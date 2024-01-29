@@ -49,3 +49,8 @@ subprojects {
         useJUnitPlatform()
     }
 }
+
+project(':eureka') {
+    bootJar { enabled = true }
+    jar { enabled = false }
+}
