@@ -5,7 +5,7 @@ dependencies {
 tasks.register('copyPrivate', Copy) {
     copy {
         from '../spring_backend_sub/eureka'
-        include 'application.yml' as Closure
+        include 'application.yml'
         into 'src/main/resources'
     }
 }
