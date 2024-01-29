@@ -3,3 +3,4 @@ include('eureka')
 
 rootProject.name = 'backend'
 include('gateway')
+
