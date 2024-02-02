@@ -7,6 +7,8 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
     // H2
     runtimeOnly 'com.h2database:h2'
+    // redis
+    implementation 'org.springframework.boot:spring-boot-starter-data-redis'
     // jwt
     implementation group: 'io.jsonwebtoken', name: 'jjwt-api', version: '0.11.5'
     runtimeOnly group: 'io.jsonwebtoken', name: 'jjwt-impl', version: '0.11.5'
@@ -14,12 +16,18 @@ dependencies {
     // test
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation 'org.awaitility:awaitility:4.2.0'
+    // testcontainers
+    testImplementation "org.junit.jupiter:junit-jupiter:5.8.1"
+    testImplementation "org.testcontainers:junit-jupiter:1.16.3"
 }
 
 tasks.register('copyPrivate', Copy) {
     copy {
-        from '../spring_backend_sub/auth'
-        include 'application.yml'
+        from '../spring_backend_sub/auth/application-local.yml'
+        into 'src/main/resources'
+    }
+    copy {
+        from '../spring_backend_sub/auth/application-test.yml'
         into 'src/main/resources'
     }
 }
