@@ -13,8 +13,9 @@ import java.time.LocalDateTime;
 @RedisHash("token")
 public class Token {
     @Id
-    private String deviceId;
     private String refreshToken;
+    private String deviceId;
+    private Long memberId;
     private LocalDateTime createdAt;
     @TimeToLive
     private Long expiration;

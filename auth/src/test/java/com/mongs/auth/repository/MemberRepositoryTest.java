@@ -38,7 +38,7 @@ public class MemberRepositoryTest {
     }
 
     @Test
-    @DisplayName("회원 가입 일자를 입력하지 않아도 가입일자가 등록된다.")
+    @DisplayName("회원 가입 일자가 자동으로 등록된다.")
     void autoCreatedAt() {
         // given
         Member member = Member.builder()
@@ -58,7 +58,7 @@ public class MemberRepositoryTest {
     }
 
     @Test
-    @DisplayName("회원 정보를 수정하면 수정일자가 변경된다.")
+    @DisplayName("회원 정보를 수정 시, 수정 일자가 변경 된다.")
     void autoUpdatedAt() {
         // given
         Member member = Member.builder()

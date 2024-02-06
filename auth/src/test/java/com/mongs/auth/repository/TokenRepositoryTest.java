@@ -24,23 +24,24 @@ public class TokenRepositoryTest extends RedisContainer {
     @Value("${application.security.jwt.refresh-expiration}")
     private Long expiration;
 
-    private final String deviceId = "test-deviceId";
-    private final String refreshToken = "test-refreshToken";
-
     @Test
     @DisplayName("토큰을 저장하면 expired 시간 이후에 소멸된다.")
     void autoCreatedAt() {
         // given
+        String deviceId = "test-deviceId";
+        Long memberId = 1L;
+        String refreshToken = "test-refreshToken";
         Token token = Token.builder()
-                .deviceId(deviceId)
                 .refreshToken(refreshToken)
+                .deviceId(deviceId)
+                .memberId(memberId)
                 .createdAt(LocalDateTime.now())
                 .expiration(expiration)
                 .build();
 
         // when
         tokenRepository.save(token);
-        boolean expected1 = tokenRepository.findById(deviceId).isPresent();
+        boolean expected1 = tokenRepository.findById(refreshToken).isPresent();
         Awaitility.await().pollDelay(Duration.ofSeconds(expiration)).until(() -> true);
         boolean expected2 = tokenRepository.findById(deviceId).isPresent();
 
