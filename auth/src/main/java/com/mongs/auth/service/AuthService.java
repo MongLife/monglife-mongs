@@ -1,8 +1,10 @@
 package com.mongs.auth.service;
 
 import com.mongs.auth.dto.response.LoginResDto;
+import com.mongs.auth.dto.response.ReissueResDto;
 import com.mongs.auth.entity.Member;
 import com.mongs.auth.entity.Token;
+import com.mongs.auth.exception.AuthorizationException;
 import com.mongs.auth.repository.MemberRepository;
 import com.mongs.auth.repository.TokenRepository;
 import com.mongs.auth.util.TokenProvider;
@@ -42,6 +44,29 @@ public class AuthService {
         return LoginResDto.builder()
                 .accessToken(tokenProvider.generateAccessToken(member.getId(), deviceId))
                 .refreshToken(token.getRefreshToken())
+                .build();
+    }
+
+    public ReissueResDto reissue(String refreshToken) throws RuntimeException {
+        /* RefreshToken Redis 존재 여부 확인 */
+        Token token = tokenRepository.findById(refreshToken)
+                .orElseThrow(() -> new AuthorizationException("RefreshToken is Expired"));
+
+        tokenRepository.deleteById(refreshToken);
+
+        /* AccessToken 및 RefreshToken 발급 */
+        Token newToken = Token.builder()
+                .refreshToken(tokenProvider.generateRefreshToken())
+                .deviceId(token.getDeviceId())
+                .memberId(token.getMemberId())
+                .createdAt(LocalDateTime.now())
+                .expiration(expiration)
+                .build();
+        newToken = tokenRepository.save(newToken);
+
+        return ReissueResDto.builder()
+                .accessToken(tokenProvider.generateAccessToken(newToken.getMemberId(), newToken.getDeviceId()))
+                .refreshToken(newToken.getRefreshToken())
                 .build();
     }
 
