@@ -5,6 +5,7 @@ import com.mongs.auth.dto.response.ReissueResDto;
 import com.mongs.auth.entity.Member;
 import com.mongs.auth.entity.Token;
 import com.mongs.auth.exception.AuthorizationException;
+import com.mongs.auth.exception.ParameterValidateException;
 import com.mongs.auth.repository.MemberRepository;
 import com.mongs.auth.repository.TokenRepository;
 import com.mongs.auth.util.TokenProvider;
@@ -27,11 +28,21 @@ public class AuthService {
     private Long expiration;
 
     public LoginResDto login(String deviceId, String email, String name) throws RuntimeException {
-        /* 회원 가입 (회원 정보가 존재하지 않을 경우) */
+        if (deviceId.isEmpty() || deviceId.isBlank()) {
+            throw new ParameterValidateException("deviceId");
+        }
+        if (email.isEmpty() || email.isBlank()) {
+            throw new ParameterValidateException("email");
+        }
+        if (name.isEmpty() || name.isBlank()) {
+            throw new ParameterValidateException("name");
+        }
+
+        /* 회원 가입 (회원 정보가 없는 경우) */
         Member member = memberRepository.findByEmail(email)
                 .orElseGet(() -> this.registerMember(email, name));
 
-        /* 엑세스 및 리프래시 토큰 발급 */
+        /* AccessToken 및 RefreshToken 발급 */
         Token token = Token.builder()
                 .refreshToken(tokenProvider.generateRefreshToken())
                 .deviceId(deviceId)
@@ -42,7 +53,7 @@ public class AuthService {
         token = tokenRepository.save(token);
 
         return LoginResDto.builder()
-                .accessToken(tokenProvider.generateAccessToken(member.getId(), deviceId))
+                .accessToken(tokenProvider.generateAccessToken(token.getMemberId(), token.getDeviceId()))
                 .refreshToken(token.getRefreshToken())
                 .build();
     }
