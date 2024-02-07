@@ -43,7 +43,33 @@ public class TokenRepositoryTest extends RedisContainer {
         tokenRepository.save(token);
         boolean expected1 = tokenRepository.findById(refreshToken).isPresent();
         Awaitility.await().pollDelay(Duration.ofSeconds(expiration)).until(() -> true);
-        boolean expected2 = tokenRepository.findById(deviceId).isPresent();
+        boolean expected2 = tokenRepository.findById(refreshToken).isPresent();
+
+        // then
+        assertThat(expected1).isTrue();
+        assertThat(expected2).isFalse();
+    }
+
+    @Test
+    @DisplayName("토큰 삭제 시, 즉시 소멸 된다.")
+    void delete() {
+        // given
+        String deviceId = "test-deviceId";
+        Long memberId = 1L;
+        String refreshToken = "test-refreshToken";
+        Token token = Token.builder()
+                .refreshToken(refreshToken)
+                .deviceId(deviceId)
+                .memberId(memberId)
+                .createdAt(LocalDateTime.now())
+                .expiration(expiration)
+                .build();
+        tokenRepository.save(token);
+
+        // when
+        boolean expected1 = tokenRepository.findById(refreshToken).isPresent();
+        tokenRepository.deleteById(refreshToken);
+        boolean expected2 = tokenRepository.findById(refreshToken).isPresent();
 
         // then
         assertThat(expected1).isTrue();
