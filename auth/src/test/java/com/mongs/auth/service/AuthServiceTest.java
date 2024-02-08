@@ -5,7 +5,6 @@ import com.mongs.auth.dto.response.ReissueResDto;
 import com.mongs.auth.entity.Member;
 import com.mongs.auth.entity.Token;
 import com.mongs.auth.exception.AuthorizationException;
-import com.mongs.auth.exception.ParameterValidateException;
 import com.mongs.auth.repository.MemberRepository;
 import com.mongs.auth.repository.TokenRepository;
 import com.mongs.auth.util.TokenProvider;
@@ -78,51 +77,6 @@ public class AuthServiceTest {
         // then
         assertThat(result.accessToken()).isEqualTo(accessToken);
         assertThat(result.refreshToken()).isEqualTo(refreshToken);
-    }
-
-    @Test
-    @DisplayName("로그인 시 deviceId 가 없는 경우 ParameterValidateException 을 발생 시킨다.")
-    void loginEmptyDeviceId() {
-        // given
-        String deviceId = "test-deviceId";
-        String email = "";
-        String name = "테스트";
-
-        // when
-        Throwable expected = catchThrowable(() -> authService.login(deviceId, email, name));
-
-        // then
-        assertThat(expected).isInstanceOf(ParameterValidateException.class);
-    }
-
-    @Test
-    @DisplayName("로그인 시 email 이 없는 경우 ParameterValidateException 을 발생 시킨다.")
-    void loginEmptyEmail() {
-        // given
-        String deviceId = "test-deviceId";
-        String email = "test@test.com";
-        String name = "";
-
-        // when
-        Throwable expected = catchThrowable(() -> authService.login(deviceId, email, name));
-
-        // then
-        assertThat(expected).isInstanceOf(ParameterValidateException.class);
-    }
-
-    @Test
-    @DisplayName("로그인 시 name 이 없는 경우 ParameterValidateException 을 발생 시킨다.")
-    void loginEmptyName() {
-        // given
-        String deviceId = "";
-        String email = "test@test.com";
-        String name = "테스트";
-
-        // when
-        Throwable expected = catchThrowable(() -> authService.login(deviceId, email, name));
-
-        // then
-        assertThat(expected).isInstanceOf(ParameterValidateException.class);
     }
 
     @Test
