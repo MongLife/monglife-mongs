@@ -5,7 +5,6 @@ import com.mongs.auth.dto.response.ReissueResDto;
 import com.mongs.auth.entity.Member;
 import com.mongs.auth.entity.Token;
 import com.mongs.auth.exception.AuthorizationException;
-import com.mongs.auth.exception.ParameterValidateException;
 import com.mongs.auth.repository.MemberRepository;
 import com.mongs.auth.repository.TokenRepository;
 import com.mongs.auth.util.TokenProvider;
@@ -28,16 +27,6 @@ public class AuthService {
     private Long expiration;
 
     public LoginResDto login(String deviceId, String email, String name) throws RuntimeException {
-        if (deviceId.isEmpty() || deviceId.isBlank()) {
-            throw new ParameterValidateException("deviceId");
-        }
-        if (email.isEmpty() || email.isBlank()) {
-            throw new ParameterValidateException("email");
-        }
-        if (name.isEmpty() || name.isBlank()) {
-            throw new ParameterValidateException("name");
-        }
-
         /* 회원 가입 (회원 정보가 없는 경우) */
         Member member = memberRepository.findByEmail(email)
                 .orElseGet(() -> this.registerMember(email, name));
