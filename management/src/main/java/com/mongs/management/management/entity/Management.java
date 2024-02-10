@@ -17,6 +17,8 @@ public class Management {
     @Column(name = "mong_id")
     private Long id;
 
+    private String email;
+
     private String name;
 
     private LocalDateTime regDt;
@@ -48,8 +50,9 @@ public class Management {
     private int paypoint;
 
     @Builder
-    public Management(Long id, String name, LocalDateTime regDt, double weight, int age, int strength, int satiety, int healthy, int sleep, int penalty, int trainingCount, int strokeCount, int poopCount, LocalDateTime sleepStart, LocalDateTime sleepEnd, int paypoint) {
+    public Management(Long id, String email, String name, LocalDateTime regDt, double weight, int age, int strength, int satiety, int healthy, int sleep, int penalty, int trainingCount, int strokeCount, int poopCount, LocalDateTime sleepStart, LocalDateTime sleepEnd, int paypoint) {
         this.id = id;
+        this.email = email;
         this.name = name;
         this.regDt = regDt;
         this.weight = weight;
@@ -71,6 +74,7 @@ public class Management {
     public String toString() {
         return "Management{" +
                 "id=" + id +
+                ", email='" + email + '\'' +
                 ", name='" + name + '\'' +
                 ", regDt=" + regDt +
                 ", weight=" + weight +
