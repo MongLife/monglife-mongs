@@ -20,7 +20,9 @@ public class AuthControllerAdvice {
     }
     @ExceptionHandler(AuthorizationException.class)
     public ResponseEntity<Object> authorizationExceptionHandler(AuthorizationException e) {
-        var message = e.getMessage();
-        return ResponseEntity.badRequest().body(ErrorResDto.builder().message(message).build());
+        return ResponseEntity.badRequest().body(ErrorResDto.builder()
+                .code(ErrorCode.REFRESH_TOKEN_EXPIRED.getCode())
+                .message(ErrorCode.REFRESH_TOKEN_EXPIRED.getMessage())
+                .build());
     }
 }
