@@ -2,7 +2,10 @@ package com.mongs.auth.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mongs.auth.dto.request.LoginReqDto;
+import com.mongs.auth.dto.request.ReissueReqDto;
 import com.mongs.auth.dto.response.LoginResDto;
+import com.mongs.auth.dto.response.ReissueResDto;
+import com.mongs.auth.exception.AuthorizationException;
 import com.mongs.auth.exception.ErrorCode;
 import com.mongs.auth.service.AuthService;
 import org.junit.jupiter.api.DisplayName;
@@ -187,5 +190,90 @@ public class AuthControllerTest {
         resultActions
                 .andExpect(jsonPath("$.code").value(ErrorCode.INVALID_PARAMETER.getCode()))
                 .andExpect(jsonPath("$.message").value(ErrorCode.INVALID_PARAMETER.getMessage()));
+    }
+
+    @Test
+    @DisplayName("refreshToken 으로 토큰 재발행하면 accessToken 과 refreshToken 을 반환한다.")
+    void reissue() throws Exception {
+        // given
+        String refreshToken = "test-refreshToken";
+        String newAccessToken = "test-new-accessToken";
+        String newRefreshToken = "test-new-refreshToken";
+
+        ReissueResDto reissueResDto = ReissueResDto.builder()
+                .accessToken(newAccessToken)
+                .refreshToken(newRefreshToken)
+                .build();
+
+        when(authService.reissue(refreshToken))
+                .thenReturn(reissueResDto);
+
+        // when
+        ResultActions resultActions = mockMvc.perform(post("/auth/reissue")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsBytes(new ReissueReqDto(refreshToken))));
+
+        // then
+        // HttpStatus & contentType
+        resultActions
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON));
+        // data
+        resultActions
+                .andExpect(jsonPath("$.accessToken").value(newAccessToken))
+                .andExpect(jsonPath("$.refreshToken").value(newRefreshToken));
+        // Parameter
+        var refreshTokenCaptor = ArgumentCaptor.forClass(String.class);
+        verify(authService, times(1)).reissue(refreshTokenCaptor.capture());
+        var passedRefreshToken = refreshTokenCaptor.getValue();
+        assertThat(passedRefreshToken).isEqualTo(refreshToken);
+    }
+
+    @Test
+    @DisplayName("refreshToken 없이 토큰 재발행하면 Invalid Parameter 에러 메시지를 반환한다.")
+    void reissueNotRefreshToken() throws Exception {
+        // given
+        when(authService.reissue(null))
+                .thenThrow(new AuthorizationException(ErrorCode.REFRESH_TOKEN_EXPIRED.getMessage()));
+
+        // when
+        ResultActions resultActions = mockMvc.perform(post("/auth/reissue")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsBytes(new ReissueReqDto(null))));
+
+        // then
+        // HttpStatus & contentType
+        resultActions
+                .andExpect(status().isBadRequest())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON));
+        // data
+        resultActions
+                .andExpect(jsonPath("$.code").value(ErrorCode.INVALID_PARAMETER.getCode()))
+                .andExpect(jsonPath("$.message").value(ErrorCode.INVALID_PARAMETER.getMessage()));
+    }
+
+    @Test
+    @DisplayName("토큰 재발행 또는 재로그인 시, 기존 refreshToken 은 만료되고 RefreshToken Expired 에러 메시지를 반환한다.")
+    void reissuePastRefreshTokenExpired() throws Exception {
+        // given
+        String refreshToken = "test-refreshToken";
+
+        when(authService.reissue(refreshToken))
+                .thenThrow(new AuthorizationException(ErrorCode.REFRESH_TOKEN_EXPIRED.getMessage()));
+
+        // when
+        ResultActions resultActions = mockMvc.perform(post("/auth/reissue")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsBytes(new ReissueReqDto(refreshToken))));
+
+        // then
+        // HttpStatus & contentType
+        resultActions
+                .andExpect(status().isBadRequest())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON));
+        // data
+        resultActions
+                .andExpect(jsonPath("$.code").value(ErrorCode.REFRESH_TOKEN_EXPIRED.getCode()))
+                .andExpect(jsonPath("$.message").value(ErrorCode.REFRESH_TOKEN_EXPIRED.getMessage()));
     }
 }
