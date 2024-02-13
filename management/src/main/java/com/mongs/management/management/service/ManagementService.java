@@ -1,24 +1,16 @@
 package com.mongs.management.management.service;
 
-import com.mongs.management.management.repository.ManagementRepository;
-import com.mongs.management.management.service.dto.SlotListResponse;
-import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
+import com.mongs.management.management.service.dto.Poop;
+import com.mongs.management.management.service.dto.*;
 
-@Service
-@RequiredArgsConstructor
-@Transactional
-public class ManagementService {
+public interface ManagementService {
 
-    private ManagementRepository managementRepository;
-
-//    public SlotListResponse SlotList () {
-//
-//        return SlotListResponse.builder()
-//                .stateCode()
-//                .isDie()
-//                .build();
-//
-//    }
+    CreateMong createMong (InitMong initmong);
+    Stroke toMongStroke ();
+    Sleep toCheckMongsLifetime ();
+    Poop toCleanMongsPoop ();
+    EatTheFeed feedToMong (FeedCode feedCode);
+    Training mongTraining (TrainingCount trainingCount);
+    Evolution mongEvolution ();
+    Graduation mongsGraduate();
 }
