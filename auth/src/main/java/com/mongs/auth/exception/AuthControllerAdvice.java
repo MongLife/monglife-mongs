@@ -13,16 +13,14 @@ import java.util.stream.Collectors;
 public class AuthControllerAdvice {
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<Object> validatedExceptionHandler(MethodArgumentNotValidException e) {
-        var message = e.getBindingResult().getAllErrors().stream()
-                .map(objectError -> Objects.requireNonNull(objectError.getCodes())[1])
-                .collect(Collectors.toList());
-
-        return ResponseEntity.badRequest().body(ErrorResDto.builder().message(message).build());
+        return ResponseEntity.badRequest().body(ErrorResDto.builder()
+                .code(ErrorCode.INVALID_PARAMETER.getCode())
+                .message(ErrorCode.INVALID_PARAMETER.getMessage())
+                .build());
     }
     @ExceptionHandler(AuthorizationException.class)
     public ResponseEntity<Object> authorizationExceptionHandler(AuthorizationException e) {
         var message = e.getMessage();
-
         return ResponseEntity.badRequest().body(ErrorResDto.builder().message(message).build());
     }
 }
