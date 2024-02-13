@@ -5,15 +5,14 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-@NoArgsConstructor
-@AllArgsConstructor
-@Builder
-@Getter
-public class SlotListResponse {
-    private Long mongId;
-    private String name;
-    private String mongCode;
-    private String stateCode;
-    private int poopCount;
-    private String mapCode;
+
+@Builder(toBuilder = true)
+public record SlotListResponse (
+    Long mongId,
+    String name,
+    String mongCode,
+    String stateCode,
+    int poopCount,
+    String mapCode
+){
 }
