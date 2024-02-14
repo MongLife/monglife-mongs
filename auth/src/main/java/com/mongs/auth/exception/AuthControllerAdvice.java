@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 @RestControllerAdvice
 public class AuthControllerAdvice {
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<Object> validatedExceptionHandler(MethodArgumentNotValidException e) {
+    public ResponseEntity<Object> validatedExceptionHandler() {
         return ResponseEntity.badRequest().body(ErrorResDto.builder()
                 .message(ErrorCode.INVALID_PARAMETER.getMessage())
                 .build());
