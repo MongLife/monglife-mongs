@@ -1,6 +1,7 @@
 package com.mongs.auth.service;
 
 import com.mongs.auth.dto.response.LoginResDto;
+import com.mongs.auth.dto.response.PassportResDto;
 import com.mongs.auth.passport.Passport;
 import com.mongs.auth.dto.response.ReissueResDto;
 import com.mongs.auth.entity.Member;
@@ -77,9 +78,9 @@ public class AuthService {
                 .build();
     }
     
-    public Passport passport(String accessToken) throws RuntimeException {
+    public PassportResDto passport(String accessToken) throws RuntimeException {
         /* AccessToken 검증 */
-        if (!tokenProvider.isTokenExpired(accessToken)) {
+        if (tokenProvider.isTokenExpired(accessToken)) {
             throw new AuthorizationException(ErrorCode.ACCESS_TOKEN_EXPIRED.getMessage());
         }
 
@@ -101,7 +102,8 @@ public class AuthService {
             String passportIntegrity = hmacProvider.generateHmac(passport);
 
             /* passport 생성 및 dto 반환 */
-            return passport.toBuilder()
+            return PassportResDto.builder()
+                    .member(passport.member())
                     .passportIntegrity(passportIntegrity)
                     .build();
         } catch (Exception e) {
