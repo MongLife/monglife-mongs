@@ -2,6 +2,7 @@ package com.mongs.auth.util;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
@@ -31,6 +32,14 @@ public class TokenProvider {
     @Value("${application.security.jwt.refresh-expiration}")
     private Long REFRESH_TOKEN_EXPIRED;
 
+    public Boolean isTokenExpired(String token) {
+        try {
+            Date expiration = extractAllClaims(token).getExpiration();
+            return expiration.before(new Date());
+        } catch (ExpiredJwtException e) {
+            return false;
+        }
+    }
     public String generateAccessToken(Long memberId, String deviceId) {
         Claims claims = Jwts.claims();
         claims.put("memberId", memberId);
@@ -54,9 +63,6 @@ public class TokenProvider {
     public String getDeviceId(String token) {
         return extractAllClaims(token).get("deviceId", String.class);
     }
-
-
-
 
     private Claims extractAllClaims(String token) {
         Key signingKey = getSigningKey();
