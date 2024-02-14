@@ -36,7 +36,7 @@ public class TokenProviderTest {
         boolean expected = tokenProvider.isTokenExpired(refreshToken);
 
         // then
-        assertThat(expected).isFalse();
+        assertThat(expected).isTrue();
     }
 
     @Test
