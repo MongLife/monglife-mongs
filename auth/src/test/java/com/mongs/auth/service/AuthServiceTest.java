@@ -1,12 +1,16 @@
 package com.mongs.auth.service;
 
 import com.mongs.auth.dto.response.LoginResDto;
+import com.mongs.auth.passport.Passport;
 import com.mongs.auth.dto.response.ReissueResDto;
 import com.mongs.auth.entity.Member;
 import com.mongs.auth.entity.Token;
 import com.mongs.auth.exception.AuthorizationException;
+import com.mongs.auth.exception.NotFoundException;
+import com.mongs.auth.exception.PassportException;
 import com.mongs.auth.repository.MemberRepository;
 import com.mongs.auth.repository.TokenRepository;
+import com.mongs.auth.util.HmacProvider;
 import com.mongs.auth.util.TokenProvider;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -35,6 +39,8 @@ public class AuthServiceTest {
     private TokenRepository tokenRepository;
     @Mock
     private TokenProvider tokenProvider;
+    @Mock
+    private HmacProvider hmacProvider;
 
     @Value("${application.security.jwt.refresh-expiration}")
     private Long expiration;
@@ -132,5 +138,102 @@ public class AuthServiceTest {
 
         // then
         assertThat(expected).isInstanceOf(AuthorizationException.class);
+    }
+
+    @Test
+    @DisplayName("accessToken 으로 passport 정보를 반환한다.")
+    void passport() throws Exception {
+        // given
+        String passportIntegrity = "test-passportIntegrity";
+        String accessToken = "test-accessToken";
+        String email = "test@test.com";
+        String name = "테스트";
+        Long memberId = 1L;
+
+        when(tokenProvider.isTokenExpired(accessToken))
+                .thenReturn(true);
+        when(tokenProvider.getMemberId(accessToken))
+                .thenReturn(memberId);
+        when(memberRepository.findById(memberId))
+                .thenReturn(Optional.of(Member.builder()
+                        .id(memberId)
+                        .email(email)
+                        .name(name)
+                        .build()));
+        when(hmacProvider.generateHmac(any()))
+                .thenReturn(passportIntegrity);
+
+        // when
+        Passport passport = authService.passport(accessToken);
+        String expected = passport.passportIntegrity();
+
+        // then
+        assertThat(expected).isEqualTo(passportIntegrity);
+    }
+
+    @Test
+    @DisplayName("만료된 accessToken 으로 passport 정보를 조회하면 AuthorizationException 을 발생 시킨다.")
+    void passportAccessTokenExpired() {
+        // given
+        String accessToken = "test-accessToken-expired";
+
+        when(tokenProvider.isTokenExpired(accessToken))
+                .thenReturn(false);
+
+        // when
+        Throwable expected = catchThrowable(() -> authService.passport(accessToken));
+
+        // then
+        assertThat(expected).isInstanceOf(AuthorizationException.class);
+    }
+
+    @Test
+    @DisplayName("accessToken 으로 passport 정보를 조회할 때, 회원 정보가 없으면 NotFoundException 을 발생 시킨다.")
+    void passportNotFoundMember() {
+        // given
+        String accessToken = "test-accessToken";
+        Long memberId = 1L;
+
+        when(tokenProvider.isTokenExpired(accessToken))
+                .thenReturn(true);
+        when(tokenProvider.getMemberId(accessToken))
+                .thenReturn(memberId);
+        when(memberRepository.findById(memberId))
+                .thenReturn(Optional.empty());
+
+        // when
+        Throwable expected = catchThrowable(() -> authService.passport(accessToken));
+
+        // then
+        assertThat(expected).isInstanceOf(NotFoundException.class);
+    }
+
+    @Test
+    @DisplayName("passportIntegrity 을 생성에 실패하면 PassportException 을 발생시킨다.")
+    void passportRegisterFail() throws Exception {
+        // given
+        String accessToken = "test-accessToken";
+        String email = "test@test.com";
+        String name = "테스트";
+        Long memberId = 1L;
+
+        when(tokenProvider.isTokenExpired(accessToken))
+                .thenReturn(true);
+        when(tokenProvider.getMemberId(accessToken))
+                .thenReturn(memberId);
+        when(memberRepository.findById(memberId))
+                .thenReturn(Optional.of(Member.builder()
+                        .id(memberId)
+                        .email(email)
+                        .name(name)
+                        .build()));
+        when(hmacProvider.generateHmac(any()))
+                .thenThrow(Exception.class);
+
+        // when
+        Throwable expected = catchThrowable(() -> authService.passport(accessToken));
+
+        // then
+        assertThat(expected).isInstanceOf(PassportException.class);
     }
 }
