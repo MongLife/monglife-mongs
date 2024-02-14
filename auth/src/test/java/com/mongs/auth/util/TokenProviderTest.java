@@ -1,11 +1,14 @@
 package com.mongs.auth.util;
 
+import org.awaitility.Awaitility;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
+
+import java.time.Duration;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -21,6 +24,20 @@ public class TokenProviderTest {
     @Value("${application.security.jwt.refresh-expiration}")
     private Long refresh_expiration;
 
+    @Test
+    @DisplayName("Token 의 만료 여부를 확인한다. (오차 범위 1s)")
+    void verifyTokenExpired() {
+        // given
+        String refreshToken = tokenProvider.generateRefreshToken();
+
+        // when
+        Long expiration = tokenProvider.getExpiredSeconds(refreshToken);
+        Awaitility.await().pollDelay(Duration.ofSeconds(expiration + 1L)).until(() -> true);
+        boolean expected = tokenProvider.isTokenExpired(refreshToken);
+
+        // then
+        assertThat(expected).isFalse();
+    }
 
     @Test
     @DisplayName("Access Token 의 payload 에 memberId, deviceId 를 저장 한다.")
