@@ -6,9 +6,11 @@ import lombok.Getter;
 @Getter
 @AllArgsConstructor
 public enum ErrorCode {
-    INVALID_PARAMETER("100", "Invalid Parameter"),
-    REFRESH_TOKEN_EXPIRED("101", "RefreshToken Expired");
-    
-    private final String code;
+    INVALID_PARAMETER("Invalid Parameter"),
+    REFRESH_TOKEN_EXPIRED("RefreshToken Expired"),
+    ACCESS_TOKEN_EXPIRED("AccessToken Expired"),
+    MEMBER_NOT_FOUND("Not Found Member"),
+    PASSPORT_GENERATE_FAIL("Passport Generate Fail");
+
     private final String message;
 }
