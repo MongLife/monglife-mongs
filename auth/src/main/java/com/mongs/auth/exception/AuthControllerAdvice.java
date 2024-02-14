@@ -11,7 +11,7 @@ public class AuthControllerAdvice {
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<Object> validatedExceptionHandler(MethodArgumentNotValidException e) {
         return ResponseEntity.badRequest().body(ErrorResDto.builder()
-                .message(e.getMessage())
+                .message(ErrorCode.INVALID_PARAMETER.getMessage())
                 .build());
     }
     @ExceptionHandler(AuthorizationException.class)
@@ -20,8 +20,14 @@ public class AuthControllerAdvice {
                 .message(e.getMessage())
                 .build());
     }
+    @ExceptionHandler(NotFoundException.class)
+    public ResponseEntity<Object> notFoundExceptionHandler(NotFoundException e) {
+        return ResponseEntity.badRequest().body(ErrorResDto.builder()
+                .message(e.getMessage())
+                .build());
+    }
     @ExceptionHandler(PassportException.class)
-    public ResponseEntity<Object> passportExceptionHandler(AuthorizationException e) {
+    public ResponseEntity<Object> passportExceptionHandler(PassportException e) {
         return ResponseEntity.badRequest().body(ErrorResDto.builder()
                 .message(e.getMessage())
                 .build());
