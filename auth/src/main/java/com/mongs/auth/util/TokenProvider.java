@@ -75,7 +75,6 @@ public class TokenProvider {
         return extractAllClaims(token).get("deviceId", String.class);
     }
 
-  
     private Claims extractAllClaims(String token) {
         Key signingKey = getSigningKey();
         return Jwts.parserBuilder()
