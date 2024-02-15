@@ -39,6 +39,10 @@ public class AuthService {
         Member member = memberRepository.findByEmail(email)
                 .orElseGet(() -> this.registerMember(email, name));
 
+        /* 이전 RefreshToken 삭제 */
+        tokenRepository.findTokenByDeviceIdAndMemberId(deviceId, member.getId())
+                .ifPresent(token -> tokenRepository.deleteById(token.getRefreshToken()));
+
         /* AccessToken 및 RefreshToken 발급 */
         Token token = Token.builder()
                 .refreshToken(tokenProvider.generateRefreshToken())

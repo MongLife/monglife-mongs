@@ -68,6 +68,14 @@ public class AuthServiceTest {
                 .thenReturn(accessToken);
         when(tokenProvider.generateRefreshToken())
                 .thenReturn(refreshToken);
+        when(tokenRepository.findTokenByDeviceIdAndMemberId(deviceId, memberId))
+                .thenReturn(Optional.of(Token.builder()
+                        .refreshToken(refreshToken)
+                        .deviceId(deviceId)
+                        .memberId(memberId)
+                        .createdAt(LocalDateTime.now())
+                        .expiration(1L)
+                        .build()));
         when(tokenRepository.save(any()))
                 .thenReturn(Token.builder()
                         .refreshToken(refreshToken)
