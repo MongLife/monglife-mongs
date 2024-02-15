@@ -1,10 +1,13 @@
 package com.mongs.auth.util;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.mongs.auth.exception.AuthorizationException;
+import com.mongs.auth.exception.ErrorCode;
 import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
+import io.jsonwebtoken.security.SignatureException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -31,6 +34,14 @@ public class TokenProvider {
     @Value("${application.security.jwt.refresh-expiration}")
     private Long REFRESH_TOKEN_EXPIRED;
 
+    public Boolean isTokenExpired(String token) {
+        try {
+            Date expiration = extractAllClaims(token).getExpiration();
+            return expiration.before(new Date());
+        } catch (ExpiredJwtException | SignatureException e) {
+            return true;
+        }
+    }
     public String generateAccessToken(Long memberId, String deviceId) {
         Claims claims = Jwts.claims();
         claims.put("memberId", memberId);
@@ -41,23 +52,30 @@ public class TokenProvider {
         Claims claims = Jwts.claims();
         return generateToken(claims, REFRESH_TOKEN_EXPIRED);
     }
-    public Long getExpiredSeconds(String token) {
+    public Long getExpiredSeconds(String token) throws AuthorizationException {
+        if (isTokenExpired(token)) {
+            throw new AuthorizationException(ErrorCode.ACCESS_TOKEN_EXPIRED.getMessage());
+        }
         LocalDateTime expiration = extractAllClaims(token).getExpiration().toInstant()
                 .atZone(ZoneId.systemDefault())
                 .toLocalDateTime();
         long expired = Duration.between(LocalDateTime.now(), expiration).getSeconds();
         return Math.max(0, expired);
     }
-    public Long getMemberId(String token) {
+    public Long getMemberId(String token) throws AuthorizationException {
+        if (isTokenExpired(token)) {
+            throw new AuthorizationException(ErrorCode.ACCESS_TOKEN_EXPIRED.getMessage());
+        }
         return extractAllClaims(token).get("memberId", Long.class);
     }
-    public String getDeviceId(String token) {
+    public String getDeviceId(String token) throws AuthorizationException {
+        if (isTokenExpired(token)) {
+            throw new AuthorizationException(ErrorCode.ACCESS_TOKEN_EXPIRED.getMessage());
+        }
         return extractAllClaims(token).get("deviceId", String.class);
     }
 
-
-
-
+  
     private Claims extractAllClaims(String token) {
         Key signingKey = getSigningKey();
         return Jwts.parserBuilder()

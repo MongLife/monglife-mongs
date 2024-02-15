@@ -3,8 +3,7 @@ package com.mongs.auth.repository;
 import com.mongs.auth.config.RedisContainer;
 import com.mongs.auth.entity.Token;
 import org.awaitility.Awaitility;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -43,10 +42,78 @@ public class TokenRepositoryTest extends RedisContainer {
         tokenRepository.save(token);
         boolean expected1 = tokenRepository.findById(refreshToken).isPresent();
         Awaitility.await().pollDelay(Duration.ofSeconds(expiration)).until(() -> true);
-        boolean expected2 = tokenRepository.findById(deviceId).isPresent();
+        boolean expected2 = tokenRepository.findById(refreshToken).isPresent();
 
         // then
         assertThat(expected1).isTrue();
         assertThat(expected2).isFalse();
+    }
+
+    @Test
+    @DisplayName("토큰 삭제 시, 즉시 소멸 된다.")
+    void delete() {
+        // given
+        String deviceId = "test-deviceId";
+        Long memberId = 1L;
+        String refreshToken = "test-refreshToken";
+        Token token = Token.builder()
+                .refreshToken(refreshToken)
+                .deviceId(deviceId)
+                .memberId(memberId)
+                .createdAt(LocalDateTime.now())
+                .expiration(expiration)
+                .build();
+        tokenRepository.save(token);
+
+        // when
+        boolean expected1 = tokenRepository.findById(refreshToken).isPresent();
+        tokenRepository.deleteById(refreshToken);
+        boolean expected2 = tokenRepository.findById(refreshToken).isPresent();
+
+        // then
+        assertThat(expected1).isTrue();
+        assertThat(expected2).isFalse();
+    }
+
+    @Nested
+    public class Find {
+        String deviceId = "test-deviceId";
+        Long memberId = 1L;
+        String refreshToken = "test-refreshToken";
+        Long expiration = 1000000L;
+
+        @BeforeEach
+        void beforeEach() {
+            Token token = Token.builder()
+                    .refreshToken(refreshToken)
+                    .deviceId(deviceId)
+                    .memberId(memberId)
+                    .createdAt(LocalDateTime.now())
+                    .expiration(expiration)
+                    .build();
+            tokenRepository.save(token);
+        }
+        @AfterEach
+        void after() {
+            tokenRepository.deleteById(refreshToken);
+        }
+
+        @Test
+        @DisplayName("deviceId, memberId 로 토큰을 조회한다.")
+        void findByDeviceIdAndMemberId() {
+            // given
+            String deviceId = "test-deviceId";
+            Long memberId = 1L;
+
+            // when
+            Token token = tokenRepository.findTokenByDeviceIdAndMemberId(deviceId, memberId)
+                    .orElseGet(null);
+
+            // then
+            assertThat(token).isNotNull();
+            assertThat(token.getRefreshToken()).isEqualTo(refreshToken);
+            assertThat(token.getDeviceId()).isEqualTo(deviceId);
+            assertThat(token.getMemberId()).isEqualTo(memberId);
+        }
     }
 }
