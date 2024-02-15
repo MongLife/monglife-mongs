@@ -1,7 +1,7 @@
 package com.mongs.auth.service;
 
 import com.mongs.auth.dto.response.LoginResDto;
-import com.mongs.auth.passport.Passport;
+import com.mongs.auth.dto.response.PassportResDto;
 import com.mongs.auth.dto.response.ReissueResDto;
 import com.mongs.auth.entity.Member;
 import com.mongs.auth.entity.Token;
@@ -151,7 +151,7 @@ public class AuthServiceTest {
         Long memberId = 1L;
 
         when(tokenProvider.isTokenExpired(accessToken))
-                .thenReturn(true);
+                .thenReturn(false);
         when(tokenProvider.getMemberId(accessToken))
                 .thenReturn(memberId);
         when(memberRepository.findById(memberId))
@@ -164,8 +164,8 @@ public class AuthServiceTest {
                 .thenReturn(passportIntegrity);
 
         // when
-        Passport passport = authService.passport(accessToken);
-        String expected = passport.passportIntegrity();
+        PassportResDto passportResDto = authService.passport(accessToken);
+        String expected = passportResDto.passportIntegrity();
 
         // then
         assertThat(expected).isEqualTo(passportIntegrity);
@@ -178,7 +178,7 @@ public class AuthServiceTest {
         String accessToken = "test-accessToken-expired";
 
         when(tokenProvider.isTokenExpired(accessToken))
-                .thenReturn(false);
+                .thenReturn(true);
 
         // when
         Throwable expected = catchThrowable(() -> authService.passport(accessToken));
@@ -195,7 +195,7 @@ public class AuthServiceTest {
         Long memberId = 1L;
 
         when(tokenProvider.isTokenExpired(accessToken))
-                .thenReturn(true);
+                .thenReturn(false);
         when(tokenProvider.getMemberId(accessToken))
                 .thenReturn(memberId);
         when(memberRepository.findById(memberId))
@@ -218,7 +218,7 @@ public class AuthServiceTest {
         Long memberId = 1L;
 
         when(tokenProvider.isTokenExpired(accessToken))
-                .thenReturn(true);
+                .thenReturn(false);
         when(tokenProvider.getMemberId(accessToken))
                 .thenReturn(memberId);
         when(memberRepository.findById(memberId))

@@ -2,11 +2,16 @@ package com.mongs.auth.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mongs.auth.dto.request.LoginReqDto;
+import com.mongs.auth.dto.request.PassportReqDto;
 import com.mongs.auth.dto.request.ReissueReqDto;
 import com.mongs.auth.dto.response.LoginResDto;
+import com.mongs.auth.dto.response.PassportResDto;
 import com.mongs.auth.dto.response.ReissueResDto;
 import com.mongs.auth.exception.AuthorizationException;
 import com.mongs.auth.exception.ErrorCode;
+import com.mongs.auth.exception.NotFoundException;
+import com.mongs.auth.exception.PassportException;
+import com.mongs.auth.passport.PassportMember;
 import com.mongs.auth.service.AuthService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -90,7 +95,7 @@ public class AuthControllerTest {
     }
 
     @Test
-    @DisplayName("deviceId 없이 로그인하면 Invalid Parameter 에러 메시지를 반환한다.")
+    @DisplayName("deviceId 없이 로그인하면 INVALID_PARAMETER 에러 메시지를 반환한다.")
     void loginNotDeviceId() throws Exception {
         // given
         String email = "test@test.com";
@@ -113,7 +118,7 @@ public class AuthControllerTest {
     }
 
     @Test
-    @DisplayName("email 없이 로그인하면 Invalid Parameter 에러 메시지를 반환한다.")
+    @DisplayName("email 없이 로그인하면 INVALID_PARAMETER 에러 메시지를 반환한다.")
     void loginNotEmail() throws Exception {
         // given
         String deviceId = "test-deviceId";
@@ -136,7 +141,7 @@ public class AuthControllerTest {
     }
 
     @Test
-    @DisplayName("email 형식이 맞지 않는 경우 Invalid Parameter 에러 메시지를 반환한다.")
+    @DisplayName("email 형식이 맞지 않는 경우 INVALID_PARAMETER 에러 메시지를 반환한다.")
     void loginNotEmailFormat() throws Exception {
         // given
         String deviceId = "test-deviceId";
@@ -160,7 +165,7 @@ public class AuthControllerTest {
     }
 
     @Test
-    @DisplayName("name 없이 로그인하면 Invalid Parameter 에러 메시지를 반환한다.")
+    @DisplayName("name 없이 로그인하면 INVALID_PARAMETER 에러 메시지를 반환한다.")
     void loginNotName() throws Exception {
         // given
         String deviceId = "test-deviceId";
@@ -220,12 +225,8 @@ public class AuthControllerTest {
     }
 
     @Test
-    @DisplayName("refreshToken 없이 토큰 재발행하면 Invalid Parameter 에러 메시지를 반환한다.")
+    @DisplayName("refreshToken 없이 토큰 재발행하면 INVALID_PARAMETER 에러 메시지를 반환한다.")
     void reissueNotRefreshToken() throws Exception {
-        // given
-        when(authService.reissue(null))
-                .thenThrow(new AuthorizationException(ErrorCode.REFRESH_TOKEN_EXPIRED.getMessage()));
-
         // when
         ResultActions resultActions = mockMvc.perform(post("/auth/reissue")
                 .contentType(MediaType.APPLICATION_JSON)
@@ -242,7 +243,7 @@ public class AuthControllerTest {
     }
 
     @Test
-    @DisplayName("토큰 재발행 또는 재로그인 시, 기존 refreshToken 은 만료되고 RefreshToken Expired 에러 메시지를 반환한다.")
+    @DisplayName("토큰 재발행 또는 재로그인 시, 기존 refreshToken 은 만료되고 REFRESH_TOKEN_EXPIRED 에러 메시지를 반환한다.")
     void reissuePastRefreshTokenExpired() throws Exception {
         // given
         String refreshToken = "test-refreshToken";
@@ -263,5 +264,124 @@ public class AuthControllerTest {
         // data
         resultActions
                 .andExpect(jsonPath("$.message").value(ErrorCode.REFRESH_TOKEN_EXPIRED.getMessage()));
+    }
+
+    @Test
+    @DisplayName("accessToken 으로 Passport 를 발급받고 반환한다.")
+    void passport() throws Exception {
+        // given
+        String passportIntegrity = "test-passportIntegrity";
+        String email = "test@test.com";
+        String name = "test-name";
+        Long memberId = 1L;
+        String accessToken = "test-accessToken";
+
+        PassportResDto passportResDto = PassportResDto.builder()
+                .member(PassportMember.builder()
+                        .id(memberId)
+                        .email(email)
+                        .name(name)
+                        .build())
+                .passportIntegrity(passportIntegrity)
+                .build();
+
+        when(authService.passport(accessToken))
+                .thenReturn(passportResDto);
+
+        // when
+        // Response
+        ResultActions resultActions = mockMvc.perform(post("/auth/passport")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsBytes(new PassportReqDto(accessToken))));
+
+        // then
+        // HttpStatus & contentType
+        resultActions
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON));
+        // data
+        resultActions
+                .andExpect(jsonPath("$.member.id").value(memberId))
+                .andExpect(jsonPath("$.member.email").value(email))
+                .andExpect(jsonPath("$.member.name").value(name))
+                .andExpect(jsonPath("$.passportIntegrity").value(passportIntegrity));
+        // Parameter
+        var accessTokenCaptor = ArgumentCaptor.forClass(String.class);
+        verify(authService, times(1)).passport(accessTokenCaptor.capture());
+
+        var passedAccessToken = accessTokenCaptor.getValue();
+        assertThat(passedAccessToken).isEqualTo(accessToken);
+    }
+
+    @Test
+    @DisplayName("만료된 accessToken 으로 Passport 를 발급받으면 ACCESS_TOKEN_EXPIRED 에러 메시지를 반환한다.")
+    void passportAccessTokenExpired() throws Exception {
+        // given
+        String accessToken = "test-accessToken";
+
+        when(authService.passport(accessToken))
+                .thenThrow(new AuthorizationException(ErrorCode.ACCESS_TOKEN_EXPIRED.getMessage()));
+
+        // when
+        ResultActions resultActions = mockMvc.perform(post("/auth/passport")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsBytes(new PassportReqDto(accessToken))));
+
+        // then
+        // HttpStatus & contentType
+        resultActions
+                .andExpect(status().isBadRequest())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON));
+        // data
+        resultActions
+                .andExpect(jsonPath("$.message").value(ErrorCode.ACCESS_TOKEN_EXPIRED.getMessage()));
+    }
+
+    @Test
+    @DisplayName("accessToken 의 memberId 를 통해 회원 정보를 조회할 수 없는 경우 MEMBER_NOT_FOUND 에러 메시지를 반환한다.")
+    void passportNotFoundMember() throws Exception {
+        // given
+        String accessToken = "test-accessToken";
+
+        when(authService.passport(accessToken))
+                .thenThrow(new NotFoundException(ErrorCode.MEMBER_NOT_FOUND.getMessage()));
+
+        // when
+        ResultActions resultActions = mockMvc.perform(post("/auth/passport")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsBytes(new PassportReqDto(accessToken))));
+
+        // then
+        // HttpStatus & contentType
+        resultActions
+                .andExpect(status().isBadRequest())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON));
+        // data
+        resultActions
+                .andExpect(jsonPath("$.message").value(ErrorCode.MEMBER_NOT_FOUND.getMessage()));
+    }
+
+    @Test
+    @DisplayName("Hmac 서명을 발행에 실패한 경우 PASSPORT_GENERATE_FAIL 에러 메시지를 반환한다.")
+    void passportGenerateIntegrityFail() throws Exception {
+        // given
+        String accessToken = "test-accessToken";
+
+        when(authService.passport(accessToken))
+                .thenThrow(new PassportException(ErrorCode.PASSPORT_GENERATE_FAIL.getMessage()));
+
+        // when
+        ResultActions resultActions = mockMvc.perform(post("/auth/passport")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsBytes(new PassportReqDto(accessToken))));
+
+        // then
+        // HttpStatus & contentType
+        resultActions
+                .andExpect(status().isBadRequest())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON));
+        // data
+        resultActions
+                .andExpect(jsonPath("$.message").value(ErrorCode.PASSPORT_GENERATE_FAIL.getMessage()));
     }
 }
