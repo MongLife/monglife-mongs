@@ -117,7 +117,7 @@ public class AuthService {
             throw new PassportException(ErrorCode.PASSPORT_GENERATE_FAIL.getMessage());
         }
     }
- 
+  
     private Member registerMember(String email, String name) {
         Member registerMember = Member.builder()
                 .name(name)
