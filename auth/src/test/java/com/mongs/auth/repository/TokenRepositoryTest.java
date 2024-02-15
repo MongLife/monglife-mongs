@@ -3,8 +3,7 @@ package com.mongs.auth.repository;
 import com.mongs.auth.config.RedisContainer;
 import com.mongs.auth.entity.Token;
 import org.awaitility.Awaitility;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -74,5 +73,47 @@ public class TokenRepositoryTest extends RedisContainer {
         // then
         assertThat(expected1).isTrue();
         assertThat(expected2).isFalse();
+    }
+
+    @Nested
+    public class Find {
+        String deviceId = "test-deviceId";
+        Long memberId = 1L;
+        String refreshToken = "test-refreshToken";
+        Long expiration = 1000000L;
+
+        @BeforeEach
+        void beforeEach() {
+            Token token = Token.builder()
+                    .refreshToken(refreshToken)
+                    .deviceId(deviceId)
+                    .memberId(memberId)
+                    .createdAt(LocalDateTime.now())
+                    .expiration(expiration)
+                    .build();
+            tokenRepository.save(token);
+        }
+        @AfterEach
+        void after() {
+            tokenRepository.deleteById(refreshToken);
+        }
+
+        @Test
+        @DisplayName("deviceId, memberId 로 토큰을 조회한다.")
+        void findByDeviceIdAndMemberId() {
+            // given
+            String deviceId = "test-deviceId";
+            Long memberId = 1L;
+
+            // when
+            Token token = tokenRepository.findTokenByDeviceIdAndMemberId(deviceId, memberId)
+                    .orElseGet(null);
+
+            // then
+            assertThat(token).isNotNull();
+            assertThat(token.getRefreshToken()).isEqualTo(refreshToken);
+            assertThat(token.getDeviceId()).isEqualTo(deviceId);
+            assertThat(token.getMemberId()).isEqualTo(memberId);
+        }
     }
 }
