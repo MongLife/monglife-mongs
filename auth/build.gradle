@@ -1,4 +1,6 @@
 dependencies {
+    // core project
+    implementation project(':core')
     // spring
     implementation 'org.springframework.boot:spring-boot-starter-web'
     developmentOnly 'org.springframework.boot:spring-boot-devtools'
