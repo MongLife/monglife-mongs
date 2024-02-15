@@ -1,11 +1,11 @@
 package com.mongs.auth.dto.response;
 
-import com.mongs.auth.passport.PassportMember;
+import com.mongs.passport.PassportData;
 import lombok.Builder;
 
 @Builder
 public record PassportResDto(
-        PassportMember member,
+        PassportData data,
         String passportIntegrity
 ) {
 }

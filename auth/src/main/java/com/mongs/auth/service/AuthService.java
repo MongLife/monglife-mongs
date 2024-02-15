@@ -1,20 +1,21 @@
 package com.mongs.auth.service;
 
-import com.mongs.auth.dto.response.LoginResDto;
-import com.mongs.auth.dto.response.PassportResDto;
-import com.mongs.auth.passport.Passport;
 import com.mongs.auth.dto.response.ReissueResDto;
-import com.mongs.auth.entity.Member;
-import com.mongs.auth.entity.Token;
 import com.mongs.auth.exception.AuthorizationException;
 import com.mongs.auth.exception.ErrorCode;
+import com.mongs.auth.repository.TokenRepository;
+import com.mongs.auth.util.TokenProvider;
+import com.mongs.auth.dto.response.LoginResDto;
+import com.mongs.auth.dto.response.PassportResDto;
+import com.mongs.auth.entity.Member;
+import com.mongs.auth.entity.Token;
 import com.mongs.auth.exception.NotFoundException;
 import com.mongs.auth.exception.PassportException;
-import com.mongs.auth.passport.PassportMember;
+import com.mongs.passport.PassportVO;
+import com.mongs.passport.PassportData;
+import com.mongs.passport.PassportMember;
 import com.mongs.auth.repository.MemberRepository;
-import com.mongs.auth.repository.TokenRepository;
 import com.mongs.auth.util.HmacProvider;
-import com.mongs.auth.util.TokenProvider;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -95,19 +96,21 @@ public class AuthService {
                 .orElseThrow(() -> new NotFoundException(ErrorCode.MEMBER_NOT_FOUND.getMessage()));
 
         try {
-            Passport passport = Passport.builder()
-                    .member(PassportMember.builder()
-                            .id(member.getId())
-                            .email(member.getEmail())
-                            .name(member.getName())
+            PassportVO passportVO = PassportVO.builder()
+                    .data(PassportData.builder()
+                            .member(PassportMember.builder()
+                                    .id(memberId)
+                                    .email(member.getEmail())
+                                    .name(member.getName())
+                                    .build())
                             .build())
                     .build();
 
-            String passportIntegrity = hmacProvider.generateHmac(passport);
+            String passportIntegrity = hmacProvider.generateHmac(passportVO);
 
             /* passport 생성 및 dto 반환 */
             return PassportResDto.builder()
-                    .member(passport.member())
+                    .data(passportVO.data())
                     .passportIntegrity(passportIntegrity)
                     .build();
         } catch (Exception e) {

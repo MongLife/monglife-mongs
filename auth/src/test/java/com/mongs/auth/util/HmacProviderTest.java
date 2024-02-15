@@ -1,7 +1,8 @@
 package com.mongs.auth.util;
 
-import com.mongs.auth.passport.Passport;
-import com.mongs.auth.passport.PassportMember;
+import com.mongs.passport.PassportVO;
+import com.mongs.passport.PassportData;
+import com.mongs.passport.PassportMember;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,16 +25,18 @@ class HmacProviderTest {
         String name = "테스트";
         Long memberId = 1L;
 
-        Passport passport = Passport.builder()
-                .member(PassportMember.builder()
-                        .id(memberId)
-                        .email(email)
-                        .name(name)
+        PassportVO passportVO = PassportVO.builder()
+                .data(PassportData.builder()
+                        .member(PassportMember.builder()
+                                .id(memberId)
+                                .email(email)
+                                .name(name)
+                                .build())
                         .build())
                 .build();
 
         // when
-        String expected = hmacProvider.generateHmac(passport);
+        String expected = hmacProvider.generateHmac(passportVO.data());
 
         // then
         assertThat(expected).isNotNull();
@@ -48,17 +51,19 @@ class HmacProviderTest {
         String name = "테스트";
         Long memberId = 1L;
 
-        Passport passport = Passport.builder()
-                .member(PassportMember.builder()
-                        .id(memberId)
-                        .email(email)
-                        .name(name)
+        PassportVO passportVO = PassportVO.builder()
+                .data(PassportData.builder()
+                        .member(PassportMember.builder()
+                                .id(memberId)
+                                .email(email)
+                                .name(name)
+                                .build())
                         .build())
                 .passportIntegrity(integrity)
                 .build();
 
         // when
-        boolean expected = hmacProvider.verifyHmac(passport, passport.passportIntegrity());
+        boolean expected = hmacProvider.verifyHmac(passportVO.data(), passportVO.passportIntegrity());
 
         // then
         assertThat(expected).isTrue();
@@ -74,19 +79,22 @@ class HmacProviderTest {
         Long memberId = 2L;
         
         // 위변조 데이터 생성
-        Passport passport = Passport.builder()
-                .member(PassportMember.builder()
-                        .id(memberId)
-                        .email(email)
-                        .name(name)
+        PassportVO passportVO = PassportVO.builder()
+                .data(PassportData.builder()
+                        .member(PassportMember.builder()
+                                .id(memberId)
+                                .email(email)
+                                .name(name)
+                                .build())
                         .build())
                 .build();
-        passport = passport.toBuilder()
-                .passportIntegrity( hmacProvider.generateHmac(passport, forgeryKey))
+
+        passportVO = passportVO.toBuilder()
+                .passportIntegrity( hmacProvider.generateHmac(passportVO.data(), forgeryKey))
                 .build();
 
         // when
-        boolean expected = hmacProvider.verifyHmac(passport, passport.passportIntegrity());
+        boolean expected = hmacProvider.verifyHmac(passportVO.data(), passportVO.passportIntegrity());
 
         // then
         assertThat(expected).isFalse();
