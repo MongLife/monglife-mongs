@@ -11,7 +11,8 @@ import com.mongs.auth.exception.AuthorizationException;
 import com.mongs.auth.exception.ErrorCode;
 import com.mongs.auth.exception.NotFoundException;
 import com.mongs.auth.exception.PassportException;
-import com.mongs.auth.passport.PassportMember;
+import com.mongs.passport.PassportData;
+import com.mongs.passport.PassportMember;
 import com.mongs.auth.service.AuthService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -277,10 +278,12 @@ public class AuthControllerTest {
         String accessToken = "test-accessToken";
 
         PassportResDto passportResDto = PassportResDto.builder()
-                .member(PassportMember.builder()
-                        .id(memberId)
-                        .email(email)
-                        .name(name)
+                .data(PassportData.builder()
+                        .member(PassportMember.builder()
+                                .id(memberId)
+                                .email(email)
+                                .name(name)
+                                .build())
                         .build())
                 .passportIntegrity(passportIntegrity)
                 .build();
@@ -301,9 +304,9 @@ public class AuthControllerTest {
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON));
         // data
         resultActions
-                .andExpect(jsonPath("$.member.id").value(memberId))
-                .andExpect(jsonPath("$.member.email").value(email))
-                .andExpect(jsonPath("$.member.name").value(name))
+                .andExpect(jsonPath("$.data.member.id").value(memberId))
+                .andExpect(jsonPath("$.data.member.email").value(email))
+                .andExpect(jsonPath("$.data.member.name").value(name))
                 .andExpect(jsonPath("$.passportIntegrity").value(passportIntegrity));
         // Parameter
         var accessTokenCaptor = ArgumentCaptor.forClass(String.class);

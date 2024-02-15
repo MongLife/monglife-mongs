@@ -1,4 +1,4 @@
-package com.mongs.auth.passport;
+package com.mongs.passport;
 
 import lombok.Builder;
 

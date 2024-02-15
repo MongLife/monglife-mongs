@@ -82,7 +82,7 @@ public class AuthServiceTest {
                         .deviceId(deviceId)
                         .memberId(memberId)
                         .createdAt(LocalDateTime.now())
-                        .expiration(1L)
+                        .expiration(expiration)
                         .build());
 
         // when
