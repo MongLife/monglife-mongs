@@ -1,8 +1,10 @@
 package com.mongs.gateway.filter;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.mongs.gateway.exception.ErrorCode;
+import com.mongs.gateway.exception.PassportException;
+import com.mongs.gateway.exception.TokenNotFoundException;
 import com.mongs.gateway.service.GatewayService;
+import com.mongs.gateway.util.HttpUtils;
 import com.mongs.passport.PassportVO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cloud.gateway.filter.GatewayFilter;
@@ -10,19 +12,17 @@ import org.springframework.cloud.gateway.filter.factory.AbstractGatewayFilterFac
 import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.stereotype.Component;
 
-import java.util.Objects;
-
 @Slf4j
 @Component
 public class PassportFilter extends AbstractGatewayFilterFactory<FilterConfig> {
 
     private final GatewayService gatewayService;
-    private final ObjectMapper objectMapper;
+    private final HttpUtils httpUtils;
 
-    public PassportFilter(GatewayService gatewayService, ObjectMapper objectMapper) {
+    public PassportFilter(GatewayService gatewayService, HttpUtils httpUtils) {
         super(FilterConfig.class);
         this.gatewayService = gatewayService;
-        this.objectMapper = objectMapper;
+        this.httpUtils = httpUtils;
     }
 
     @Override
@@ -30,16 +30,15 @@ public class PassportFilter extends AbstractGatewayFilterFactory<FilterConfig> {
         return (exchange, chain) -> {
             ServerHttpRequest request = exchange.getRequest();
 
-            String accessToken = Objects.requireNonNull(request.getHeaders().get("Authorization")).get(0);
-            accessToken = accessToken.substring(7);
+            String accessToken = httpUtils.getHeader(request, "Authorization")
+                    .orElseThrow(() -> new TokenNotFoundException(ErrorCode.ACCESS_TOKEN_NOT_FOUND.getMessage()))
+                    .substring(7);
 
             PassportVO passportVO = gatewayService.getPassport(accessToken);
+            String value = httpUtils.getJsonString(passportVO)
+                    .orElseThrow(() -> new PassportException(ErrorCode.PASSPORT_GENERATE_FAIL.getMessage()));
 
-            try {
-                request.mutate().header("passport", objectMapper.writeValueAsString(passportVO)).build();
-            } catch (JsonProcessingException e) {
-                throw new RuntimeException(e);
-            }
+            request.mutate().header("passport", value).build();
 
             if (config.preLogger) {
                 log.info("[PassportFilter] Passport: " + passportVO);
