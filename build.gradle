@@ -29,8 +29,15 @@ subprojects {
     dependencies {
         compileOnly 'org.projectlombok:lombok'
         annotationProcessor 'org.projectlombok:lombok'
+        // spring
+        implementation 'org.springframework.boot:spring-boot-starter-web'
+        developmentOnly 'org.springframework.boot:spring-boot-devtools'
         // kafka
         implementation 'org.springframework.kafka:spring-kafka'
+        // feign client
+        implementation 'org.springframework.cloud:spring-cloud-starter-openfeign'
+        // eureka
+        implementation 'org.springframework.cloud:spring-cloud-starter-netflix-eureka-client'
     }
 
     tasks.named('bootJar') {

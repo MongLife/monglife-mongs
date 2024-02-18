@@ -1,6 +1,14 @@
 dependencies {
     implementation 'org.springframework.cloud:spring-cloud-starter-netflix-eureka-server'
 }
+configurations.all {
+    // kafka
+    exclude group: 'org.springframework.kafka', module: 'spring-kafka'
+    // Openfeign
+    exclude group: 'org.springframework.cloud', module: 'spring-cloud-starter-openfeign'
+    // eureka
+    exclude group: 'org.springframework.cloud', module: 'spring-cloud-starter-netflix-eureka-client'
+}
 
 tasks.register('copyPrivate', Copy) {
     copy {
