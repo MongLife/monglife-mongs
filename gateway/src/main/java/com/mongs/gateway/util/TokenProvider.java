@@ -3,6 +3,7 @@ package com.mongs.gateway.util;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.MalformedJwtException;
 import io.jsonwebtoken.security.Keys;
 import io.jsonwebtoken.security.SignatureException;
 import lombok.extern.slf4j.Slf4j;
@@ -24,7 +25,7 @@ public class TokenProvider {
         try {
             Date expiration = extractAllClaims(token).getExpiration();
             return expiration.before(new Date());
-        } catch (ExpiredJwtException | SignatureException e) {
+        } catch (ExpiredJwtException | SignatureException | MalformedJwtException e) {
             return true;
         }
     }
