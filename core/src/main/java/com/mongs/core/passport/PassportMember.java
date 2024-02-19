@@ -1,4 +1,4 @@
-package com.mongs.passport;
+package com.mongs.core.passport;
 
 import lombok.Builder;
 
@@ -6,6 +6,7 @@ import lombok.Builder;
 public record PassportMember(
         Long id,
         String email,
-        String name
+        String name,
+        String role
 ) {
 }

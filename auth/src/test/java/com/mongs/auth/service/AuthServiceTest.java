@@ -11,7 +11,7 @@ import com.mongs.auth.repository.MemberRepository;
 import com.mongs.auth.repository.TokenRepository;
 import com.mongs.auth.util.HmacProvider;
 import com.mongs.auth.util.TokenProvider;
-import com.mongs.passport.PassportVO;
+import com.mongs.core.passport.PassportVO;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

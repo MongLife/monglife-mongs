@@ -1,7 +1,7 @@
 package com.mongs.gateway.service;
 
 import com.mongs.gateway.dto.request.PassportReqDto;
-import com.mongs.passport.PassportVO;
+import com.mongs.core.passport.PassportVO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.MediaType;

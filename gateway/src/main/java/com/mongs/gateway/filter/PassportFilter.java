@@ -5,7 +5,7 @@ import com.mongs.gateway.exception.PassportException;
 import com.mongs.gateway.exception.TokenNotFoundException;
 import com.mongs.gateway.service.GatewayService;
 import com.mongs.gateway.util.HttpUtils;
-import com.mongs.passport.PassportVO;
+import com.mongs.core.passport.PassportVO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cloud.gateway.filter.GatewayFilter;
 import org.springframework.cloud.gateway.filter.factory.AbstractGatewayFilterFactory;
@@ -38,7 +38,15 @@ public class PassportFilter extends AbstractGatewayFilterFactory<FilterConfig> {
             Mono<PassportVO> passportMono = gatewayService.getPassport(accessToken);
 
             return passportMono.flatMap(passportVO -> {
-                String passportJson = httpUtils.getJsonString(passportVO)
+                String passportJson = httpUtils.getJsonString(passportVO
+                                // TODO("Passport 인가 정보 강제 주입 -> 인증 모듈에서 인가 정보 반환 기능 추가 후, 삭제 예정 ")
+                                .toBuilder()
+                                .data(passportVO
+                                        .data()
+                                        .toBuilder()
+                                        .member(passportVO.data().member().toBuilder().role("NORMAL").build())
+                                        .build())
+                                .build())
                         .orElseThrow(() -> new PassportException(ErrorCode.PASSPORT_GENERATE_FAIL.getMessage()));
 
                 request.mutate().header("passport", passportJson).build();
