@@ -5,7 +5,6 @@ import com.mongs.auth.dto.request.LoginReqDto;
 import com.mongs.auth.dto.request.PassportReqDto;
 import com.mongs.auth.dto.request.ReissueReqDto;
 import com.mongs.auth.dto.response.LoginResDto;
-import com.mongs.auth.dto.response.PassportResDto;
 import com.mongs.auth.dto.response.ReissueResDto;
 import com.mongs.auth.exception.AuthorizationException;
 import com.mongs.auth.exception.ErrorCode;
@@ -14,6 +13,7 @@ import com.mongs.auth.exception.PassportException;
 import com.mongs.passport.PassportData;
 import com.mongs.passport.PassportMember;
 import com.mongs.auth.service.AuthService;
+import com.mongs.passport.PassportVO;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
@@ -277,7 +277,7 @@ public class AuthControllerTest {
         Long memberId = 1L;
         String accessToken = "test-accessToken";
 
-        PassportResDto passportResDto = PassportResDto.builder()
+        PassportVO passportVO = PassportVO.builder()
                 .data(PassportData.builder()
                         .member(PassportMember.builder()
                                 .id(memberId)
@@ -289,7 +289,7 @@ public class AuthControllerTest {
                 .build();
 
         when(authService.passport(accessToken))
-                .thenReturn(passportResDto);
+                .thenReturn(passportVO);
 
         // when
         // Response
