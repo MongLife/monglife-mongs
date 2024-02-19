@@ -13,6 +13,7 @@ import org.springframework.http.codec.json.Jackson2JsonEncoder;
 import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.http.server.reactive.ServerHttpResponse;
 import org.springframework.stereotype.Component;
+import org.springframework.web.reactive.function.client.WebClientRequestException;
 import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
 
@@ -37,7 +38,7 @@ public class GlobalExceptionHandler implements ErrorWebExceptionHandler {
             return setErrorResponse(exchange, ErrorCode.ACCESS_TOKEN_NOT_FOUND);
         } else if (e instanceof AuthorizationException) {
             return setErrorResponse(exchange, ErrorCode.ACCESS_TOKEN_EXPIRED);
-        } else if (e instanceof NotFoundException || e instanceof ConnectException) {
+        } else if (e instanceof NotFoundException || e instanceof ConnectException || e instanceof WebClientRequestException) {
             return setErrorResponse(exchange, ErrorCode.CONNECT_FAIL);
         } else {
             return setErrorResponse(exchange, ErrorCode.INTERNAL_SERVER_ERROR);

@@ -11,6 +11,7 @@ import org.springframework.cloud.gateway.filter.GatewayFilter;
 import org.springframework.cloud.gateway.filter.factory.AbstractGatewayFilterFactory;
 import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.stereotype.Component;
+import reactor.core.publisher.Mono;
 
 @Slf4j
 @Component
@@ -34,17 +35,20 @@ public class PassportFilter extends AbstractGatewayFilterFactory<FilterConfig> {
                     .orElseThrow(() -> new TokenNotFoundException(ErrorCode.ACCESS_TOKEN_NOT_FOUND.getMessage()))
                     .substring(7);
 
-            PassportVO passportVO = gatewayService.getPassport(accessToken);
-            String value = httpUtils.getJsonString(passportVO)
-                    .orElseThrow(() -> new PassportException(ErrorCode.PASSPORT_GENERATE_FAIL.getMessage()));
+            Mono<PassportVO> passportMono = gatewayService.getPassport(accessToken);
 
-            request.mutate().header("passport", value).build();
+            return passportMono.flatMap(passportVO -> {
+                String passportJson = httpUtils.getJsonString(passportVO)
+                        .orElseThrow(() -> new PassportException(ErrorCode.PASSPORT_GENERATE_FAIL.getMessage()));
 
-            if (config.preLogger) {
-                log.info("[PassportFilter] Passport: " + passportVO);
-            }
+                request.mutate().header("passport", passportJson).build();
 
-            return chain.filter(exchange);
+                if (config.preLogger) {
+                    log.info("[PassportFilter] Passport: " + passportJson);
+                }
+
+                return chain.filter(exchange);
+            });
         };
     }
 }

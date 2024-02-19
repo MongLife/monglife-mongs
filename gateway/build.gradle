@@ -12,7 +12,12 @@ dependencies {
 }
 
 configurations.all {
+	// Spring
 	exclude group: 'org.springframework.boot', module: 'spring-boot-starter-web'
+	// kafka
+	exclude group: 'org.springframework.kafka', module: 'spring-kafka'
+	// Openfeign
+	exclude group: 'org.springframework.cloud', module: 'spring-cloud-starter-openfeign'
 }
 
 tasks.register('copyPrivate', Copy) {
