@@ -1,7 +1,6 @@
 package com.mongs.auth.service;
 
 import com.mongs.auth.dto.response.LoginResDto;
-import com.mongs.auth.dto.response.PassportResDto;
 import com.mongs.auth.dto.response.ReissueResDto;
 import com.mongs.auth.entity.Member;
 import com.mongs.auth.entity.Token;
@@ -12,6 +11,7 @@ import com.mongs.auth.repository.MemberRepository;
 import com.mongs.auth.repository.TokenRepository;
 import com.mongs.auth.util.HmacProvider;
 import com.mongs.auth.util.TokenProvider;
+import com.mongs.core.passport.PassportVO;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -172,8 +172,8 @@ public class AuthServiceTest {
                 .thenReturn(passportIntegrity);
 
         // when
-        PassportResDto passportResDto = authService.passport(accessToken);
-        String expected = passportResDto.passportIntegrity();
+        PassportVO passportVO = authService.passport(accessToken);
+        String expected = passportVO.passportIntegrity();
 
         // then
         assertThat(expected).isEqualTo(passportIntegrity);
