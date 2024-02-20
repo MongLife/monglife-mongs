@@ -1,6 +1,6 @@
 package com.mongs.gateway.exception;
 
-import com.mongs.gateway.dto.response.ErrorResDto;
+import com.mongs.core.error.ErrorResDto;
 import io.micrometer.common.lang.NonNullApi;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.web.reactive.error.ErrorWebExceptionHandler;
@@ -35,21 +35,21 @@ public class GlobalExceptionHandler implements ErrorWebExceptionHandler {
         log.error("{} : {} : {} : {}", e.getMessage(), id, method, path);
 
         if (e instanceof TokenNotFoundException) {
-            return setErrorResponse(exchange, ErrorCode.ACCESS_TOKEN_NOT_FOUND);
+            return setErrorResponse(exchange, GatewayErrorCode.ACCESS_TOKEN_NOT_FOUND);
         } else if (e instanceof AuthorizationException) {
-            return setErrorResponse(exchange, ErrorCode.ACCESS_TOKEN_EXPIRED);
+            return setErrorResponse(exchange, GatewayErrorCode.ACCESS_TOKEN_EXPIRED);
         } else if (e instanceof NotFoundException || e instanceof ConnectException || e instanceof WebClientRequestException) {
-            return setErrorResponse(exchange, ErrorCode.CONNECT_FAIL);
+            return setErrorResponse(exchange, GatewayErrorCode.CONNECT_FAIL);
         } else {
-            return setErrorResponse(exchange, ErrorCode.INTERNAL_SERVER_ERROR);
+            return setErrorResponse(exchange, GatewayErrorCode.INTERNAL_SERVER_ERROR);
         }
     }
 
-    private Mono<Void> setErrorResponse(ServerWebExchange exchange, ErrorCode errorCode) {
+    private Mono<Void> setErrorResponse(ServerWebExchange exchange, GatewayErrorCode gatewayErrorCode) {
         ServerHttpResponse response = exchange.getResponse();
         response.getHeaders().setContentType(MediaType.APPLICATION_JSON);
-        response.setStatusCode(errorCode.getHttpStatus());
-        ErrorResDto errorResDto = ErrorResDto.of(errorCode);
+        response.setStatusCode(gatewayErrorCode.getHttpStatus());
+        ErrorResDto errorResDto = ErrorResDto.of(gatewayErrorCode);
 
         return response.writeWith(
                 new Jackson2JsonEncoder()

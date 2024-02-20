@@ -1,6 +1,6 @@
 package com.mongs.gateway.filter;
 
-import com.mongs.gateway.exception.ErrorCode;
+import com.mongs.gateway.exception.GatewayErrorCode;
 import com.mongs.gateway.exception.PassportException;
 import com.mongs.gateway.exception.TokenNotFoundException;
 import com.mongs.gateway.service.GatewayService;
@@ -32,7 +32,7 @@ public class PassportFilter extends AbstractGatewayFilterFactory<FilterConfig> {
             ServerHttpRequest request = exchange.getRequest();
 
             String accessToken = httpUtils.getHeader(request, "Authorization")
-                    .orElseThrow(() -> new TokenNotFoundException(ErrorCode.ACCESS_TOKEN_NOT_FOUND.getMessage()))
+                    .orElseThrow(() -> new TokenNotFoundException(GatewayErrorCode.ACCESS_TOKEN_NOT_FOUND))
                     .substring(7);
 
             Mono<PassportVO> passportMono = gatewayService.getPassport(accessToken);
@@ -47,7 +47,7 @@ public class PassportFilter extends AbstractGatewayFilterFactory<FilterConfig> {
                                         .member(passportVO.data().member().toBuilder().role("NORMAL").build())
                                         .build())
                                 .build())
-                        .orElseThrow(() -> new PassportException(ErrorCode.PASSPORT_GENERATE_FAIL.getMessage()));
+                        .orElseThrow(() -> new PassportException(GatewayErrorCode.PASSPORT_GENERATE_FAIL));
 
                 request.mutate().header("passport", passportJson).build();
 

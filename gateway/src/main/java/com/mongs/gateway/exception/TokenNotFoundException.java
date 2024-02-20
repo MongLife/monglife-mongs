@@ -1,13 +1,20 @@
 package com.mongs.gateway.exception;
 
-public class TokenNotFoundException extends RuntimeException {
-    public TokenNotFoundException(String message) {
-        super(message);
+import com.mongs.core.error.ErrorCode;
+import com.mongs.core.error.ErrorException;
+
+public class TokenNotFoundException extends ErrorException {
+    ErrorCode errorCode;
+
+    public TokenNotFoundException(GatewayErrorCode gatewayErrorCode) {
+        super(gatewayErrorCode.getMessage());
+        this.errorCode = gatewayErrorCode;
     }
     public TokenNotFoundException(Throwable e) {
         super(e);
     }
-    public TokenNotFoundException(String message, Throwable e) {
-        super(message, e);
+    public TokenNotFoundException(GatewayErrorCode gatewayErrorCode, Throwable e) {
+        super(gatewayErrorCode.getMessage(), e);
+        this.errorCode = gatewayErrorCode;
     }
 }

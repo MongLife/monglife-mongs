@@ -2,7 +2,7 @@ package com.mongs.auth.service;
 
 import com.mongs.auth.dto.response.ReissueResDto;
 import com.mongs.auth.exception.AuthorizationException;
-import com.mongs.auth.exception.ErrorCode;
+import com.mongs.auth.exception.AuthErrorCode;
 import com.mongs.auth.repository.TokenRepository;
 import com.mongs.auth.util.TokenProvider;
 import com.mongs.auth.dto.response.LoginResDto;
@@ -62,7 +62,7 @@ public class AuthService {
     public ReissueResDto reissue(String refreshToken) throws RuntimeException {
         /* RefreshToken Redis 존재 여부 확인 */
         Token token = tokenRepository.findById(refreshToken)
-                .orElseThrow(() -> new AuthorizationException(ErrorCode.REFRESH_TOKEN_EXPIRED.getMessage()));
+                .orElseThrow(() -> new AuthorizationException(AuthErrorCode.REFRESH_TOKEN_EXPIRED));
 
         tokenRepository.deleteById(refreshToken);
 
@@ -85,14 +85,14 @@ public class AuthService {
     public PassportVO passport(String accessToken) throws RuntimeException {
         /* AccessToken 검증 */
         if (tokenProvider.isTokenExpired(accessToken)) {
-            throw new AuthorizationException(ErrorCode.ACCESS_TOKEN_EXPIRED.getMessage());
+            throw new AuthorizationException(AuthErrorCode.ACCESS_TOKEN_EXPIRED);
         }
 
         Long memberId = tokenProvider.getMemberId(accessToken);
         
         /* AccessToken 의 memberId 로 member 조회 */
         Member member = memberRepository.findById(memberId)
-                .orElseThrow(() -> new NotFoundException(ErrorCode.MEMBER_NOT_FOUND.getMessage()));
+                .orElseThrow(() -> new NotFoundException(AuthErrorCode.MEMBER_NOT_FOUND));
 
         try {
             PassportVO passportVO = PassportVO.builder()
@@ -105,14 +105,14 @@ public class AuthService {
                             .build())
                     .build();
 
-            String passportIntegrity = hmacProvider.generateHmac(passportVO);
+            String passportIntegrity = hmacProvider.generateHmac(passportVO.data());
 
             /* passport 생성 및 dto 반환 */
             return passportVO.toBuilder()
                     .passportIntegrity(passportIntegrity)
                     .build();
         } catch (Exception e) {
-            throw new PassportException(ErrorCode.PASSPORT_GENERATE_FAIL.getMessage());
+            throw new PassportException(AuthErrorCode.PASSPORT_GENERATE_FAIL);
         }
     }
   

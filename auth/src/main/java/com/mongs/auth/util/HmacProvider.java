@@ -35,6 +35,7 @@ public class HmacProvider {
 
     public Boolean verifyHmac(Object data, String integrity) throws Exception {
         String generateIntegrity = generateHmac(data);
+        System.out.println("secretKey: " + secretKey + " / gen: " + generateIntegrity + " / ver: " + integrity);
         return integrity.equals(generateIntegrity);
     }
 }

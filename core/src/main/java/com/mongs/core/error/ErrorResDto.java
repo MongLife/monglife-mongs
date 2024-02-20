@@ -1,6 +1,5 @@
-package com.mongs.gateway.dto.response;
+package com.mongs.core.error;
 
-import com.mongs.gateway.exception.ErrorCode;
 import lombok.Builder;
 
 @Builder

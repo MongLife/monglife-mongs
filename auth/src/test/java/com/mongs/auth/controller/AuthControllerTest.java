@@ -7,7 +7,7 @@ import com.mongs.auth.dto.request.ReissueReqDto;
 import com.mongs.auth.dto.response.LoginResDto;
 import com.mongs.auth.dto.response.ReissueResDto;
 import com.mongs.auth.exception.AuthorizationException;
-import com.mongs.auth.exception.ErrorCode;
+import com.mongs.auth.exception.AuthErrorCode;
 import com.mongs.auth.exception.NotFoundException;
 import com.mongs.auth.exception.PassportException;
 import com.mongs.core.passport.PassportData;
@@ -115,7 +115,7 @@ public class AuthControllerTest {
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON));
         // data
         resultActions
-                .andExpect(jsonPath("$.message").value(ErrorCode.INVALID_PARAMETER.getMessage()));
+                .andExpect(jsonPath("$.message").value(AuthErrorCode.INVALID_PARAMETER.getMessage()));
     }
 
     @Test
@@ -138,7 +138,7 @@ public class AuthControllerTest {
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON));
         // data
         resultActions
-                .andExpect(jsonPath("$.message").value(ErrorCode.INVALID_PARAMETER.getMessage()));
+                .andExpect(jsonPath("$.message").value(AuthErrorCode.INVALID_PARAMETER.getMessage()));
     }
 
     @Test
@@ -162,7 +162,7 @@ public class AuthControllerTest {
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON));
         // data
         resultActions
-                .andExpect(jsonPath("$.message").value(ErrorCode.INVALID_PARAMETER.getMessage()));
+                .andExpect(jsonPath("$.message").value(AuthErrorCode.INVALID_PARAMETER.getMessage()));
     }
 
     @Test
@@ -185,7 +185,7 @@ public class AuthControllerTest {
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON));
         // data
         resultActions
-                .andExpect(jsonPath("$.message").value(ErrorCode.INVALID_PARAMETER.getMessage()));
+                .andExpect(jsonPath("$.message").value(AuthErrorCode.INVALID_PARAMETER.getMessage()));
     }
 
     @Test
@@ -240,7 +240,7 @@ public class AuthControllerTest {
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON));
         // data
         resultActions
-                .andExpect(jsonPath("$.message").value(ErrorCode.INVALID_PARAMETER.getMessage()));
+                .andExpect(jsonPath("$.message").value(AuthErrorCode.INVALID_PARAMETER.getMessage()));
     }
 
     @Test
@@ -250,7 +250,7 @@ public class AuthControllerTest {
         String refreshToken = "test-refreshToken";
 
         when(authService.reissue(refreshToken))
-                .thenThrow(new AuthorizationException(ErrorCode.REFRESH_TOKEN_EXPIRED.getMessage()));
+                .thenThrow(new AuthorizationException(AuthErrorCode.REFRESH_TOKEN_EXPIRED));
 
         // when
         ResultActions resultActions = mockMvc.perform(post("/auth/reissue")
@@ -264,7 +264,7 @@ public class AuthControllerTest {
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON));
         // data
         resultActions
-                .andExpect(jsonPath("$.message").value(ErrorCode.REFRESH_TOKEN_EXPIRED.getMessage()));
+                .andExpect(jsonPath("$.message").value(AuthErrorCode.REFRESH_TOKEN_EXPIRED.getMessage()));
     }
 
     @Test
@@ -323,7 +323,7 @@ public class AuthControllerTest {
         String accessToken = "test-accessToken";
 
         when(authService.passport(accessToken))
-                .thenThrow(new AuthorizationException(ErrorCode.ACCESS_TOKEN_EXPIRED.getMessage()));
+                .thenThrow(new AuthorizationException(AuthErrorCode.ACCESS_TOKEN_EXPIRED));
 
         // when
         ResultActions resultActions = mockMvc.perform(post("/auth/passport")
@@ -337,7 +337,7 @@ public class AuthControllerTest {
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON));
         // data
         resultActions
-                .andExpect(jsonPath("$.message").value(ErrorCode.ACCESS_TOKEN_EXPIRED.getMessage()));
+                .andExpect(jsonPath("$.message").value(AuthErrorCode.ACCESS_TOKEN_EXPIRED.getMessage()));
     }
 
     @Test
@@ -347,7 +347,7 @@ public class AuthControllerTest {
         String accessToken = "test-accessToken";
 
         when(authService.passport(accessToken))
-                .thenThrow(new NotFoundException(ErrorCode.MEMBER_NOT_FOUND.getMessage()));
+                .thenThrow(new NotFoundException(AuthErrorCode.MEMBER_NOT_FOUND));
 
         // when
         ResultActions resultActions = mockMvc.perform(post("/auth/passport")
@@ -361,7 +361,7 @@ public class AuthControllerTest {
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON));
         // data
         resultActions
-                .andExpect(jsonPath("$.message").value(ErrorCode.MEMBER_NOT_FOUND.getMessage()));
+                .andExpect(jsonPath("$.message").value(AuthErrorCode.MEMBER_NOT_FOUND.getMessage()));
     }
 
     @Test
@@ -371,7 +371,7 @@ public class AuthControllerTest {
         String accessToken = "test-accessToken";
 
         when(authService.passport(accessToken))
-                .thenThrow(new PassportException(ErrorCode.PASSPORT_GENERATE_FAIL.getMessage()));
+                .thenThrow(new PassportException(AuthErrorCode.PASSPORT_GENERATE_FAIL));
 
         // when
         ResultActions resultActions = mockMvc.perform(post("/auth/passport")
@@ -385,6 +385,6 @@ public class AuthControllerTest {
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON));
         // data
         resultActions
-                .andExpect(jsonPath("$.message").value(ErrorCode.PASSPORT_GENERATE_FAIL.getMessage()));
+                .andExpect(jsonPath("$.message").value(AuthErrorCode.PASSPORT_GENERATE_FAIL.getMessage()));
     }
 }

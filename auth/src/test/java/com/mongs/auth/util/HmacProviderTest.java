@@ -46,7 +46,7 @@ class HmacProviderTest {
     @DisplayName("위변조 되지 않은 데이터인 경우 true 를 반환한다.")
     void verifyHmac() throws Exception {
         // given
-        String integrity = "QJTRC/6S6Trbwyu2ThyuR4D/bFmamHNy/d9nIYGc68w=";
+        String integrity = "IvnD7Ll7zL/YNfcQNy4R4lpIUi+u61auvOxty0v34EI=";
         String email = "test@test.com";
         String name = "테스트";
         Long memberId = 1L;
