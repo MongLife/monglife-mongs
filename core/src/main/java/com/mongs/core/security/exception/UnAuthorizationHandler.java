@@ -1,8 +1,7 @@
 package com.mongs.core.security.exception;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.mongs.core.security.dto.response.SecurityErrorCode;
-import com.mongs.core.security.dto.response.SecurityErrorResDto;
+import com.mongs.core.error.ErrorResDto;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -27,7 +26,7 @@ public class UnAuthorizationHandler implements AuthenticationEntryPoint {
     public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException authException) throws IOException {
         response.setContentType("application/json; charset=UTF-8");
         response.setStatus(HttpStatus.UNAUTHORIZED.value());
-        response.getWriter().write(objectMapper.writeValueAsString(SecurityErrorResDto.of(SecurityErrorCode.UNAUTHORIZATION)));
+        response.getWriter().write(objectMapper.writeValueAsString(ErrorResDto.of(SecurityErrorCode.UNAUTHORIZED)));
 
         log.info("Passport 인증 불가 : {}", request.getHeader("passport"));
     }

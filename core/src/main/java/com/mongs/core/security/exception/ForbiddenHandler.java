@@ -1,8 +1,7 @@
 package com.mongs.core.security.exception;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.mongs.core.security.dto.response.SecurityErrorCode;
-import com.mongs.core.security.dto.response.SecurityErrorResDto;
+import com.mongs.core.error.ErrorResDto;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -27,7 +26,7 @@ public class ForbiddenHandler implements AccessDeniedHandler {
     public void handle(HttpServletRequest request, HttpServletResponse response, AccessDeniedException accessDeniedException) throws IOException {
         response.setContentType("application/json; charset=UTF-8");
         response.setStatus(HttpStatus.FORBIDDEN.value());
-        response.getWriter().write(objectMapper.writeValueAsString(SecurityErrorResDto.of(SecurityErrorCode.FORBIDDEN)));
+        response.getWriter().write(objectMapper.writeValueAsString(ErrorResDto.of(SecurityErrorCode.FORBIDDEN)));
 
         log.info("Passport 인가 불가 : {}", request.getHeader("passport"));
     }
