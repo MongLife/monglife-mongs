@@ -29,10 +29,6 @@ public class SecurityExceptionHandler extends GenericFilterBean {
 
         try {
             chain.doFilter(request, response);
-        } catch (PassportNotFoundException e) {
-            response.setContentType("application/json; charset=UTF-8");
-            response.setStatus(e.errorCode.getHttpStatus().value());
-            response.getWriter().write(objectMapper.writeValueAsString(ErrorResDto.of(e.errorCode)));
         } catch (Exception e) {
             response.setContentType("application/json; charset=UTF-8");
             response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
