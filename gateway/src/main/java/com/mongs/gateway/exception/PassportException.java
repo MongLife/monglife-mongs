@@ -1,4 +1,4 @@
-package com.mongs.auth.exception;
+package com.mongs.gateway.exception;
 
 import com.mongs.core.error.ErrorCode;
 import com.mongs.core.error.ErrorException;

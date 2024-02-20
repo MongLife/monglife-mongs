@@ -1,17 +1,31 @@
 dependencies {
-	implementation 'org.springframework.cloud:spring-cloud-starter-circuitbreaker-resilience4j'
-	implementation 'org.springframework.cloud:spring-cloud-starter-gateway'
+	// core project
+	implementation project(':core')
+	// eureka
 	implementation 'org.springframework.cloud:spring-cloud-starter-netflix-eureka-client'
-	compileOnly 'org.projectlombok:lombok'
-	developmentOnly 'org.springframework.boot:spring-boot-devtools'
-	annotationProcessor 'org.projectlombok:lombok'
-	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+	// spring gateway
+	implementation 'org.springframework.cloud:spring-cloud-starter-gateway'
+	// gateway
+	implementation 'org.springframework.cloud:spring-cloud-starter-circuitbreaker-resilience4j'
+	// jwt
+	implementation group: 'io.jsonwebtoken', name: 'jjwt-api', version: '0.11.5'
+	runtimeOnly group: 'io.jsonwebtoken', name: 'jjwt-impl', version: '0.11.5'
+	runtimeOnly group: 'io.jsonwebtoken', name: 'jjwt-jackson', version: '0.11.5'
+}
+
+configurations.all {
+	// spring
+	exclude group: 'org.springframework.boot', module: 'spring-boot-starter-web'
+	// spring security
+	exclude group: 'org.springframework.boot', module: 'spring-boot-starter-security'
+	// kafka
+	exclude group: 'org.springframework.kafka', module: 'spring-kafka'
 }
 
 tasks.register('copyPrivate', Copy) {
 	copy {
 		from '../spring_backend_sub/gateway'
-		include 'application.yml'
+		include 'application-local.yml'
 		into 'src/main/resources'
 	}
 }

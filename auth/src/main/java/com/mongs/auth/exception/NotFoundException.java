@@ -1,13 +1,16 @@
 package com.mongs.auth.exception;
 
-public class NotFoundException extends RuntimeException {
-    public NotFoundException(String message) {
-        super(message);
+import com.mongs.core.error.ErrorCode;
+import com.mongs.core.error.ErrorException;
+
+public class NotFoundException extends ErrorException {
+    public NotFoundException(ErrorCode errorCode) {
+        super(errorCode);
     }
     public NotFoundException(Throwable e) {
         super(e);
     }
-    public NotFoundException(String message, Throwable e) {
-        super(message, e);
+    public NotFoundException(ErrorCode errorCode, Throwable e) {
+        super(errorCode, e);
     }
 }

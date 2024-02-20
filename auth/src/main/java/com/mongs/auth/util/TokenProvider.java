@@ -1,7 +1,7 @@
 package com.mongs.auth.util;
 
 import com.mongs.auth.exception.AuthorizationException;
-import com.mongs.auth.exception.ErrorCode;
+import com.mongs.auth.exception.AuthErrorCode;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
@@ -54,7 +54,7 @@ public class TokenProvider {
     }
     public Long getExpiredSeconds(String token) throws AuthorizationException {
         if (isTokenExpired(token)) {
-            throw new AuthorizationException(ErrorCode.ACCESS_TOKEN_EXPIRED.getMessage());
+            throw new AuthorizationException(AuthErrorCode.ACCESS_TOKEN_EXPIRED);
         }
         LocalDateTime expiration = extractAllClaims(token).getExpiration().toInstant()
                 .atZone(ZoneId.systemDefault())
@@ -64,13 +64,13 @@ public class TokenProvider {
     }
     public Long getMemberId(String token) throws AuthorizationException {
         if (isTokenExpired(token)) {
-            throw new AuthorizationException(ErrorCode.ACCESS_TOKEN_EXPIRED.getMessage());
+            throw new AuthorizationException(AuthErrorCode.ACCESS_TOKEN_EXPIRED);
         }
         return extractAllClaims(token).get("memberId", Long.class);
     }
     public String getDeviceId(String token) throws AuthorizationException {
         if (isTokenExpired(token)) {
-            throw new AuthorizationException(ErrorCode.ACCESS_TOKEN_EXPIRED.getMessage());
+            throw new AuthorizationException(AuthErrorCode.ACCESS_TOKEN_EXPIRED);
         }
         return extractAllClaims(token).get("deviceId", String.class);
     }

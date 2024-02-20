@@ -1,4 +1,4 @@
-package com.mongs.management.common.config;
+package com.mongs.management.management.config;
 
 
 import org.apache.kafka.clients.admin.AdminClientConfig;
@@ -16,8 +16,8 @@ import org.springframework.kafka.core.*;
 import java.util.HashMap;
 import java.util.Map;
 
-@Configuration
-@EnableKafka
+//@Configuration
+//@EnableKafka
 public class KafkaConfig {
 
     @Value(value = "${spring.kafka.bootstrap-servers}")

@@ -2,10 +2,17 @@ dependencies {
     implementation 'org.springframework.cloud:spring-cloud-starter-netflix-eureka-server'
 }
 
+configurations.all {
+    // spring security
+    exclude group: 'org.springframework.boot', module: 'spring-boot-starter-security'
+    // kafka
+    exclude group: 'org.springframework.kafka', module: 'spring-kafka'
+}
+
 tasks.register('copyPrivate', Copy) {
     copy {
         from '../spring_backend_sub/eureka'
-        include 'application.yml'
+        include 'application-local.yml'
         into 'src/main/resources'
     }
 }
