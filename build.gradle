@@ -32,12 +32,10 @@ subprojects {
         // spring
         implementation 'org.springframework.boot:spring-boot-starter-web'
         developmentOnly 'org.springframework.boot:spring-boot-devtools'
+        // spring security
+        implementation 'org.springframework.boot:spring-boot-starter-security'
         // kafka
         implementation 'org.springframework.kafka:spring-kafka'
-        // feign client
-        implementation 'org.springframework.cloud:spring-cloud-starter-openfeign'
-        // eureka
-        implementation 'org.springframework.cloud:spring-cloud-starter-netflix-eureka-client'
     }
 
     tasks.named('bootJar') {
