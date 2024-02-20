@@ -1,4 +1,4 @@
-package com.mongs.core.security;
+package com.mongs.management.management.config;
 
 import com.mongs.core.security.exception.ForbiddenHandler;
 import com.mongs.core.security.exception.SecurityExceptionHandler;
@@ -17,10 +17,10 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
-//@Configuration
+@Configuration
+@RequiredArgsConstructor
 @EnableWebSecurity
 @EnableMethodSecurity
-@RequiredArgsConstructor
 @ComponentScan("com.mongs.core.*")
 public class SecurityConfig {
     private final UnAuthorizationHandler unAuthorizationHandler;
@@ -34,10 +34,10 @@ public class SecurityConfig {
             .csrf(AbstractHttpConfigurer::disable)
             .formLogin(AbstractHttpConfigurer::disable)
             .authorizeHttpRequests(authorize -> authorize
-//                            .anyRequest().permitAll()
+                            .anyRequest().permitAll()
 //                            .requestMatchers("/").permitAll()
 //                            .anyRequest().authenticated()
-                            .anyRequest().hasAnyAuthority("NORMAL")
+//                            .anyRequest().hasAnyAuthority("NORMAL")
             )
             .exceptionHandling(configurer -> {
                 configurer.authenticationEntryPoint(unAuthorizationHandler);
