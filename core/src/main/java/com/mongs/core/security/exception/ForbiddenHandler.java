@@ -27,7 +27,5 @@ public class ForbiddenHandler implements AccessDeniedHandler {
         response.setContentType("application/json; charset=UTF-8");
         response.setStatus(HttpStatus.FORBIDDEN.value());
         response.getWriter().write(objectMapper.writeValueAsString(ErrorResDto.of(SecurityErrorCode.FORBIDDEN)));
-
-        log.info("Passport 인가 불가 : {}", request.getHeader("passport"));
     }
 }

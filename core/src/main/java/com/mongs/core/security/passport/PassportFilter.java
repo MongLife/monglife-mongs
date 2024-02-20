@@ -2,6 +2,8 @@ package com.mongs.core.security.passport;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mongs.core.passport.PassportVO;
+import com.mongs.core.security.exception.PassportNotFoundException;
+import com.mongs.core.security.exception.SecurityErrorCode;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.ServletRequest;
@@ -31,10 +33,10 @@ public class PassportFilter extends GenericFilterBean {
         String passportJson = request.getHeader("passport");
 
         if (passportJson == null) {
-            throw new RuntimeException();
+            throw new PassportNotFoundException(SecurityErrorCode.UNAUTHORIZED);
         }
 
-        PassportVO passportVO = objectMapper.readValue("{}", PassportVO.class);
+        PassportVO passportVO = objectMapper.readValue(passportJson, PassportVO.class);
 
         UserDetails passport = new Passport(passportVO);
 

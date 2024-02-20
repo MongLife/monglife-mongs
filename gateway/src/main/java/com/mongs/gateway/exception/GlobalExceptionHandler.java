@@ -1,5 +1,7 @@
 package com.mongs.gateway.exception;
 
+import com.mongs.core.error.ErrorCode;
+import com.mongs.core.error.ErrorException;
 import com.mongs.core.error.ErrorResDto;
 import io.micrometer.common.lang.NonNullApi;
 import lombok.extern.slf4j.Slf4j;
@@ -33,23 +35,30 @@ public class GlobalExceptionHandler implements ErrorWebExceptionHandler {
         String path = request.getPath().value();
 
         log.error("{} : {} : {} : {}", e.getMessage(), id, method, path);
-
-        if (e instanceof TokenNotFoundException) {
-            return setErrorResponse(exchange, GatewayErrorCode.ACCESS_TOKEN_NOT_FOUND);
-        } else if (e instanceof AuthorizationException) {
-            return setErrorResponse(exchange, GatewayErrorCode.ACCESS_TOKEN_EXPIRED);
-        } else if (e instanceof NotFoundException || e instanceof ConnectException || e instanceof WebClientRequestException) {
+        
+        /* 시스템 정의 예외 처리 */
+        if (e instanceof NotFoundException || e instanceof ConnectException || e instanceof WebClientRequestException) {
             return setErrorResponse(exchange, GatewayErrorCode.CONNECT_FAIL);
+        }
+
+        /* 사용자 정의 예외 처리 */
+        ErrorException ex = (ErrorException) e;
+        if (e instanceof TokenNotFoundException) {
+            return setErrorResponse(exchange, ex.errorCode);
+        } else if (e instanceof AuthorizationException) {
+            return setErrorResponse(exchange, ex.errorCode);
+        } else if (e instanceof PassportException) {
+            return setErrorResponse(exchange, ex.errorCode);
         } else {
             return setErrorResponse(exchange, GatewayErrorCode.INTERNAL_SERVER_ERROR);
         }
     }
 
-    private Mono<Void> setErrorResponse(ServerWebExchange exchange, GatewayErrorCode gatewayErrorCode) {
+    private Mono<Void> setErrorResponse(ServerWebExchange exchange, ErrorCode errorCode) {
         ServerHttpResponse response = exchange.getResponse();
         response.getHeaders().setContentType(MediaType.APPLICATION_JSON);
-        response.setStatusCode(gatewayErrorCode.getHttpStatus());
-        ErrorResDto errorResDto = ErrorResDto.of(gatewayErrorCode);
+        response.setStatusCode(errorCode.getHttpStatus());
+        ErrorResDto errorResDto = ErrorResDto.of(errorCode);
 
         return response.writeWith(
                 new Jackson2JsonEncoder()

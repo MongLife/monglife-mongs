@@ -260,7 +260,7 @@ public class AuthControllerTest {
         // then
         // HttpStatus & contentType
         resultActions
-                .andExpect(status().isBadRequest())
+                .andExpect(status().isUnauthorized())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON));
         // data
         resultActions
@@ -333,7 +333,7 @@ public class AuthControllerTest {
         // then
         // HttpStatus & contentType
         resultActions
-                .andExpect(status().isBadRequest())
+                .andExpect(status().isUnauthorized())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON));
         // data
         resultActions
@@ -381,7 +381,7 @@ public class AuthControllerTest {
         // then
         // HttpStatus & contentType
         resultActions
-                .andExpect(status().isBadRequest())
+                .andExpect(status().isInternalServerError())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON));
         // data
         resultActions

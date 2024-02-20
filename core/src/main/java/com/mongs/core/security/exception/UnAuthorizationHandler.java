@@ -27,7 +27,5 @@ public class UnAuthorizationHandler implements AuthenticationEntryPoint {
         response.setContentType("application/json; charset=UTF-8");
         response.setStatus(HttpStatus.UNAUTHORIZED.value());
         response.getWriter().write(objectMapper.writeValueAsString(ErrorResDto.of(SecurityErrorCode.UNAUTHORIZED)));
-
-        log.info("Passport 인증 불가 : {}", request.getHeader("passport"));
     }
 }

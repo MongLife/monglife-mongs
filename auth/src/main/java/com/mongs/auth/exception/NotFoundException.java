@@ -4,17 +4,13 @@ import com.mongs.core.error.ErrorCode;
 import com.mongs.core.error.ErrorException;
 
 public class NotFoundException extends ErrorException {
-    ErrorCode errorCode;
-
-    public NotFoundException(AuthErrorCode authErrorCode) {
-        super(authErrorCode.getMessage());
-        this.errorCode = authErrorCode;
+    public NotFoundException(ErrorCode errorCode) {
+        super(errorCode);
     }
     public NotFoundException(Throwable e) {
         super(e);
     }
-    public NotFoundException(AuthErrorCode authErrorCode, Throwable e) {
-        super(authErrorCode.getMessage(), e);
-        this.errorCode = authErrorCode;
+    public NotFoundException(ErrorCode errorCode, Throwable e) {
+        super(errorCode, e);
     }
 }

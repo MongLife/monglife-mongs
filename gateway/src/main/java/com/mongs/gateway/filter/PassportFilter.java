@@ -37,26 +37,28 @@ public class PassportFilter extends AbstractGatewayFilterFactory<FilterConfig> {
 
             Mono<PassportVO> passportMono = gatewayService.getPassport(accessToken);
 
-            return passportMono.flatMap(passportVO -> {
-                String passportJson = httpUtils.getJsonString(passportVO
-                                // TODO("Passport 인가 정보 강제 주입 -> 인증 모듈에서 인가 정보 반환 기능 추가 후, 삭제 예정 ")
-                                .toBuilder()
-                                .data(passportVO
-                                        .data()
+            return passportMono
+                    .onErrorMap(throwable -> new PassportException(GatewayErrorCode.PASSPORT_GENERATE_FAIL))
+                    .flatMap(passportVO -> {
+                        String passportJson = httpUtils.getJsonString(passportVO
+                                        // TODO("Passport 인가 정보 강제 주입 -> 인증 모듈에서 인가 정보 반환 기능 추가 후, 삭제 예정 ")
                                         .toBuilder()
-                                        .member(passportVO.data().member().toBuilder().role("NORMAL").build())
+                                        .data(passportVO
+                                                .data()
+                                                .toBuilder()
+                                                .member(passportVO.data().member().toBuilder().role("NORMAL").build())
+                                                .build())
                                         .build())
-                                .build())
-                        .orElseThrow(() -> new PassportException(GatewayErrorCode.PASSPORT_GENERATE_FAIL));
+                                .orElseThrow(() -> new PassportException(GatewayErrorCode.PASSPORT_GENERATE_FAIL));
 
-                request.mutate().header("passport", passportJson).build();
+                        request.mutate().header("passport", passportJson).build();
 
-                if (config.preLogger) {
-                    log.info("[PassportFilter] Passport: " + passportJson);
-                }
+                        if (config.preLogger) {
+                            log.info("[PassportFilter] Passport: " + passportJson);
+                        }
 
-                return chain.filter(exchange);
-            });
+                        return chain.filter(exchange);
+                    });
         };
     }
 }
