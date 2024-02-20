@@ -1,6 +1,6 @@
 package com.mongs.management.management.entity;
 
-import com.mongs.common.time.BaseTimeEntity;
+import com.mongs.core.time.BaseTimeEntity;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
