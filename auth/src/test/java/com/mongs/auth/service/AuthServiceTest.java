@@ -61,8 +61,6 @@ public class AuthServiceTest {
                         .id(memberId)
                         .email(email)
                         .name(name)
-                        .createdAt(LocalDateTime.now())
-                        .updatedAt(LocalDateTime.now())
                         .build()));
         when(tokenProvider.generateAccessToken(memberId, deviceId))
                 .thenReturn(accessToken);
