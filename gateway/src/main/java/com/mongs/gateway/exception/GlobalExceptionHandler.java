@@ -39,16 +39,8 @@ public class GlobalExceptionHandler implements ErrorWebExceptionHandler {
         /* 시스템 정의 예외 처리 */
         if (e instanceof NotFoundException || e instanceof ConnectException || e instanceof WebClientRequestException) {
             return setErrorResponse(exchange, GatewayErrorCode.CONNECT_FAIL);
-        }
-
-        /* 사용자 정의 예외 처리 */
-        ErrorException ex = (ErrorException) e;
-        if (e instanceof TokenNotFoundException) {
-            return setErrorResponse(exchange, ex.errorCode);
-        } else if (e instanceof AuthorizationException) {
-            return setErrorResponse(exchange, ex.errorCode);
-        } else if (e instanceof PassportException) {
-            return setErrorResponse(exchange, ex.errorCode);
+        } else if (e instanceof TokenNotFoundException || e instanceof AuthorizationException || e instanceof PassportException) {
+            return setErrorResponse(exchange, (( ErrorException) e).errorCode);
         } else {
             return setErrorResponse(exchange, GatewayErrorCode.INTERNAL_SERVER_ERROR);
         }
