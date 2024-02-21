@@ -1,12 +1,9 @@
 package com.mongs.core.code;
 
-import org.springframework.stereotype.Component;
-
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
-@Component
 public class CodeRepositoryImpl implements CodeRepository {
 
     @Override
