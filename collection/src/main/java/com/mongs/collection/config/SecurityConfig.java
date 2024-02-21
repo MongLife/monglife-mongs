@@ -7,13 +7,15 @@ import com.mongs.core.security.exception.UnAuthorizationHandler;
 import com.mongs.core.security.filter.PassportFilter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
-import org.springframework.security.config.annotation.web.configurers.HeadersConfigurer;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
@@ -27,6 +29,12 @@ public class SecurityConfig {
     private final ObjectMapper objectMapper;
 
     @Bean
+    @ConditionalOnProperty(name = "spring.h2.console.enabled", havingValue = "true")
+    public WebSecurityCustomizer configureH2ConsoleEnable() {
+        return web -> web.ignoring().requestMatchers(PathRequest.toH2Console());
+    }
+
+    @Bean
     public SecurityFilterChain filterChain(
             @Autowired UnAuthorizationHandler unAuthorizationHandler,
             @Autowired ForbiddenHandler forbiddenHandler,
@@ -34,8 +42,6 @@ public class SecurityConfig {
             @Autowired SecurityExceptionHandler securityExceptionHandler,
             HttpSecurity http) throws Exception {
         return http
-            .headers(httpSecurityHeadersConfigurer -> httpSecurityHeadersConfigurer     // H2 콘솔 설정
-                    .frameOptions(HeadersConfigurer.FrameOptionsConfig::disable))
             .csrf(AbstractHttpConfigurer::disable)
             .formLogin(AbstractHttpConfigurer::disable)
             .addFilterBefore(passportFilter, UsernamePasswordAuthenticationFilter.class)
@@ -43,7 +49,7 @@ public class SecurityConfig {
             .authorizeHttpRequests(authorize -> authorize
                     .requestMatchers("/collection/admin/**").hasAnyAuthority("ADMIN")
                     .requestMatchers("/collection/**").hasAnyAuthority("NORMAL")
-                    .anyRequest().permitAll()     // H2 콘솔 설정
+                    .anyRequest().authenticated()
             )
             .exceptionHandling(configurer -> {
                 configurer.authenticationEntryPoint(unAuthorizationHandler);
