@@ -7,7 +7,9 @@ import lombok.Getter;
 @AllArgsConstructor
 public enum GroupCode {
     MAP("MP"),
-    MONG("CH");
+    ACTIVE("AT"),
+    MONG("CH"),
+    CONDITION("CD");
 
     private final String groupCode;
 }
