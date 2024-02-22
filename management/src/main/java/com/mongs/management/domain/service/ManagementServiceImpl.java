@@ -47,7 +47,11 @@ public class ManagementServiceImpl implements ManagementService {
 
     @Override
     public Stroke toMongStroke(Long memberId) {
-        return null;
+        Management mong = managementRepository.findManagementByMemberId(memberId)
+                .orElseThrow(() -> new ManagementException(ManagementErrorCode.NOT_FOUND));
+
+        mong.doStroke(mong.getStrokeCount());
+        return Stroke.of(mong);
     }
 
     @Override
