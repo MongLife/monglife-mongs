@@ -3,6 +3,7 @@ package com.mongs.collection.service;
 import com.mongs.collection.dto.response.FindMapCollectionResDto;
 import com.mongs.collection.dto.response.FindMongCollectionResDto;
 import com.mongs.collection.dto.response.RegisterMapCollectionResDto;
+import com.mongs.collection.dto.response.RegisterMongCollectionResDto;
 import com.mongs.collection.entity.MapCollection;
 import com.mongs.collection.entity.MongCollection;
 import com.mongs.collection.repository.MapCollectionRepository;
@@ -75,6 +76,22 @@ public class CollectionService {
                 .memberId(mapCollection.getMemberId())
                 .code(mapCollection.getCode())
                 .createdAt(mapCollection.getCreatedAt())
+                .build();
+    }
+
+    @Transactional
+    public RegisterMongCollectionResDto registerMongCollection(Long memberId, String mongCode) {
+
+        MongCollection mongCollection = mongCollectionRepository.save(MongCollection.builder()
+                .memberId(memberId)
+                .groupCode(GroupCode.MONG.getGroupCode())
+                .code(mongCode)
+                .build());
+
+        return RegisterMongCollectionResDto.builder()
+                .memberId(mongCollection.getMemberId())
+                .code(mongCollection.getCode())
+                .createdAt(mongCollection.getCreatedAt())
                 .build();
     }
 }
