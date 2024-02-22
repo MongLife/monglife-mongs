@@ -22,7 +22,7 @@ public class ForbiddenHandler implements AccessDeniedHandler {
     @Override
     public void handle(HttpServletRequest request, HttpServletResponse response, AccessDeniedException accessDeniedException) throws IOException {
         response.setContentType("application/json; charset=UTF-8");
-        response.setStatus(HttpStatus.FORBIDDEN.value());
+        response.setStatus(SecurityErrorCode.FORBIDDEN.getHttpStatus().value());
         response.getWriter().write(objectMapper.writeValueAsString(ErrorResDto.of(SecurityErrorCode.FORBIDDEN)));
     }
 }

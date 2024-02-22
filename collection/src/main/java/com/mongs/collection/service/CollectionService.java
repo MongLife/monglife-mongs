@@ -3,6 +3,8 @@ package com.mongs.collection.service;
 import com.mongs.collection.dto.response.*;
 import com.mongs.collection.entity.MapCollection;
 import com.mongs.collection.entity.MongCollection;
+import com.mongs.collection.exception.InvalidCodeException;
+import com.mongs.collection.exception.CollectionErrorCode;
 import com.mongs.collection.repository.MapCollectionRepository;
 import com.mongs.collection.repository.MongCollectionRepository;
 import com.mongs.core.code.Code;
@@ -61,13 +63,20 @@ public class CollectionService {
     }
 
     @Transactional
-    public RegisterMapCollectionResDto registerMapCollection(Long memberId, String mapCode) {
+    public RegisterMapCollectionResDto registerMapCollection(Long memberId, String mapCode) throws InvalidCodeException {
+        /* mapCode 값 유효성 체크 */
+        codeRepository.findByGroupCodeAndCode(GroupCode.MAP.getGroupCode(), mapCode)
+                .orElseThrow(() -> new InvalidCodeException(CollectionErrorCode.INVALID_MAP_CODE));
 
-        MapCollection mapCollection = mapCollectionRepository.save(MapCollection.builder()
-                .memberId(memberId)
-                .groupCode(GroupCode.MAP.getGroupCode())
-                .code(mapCode)
-                .build());
+        /* 중복 등록 여부 체크 */
+        MapCollection mapCollection = mapCollectionRepository.findByMemberIdAndCode(memberId, mapCode)
+                .orElseGet(() ->
+                        /* 미등록 시 저장 */
+                        mapCollectionRepository.save(MapCollection.builder()
+                        .memberId(memberId)
+                        .groupCode(GroupCode.MAP.getGroupCode())
+                        .code(mapCode)
+                        .build()));
 
         return RegisterMapCollectionResDto.builder()
                 .memberId(mapCollection.getMemberId())
@@ -77,13 +86,20 @@ public class CollectionService {
     }
 
     @Transactional
-    public RegisterMongCollectionResDto registerMongCollection(Long memberId, String mongCode) {
+    public RegisterMongCollectionResDto registerMongCollection(Long memberId, String mongCode) throws InvalidCodeException {
+        /* mongCode 값 유효성 체크 */
+        codeRepository.findByGroupCodeAndCode(GroupCode.MONG.getGroupCode(), mongCode)
+                .orElseThrow(() -> new InvalidCodeException(CollectionErrorCode.INVALID_MONG_CODE));
 
-        MongCollection mongCollection = mongCollectionRepository.save(MongCollection.builder()
-                .memberId(memberId)
-                .groupCode(GroupCode.MONG.getGroupCode())
-                .code(mongCode)
-                .build());
+        /* 중복 등록 여부 체크 */
+        MongCollection mongCollection = mongCollectionRepository.findByMemberIdAndCode(memberId, mongCode)
+                .orElseGet(() ->
+                        /* 미등록 시 저장 */
+                        mongCollectionRepository.save(MongCollection.builder()
+                        .memberId(memberId)
+                        .groupCode(GroupCode.MONG.getGroupCode())
+                        .code(mongCode)
+                        .build()));
 
         return RegisterMongCollectionResDto.builder()
                 .memberId(mongCollection.getMemberId())
@@ -93,12 +109,20 @@ public class CollectionService {
     }
 
     @Transactional
-    public void removeMapCollection(Long memberId, String mapCode) {
+    public void removeMapCollection(Long memberId, String mapCode) throws InvalidCodeException {
+        /* mapCode 값 유효성 체크 */
+        codeRepository.findByGroupCodeAndCode(GroupCode.MAP.getGroupCode(), mapCode)
+                .orElseThrow(() -> new InvalidCodeException(CollectionErrorCode.INVALID_MAP_CODE));
+
         mapCollectionRepository.deleteByMemberIdAndCode(memberId, mapCode);
     }
 
     @Transactional
-    public void removeMongCollection(Long memberId, String mongCode) {
+    public void removeMongCollection(Long memberId, String mongCode) throws InvalidCodeException {
+        /* mongCode 값 유효성 체크 */
+        codeRepository.findByGroupCodeAndCode(GroupCode.MONG.getGroupCode(), mongCode)
+                .orElseThrow(() -> new InvalidCodeException(CollectionErrorCode.INVALID_MONG_CODE));
+
         mongCollectionRepository.deleteByMemberIdAndCode(memberId, mongCode);
     }
 }
