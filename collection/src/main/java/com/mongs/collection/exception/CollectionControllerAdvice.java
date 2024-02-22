@@ -14,8 +14,8 @@ public class CollectionControllerAdvice {
         ErrorCode errorCode = CollectionErrorCode.INVALID_PARAMETER;
         return ResponseEntity.status(errorCode.getHttpStatus()).body(ErrorResDto.of(errorCode));
     }
-    @ExceptionHandler(CodeNotFoundException.class)
-    public ResponseEntity<Object> codeNotFoundExceptionHandler(CodeNotFoundException e) {
+    @ExceptionHandler(InvalidCodeException.class)
+    public ResponseEntity<Object> codeNotFoundExceptionHandler(InvalidCodeException e) {
         return ResponseEntity.status(e.errorCode.getHttpStatus()).body(ErrorResDto.of(e.errorCode));
     }
 }

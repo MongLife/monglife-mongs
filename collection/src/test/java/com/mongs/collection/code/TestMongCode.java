@@ -49,7 +49,10 @@ public enum TestMongCode implements Code {
         this.code = code;
         this.name = name;
     }
-
+    @Override
+    public String getGroupCode() {
+        return this.groupCode;
+    }
     @Override
     public String getCode() {
         return this.code;
