@@ -3,6 +3,8 @@ package com.mongs.collection.service;
 import com.mongs.collection.dto.response.*;
 import com.mongs.collection.entity.MapCollection;
 import com.mongs.collection.entity.MongCollection;
+import com.mongs.collection.exception.CodeNotFoundException;
+import com.mongs.collection.exception.CollectionErrorCode;
 import com.mongs.collection.repository.MapCollectionRepository;
 import com.mongs.collection.repository.MongCollectionRepository;
 import com.mongs.core.code.Code;
@@ -61,13 +63,20 @@ public class CollectionService {
     }
 
     @Transactional
-    public RegisterMapCollectionResDto registerMapCollection(Long memberId, String mapCode) {
+    public RegisterMapCollectionResDto registerMapCollection(Long memberId, String mapCode) throws CodeNotFoundException {
+        /* mapCode 값 유효성 체크 */
+        codeRepository.findByCode(mapCode)
+                .orElseThrow(() -> new CodeNotFoundException(CollectionErrorCode.MAP_CODE_NOT_FOUND));
 
-        MapCollection mapCollection = mapCollectionRepository.save(MapCollection.builder()
-                .memberId(memberId)
-                .groupCode(GroupCode.MAP.getGroupCode())
-                .code(mapCode)
-                .build());
+        /* 중복 등록 여부 체크 */
+        MapCollection mapCollection = mapCollectionRepository.findByMemberIdAndCode(memberId, mapCode)
+                .orElseGet(() ->
+                        /* 미등록 시 저장 */
+                        mapCollectionRepository.save(MapCollection.builder()
+                        .memberId(memberId)
+                        .groupCode(GroupCode.MAP.getGroupCode())
+                        .code(mapCode)
+                        .build()));
 
         return RegisterMapCollectionResDto.builder()
                 .memberId(mapCollection.getMemberId())
@@ -77,13 +86,20 @@ public class CollectionService {
     }
 
     @Transactional
-    public RegisterMongCollectionResDto registerMongCollection(Long memberId, String mongCode) {
+    public RegisterMongCollectionResDto registerMongCollection(Long memberId, String mongCode) throws CodeNotFoundException {
+        /* mongCode 값 유효성 체크 */
+        codeRepository.findByCode(mongCode)
+                .orElseThrow(() -> new CodeNotFoundException(CollectionErrorCode.MONG_CODE_NOT_FOUND));
 
-        MongCollection mongCollection = mongCollectionRepository.save(MongCollection.builder()
-                .memberId(memberId)
-                .groupCode(GroupCode.MONG.getGroupCode())
-                .code(mongCode)
-                .build());
+        /* 중복 등록 여부 체크 */
+        MongCollection mongCollection = mongCollectionRepository.findByMemberIdAndCode(memberId, mongCode)
+                .orElseGet(() ->
+                        /* 미등록 시 저장 */
+                        mongCollectionRepository.save(MongCollection.builder()
+                        .memberId(memberId)
+                        .groupCode(GroupCode.MONG.getGroupCode())
+                        .code(mongCode)
+                        .build()));
 
         return RegisterMongCollectionResDto.builder()
                 .memberId(mongCollection.getMemberId())
@@ -93,12 +109,20 @@ public class CollectionService {
     }
 
     @Transactional
-    public void removeMapCollection(Long memberId, String mapCode) {
+    public void removeMapCollection(Long memberId, String mapCode) throws CodeNotFoundException {
+        /* mapCode 값 유효성 체크 */
+        codeRepository.findByCode(mapCode)
+                .orElseThrow(() -> new CodeNotFoundException(CollectionErrorCode.MAP_CODE_NOT_FOUND));
+
         mapCollectionRepository.deleteByMemberIdAndCode(memberId, mapCode);
     }
 
     @Transactional
-    public void removeMongCollection(Long memberId, String mongCode) {
+    public void removeMongCollection(Long memberId, String mongCode) throws CodeNotFoundException {
+        /* mongCode 값 유효성 체크 */
+        codeRepository.findByCode(mongCode)
+                .orElseThrow(() -> new CodeNotFoundException(CollectionErrorCode.MONG_CODE_NOT_FOUND));
+
         mongCollectionRepository.deleteByMemberIdAndCode(memberId, mongCode);
     }
 }

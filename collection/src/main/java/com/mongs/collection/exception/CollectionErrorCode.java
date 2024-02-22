@@ -8,7 +8,9 @@ import org.springframework.http.HttpStatus;
 @Getter
 @AllArgsConstructor
 public enum CollectionErrorCode implements ErrorCode {
-    ;
+    INVALID_PARAMETER(HttpStatus.BAD_REQUEST, "COLLECTION-100", "Invalid Parameter"),
+    MAP_CODE_NOT_FOUND(HttpStatus.BAD_REQUEST, "COLLECTION-101", "Invalid Map Code"),
+    MONG_CODE_NOT_FOUND(HttpStatus.BAD_REQUEST, "COLLECTION-102", "Invalid Mong Code");
 
     private final HttpStatus httpStatus;
     private final String code;
