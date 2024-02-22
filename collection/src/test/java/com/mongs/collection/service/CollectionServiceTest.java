@@ -1,9 +1,13 @@
 package com.mongs.collection.service;
 
 import com.mongs.collection.code.TestMapCode;
+import com.mongs.collection.code.TestMongCode;
 import com.mongs.collection.dto.response.FindMapCollectionResDto;
+import com.mongs.collection.dto.response.FindMongCollectionResDto;
 import com.mongs.collection.entity.MapCollection;
+import com.mongs.collection.entity.MongCollection;
 import com.mongs.collection.repository.MapCollectionRepository;
+import com.mongs.collection.repository.MongCollectionRepository;
 import com.mongs.core.code.CodeRepository;
 import com.mongs.core.code.GroupCode;
 import org.junit.jupiter.api.DisplayName;
@@ -31,6 +35,8 @@ class CollectionServiceTest {
     private CodeRepository codeRepository;
     @Mock
     private MapCollectionRepository mapCollectionRepository;
+    @Mock
+    private MongCollectionRepository mongCollectionRepository;
 
     @Test
     @DisplayName("회원 id 로 맵 컬렉션을 조회하면 맵 컬렉션 리스트를 반환한다.")
@@ -70,6 +76,48 @@ class CollectionServiceTest {
                 assertThat(findMapCollectionResDto.disable()).isFalse();
             } else {
                 assertThat(findMapCollectionResDto.disable()).isTrue();
+            }
+        });
+    }
+
+    @Test
+    @DisplayName("회원 id 로 몽 컬렉션을 조회하면 몽 컬렉션 리스트를 반환한다.")
+    void findMongCollection() {
+        // given
+        Long memberId = 1L;
+        String groupCode = GroupCode.MONG.getGroupCode();
+        List<TestMongCode> mongCollectionCodeList = List.of(
+                TestMongCode.CH000,
+                TestMongCode.CH001,
+                TestMongCode.CH002
+        );
+        List<MongCollection> mongCollectionList = mongCollectionCodeList.stream()
+                .map(mongCode -> MongCollection.builder()
+                        .id(1L)
+                        .memberId(memberId)
+                        .groupCode(groupCode)
+                        .code(mongCode.getCode())
+                        .build())
+                .toList();
+
+        when(codeRepository.findByGroupCode(groupCode))
+                .thenReturn(List.of(TestMongCode.values()));
+        when(mongCollectionRepository.findByMemberId(memberId))
+                .thenReturn(mongCollectionList);
+
+        // when
+        List<FindMongCollectionResDto> findMongCollectionResDtoList = collectionService.findMongCollection(memberId);
+
+        // then
+        assertThat(findMongCollectionResDtoList).isNotNull();
+        assertThat(findMongCollectionResDtoList).isNotEmpty();
+        findMongCollectionResDtoList.forEach(findMongCollectionResDto -> {
+            String code = findMongCollectionResDto.code();
+
+            if (mongCollectionCodeList.contains(TestMongCode.valueOf(code))) {
+                assertThat(findMongCollectionResDto.disable()).isFalse();
+            } else {
+                assertThat(findMongCollectionResDto.disable()).isTrue();
             }
         });
     }
