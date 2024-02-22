@@ -27,8 +27,8 @@ public class SecurityExceptionHandler extends GenericFilterBean {
             chain.doFilter(request, response);
         } catch (Exception e) {
             response.setContentType("application/json; charset=UTF-8");
-            response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
-            response.getWriter().write(objectMapper.writeValueAsString(ErrorResDto.of(SecurityErrorCode.FORBIDDEN)));
+            response.setStatus(SecurityErrorCode.INTERNAL_SERVER_ERROR.getHttpStatus().value());
+            response.getWriter().write(objectMapper.writeValueAsString(ErrorResDto.of(SecurityErrorCode.INTERNAL_SERVER_ERROR)));
         }
     }
 }

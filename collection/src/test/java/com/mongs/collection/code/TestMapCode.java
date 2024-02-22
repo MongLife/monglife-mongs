@@ -58,6 +58,10 @@ public enum TestMapCode implements Code {
         this.name = name;
     }
     @Override
+    public String getGroupCode() {
+        return this.groupCode;
+    }
+    @Override
     public String getCode() {
         return this.code;
     }
