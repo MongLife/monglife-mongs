@@ -20,6 +20,7 @@ import org.springframework.test.context.ActiveProfiles;
 
 import java.util.List;
 
+import static org.assertj.core.api.InstanceOfAssertFactories.map;
 import static org.junit.jupiter.api.Assertions.*;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -120,5 +121,31 @@ class CollectionServiceTest {
                 assertThat(findMongCollectionResDto.disable()).isTrue();
             }
         });
+    }
+
+    @Test
+    @DisplayName("회원 id, 맵 코드로 맵 컬렉션을 등록하고, 등록된 값을 반환한다.")
+    void registerMapCollection() {
+        // given
+        Long memberId = 1L;
+        String groupCode = GroupCode.MAP.getGroupCode();
+        String mapCode = TestMapCode.MP000.getCode();
+        MapCollection mapCollection = MapCollection.builder()
+                .id(1L)
+                .memberId(memberId)
+                .groupCode(groupCode)
+                .code(mapCode)
+                .build();
+
+        when(mapCollectionRepository.save(any()))
+                .thenReturn(mapCollection);
+
+        // when
+        var registerMapCollectionResDto = collectionService.registerMapCollection(memberId, mapCode);
+
+        // then
+        assertThat(registerMapCollectionResDto).isNotNull();
+        assertThat(registerMapCollectionResDto.memberId()).isEqualTo(memberId);
+        assertThat(registerMapCollectionResDto.code()).isEqualTo(mapCode);
     }
 }
