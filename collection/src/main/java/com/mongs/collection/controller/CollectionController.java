@@ -67,7 +67,7 @@ public class CollectionController {
             @AuthenticationPrincipal PassportDetail passportDetail,
             @RequestBody @Validated RemoveMongCollectionReqDto removeMongCollectionReqDto
     ) {
-        collectionService.removeMapCollection(passportDetail.getId(), removeMongCollectionReqDto.mongCode());
+        collectionService.removeMongCollection(passportDetail.getId(), removeMongCollectionReqDto.mongCode());
         return ResponseEntity.ok().body(null);
     }
 }
