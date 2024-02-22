@@ -1,9 +1,6 @@
 package com.mongs.collection.service;
 
-import com.mongs.collection.dto.response.FindMapCollectionResDto;
-import com.mongs.collection.dto.response.FindMongCollectionResDto;
-import com.mongs.collection.dto.response.RegisterMapCollectionResDto;
-import com.mongs.collection.dto.response.RegisterMongCollectionResDto;
+import com.mongs.collection.dto.response.*;
 import com.mongs.collection.entity.MapCollection;
 import com.mongs.collection.entity.MongCollection;
 import com.mongs.collection.repository.MapCollectionRepository;
@@ -93,5 +90,15 @@ public class CollectionService {
                 .code(mongCollection.getCode())
                 .createdAt(mongCollection.getCreatedAt())
                 .build();
+    }
+
+    @Transactional
+    public void removeMapCollection(Long memberId, String mapCode) {
+        mapCollectionRepository.deleteByMemberIdAndCode(memberId, mapCode);
+    }
+
+    @Transactional
+    public void removeMongCollection(Long memberId, String mongCode) {
+        mongCollectionRepository.deleteByMemberIdAndCode(memberId, mongCode);
     }
 }
