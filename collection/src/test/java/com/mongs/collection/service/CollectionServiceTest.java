@@ -19,6 +19,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.test.context.ActiveProfiles;
 
 import java.util.List;
+import java.util.Optional;
 
 import static org.assertj.core.api.InstanceOfAssertFactories.map;
 import static org.junit.jupiter.api.Assertions.*;
@@ -137,6 +138,8 @@ class CollectionServiceTest {
                 .code(mapCode)
                 .build();
 
+        when(codeRepository.findByCode(mapCode))
+                .thenReturn(Optional.of(TestMapCode.MP000));
         when(mapCollectionRepository.save(any()))
                 .thenReturn(mapCollection);
 
@@ -163,6 +166,8 @@ class CollectionServiceTest {
                 .code(mongCode)
                 .build();
 
+        when(codeRepository.findByCode(mongCode))
+                .thenReturn(Optional.of(TestMongCode.CH000));
         when(mongCollectionRepository.save(any()))
                 .thenReturn(mongCollection);
 
@@ -182,6 +187,8 @@ class CollectionServiceTest {
         Long memberId = 1L;
         String mapCode = TestMapCode.MP000.getCode();
 
+        when(codeRepository.findByCode(mapCode))
+                .thenReturn(Optional.of(TestMapCode.MP000));
         doNothing().when(mapCollectionRepository).deleteByMemberIdAndCode(memberId, mapCode);
 
         // when
@@ -198,6 +205,8 @@ class CollectionServiceTest {
         Long memberId = 1L;
         String mongCode = TestMongCode.CH000.getCode();
 
+        when(codeRepository.findByCode(mongCode))
+                .thenReturn(Optional.of(TestMongCode.CH000));
         doNothing().when(mongCollectionRepository).deleteByMemberIdAndCode(memberId, mongCode);
 
         // when
