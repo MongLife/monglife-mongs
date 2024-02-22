@@ -148,4 +148,30 @@ class CollectionServiceTest {
         assertThat(registerMapCollectionResDto.memberId()).isEqualTo(memberId);
         assertThat(registerMapCollectionResDto.code()).isEqualTo(mapCode);
     }
+
+    @Test
+    @DisplayName("회원 id, 몽 코드로 몽 컬렉션을 등록하고, 등록된 값을 반환한다.")
+    void registerMongCollection() {
+        // given
+        Long memberId = 1L;
+        String groupCode = GroupCode.MONG.getGroupCode();
+        String mongCode = TestMongCode.CH000.getCode();
+        MongCollection mongCollection = MongCollection.builder()
+                .id(1L)
+                .memberId(memberId)
+                .groupCode(groupCode)
+                .code(mongCode)
+                .build();
+
+        when(mongCollectionRepository.save(any()))
+                .thenReturn(mongCollection);
+
+        // when
+        var registerMongCollectionResDto = collectionService.registerMongCollection(memberId, mongCode);
+
+        // then
+        assertThat(registerMongCollectionResDto).isNotNull();
+        assertThat(registerMongCollectionResDto.memberId()).isEqualTo(memberId);
+        assertThat(registerMongCollectionResDto.code()).isEqualTo(mongCode);
+    }
 }
