@@ -9,4 +9,5 @@ import java.util.List;
 @Repository
 public interface MongCollectionRepository extends JpaRepository<MongCollection, Long> {
     List<MongCollection> findByMemberId(Long memberId);
+    void deleteByMemberIdAndCode(Long memberId, String code);
 }
