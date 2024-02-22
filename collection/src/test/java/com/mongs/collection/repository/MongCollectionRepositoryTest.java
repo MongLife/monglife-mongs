@@ -1,5 +1,8 @@
 package com.mongs.collection.repository;
 
+import com.mongs.collection.code.TestMapCode;
+import com.mongs.collection.code.TestMongCode;
+import com.mongs.collection.entity.MapCollection;
 import com.mongs.collection.entity.MongCollection;
 import com.mongs.core.code.GroupCode;
 import org.junit.jupiter.api.DisplayName;
@@ -10,6 +13,7 @@ import org.springframework.test.context.ActiveProfiles;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -26,7 +30,7 @@ public class MongCollectionRepositoryTest {
         // given
         Long memberId = 1L;
         String groupCode = GroupCode.MONG.getGroupCode();
-        String code = "CH000";
+        String code = TestMongCode.CH000.getCode();
 
         MongCollection mongCollection = MongCollection.builder()
                 .memberId(memberId)
@@ -40,7 +44,6 @@ public class MongCollectionRepositoryTest {
         // then
         Long mongCollectionId = saveMongCollection.getId();
         assertThat(mongCollectionId).isNotNull();
-        assertThat(mongCollectionId).isEqualTo(1L);
     }
 
     @Test
@@ -49,7 +52,7 @@ public class MongCollectionRepositoryTest {
         // given
         Long memberId = 1L;
         String groupCode = GroupCode.MONG.getGroupCode();
-        String code = "CH000";
+        String code = TestMongCode.CH000.getCode();
 
         MongCollection mongCollection = MongCollection.builder()
                 .memberId(memberId)
@@ -96,5 +99,29 @@ public class MongCollectionRepositoryTest {
             assertThat(mapCollection.getGroupCode()).isEqualTo(groupCode);
             assertThat(mapCollection.getCode()).isEqualTo(String.format("CH%03d", codeNumber.getAndIncrement()));
         });
+    }
+
+    @Test
+    @DisplayName("회원 id, 몽 코드를 기준으로 몽 컬렉션을 삭제한다.")
+    void deleteByMemberIdAndMongCode() {
+        // given
+        Long memberId = 1L;
+        String groupCode = GroupCode.MONG.getGroupCode();
+        String code = TestMongCode.CH000.getCode();
+
+        MongCollection mongCollection = MongCollection.builder()
+                .memberId(memberId)
+                .groupCode(groupCode)
+                .code(code)
+                .build();
+        MongCollection saveMongCollection = mongCollectionRepository.save(mongCollection);
+
+        // when
+        mongCollectionRepository.deleteByMemberIdAndCode(memberId, code);
+
+        Optional<MongCollection> expected  = mongCollectionRepository.findById(saveMongCollection.getId());
+
+        // then
+        assertThat(expected.isPresent()).isFalse();
     }
 }

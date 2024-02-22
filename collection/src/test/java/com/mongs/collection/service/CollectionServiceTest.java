@@ -174,4 +174,36 @@ class CollectionServiceTest {
         assertThat(registerMongCollectionResDto.memberId()).isEqualTo(memberId);
         assertThat(registerMongCollectionResDto.code()).isEqualTo(mongCode);
     }
+
+    @Test
+    @DisplayName("회원 id, 맵 코드로 맵 컬렉션을 삭제한다.")
+    void removeMapCollection() {
+        // given
+        Long memberId = 1L;
+        String mapCode = TestMapCode.MP000.getCode();
+
+        doNothing().when(mapCollectionRepository).deleteByMemberIdAndCode(memberId, mapCode);
+
+        // when
+        Throwable e = catchThrowable(() -> collectionService.removeMapCollection(memberId, mapCode));
+
+        // then
+        assertThat(e).isNull();
+    }
+
+    @Test
+    @DisplayName("회원 id, 몽 코드로 몽 컬렉션을 삭제한다.")
+    void removeMongCollection() {
+        // given
+        Long memberId = 1L;
+        String mongCode = TestMongCode.CH000.getCode();
+
+        doNothing().when(mongCollectionRepository).deleteByMemberIdAndCode(memberId, mongCode);
+
+        // when
+        Throwable e = catchThrowable(() -> collectionService.removeMongCollection(memberId, mongCode));
+
+        // then
+        assertThat(e).isNull();
+    }
 }
