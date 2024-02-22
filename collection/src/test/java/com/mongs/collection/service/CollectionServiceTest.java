@@ -148,7 +148,7 @@ class CollectionServiceTest {
                     .code(mapCode)
                     .build();
 
-            when(codeRepository.findByCode(mapCode))
+            when(codeRepository.findByGroupCodeAndCode(GroupCode.MAP.getGroupCode(), mapCode))
                     .thenReturn(Optional.of(testMapCode));
             when(mapCollectionRepository.save(any()))
                     .thenReturn(mapCollection);
@@ -167,36 +167,13 @@ class CollectionServiceTest {
         void registerMapCollectionNotFoundMapCode() {
             // given
             Long memberId = 1L;
-            String mapCode = testMapCode.getCode();
+            String mapCode = "INVALID_CODE";
 
-            when(codeRepository.findByCode(mapCode))
+            when(codeRepository.findByGroupCodeAndCode(GroupCode.MAP.getGroupCode(), mapCode))
                     .thenReturn(Optional.empty());
 
             // when
             Throwable e = catchThrowable(() -> collectionService.registerMapCollection(memberId, mapCode));
-
-            var expected = ((InvalidCodeException) e).errorCode;
-            var errorCode = CollectionErrorCode.NOT_FOUND_MAP_CODE;
-
-            // then
-            assertThat(e).isInstanceOf(InvalidCodeException.class);
-            assertThat(expected.getHttpStatus()).isEqualTo(errorCode.getHttpStatus());
-            assertThat(expected.getCode()).isEqualTo(errorCode.getCode());
-            assertThat(expected.getMessage()).isEqualTo(errorCode.getMessage());
-        }
-
-        @Test
-        @DisplayName("몽 코드로 맵 컬렉션을 등록하면, InvalidCodeException 이 발생한다.")
-        void registerMapCollectionByMongCode() {
-            // given
-            Long memberId = 1L;
-            String mongCode = testMongCode.getCode();
-
-            when(codeRepository.findByCode(mongCode))
-                    .thenReturn(Optional.of(testMongCode));
-
-            // when
-            Throwable e = catchThrowable(() -> collectionService.registerMapCollection(memberId, mongCode));
 
             var expected = ((InvalidCodeException) e).errorCode;
             var errorCode = CollectionErrorCode.INVALID_MAP_CODE;
@@ -222,7 +199,7 @@ class CollectionServiceTest {
                     .code(mongCode)
                     .build();
 
-            when(codeRepository.findByCode(mongCode))
+            when(codeRepository.findByGroupCodeAndCode(GroupCode.MONG.getGroupCode(), mongCode))
                     .thenReturn(Optional.of(testMongCode));
             when(mongCollectionRepository.save(any()))
                     .thenReturn(mongCollection);
@@ -241,36 +218,13 @@ class CollectionServiceTest {
         void registerMongCollectionNotFoundMongCode() {
             // given
             Long memberId = 1L;
-            String mongCode = testMongCode.getCode();
+            String mongCode = "INVALID_CODE";
 
-            when(codeRepository.findByCode(mongCode))
+            when(codeRepository.findByGroupCodeAndCode(GroupCode.MONG.getGroupCode(), mongCode))
                     .thenReturn(Optional.empty());
 
             // when
             Throwable e = catchThrowable(() -> collectionService.registerMongCollection(memberId, mongCode));
-
-            var expected = ((InvalidCodeException) e).errorCode;
-            var errorCode = CollectionErrorCode.NOT_FOUND_MONG_CODE;
-
-            // then
-            assertThat(e).isInstanceOf(InvalidCodeException.class);
-            assertThat(expected.getHttpStatus()).isEqualTo(errorCode.getHttpStatus());
-            assertThat(expected.getCode()).isEqualTo(errorCode.getCode());
-            assertThat(expected.getMessage()).isEqualTo(errorCode.getMessage());
-        }
-
-        @Test
-        @DisplayName("맵 코드로 몽 컬렉션을 등록하면, InvalidCodeException 이 발생한다.")
-        void registerMongCollectionByMapCode() {
-            // given
-            Long memberId = 1L;
-            String mapCode = testMapCode.getCode();
-
-            when(codeRepository.findByCode(mapCode))
-                    .thenReturn(Optional.of(testMapCode));
-
-            // when
-            Throwable e = catchThrowable(() -> collectionService.removeMongCollection(memberId, mapCode));
 
             var expected = ((InvalidCodeException) e).errorCode;
             var errorCode = CollectionErrorCode.INVALID_MONG_CODE;
@@ -293,7 +247,7 @@ class CollectionServiceTest {
             Long memberId = 1L;
             String mapCode = testMapCode.getCode();
 
-            when(codeRepository.findByCode(mapCode))
+            when(codeRepository.findByGroupCodeAndCode(GroupCode.MAP.getGroupCode(), mapCode))
                     .thenReturn(Optional.of(testMapCode));
             doNothing().when(mapCollectionRepository).deleteByMemberIdAndCode(memberId, mapCode);
 
@@ -309,36 +263,13 @@ class CollectionServiceTest {
         void removeMapCollectionNotFoundMapCode() {
             // given
             Long memberId = 1L;
-            String mapCode = testMapCode.getCode();
+            String mapCode = "INVALID_CODE";
 
-            when(codeRepository.findByCode(mapCode))
+            when(codeRepository.findByGroupCodeAndCode(GroupCode.MAP.getGroupCode(), mapCode))
                     .thenReturn(Optional.empty());
 
             // when
             Throwable e = catchThrowable(() -> collectionService.removeMapCollection(memberId, mapCode));
-
-            var expected = ((InvalidCodeException) e).errorCode;
-            var errorCode = CollectionErrorCode.NOT_FOUND_MAP_CODE;
-
-            // then
-            assertThat(e).isInstanceOf(InvalidCodeException.class);
-            assertThat(expected.getHttpStatus()).isEqualTo(errorCode.getHttpStatus());
-            assertThat(expected.getCode()).isEqualTo(errorCode.getCode());
-            assertThat(expected.getMessage()).isEqualTo(errorCode.getMessage());
-        }
-
-        @Test
-        @DisplayName("몽 코드로 맵 컬렉션을 삭제하면, InvalidCodeException 이 발생한다.")
-        void removeMapCollectionByMongCode() {
-            // given
-            Long memberId = 1L;
-            String mongCode = testMongCode.getCode();
-
-            when(codeRepository.findByCode(mongCode))
-                    .thenReturn(Optional.of(testMongCode));
-
-            // when
-            Throwable e = catchThrowable(() -> collectionService.removeMapCollection(memberId, mongCode));
 
             var expected = ((InvalidCodeException) e).errorCode;
             var errorCode = CollectionErrorCode.INVALID_MAP_CODE;
@@ -357,7 +288,7 @@ class CollectionServiceTest {
             Long memberId = 1L;
             String mongCode = testMongCode.getCode();
 
-            when(codeRepository.findByCode(mongCode))
+            when(codeRepository.findByGroupCodeAndCode(GroupCode.MONG.getGroupCode(), mongCode))
                     .thenReturn(Optional.of(testMongCode));
             doNothing().when(mongCollectionRepository).deleteByMemberIdAndCode(memberId, mongCode);
 
@@ -373,36 +304,13 @@ class CollectionServiceTest {
         void removeMongCollectionNotFoundMongCode() {
             // given
             Long memberId = 1L;
-            String mongCode = testMongCode.getCode();
+            String mongCode = "INVALID_CODE";
 
-            when(codeRepository.findByCode(mongCode))
+            when(codeRepository.findByGroupCodeAndCode(GroupCode.MONG.getGroupCode(), mongCode))
                     .thenReturn(Optional.empty());
 
             // when
             Throwable e = catchThrowable(() -> collectionService.removeMongCollection(memberId, mongCode));
-
-            var expected = ((InvalidCodeException) e).errorCode;
-            var errorCode = CollectionErrorCode.NOT_FOUND_MONG_CODE;
-
-            // then
-            assertThat(e).isInstanceOf(InvalidCodeException.class);
-            assertThat(expected.getHttpStatus()).isEqualTo(errorCode.getHttpStatus());
-            assertThat(expected.getCode()).isEqualTo(errorCode.getCode());
-            assertThat(expected.getMessage()).isEqualTo(errorCode.getMessage());
-        }
-
-        @Test
-        @DisplayName("맵 코드로 몽 컬렉션을 삭제하면, InvalidCodeException 이 발생한다.")
-        void removeMongCollectionByMapCode() {
-            // given
-            Long memberId = 1L;
-            String mapCode = testMapCode.getCode();
-
-            when(codeRepository.findByCode(mapCode))
-                    .thenReturn(Optional.of(testMapCode));
-
-            // when
-            Throwable e = catchThrowable(() -> collectionService.removeMongCollection(memberId, mapCode));
 
             var expected = ((InvalidCodeException) e).errorCode;
             var errorCode = CollectionErrorCode.INVALID_MONG_CODE;
