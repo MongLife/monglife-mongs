@@ -65,13 +65,8 @@ public class CollectionService {
     @Transactional
     public RegisterMapCollectionResDto registerMapCollection(Long memberId, String mapCode) throws InvalidCodeException {
         /* mapCode 값 유효성 체크 */
-        Code code = codeRepository.findByCode(mapCode)
-                .orElseThrow(() -> new InvalidCodeException(CollectionErrorCode.NOT_FOUND_MAP_CODE));
-
-        /* mapCode 의 GroupCode 유효성 체크 */
-        if (!code.getGroupCode().equals(GroupCode.MAP.getGroupCode())) {
-            throw new InvalidCodeException(CollectionErrorCode.INVALID_MAP_CODE);
-        }
+        codeRepository.findByGroupCodeAndCode(GroupCode.MAP.getGroupCode(), mapCode)
+                .orElseThrow(() -> new InvalidCodeException(CollectionErrorCode.INVALID_MAP_CODE));
 
         /* 중복 등록 여부 체크 */
         MapCollection mapCollection = mapCollectionRepository.findByMemberIdAndCode(memberId, mapCode)
@@ -93,13 +88,8 @@ public class CollectionService {
     @Transactional
     public RegisterMongCollectionResDto registerMongCollection(Long memberId, String mongCode) throws InvalidCodeException {
         /* mongCode 값 유효성 체크 */
-        Code code = codeRepository.findByCode(mongCode)
-                .orElseThrow(() -> new InvalidCodeException(CollectionErrorCode.NOT_FOUND_MONG_CODE));
-
-        /* mongCode 의 GroupCode 유효성 체크 */
-        if (!code.getGroupCode().equals(GroupCode.MONG.getGroupCode())) {
-            throw new InvalidCodeException(CollectionErrorCode.INVALID_MONG_CODE);
-        }
+        codeRepository.findByGroupCodeAndCode(GroupCode.MONG.getGroupCode(), mongCode)
+                .orElseThrow(() -> new InvalidCodeException(CollectionErrorCode.INVALID_MONG_CODE));
 
         /* 중복 등록 여부 체크 */
         MongCollection mongCollection = mongCollectionRepository.findByMemberIdAndCode(memberId, mongCode)
@@ -121,13 +111,8 @@ public class CollectionService {
     @Transactional
     public void removeMapCollection(Long memberId, String mapCode) throws InvalidCodeException {
         /* mapCode 값 유효성 체크 */
-        Code code = codeRepository.findByCode(mapCode)
-                .orElseThrow(() -> new InvalidCodeException(CollectionErrorCode.NOT_FOUND_MAP_CODE));
-
-        /* mapCode 의 GroupCode 유효성 체크 */
-        if (!code.getGroupCode().equals(GroupCode.MAP.getGroupCode())) {
-            throw new InvalidCodeException(CollectionErrorCode.INVALID_MAP_CODE);
-        }
+        codeRepository.findByGroupCodeAndCode(GroupCode.MAP.getGroupCode(), mapCode)
+                .orElseThrow(() -> new InvalidCodeException(CollectionErrorCode.INVALID_MAP_CODE));
 
         mapCollectionRepository.deleteByMemberIdAndCode(memberId, mapCode);
     }
@@ -135,13 +120,8 @@ public class CollectionService {
     @Transactional
     public void removeMongCollection(Long memberId, String mongCode) throws InvalidCodeException {
         /* mongCode 값 유효성 체크 */
-        Code code = codeRepository.findByCode(mongCode)
-                .orElseThrow(() -> new InvalidCodeException(CollectionErrorCode.NOT_FOUND_MONG_CODE));
-
-        /* mongCode 의 GroupCode 유효성 체크 */
-        if (!code.getGroupCode().equals(GroupCode.MONG.getGroupCode())) {
-            throw new InvalidCodeException(CollectionErrorCode.INVALID_MONG_CODE);
-        }
+        codeRepository.findByGroupCodeAndCode(GroupCode.MONG.getGroupCode(), mongCode)
+                .orElseThrow(() -> new InvalidCodeException(CollectionErrorCode.INVALID_MONG_CODE));
 
         mongCollectionRepository.deleteByMemberIdAndCode(memberId, mongCode);
     }

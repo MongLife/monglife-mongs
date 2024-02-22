@@ -34,7 +34,11 @@ public class CodeRepositoryImpl implements CodeRepository {
     @Override
     public Optional<Code> findByCode(String code) {
         String groupCode = code.substring(0, 2);
+        return findByGroupCodeAndCode(groupCode, code);
+    }
 
+    @Override
+    public Optional<Code> findByGroupCodeAndCode(String groupCode, String code) {
         if (groupCode.equals(GroupCode.MAP.getGroupCode())) {
             return Arrays.stream(MapCode.values())
                     .filter(mapCode -> mapCode.getCode().equals(code))
@@ -57,6 +61,5 @@ public class CodeRepositoryImpl implements CodeRepository {
                     .findFirst();
         } else {
             return Optional.empty();
-        }
-    }
+        }    }
 }
