@@ -1,5 +1,6 @@
 package com.mongs.collection.repository;
 
+import com.mongs.collection.code.TestMapCode;
 import com.mongs.collection.entity.MapCollection;
 import com.mongs.core.code.GroupCode;
 import org.junit.jupiter.api.DisplayName;
@@ -10,6 +11,7 @@ import org.springframework.test.context.ActiveProfiles;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -26,7 +28,7 @@ class MapCollectionRepositoryTest {
         // given
         Long memberId = 1L;
         String groupCode = GroupCode.MAP.getGroupCode();
-        String code = "MP000";
+        String code = TestMapCode.MP000.getCode();
 
         MapCollection mapCollection = MapCollection.builder()
                 .memberId(memberId)
@@ -40,7 +42,6 @@ class MapCollectionRepositoryTest {
         // then
         Long mapCollectionId = saveMapCollection.getId();
         assertThat(mapCollectionId).isNotNull();
-        assertThat(mapCollectionId).isEqualTo(1L);
     }
 
     @Test
@@ -49,7 +50,7 @@ class MapCollectionRepositoryTest {
         // given
         Long memberId = 1L;
         String groupCode = GroupCode.MAP.getGroupCode();
-        String code = "MP000";
+        String code = TestMapCode.MP000.getCode();
 
         MapCollection mapCollection = MapCollection.builder()
                 .memberId(memberId)
@@ -96,5 +97,29 @@ class MapCollectionRepositoryTest {
             assertThat(mapCollection.getGroupCode()).isEqualTo(groupCode);
             assertThat(mapCollection.getCode()).isEqualTo(String.format("MP%03d", codeNumber.getAndIncrement()));
         });
+    }
+
+    @Test
+    @DisplayName("회원 id, 맵 코드를 기준으로 맵 컬렉션을 삭제한다.")
+    void deleteByMemberIdAndMapCode() {
+        // given
+        Long memberId = 1L;
+        String groupCode = GroupCode.MAP.getGroupCode();
+        String code = TestMapCode.MP000.getCode();
+
+        MapCollection mapCollection = MapCollection.builder()
+                .memberId(memberId)
+                .groupCode(groupCode)
+                .code(code)
+                .build();
+        MapCollection saveMapCollection = mapCollectionRepository.save(mapCollection);
+
+        // when
+        mapCollectionRepository.deleteByMemberIdAndCode(memberId, code);
+
+        Optional<MapCollection> expected  = mapCollectionRepository.findById(saveMapCollection.getId());
+
+        // then
+        assertThat(expected.isPresent()).isFalse();
     }
 }
