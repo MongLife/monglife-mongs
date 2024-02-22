@@ -2,6 +2,7 @@ package com.mongs.collection.service;
 
 import com.mongs.collection.dto.response.FindMapCollectionResDto;
 import com.mongs.collection.dto.response.FindMongCollectionResDto;
+import com.mongs.collection.dto.response.RegisterMapCollectionResDto;
 import com.mongs.collection.entity.MapCollection;
 import com.mongs.collection.entity.MongCollection;
 import com.mongs.collection.repository.MapCollectionRepository;
@@ -11,6 +12,7 @@ import com.mongs.core.code.CodeRepository;
 import com.mongs.core.code.GroupCode;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -22,6 +24,7 @@ public class CollectionService {
     private final MapCollectionRepository mapCollectionRepository;
     private final MongCollectionRepository mongCollectionRepository;
 
+    @Transactional(readOnly = true)
     public List<FindMapCollectionResDto> findMapCollection(Long memberId) {
         List<Code> mapCodeList = codeRepository.findByGroupCode(GroupCode.MAP.getGroupCode());
         List<String> mapCollectionList = mapCollectionRepository.findByMemberId(memberId)
@@ -40,6 +43,7 @@ public class CollectionService {
         return FindMapCollectionResDto.toList(enableList, disableList);
     }
 
+    @Transactional(readOnly = true)
     public List<FindMongCollectionResDto> findMongCollection(Long memberId) {
         List<Code> mongCodeList = codeRepository.findByGroupCode(GroupCode.MONG.getGroupCode());
         List<String> mongCollectionList = mongCollectionRepository.findByMemberId(memberId)
@@ -56,5 +60,21 @@ public class CollectionService {
                 .toList();
 
         return FindMongCollectionResDto.toList(enableList, disableList);
+    }
+
+    @Transactional
+    public RegisterMapCollectionResDto registerMapCollection(Long memberId, String mapCode) {
+
+        MapCollection mapCollection = mapCollectionRepository.save(MapCollection.builder()
+                .memberId(memberId)
+                .groupCode(GroupCode.MAP.getGroupCode())
+                .code(mapCode)
+                .build());
+
+        return RegisterMapCollectionResDto.builder()
+                .memberId(mapCollection.getMemberId())
+                .code(mapCollection.getCode())
+                .createdAt(mapCollection.getCreatedAt())
+                .build();
     }
 }
