@@ -1,17 +1,12 @@
-package com.mongs.auth.util;
+package com.mongs.core.util;
 
-import com.mongs.auth.exception.AuthorizationException;
-import com.mongs.auth.exception.AuthErrorCode;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
 import io.jsonwebtoken.security.SignatureException;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Component;
+import lombok.AllArgsConstructor;
 
 import java.nio.charset.StandardCharsets;
 import java.security.Key;
@@ -19,20 +14,13 @@ import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.Date;
+import java.util.Optional;
 
-@Slf4j
-@Component
-@RequiredArgsConstructor
+@AllArgsConstructor
 public class TokenProvider {
-
-    @Value("${application.security.jwt.secret-key}")
-    private String JWT_KEY;
-
-    @Value("${application.security.jwt.access-expiration}")
-    private Long ACCESS_TOKEN_EXPIRED;
-
-    @Value("${application.security.jwt.refresh-expiration}")
-    private Long REFRESH_TOKEN_EXPIRED;
+    private final String JWT_KEY;
+    private final Long ACCESS_TOKEN_EXPIRED;
+    private final Long REFRESH_TOKEN_EXPIRED;
 
     public Boolean isTokenExpired(String token) {
         try {
@@ -52,27 +40,27 @@ public class TokenProvider {
         Claims claims = Jwts.claims();
         return generateToken(claims, REFRESH_TOKEN_EXPIRED);
     }
-    public Long getExpiredSeconds(String token) throws AuthorizationException {
+    public Optional<Long> getExpiredSeconds(String token) {
         if (isTokenExpired(token)) {
-            throw new AuthorizationException(AuthErrorCode.ACCESS_TOKEN_EXPIRED);
+            return Optional.empty();
         }
         LocalDateTime expiration = extractAllClaims(token).getExpiration().toInstant()
                 .atZone(ZoneId.systemDefault())
                 .toLocalDateTime();
         long expired = Duration.between(LocalDateTime.now(), expiration).getSeconds();
-        return Math.max(0, expired);
+        return Optional.of(Math.max(0, expired));
     }
-    public Long getMemberId(String token) throws AuthorizationException {
+    public Optional<Long> getMemberId(String token) {
         if (isTokenExpired(token)) {
-            throw new AuthorizationException(AuthErrorCode.ACCESS_TOKEN_EXPIRED);
+            return Optional.empty();
         }
-        return extractAllClaims(token).get("memberId", Long.class);
+        return Optional.of(extractAllClaims(token).get("memberId", Long.class));
     }
-    public String getDeviceId(String token) throws AuthorizationException {
+    public Optional<String> getDeviceId(String token) {
         if (isTokenExpired(token)) {
-            throw new AuthorizationException(AuthErrorCode.ACCESS_TOKEN_EXPIRED);
+            return Optional.empty();
         }
-        return extractAllClaims(token).get("deviceId", String.class);
+        return Optional.of(extractAllClaims(token).get("deviceId", String.class));
     }
 
     private Claims extractAllClaims(String token) {

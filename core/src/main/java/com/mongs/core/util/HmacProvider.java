@@ -1,6 +1,7 @@
-package com.mongs.auth.util;
+package com.mongs.core.util;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.tomcat.util.codec.binary.Base64;
@@ -11,15 +12,11 @@ import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
 import java.nio.charset.StandardCharsets;
 
-@Slf4j
-@Component
-@RequiredArgsConstructor
+@AllArgsConstructor
 public class HmacProvider {
 
     private final ObjectMapper objectMapper;
-
-    @Value("${application.security.hmac.secret-key}")
-    private String secretKey;
+    private final String secretKey;
 
     public String generateHmac(Object data) throws Exception {
         return this.generateHmac(data, this.secretKey);
