@@ -2,17 +2,14 @@ package com.mongs.management.domain.service;
 
 import com.mongs.management.domain.entity.Management;
 import com.mongs.management.domain.repository.ManagementRepository;
-import com.mongs.management.domain.service.dto.CreateMong;
 import com.mongs.management.domain.service.dto.InitMong;
-import com.mongs.management.domain.service.dto.Stroke;
-import com.mongs.management.exception.ManagementErrorCode;
 import com.mongs.management.exception.ManagementException;
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.Optional;
@@ -22,6 +19,7 @@ import static org.assertj.core.api.Assertions.*;
 import static org.mockito.Mockito.*;
 import static org.junit.jupiter.api.Assertions.*;
 
+@Transactional
 @SpringBootTest
 class ManagementServiceTest {
 
@@ -45,6 +43,7 @@ class ManagementServiceTest {
                 .sleepStart(initMong.sleepStart())
                 .sleepEnd(initMong.sleepEnd())
                 .weight(new Random().nextDouble() * 100)
+                .poopCount(10)
                 .sleep(true)
                 .build();
 
@@ -77,5 +76,11 @@ class ManagementServiceTest {
     void toMongStroke() {
         managementService.toMongStroke(memberId);
         assertEquals(mong.getStrokeCount(), 1);
+    }
+
+    @Test
+    void toCleanMongsPoop() {
+        managementService.toCleanMongsPoop(memberId);
+        assertEquals(0, mong.getPoopCount());
     }
 }
