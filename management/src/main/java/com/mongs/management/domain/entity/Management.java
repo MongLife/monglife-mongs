@@ -67,4 +67,8 @@ public class Management extends BaseTimeEntity {
     public void changeSleepConditon (Boolean isSleep) {
         this.sleep = isSleep;
     }
+
+    public void setPoopCount(int poopCount) {
+        this.poopCount = poopCount;
+    }
 }

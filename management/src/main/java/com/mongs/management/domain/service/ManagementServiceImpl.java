@@ -47,9 +47,7 @@ public class ManagementServiceImpl implements ManagementService {
 
     @Override
     public Stroke toMongStroke(Long memberId) {
-        Management mong = managementRepository.findManagementByMemberId(memberId)
-                .orElseThrow(() -> new ManagementException(ManagementErrorCode.NOT_FOUND));
-
+        Management mong = getMong(memberId);
         mong.doStroke(mong.getStrokeCount());
         return Stroke.of(mong);
     }
@@ -59,9 +57,12 @@ public class ManagementServiceImpl implements ManagementService {
         return null;
     }
 
+    // Poop Clean -> 0으로? or 1로?
     @Override
     public Poop toCleanMongsPoop(Long memberId) {
-        return null;
+        Management mong = getMong(memberId);
+        mong.setPoopCount(0);
+        return Poop.of(mong);
     }
 
     @Override
@@ -84,4 +85,8 @@ public class ManagementServiceImpl implements ManagementService {
         return null;
     }
 
+    private Management getMong(Long memberId) {
+        return managementRepository.findManagementByMemberId(memberId)
+                .orElseThrow(() -> new ManagementException(ManagementErrorCode.NOT_FOUND));
+    }
 }

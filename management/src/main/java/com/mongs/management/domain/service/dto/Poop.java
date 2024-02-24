@@ -27,7 +27,7 @@ public record Poop (
     Boolean sleep,
     int poopCount
 ){
-    public Poop of(Management management){
+    public static Poop of(Management management){
         return Poop.builder()
                 .mongCode(ManagementErrorCode.SUCCESS.getCode())
                 .message(MongActiveCode.BOWEL.getName())
