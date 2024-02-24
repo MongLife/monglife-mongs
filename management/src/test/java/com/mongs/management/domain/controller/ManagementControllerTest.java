@@ -6,6 +6,8 @@ import com.mongs.management.domain.repository.ManagementRepository;
 import com.mongs.management.domain.security.WithMockPassportDetail;
 import com.mongs.management.domain.service.ManagementService;
 import com.mongs.management.domain.service.dto.Poop;
+import com.mongs.management.domain.service.dto.Training;
+import com.mongs.management.domain.service.dto.TrainingCount;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -19,6 +21,8 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
@@ -28,7 +32,7 @@ import java.util.Optional;
 import java.util.Random;
 
 import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 import static org.springframework.test.web.client.ExpectedCount.times;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -98,4 +102,27 @@ public class ManagementControllerTest {
         assertThat(passedMemberId).isEqualTo(memberId);
     }
 
+    @Test
+    public void mongTraining() throws Exception {
+        // Given
+        Long memberId = 1L;
+        TrainingCount trainingCount = new TrainingCount(100);
+        Training training = Training.of(mong);
+        given(managementService.mongTraining(any(TrainingCount.class), eq(memberId))).willReturn(training);
+
+        // When & Then
+        mockMvc.perform(put("/management/training")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(trainingCount)))
+                .andExpect(status().isAccepted())
+                .andExpect(jsonPath("$.message").value("몽 훈련"));
+
+        var memberIdCaptor = ArgumentCaptor.forClass(Long.class);
+        var trainingCaptor = ArgumentCaptor.forClass(TrainingCount.class);
+        verify(managementService, Mockito.times(1))
+                .mongTraining(trainingCaptor.capture(), memberIdCaptor.capture());
+
+        assertThat(memberIdCaptor.getValue()).isEqualTo(memberId);
+        assertThat(trainingCaptor.getValue().getTrainingCount()).isEqualTo(trainingCount.getTrainingCount());
+    }
 }

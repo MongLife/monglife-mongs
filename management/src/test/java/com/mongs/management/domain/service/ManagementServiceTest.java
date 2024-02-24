@@ -3,6 +3,7 @@ package com.mongs.management.domain.service;
 import com.mongs.management.domain.entity.Management;
 import com.mongs.management.domain.repository.ManagementRepository;
 import com.mongs.management.domain.service.dto.InitMong;
+import com.mongs.management.domain.service.dto.TrainingCount;
 import com.mongs.management.exception.ManagementException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -82,5 +83,12 @@ class ManagementServiceTest {
     void toCleanMongsPoop() {
         managementService.toCleanMongsPoop(memberId);
         assertEquals(0, mong.getPoopCount());
+    }
+
+    @Test
+    void mongTraining() {
+        TrainingCount trainingCount = new TrainingCount(100);
+        managementService.mongTraining(trainingCount, 1L);
+        assertEquals(100, mong.getTrainingCount());
     }
 }
