@@ -72,7 +72,9 @@ public class ManagementServiceImpl implements ManagementService {
 
     @Override
     public Training mongTraining(TrainingCount trainingCount, Long memberId) {
-        return null;
+        Management mong = getMong(memberId);
+        mong.setTrainingCount(trainingCount.getTrainingCount());
+        return Training.of(mong);
     }
 
     @Override

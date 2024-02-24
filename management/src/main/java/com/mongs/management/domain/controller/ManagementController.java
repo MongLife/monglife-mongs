@@ -2,10 +2,7 @@ package com.mongs.management.domain.controller;
 
 import com.mongs.core.security.principal.PassportDetail;
 import com.mongs.management.domain.service.ManagementService;
-import com.mongs.management.domain.service.dto.CreateMong;
-import com.mongs.management.domain.service.dto.InitMong;
-import com.mongs.management.domain.service.dto.Poop;
-import com.mongs.management.domain.service.dto.Stroke;
+import com.mongs.management.domain.service.dto.*;
 import com.mongs.management.response.ResponseHandler;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -59,6 +56,17 @@ public class ManagementController {
                         .message("몽 배변 치우기")
                         .statusCode(HttpStatus.ACCEPTED)
                         .data(managementService.toCleanMongsPoop(passportDetail.getId()))
+                        .build());
+    }
+
+    @PutMapping("/training")
+    public ResponseEntity<ResponseHandler<Training>> mongTraining(@RequestBody TrainingCount trainingCount, @AuthenticationPrincipal PassportDetail passportDetail) {
+        return ResponseEntity
+                .status(HttpStatus.ACCEPTED)
+                .body(ResponseHandler.<Training>builder()
+                        .message("몽 훈련")
+                        .statusCode(HttpStatus.ACCEPTED)
+                        .data(managementService.mongTraining(trainingCount,passportDetail.getId()))
                         .build());
     }
 }

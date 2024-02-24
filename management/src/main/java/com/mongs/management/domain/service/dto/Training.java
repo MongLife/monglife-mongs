@@ -27,7 +27,7 @@ public record Training (
     Boolean sleep,
     int poopCount
 ){
-    public Training of(Management management){
+    public static Training of(Management management){
         return Training.builder()
                 .mongCode(ManagementErrorCode.SUCCESS.getCode())
                 .message(MongActiveCode.TRAINING.getName())

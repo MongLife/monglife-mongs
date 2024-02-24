@@ -1,6 +1,7 @@
 package com.mongs.management.domain.entity;
 
 import com.mongs.core.time.BaseTimeEntity;
+import com.mongs.management.domain.service.dto.TrainingCount;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -70,5 +71,9 @@ public class Management extends BaseTimeEntity {
 
     public void setPoopCount(int poopCount) {
         this.poopCount = poopCount;
+    }
+
+    public void setTrainingCount(int trainingCount) {
+        this.trainingCount += trainingCount;
     }
 }
