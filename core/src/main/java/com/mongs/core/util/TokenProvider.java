@@ -16,11 +16,20 @@ import java.time.ZoneId;
 import java.util.Date;
 import java.util.Optional;
 
-@AllArgsConstructor
 public class TokenProvider {
     private final String JWT_KEY;
     private final Long ACCESS_TOKEN_EXPIRED;
     private final Long REFRESH_TOKEN_EXPIRED;
+
+    public TokenProvider(String jwtKey) {
+        this(jwtKey, 0L, 0L);
+    }
+
+    public TokenProvider(String jwtKey, Long accessTokenExpired, Long refreshTokenExpired) {
+        this.JWT_KEY = jwtKey;
+        this.ACCESS_TOKEN_EXPIRED = accessTokenExpired;
+        this.REFRESH_TOKEN_EXPIRED = refreshTokenExpired;
+    }
 
     public Boolean isTokenExpired(String token) {
         try {

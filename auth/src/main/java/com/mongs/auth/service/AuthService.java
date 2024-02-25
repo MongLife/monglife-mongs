@@ -90,31 +90,29 @@ public class AuthService {
 
         Long memberId = tokenProvider.getMemberId(accessToken)
                 .orElseThrow(() -> new AuthorizationException(AuthErrorCode.ACCESS_TOKEN_EXPIRED));
-        
+
         /* AccessToken 의 memberId 로 member 조회 */
         Member member = memberRepository.findById(memberId)
                 .orElseThrow(() -> new NotFoundException(AuthErrorCode.MEMBER_NOT_FOUND));
 
-        try {
-            PassportVO passportVO = PassportVO.builder()
-                    .data(PassportData.builder()
-                            .member(PassportMember.builder()
-                                    .id(memberId)
-                                    .email(member.getEmail())
-                                    .name(member.getName())
-                                    .build())
-                            .build())
-                    .build();
+        PassportVO passportVO = PassportVO.builder()
+                .data(PassportData.builder()
+                        .member(PassportMember.builder()
+                                .id(memberId)
+                                .email(member.getEmail())
+                                .name(member.getName())
+                                .role("NORMAL")
+                                .build())
+                        .build())
+                .build();
 
-            String passportIntegrity = hmacProvider.generateHmac(passportVO.data());
+        String passportIntegrity = hmacProvider.generateHmac(passportVO.data())
+                .orElseThrow(() -> new PassportException(AuthErrorCode.PASSPORT_GENERATE_FAIL));
 
-            /* passport 생성 및 dto 반환 */
-            return passportVO.toBuilder()
-                    .passportIntegrity(passportIntegrity)
-                    .build();
-        } catch (Exception e) {
-            throw new PassportException(AuthErrorCode.PASSPORT_GENERATE_FAIL);
-        }
+        /* passport 생성 및 dto 반환 */
+        return passportVO.toBuilder()
+                .passportIntegrity(passportIntegrity)
+                .build();
     }
   
     private Member registerMember(String email, String name) {

@@ -1,5 +1,6 @@
 package com.mongs.auth.util;
 
+import com.mongs.core.util.TokenProvider;
 import org.awaitility.Awaitility;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -31,7 +32,7 @@ public class TokenProviderTest {
         String refreshToken = tokenProvider.generateRefreshToken();
 
         // when
-        Long expiration = tokenProvider.getExpiredSeconds(refreshToken);
+        Long expiration = tokenProvider.getExpiredSeconds(refreshToken).get();
         Awaitility.await().pollDelay(Duration.ofSeconds(expiration + 1L)).until(() -> true);
         boolean expected = tokenProvider.isTokenExpired(refreshToken);
 
@@ -48,8 +49,8 @@ public class TokenProviderTest {
         String accessToken = tokenProvider.generateAccessToken(memberId, deviceId);
 
         // when
-        Long tokenMemberId = tokenProvider.getMemberId(accessToken);
-        String tokenDeviceId = tokenProvider.getDeviceId(accessToken);
+        Long tokenMemberId = tokenProvider.getMemberId(accessToken).get();
+        String tokenDeviceId = tokenProvider.getDeviceId(accessToken).get();
 
         // then
         assertThat(tokenMemberId).isNotNull();
@@ -67,7 +68,7 @@ public class TokenProviderTest {
         String accessToken = tokenProvider.generateAccessToken(memberId, deviceId);
 
         // when
-        Long expiration = tokenProvider.getExpiredSeconds(accessToken);
+        Long expiration = tokenProvider.getExpiredSeconds(accessToken).get();
         Long expected1 = access_expiration - 5;
         Long expected2 = access_expiration;
 
@@ -83,7 +84,7 @@ public class TokenProviderTest {
         String refreshToken = tokenProvider.generateRefreshToken();
 
         // when
-        Long expiration = tokenProvider.getExpiredSeconds(refreshToken);
+        Long expiration = tokenProvider.getExpiredSeconds(refreshToken).get();
         Long expected1 = refresh_expiration - 5;
         Long expected2 = refresh_expiration;
 
