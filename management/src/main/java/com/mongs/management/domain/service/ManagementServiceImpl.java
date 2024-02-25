@@ -14,6 +14,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
+import java.util.Arrays;
 import java.util.Random;
 
 @Slf4j
@@ -27,22 +30,38 @@ public class ManagementServiceImpl implements ManagementService {
 
     @Retryable(value = DataAccessException.class, maxAttempts = 3, backoff = @Backoff(delay = 1000))
     @Override
-    public CreateMong createMong(InitMong initmong, Long memberId) {
-
-        Boolean sleep = initmong.sleepEnd().isAfter(LocalDateTime.now()) &&
-                initmong.sleepStart().isBefore(LocalDateTime.now());
+    public CreateMong createMong(InitMong initMong, Long memberId) {
+        String sleepTimeStart = timeConverter(initMong.sleepStart());
+        String sleepTimeEnd = timeConverter(initMong.sleepEnd());
+        Boolean sleep = isSleep(sleepTimeStart, sleepTimeEnd);
 
         Management mong = Management.builder()
                 .memberId(memberId)
-                .name(initmong.name())
-                .sleepStart(initmong.sleepStart())
-                .sleepEnd(initmong.sleepEnd())
+                .name(initMong.name())
+                .sleepStart(sleepTimeStart)
+                .sleepEnd(sleepTimeEnd)
                 .weight(new Random().nextDouble() * 100)
                 .sleep(sleep)
                 .build();
         managementRepository.save(mong);
         return CreateMong.of(mong);
 
+    }
+
+    private Boolean isSleep(String sleepStart, String sleepEnd) {
+        LocalTime startTime = LocalTime.parse(sleepStart, DateTimeFormatter.ofPattern("HH:mm"));
+        LocalTime endTime = LocalTime.parse(sleepEnd, DateTimeFormatter.ofPattern("HH:mm"));
+        LocalTime currentTime = LocalTime.now();
+
+        if (endTime.isBefore(startTime)) {
+            return !currentTime.isBefore(startTime) || !currentTime.isAfter(endTime);
+        } else {
+            return !currentTime.isBefore(startTime) && !currentTime.isAfter(endTime);
+        }
+    }
+
+    private String timeConverter(LocalDateTime time) {
+        return time.toLocalTime().format(DateTimeFormatter.ofPattern("HH:mm"));
     }
 
     @Override
@@ -54,7 +73,9 @@ public class ManagementServiceImpl implements ManagementService {
 
     @Override
     public Sleep toCheckMongsLifetime(Long memberId) {
-        return null;
+        Management mong = getMong(memberId);
+        mong.changeSleepConditon(isSleep(mong.getSleepStart(), mong.getSleepEnd()));
+        return Sleep.of(mong);
     }
 
     // Poop Clean -> 0으로? or 1로?
