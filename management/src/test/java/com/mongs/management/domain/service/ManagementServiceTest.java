@@ -13,6 +13,8 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Optional;
 import java.util.Random;
 
@@ -37,15 +39,20 @@ class ManagementServiceTest {
     @BeforeEach
     void setUp() {
         memberId = 1L;
-        initMong = new InitMong("MongName", LocalDateTime.now().minusHours(1), LocalDateTime.now().plusHours(8));
+        initMong = new InitMong("MongName", LocalDateTime.of(2024, 2, 5, 22, 0), LocalDateTime.of(2024, 2, 26, 8, 0));
+
+        String sleepTimeStart = timeConverter(initMong.sleepStart());
+        String sleepTimeEnd = timeConverter(initMong.sleepEnd());
+        Boolean sleep = isSleep(sleepTimeStart, sleepTimeEnd);
+
         mong = Management.builder()
                 .memberId(memberId)
                 .name(initMong.name())
-                .sleepStart(initMong.sleepStart())
-                .sleepEnd(initMong.sleepEnd())
+                .sleepStart(sleepTimeStart)
+                .sleepEnd(sleepTimeEnd)
                 .weight(new Random().nextDouble() * 100)
                 .poopCount(10)
-                .sleep(true)
+                .sleep(sleep)
                 .build();
 
         when(managementRepository.findManagementByMemberId(memberId)).thenReturn(Optional.of(mong));
@@ -58,6 +65,11 @@ class ManagementServiceTest {
         assertNotNull(mong);
         assertEquals(mong.getMemberId(),1L);
         assertEquals(mong.getName(), "MongName");
+        assertEquals(mong.getSleepStart(), "22:00");
+        assertEquals(mong.getSleepEnd(), "08:00");
+
+        assertEquals(false, isSleep(mong.getSleepStart(), mong.getSleepEnd()));;
+
         assertNotNull(mong.getSleepStart());
         assertNotNull(mong.getSleepEnd());
         assertTrue(mong.getWeight() > 0);
@@ -90,5 +102,41 @@ class ManagementServiceTest {
         TrainingCount trainingCount = new TrainingCount(100);
         managementService.mongTraining(trainingCount, 1L);
         assertEquals(100, mong.getTrainingCount());
+    }
+
+    @Test
+    void isMongSleep() {
+        managementService.toCheckMongsLifetime(1L);
+
+        Boolean sleep = isSleep(mong.getSleepStart(), mong.getSleepEnd());
+        assertEquals(false, sleep);
+
+        LocalTime startTime = LocalTime.parse(mong.getSleepStart(), DateTimeFormatter.ofPattern("HH:mm"));
+        LocalTime endTime = LocalTime.parse(mong.getSleepEnd(), DateTimeFormatter.ofPattern("HH:mm"));
+        LocalTime currentTime = LocalTime.of(23, 0);
+
+        if (endTime.isBefore(startTime) && !currentTime.isBefore(startTime) || !currentTime.isAfter(endTime)) {
+            sleep = true;
+        }
+        if(endTime.isBefore(startTime) && !currentTime.isBefore(startTime) && !currentTime.isAfter(endTime)){
+            sleep = false;
+        }
+        assertEquals(true, sleep);
+    }
+
+    private Boolean isSleep(String sleepStart, String sleepEnd) {
+        LocalTime startTime = LocalTime.parse(sleepStart, DateTimeFormatter.ofPattern("HH:mm"));
+        LocalTime endTime = LocalTime.parse(sleepEnd, DateTimeFormatter.ofPattern("HH:mm"));
+        LocalTime currentTime = LocalTime.of(15, 0);
+
+        if (endTime.isBefore(startTime)) {
+            return !currentTime.isBefore(startTime) || !currentTime.isAfter(endTime);
+        } else {
+            return !currentTime.isBefore(startTime) && !currentTime.isAfter(endTime);
+        }
+    }
+
+    private String timeConverter(LocalDateTime time) {
+        return time.toLocalTime().format(DateTimeFormatter.ofPattern("HH:mm"));
     }
 }

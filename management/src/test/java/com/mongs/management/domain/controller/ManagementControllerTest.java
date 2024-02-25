@@ -6,6 +6,7 @@ import com.mongs.management.domain.repository.ManagementRepository;
 import com.mongs.management.domain.security.WithMockPassportDetail;
 import com.mongs.management.domain.service.ManagementService;
 import com.mongs.management.domain.service.dto.Poop;
+import com.mongs.management.domain.service.dto.Sleep;
 import com.mongs.management.domain.service.dto.Training;
 import com.mongs.management.domain.service.dto.TrainingCount;
 import org.junit.jupiter.api.BeforeEach;
@@ -28,6 +29,8 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
 import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Optional;
 import java.util.Random;
 
@@ -59,15 +62,19 @@ public class ManagementControllerTest {
     @BeforeEach
     public void setup(WebApplicationContext webApplicationContext) {
         mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext).build();
+        String mongSleepTime = "22:00";
+        String mongAwakeTime = "08:00";
+
+        Boolean sleep = isSleep(mongSleepTime, mongAwakeTime);
 
         mong = Management.builder()
                 .memberId(1L)
-                .name("Mong")
-                .sleepStart(LocalDateTime.now().minusHours(1))
-                .sleepEnd(LocalDateTime.now().plusHours(8))
+                .name("mong's")
+                .sleepStart(mongSleepTime)
+                .sleepEnd(mongAwakeTime)
                 .weight(new Random().nextDouble() * 100)
                 .poopCount(10)
-                .sleep(true)
+                .sleep(sleep)
                 .build();
 
         when(managementRepository.findManagementByMemberId(1L)).thenReturn(Optional.of(mong));
@@ -125,4 +132,38 @@ public class ManagementControllerTest {
         assertThat(memberIdCaptor.getValue()).isEqualTo(memberId);
         assertThat(trainingCaptor.getValue().getTrainingCount()).isEqualTo(trainingCount.getTrainingCount());
     }
+
+    @Test
+    public void toCheckMongLifeTime() throws Exception {
+        // Given
+        Long memberId = 1L;
+        Sleep sleep = Sleep.of(mong);
+        given(managementService.toCheckMongsLifetime(memberId)).willReturn(sleep);
+
+        // When & Then
+        mockMvc.perform(put("/management/sleep/toggle")
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isAccepted())
+                .andExpect(jsonPath("$.message").value("몽이 자는지 확인"));
+
+        var memberIdCaptor = ArgumentCaptor.forClass(Long.class);
+        verify(managementService, Mockito.times(1))
+                .toCheckMongsLifetime(memberIdCaptor.capture());
+
+        assertThat(memberIdCaptor.getValue()).isEqualTo(memberId);
+    }
+
+
+    private Boolean isSleep(String sleepStart, String sleepEnd) {
+        LocalTime startTime = LocalTime.parse(sleepStart, DateTimeFormatter.ofPattern("HH:mm"));
+        LocalTime endTime = LocalTime.parse(sleepEnd, DateTimeFormatter.ofPattern("HH:mm"));
+        LocalTime currentTime = LocalTime.of(15, 0);
+
+        if (endTime.isBefore(startTime)) {
+            return !currentTime.isBefore(startTime) || !currentTime.isAfter(endTime);
+        } else {
+            return !currentTime.isBefore(startTime) && !currentTime.isAfter(endTime);
+        }
+    }
+
 }
