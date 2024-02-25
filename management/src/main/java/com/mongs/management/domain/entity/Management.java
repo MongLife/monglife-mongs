@@ -54,9 +54,9 @@ public class Management extends BaseTimeEntity {
     @Builder.Default
     private int poopCount = 0;
 
-    private LocalDateTime sleepStart;
+    private String sleepStart;
 
-    private LocalDateTime sleepEnd;
+    private String sleepEnd;
 
     @Builder.Default
     private int paypoint = 0;
