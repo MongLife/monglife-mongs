@@ -32,11 +32,13 @@ public class TokenProviderTest {
         String refreshToken = tokenProvider.generateRefreshToken();
 
         // when
-        Long expiration = tokenProvider.getExpiredSeconds(refreshToken).get();
+        Long expiration = tokenProvider.getExpiredSeconds(refreshToken)
+                .orElse(-1L);
         Awaitility.await().pollDelay(Duration.ofSeconds(expiration + 1L)).until(() -> true);
         boolean expected = tokenProvider.isTokenExpired(refreshToken);
 
         // then
+        assertThat(expiration).isNotEqualTo(-1L);
         assertThat(expected).isTrue();
     }
 
@@ -49,8 +51,10 @@ public class TokenProviderTest {
         String accessToken = tokenProvider.generateAccessToken(memberId, deviceId);
 
         // when
-        Long tokenMemberId = tokenProvider.getMemberId(accessToken).get();
-        String tokenDeviceId = tokenProvider.getDeviceId(accessToken).get();
+        Long tokenMemberId = tokenProvider.getMemberId(accessToken)
+                .orElse(null);
+        String tokenDeviceId = tokenProvider.getDeviceId(accessToken)
+                .orElse(null);
 
         // then
         assertThat(tokenMemberId).isNotNull();
@@ -68,11 +72,13 @@ public class TokenProviderTest {
         String accessToken = tokenProvider.generateAccessToken(memberId, deviceId);
 
         // when
-        Long expiration = tokenProvider.getExpiredSeconds(accessToken).get();
+        Long expiration = tokenProvider.getExpiredSeconds(accessToken)
+                .orElse(-1L);
         Long expected1 = access_expiration - 5;
         Long expected2 = access_expiration;
 
         // then
+        assertThat(expiration).isNotEqualTo(-1L);
         assertThat(expiration).isGreaterThan(expected1);
         assertThat(expiration).isLessThan(expected2);
     }
@@ -84,11 +90,13 @@ public class TokenProviderTest {
         String refreshToken = tokenProvider.generateRefreshToken();
 
         // when
-        Long expiration = tokenProvider.getExpiredSeconds(refreshToken).get();
+        Long expiration = tokenProvider.getExpiredSeconds(refreshToken)
+                .orElse(-1L);
         Long expected1 = refresh_expiration - 5;
         Long expected2 = refresh_expiration;
 
         // then
+        assertThat(expiration).isNotEqualTo(-1L);
         assertThat(expiration).isGreaterThan(expected1);
         assertThat(expiration).isLessThan(expected2);
     }

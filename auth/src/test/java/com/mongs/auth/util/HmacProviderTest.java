@@ -93,7 +93,7 @@ class HmacProviderTest {
                 .build();
 
         String passIntegrity = hmacProvider.generateHmac(passportVO.data(), forgeryKey)
-                .orElseGet(() -> null);
+                .orElse(null);
 
         passportVO = passportVO.toBuilder()
                 .passportIntegrity(passIntegrity)

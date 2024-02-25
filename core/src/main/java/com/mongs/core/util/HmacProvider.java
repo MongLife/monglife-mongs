@@ -35,9 +35,7 @@ public class HmacProvider {
     public boolean verifyHmac(Object data, String integrity) {
         AtomicBoolean verify = new AtomicBoolean(false);
 
-        generateHmac(data).ifPresent(generateIntegrity -> {
-            verify.set(integrity.equals(generateIntegrity));
-        });
+        generateHmac(data).ifPresent(generateIntegrity -> verify.set(integrity.equals(generateIntegrity)));
 
         return verify.get();
     }
