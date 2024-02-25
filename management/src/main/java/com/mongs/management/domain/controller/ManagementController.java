@@ -69,4 +69,15 @@ public class ManagementController {
                         .data(managementService.mongTraining(trainingCount,passportDetail.getId()))
                         .build());
     }
+
+    @PutMapping("/sleep/toggle")
+    public ResponseEntity<ResponseHandler<Sleep>> isMongSleep(@AuthenticationPrincipal PassportDetail passportDetail) {
+        return ResponseEntity
+                .status(HttpStatus.ACCEPTED)
+                .body(ResponseHandler.<Sleep>builder()
+                        .message("몽이 자는지 확인")
+                        .statusCode(HttpStatus.ACCEPTED)
+                        .data(managementService.toCheckMongsLifetime(passportDetail.getId()))
+                        .build());
+    }
 }
