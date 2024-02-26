@@ -1,14 +1,15 @@
 package com.mongs.management.domain.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.mongs.management.domain.entity.Management;
-import com.mongs.management.domain.repository.ManagementRepository;
+import com.mongs.management.domain.mong.controller.ManagementController;
+import com.mongs.management.domain.mong.entity.Management;
+import com.mongs.management.domain.mong.repository.ManagementRepository;
 import com.mongs.management.domain.security.WithMockPassportDetail;
-import com.mongs.management.domain.service.ManagementService;
-import com.mongs.management.domain.service.dto.Poop;
-import com.mongs.management.domain.service.dto.Sleep;
-import com.mongs.management.domain.service.dto.Training;
-import com.mongs.management.domain.service.dto.TrainingCount;
+import com.mongs.management.domain.mong.service.ManagementService;
+import com.mongs.management.domain.mong.service.dto.Poop;
+import com.mongs.management.domain.mong.service.dto.Sleep;
+import com.mongs.management.domain.mong.service.dto.Training;
+import com.mongs.management.domain.mong.service.dto.TrainingCount;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -28,7 +29,6 @@ import static org.mockito.Mockito.verify;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
-import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Optional;
@@ -36,7 +36,6 @@ import java.util.Random;
 
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.*;
-import static org.springframework.test.web.client.ExpectedCount.times;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 

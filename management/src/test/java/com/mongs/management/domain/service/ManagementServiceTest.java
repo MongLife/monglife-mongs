@@ -1,9 +1,10 @@
 package com.mongs.management.domain.service;
 
-import com.mongs.management.domain.entity.Management;
-import com.mongs.management.domain.repository.ManagementRepository;
-import com.mongs.management.domain.service.dto.InitMong;
-import com.mongs.management.domain.service.dto.TrainingCount;
+import com.mongs.management.domain.mong.entity.Management;
+import com.mongs.management.domain.mong.repository.ManagementRepository;
+import com.mongs.management.domain.mong.service.ManagementService;
+import com.mongs.management.domain.mong.service.dto.InitMong;
+import com.mongs.management.domain.mong.service.dto.TrainingCount;
 import com.mongs.management.exception.ManagementException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
