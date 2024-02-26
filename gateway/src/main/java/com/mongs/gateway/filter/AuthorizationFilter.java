@@ -4,7 +4,7 @@ import com.mongs.gateway.exception.AuthorizationException;
 import com.mongs.gateway.exception.GatewayErrorCode;
 import com.mongs.gateway.exception.TokenNotFoundException;
 import com.mongs.gateway.util.HttpUtils;
-import com.mongs.gateway.util.TokenProvider;
+import com.mongs.core.util.TokenProvider;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cloud.gateway.filter.GatewayFilter;
 import org.springframework.cloud.gateway.filter.factory.AbstractGatewayFilterFactory;

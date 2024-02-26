@@ -3,11 +3,14 @@ package com.mongs.auth.util;
 import com.mongs.core.passport.PassportVO;
 import com.mongs.core.passport.PassportData;
 import com.mongs.core.passport.PassportMember;
+import com.mongs.core.util.HmacProvider;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
+
+import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -19,7 +22,7 @@ class HmacProviderTest {
 
     @Test
     @DisplayName("Object 타입의 객체를 받아 hmac 서명을 생성한다.")
-    void generateHmac() throws Exception {
+    void generateHmac() {
         // given
         String email = "test@test.com";
         String name = "테스트";
@@ -36,15 +39,15 @@ class HmacProviderTest {
                 .build();
 
         // when
-        String expected = hmacProvider.generateHmac(passportVO.data());
+        Optional<String> expected = hmacProvider.generateHmac(passportVO.data());
 
         // then
-        assertThat(expected).isNotNull();
+        assertThat(expected.isPresent()).isNotNull();
     }
 
     @Test
     @DisplayName("위변조 되지 않은 데이터인 경우 true 를 반환한다.")
-    void verifyHmac() throws Exception {
+    void verifyHmac() {
         // given
         String integrity = "IvnD7Ll7zL/YNfcQNy4R4lpIUi+u61auvOxty0v34EI=";
         String email = "test@test.com";
@@ -71,7 +74,7 @@ class HmacProviderTest {
 
     @Test
     @DisplayName("위변조 된 데이터인 경우 false 를 반환한다.")
-    void verifyHmacForgery() throws Exception {
+    void verifyHmacForgery() {
         // given
         String forgeryKey = "test-forgery-key/test-forgery-key/test-forgery-key";
         String email = "forgery@forgery.com";
@@ -89,14 +92,18 @@ class HmacProviderTest {
                         .build())
                 .build();
 
+        String passIntegrity = hmacProvider.generateHmac(passportVO.data(), forgeryKey)
+                .orElse(null);
+
         passportVO = passportVO.toBuilder()
-                .passportIntegrity( hmacProvider.generateHmac(passportVO.data(), forgeryKey))
+                .passportIntegrity(passIntegrity)
                 .build();
 
         // when
         boolean expected = hmacProvider.verifyHmac(passportVO.data(), passportVO.passportIntegrity());
 
         // then
+        assertThat(passIntegrity).isNotNull();
         assertThat(expected).isFalse();
     }
 }

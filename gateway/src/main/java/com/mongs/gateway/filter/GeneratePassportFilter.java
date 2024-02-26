@@ -15,12 +15,12 @@ import reactor.core.publisher.Mono;
 
 @Slf4j
 @Component
-public class PassportFilter extends AbstractGatewayFilterFactory<FilterConfig> {
+public class GeneratePassportFilter extends AbstractGatewayFilterFactory<FilterConfig> {
 
     private final GatewayService gatewayService;
     private final HttpUtils httpUtils;
 
-    public PassportFilter(GatewayService gatewayService, HttpUtils httpUtils) {
+    public GeneratePassportFilter(GatewayService gatewayService, HttpUtils httpUtils) {
         super(FilterConfig.class);
         this.gatewayService = gatewayService;
         this.httpUtils = httpUtils;
@@ -40,15 +40,7 @@ public class PassportFilter extends AbstractGatewayFilterFactory<FilterConfig> {
             return passportMono
                     .onErrorMap(throwable -> new PassportException(GatewayErrorCode.PASSPORT_GENERATE_FAIL))
                     .flatMap(passportVO -> {
-                        String passportJson = httpUtils.getJsonString(passportVO
-                                        // TODO("Passport 인가 정보 강제 주입 -> 인증 모듈에서 인가 정보 반환 기능 추가 후, 삭제 예정 ")
-                                        .toBuilder()
-                                        .data(passportVO
-                                                .data()
-                                                .toBuilder()
-                                                .member(passportVO.data().member().toBuilder().role("NORMAL").build())
-                                                .build())
-                                        .build())
+                        String passportJson = httpUtils.getJsonString(passportVO)
                                 .orElseThrow(() -> new PassportException(GatewayErrorCode.PASSPORT_GENERATE_FAIL));
 
                         request.mutate().header("passport", passportJson).build();
