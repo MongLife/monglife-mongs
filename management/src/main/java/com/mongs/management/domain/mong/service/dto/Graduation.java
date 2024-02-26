@@ -1,4 +1,4 @@
-package com.mongs.management.domain.service.dto;
+package com.mongs.management.domain.mong.service.dto;
 
 import lombok.*;
 

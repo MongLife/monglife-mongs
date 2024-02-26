@@ -1,8 +1,8 @@
-package com.mongs.management.domain.service.dto;
+package com.mongs.management.domain.mong.service.dto;
 
 import com.mongs.management.exception.ManagementErrorCode;
 import com.mongs.core.code.MongActiveCode;
-import com.mongs.management.domain.entity.Management;
+import com.mongs.management.domain.mong.entity.Mong;
 import lombok.*;
 
 /**
@@ -28,15 +28,15 @@ public record Stroke (
     double sleep,
     int poopCount
 ){
-    public static Stroke of(Management management){
+    public static Stroke of(Mong mong){
         return Stroke.builder()
                 .mongCode(ManagementErrorCode.SUCCESS.getCode())
                 .message(MongActiveCode.STROKE.getName())
                 .stateCode(MongActiveCode.STROKE.getCode())
-                .weight(management.getWeight())
-                .health(management.getHealthy())
-                .strength(management.getStrength())
-                .poopCount(management.getPoopCount())
+                .weight(mong.getWeight())
+                .health(mong.getHealthy())
+                .strength(mong.getStrength())
+                .poopCount(mong.getNumberOfPoop())
                 .build();
     }
 }

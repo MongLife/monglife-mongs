@@ -1,8 +1,9 @@
-package com.mongs.management.domain.service.dto;
+package com.mongs.management.domain.mong.service.dto;
 
 
+import com.mongs.core.code.MongCode;
 import com.mongs.management.exception.ManagementErrorCode;
-import com.mongs.management.domain.entity.Management;
+import com.mongs.management.domain.mong.entity.Mong;
 import lombok.*;
 
 import java.time.LocalDateTime;
@@ -14,11 +15,11 @@ public record CreateMong (
     double weight,
     LocalDateTime borntime
 ){
-    public static CreateMong of(Management management) {
+    public static CreateMong of(Mong mong) {
         return CreateMong.builder()
-                .name(management.getName())
+                .name(mong.getName())
                 .mongCode(ManagementErrorCode.SUCCESS.getCode())
-                .weight(management.getWeight())
+                .weight(mong.getWeight())
                 .build();
     }
 

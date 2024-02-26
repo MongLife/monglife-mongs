@@ -1,8 +1,8 @@
-package com.mongs.management.domain.service.dto;
+package com.mongs.management.domain.mong.service.dto;
 
 import com.mongs.management.exception.ManagementErrorCode;
 import com.mongs.core.code.MongActiveCode;
-import com.mongs.management.domain.entity.Management;
+import com.mongs.management.domain.mong.entity.Mong;
 import lombok.*;
 
 
@@ -17,15 +17,15 @@ public record Sleep (
     double sleep,
     int poopCount
 ){
-    public static Sleep of(Management management){
+    public static Sleep of(Mong mong){
         return Sleep.builder()
                 .mongCode(ManagementErrorCode.SUCCESS.getCode())
                 .message(MongActiveCode.SLEEP.getName())
                 .stateCode(MongActiveCode.SLEEP.getCode())
-                .weight(management.getWeight())
-                .health(management.getHealthy())
-                .strength(management.getStrength())
-                .poopCount(management.getPoopCount())
+                .weight(mong.getWeight())
+                .health(mong.getHealthy())
+                .strength(mong.getStrength())
+                .poopCount(mong.getNumberOfPoop())
                 .build();
     }
 }
