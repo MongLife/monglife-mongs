@@ -2,7 +2,7 @@ package com.mongs.management.domain.mong.service.dto;
 
 import com.mongs.management.exception.ManagementErrorCode;
 import com.mongs.core.code.MongActiveCode;
-import com.mongs.management.domain.mong.entity.Management;
+import com.mongs.management.domain.mong.entity.Mong;
 import lombok.*;
 
 /**
@@ -28,16 +28,16 @@ public record EatTheFeed (
     Boolean sleep,
     int poopCount
 ){
-    public EatTheFeed of(Management management){
+    public EatTheFeed of(Mong mong){
         return EatTheFeed.builder()
                 .mongCode(ManagementErrorCode.SUCCESS.getCode())
                 .message(MongActiveCode.MEAL.getName())
                 .stateCode(MongActiveCode.MEAL.getCode())
-                .weight(management.getWeight())
-                .health(management.getHealthy())
-                .strength(management.getStrength())
-                .sleep(management.getSleep())
-                .poopCount(management.getPoopCount())
+                .weight(mong.getWeight())
+                .health(mong.getHealthy())
+                .strength(mong.getStrength())
+                .sleep(mong.getIsSleeping())
+                .poopCount(mong.getNumberOfPoop())
                 .build();
     }
 }
