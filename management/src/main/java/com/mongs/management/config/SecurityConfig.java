@@ -5,8 +5,10 @@ import com.mongs.core.security.exception.ForbiddenHandler;
 import com.mongs.core.security.exception.SecurityExceptionHandler;
 import com.mongs.core.security.exception.UnAuthorizationHandler;
 import com.mongs.core.security.filter.PassportFilter;
+import com.mongs.core.util.HmacProvider;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
@@ -24,6 +26,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @RequiredArgsConstructor
 public class SecurityConfig {
     private final ObjectMapper objectMapper;
+    private final HmacProvider hmacProvider;
 
     @Bean
     public SecurityFilterChain filterChain(
@@ -62,7 +65,7 @@ public class SecurityConfig {
     }
     @Bean
     public PassportFilter passportFilter() {
-        return new PassportFilter(objectMapper);
+        return new PassportFilter(objectMapper, hmacProvider);
     }
     @Bean
     public PasswordEncoder passwordEncoder() {
