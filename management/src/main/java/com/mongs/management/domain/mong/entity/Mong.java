@@ -8,6 +8,11 @@ import com.mongs.management.domain.mong.service.dto.MongStatus;
 import com.mongs.management.domain.mong.service.enums.MongCollapse;
 import jakarta.persistence.*;
 import lombok.*;
+import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 import org.hibernate.annotations.DynamicUpdate;
 
 import java.util.List;
