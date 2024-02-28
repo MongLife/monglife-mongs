@@ -14,7 +14,8 @@ import com.mongs.collection.exception.CollectionErrorCode;
 import com.mongs.collection.exception.InvalidCodeException;
 import com.mongs.collection.security.WithMockPassportDetail;
 import com.mongs.collection.service.CollectionService;
-import com.mongs.core.code.Code;
+import com.mongs.core.code.entity.MapCode;
+import com.mongs.core.code.entity.MongCode;
 import com.mongs.core.error.ErrorCode;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -54,26 +55,36 @@ public class CollectionControllerTest {
     @MockBean
     private CollectionService collectionService;
 
-    private final TestMapCode testMapCode = TestMapCode.MP000;
-    private final TestMongCode testMongCode = TestMongCode.CH000;
+    private final MapCode testMapCode =  new MapCode(TestMapCode.MP000.getCode(), TestMapCode.MP000.getName());
+    private final MongCode testMongCode = new MongCode(TestMongCode.CH000.getCode(), TestMongCode.CH000.getName());
 
     @Nested
     @DisplayName("조회 단위 테스트")
     @WithMockPassportDetail
     class Find {
+
+        private final List<MapCode> mapCodeList =
+                Arrays.stream(TestMapCode.values())
+                        .map(mapCode -> new MapCode(mapCode.getCode(), mapCode.getName()))
+                        .toList();
+        private final List<MongCode> mongCodeList =
+                Arrays.stream(TestMongCode.values())
+                        .map(mongCode -> new MongCode(mongCode.getCode(), mongCode.getName()))
+                        .toList();
+
         @Test
         @DisplayName("맵 컬렉션을 조회하면 맵 컬렉션 리스트를 반환한다.")
         void findMapCollection() throws Exception {
             // given
             Long memberId = 1L;
-            List<Code> enable = List.of(
-                    TestMapCode.MP000,
-                    TestMapCode.MP001,
-                    TestMapCode.MP002
+            List<MapCode> enable = List.of(
+                    new MapCode(TestMapCode.MP000.getCode(), TestMapCode.MP000.getName()),
+                    new MapCode(TestMapCode.MP001.getCode(), TestMapCode.MP001.getName()),
+                    new MapCode(TestMapCode.MP002.getCode(), TestMapCode.MP002.getName())
             );
-            List<Code> disable = Arrays.stream(TestMapCode.values())
-                    .filter(code -> !enable.stream().map(Code::getCode).toList().contains(code.getCode()))
-                    .map(mapCode -> (Code) mapCode)
+            List<String> enableList = enable.stream().map(MapCode::code).toList();
+            List<MapCode> disable = mapCodeList.stream()
+                    .filter(mapCode -> !enableList.contains(mapCode.code()))
                     .toList();
 
             List<FindMapCollectionResDto> findMapCollectionResDtoList =
@@ -93,9 +104,9 @@ public class CollectionControllerTest {
                     .andExpect(content().contentType(MediaType.APPLICATION_JSON));
             // data
             for (int idx = 0; idx < enable.size(); idx++) {
-                Code mapCode = enable.get(idx);
+                MapCode mapCode = enable.get(idx);
                 resultActions
-                        .andExpect(jsonPath("$["+idx+"].code").value(mapCode.getCode()))
+                        .andExpect(jsonPath("$["+idx+"].code").value(mapCode.code()))
                         .andExpect(jsonPath("$["+idx+"].disable").value(false));
             }
             // Parameter
@@ -111,14 +122,14 @@ public class CollectionControllerTest {
         void findMongCollection() throws Exception {
             // given
             Long memberId = 1L;
-            List<Code> enable = List.of(
-                    TestMongCode.CH000,
-                    TestMongCode.CH001,
-                    TestMongCode.CH002
+            List<MongCode> enable = List.of(
+                    new MongCode(TestMongCode.CH000.getCode(), TestMongCode.CH000.getName()),
+                    new MongCode(TestMongCode.CH001.getCode(), TestMongCode.CH001.getName()),
+                    new MongCode(TestMongCode.CH002.getCode(), TestMongCode.CH002.getName())
             );
-            List<Code> disable = Arrays.stream(TestMongCode.values())
-                    .filter(code -> !enable.stream().map(Code::getCode).toList().contains(code.getCode()))
-                    .map(mongCode -> (Code) mongCode)
+            List<String> enableList = enable.stream().map(MongCode::code).toList();
+            List<MongCode> disable = mongCodeList.stream()
+                    .filter(mongCode -> !enableList.contains(mongCode.code()))
                     .toList();
 
             List<FindMongCollectionResDto> findMongCollectionResDtoList =
@@ -138,9 +149,9 @@ public class CollectionControllerTest {
                     .andExpect(content().contentType(MediaType.APPLICATION_JSON));
             // data
             for (int idx = 0; idx < enable.size(); idx++) {
-                Code mongCode = enable.get(idx);
+                MongCode mongCode = enable.get(idx);
                 resultActions
-                        .andExpect(jsonPath("$["+idx+"].code").value(mongCode.getCode()))
+                        .andExpect(jsonPath("$["+idx+"].code").value(mongCode.code()))
                         .andExpect(jsonPath("$["+idx+"].disable").value(false));
             }
             // Parameter
@@ -161,7 +172,7 @@ public class CollectionControllerTest {
         void registerMapCollection() throws Exception {
             // given
             Long memberId = 1L;
-            String mapCode = testMapCode.getCode();
+            String mapCode = testMapCode.code();
             RegisterMapCollectionResDto registerMapCollectionResDto =
                     RegisterMapCollectionResDto.builder()
                             .memberId(memberId)
@@ -252,7 +263,7 @@ public class CollectionControllerTest {
         void registerMongCollection() throws Exception {
             // given
             Long memberId = 1L;
-            String mongCode = testMongCode.getCode();
+            String mongCode = testMongCode.code();
             RegisterMongCollectionResDto registerMongCollectionResDto =
                     RegisterMongCollectionResDto.builder()
                             .memberId(memberId)
@@ -348,7 +359,7 @@ public class CollectionControllerTest {
         void removeMapCollection() throws Exception {
             // given
             Long memberId = 1L;
-            String mapCode = testMapCode.getCode();
+            String mapCode = testMapCode.code();
 
             doNothing().when(collectionService).removeMapCollection(memberId, mapCode);
 
@@ -435,7 +446,7 @@ public class CollectionControllerTest {
         void removeMongCollection() throws Exception {
             // given
             Long memberId = 1L;
-            String mongCode = testMongCode.getCode();
+            String mongCode = testMongCode.code();
 
             doNothing().when(collectionService).removeMongCollection(memberId, mongCode);
 

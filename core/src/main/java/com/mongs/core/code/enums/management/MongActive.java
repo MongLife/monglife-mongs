@@ -1,11 +1,12 @@
-package com.mongs.core.code;
+package com.mongs.core.code.enums.management;
 
+import com.mongs.core.code.enums.Code;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 @Getter
 @AllArgsConstructor
-public enum MongActiveCode implements Code {
+public enum MongActive implements Code {
 
     MEAL("AT000", "식사"),
     SNACK("AT001", "간식"),
@@ -23,7 +24,6 @@ public enum MongActiveCode implements Code {
     CHARGING("AT013", "충전중"),
     DISCHARGING("AT014", "충전 중지");
 
-    private final String groupCode = "AT";
     private final String code;
     private final String name;
 }

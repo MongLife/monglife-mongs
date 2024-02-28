@@ -3,7 +3,7 @@ package com.mongs.management.domain.mong.service;
 import com.mongs.management.domain.mong.entity.Mong;
 import com.mongs.management.domain.mong.repository.MongRepository;
 import com.mongs.management.domain.mong.service.dto.MongStatus;
-import com.mongs.management.domain.mong.service.enums.MongCollapse;
+import com.mongs.core.code.enums.management.MongCollapse;
 import com.mongs.management.domain.mongEvent.MongEventRepository;
 import com.mongs.management.domain.mongEvent.MongEventService;
 import com.mongs.management.domain.mongEvent.dtos.EventOccurrence;
@@ -26,8 +26,8 @@ public class MongScheduler {
     private final MongEventService mongEventService;
     private final MongEventRepository mongEventRepository;
 
-    @Value("${passedTime.value}")
-    private int value;
+//    @Value("${passedTime.value}")
+    private int value = 100;
 
     // 경험치 ++은 출석시, 운동, 쓰다듬 ++
     // 졸업도 경험치 올리면서 체크 --> 스케쥴러 필요 없음
@@ -71,9 +71,9 @@ public class MongScheduler {
                             .orElseThrow(() -> new ManagementException(ManagementErrorCode.NOT_FOUND));
                     MongCollapse collapse = mongEvent.getCollapse();
                     if ("공복".equals(collapse.getName()) && mong.getSatiety() == 0) {
-                        mong.stateToDeath();
+                        mong.shiftToDeath();
                     } else if ("체력0".equals(collapse.getName()) && mong.getHealthy() == 0) {
-                        mong.stateToDeath();
+                        mong.shiftToDeath();
                     }
                 });
     }

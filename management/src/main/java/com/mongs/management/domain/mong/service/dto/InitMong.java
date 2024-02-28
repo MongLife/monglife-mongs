@@ -1,10 +1,5 @@
 package com.mongs.management.domain.mong.service.dto;
 
-import com.mongs.core.code.MongCode;
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-
 import java.time.LocalDateTime;
 
 /**

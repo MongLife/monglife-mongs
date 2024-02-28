@@ -1,4 +1,4 @@
-package com.mongs.collection.code;
+package com.mongs.management.code;
 
 public enum TestMongCode {
 

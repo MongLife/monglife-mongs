@@ -1,10 +1,7 @@
 package com.mongs.collection.repository;
 
-import com.mongs.collection.code.TestMapCode;
 import com.mongs.collection.code.TestMongCode;
-import com.mongs.collection.entity.MapCollection;
 import com.mongs.collection.entity.MongCollection;
-import com.mongs.core.code.GroupCode;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,7 +17,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @DataJpaTest
 @ActiveProfiles("test")
-public class MongCollectionRepositoryTest {
+public class MongCodeCollectionRepositoryTest {
     @Autowired
     private MongCollectionRepository mongCollectionRepository;
     
@@ -29,12 +26,10 @@ public class MongCollectionRepositoryTest {
     void autoMemberId() {
         // given
         Long memberId = 1L;
-        String groupCode = GroupCode.MONG.getGroupCode();
         String code = TestMongCode.CH000.getCode();
 
         MongCollection mongCollection = MongCollection.builder()
                 .memberId(memberId)
-                .groupCode(groupCode)
                 .code(code)
                 .build();
 
@@ -51,12 +46,10 @@ public class MongCollectionRepositoryTest {
     void autoCreatedAt() {
         // given
         Long memberId = 1L;
-        String groupCode = GroupCode.MONG.getGroupCode();
         String code = TestMongCode.CH000.getCode();
 
         MongCollection mongCollection = MongCollection.builder()
                 .memberId(memberId)
-                .groupCode(groupCode)
                 .code(code)
                 .build();
 
@@ -76,12 +69,10 @@ public class MongCollectionRepositoryTest {
     void findByMemberId() {
         // given
         Long memberId = 1L;
-        String groupCode = GroupCode.MONG.getGroupCode();
 
         for (long codeNumber = 0; codeNumber < 10; codeNumber++) {
             mongCollectionRepository.save(MongCollection.builder()
                     .memberId(memberId)
-                    .groupCode(groupCode)
                     .code(String.format("CH%03d", codeNumber))
                     .build());
         }
@@ -96,7 +87,6 @@ public class MongCollectionRepositoryTest {
         mapCollectionList.forEach(mapCollection -> {
             assertThat(mapCollection).isNotNull();
             assertThat(mapCollection.getMemberId()).isEqualTo(memberId);
-            assertThat(mapCollection.getGroupCode()).isEqualTo(groupCode);
             assertThat(mapCollection.getCode()).isEqualTo(String.format("CH%03d", codeNumber.getAndIncrement()));
         });
     }
@@ -106,12 +96,10 @@ public class MongCollectionRepositoryTest {
     void deleteByMemberIdAndMongCode() {
         // given
         Long memberId = 1L;
-        String groupCode = GroupCode.MONG.getGroupCode();
         String code = TestMongCode.CH000.getCode();
 
         MongCollection mongCollection = MongCollection.builder()
                 .memberId(memberId)
-                .groupCode(groupCode)
                 .code(code)
                 .build();
         MongCollection saveMongCollection = mongCollectionRepository.save(mongCollection);

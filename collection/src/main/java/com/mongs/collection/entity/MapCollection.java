@@ -21,7 +21,5 @@ public class MapCollection extends BaseTimeEntity {
     @Column(updatable = false, nullable = false)
     private Long memberId;
     @Column(updatable = false, nullable = false)
-    private String groupCode;
-    @Column(updatable = false, nullable = false)
     private String code;
 }

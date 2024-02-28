@@ -1,13 +1,12 @@
 package com.mongs.management.domain.mong.entity;
 
-import com.mongs.core.code.MongCode;
-import com.mongs.core.code.MongConditionCode;
 import com.mongs.core.time.BaseTimeEntity;
 import com.mongs.management.domain.ateFood.AteFoodHistory;
 import com.mongs.management.domain.mong.service.dto.MongStatus;
-import com.mongs.management.domain.mong.service.enums.MongCollapse;
-import jakarta.persistence.*;
-import lombok.*;
+import com.mongs.core.code.enums.management.MongCollapse;
+import com.mongs.core.code.enums.management.MongCondition;
+import com.mongs.core.code.enums.management.MongGrade;
+import com.mongs.core.code.enums.management.MongShift;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -66,13 +65,16 @@ public class Mong extends BaseTimeEntity {
     private String wakeUpTime;
 
     @Enumerated(EnumType.STRING) // 몽 단계 1, 2, 3을 위해 만들어놓은 필드
-    private MongCode grade;
+    private MongGrade grade;
 
     @Enumerated(EnumType.STRING)
-    private MongConditionCode state;
+    private MongShift shift;
 
     @Enumerated(EnumType.STRING)
-    private MongConditionCode lifeCycle;
+    private MongCondition condition;
+
+    @Enumerated(EnumType.STRING)
+    private MongCondition lifeCycle;
 
     @Builder.Default
     private int paypoint = 0;
@@ -84,7 +86,7 @@ public class Mong extends BaseTimeEntity {
         this.numberOfStroke = stroke + 1;
     }
 
-    public void changeSleepConditon (Boolean isSleeping) {
+    public void changeSleepCondition(Boolean isSleeping) {
         this.isSleeping = isSleeping;
     }
 
@@ -121,8 +123,8 @@ public class Mong extends BaseTimeEntity {
     }
 
 
-    public void stateToDeath() {
-        this.state = MongConditionCode.DIE;
+    public void shiftToDeath() {
+        this.shift = MongShift.DIE;
     }
 
     public void addPoop() {

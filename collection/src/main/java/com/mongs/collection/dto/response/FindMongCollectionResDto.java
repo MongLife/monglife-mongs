@@ -1,6 +1,6 @@
 package com.mongs.collection.dto.response;
 
-import com.mongs.core.code.Code;
+import com.mongs.core.code.entity.MongCode;
 import lombok.Builder;
 
 import java.util.Comparator;
@@ -13,14 +13,14 @@ public record FindMongCollectionResDto(
         String code,
         Boolean disable
 ) {
-    public static FindMongCollectionResDto of(Code mongCode, Boolean isDisable) {
+    public static FindMongCollectionResDto of(MongCode mongCode, Boolean isDisable) {
         return FindMongCollectionResDto.builder()
-                .code(mongCode.getCode())
+                .code(mongCode.code())
                 .disable(isDisable)
                 .build();
     }
 
-    public static List<FindMongCollectionResDto> toList(List<Code> enableList, List<Code> disableList) {
+    public static List<FindMongCollectionResDto> toList(List<MongCode> enableList, List<MongCode> disableList) {
         return Stream.concat(
                 enableList.stream().map(mongCollection ->
                         FindMongCollectionResDto.of(mongCollection, false)),
