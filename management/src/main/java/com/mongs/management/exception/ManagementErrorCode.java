@@ -11,6 +11,7 @@ public enum ManagementErrorCode implements ErrorCode {
 
     SUCCESS(HttpStatus.OK, "200","성공"),
     IMPOSSIBLE(HttpStatus.NOT_ACCEPTABLE, "201","할 수 없음"),
+    FAILED_SAVE_MONG(HttpStatus.NOT_ACCEPTABLE, "400", "몽 생성하지 못했습니다."),
     NULL_POINT(HttpStatus.BAD_REQUEST, "500","빈 값이 있습니다."),
     NOT_FOUND(HttpStatus.BAD_REQUEST, "501", "해당 id를 가진 몽을 찾지 못했습니다."),
     NOT_ACTION(HttpStatus.BAD_REQUEST, "502", "해당 액션을 찾을 수 없습니다."),
