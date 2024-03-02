@@ -1,8 +1,6 @@
 package com.mongs.collection.code;
 
-import com.mongs.core.code.Code;
-
-public enum TestMongCode implements Code {
+public enum TestMongCode {
 
     CH000("CH000", "화산알"),
     CH001("CH001", "석탄알"),
@@ -41,7 +39,6 @@ public enum TestMongCode implements Code {
     CH303("CH303", "쌔까몽"),
     CH444("CH444", "");
 
-    private final String groupCode = "CH";
     private final String code;
     private final String name;
 
@@ -49,16 +46,10 @@ public enum TestMongCode implements Code {
         this.code = code;
         this.name = name;
     }
-    @Override
-    public String getGroupCode() {
-        return this.groupCode;
-    }
-    @Override
     public String getCode() {
         return this.code;
     }
 
-    @Override
     public String getName() {
         return this.name;
     }

@@ -2,7 +2,6 @@ package com.mongs.collection.repository;
 
 import com.mongs.collection.code.TestMapCode;
 import com.mongs.collection.entity.MapCollection;
-import com.mongs.core.code.GroupCode;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,12 +26,10 @@ class MapCollectionRepositoryTest {
     void autoMemberId() {
         // given
         Long memberId = 1L;
-        String groupCode = GroupCode.MAP.getGroupCode();
         String code = TestMapCode.MP000.getCode();
 
         MapCollection mapCollection = MapCollection.builder()
                 .memberId(memberId)
-                .groupCode(groupCode)
                 .code(code)
                 .build();
 
@@ -49,12 +46,10 @@ class MapCollectionRepositoryTest {
     void autoCreatedAt() {
         // given
         Long memberId = 1L;
-        String groupCode = GroupCode.MAP.getGroupCode();
         String code = TestMapCode.MP000.getCode();
 
         MapCollection mapCollection = MapCollection.builder()
                 .memberId(memberId)
-                .groupCode(groupCode)
                 .code(code)
                 .build();
 
@@ -74,12 +69,10 @@ class MapCollectionRepositoryTest {
     void findByMemberId() {
         // given
         Long memberId = 1L;
-        String groupCode = GroupCode.MAP.getGroupCode();
 
         for (long codeNumber = 0; codeNumber < 10; codeNumber++) {
             mapCollectionRepository.save(MapCollection.builder()
                     .memberId(memberId)
-                    .groupCode(groupCode)
                     .code(String.format("MP%03d", codeNumber))
                     .build());
         }
@@ -94,7 +87,6 @@ class MapCollectionRepositoryTest {
         mapCollectionList.forEach(mapCollection -> {
             assertThat(mapCollection).isNotNull();
             assertThat(mapCollection.getMemberId()).isEqualTo(memberId);
-            assertThat(mapCollection.getGroupCode()).isEqualTo(groupCode);
             assertThat(mapCollection.getCode()).isEqualTo(String.format("MP%03d", codeNumber.getAndIncrement()));
         });
     }
@@ -104,12 +96,10 @@ class MapCollectionRepositoryTest {
     void deleteByMemberIdAndMapCode() {
         // given
         Long memberId = 1L;
-        String groupCode = GroupCode.MAP.getGroupCode();
         String code = TestMapCode.MP000.getCode();
 
         MapCollection mapCollection = MapCollection.builder()
                 .memberId(memberId)
-                .groupCode(groupCode)
                 .code(code)
                 .build();
         MapCollection saveMapCollection = mapCollectionRepository.save(mapCollection);

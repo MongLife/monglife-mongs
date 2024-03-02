@@ -13,7 +13,7 @@ public record CreateMong (
     String name,
     String mongCode,
     double weight,
-    LocalDateTime borntime
+    LocalDateTime bornTime
 ){
     public static CreateMong of(Mong mong) {
         return CreateMong.builder()

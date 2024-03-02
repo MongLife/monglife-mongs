@@ -74,7 +74,7 @@ public class MongServiceImpl implements MongService {
     @Override
     public Sleep toCheckMongsLifetime(Long memberId) {
         Mong mong = getMong(memberId);
-        mong.changeSleepConditon(isSleep(mong.getSleepTime(), mong.getWakeUpTime()));
+        mong.changeSleepCondition(isSleep(mong.getSleepTime(), mong.getWakeUpTime()));
         return Sleep.of(mong);
     }
 

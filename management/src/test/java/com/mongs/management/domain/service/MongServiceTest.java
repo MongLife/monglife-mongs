@@ -1,6 +1,6 @@
 package com.mongs.management.domain.service;
 
-import com.mongs.core.code.MongCode;
+import com.mongs.management.code.TestMongCode;
 import com.mongs.management.domain.mong.entity.Mong;
 import com.mongs.management.domain.mong.repository.MongRepository;
 import com.mongs.management.domain.mong.service.MongService;
@@ -12,6 +12,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
@@ -26,6 +27,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @Transactional
 @SpringBootTest
+@ActiveProfiles("test")
 class MongServiceTest {
 
     @MockBean
@@ -41,7 +43,7 @@ class MongServiceTest {
     @BeforeEach
     void setUp() {
         memberId = 1L;
-        initMong = new InitMong(MongCode.CH000.getName(), LocalDateTime.of(2024, 2, 5, 22, 0), LocalDateTime.of(2024, 2, 26, 8, 0));
+        initMong = new InitMong(TestMongCode.CH000.getName(), LocalDateTime.of(2024, 2, 5, 22, 0), LocalDateTime.of(2024, 2, 26, 8, 0));
 
         String sleepTimeStart = timeConverter(initMong.sleepStart());
         String sleepTimeEnd = timeConverter(initMong.sleepEnd());
@@ -66,7 +68,7 @@ class MongServiceTest {
 
         assertNotNull(mong);
         assertEquals(mong.getMemberId(),1L);
-        assertEquals(mong.getName(), "MongName");
+        assertEquals(mong.getName(), initMong.name());
         assertEquals(mong.getSleepTime(), "22:00");
         assertEquals(mong.getWakeUpTime(), "08:00");
 
@@ -110,7 +112,7 @@ class MongServiceTest {
     void isMongSleep() {
         mongService.toCheckMongsLifetime(1L);
 
-        Boolean sleep = isSleep(mong.getSleepTime(), mong.getWakeUpTime());
+        boolean sleep = isSleep(mong.getSleepTime(), mong.getWakeUpTime());
         assertEquals(false, sleep);
 
         LocalTime startTime = LocalTime.parse(mong.getSleepTime(), DateTimeFormatter.ofPattern("HH:mm"));

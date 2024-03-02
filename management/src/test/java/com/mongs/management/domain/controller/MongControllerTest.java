@@ -1,7 +1,7 @@
 package com.mongs.management.domain.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.mongs.core.code.MongCode;
+import com.mongs.management.code.TestMongCode;
 import com.mongs.management.domain.mong.controller.MongController;
 import com.mongs.management.domain.mong.entity.Mong;
 import com.mongs.management.domain.mong.repository.MongRepository;
@@ -69,7 +69,7 @@ public class MongControllerTest {
 
         mong = Mong.builder()
                 .memberId(1L)
-                .name(MongCode.CH000.getName())
+                .name(TestMongCode.CH000.getName())
                 .sleepTime(mongSleepTime)
                 .wakeUpTime(mongAwakeTime)
                 .weight(new Random().nextDouble() * 100)

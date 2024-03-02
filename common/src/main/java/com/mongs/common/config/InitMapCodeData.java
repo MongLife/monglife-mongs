@@ -1,11 +1,11 @@
-package com.mongs.core.code;
+package com.mongs.common.config;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 @Getter
 @AllArgsConstructor
-public enum MapCode implements Code {
+public enum InitMapCodeData {
 
     MP000("MP000", "기본"),
     MP001("MP001", "스타벅스"),
@@ -52,7 +52,6 @@ public enum MapCode implements Code {
     MP042("MP042", "아난티코브"),
     MP043("MP043", "노브랜드");
 
-    private final String groupCode = "MP";
     private final String code;
     private final String name;
 }

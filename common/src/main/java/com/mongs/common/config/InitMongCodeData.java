@@ -1,11 +1,11 @@
-package com.mongs.core.code;
+package com.mongs.common.config;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 @Getter
 @AllArgsConstructor
-public enum MongCode implements Code {
+public enum InitMongCodeData {
 
     CH000("CH000", "화산알"),
     CH001("CH001", "석탄알"),
@@ -44,7 +44,6 @@ public enum MongCode implements Code {
     CH303("CH303", "쌔까몽"),
     CH444("CH444", "");
 
-    private final String groupCode = "CH";
     private final String code;
     private final String name;
 }

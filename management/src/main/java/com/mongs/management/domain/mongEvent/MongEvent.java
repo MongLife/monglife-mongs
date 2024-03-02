@@ -1,7 +1,7 @@
 package com.mongs.management.domain.mongEvent;
 
 import com.mongs.core.time.BaseTimeEntity;
-import com.mongs.management.domain.mong.service.enums.MongCollapse;
+import com.mongs.core.code.enums.management.MongCollapse;
 import jakarta.persistence.*;
 import lombok.*;
 

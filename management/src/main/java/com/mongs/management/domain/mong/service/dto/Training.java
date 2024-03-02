@@ -1,7 +1,7 @@
 package com.mongs.management.domain.mong.service.dto;
 
 import com.mongs.management.exception.ManagementErrorCode;
-import com.mongs.core.code.MongActiveCode;
+//import com.mongs.core.code.MongActiveCode;
 import com.mongs.management.domain.mong.entity.Mong;
 import lombok.*;
 
@@ -30,8 +30,8 @@ public record Training (
     public static Training of(Mong mong){
         return Training.builder()
                 .mongCode(ManagementErrorCode.SUCCESS.getCode())
-                .message(MongActiveCode.TRAINING.getName())
-                .stateCode(MongActiveCode.TRAINING.getCode())
+//                .message(MongActiveCode.TRAINING.getName())
+//                .stateCode(MongActiveCode.TRAINING.getCode())
                 .weight(mong.getWeight())
                 .health(mong.getHealthy())
                 .strength(mong.getStrength())

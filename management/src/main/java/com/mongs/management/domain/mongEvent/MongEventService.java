@@ -1,6 +1,6 @@
 package com.mongs.management.domain.mongEvent;
 
-import com.mongs.management.domain.mong.service.enums.MongCollapse;
+import com.mongs.core.code.enums.management.MongCollapse;
 import com.mongs.management.domain.mongEvent.dtos.EventOccurrence;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
