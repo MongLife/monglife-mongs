@@ -1,12 +1,12 @@
 package com.mongs.management.domain.mong.service.enums;
 
-import com.mongs.core.code.Code;
+import com.mongs.core.code.enums.Code;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 @Getter
 @AllArgsConstructor
-public enum MongGrade implements Code{
+public enum MongGrade implements Code {
 
     ZERO("GD000", "알"),
     FIRST("GD001", "1단계"),

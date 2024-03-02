@@ -1,12 +1,12 @@
 package com.mongs.management.domain.mong.service.enums;
 
-import com.mongs.core.code.Code;
+import com.mongs.core.code.enums.Code;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 @Getter
 @AllArgsConstructor
-public enum MongCollapse implements Code{
+public enum MongCollapse implements Code {
 
     STARVING("EV000", "공복"),
     NO_STAMINA("EV001", "체력0"),
