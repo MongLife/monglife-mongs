@@ -1,8 +1,6 @@
 package com.mongs.collection.code;
 
-import com.mongs.core.code.Code;
-
-public enum TestMapCode implements Code {
+public enum TestMapCode {
 
     MP000("MP000", "기본"),
     MP001("MP001", "스타벅스"),
@@ -49,7 +47,6 @@ public enum TestMapCode implements Code {
     MP042("MP042", "아난티코브"),
     MP043("MP043", "노브랜드");
 
-    private final String groupCode = "MP";
     private final String code;
     private final String name;
 
@@ -57,15 +54,9 @@ public enum TestMapCode implements Code {
         this.code = code;
         this.name = name;
     }
-    @Override
-    public String getGroupCode() {
-        return this.groupCode;
-    }
-    @Override
     public String getCode() {
         return this.code;
     }
-    @Override
     public String getName() {
         return this.name;
     }

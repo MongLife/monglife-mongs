@@ -8,10 +8,12 @@ import com.mongs.collection.entity.MapCollection;
 import com.mongs.collection.entity.MongCollection;
 import com.mongs.collection.exception.CollectionErrorCode;
 import com.mongs.collection.exception.InvalidCodeException;
+import com.mongs.collection.repository.MapCodeRepository;
 import com.mongs.collection.repository.MapCollectionRepository;
+import com.mongs.collection.repository.MongCodeRepository;
 import com.mongs.collection.repository.MongCollectionRepository;
-import com.mongs.core.code.CodeRepository;
-import com.mongs.core.code.GroupCode;
+import com.mongs.core.code.entity.MapCode;
+import com.mongs.core.code.entity.MongCode;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -21,6 +23,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.test.context.ActiveProfiles;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
@@ -34,14 +37,16 @@ class CollectionServiceTest {
     @InjectMocks
     private CollectionService collectionService;
     @Mock
-    private CodeRepository codeRepository;
+    private MongCodeRepository mongCodeRepository;
+    @Mock
+    private MapCodeRepository mapCodeRepository;
     @Mock
     private MapCollectionRepository mapCollectionRepository;
     @Mock
     private MongCollectionRepository mongCollectionRepository;
 
-    private final TestMapCode testMapCode = TestMapCode.MP000;
-    private final TestMongCode testMongCode = TestMongCode.CH000;
+    private final MapCode testMapCode =  new MapCode(TestMapCode.MP000.getCode(), TestMapCode.MP000.getName());
+    private final MongCode testMongCode = new MongCode(TestMongCode.CH000.getCode(), TestMongCode.CH000.getName());
 
     @Nested
     @DisplayName("조회 단위 테스트")
@@ -51,7 +56,6 @@ class CollectionServiceTest {
         void findMapCollection() {
             // given
             Long memberId = 1L;
-            String groupCode = GroupCode.MAP.getGroupCode();
             List<TestMapCode> mapCollectionCodeList = List.of(
                     TestMapCode.MP000,
                     TestMapCode.MP001,
@@ -61,13 +65,17 @@ class CollectionServiceTest {
                     .map(mapCode -> MapCollection.builder()
                             .id(1L)
                             .memberId(memberId)
-                            .groupCode(groupCode)
                             .code(mapCode.getCode())
                             .build())
                     .toList();
 
-            when(codeRepository.findByGroupCode(groupCode))
-                    .thenReturn(List.of(TestMapCode.values()));
+            when(mapCodeRepository.findAll())
+                    .thenReturn(Arrays.stream(TestMapCode.values())
+                            .map(code -> MapCode.builder()
+                                    .code(code.getCode())
+                                    .name(code.getName())
+                                    .build())
+                            .toList());
             when(mapCollectionRepository.findByMemberId(memberId))
                     .thenReturn(mapCollectionList);
 
@@ -93,7 +101,6 @@ class CollectionServiceTest {
         void findMongCollection() {
             // given
             Long memberId = 1L;
-            String groupCode = GroupCode.MONG.getGroupCode();
             List<TestMongCode> mongCollectionCodeList = List.of(
                     TestMongCode.CH000,
                     TestMongCode.CH001,
@@ -103,13 +110,17 @@ class CollectionServiceTest {
                     .map(mongCode -> MongCollection.builder()
                             .id(1L)
                             .memberId(memberId)
-                            .groupCode(groupCode)
                             .code(mongCode.getCode())
                             .build())
                     .toList();
 
-            when(codeRepository.findByGroupCode(groupCode))
-                    .thenReturn(List.of(TestMongCode.values()));
+            when(mongCodeRepository.findAll())
+                    .thenReturn(Arrays.stream(TestMongCode.values())
+                            .map(code -> MongCode.builder()
+                                    .code(code.getCode())
+                                    .name(code.getName())
+                                    .build())
+                            .toList());
             when(mongCollectionRepository.findByMemberId(memberId))
                     .thenReturn(mongCollectionList);
 
@@ -139,16 +150,14 @@ class CollectionServiceTest {
         void registerMapCollection() {
             // given
             Long memberId = 1L;
-            String groupCode = GroupCode.MAP.getGroupCode();
-            String mapCode = testMapCode.getCode();
+            String mapCode = testMapCode.code();
             MapCollection mapCollection = MapCollection.builder()
                     .id(1L)
                     .memberId(memberId)
-                    .groupCode(groupCode)
                     .code(mapCode)
                     .build();
 
-            when(codeRepository.findByGroupCodeAndCode(GroupCode.MAP.getGroupCode(), mapCode))
+            when(mapCodeRepository.findById(mapCode))
                     .thenReturn(Optional.of(testMapCode));
             when(mapCollectionRepository.save(any()))
                     .thenReturn(mapCollection);
@@ -169,7 +178,7 @@ class CollectionServiceTest {
             Long memberId = 1L;
             String mapCode = "INVALID_CODE";
 
-            when(codeRepository.findByGroupCodeAndCode(GroupCode.MAP.getGroupCode(), mapCode))
+            when(mapCodeRepository.findById(mapCode))
                     .thenReturn(Optional.empty());
 
             // when
@@ -190,16 +199,14 @@ class CollectionServiceTest {
         void registerMongCollection() {
             // given
             Long memberId = 1L;
-            String groupCode = GroupCode.MONG.getGroupCode();
-            String mongCode = testMongCode.getCode();
+            String mongCode = testMongCode.code();
             MongCollection mongCollection = MongCollection.builder()
                     .id(1L)
                     .memberId(memberId)
-                    .groupCode(groupCode)
                     .code(mongCode)
                     .build();
 
-            when(codeRepository.findByGroupCodeAndCode(GroupCode.MONG.getGroupCode(), mongCode))
+            when(mongCodeRepository.findById(mongCode))
                     .thenReturn(Optional.of(testMongCode));
             when(mongCollectionRepository.save(any()))
                     .thenReturn(mongCollection);
@@ -220,7 +227,7 @@ class CollectionServiceTest {
             Long memberId = 1L;
             String mongCode = "INVALID_CODE";
 
-            when(codeRepository.findByGroupCodeAndCode(GroupCode.MONG.getGroupCode(), mongCode))
+            when(mongCodeRepository.findById(mongCode))
                     .thenReturn(Optional.empty());
 
             // when
@@ -245,9 +252,9 @@ class CollectionServiceTest {
         void removeMapCollection() {
             // given
             Long memberId = 1L;
-            String mapCode = testMapCode.getCode();
+            String mapCode = testMapCode.code();
 
-            when(codeRepository.findByGroupCodeAndCode(GroupCode.MAP.getGroupCode(), mapCode))
+            when(mapCodeRepository.findById(mapCode))
                     .thenReturn(Optional.of(testMapCode));
             doNothing().when(mapCollectionRepository).deleteByMemberIdAndCode(memberId, mapCode);
 
@@ -265,7 +272,7 @@ class CollectionServiceTest {
             Long memberId = 1L;
             String mapCode = "INVALID_CODE";
 
-            when(codeRepository.findByGroupCodeAndCode(GroupCode.MAP.getGroupCode(), mapCode))
+            when(mapCodeRepository.findById(mapCode))
                     .thenReturn(Optional.empty());
 
             // when
@@ -286,9 +293,9 @@ class CollectionServiceTest {
         void removeMongCollection() {
             // given
             Long memberId = 1L;
-            String mongCode = testMongCode.getCode();
+            String mongCode = testMongCode.code();
 
-            when(codeRepository.findByGroupCodeAndCode(GroupCode.MONG.getGroupCode(), mongCode))
+            when(mongCodeRepository.findById(mongCode))
                     .thenReturn(Optional.of(testMongCode));
             doNothing().when(mongCollectionRepository).deleteByMemberIdAndCode(memberId, mongCode);
 
@@ -306,7 +313,7 @@ class CollectionServiceTest {
             Long memberId = 1L;
             String mongCode = "INVALID_CODE";
 
-            when(codeRepository.findByGroupCodeAndCode(GroupCode.MONG.getGroupCode(), mongCode))
+            when(mongCodeRepository.findById(mongCode))
                     .thenReturn(Optional.empty());
 
             // when

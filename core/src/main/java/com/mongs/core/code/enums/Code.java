@@ -1,4 +1,4 @@
-package com.mongs.core.code;
+package com.mongs.core.code.enums;
 
 public interface Code {
     String getGroupCode();
