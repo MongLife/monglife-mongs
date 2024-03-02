@@ -1,7 +1,6 @@
 package com.mongs.management.domain.mong.service.dto;
 
 
-import com.mongs.core.code.MongCode;
 import com.mongs.management.exception.ManagementErrorCode;
 import com.mongs.management.domain.mong.entity.Mong;
 import lombok.*;
