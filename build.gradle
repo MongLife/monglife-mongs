@@ -36,7 +36,7 @@ subprojects {
     }
 
     tasks.named('jar') {
-        enabled = true
+        enabled = false
     }
 
     tasks.named('test') {

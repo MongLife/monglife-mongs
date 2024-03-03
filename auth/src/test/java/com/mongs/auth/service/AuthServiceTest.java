@@ -9,8 +9,8 @@ import com.mongs.auth.exception.NotFoundException;
 import com.mongs.auth.exception.PassportException;
 import com.mongs.auth.repository.MemberRepository;
 import com.mongs.auth.repository.TokenRepository;
-import com.mongs.auth.util.HmacProvider;
-import com.mongs.auth.util.TokenProvider;
+import com.mongs.core.util.HmacProvider;
+import com.mongs.core.util.TokenProvider;
 import com.mongs.core.passport.PassportVO;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -148,7 +148,7 @@ public class AuthServiceTest {
 
     @Test
     @DisplayName("accessToken 으로 passport 정보를 반환한다.")
-    void passport() throws Exception {
+    void passport() {
         // given
         String passportIntegrity = "test-passportIntegrity";
         String accessToken = "test-accessToken";
@@ -159,7 +159,7 @@ public class AuthServiceTest {
         when(tokenProvider.isTokenExpired(accessToken))
                 .thenReturn(false);
         when(tokenProvider.getMemberId(accessToken))
-                .thenReturn(memberId);
+                .thenReturn(Optional.of(memberId));
         when(memberRepository.findById(memberId))
                 .thenReturn(Optional.of(Member.builder()
                         .id(memberId)
@@ -167,7 +167,7 @@ public class AuthServiceTest {
                         .name(name)
                         .build()));
         when(hmacProvider.generateHmac(any()))
-                .thenReturn(passportIntegrity);
+                .thenReturn(Optional.of(passportIntegrity));
 
         // when
         PassportVO passportVO = authService.passport(accessToken);
@@ -203,7 +203,7 @@ public class AuthServiceTest {
         when(tokenProvider.isTokenExpired(accessToken))
                 .thenReturn(false);
         when(tokenProvider.getMemberId(accessToken))
-                .thenReturn(memberId);
+                .thenReturn(Optional.of(memberId));
         when(memberRepository.findById(memberId))
                 .thenReturn(Optional.empty());
 
@@ -216,7 +216,7 @@ public class AuthServiceTest {
 
     @Test
     @DisplayName("passportIntegrity 을 생성에 실패하면 PassportException 을 발생시킨다.")
-    void passportRegisterFail() throws Exception {
+    void passportRegisterFail() {
         // given
         String accessToken = "test-accessToken";
         String email = "test@test.com";
@@ -226,7 +226,7 @@ public class AuthServiceTest {
         when(tokenProvider.isTokenExpired(accessToken))
                 .thenReturn(false);
         when(tokenProvider.getMemberId(accessToken))
-                .thenReturn(memberId);
+                .thenReturn(Optional.of(memberId));
         when(memberRepository.findById(memberId))
                 .thenReturn(Optional.of(Member.builder()
                         .id(memberId)
@@ -234,7 +234,7 @@ public class AuthServiceTest {
                         .name(name)
                         .build()));
         when(hmacProvider.generateHmac(any()))
-                .thenThrow(Exception.class);
+                .thenReturn(Optional.empty());
 
         // when
         Throwable expected = catchThrowable(() -> authService.passport(accessToken));

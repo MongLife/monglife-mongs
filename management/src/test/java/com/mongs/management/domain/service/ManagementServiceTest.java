@@ -2,12 +2,8 @@ package com.mongs.management.domain.service;
 
 import com.mongs.management.domain.entity.Management;
 import com.mongs.management.domain.repository.ManagementRepository;
-import com.mongs.management.domain.service.dto.CreateMong;
 import com.mongs.management.domain.service.dto.InitMong;
-import com.mongs.management.domain.service.dto.Stroke;
-import com.mongs.management.exception.ManagementErrorCode;
 import com.mongs.management.exception.ManagementException;
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
