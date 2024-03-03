@@ -30,11 +30,11 @@ dependencies {
 
 tasks.register('copyPrivate', Copy) {
 	copy {
-		from '../spring_backend_sub/collection/application-local.yml'
+		from '../spring_backend_sub/member/application-local.yml'
 		into 'src/main/resources'
 	}
 	copy {
-		from '../spring_backend_sub/collection/application-test.yml'
+		from '../spring_backend_sub/member/application-test.yml'
 		into 'src/main/resources'
 	}
 }
