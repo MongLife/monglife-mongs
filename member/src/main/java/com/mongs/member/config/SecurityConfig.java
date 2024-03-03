@@ -1,4 +1,4 @@
-package com.mongs.collection.config;
+package com.mongs.member.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mongs.core.security.exception.ForbiddenHandler;
@@ -12,6 +12,7 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -49,6 +50,11 @@ public class SecurityConfig {
             .addFilterBefore(passportFilter, UsernamePasswordAuthenticationFilter.class)
             .addFilterBefore(securityExceptionHandler, PassportFilter.class)
             .authorizeHttpRequests(authorize -> authorize
+                    .requestMatchers("/member/admin/**").hasAnyAuthority("ADMIN")
+                    .requestMatchers(HttpMethod.GET,"/member/**").hasAnyAuthority("NORMAL")
+                    .requestMatchers(HttpMethod.POST, "/member/**").permitAll()
+                    .requestMatchers(HttpMethod.PUT,"/member/**").hasAnyAuthority("NORMAL")
+                    .requestMatchers(HttpMethod.DELETE,"/member/**").hasAnyAuthority("NORMAL")
                     .requestMatchers("/collection/admin/**").hasAnyAuthority("ADMIN")
                     .requestMatchers("/collection/**").hasAnyAuthority("NORMAL")
                     .anyRequest().authenticated()
