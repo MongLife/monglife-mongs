@@ -19,14 +19,14 @@ public class MemberService {
     private final MemberRepository memberRepository;
 
     public FindMemberResDto findMember(Long accountId) {
-        Member member = memberRepository.findById(accountId)
+        Member member = memberRepository.findByAccountIdAndIsDeletedIsFalse(accountId)
                 .orElseThrow(() -> new NotFoundMemberException(MemberErrorCode.NOT_FOUND_MEMBER));
 
         return FindMemberResDto.of(member);
     }
 
     public RegisterMemberResDto registerMember(Long accountId) {
-        Member savedMember = memberRepository.findById(accountId)
+        Member savedMember = memberRepository.findByAccountIdAndIsDeletedIsFalse(accountId)
                 .orElseGet(() -> memberRepository.save(Member.builder()
                         .accountId(accountId)
                         .build()));
@@ -43,7 +43,7 @@ public class MemberService {
             case ADMIN -> slotCount = 10;
         }
 
-        Member member = memberRepository.findById(accountId)
+        Member member = memberRepository.findByAccountIdAndIsDeletedIsFalse(accountId)
                 .orElseThrow(() -> new NotFoundMemberException(MemberErrorCode.NOT_FOUND_MEMBER));
 
         Member modifiedMember = memberRepository.save(member.toBuilder()
@@ -54,7 +54,7 @@ public class MemberService {
     }
 
     public RemoveMemberResDto removeMember(Long accountId) {
-        Member member = memberRepository.findById(accountId)
+        Member member = memberRepository.findByAccountIdAndIsDeletedIsFalse(accountId)
                 .orElseThrow(() -> new NotFoundMemberException(MemberErrorCode.NOT_FOUND_MEMBER));
 
         Member deletedMember = memberRepository.save(member.toBuilder()
