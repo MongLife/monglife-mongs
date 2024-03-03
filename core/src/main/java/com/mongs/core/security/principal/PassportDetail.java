@@ -21,16 +21,15 @@ public class PassportDetail extends User {
 
     public PassportDetail(PassportVO passportVO) {
         super(
-                passportVO.data().member().email(),
+                passportVO.data().account().email(),
                 UUID.randomUUID().toString(),
-                Arrays.stream(passportVO.data().member().role().split(","))
+                Arrays.stream(passportVO.data().account().role().split(","))
                         .map(SimpleGrantedAuthority::new)
                         .collect(Collectors.toList())
         );
-        log.info(passportVO.passportIntegrity().toString());
 
-        this.id = passportVO.data().member().id();
-        this.email = passportVO.data().member().email();
-        this.name = passportVO.data().member().name();
+        this.id = passportVO.data().account().id();
+        this.email = passportVO.data().account().email();
+        this.name = passportVO.data().account().name();
     }
 }

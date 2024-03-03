@@ -1,12 +1,21 @@
 package com.mongs.auth.repository;
 
-import com.mongs.auth.entity.Member;
-import org.springframework.data.jpa.repository.JpaRepository;
+import com.mongs.auth.client.MemberClient;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Repository;
 
-import java.util.Optional;
-
 @Repository
-public interface MemberRepository extends JpaRepository<Member, Long> {
-    Optional<Member> findByEmail(String email);
+@RequiredArgsConstructor
+public class MemberRepository {
+    private final MemberClient memberClient;
+
+    public void registerMember(Long accountId) throws RuntimeException {
+        ResponseEntity<Object> response = memberClient.registerMember(accountId);
+
+        if (!response.getStatusCode().is2xxSuccessful()) {
+            // TODO("예외처리 부분 수정")
+            throw new RuntimeException();
+        }
+    }
 }

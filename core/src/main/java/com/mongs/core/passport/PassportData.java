@@ -4,6 +4,6 @@ import lombok.Builder;
 
 @Builder(toBuilder = true)
 public record PassportData(
-        PassportMember member
+        PassportAccount account
 ) {
 }

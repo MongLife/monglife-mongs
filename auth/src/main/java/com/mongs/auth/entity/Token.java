@@ -18,7 +18,7 @@ public class Token {
     @Indexed
     private String deviceId;
     @Indexed
-    private Long memberId;
+    private Long accountId;
     private LocalDateTime createdAt;
     @TimeToLive
     private Long expiration;

@@ -1,7 +1,7 @@
 package com.mongs.management.domain.security;
 
 import com.mongs.core.passport.PassportData;
-import com.mongs.core.passport.PassportMember;
+import com.mongs.core.passport.PassportAccount;
 import com.mongs.core.passport.PassportVO;
 import com.mongs.core.security.principal.PassportDetail;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -19,7 +19,7 @@ public class WithMockCustomUserSecurityContextFactory implements WithSecurityCon
 
         PassportVO passportVO = PassportVO.builder()
                 .data(PassportData.builder()
-                        .member(PassportMember.builder()
+                        .account(PassportAccount.builder()
                                 .id(1L)
                                 .email("test@test.com")
                                 .name("testName")
