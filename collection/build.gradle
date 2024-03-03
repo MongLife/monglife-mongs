@@ -37,8 +37,4 @@ tasks.register('copyPrivate', Copy) {
 		from '../spring_backend_sub/collection/application-test.yml'
 		into 'src/main/resources'
 	}
-	copy {
-		from '../spring_backend_sub/collection/data.sql'
-		into 'src/main/resources'
-	}
 }
