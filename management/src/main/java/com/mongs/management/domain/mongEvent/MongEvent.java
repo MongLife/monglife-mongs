@@ -25,4 +25,7 @@ public class MongEvent extends BaseTimeEntity {
     @Builder.Default
     private boolean isEnough = false;
 
+    public void setEnough (boolean isEnough) {
+        this.isEnough = isEnough;
+    }
 }
