@@ -13,6 +13,9 @@ import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.stereotype.Component;
 import reactor.core.publisher.Mono;
 
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
+
 @Slf4j
 @Component
 public class GeneratePassportFilter extends AbstractGatewayFilterFactory<FilterConfig> {
@@ -43,7 +46,7 @@ public class GeneratePassportFilter extends AbstractGatewayFilterFactory<FilterC
                         String passportJson = httpUtils.getJsonString(passportVO)
                                 .orElseThrow(() -> new PassportException(GatewayErrorCode.PASSPORT_GENERATE_FAIL));
 
-                        request.mutate().header("passport", passportJson).build();
+                        request.mutate().header("passport", URLEncoder.encode(passportJson, StandardCharsets.UTF_8)).build();
 
                         if (config.preLogger) {
                             log.info("[PassportFilter] Passport: " + passportJson);
