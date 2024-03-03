@@ -3,6 +3,7 @@ package com.mongs.management.domain.mong.service;
 import com.mongs.management.domain.mong.entity.Mong;
 import com.mongs.management.domain.mong.repository.MongRepository;
 import com.mongs.management.domain.mong.service.dto.*;
+import com.mongs.management.domain.mong.service.enums.MongEvolutionEXP;
 import com.mongs.management.exception.ManagementErrorCode;
 import com.mongs.management.exception.ManagementException;
 import lombok.RequiredArgsConstructor;
@@ -74,11 +75,10 @@ public class MongServiceImpl implements MongService {
     @Override
     public Sleep toCheckMongsLifetime(Long memberId) {
         Mong mong = getMong(memberId);
-        mong.changeSleepCondition(isSleep(mong.getSleepTime(), mong.getWakeUpTime()));
+        mong.changeSleepCondition(mong.getIsSleeping());
         return Sleep.of(mong);
     }
 
-    // Poop Clean -> 0으로? or 1로?
     @Override
     public Poop toCleanMongsPoop(Long memberId) {
         Mong mong = getMong(memberId);
@@ -94,19 +94,39 @@ public class MongServiceImpl implements MongService {
     @Override
     public Training mongTraining(TrainingCount trainingCount, Long memberId) {
         Mong mong = getMong(memberId);
-        mong.setNumberOfTraining(trainingCount.getTrainingCount());
-        return Training.of(mong);
+        if(mong.getPaypoint() >= 50) {
+            mong.setNumberOfTraining(trainingCount.getTrainingCount());
+            return Training.of(mong);
+        }
+        throw new ManagementException(ManagementErrorCode.NOT_ENOUGH_PAYPOINT);
     }
 
     @Override
     public Evolution mongEvolution(Long memberId) {
-
-        return null;
+        Mong mong = getMong(memberId);
+        int exp = mong.getExp();
+        MongEvolutionEXP[] values = MongEvolutionEXP.values();
+        for (int i = values.length - 1; i >= 0; i--) {
+            if (exp >= Integer.parseInt(values[i].getExp())) {
+                mong.setGrade(values[i].getName());
+                break;
+            }
+        }
+        return Evolution.builder()
+                .mongCode(mong.getGrade().getCode())
+                .stateCode(mong.getCondition().getCode())
+                .build();
     }
 
     @Override
     public Graduation mongsGraduate(Long memberId) {
-        return null;
+        Mong mong = getMong(memberId);
+        if(!mong.getGrade().getName().equals(MongEvolutionEXP.FOURTH_GRADE.getName())) {
+            throw new ManagementException(ManagementErrorCode.NOT_ENOUGH_EXP);
+        }
+        return Graduation.builder()
+                .mongCode(mong.getGrade().getCode())
+                .build();
     }
 
     @Override
