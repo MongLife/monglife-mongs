@@ -26,4 +26,9 @@ public class AuthControllerAdvice {
     public ResponseEntity<Object> passportExceptionHandler(PassportException e) {
         return ResponseEntity.status(e.errorCode.getHttpStatus()).body(ErrorResDto.of(e.errorCode));
     }
+    @ExceptionHandler(RuntimeException.class)
+    public ResponseEntity<Object> runtimeExceptionHandler() {
+        ErrorCode errorCode = AuthErrorCode.INTERNAL_SERVER_ERROR;
+        return ResponseEntity.status(errorCode.getHttpStatus()).body(ErrorResDto.of(errorCode));
+    }
 }
