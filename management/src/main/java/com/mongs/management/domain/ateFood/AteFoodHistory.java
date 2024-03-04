@@ -1,6 +1,6 @@
 package com.mongs.management.domain.ateFood;
 
-import com.mongs.core.time.BaseTimeEntity;
+import com.mongs.management.config.BaseTimeEntity;
 import com.mongs.management.domain.mong.entity.Mong;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;

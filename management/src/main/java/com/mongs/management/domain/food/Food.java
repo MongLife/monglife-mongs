@@ -1,6 +1,6 @@
 package com.mongs.management.domain.food;
 
-import com.mongs.core.time.BaseTimeEntity;
+import com.mongs.management.config.BaseTimeEntity;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -22,6 +22,6 @@ public class Food extends BaseTimeEntity {
     private String detailCode;
     private int fullness;
     @Column(unique = true)
-    private String foodName;
-    private int point;
+    private String name;
+    private int price;
 }

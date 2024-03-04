@@ -1,6 +1,6 @@
 package com.mongs.management.domain.mongEvent;
 
-import com.mongs.core.time.BaseTimeEntity;
+import com.mongs.management.config.BaseTimeEntity;
 import com.mongs.core.code.enums.management.MongCollapse;
 import jakarta.persistence.*;
 import lombok.*;
@@ -25,4 +25,7 @@ public class MongEvent extends BaseTimeEntity {
     @Builder.Default
     private boolean isEnough = false;
 
+    public void setEnough (boolean isEnough) {
+        this.isEnough = isEnough;
+    }
 }
