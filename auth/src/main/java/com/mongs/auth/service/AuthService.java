@@ -92,6 +92,8 @@ public class AuthService {
 
         Long accountId = tokenProvider.getMemberId(accessToken)
                 .orElseThrow(() -> new AuthorizationException(AuthErrorCode.ACCESS_TOKEN_EXPIRED));
+        String deviceId = tokenProvider.getDeviceId(accessToken)
+                .orElseThrow(() -> new AuthorizationException(AuthErrorCode.ACCESS_TOKEN_EXPIRED));
 
         /* AccessToken 의 accountId 로 account 조회 */
         Account account = accountRepository.findById(accountId)
@@ -101,6 +103,7 @@ public class AuthService {
                 .data(PassportData.builder()
                         .account(PassportAccount.builder()
                                 .id(accountId)
+                                .deviceId(deviceId)
                                 .email(account.getEmail())
                                 .name(account.getName())
                                 .role("NORMAL")

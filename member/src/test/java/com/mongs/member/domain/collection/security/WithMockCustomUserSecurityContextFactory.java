@@ -21,6 +21,7 @@ public class WithMockCustomUserSecurityContextFactory implements WithSecurityCon
                 .data(PassportData.builder()
                         .account(PassportAccount.builder()
                                 .id(1L)
+                                .deviceId("testDeviceId")
                                 .email("test@test.com")
                                 .name("testName")
                                 .role("NORMAL")
