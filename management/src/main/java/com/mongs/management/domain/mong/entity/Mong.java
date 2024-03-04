@@ -2,7 +2,6 @@ package com.mongs.management.domain.mong.entity;
 
 import com.mongs.management.config.BaseTimeEntity;
 import com.mongs.management.domain.ateFood.AteFoodHistory;
-import com.mongs.management.domain.mong.service.dto.Evolution;
 import com.mongs.management.domain.mong.service.dto.MongStatus;
 import com.mongs.core.code.enums.management.MongCollapse;
 import com.mongs.core.code.enums.management.MongCondition;
@@ -65,17 +64,23 @@ public class Mong extends BaseTimeEntity {
 
     private String wakeUpTime;
 
+    @Builder.Default
     @Enumerated(EnumType.STRING) // 몽 단계 1, 2, 3을 위해 만들어놓은 필드
-    private MongGrade grade;
+    private MongGrade grade = MongGrade.ZERO;
 
+    @Builder.Default
     @Enumerated(EnumType.STRING)
-    private MongShift shift;
+    private MongShift shift = MongShift.EMPTY;
 
+    // condition mysql 예약어
+    @Builder.Default
     @Enumerated(EnumType.STRING)
-    private MongCondition condition;
+    private MongCondition mongCondition = MongCondition.NORMAL;
 
+    // 회의 결과로 나눈다고 했기 때문에, 우선적으로 작성, -> 추후 리팩토링시 변경
+    @Builder.Default
     @Enumerated(EnumType.STRING)
-    private MongCondition lifeCycle;
+    private MongCondition lifeCycle = MongCondition.NORMAL;
 
     @Builder.Default
     private int paypoint = 0;
@@ -85,6 +90,9 @@ public class Mong extends BaseTimeEntity {
 
     @OneToMany(mappedBy = "mong")
     private List<AteFoodHistory> foodHistoryList;
+
+    @Builder.Default
+    private int evolutionPoint = 0;
 
     public void doStroke(int stroke) {
         this.numberOfStroke = stroke + 1;
@@ -138,5 +146,21 @@ public class Mong extends BaseTimeEntity {
 
     public void setGrade(String name) {
         this.grade = MongGrade.valueOf(name);
+    }
+
+    public void setSatiety(int satiety) {
+        this.satiety = satiety;
+    }
+
+    public void setPoint(int paypoint) {
+        this.paypoint = paypoint;
+    }
+
+    public void setExp(int exp) {
+        this.exp = exp;
+    }
+
+    public void setStrength(int strength) {
+        this.strength = strength;
     }
 }

@@ -3,7 +3,6 @@ package com.mongs.management.domain.mong.controller;
 import com.mongs.core.security.principal.PassportDetail;
 import com.mongs.management.domain.mong.service.MongService;
 import com.mongs.management.domain.mong.service.dto.*;
-import com.mongs.management.response.ResponseHandler;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -29,6 +28,7 @@ public class MongController {
     @PostMapping("/")
     public ResponseEntity<CreateMong> createMong(@RequestBody InitMong initMong,
                                                  @AuthenticationPrincipal PassportDetail passportDetail) {
+        log.info("들어옴");
         return ResponseEntity
                 .ok()
                 .body(mongService.createMong(initMong, passportDetail.getId()));
@@ -81,6 +81,12 @@ public class MongController {
         return ResponseEntity
                 .status(HttpStatus.ACCEPTED)
                 .body(mongService.mongEvolution(passportDetail.getId()));
+    }
 
+    @PutMapping("/feed")
+    public ResponseEntity<EatTheFeed> feedToMong(@RequestBody FeedCode feed, @AuthenticationPrincipal PassportDetail passportDetail) {
+        return ResponseEntity
+                .status(HttpStatus.ACCEPTED)
+                .body(mongService.feedToMong(feed, passportDetail.getId()));
     }
 }

@@ -18,6 +18,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.util.List;
 
 @Component
 @RequiredArgsConstructor
