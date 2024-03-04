@@ -55,8 +55,13 @@ public class SecurityConfig {
                     .requestMatchers(HttpMethod.POST, "/member/**").permitAll()
                     .requestMatchers(HttpMethod.PUT,"/member/**").hasAnyAuthority("NORMAL")
                     .requestMatchers(HttpMethod.DELETE,"/member/**").hasAnyAuthority("NORMAL")
+
                     .requestMatchers("/collection/admin/**").hasAnyAuthority("ADMIN")
                     .requestMatchers("/collection/**").hasAnyAuthority("NORMAL")
+
+                    .requestMatchers("/feedback/admin/**").hasAnyAuthority("ADMIN")
+                    .requestMatchers("/feedback/**").hasAnyAuthority("NORMAL")
+
                     .anyRequest().authenticated()
             )
             .exceptionHandling(configurer -> {
