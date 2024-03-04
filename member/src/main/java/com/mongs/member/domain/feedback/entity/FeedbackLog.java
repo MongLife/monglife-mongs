@@ -1,10 +1,7 @@
 package com.mongs.member.domain.feedback.entity;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.LocalDateTime;
@@ -26,12 +23,8 @@ public class FeedbackLog {
     @Column(updatable = false, nullable = false)
     private LocalDateTime createdAt;
 
+    @Setter
     @ManyToOne
     @JoinColumn(name = "feedback_id")
     private Feedback feedback;
-
-    @Override
-    public String toString() {
-        return String.format("FeedbackLog(id: %d, location: %s, message: %s, createdAt: %s)", id, location, message, createdAt.toString());
-    }
 }

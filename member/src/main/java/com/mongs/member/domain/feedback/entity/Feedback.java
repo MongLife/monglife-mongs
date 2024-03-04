@@ -5,6 +5,7 @@ import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -31,11 +32,12 @@ public class Feedback extends BaseTimeEntity {
     @Builder.Default
     private Boolean isSolved = false;
 
+    @Builder.Default
     @OneToMany(mappedBy = "feedback", cascade = CascadeType.ALL)
-    List<FeedbackLog> feedbackLogList;
+    List<FeedbackLog> feedbackLogList = new ArrayList<>();
 
-    @Override
-    public String toString() {
-        return String.format("Feedback(id: %d, accountId: %d, deviceId: %s, code: %s, title: %s, content: %s, feedbackLogList: %s)", id, accountId, deviceId, code, title, content, feedbackLogList);
+    public void addFeedbackLog(FeedbackLog feedbackLog) {
+        this.feedbackLogList.add(feedbackLog);
+        feedbackLog.setFeedback(this);
     }
 }
