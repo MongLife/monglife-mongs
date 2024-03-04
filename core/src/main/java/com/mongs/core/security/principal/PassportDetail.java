@@ -16,6 +16,7 @@ import java.util.stream.Collectors;
 @ToString
 public class PassportDetail extends User {
     private final long id;
+    private final String deviceId;
     private final String email;
     private final String name;
 
@@ -29,6 +30,7 @@ public class PassportDetail extends User {
         );
 
         this.id = passportVO.data().account().id();
+        this.deviceId = passportVO.data().account().deviceId();
         this.email = passportVO.data().account().email();
         this.name = passportVO.data().account().name();
     }
