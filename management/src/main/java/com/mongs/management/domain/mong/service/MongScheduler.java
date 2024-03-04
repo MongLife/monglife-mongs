@@ -49,8 +49,8 @@ public class MongScheduler {
     public void timePasses() {
         boolean minusSleep = LocalTime.now().getMinute() % 30 == 0;
 
-        mongRepository.findAll().stream().forEach(mong -> {
-            value = mong.getIsSleeping() ? value - 3 : value;
+        mongRepository.findAll().forEach(mong -> {
+            value = mong.getIsSleeping() ? (int) (value * 0.7) : value;
             MongStatus mongStatus = mong.mongPassedTime(minusSleep, value);
             mongEventService.save(EventOccurrence.builder()
                     .mongId(mongStatus.mongId())
