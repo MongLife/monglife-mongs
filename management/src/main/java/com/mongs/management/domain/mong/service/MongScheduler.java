@@ -68,9 +68,10 @@ public class MongScheduler {
     @Scheduled(cron = "0 30 * * * *")
     public void timePasses() {
         boolean minusSleep = LocalTime.now().getMinute() % 30 == 0;
+
         mongRepository.findAll().forEach(mong -> {
-            int adjustedValue = mong.getIsSleeping() ? (int) (value * SLEEP_DECAY_FACTOR) : value;
-            MongStatus mongStatus = mong.mongPassedTime(minusSleep, adjustedValue);
+            value = mong.getIsSleeping() ? (int) (value * 0.7) : value;
+            MongStatus mongStatus = mong.mongPassedTime(minusSleep, value);
             mongEventService.save(EventOccurrence.builder()
                     .mongId(mongStatus.mongId())
                     .event(mongStatus.collapse() != null ? mongStatus.collapse().getName() : "No Collapse")
