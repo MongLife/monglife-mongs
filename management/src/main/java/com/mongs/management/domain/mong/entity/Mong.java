@@ -1,7 +1,8 @@
 package com.mongs.management.domain.mong.entity;
 
-import com.mongs.core.time.BaseTimeEntity;
+import com.mongs.management.config.BaseTimeEntity;
 import com.mongs.management.domain.ateFood.AteFoodHistory;
+import com.mongs.management.domain.mong.service.dto.Evolution;
 import com.mongs.management.domain.mong.service.dto.MongStatus;
 import com.mongs.core.code.enums.management.MongCollapse;
 import com.mongs.core.code.enums.management.MongCondition;
@@ -79,6 +80,9 @@ public class Mong extends BaseTimeEntity {
     @Builder.Default
     private int paypoint = 0;
 
+    @Builder.Default
+    private int exp = 0;
+
     @OneToMany(mappedBy = "mong")
     private List<AteFoodHistory> foodHistoryList;
 
@@ -86,8 +90,9 @@ public class Mong extends BaseTimeEntity {
         this.numberOfStroke = stroke + 1;
     }
 
+    // 반대로 토글
     public void changeSleepCondition(Boolean isSleeping) {
-        this.isSleeping = isSleeping;
+        this.isSleeping = !isSleeping;
     }
 
     public void setNumberOfPoop(int poopCount) {
@@ -129,5 +134,9 @@ public class Mong extends BaseTimeEntity {
 
     public void addPoop() {
         this.numberOfPoop += 1;
+    }
+
+    public void setGrade(String name) {
+        this.grade = MongGrade.valueOf(name);
     }
 }

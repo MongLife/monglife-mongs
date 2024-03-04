@@ -25,59 +25,62 @@ public class MongController {
         return passportDetail.toString();
     }
 
+    // 몽 생성
     @PostMapping("/")
-    public ResponseEntity<ResponseHandler<CreateMong>> createMong(@RequestBody InitMong initMong,
-                                                                  @AuthenticationPrincipal PassportDetail passportDetail) {
+    public ResponseEntity<CreateMong> createMong(@RequestBody InitMong initMong,
+                                                 @AuthenticationPrincipal PassportDetail passportDetail) {
         return ResponseEntity
                 .ok()
-                .body(ResponseHandler.<CreateMong>builder()
-                        .message("몽 생성")
-                        .statusCode(HttpStatus.CREATED)
-                        .data(mongService.createMong(initMong, passportDetail.getId()))
-                        .build());
+                .body(mongService.createMong(initMong, passportDetail.getId()));
     }
 
+    // 쓰다듬기 (수정 필_)
     @PutMapping("/stroke")
-    public ResponseEntity<ResponseHandler<Stroke>> toMongStroke(@AuthenticationPrincipal PassportDetail passportDetail) {
+    public ResponseEntity<Stroke> toMongStroke(@AuthenticationPrincipal PassportDetail passportDetail) {
         return ResponseEntity
                 .ok()
-                .body(ResponseHandler.<Stroke>builder()
-                        .message("몽 쓰다듬기 성공")
-                        .statusCode(HttpStatus.ACCEPTED)
-                        .data(mongService.toMongStroke(passportDetail.getId()))
-                        .build());
+                .body(mongService.toMongStroke(passportDetail.getId()));
     }
 
+    // 똥 치우기
     @PutMapping("/poop")
-    public ResponseEntity<ResponseHandler<Poop>> toCleanMongsPoop(@AuthenticationPrincipal PassportDetail passportDetail) {
+    public ResponseEntity<Poop> toCleanMongsPoop(@AuthenticationPrincipal PassportDetail passportDetail) {
         return ResponseEntity
                 .status(HttpStatus.ACCEPTED)
-                .body(ResponseHandler.<Poop>builder()
-                        .message("몽 배변 치우기")
-                        .statusCode(HttpStatus.ACCEPTED)
-                        .data(mongService.toCleanMongsPoop(passportDetail.getId()))
-                        .build());
+                .body(mongService.toCleanMongsPoop(passportDetail.getId()));
     }
 
+    // 훈련
     @PutMapping("/training")
-    public ResponseEntity<ResponseHandler<Training>> mongTraining(@RequestBody TrainingCount trainingCount, @AuthenticationPrincipal PassportDetail passportDetail) {
+    public ResponseEntity<Training> mongTraining(@RequestBody TrainingCount trainingCount, @AuthenticationPrincipal PassportDetail passportDetail) {
         return ResponseEntity
                 .status(HttpStatus.ACCEPTED)
-                .body(ResponseHandler.<Training>builder()
-                        .message("몽 훈련")
-                        .statusCode(HttpStatus.ACCEPTED)
-                        .data(mongService.mongTraining(trainingCount,passportDetail.getId()))
-                        .build());
+                .body(mongService.mongTraining(trainingCount, passportDetail.getId()));
     }
 
+    // 잠자기 토글
     @PutMapping("/sleep/toggle")
-    public ResponseEntity<ResponseHandler<Sleep>> isMongSleep(@AuthenticationPrincipal PassportDetail passportDetail) {
+    public ResponseEntity<Sleep> isMongSleep(@AuthenticationPrincipal PassportDetail passportDetail) {
         return ResponseEntity
                 .status(HttpStatus.ACCEPTED)
-                .body(ResponseHandler.<Sleep>builder()
-                        .message("몽이 자는지 확인")
-                        .statusCode(HttpStatus.ACCEPTED)
-                        .data(mongService.toCheckMongsLifetime(passportDetail.getId()))
-                        .build());
+                .body(mongService.toCheckMongsLifetime(passportDetail.getId()));
+    }
+
+    // 졸업
+    @PutMapping("/graduation")
+    public ResponseEntity<Graduation> mongsGraduate(@AuthenticationPrincipal PassportDetail passportDetail) {
+        return ResponseEntity
+                .status(HttpStatus.ACCEPTED)
+                .body(mongService.mongsGraduate(passportDetail.getId()));
+
+    }
+
+    // 진화
+    @PutMapping("/evolution")
+    public ResponseEntity<Evolution> mongEvolution(@AuthenticationPrincipal PassportDetail passportDetail) {
+        return ResponseEntity
+                .status(HttpStatus.ACCEPTED)
+                .body(mongService.mongEvolution(passportDetail.getId()));
+
     }
 }
