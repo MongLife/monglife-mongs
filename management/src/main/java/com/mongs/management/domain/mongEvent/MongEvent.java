@@ -21,4 +21,8 @@ public class MongEvent extends BaseTimeEntity {
 
     @Enumerated(EnumType.STRING)
     private MongCollapse collapse;
+
+    @Builder.Default
+    private boolean isEnough = false;
+
 }
