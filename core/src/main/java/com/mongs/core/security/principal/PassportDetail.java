@@ -7,6 +7,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
 
+import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -18,6 +19,7 @@ public class PassportDetail extends User {
     private final long id;
     private final String deviceId;
     private final String email;
+    private final LocalDate loginAt;
     private final String name;
 
     public PassportDetail(PassportVO passportVO) {
@@ -32,6 +34,7 @@ public class PassportDetail extends User {
         this.id = passportVO.data().account().id();
         this.deviceId = passportVO.data().account().deviceId();
         this.email = passportVO.data().account().email();
+        this.loginAt = passportVO.data().account().loginAt();
         this.name = passportVO.data().account().name();
     }
 }
