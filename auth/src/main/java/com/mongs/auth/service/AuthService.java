@@ -1,8 +1,11 @@
 package com.mongs.auth.service;
 
+import com.mongs.auth.dto.response.LogoutResDto;
 import com.mongs.auth.dto.response.ReissueResDto;
+import com.mongs.auth.entity.AccountLog;
 import com.mongs.auth.exception.AuthorizationException;
 import com.mongs.auth.exception.AuthErrorCode;
+import com.mongs.auth.repository.AccountLogRepository;
 import com.mongs.auth.repository.MemberRepository;
 import com.mongs.auth.repository.TokenRepository;
 import com.mongs.auth.dto.response.LoginResDto;
@@ -20,7 +23,9 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Slf4j
@@ -28,6 +33,7 @@ import java.time.LocalDateTime;
 @RequiredArgsConstructor
 public class AuthService {
     private final AccountRepository accountRepository;
+    private final AccountLogRepository accountLogRepository;
     private final MemberRepository memberRepository;
     private final TokenRepository tokenRepository;
     private final TokenProvider tokenProvider;
@@ -36,6 +42,7 @@ public class AuthService {
     @Value("${application.security.jwt.refresh-expiration}")
     private Long expiration;
 
+    @Transactional
     public LoginResDto login(String deviceId, String email, String name) throws RuntimeException {
         /* 회원 가입 (회원 정보가 없는 경우) */
         Account account = accountRepository.findByEmail(email)
@@ -55,12 +62,37 @@ public class AuthService {
                 .build();
         token = tokenRepository.save(token);
 
+        LocalDate today = LocalDate.now();
+        AccountLog accountLog = accountLogRepository.findByAccountIdAndDeviceIdAndLoginAt(account.getId(), deviceId, today)
+                                    .orElseGet(() -> AccountLog.builder()
+                                            .accountId(account.getId())
+                                            .deviceId(deviceId)
+                                            .loginAt(today)
+                                            .build());
+
+        accountLogRepository.save(accountLog.toBuilder()
+                .loginCount(accountLog.getLoginCount() + 1)
+                .build());
+
         return LoginResDto.builder()
                 .accessToken(tokenProvider.generateAccessToken(token.getAccountId(), token.getDeviceId()))
                 .refreshToken(token.getRefreshToken())
                 .build();
     }
 
+    @Transactional
+    public LogoutResDto logout(String refreshToken) throws RuntimeException {
+        Token token = tokenRepository.findById(refreshToken)
+                .orElseThrow(() -> new AuthorizationException(AuthErrorCode.REFRESH_TOKEN_EXPIRED));
+
+        tokenRepository.deleteById(token.getRefreshToken());
+
+        return LogoutResDto.builder()
+                .accountId(token.getAccountId())
+                .build();
+    }
+
+    @Transactional
     public ReissueResDto reissue(String refreshToken) throws RuntimeException {
         /* RefreshToken Redis 존재 여부 확인 */
         Token token = tokenRepository.findById(refreshToken)
@@ -83,7 +115,8 @@ public class AuthService {
                 .refreshToken(newToken.getRefreshToken())
                 .build();
     }
-    
+
+    @Transactional
     public PassportVO passport(String accessToken) throws RuntimeException {
         /* AccessToken 검증 */
         if (tokenProvider.isTokenExpired(accessToken)) {
@@ -99,6 +132,9 @@ public class AuthService {
         Account account = accountRepository.findById(accountId)
                 .orElseThrow(() -> new NotFoundException(AuthErrorCode.ACCOUNT_NOT_FOUND));
 
+        AccountLog accountLog = accountLogRepository.findTopByAccountIdAndDeviceIdOrderByLoginAt(accountId, deviceId)
+                .orElseThrow(() -> new NotFoundException(AuthErrorCode.ACCOUNT_LOG_NOT_FOUND));
+
         PassportVO passportVO = PassportVO.builder()
                 .data(PassportData.builder()
                         .account(PassportAccount.builder()
@@ -106,6 +142,7 @@ public class AuthService {
                                 .deviceId(deviceId)
                                 .email(account.getEmail())
                                 .name(account.getName())
+                                .loginAt(accountLog.getLoginAt())
                                 .role("NORMAL")
                                 .build())
                         .build())
@@ -119,7 +156,7 @@ public class AuthService {
                 .passportIntegrity(passportIntegrity)
                 .build();
     }
-  
+
     private Account registerAccount(String email, String name) throws RuntimeException {
         Account registerAccount = accountRepository.save(Account.builder()
                 .name(name)
