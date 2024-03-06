@@ -9,7 +9,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 import java.time.LocalDateTime;
 
 @Data
-@Builder
+@Builder(toBuilder = true)
 @Document(collection = "mong_event")
 public class MongEvent {
     @Id
@@ -17,6 +17,5 @@ public class MongEvent {
     private MongEventCode eventCode;
     private Long mongId;
     private LocalDateTime expiredAt;
-    @Builder.Default
-    private LocalDateTime createdAt = LocalDateTime.now();
+    private LocalDateTime createdAt;
 }
