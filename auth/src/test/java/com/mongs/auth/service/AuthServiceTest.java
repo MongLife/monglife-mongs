@@ -2,12 +2,12 @@ package com.mongs.auth.service;
 
 import com.mongs.auth.dto.response.LoginResDto;
 import com.mongs.auth.dto.response.ReissueResDto;
-import com.mongs.auth.entity.Member;
+import com.mongs.auth.entity.Account;
 import com.mongs.auth.entity.Token;
 import com.mongs.auth.exception.AuthorizationException;
 import com.mongs.auth.exception.NotFoundException;
 import com.mongs.auth.exception.PassportException;
-import com.mongs.auth.repository.MemberRepository;
+import com.mongs.auth.repository.AccountRepository;
 import com.mongs.auth.repository.TokenRepository;
 import com.mongs.core.util.HmacProvider;
 import com.mongs.core.util.TokenProvider;
@@ -34,7 +34,7 @@ public class AuthServiceTest {
     @InjectMocks
     private AuthService authService;
     @Mock
-    private MemberRepository memberRepository;
+    private AccountRepository accountRepository;
     @Mock
     private TokenRepository tokenRepository;
     @Mock
@@ -52,25 +52,25 @@ public class AuthServiceTest {
         String deviceId = "test-deviceId";
         String email = "test@test.com";
         String name = "테스트";
-        Long memberId = 1L;
+        Long accountId = 1L;
         String accessToken = "test-accessToken";
         String refreshToken = "test-refreshToken";
 
-        when(memberRepository.findByEmail(email))
-                .thenReturn(Optional.of(Member.builder()
-                        .id(memberId)
+        when(accountRepository.findByEmail(email))
+                .thenReturn(Optional.of(Account.builder()
+                        .id(accountId)
                         .email(email)
                         .name(name)
                         .build()));
-        when(tokenProvider.generateAccessToken(memberId, deviceId))
+        when(tokenProvider.generateAccessToken(accountId, deviceId))
                 .thenReturn(accessToken);
         when(tokenProvider.generateRefreshToken())
                 .thenReturn(refreshToken);
-        when(tokenRepository.findTokenByDeviceIdAndMemberId(deviceId, memberId))
+        when(tokenRepository.findTokenByDeviceIdAndAccountId(deviceId, accountId))
                 .thenReturn(Optional.of(Token.builder()
                         .refreshToken(refreshToken)
                         .deviceId(deviceId)
-                        .memberId(memberId)
+                        .accountId(accountId)
                         .createdAt(LocalDateTime.now())
                         .expiration(1L)
                         .build()));
@@ -78,7 +78,7 @@ public class AuthServiceTest {
                 .thenReturn(Token.builder()
                         .refreshToken(refreshToken)
                         .deviceId(deviceId)
-                        .memberId(memberId)
+                        .accountId(accountId)
                         .createdAt(LocalDateTime.now())
                         .expiration(expiration)
                         .build());
@@ -96,7 +96,7 @@ public class AuthServiceTest {
     void reissue() {
         // given
         String deviceId = "test-deviceId";
-        Long memberId = 1L;
+        Long accountId = 1L;
         String refreshToken = "test-refreshToken";
         String newAccessToken = "test-new-accessToken";
         String newRefreshToken = "test-new-refreshToken";
@@ -105,11 +105,11 @@ public class AuthServiceTest {
                 .thenReturn(Optional.of(Token.builder()
                         .refreshToken(refreshToken)
                         .deviceId(deviceId)
-                        .memberId(memberId)
+                        .accountId(accountId)
                         .createdAt(LocalDateTime.now())
                         .expiration(expiration)
                         .build()));
-        when(tokenProvider.generateAccessToken(memberId, deviceId))
+        when(tokenProvider.generateAccessToken(accountId, deviceId))
                 .thenReturn(newAccessToken);
         when(tokenProvider.generateRefreshToken())
                 .thenReturn(newRefreshToken);
@@ -117,7 +117,7 @@ public class AuthServiceTest {
                 .thenReturn(Token.builder()
                         .refreshToken(newRefreshToken)
                         .deviceId(deviceId)
-                        .memberId(memberId)
+                        .accountId(accountId)
                         .createdAt(LocalDateTime.now())
                         .expiration(expiration)
                         .build());
@@ -154,15 +154,15 @@ public class AuthServiceTest {
         String accessToken = "test-accessToken";
         String email = "test@test.com";
         String name = "테스트";
-        Long memberId = 1L;
+        Long accountId = 1L;
 
         when(tokenProvider.isTokenExpired(accessToken))
                 .thenReturn(false);
         when(tokenProvider.getMemberId(accessToken))
-                .thenReturn(Optional.of(memberId));
-        when(memberRepository.findById(memberId))
-                .thenReturn(Optional.of(Member.builder()
-                        .id(memberId)
+                .thenReturn(Optional.of(accountId));
+        when(accountRepository.findById(accountId))
+                .thenReturn(Optional.of(Account.builder()
+                        .id(accountId)
                         .email(email)
                         .name(name)
                         .build()));
@@ -198,13 +198,13 @@ public class AuthServiceTest {
     void passportNotFoundMember() {
         // given
         String accessToken = "test-accessToken";
-        Long memberId = 1L;
+        Long accountId = 1L;
 
         when(tokenProvider.isTokenExpired(accessToken))
                 .thenReturn(false);
         when(tokenProvider.getMemberId(accessToken))
-                .thenReturn(Optional.of(memberId));
-        when(memberRepository.findById(memberId))
+                .thenReturn(Optional.of(accountId));
+        when(accountRepository.findById(accountId))
                 .thenReturn(Optional.empty());
 
         // when
@@ -221,15 +221,15 @@ public class AuthServiceTest {
         String accessToken = "test-accessToken";
         String email = "test@test.com";
         String name = "테스트";
-        Long memberId = 1L;
+        Long accountId = 1L;
 
         when(tokenProvider.isTokenExpired(accessToken))
                 .thenReturn(false);
         when(tokenProvider.getMemberId(accessToken))
-                .thenReturn(Optional.of(memberId));
-        when(memberRepository.findById(memberId))
-                .thenReturn(Optional.of(Member.builder()
-                        .id(memberId)
+                .thenReturn(Optional.of(accountId));
+        when(accountRepository.findById(accountId))
+                .thenReturn(Optional.of(Account.builder()
+                        .id(accountId)
                         .email(email)
                         .name(name)
                         .build()));

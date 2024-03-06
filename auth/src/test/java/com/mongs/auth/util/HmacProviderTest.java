@@ -2,7 +2,7 @@ package com.mongs.auth.util;
 
 import com.mongs.core.passport.PassportVO;
 import com.mongs.core.passport.PassportData;
-import com.mongs.core.passport.PassportMember;
+import com.mongs.core.passport.PassportAccount;
 import com.mongs.core.util.HmacProvider;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -26,12 +26,12 @@ class HmacProviderTest {
         // given
         String email = "test@test.com";
         String name = "테스트";
-        Long memberId = 1L;
+        Long accountId = 1L;
 
         PassportVO passportVO = PassportVO.builder()
                 .data(PassportData.builder()
-                        .member(PassportMember.builder()
-                                .id(memberId)
+                        .account(PassportAccount.builder()
+                                .id(accountId)
                                 .email(email)
                                 .name(name)
                                 .build())
@@ -49,15 +49,15 @@ class HmacProviderTest {
     @DisplayName("위변조 되지 않은 데이터인 경우 true 를 반환한다.")
     void verifyHmac() {
         // given
-        String integrity = "IvnD7Ll7zL/YNfcQNy4R4lpIUi+u61auvOxty0v34EI=";
+        String integrity = "YkGQUBhyGuenqR9ip50BBfgyfIMHJOqsfs3yLooOYwg=";
         String email = "test@test.com";
         String name = "테스트";
-        Long memberId = 1L;
+        Long accountId = 1L;
 
         PassportVO passportVO = PassportVO.builder()
                 .data(PassportData.builder()
-                        .member(PassportMember.builder()
-                                .id(memberId)
+                        .account(PassportAccount.builder()
+                                .id(accountId)
                                 .email(email)
                                 .name(name)
                                 .build())
@@ -79,13 +79,13 @@ class HmacProviderTest {
         String forgeryKey = "test-forgery-key/test-forgery-key/test-forgery-key";
         String email = "forgery@forgery.com";
         String name = "위변조_테스트";
-        Long memberId = 2L;
+        Long accountId = 2L;
         
         // 위변조 데이터 생성
         PassportVO passportVO = PassportVO.builder()
                 .data(PassportData.builder()
-                        .member(PassportMember.builder()
-                                .id(memberId)
+                        .account(PassportAccount.builder()
+                                .id(accountId)
                                 .email(email)
                                 .name(name)
                                 .build())

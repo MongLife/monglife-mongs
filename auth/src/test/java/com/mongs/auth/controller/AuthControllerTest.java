@@ -11,7 +11,7 @@ import com.mongs.auth.exception.AuthErrorCode;
 import com.mongs.auth.exception.NotFoundException;
 import com.mongs.auth.exception.PassportException;
 import com.mongs.core.passport.PassportData;
-import com.mongs.core.passport.PassportMember;
+import com.mongs.core.passport.PassportAccount;
 import com.mongs.auth.service.AuthService;
 import com.mongs.core.passport.PassportVO;
 import org.junit.jupiter.api.DisplayName;
@@ -274,13 +274,13 @@ public class AuthControllerTest {
         String passportIntegrity = "test-passportIntegrity";
         String email = "test@test.com";
         String name = "test-name";
-        Long memberId = 1L;
+        Long accountId = 1L;
         String accessToken = "test-accessToken";
 
         PassportVO passportVO = PassportVO.builder()
                 .data(PassportData.builder()
-                        .member(PassportMember.builder()
-                                .id(memberId)
+                        .account(PassportAccount.builder()
+                                .id(accountId)
                                 .email(email)
                                 .name(name)
                                 .build())
@@ -304,9 +304,9 @@ public class AuthControllerTest {
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON));
         // data
         resultActions
-                .andExpect(jsonPath("$.data.member.id").value(memberId))
-                .andExpect(jsonPath("$.data.member.email").value(email))
-                .andExpect(jsonPath("$.data.member.name").value(name))
+                .andExpect(jsonPath("$.data.account.id").value(accountId))
+                .andExpect(jsonPath("$.data.account.email").value(email))
+                .andExpect(jsonPath("$.data.account.name").value(name))
                 .andExpect(jsonPath("$.passportIntegrity").value(passportIntegrity));
         // Parameter
         var accessTokenCaptor = ArgumentCaptor.forClass(String.class);
@@ -341,13 +341,13 @@ public class AuthControllerTest {
     }
 
     @Test
-    @DisplayName("accessToken 의 memberId 를 통해 회원 정보를 조회할 수 없는 경우 MEMBER_NOT_FOUND 에러 메시지를 반환한다.")
+    @DisplayName("accessToken 의 accountId 를 통해 회원 정보를 조회할 수 없는 경우 MEMBER_NOT_FOUND 에러 메시지를 반환한다.")
     void passportNotFoundMember() throws Exception {
         // given
         String accessToken = "test-accessToken";
 
         when(authService.passport(accessToken))
-                .thenThrow(new NotFoundException(AuthErrorCode.MEMBER_NOT_FOUND));
+                .thenThrow(new NotFoundException(AuthErrorCode.ACCOUNT_NOT_FOUND));
 
         // when
         ResultActions resultActions = mockMvc.perform(post("/auth/passport")
@@ -361,7 +361,7 @@ public class AuthControllerTest {
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON));
         // data
         resultActions
-                .andExpect(jsonPath("$.message").value(AuthErrorCode.MEMBER_NOT_FOUND.getMessage()));
+                .andExpect(jsonPath("$.message").value(AuthErrorCode.ACCOUNT_NOT_FOUND.getMessage()));
     }
 
     @Test

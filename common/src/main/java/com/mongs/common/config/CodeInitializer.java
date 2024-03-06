@@ -20,6 +20,7 @@ public class CodeInitializer implements ApplicationRunner {
     private final FoodCodeRepository foodCodeRepository;
     private final MapCodeRepository mapCodeRepository;
     private final MongCodeRepository mongCodeRepository;
+    private final FeedbackCodeRepository feedbackCodeRepository;
 
     @Override
     public void run(ApplicationArguments args) {
@@ -54,6 +55,14 @@ public class CodeInitializer implements ApplicationRunner {
             mongCodeRepository.save(MongCode.builder()
                             .code(mongCode.getCode())
                             .name(mongCode.getName())
+                    .build());
+        });
+
+        feedbackCodeRepository.deleteAll();
+        Arrays.stream(InitFeedbackCodeData.values()).forEach(feedbackCode -> {
+            feedbackCodeRepository.save(FeedbackCode.builder()
+                    .code(feedbackCode.getCode())
+                    .message(feedbackCode.getMessage())
                     .build());
         });
     }

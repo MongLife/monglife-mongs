@@ -28,12 +28,12 @@ public class TokenRepositoryTest extends RedisContainer {
     void autoCreatedAt() {
         // given
         String deviceId = "test-deviceId";
-        Long memberId = 1L;
+        Long accountId = 1L;
         String refreshToken = "test-refreshToken";
         Token token = Token.builder()
                 .refreshToken(refreshToken)
                 .deviceId(deviceId)
-                .memberId(memberId)
+                .accountId(accountId)
                 .createdAt(LocalDateTime.now())
                 .expiration(expiration)
                 .build();
@@ -54,12 +54,12 @@ public class TokenRepositoryTest extends RedisContainer {
     void delete() {
         // given
         String deviceId = "test-deviceId";
-        Long memberId = 1L;
+        Long accountId = 1L;
         String refreshToken = "test-refreshToken";
         Token token = Token.builder()
                 .refreshToken(refreshToken)
                 .deviceId(deviceId)
-                .memberId(memberId)
+                .accountId(accountId)
                 .createdAt(LocalDateTime.now())
                 .expiration(expiration)
                 .build();
@@ -78,7 +78,7 @@ public class TokenRepositoryTest extends RedisContainer {
     @Nested
     public class Find {
         String deviceId = "test-deviceId";
-        Long memberId = 1L;
+        Long accountId = 1L;
         String refreshToken = "test-refreshToken";
         Long expiration = 1000000L;
 
@@ -87,7 +87,7 @@ public class TokenRepositoryTest extends RedisContainer {
             Token token = Token.builder()
                     .refreshToken(refreshToken)
                     .deviceId(deviceId)
-                    .memberId(memberId)
+                    .accountId(accountId)
                     .createdAt(LocalDateTime.now())
                     .expiration(expiration)
                     .build();
@@ -99,21 +99,21 @@ public class TokenRepositoryTest extends RedisContainer {
         }
 
         @Test
-        @DisplayName("deviceId, memberId 로 토큰을 조회한다.")
+        @DisplayName("deviceId, accountId 로 토큰을 조회한다.")
         void findByDeviceIdAndMemberId() {
             // given
             String deviceId = "test-deviceId";
-            Long memberId = 1L;
+            Long accountId = 1L;
 
             // when
-            Token token = tokenRepository.findTokenByDeviceIdAndMemberId(deviceId, memberId)
+            Token token = tokenRepository.findTokenByDeviceIdAndAccountId(deviceId, accountId)
                     .orElseGet(null);
 
             // then
             assertThat(token).isNotNull();
             assertThat(token.getRefreshToken()).isEqualTo(refreshToken);
             assertThat(token.getDeviceId()).isEqualTo(deviceId);
-            assertThat(token.getMemberId()).isEqualTo(memberId);
+            assertThat(token.getAccountId()).isEqualTo(accountId);
         }
     }
 }

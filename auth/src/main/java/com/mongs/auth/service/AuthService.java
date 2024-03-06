@@ -3,16 +3,17 @@ package com.mongs.auth.service;
 import com.mongs.auth.dto.response.ReissueResDto;
 import com.mongs.auth.exception.AuthorizationException;
 import com.mongs.auth.exception.AuthErrorCode;
+import com.mongs.auth.repository.MemberRepository;
 import com.mongs.auth.repository.TokenRepository;
 import com.mongs.auth.dto.response.LoginResDto;
-import com.mongs.auth.entity.Member;
+import com.mongs.auth.entity.Account;
 import com.mongs.auth.entity.Token;
 import com.mongs.auth.exception.NotFoundException;
 import com.mongs.auth.exception.PassportException;
 import com.mongs.core.passport.PassportVO;
 import com.mongs.core.passport.PassportData;
-import com.mongs.core.passport.PassportMember;
-import com.mongs.auth.repository.MemberRepository;
+import com.mongs.core.passport.PassportAccount;
+import com.mongs.auth.repository.AccountRepository;
 import com.mongs.core.util.HmacProvider;
 import com.mongs.core.util.TokenProvider;
 import lombok.RequiredArgsConstructor;
@@ -26,6 +27,7 @@ import java.time.LocalDateTime;
 @Service
 @RequiredArgsConstructor
 public class AuthService {
+    private final AccountRepository accountRepository;
     private final MemberRepository memberRepository;
     private final TokenRepository tokenRepository;
     private final TokenProvider tokenProvider;
@@ -36,25 +38,25 @@ public class AuthService {
 
     public LoginResDto login(String deviceId, String email, String name) throws RuntimeException {
         /* 회원 가입 (회원 정보가 없는 경우) */
-        Member member = memberRepository.findByEmail(email)
-                .orElseGet(() -> this.registerMember(email, name));
+        Account account = accountRepository.findByEmail(email)
+                .orElseGet(() -> this.registerAccount(email, name));
 
         /* 이전 RefreshToken 삭제 */
-        tokenRepository.findTokenByDeviceIdAndMemberId(deviceId, member.getId())
+        tokenRepository.findTokenByDeviceIdAndAccountId(deviceId, account.getId())
                 .ifPresent(token -> tokenRepository.deleteById(token.getRefreshToken()));
 
         /* AccessToken 및 RefreshToken 발급 */
         Token token = Token.builder()
                 .refreshToken(tokenProvider.generateRefreshToken())
                 .deviceId(deviceId)
-                .memberId(member.getId())
+                .accountId(account.getId())
                 .createdAt(LocalDateTime.now())
                 .expiration(expiration)
                 .build();
         token = tokenRepository.save(token);
 
         return LoginResDto.builder()
-                .accessToken(tokenProvider.generateAccessToken(token.getMemberId(), token.getDeviceId()))
+                .accessToken(tokenProvider.generateAccessToken(token.getAccountId(), token.getDeviceId()))
                 .refreshToken(token.getRefreshToken())
                 .build();
     }
@@ -70,14 +72,14 @@ public class AuthService {
         Token newToken = Token.builder()
                 .refreshToken(tokenProvider.generateRefreshToken())
                 .deviceId(token.getDeviceId())
-                .memberId(token.getMemberId())
+                .accountId(token.getAccountId())
                 .createdAt(LocalDateTime.now())
                 .expiration(expiration)
                 .build();
         newToken = tokenRepository.save(newToken);
 
         return ReissueResDto.builder()
-                .accessToken(tokenProvider.generateAccessToken(newToken.getMemberId(), newToken.getDeviceId()))
+                .accessToken(tokenProvider.generateAccessToken(newToken.getAccountId(), newToken.getDeviceId()))
                 .refreshToken(newToken.getRefreshToken())
                 .build();
     }
@@ -88,19 +90,22 @@ public class AuthService {
             throw new AuthorizationException(AuthErrorCode.ACCESS_TOKEN_EXPIRED);
         }
 
-        Long memberId = tokenProvider.getMemberId(accessToken)
+        Long accountId = tokenProvider.getMemberId(accessToken)
+                .orElseThrow(() -> new AuthorizationException(AuthErrorCode.ACCESS_TOKEN_EXPIRED));
+        String deviceId = tokenProvider.getDeviceId(accessToken)
                 .orElseThrow(() -> new AuthorizationException(AuthErrorCode.ACCESS_TOKEN_EXPIRED));
 
-        /* AccessToken 의 memberId 로 member 조회 */
-        Member member = memberRepository.findById(memberId)
-                .orElseThrow(() -> new NotFoundException(AuthErrorCode.MEMBER_NOT_FOUND));
+        /* AccessToken 의 accountId 로 account 조회 */
+        Account account = accountRepository.findById(accountId)
+                .orElseThrow(() -> new NotFoundException(AuthErrorCode.ACCOUNT_NOT_FOUND));
 
         PassportVO passportVO = PassportVO.builder()
                 .data(PassportData.builder()
-                        .member(PassportMember.builder()
-                                .id(memberId)
-                                .email(member.getEmail())
-                                .name(member.getName())
+                        .account(PassportAccount.builder()
+                                .id(accountId)
+                                .deviceId(deviceId)
+                                .email(account.getEmail())
+                                .name(account.getName())
                                 .role("NORMAL")
                                 .build())
                         .build())
@@ -115,11 +120,14 @@ public class AuthService {
                 .build();
     }
   
-    private Member registerMember(String email, String name) {
-        Member registerMember = Member.builder()
+    private Account registerAccount(String email, String name) throws RuntimeException {
+        Account registerAccount = accountRepository.save(Account.builder()
                 .name(name)
                 .email(email)
-                .build();
-        return memberRepository.save(registerMember);
+                .build());
+
+        memberRepository.registerMember(registerAccount.getId());
+
+        return registerAccount;
     }
 }
