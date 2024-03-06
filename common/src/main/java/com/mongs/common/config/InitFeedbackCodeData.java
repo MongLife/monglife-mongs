@@ -7,20 +7,21 @@ import lombok.Getter;
 @AllArgsConstructor
 public enum InitFeedbackCodeData {
     /* 캐릭터 */
-    FB0000("FB0000", "캐릭터 생성"),
-    FB0001("FB0001", "캐릭터 삭제"),
-    FB0002("FB0002", "캐릭터 성장"),
-    FB0003("FB0003", "캐릭터 선택"),
+    FB_CHARACTER_0000("FB_CHARACTER_0000", "FB_CHARACTER", "캐릭터 생성"),
+    FB_CHARACTER_0001("FB_CHARACTER_0001", "FB_CHARACTER", "캐릭터 삭제"),
+    FB_CHARACTER_0002("FB_CHARACTER_0002", "FB_CHARACTER", "캐릭터 성장"),
+    FB_CHARACTER_0003("FB_CHARACTER_0003", "FB_CHARACTER", "캐릭터 선택"),
     /* 음식 */
-    FB0100("FB0100", "음식 구매"),
-    FB0101("FB0101", "음식 구매 후 스텟 적용"),
+    FB_FOOD_0000("FB_FOOD_0000", "FB_FOOD", "음식 구매"),
+    FB_FOOD_0001("FB_FOOD_0001", "FB_FOOD", "음식 구매 후 스텟 적용"),
     /* 포인트 */
-    FB0200("FB0200", "포인트 사용"),
-    FB0201("FB0200", "포인트 충전"),
+    FB_POINT_0000("FB_POINT_0000", "FB_POINT", "포인트 사용"),
+    FB_POINT_0001("FB_POINT_0001", "FB_POINT", "포인트 충전"),
 
-    FB9999("FB9999", "사용자 정의 피드백"),
+    FB_CUSTOM_0000("FB_CUSTOM_0000", "FB_CUSTOM", "사용자 정의 피드백"),
     ;
 
     private final String code;
+    private final String groupCode;
     private final String message;
 }

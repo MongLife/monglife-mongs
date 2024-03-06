@@ -9,6 +9,7 @@ public record FindCodeResDto(
         String version,
         List<FindMapCodeResDto> mapCodeList,
         List<FindMongCodeResDto> mongCodeList,
-        List<FindFoodCodeResDto> foodCodeList
+        List<FindFoodCodeResDto> foodCodeList,
+        List<FindFeedbackCodeResDto> feedbackCodeList
 ) {
 }

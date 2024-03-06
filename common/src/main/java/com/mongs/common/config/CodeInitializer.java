@@ -62,6 +62,7 @@ public class CodeInitializer implements ApplicationRunner {
         Arrays.stream(InitFeedbackCodeData.values()).forEach(feedbackCode -> {
             feedbackCodeRepository.save(FeedbackCode.builder()
                     .code(feedbackCode.getCode())
+                    .groupCode(feedbackCode.getGroupCode())
                     .message(feedbackCode.getMessage())
                     .build());
         });

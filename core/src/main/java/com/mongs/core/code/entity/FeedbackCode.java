@@ -9,6 +9,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 public record FeedbackCode(
         @Id
         String code,
+        String groupCode,
         String message
 ) {
 }

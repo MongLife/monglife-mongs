@@ -53,7 +53,7 @@ public class CollectionController {
                 ));
     }
 
-    @DeleteMapping("/map")
+    @DeleteMapping("/admin/map")
     public ResponseEntity<Object> removeMapCollection(
             @AuthenticationPrincipal PassportDetail passportDetail,
             @RequestBody @Validated RemoveMapCollectionReqDto removeMapCollectionReqDto
@@ -62,7 +62,7 @@ public class CollectionController {
         return ResponseEntity.ok().body(null);
     }
 
-    @DeleteMapping("/mong")
+    @DeleteMapping("/admin/mong")
     public ResponseEntity<Object> removeMongCollection(
             @AuthenticationPrincipal PassportDetail passportDetail,
             @RequestBody @Validated RemoveMongCollectionReqDto removeMongCollectionReqDto
