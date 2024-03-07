@@ -1,5 +1,6 @@
 package com.mongs.lifecycle.entity;
 
+import com.mongs.lifecycle.code.EventStatusCode;
 import com.mongs.lifecycle.code.MongEventCode;
 import lombok.Builder;
 import lombok.Data;
@@ -16,6 +17,9 @@ public class MongEvent {
     private String eventId;
     private MongEventCode eventCode;
     private Long mongId;
+    private Long expiration;
     private LocalDateTime expiredAt;
     private LocalDateTime createdAt;
+    @Builder.Default
+    private EventStatusCode statusCode = EventStatusCode.WAIT;
 }

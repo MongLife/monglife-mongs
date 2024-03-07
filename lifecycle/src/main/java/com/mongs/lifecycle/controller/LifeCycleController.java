@@ -1,8 +1,7 @@
 package com.mongs.lifecycle.controller;
 
-import com.mongs.lifecycle.code.MongEventCode;
 import com.mongs.lifecycle.dto.response.*;
-import com.mongs.lifecycle.service.MongEventService;
+import com.mongs.lifecycle.service_.LifecycleService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -12,32 +11,21 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/lifecycle")
 public class LifeCycleController {
 
-    private final MongEventService mongEventService;
+    private final LifecycleService lifecycleService;
 
-    @GetMapping("/stress_test/{size}")
+    @GetMapping("/stress/{size}")
     public ResponseEntity<Object> stressTest(@PathVariable("size") Integer size) {
 
         for (long mongId = 1; mongId <= Math.min(1000, size); mongId++) {
-            mongEventService.removeAllMongEvent(mongId);
-            mongEventService.registerMongEvent(mongId, MongEventCode.WEIGHT_DOWN);
-            mongEventService.registerMongEvent(mongId, MongEventCode.HEALTHY_DOWN);
-            mongEventService.registerMongEvent(mongId, MongEventCode.STRENGTH_DOWN);
-            mongEventService.registerMongEvent(mongId, MongEventCode.SATIETY_DOWN);
-            mongEventService.registerMongEvent(mongId, MongEventCode.SLEEP_DOWN);
-            mongEventService.registerMongEvent(mongId, MongEventCode.POOP);
+            lifecycleService.statusEvent(mongId);
         }
 
         return ResponseEntity.ok().body(null);
     }
 
     @PostMapping("/status/{mongId}")
-    public ResponseEntity<Object> statusMongEvent(@PathVariable("mongId") Long mongId) {
-        mongEventService.registerMongEvent(mongId, MongEventCode.WEIGHT_DOWN);
-        mongEventService.registerMongEvent(mongId, MongEventCode.HEALTHY_DOWN);
-        mongEventService.registerMongEvent(mongId, MongEventCode.STRENGTH_DOWN);
-        mongEventService.registerMongEvent(mongId, MongEventCode.SATIETY_DOWN);
-        mongEventService.registerMongEvent(mongId, MongEventCode.SLEEP_DOWN);
-        mongEventService.registerMongEvent(mongId, MongEventCode.POOP);
+    public ResponseEntity<Object> status(@PathVariable("mongId") Long mongId) {
+        lifecycleService.statusEvent(mongId);
 
         return ResponseEntity.ok().body(RegisterMongEventResDto.builder()
                 .mongId(mongId)
@@ -46,13 +34,7 @@ public class LifeCycleController {
 
     @PutMapping("/sleep/{mongId}")
     public ResponseEntity<Object> sleepMongEvent(@PathVariable("mongId") Long mongId) {
-        mongEventService.removeMongEvent(mongId, MongEventCode.WEIGHT_DOWN);
-        mongEventService.removeMongEvent(mongId, MongEventCode.HEALTHY_DOWN);
-        mongEventService.removeMongEvent(mongId, MongEventCode.STRENGTH_DOWN);
-        mongEventService.removeMongEvent(mongId, MongEventCode.SATIETY_DOWN);
-        mongEventService.removeMongEvent(mongId, MongEventCode.SLEEP_DOWN);
-        mongEventService.removeMongEvent(mongId, MongEventCode.POOP);
-        mongEventService.registerMongEvent(mongId, MongEventCode.SLEEP_UP);
+        lifecycleService.sleepEvent(mongId);
 
         return ResponseEntity.ok().body(SleepMongEventResDto.builder()
                 .mongId(mongId)
@@ -61,13 +43,7 @@ public class LifeCycleController {
 
     @PutMapping("/wakeup/{mongId}")
     public ResponseEntity<Object> wakeupMongEvent(@PathVariable("mongId") Long mongId) {
-        mongEventService.removeMongEvent(mongId, MongEventCode.SLEEP_UP);
-        mongEventService.registerMongEvent(mongId, MongEventCode.WEIGHT_DOWN);
-        mongEventService.registerMongEvent(mongId, MongEventCode.HEALTHY_DOWN);
-        mongEventService.registerMongEvent(mongId, MongEventCode.STRENGTH_DOWN);
-        mongEventService.registerMongEvent(mongId, MongEventCode.SATIETY_DOWN);
-        mongEventService.registerMongEvent(mongId, MongEventCode.SLEEP_DOWN);
-        mongEventService.registerMongEvent(mongId, MongEventCode.POOP);
+        lifecycleService.wakeupEvent(mongId);
 
         return ResponseEntity.ok().body(WakeupMongEventResDto.builder()
                 .mongId(mongId)
@@ -76,12 +52,7 @@ public class LifeCycleController {
 
     @DeleteMapping("/evolution/{mongId}")
     public ResponseEntity<Object> evolutionMongEvent(@PathVariable("mongId") Long mongId) {
-        mongEventService.removeMongEvent(mongId, MongEventCode.WEIGHT_DOWN);
-        mongEventService.removeMongEvent(mongId, MongEventCode.STRENGTH_DOWN);
-        mongEventService.removeMongEvent(mongId, MongEventCode.SATIETY_DOWN);
-        mongEventService.removeMongEvent(mongId, MongEventCode.HEALTHY_DOWN);
-        mongEventService.removeMongEvent(mongId, MongEventCode.SLEEP_DOWN);
-        mongEventService.removeMongEvent(mongId, MongEventCode.POOP);
+        lifecycleService.evolutionEvent(mongId);
 
         return ResponseEntity.ok().body(EvolutionMongEventResDto.builder()
                 .mongId(mongId)
@@ -90,19 +61,9 @@ public class LifeCycleController {
 
     @DeleteMapping("/graduation/{mongId}")
     public ResponseEntity<Object> graduationMongEvent(@PathVariable("mongId") Long mongId) {
-        mongEventService.removeAllMongEvent(mongId);
+        lifecycleService.graduationEvent(mongId);
 
         return ResponseEntity.ok().body(GraduationMongEventResDto.builder()
-                .mongId(mongId)
-                .build());
-    }
-
-    @DeleteMapping("/dead/{mongId}")
-    public ResponseEntity<Object> deadMongEvent(@PathVariable("mongId") Long mongId) {
-        mongEventService.registerMongEvent(mongId, MongEventCode.ADMIN_DEAD);
-        mongEventService.removeAllMongEvent(mongId);
-
-        return ResponseEntity.ok().body(DeadMongEventResDto.builder()
                 .mongId(mongId)
                 .build());
     }
