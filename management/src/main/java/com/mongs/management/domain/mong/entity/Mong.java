@@ -2,6 +2,7 @@ package com.mongs.management.domain.mong.entity;
 
 import com.mongs.management.config.BaseTimeEntity;
 import com.mongs.management.domain.ateFood.AteFoodHistory;
+import com.mongs.management.domain.mong.service.dto.Evolution;
 import com.mongs.management.domain.mong.service.dto.MongStatus;
 import com.mongs.core.code.enums.management.MongCollapse;
 import com.mongs.core.code.enums.management.MongCondition;

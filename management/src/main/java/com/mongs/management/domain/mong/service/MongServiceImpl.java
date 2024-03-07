@@ -92,7 +92,6 @@ public class MongServiceImpl implements MongService {
         return Sleep.of(mong);
     }
 
-    // 몽 똥 치우기
     @Override
     public Poop toCleanMongsPoop(Long memberId) {
         Mong mong = getMong(memberId);
@@ -148,6 +147,7 @@ public class MongServiceImpl implements MongService {
         mong.setStrength(mong.getStrength() + 5);
         mong.setExp(mong.getExp() + MongEXP.TRAINING.getExp());
         return Training.of(mong);
+      
     }
 
     // 몽 진화 MongEvolutionEXP를 순회하면서 체크
@@ -168,9 +168,13 @@ public class MongServiceImpl implements MongService {
         if(!flag) {
             throw new ManagementException(ManagementErrorCode.NOT_ENOUGH_EXP);
         }
-
-        return Evolution.of(mong);
+      
+        return Evolution.builder()
+                .mongCode(mong.getGrade().getCode())
+                .stateCode(mong.getCondition().getCode())
+                .build();
     }
+
 
     // 몽 졸업 ( 4단계 달성하면 졸업 )
     @Override

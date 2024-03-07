@@ -28,7 +28,6 @@ public class MongController {
     @PostMapping("/")
     public ResponseEntity<CreateMong> createMong(@RequestBody InitMong initMong,
                                                  @AuthenticationPrincipal PassportDetail passportDetail) {
-        log.info("들어옴");
         return ResponseEntity
                 .ok()
                 .body(mongService.createMong(initMong, passportDetail.getId()));
