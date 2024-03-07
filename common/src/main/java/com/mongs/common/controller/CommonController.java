@@ -21,6 +21,7 @@ public class CommonController {
                         .mapCodeList(commonService.findMapCode())
                         .mongCodeList(commonService.findMongCode())
                         .foodCodeList(commonService.findFoodCode())
+                        .feedbackCodeList(commonService.findFeedbackCode())
                         .build()
         );
     }
@@ -38,5 +39,10 @@ public class CommonController {
     @GetMapping("/food")
     public ResponseEntity<Object> findFoodCode() {
         return ResponseEntity.ok().body(commonService.findFoodCode());
+    }
+
+    @GetMapping("/feedback")
+    public ResponseEntity<Object> findFeedbackCode() {
+        return ResponseEntity.ok().body(commonService.findFeedbackCode());
     }
 }

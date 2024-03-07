@@ -20,8 +20,6 @@ public record Sleep (
     public static Sleep of(Mong mong){
         return Sleep.builder()
                 .mongCode(ManagementErrorCode.SUCCESS.getCode())
-//                .message(MongActiveCode.SLEEP.getName())
-//                .stateCode(MongActiveCode.SLEEP.getCode())
                 .weight(mong.getWeight())
                 .health(mong.getHealthy())
                 .strength(mong.getStrength())

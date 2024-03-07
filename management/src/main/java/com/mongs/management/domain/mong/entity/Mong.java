@@ -32,33 +32,40 @@ public class Mong extends BaseTimeEntity {
     @Column(name = "member_id")
     private Long memberId;
 
-    // 몽 이름
+    @Column(nullable = false)
     private String name;
 
-    private double weight;
+    @Builder.Default
+    @Column(nullable = false)
+    private Double weight = 0D;
+    @Builder.Default
+    @Column(nullable = false)
+    private Double strength = 100D;
+    @Builder.Default
+    @Column(nullable = false)
+    private Double satiety = 100D;
+    @Builder.Default
+    @Column(nullable = false)
+    private Double healthy = 100D;
+    @Builder.Default
+    @Column(nullable = false)
+    private Double sleep = 100D;
+    @Builder.Default
+    @Column(nullable = false)
+    private Integer penalty = 0;
+    @Builder.Default
+    @Column(nullable = false)
+    private Integer numberOfTraining = 0;
+    @Builder.Default
+    @Column(nullable = false)
+    private Integer numberOfStroke = 0;
+    @Builder.Default
+    @Column(nullable = false)
+    private Integer numberOfPoop = 0;
 
     @Builder.Default
-    private int strength = 100;
-
-    @Builder.Default
-    private int satiety = 100;
-
-    @Builder.Default
-    private int healthy = 100;
-
-    private Boolean isSleeping;
-
-    @Builder.Default
-    private int penalty = 0;
-
-    @Builder.Default
-    private int numberOfTraining = 0;
-
-    @Builder.Default
-    private int numberOfStroke = 0;
-
-    @Builder.Default
-    private int numberOfPoop = 0;
+    @Column(nullable = false)
+    private Boolean isSleeping = false;
 
     private String sleepTime;
 
@@ -148,7 +155,7 @@ public class Mong extends BaseTimeEntity {
         this.grade = MongGrade.valueOf(name);
     }
 
-    public void setSatiety(int satiety) {
+    public void setSatiety(double satiety) {
         this.satiety = satiety;
     }
 
@@ -160,7 +167,7 @@ public class Mong extends BaseTimeEntity {
         this.exp = exp;
     }
 
-    public void setStrength(int strength) {
+    public void setStrength(double strength) {
         this.strength = strength;
     }
 }

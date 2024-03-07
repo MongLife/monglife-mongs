@@ -19,6 +19,8 @@ import org.springframework.security.core.userdetails.User;
 import org.springframework.web.filter.GenericFilterBean;
 
 import java.io.IOException;
+import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
 
 @Slf4j
 @AllArgsConstructor
@@ -34,10 +36,9 @@ public class PassportFilter extends GenericFilterBean {
         String passportJson = request.getHeader("passport");
 
         if (passportJson != null) {
-            PassportVO passportVO = objectMapper.readValue(passportJson, PassportVO.class);
+            PassportVO passportVO = objectMapper.readValue(URLDecoder.decode(passportJson, StandardCharsets.UTF_8), PassportVO.class);
 
             if (!hmacProvider.verifyHmac(passportVO.data(), passportVO.passportIntegrity())) {
-                log.info("passport integrity fail");
                 throw new PassportIntegrityException(SecurityErrorCode.UNAUTHORIZED);
             }
 

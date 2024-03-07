@@ -16,8 +16,4 @@ public interface MongService {
     Training mongTraining (TrainingCount trainingCount, Long memberId);
     Evolution mongEvolution (Long memberId);
     Graduation mongsGraduate(Long memberId);
-    List<SlotList> slotInfo (Long memberId); // kafka 필요, join
-
-
-
 }

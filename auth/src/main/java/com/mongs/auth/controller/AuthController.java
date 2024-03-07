@@ -1,6 +1,7 @@
 package com.mongs.auth.controller;
 
 import com.mongs.auth.dto.request.LoginReqDto;
+import com.mongs.auth.dto.request.LogoutReqDto;
 import com.mongs.auth.dto.request.PassportReqDto;
 import com.mongs.auth.dto.request.ReissueReqDto;
 import com.mongs.auth.service.AuthService;
@@ -19,6 +20,11 @@ public class AuthController {
     @PostMapping("/login")
     public ResponseEntity<Object> login(@RequestBody @Validated LoginReqDto loginReqDto) {
         return ResponseEntity.ok().body(authService.login(loginReqDto.deviceId(), loginReqDto.email(), loginReqDto.name()));
+    }
+
+    @PostMapping("/logout")
+    public ResponseEntity<Object> logout(@RequestBody @Validated LogoutReqDto logoutReqDto) {
+        return ResponseEntity.ok().body(authService.logout(logoutReqDto.refreshToken()));
     }
 
     @PostMapping("/reissue")
