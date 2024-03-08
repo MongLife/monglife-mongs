@@ -1,11 +1,12 @@
 package com.mongs.lifecycle.repository;
 
-import com.mongs.lifecycle.exception.EventTaskException;
-import com.mongs.lifecycle.exception.LifecycleErrorCode;
-import com.mongs.lifecycle.thread.BasicTask;
+import com.mongs.lifecycle.code.EventStatusCode;
+import com.mongs.lifecycle.code.MongEventCode;
+import com.mongs.lifecycle.task.BasicTask;
 import org.springframework.stereotype.Component;
 
 import java.util.Map;
+import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 
 @Component
@@ -17,21 +18,18 @@ public class EventTaskRepository {
         this.eventTaskMap = new ConcurrentHashMap<>();
     }
 
-    public void save(BasicTask basicTask) throws RuntimeException {
+    public void save(BasicTask basicTask) {
         this.eventTaskMap.put(basicTask.getEvent().getEventId(), basicTask);
     }
 
-    public BasicTask findById(String eventId) throws EventTaskException {
+    public Optional<BasicTask> findById(String eventId) {
         if (!eventTaskMap.containsKey(eventId)) {
-            throw new EventTaskException(LifecycleErrorCode.NOT_FOUND_TASK);
+            return Optional.empty();
         }
-        return this.eventTaskMap.get(eventId);
+        return Optional.of(this.eventTaskMap.get(eventId));
     }
 
-    public void deleteById(String eventId) throws EventTaskException {
-        if (!eventTaskMap.containsKey(eventId)) {
-            throw new EventTaskException(LifecycleErrorCode.NOT_FOUND_TASK);
-        }
+    public void deleteById(String eventId) {
         eventTaskMap.remove(eventId);
     }
 }

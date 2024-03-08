@@ -1,4 +1,4 @@
-package com.mongs.lifecycle.thread;
+package com.mongs.lifecycle.task;
 
 import com.mongs.lifecycle.entity.MongEvent;
 

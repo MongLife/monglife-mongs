@@ -1,7 +1,7 @@
 package com.mongs.lifecycle.controller;
 
 import com.mongs.lifecycle.dto.response.*;
-import com.mongs.lifecycle.service_.LifecycleService;
+import com.mongs.lifecycle.service.LifecycleService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/lifecycle")
-public class LifeCycleController {
+public class LifecycleController {
 
     private final LifecycleService lifecycleService;
 
@@ -17,17 +17,17 @@ public class LifeCycleController {
     public ResponseEntity<Object> stressTest(@PathVariable("size") Integer size) {
 
         for (long mongId = 1; mongId <= Math.min(1000, size); mongId++) {
-            lifecycleService.statusEvent(mongId);
+            lifecycleService.stressTestEvent(mongId);
         }
 
         return ResponseEntity.ok().body(null);
     }
 
-    @PostMapping("/status/{mongId}")
-    public ResponseEntity<Object> status(@PathVariable("mongId") Long mongId) {
-        lifecycleService.statusEvent(mongId);
+    @PostMapping("/evolution/{mongId}")
+    public ResponseEntity<Object> evolutionMongEvent(@PathVariable("mongId") Long mongId) {
+        lifecycleService.evolutionEvent(mongId);
 
-        return ResponseEntity.ok().body(RegisterMongEventResDto.builder()
+        return ResponseEntity.ok().body(EvolutionMongEventResDto.builder()
                 .mongId(mongId)
                 .build());
     }
@@ -50,20 +50,11 @@ public class LifeCycleController {
                 .build());
     }
 
-    @DeleteMapping("/evolution/{mongId}")
-    public ResponseEntity<Object> evolutionMongEvent(@PathVariable("mongId") Long mongId) {
-        lifecycleService.evolutionEvent(mongId);
+    @DeleteMapping("/admin/dead/{mongId}")
+    public ResponseEntity<Object> deadMongEvent(@PathVariable("mongId") Long mongId) {
+        lifecycleService.dead(mongId);
 
-        return ResponseEntity.ok().body(EvolutionMongEventResDto.builder()
-                .mongId(mongId)
-                .build());
-    }
-
-    @DeleteMapping("/graduation/{mongId}")
-    public ResponseEntity<Object> graduationMongEvent(@PathVariable("mongId") Long mongId) {
-        lifecycleService.graduationEvent(mongId);
-
-        return ResponseEntity.ok().body(GraduationMongEventResDto.builder()
+        return ResponseEntity.ok().body(WakeupMongEventResDto.builder()
                 .mongId(mongId)
                 .build());
     }
