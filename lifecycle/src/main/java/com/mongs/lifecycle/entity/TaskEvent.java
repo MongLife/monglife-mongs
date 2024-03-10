@@ -25,8 +25,7 @@ public class TaskEvent {
     @Builder.Default
     private TaskStatusCode statusCode = TaskStatusCode.WAIT;
 
-    public static TaskEvent of(Long mongId, TaskCode taskCode, Long expiration) {
-        LocalDateTime createdAt = LocalDateTime.now();
+    public static TaskEvent of(Long mongId, TaskCode taskCode, LocalDateTime createdAt, Long expiration) {
         LocalDateTime expiredAt = createdAt.plusSeconds(expiration);
 
         return TaskEvent.builder()

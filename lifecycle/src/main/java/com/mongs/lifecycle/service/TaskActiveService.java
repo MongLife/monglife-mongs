@@ -9,6 +9,7 @@ import com.mongs.lifecycle.exception.LifecycleErrorCode;
 import com.mongs.lifecycle.repository.MongRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -20,10 +21,14 @@ import java.time.LocalDateTime;
 @RequiredArgsConstructor
 public class TaskActiveService {
 
+    private final boolean isDebug = true;
+
     private final MongRepository mongRepository;
 
-    private final Double SLEEP_MAX = 100D;
-    private final Integer POOP_MAX = 4;
+    @Value("${application.scheduler.sleep-max}")
+    private Double SLEEP_MAX;
+    @Value("${application.scheduler.poop-max}")
+    private Integer POOP_MAX;
 
     @Transactional
     public void decreaseWeight(Long mongId, TaskCode taskCode, LocalDateTime createdAt) {
@@ -35,7 +40,9 @@ public class TaskActiveService {
             double subWeight = taskCode.getValue() / taskCode.getExpiration() * seconds;
             double newWeight = Math.max(0D, mong.getWeight() - subWeight);
 
-            // log.info("[{}] 몸무게 {} 감소", mongId, mong.getWeight() - newWeight);
+            if (isDebug) {
+                log.info("[{}] 몸무게 {} 감소", mongId, mong.getWeight() - newWeight);
+            }
 
             mongRepository.save(mong.toBuilder()
                     .weight(newWeight)
@@ -55,7 +62,9 @@ public class TaskActiveService {
             double subStrength = taskCode.getValue() / taskCode.getExpiration() * seconds;
             double newStrength = Math.max(0D, mong.getStrength() - subStrength);
 
-            // log.info("[{}] 근력 {} 감소", mongId, mong.getStrength() - newStrength);
+            if (isDebug) {
+                log.info("[{}] 근력 {} 감소", mongId, mong.getStrength() - newStrength);
+            }
 
             mongRepository.save(mong.toBuilder()
                     .strength(newStrength)
@@ -77,7 +86,9 @@ public class TaskActiveService {
             double subSatiety = taskCode.getValue() / taskCode.getExpiration() * seconds;
             newSatiety = Math.max(0D, mong.getSatiety() - subSatiety);
 
-            // log.info("[{}] 포만감 {} 감소", mongId, mong.getSatiety() - newSatiety);
+            if (isDebug) {
+                log.info("[{}] 포만감 {} 감소", mongId, mong.getSatiety() - newSatiety);
+            }
 
             mongRepository.save(mong.toBuilder()
                     .satiety(newSatiety)
@@ -101,7 +112,9 @@ public class TaskActiveService {
             double subHealthy = taskCode.getValue() / taskCode.getExpiration() * seconds;
             newHealthy = Math.max(0D, mong.getHealthy() - subHealthy);
 
-            // log.info("[{}] 체력 {} 감소", mongId, mong.getHealthy() - newHealthy);
+            if (isDebug) {
+                log.info("[{}] 체력 {} 감소", mongId, mong.getHealthy() - newHealthy);
+            }
 
             mongRepository.save(mong.toBuilder()
                     .healthy(newHealthy)
@@ -123,7 +136,9 @@ public class TaskActiveService {
             double subSleep = taskCode.getValue() / taskCode.getExpiration() * seconds;
             double newSleep = Math.max(0D, mong.getSleep() - subSleep);
 
-            // log.info("[{}] 피로도 {} 감소", mongId, mong.getSleep() - newSleep);
+            if (isDebug) {
+                log.info("[{}] 피로도 {} 감소", mongId, mong.getSleep() - newSleep);
+            }
 
             mongRepository.save(mong.toBuilder()
                     .sleep(newSleep)
@@ -143,7 +158,9 @@ public class TaskActiveService {
             double addSleep = taskCode.getValue() / taskCode.getExpiration() * seconds;
             double newSleep = Math.min(SLEEP_MAX, mong.getSleep() + addSleep);
 
-            // log.info("[{}] 피로도 {} 증가", mongId, newSleep - mong.getSleep());
+            if (isDebug) {
+                log.info("[{}] 피로도 {} 증가", mongId, newSleep - mong.getSleep());
+            }
 
             mongRepository.save(mong.toBuilder()
                     .sleep(newSleep)
@@ -162,7 +179,9 @@ public class TaskActiveService {
             int addPayPoint = taskCode.getValue().intValue();
             int newPayPoint = mong.getPayPoint() + addPayPoint;
 
-            // log.info("[{}] 페이포인트 {} 증가", mongId, addPayPoint);
+            if (isDebug) {
+                log.info("[{}] 페이포인트 {} 증가", mongId, addPayPoint);
+            }
 
             mongRepository.save(mong.toBuilder()
                     .payPoint(newPayPoint)
@@ -187,9 +206,14 @@ public class TaskActiveService {
                         .penalty(newPenalty)
                         .build());
 
-                log.info("[{}] 똥 {} 개 도달 : 패널티 1 증가 ({})", mongId, POOP_MAX, newPenalty);
+                if (isDebug) {
+                    log.info("[{}] 똥 {} 개 도달 : 패널티 1 증가 ({})", mongId, POOP_MAX, newPenalty);
+                }
+
             } else {
-                // log.info("[{}] 똥 {} 개 생성", mongId, newPoop - mong.getNumberOfPoop());
+                if (isDebug) {
+                    log.info("[{}] 똥 {} 개 생성", mongId, newPoop - mong.getNumberOfPoop());
+                }
 
                 mongRepository.save(mong.toBuilder()
                         .numberOfPoop(newPoop)

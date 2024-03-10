@@ -13,17 +13,25 @@ public class LifecycleController {
 
     private final LifecycleService lifecycleService;
 
-    @GetMapping("/stress/{size}")
-    public ResponseEntity<Object> stressTest(@PathVariable("size") Integer size) {
+    @DeleteMapping("/graduation/{mongId}")
+    public ResponseEntity<Object> graduationMongEvent(@PathVariable("mongId") Long mongId) {
+        lifecycleService.graduationEvent(mongId);
 
-        for (long mongId = 1; mongId <= Math.min(1000, size); mongId++) {
-            lifecycleService.stressTestEvent(mongId);
-        }
-
-        return ResponseEntity.ok().body(null);
+        return ResponseEntity.ok().body(GraduationMongEventResDto.builder()
+                .mongId(mongId)
+                .build());
     }
 
-    @PostMapping("/evolution/{mongId}")
+    @DeleteMapping("/evolution/{mongId}")
+    public ResponseEntity<Object> evolutionReadyMongEvent(@PathVariable("mongId") Long mongId) {
+        lifecycleService.evolutionReadyEvent(mongId);
+
+        return ResponseEntity.ok().body(EvolutionMongEventResDto.builder()
+                .mongId(mongId)
+                .build());
+    }
+
+    @PutMapping("/evolution/{mongId}")
     public ResponseEntity<Object> evolutionMongEvent(@PathVariable("mongId") Long mongId) {
         lifecycleService.evolutionEvent(mongId);
 
@@ -54,7 +62,7 @@ public class LifecycleController {
     public ResponseEntity<Object> deadMongEvent(@PathVariable("mongId") Long mongId) {
         lifecycleService.dead(mongId);
 
-        return ResponseEntity.ok().body(WakeupMongEventResDto.builder()
+        return ResponseEntity.ok().body(DeadMongEventResDto.builder()
                 .mongId(mongId)
                 .build());
     }

@@ -12,7 +12,8 @@ import java.util.Optional;
 @Repository
 public interface TaskEventRepository extends MongoRepository<TaskEvent, String> {
     Optional<TaskEvent> findByTaskIdAndStatusCode(String taskId, TaskStatusCode taskStatusCode);
-    Optional<TaskEvent> findByMongIdAndTaskCodeAndStatusCodeNot(Long mongId, TaskCode taskCode, TaskStatusCode taskStatusCode);
-    List<TaskEvent> findByMongIdAndStatusCode(Long mongId, TaskStatusCode taskStatusCode);
+    Optional<TaskEvent> findByMongIdAndTaskCodeAndStatusCodeIn(Long mongId, TaskCode taskCode, List<TaskStatusCode> taskStatusCode);
+    List<TaskEvent> findAllByMongIdAndStatusCode(Long mongId, TaskStatusCode taskStatusCode);
     Optional<TaskEvent> findByMongIdAndTaskCodeAndStatusCode(Long mongId, TaskCode taskCode, TaskStatusCode taskStatusCode);
+    List<TaskEvent> findAllByStatusCode(TaskStatusCode taskStatusCode);
 }

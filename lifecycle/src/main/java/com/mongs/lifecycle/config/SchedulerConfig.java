@@ -1,5 +1,6 @@
 package com.mongs.lifecycle.config;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -8,7 +9,8 @@ import java.util.concurrent.ScheduledExecutorService;
 
 @Configuration
 public class SchedulerConfig {
-    private final int SINGLE_POOL_SIZE = 5;
+    @Value("${application.scheduler.pool-size}")
+    private Integer SINGLE_POOL_SIZE;
 
     @Bean
     public ScheduledExecutorService scheduledExecutorService() {

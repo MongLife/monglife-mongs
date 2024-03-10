@@ -1,51 +1,68 @@
 package com.mongs.lifecycle.service;
 
 import com.mongs.lifecycle.code.TaskCode;
-import com.mongs.lifecycle.entity.Mong;
 import com.mongs.lifecycle.exception.EventTaskException;
 import com.mongs.lifecycle.exception.LifecycleErrorCode;
-import com.mongs.lifecycle.repository.TaskEventRepository;
 import com.mongs.lifecycle.repository.MongRepository;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 @Slf4j
 @Service
-//@RequiredArgsConstructor
+@RequiredArgsConstructor
 public class LifecycleService {
     private final TaskService taskService;
+    private final TaskActiveService taskActiveService;
     private final MongRepository mongRepository;
 
-
-    @Autowired
-    public LifecycleService(
-            TaskService taskService,
-            TaskEventRepository taskEventRepository,
-            MongRepository mongRepository
-    ) {
-        this.taskService = taskService;
-        this.mongRepository = mongRepository;
-        taskEventRepository.deleteAll();
-        for (long mongId = 1; mongId <= 1000; mongId++) {
-            mongRepository.save(Mong.builder()
-                    .accountId(1L)
-                    .name("(" + mongId + ") 테스트 몽")
-//                    .healthy(5D)
-//                    .satiety(10D)
-                    .build());
+    public void graduationEvent(Long mongId) {
+        if (mongRepository.findByIdAndIsActiveTrue(mongId).isEmpty()) {
+            throw new EventTaskException(LifecycleErrorCode.NOT_FOUND_MONG);
         }
+
+        List<TaskCode> startList = List.of();
+        List<TaskCode> restartList = List.of();
+        List<TaskCode> pauseList = List.of();
+        List<TaskCode> stopList = List.of(
+                TaskCode.WEIGHT_DOWN,
+                TaskCode.HEALTHY_DOWN,
+                TaskCode.STRENGTH_DOWN,
+                TaskCode.SATIETY_DOWN,
+                TaskCode.SLEEP_DOWN,
+                TaskCode.POOP,
+                TaskCode.SLEEP_UP,
+                TaskCode.PAY_POINT_UP,
+                TaskCode.DEAD_HEALTHY,
+                TaskCode.DEAD_SATIETY
+        );
+
+        exec(mongId, startList, restartList, pauseList, stopList);
     }
 
-    public void stressTestEvent(Long mongId) {
-        taskService.startTask(mongId, TaskCode.WEIGHT_DOWN);
-        taskService.startTask(mongId, TaskCode.HEALTHY_DOWN);
-        taskService.startTask(mongId, TaskCode.STRENGTH_DOWN);
-        taskService.startTask(mongId, TaskCode.SATIETY_DOWN);
-        taskService.startTask(mongId, TaskCode.SLEEP_DOWN);
-        taskService.startTask(mongId, TaskCode.POOP);
+    public void evolutionReadyEvent(Long mongId) {
+        if (mongRepository.findByIdAndIsActiveTrue(mongId).isEmpty()) {
+            throw new EventTaskException(LifecycleErrorCode.NOT_FOUND_MONG);
+        }
+
+        List<TaskCode> startList = List.of();
+        List<TaskCode> restartList = List.of();
+        List<TaskCode> pauseList = List.of(
+                TaskCode.DEAD_SATIETY,
+                TaskCode.DEAD_HEALTHY
+        );
+        List<TaskCode> stopList = List.of(
+                TaskCode.WEIGHT_DOWN,
+                TaskCode.HEALTHY_DOWN,
+                TaskCode.STRENGTH_DOWN,
+                TaskCode.SATIETY_DOWN,
+                TaskCode.SLEEP_DOWN,
+                TaskCode.POOP
+        );
+
+        exec(mongId, startList, restartList, pauseList, stopList);
     }
 
     public void evolutionEvent(Long mongId) {
@@ -61,10 +78,14 @@ public class LifecycleService {
                 TaskCode.SLEEP_DOWN,
                 TaskCode.POOP
         );
-        List<TaskCode> stopList = List.of(
+        List<TaskCode> restartList = List.of(
+                TaskCode.DEAD_SATIETY,
+                TaskCode.DEAD_HEALTHY
         );
+        List<TaskCode> pauseList = List.of();
+        List<TaskCode> stopList = List.of();
 
-        exec(mongId, startList, stopList);
+        exec(mongId, startList, restartList, pauseList, stopList);
     }
 
     public void sleepEvent(Long mongId) {
@@ -75,6 +96,8 @@ public class LifecycleService {
         List<TaskCode> startList = List.of(
                 TaskCode.SLEEP_UP
         );
+        List<TaskCode> restartList = List.of();
+        List<TaskCode> pauseList = List.of();
         List<TaskCode> stopList = List.of(
                 TaskCode.WEIGHT_DOWN,
                 TaskCode.HEALTHY_DOWN,
@@ -84,7 +107,7 @@ public class LifecycleService {
                 TaskCode.POOP
         );
 
-        exec(mongId, startList, stopList);
+        exec(mongId, startList, restartList, pauseList, stopList);
     }
 
     public void wakeupEvent(Long mongId) {
@@ -100,25 +123,28 @@ public class LifecycleService {
                 TaskCode.SLEEP_DOWN,
                 TaskCode.POOP
         );
+        List<TaskCode> restartList = List.of();
+        List<TaskCode> pauseList = List.of();
         List<TaskCode> stopList = List.of(
                 TaskCode.SLEEP_UP
         );
 
-        exec(mongId, startList, stopList);
+        exec(mongId, startList, restartList, pauseList, stopList);
     }
 
     public void dead(Long mongId) {
         if (mongRepository.findByIdAndIsActiveTrue(mongId).isEmpty()) {
             throw new EventTaskException(LifecycleErrorCode.NOT_FOUND_MONG);
         }
-
-        // TODO("MongActiveService.dead() 실행 필요")
+        taskActiveService.dead(mongId, TaskCode.DEAD);
         taskService.stopAllTask(mongId);
     }
 
     private void exec(
             Long mongId,
             List<TaskCode> startList,
+            List<TaskCode> restartList,
+            List<TaskCode> pauseList,
             List<TaskCode> stopList
     ) {
         startList.forEach(eventCode -> {
@@ -126,6 +152,20 @@ public class LifecycleService {
                 taskService.startTask(mongId, eventCode);
             } catch (EventTaskException e) {
                 log.error("[exec] [{}] {} 시작 실패", mongId, eventCode);
+            }
+        });
+        restartList.forEach(eventCode -> {
+            try {
+                taskService.restartTask(mongId, eventCode);
+            } catch (EventTaskException e) {
+                log.error("[exec] [{}] {} 재시작 실패", mongId, eventCode);
+            }
+        });
+        pauseList.forEach(eventCode -> {
+            try {
+                taskService.pauseTask(mongId, eventCode);
+            } catch (EventTaskException e) {
+                log.error("[exec] [{}] {} 일시중지 실패", mongId, eventCode);
             }
         });
         stopList.forEach(eventCode -> {
