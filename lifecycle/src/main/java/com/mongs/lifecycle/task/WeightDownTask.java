@@ -1,10 +1,10 @@
 package com.mongs.lifecycle.task;
 
-import com.mongs.lifecycle.code.EventStatusCode;
-import com.mongs.lifecycle.code.MongEventCode;
-import com.mongs.lifecycle.entity.MongEvent;
+import com.mongs.lifecycle.code.TaskStatusCode;
+import com.mongs.lifecycle.entity.TaskEvent;
 import com.mongs.lifecycle.service.TaskActiveService;
 import com.mongs.lifecycle.service.TaskService;
+import com.mongs.lifecycle.vo.TaskEventVo;
 import lombok.Builder;
 import lombok.extern.slf4j.Slf4j;
 
@@ -18,44 +18,41 @@ public class WeightDownTask extends TimerTask implements BasicTask {
     private final TaskService taskService;
     private final TaskActiveService taskActiveService;
 
-    private final MongEvent event;
+    private final TaskEventVo taskEventVo;
     private Timer timer;
 
-    public static WeightDownTask of(TaskService taskService, TaskActiveService taskActiveService, MongEvent event) {
+    public static WeightDownTask of(
+            TaskService taskService,
+            TaskActiveService taskActiveService,
+            TaskEventVo taskEventVo
+    ) {
         return WeightDownTask.builder()
                 .taskService(taskService)
                 .taskActiveService(taskActiveService)
-                .event(event)
+                .taskEventVo(taskEventVo)
+                .timer(new Timer())
                 .build();
     }
 
     @Override
-    public MongEvent getEvent() {
-        return this.event;
-    }
-
-    @Override
     public void start() {
-        this.timer = new Timer();
-        timer.schedule(this, 1000 * event.getExpiration());
+        timer.schedule(this, 1000 * taskEventVo.expiration());
     }
 
     @Override
     public void stop() {
-        taskService.modifyTaskStatus(event.getId(), EventStatusCode.PROCESS, event.getEventCode());
-        taskActiveService.decreaseWeight(event);
+        taskService.processTask(taskEventVo.taskId());
+        taskActiveService.decreaseWeight(taskEventVo.mongId(), taskEventVo.taskCode(), taskEventVo.createdAt());
         timer.cancel();
         timer.purge();
-        taskService.modifyTaskStatus(event.getId(), EventStatusCode.DONE, event.getEventCode());
-        taskService.deleteTask(event.getEventId());
+        taskService.doneTask(taskEventVo.taskId());
     }
 
     @Override
     public void run() {
-        taskService.modifyTaskStatus(event.getId(), EventStatusCode.PROCESS, event.getEventCode());
-        taskActiveService.decreaseWeight(event);
-        taskService.modifyTaskStatus(event.getId(), EventStatusCode.DONE, event.getEventCode());
-        taskService.deleteTask(event.getEventId());
-        taskService.startTask(event.getMongId(), event.getEventCode());
+        taskService.processTask(taskEventVo.taskId());
+        taskActiveService.decreaseWeight(taskEventVo.mongId(), taskEventVo.taskCode(), taskEventVo.createdAt());
+        taskService.doneTask(taskEventVo.taskId());
+        taskService.startTask(taskEventVo.mongId(), taskEventVo.taskCode());
     }
 }

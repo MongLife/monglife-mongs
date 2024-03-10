@@ -1,9 +1,8 @@
 package com.mongs.lifecycle.task;
 
-import com.mongs.lifecycle.entity.MongEvent;
+import com.mongs.lifecycle.entity.TaskEvent;
 
 public interface BasicTask {
-    MongEvent getEvent();
     void start();
     void stop();
 }

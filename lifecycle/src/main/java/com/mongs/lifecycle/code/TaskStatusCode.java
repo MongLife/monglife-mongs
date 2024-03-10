@@ -1,6 +1,6 @@
 package com.mongs.lifecycle.code;
 
-public enum EventStatusCode {
+public enum TaskStatusCode {
     WAIT,
     PROCESS,
     DONE
