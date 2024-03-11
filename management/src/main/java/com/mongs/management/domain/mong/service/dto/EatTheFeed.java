@@ -1,5 +1,6 @@
 package com.mongs.management.domain.mong.service.dto;
 
+import com.mongs.management.domain.food.InitFoodCodeData;
 import com.mongs.management.exception.ManagementErrorCode;
 //import com.mongs.core.code.MongActiveCode;
 import com.mongs.management.domain.mong.entity.Mong;
@@ -28,11 +29,11 @@ public record EatTheFeed (
     Boolean sleep,
     int poopCount
 ){
-    public EatTheFeed of(Mong mong){
+    public static EatTheFeed of(Mong mong, InitFoodCodeData value){
         return EatTheFeed.builder()
                 .mongCode(ManagementErrorCode.SUCCESS.getCode())
-//                .message(MongActiveCode.MEAL.getName())
-//                .stateCode(MongActiveCode.MEAL.getCode())
+                .message(InitFoodCodeData.valueOf(value.getValue()).getCode())
+                .stateCode(InitFoodCodeData.valueOf(value.getValue()).getCode())
                 .weight(mong.getWeight())
                 .health(mong.getHealthy())
                 .strength(mong.getStrength())

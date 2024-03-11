@@ -7,10 +7,10 @@ import lombok.Getter;
 @AllArgsConstructor
 public enum MongEvolutionEXP {
 
-    FIRST_GRADE("100", "FIRST"),
-    SECOND_GRADE("300", "SECOND"),
-    THIRD_GRADE("500", "THIRD"),
-    FOURTH_GRADE("800", "LAST");
+    FIRST_GRADE("100", "1단계"),
+    SECOND_GRADE("300", "2단계"),
+    THIRD_GRADE("500", "3단계"),
+    FOURTH_GRADE("800", "졸업");
 
     private final String exp;
     private final String name;

@@ -33,49 +33,62 @@ public class Mong extends BaseTimeEntity {
     @Column(name = "member_id")
     private Long memberId;
 
-    // 몽 이름
+    @Column(nullable = false)
     private String name;
 
-    private double weight;
+    @Builder.Default
+    @Column(nullable = false)
+    private Double weight = 0D;
+    @Builder.Default
+    @Column(nullable = false)
+    private Double strength = 100D;
+    @Builder.Default
+    @Column(nullable = false)
+    private Double satiety = 100D;
+    @Builder.Default
+    @Column(nullable = false)
+    private Double healthy = 100D;
+    @Builder.Default
+    @Column(nullable = false)
+    private Double sleep = 100D;
+    @Builder.Default
+    @Column(nullable = false)
+    private Integer penalty = 0;
+    @Builder.Default
+    @Column(nullable = false)
+    private Integer numberOfTraining = 0;
+    @Builder.Default
+    @Column(nullable = false)
+    private Integer numberOfStroke = 0;
+    @Builder.Default
+    @Column(nullable = false)
+    private Integer numberOfPoop = 0;
 
     @Builder.Default
-    private int strength = 100;
-
-    @Builder.Default
-    private int satiety = 100;
-
-    @Builder.Default
-    private int healthy = 100;
-
-    private Boolean isSleeping;
-
-    @Builder.Default
-    private int penalty = 0;
-
-    @Builder.Default
-    private int numberOfTraining = 0;
-
-    @Builder.Default
-    private int numberOfStroke = 0;
-
-    @Builder.Default
-    private int numberOfPoop = 0;
+    @Column(nullable = false)
+    private Boolean isSleeping = false;
 
     private String sleepTime;
 
     private String wakeUpTime;
 
+    @Builder.Default
     @Enumerated(EnumType.STRING) // 몽 단계 1, 2, 3을 위해 만들어놓은 필드
-    private MongGrade grade;
+    private MongGrade grade = MongGrade.ZERO;
 
+    @Builder.Default
     @Enumerated(EnumType.STRING)
-    private MongShift shift;
+    private MongShift shift = MongShift.EMPTY;
 
+    // condition mysql 예약어
+    @Builder.Default
     @Enumerated(EnumType.STRING)
-    private MongCondition condition;
+    private MongCondition mongCondition = MongCondition.NORMAL;
 
+    // 회의 결과로 나눈다고 했기 때문에, 우선적으로 작성, -> 추후 리팩토링시 변경
+    @Builder.Default
     @Enumerated(EnumType.STRING)
-    private MongCondition lifeCycle;
+    private MongCondition lifeCycle = MongCondition.NORMAL;
 
     @Builder.Default
     private int paypoint = 0;
@@ -85,6 +98,9 @@ public class Mong extends BaseTimeEntity {
 
     @OneToMany(mappedBy = "mong")
     private List<AteFoodHistory> foodHistoryList;
+
+    @Builder.Default
+    private int evolutionPoint = 0;
 
     public void doStroke(int stroke) {
         this.numberOfStroke = stroke + 1;
@@ -138,5 +154,21 @@ public class Mong extends BaseTimeEntity {
 
     public void setGrade(String name) {
         this.grade = MongGrade.valueOf(name);
+    }
+
+    public void setSatiety(double satiety) {
+        this.satiety = satiety;
+    }
+
+    public void setPoint(int paypoint) {
+        this.paypoint = paypoint;
+    }
+
+    public void setExp(int exp) {
+        this.exp = exp;
+    }
+
+    public void setStrength(double strength) {
+        this.strength = strength;
     }
 }

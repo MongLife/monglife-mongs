@@ -43,12 +43,12 @@ public class TokenProviderTest {
     }
 
     @Test
-    @DisplayName("Access Token 의 payload 에 memberId, deviceId 를 저장 한다.")
+    @DisplayName("Access Token 의 payload 에 accountId, deviceId 를 저장 한다.")
     void registerMemberIdAndDeviceId() {
         // given
-        Long memberId = 1L;
+        Long accountId = 1L;
         String deviceId = "test-deviceId";
-        String accessToken = tokenProvider.generateAccessToken(memberId, deviceId);
+        String accessToken = tokenProvider.generateAccessToken(accountId, deviceId);
 
         // when
         Long tokenMemberId = tokenProvider.getMemberId(accessToken)
@@ -58,7 +58,7 @@ public class TokenProviderTest {
 
         // then
         assertThat(tokenMemberId).isNotNull();
-        assertThat(tokenMemberId).isEqualTo(memberId);
+        assertThat(tokenMemberId).isEqualTo(accountId);
         assertThat(tokenDeviceId).isNotNull();
         assertThat(tokenDeviceId).isEqualTo(deviceId);
     }
@@ -67,9 +67,9 @@ public class TokenProviderTest {
     @DisplayName("AccessToken 의 만료 시간이 access_expiration 와 일치 여부를 확인 한다. (오차 5s)")
     void accessTokenExpiration() {
         // given
-        Long memberId = 1L;
+        Long accountId = 1L;
         String deviceId = "test-deviceId";
-        String accessToken = tokenProvider.generateAccessToken(memberId, deviceId);
+        String accessToken = tokenProvider.generateAccessToken(accountId, deviceId);
 
         // when
         Long expiration = tokenProvider.getExpiredSeconds(accessToken)

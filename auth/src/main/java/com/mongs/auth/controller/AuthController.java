@@ -1,6 +1,7 @@
 package com.mongs.auth.controller;
 
 import com.mongs.auth.dto.request.LoginReqDto;
+import com.mongs.auth.dto.request.LogoutReqDto;
 import com.mongs.auth.dto.request.PassportReqDto;
 import com.mongs.auth.dto.request.ReissueReqDto;
 import com.mongs.auth.service.AuthService;
@@ -21,6 +22,11 @@ public class AuthController {
         return ResponseEntity.ok().body(authService.login(loginReqDto.deviceId(), loginReqDto.email(), loginReqDto.name()));
     }
 
+    @PostMapping("/logout")
+    public ResponseEntity<Object> logout(@RequestBody @Validated LogoutReqDto logoutReqDto) {
+        return ResponseEntity.ok().body(authService.logout(logoutReqDto.refreshToken()));
+    }
+
     @PostMapping("/reissue")
     public ResponseEntity<Object> reissue(@RequestBody @Validated ReissueReqDto reissueReqDto) {
         return ResponseEntity.ok().body(authService.reissue(reissueReqDto.refreshToken()));
@@ -31,3 +37,5 @@ public class AuthController {
         return ResponseEntity.ok().body(authService.passport(passportReqDto.accessToken()));
     }
 }
+
+
