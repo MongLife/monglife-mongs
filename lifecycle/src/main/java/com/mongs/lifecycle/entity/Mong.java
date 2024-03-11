@@ -26,6 +26,9 @@ public class Mong extends BaseTimeEntity {
     private Long accountId;
     @Column(nullable = false)
     private String name;
+    @Builder.Default
+    @Column(nullable = false)
+    private Boolean isActive = true;
 
     @Builder.Default
     @Column(nullable = false)
