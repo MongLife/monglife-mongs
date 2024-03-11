@@ -8,12 +8,13 @@ import lombok.Getter;
 @AllArgsConstructor
 public enum MongGrade implements Code {
 
-    ZERO("GD000", "알"),
-    FIRST("GD001", "1단계"),
-    SECOND("GD002", "2단계"),
-    THIRD("GD003", "3단계"),
-    LAST("GD004", "졸업");
+    ZERO("GD000", "알", "ZERO"),
+    FIRST("GD001", "1단계", "FIRST"),
+    SECOND("GD002", "2단계", "SECOND"),
+    THIRD("GD003", "3단계", "THIRD"),
+    LAST("GD004", "졸업", "LAST");
 
     private final String code;
     private final String name;
+    private final String value;
 }
