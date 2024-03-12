@@ -1,9 +1,6 @@
 package com.mongs.notification.controller;
 
-import com.mongs.core.mqtt.MqttReqDto;
-import com.mongs.core.mqtt.PublishShift;
-import com.mongs.core.mqtt.PublishState;
-import com.mongs.core.mqtt.PublishStatus;
+import com.mongs.core.mqtt.*;
 import com.mongs.notification.service.NotificationService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -17,6 +14,10 @@ public class NotificationController {
 
     private final NotificationService notificationService;
 
+    @PostMapping("/create")
+    public void publishCreate(@RequestBody MqttReqDto<PublishCreate> request) throws Exception {
+        notificationService.publishCreate(request.email(), request.data());
+    }
     @PostMapping("/status")
     public void publishStatus(@RequestBody MqttReqDto<PublishStatus> request) throws Exception {
         notificationService.publishStatus(request.email(), request.data());

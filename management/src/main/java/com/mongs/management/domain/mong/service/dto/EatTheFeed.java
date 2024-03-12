@@ -1,8 +1,7 @@
 package com.mongs.management.domain.mong.service.dto;
 
-import com.mongs.management.domain.food.InitFoodCodeData;
+import com.mongs.core.entity.FoodCode;
 import com.mongs.management.exception.ManagementErrorCode;
-//import com.mongs.core.code.MongActiveCode;
 import com.mongs.management.domain.mong.entity.Mong;
 import lombok.*;
 
@@ -29,11 +28,11 @@ public record EatTheFeed (
     Boolean sleep,
     int poopCount
 ){
-    public static EatTheFeed of(Mong mong, InitFoodCodeData value){
+    public static EatTheFeed of(Mong mong, FoodCode foodCode){
         return EatTheFeed.builder()
                 .mongCode(ManagementErrorCode.SUCCESS.getCode())
-                .message(InitFoodCodeData.valueOf(value.getValue()).getCode())
-                .stateCode(InitFoodCodeData.valueOf(value.getValue()).getCode())
+                .message(foodCode.code())
+                .stateCode(foodCode.code())
                 .weight(mong.getWeight())
                 .health(mong.getHealthy())
                 .strength(mong.getStrength())

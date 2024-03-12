@@ -1,7 +1,6 @@
 package com.mongs.common.dto.response;
 
-import com.mongs.core.code.entity.FeedbackCode;
-import com.mongs.core.code.entity.MongCode;
+import com.mongs.core.entity.FeedbackCode;
 import lombok.Builder;
 
 import java.util.List;

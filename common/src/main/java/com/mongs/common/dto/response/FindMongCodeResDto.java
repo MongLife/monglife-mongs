@@ -1,6 +1,6 @@
 package com.mongs.common.dto.response;
 
-import com.mongs.core.code.entity.MongCode;
+import com.mongs.core.entity.MongCode;
 import lombok.Builder;
 
 import java.util.List;

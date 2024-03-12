@@ -1,6 +1,6 @@
 package com.mongs.member.domain.collection.dto.response;
 
-import com.mongs.core.code.entity.MapCode;
+import com.mongs.core.entity.MapCode;
 import lombok.Builder;
 
 import java.util.Comparator;

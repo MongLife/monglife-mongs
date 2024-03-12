@@ -1,6 +1,6 @@
 package com.mongs.member.domain.member.service;
 
-import com.mongs.core.code.enums.member.SlotCountCode;
+import com.mongs.core.enums.member.SlotCountCode;
 import com.mongs.member.domain.member.dto.response.FindMemberResDto;
 import com.mongs.member.domain.member.dto.response.ModifyMemberResDto;
 import com.mongs.member.domain.member.dto.response.RegisterMemberResDto;

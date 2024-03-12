@@ -5,9 +5,10 @@ import lombok.Builder;
 @Builder
 public record PublishStatus(
         Long mongId,
-        Float health,
-        Float satiety,
-        Float strength,
-        Float sleep
+        Double health,
+        Double satiety,
+        Double strength,
+        Double sleep,
+        Integer poopCount
 ) {
 }

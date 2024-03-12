@@ -13,8 +13,8 @@ import com.mongs.member.domain.collection.dto.response.RegisterMongCollectionRes
 import com.mongs.member.domain.collection.exception.CollectionErrorCode;
 import com.mongs.member.domain.collection.exception.InvalidCodeException;
 import com.mongs.member.domain.collection.security.WithMockPassportDetail;
-import com.mongs.core.code.entity.MapCode;
-import com.mongs.core.code.entity.MongCode;
+import com.mongs.core.entity.MapCode;
+import com.mongs.core.entity.MongCode;
 import com.mongs.core.error.ErrorCode;
 import com.mongs.member.domain.collection.service.CollectionService;
 import org.junit.jupiter.api.DisplayName;

@@ -4,6 +4,8 @@ dependencies {
         exclude group: 'io.jsonwebtoken'
         exclude group: 'org.springframework.boot'
     }
+    // eureka
+    implementation 'org.springframework.cloud:spring-cloud-starter-netflix-eureka-client'
     // spring
     implementation 'org.springframework.boot:spring-boot-starter-web'
     developmentOnly 'org.springframework.boot:spring-boot-devtools'

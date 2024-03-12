@@ -13,9 +13,9 @@ import com.mongs.common.repository.CodeVersionRepository;
 import com.mongs.common.repository.FoodCodeRepository;
 import com.mongs.common.repository.MapCodeRepository;
 import com.mongs.common.repository.MongCodeRepository;
-import com.mongs.core.code.entity.FoodCode;
-import com.mongs.core.code.entity.MapCode;
-import com.mongs.core.code.entity.MongCode;
+import com.mongs.core.entity.FoodCode;
+import com.mongs.core.entity.MapCode;
+import com.mongs.core.entity.MongCode;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -53,8 +53,8 @@ class CommonServiceTest {
     @DisplayName("버전의 최신화 여부를 확인하여 코드 값을 반환한다.")
     void codeVersionCheckAndNewestCode() {
         // given
-        String version = "test-version";
-        String newestVersion = "test-newestVersion";
+        Long version = 1L;
+        Long newestVersion = 2L;
 
         when(codeVersionRepository.findTopByOrderByCreatedAtDesc())
                 .thenReturn(Optional.of(CodeVersion.builder()
@@ -63,7 +63,7 @@ class CommonServiceTest {
                         .build()));
 
         // when
-        String expected = commonService.codeVersionCheckAndNewestCode(version);
+        Long expected = commonService.codeVersionCheckAndNewestCode(version);
 
         // then
         assertThat(expected).isEqualTo(newestVersion);
@@ -73,7 +73,7 @@ class CommonServiceTest {
     @DisplayName("데이터베이스에 저장된 버전 정보가 없는 경우 NotFoundVersionException 예외를 발생 시킨다.")
     void codeVersionCheckAndNewestCodeWhenNotFoundVersion() {
         // given
-        String version = "test-version";
+        Long version = 1L;
         when(codeVersionRepository.findTopByOrderByCreatedAtDesc())
                 .thenReturn(Optional.empty());
 
@@ -89,8 +89,8 @@ class CommonServiceTest {
     @DisplayName("이미 최신 버전인 경우 NewestVersionException 예외를 발생 시킨다.")
     void codeVersionCheckAndNewestCodeWhenOldVersion() {
         // given
-        String version = "test-newestVersion";
-        String newestVersion = "test-newestVersion";
+        Long version = 2L;
+        Long newestVersion = 2L;
 
         when(codeVersionRepository.findTopByOrderByCreatedAtDesc())
                 .thenReturn(Optional.of(CodeVersion.builder()

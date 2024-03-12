@@ -1,7 +1,6 @@
 package com.mongs.common.dto.response;
 
-import com.mongs.core.code.entity.FoodCode;
-import com.mongs.core.code.entity.MongCode;
+import com.mongs.core.entity.FoodCode;
 import lombok.Builder;
 
 import java.util.List;
@@ -18,7 +17,7 @@ public record FindFoodCodeResDto(
                 .code(mongCode.code())
                 .name(mongCode.name())
                 .groupCode(mongCode.groupCode())
-                .point(mongCode.point())
+                .point(mongCode.price())
                 .build();
     }
 

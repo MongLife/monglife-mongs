@@ -24,7 +24,7 @@ public class CommonService {
     private final FoodCodeRepository foodCodeRepository;
     private final FeedbackCodeRepository feedbackCodeRepository;
 
-    public String codeVersionCheckAndNewestCode(String version) {
+    public Long codeVersionCheckAndNewestCode(Long version) {
         CodeVersion newestVersion = codeVersionRepository.findTopByOrderByCreatedAtDesc()
                 .orElseThrow(() -> new NotFoundVersionException(CommonErrorCode.NOT_FOUND_VERSION));
 

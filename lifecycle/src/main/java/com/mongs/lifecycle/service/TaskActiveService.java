@@ -1,7 +1,7 @@
 package com.mongs.lifecycle.service;
 
-import com.mongs.core.code.enums.management.MongShift;
-import com.mongs.core.code.enums.management.MongState;
+import com.mongs.core.enums.management.MongShift;
+import com.mongs.core.enums.management.MongState;
 import com.mongs.lifecycle.code.TaskCode;
 import com.mongs.lifecycle.entity.Mong;
 import com.mongs.lifecycle.exception.EventTaskException;

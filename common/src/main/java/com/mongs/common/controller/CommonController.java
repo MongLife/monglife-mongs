@@ -14,13 +14,12 @@ public class CommonController {
     private final CommonService commonService;
 
     @GetMapping("")
-    public ResponseEntity<Object> findCode(@RequestParam("version") String versionCode) {
+    public ResponseEntity<Object> findCode(@RequestParam("version") Long version) {
         return ResponseEntity.ok().body(
                 FindCodeResDto.builder()
-                        .version(commonService.codeVersionCheckAndNewestCode(versionCode))
+                        .version(commonService.codeVersionCheckAndNewestCode(version))
                         .mapCodeList(commonService.findMapCode())
                         .mongCodeList(commonService.findMongCode())
-                        .foodCodeList(commonService.findFoodCode())
                         .feedbackCodeList(commonService.findFeedbackCode())
                         .build()
         );

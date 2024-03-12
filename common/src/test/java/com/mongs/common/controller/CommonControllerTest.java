@@ -9,9 +9,9 @@ import com.mongs.common.dto.response.FindMongCodeResDto;
 import com.mongs.common.exception.CommonErrorCode;
 import com.mongs.common.exception.NewestVersionException;
 import com.mongs.common.service.CommonService;
-import com.mongs.core.code.entity.FoodCode;
-import com.mongs.core.code.entity.MapCode;
-import com.mongs.core.code.entity.MongCode;
+import com.mongs.core.entity.FoodCode;
+import com.mongs.core.entity.MapCode;
+import com.mongs.core.entity.MongCode;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
@@ -71,8 +71,8 @@ class CommonControllerTest {
     @DisplayName("버전에 따른 코드 값을 반환한다. (몽, 맵, 음식)")
     void findCode() throws Exception {
         // given
-        String version = "test-version";
-        String newestVersion = "test-newestVersion";
+        Long version = 1L;
+        Long newestVersion = 2L;
 
         when(commonService.codeVersionCheckAndNewestCode(version))
                 .thenReturn(newestVersion);
@@ -86,7 +86,7 @@ class CommonControllerTest {
         // when
         ResultActions resultActions = mockMvc.perform(get("/common")
                 .contentType(MediaType.APPLICATION_JSON)
-                .param("version", version));
+                .param("version", String.valueOf(version)));
 
         // then
         resultActions
@@ -110,10 +110,10 @@ class CommonControllerTest {
             resultActions.andExpect(jsonPath("$.foodCodeList.[" + idx + "].code").value(foodCode.code()));
             resultActions.andExpect(jsonPath("$.foodCodeList.[" + idx + "].name").value(foodCode.name()));
             resultActions.andExpect(jsonPath("$.foodCodeList.[" + idx + "].groupCode").value(foodCode.groupCode()));
-            resultActions.andExpect(jsonPath("$.foodCodeList.[" + idx + "].point").value(foodCode.point()));
+            resultActions.andExpect(jsonPath("$.foodCodeList.[" + idx + "].point").value(foodCode.price()));
         }
 
-        var versionCaptor = ArgumentCaptor.forClass(String.class);
+        var versionCaptor = ArgumentCaptor.forClass(Long.class);
         verify(commonService, times(1)).codeVersionCheckAndNewestCode(versionCaptor.capture());
 
         var passedVersion = versionCaptor.getValue();
@@ -124,7 +124,7 @@ class CommonControllerTest {
     @DisplayName("이미 최신 버전인 경우 ALREADY_NEW_VERSION 에러를 반환한다.")
     void findCodeWhenAlreadyNewestVersion() throws Exception {
         // given
-        String newestVersion = "test-newestVersion";
+        Long newestVersion = 2L;
 
         when(commonService.codeVersionCheckAndNewestCode(newestVersion))
                 .thenThrow(new NewestVersionException(CommonErrorCode.ALREADY_NEW_VERSION));
@@ -132,7 +132,7 @@ class CommonControllerTest {
         // when
         ResultActions resultActions = mockMvc.perform(get("/common")
                 .contentType(MediaType.APPLICATION_JSON)
-                .param("version", newestVersion));
+                .param("version", String.valueOf(newestVersion)));
 
         // then
         resultActions
@@ -142,7 +142,7 @@ class CommonControllerTest {
         resultActions.andExpect(jsonPath("$.code").value(CommonErrorCode.ALREADY_NEW_VERSION.getCode()));
         resultActions.andExpect(jsonPath("$.message").value(CommonErrorCode.ALREADY_NEW_VERSION.getMessage()));
 
-        var versionCaptor = ArgumentCaptor.forClass(String.class);
+        var versionCaptor = ArgumentCaptor.forClass(Long.class);
         verify(commonService, times(1)).codeVersionCheckAndNewestCode(versionCaptor.capture());
 
         var passedVersion = versionCaptor.getValue();
@@ -216,7 +216,7 @@ class CommonControllerTest {
             resultActions.andExpect(jsonPath("$.[" + idx + "].code").value(foodCode.code()));
             resultActions.andExpect(jsonPath("$.[" + idx + "].name").value(foodCode.name()));
             resultActions.andExpect(jsonPath("$.[" + idx + "].groupCode").value(foodCode.groupCode()));
-            resultActions.andExpect(jsonPath("$.[" + idx + "].point").value(foodCode.point()));
+            resultActions.andExpect(jsonPath("$.[" + idx + "].point").value(foodCode.price()));
         }
     }
 }

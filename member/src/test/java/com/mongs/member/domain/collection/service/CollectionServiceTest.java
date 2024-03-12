@@ -2,8 +2,8 @@ package com.mongs.member.domain.collection.service;
 
 import com.mongs.member.domain.collection.code.TestMapCode;
 import com.mongs.member.domain.collection.code.TestMongCode;
-import com.mongs.core.code.entity.MapCode;
-import com.mongs.core.code.entity.MongCode;
+import com.mongs.core.entity.MapCode;
+import com.mongs.core.entity.MongCode;
 import com.mongs.member.domain.collection.dto.response.FindMapCollectionResDto;
 import com.mongs.member.domain.collection.dto.response.FindMongCollectionResDto;
 import com.mongs.member.domain.collection.entity.MapCollection;

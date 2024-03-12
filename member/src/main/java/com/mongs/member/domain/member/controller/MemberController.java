@@ -1,6 +1,6 @@
 package com.mongs.member.domain.member.controller;
 
-import com.mongs.core.code.enums.member.SlotCountCode;
+import com.mongs.core.enums.member.SlotCountCode;
 import com.mongs.member.domain.member.dto.request.ModifyMemberReqDto;
 import com.mongs.member.domain.member.service.MemberService;
 import com.mongs.core.security.principal.PassportDetail;

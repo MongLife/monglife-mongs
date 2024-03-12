@@ -13,15 +13,11 @@ import lombok.*;
 
 @Builder
 public record Evolution (
-    String mongCode,
-    String stateCode,
-    double weight
+    String mongCode
 ){
     public static Evolution of(Mong mong){
         return Evolution.builder()
-                .mongCode(mong.getGrade().getCode())
-                .stateCode(mong.getMongCondition().getCode())
-                .weight(mong.getWeight())
+                .mongCode(mong.getMongCode())
                 .build();
     }
 }

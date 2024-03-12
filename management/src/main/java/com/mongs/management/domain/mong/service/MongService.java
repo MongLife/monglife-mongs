@@ -6,14 +6,14 @@ import java.util.List;
 
 public interface MongService {
 
-    CreateMong createMong (InitMong initmong, Long memberId);
-    Stroke toMongStroke (Long memberId);
-    Sleep toCheckMongsLifetime (Long memberId);
-    Poop toCleanMongsPoop (Long memberId);
+    CreateMong createMong (InitMong initmong, Long accountId, String email);
+    Stroke toMongStroke (Long mongId, Long accountId);
+    Sleep toMongSleeping (Long mongId, Long accountId, String email);
+    Poop toCleanMongsPoop (Long mongId, Long accountId, String email);
 
     // 음식 먹이기
-    EatTheFeed feedToMong (FeedCode feed, Long memberId);
-    Training mongTraining (TrainingCount trainingCount, Long memberId);
-    Evolution mongEvolution (Long memberId);
-    Graduation mongsGraduate(Long memberId);
+    EatTheFeed feedToMong (FeedCode code, Long mongId, Long accountId, String email);
+    Training mongTraining (Long mongId, Long accountId);
+    Evolution mongEvolution (Long mongId, Long accountId, String email);
+    Graduation mongsGraduate(Long mongId, Long accountId, String email);
 }
