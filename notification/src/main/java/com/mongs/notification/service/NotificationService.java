@@ -25,7 +25,7 @@ public class NotificationService {
     @Value("${application.mqtt.topic.mong_data}")
     private String TOPIC_FILTER;
 
-    public void publishCreate(String email, PublishCreate publishCreate) throws JsonProcessingException {
+    public void publishCreate(Long accountId, PublishCreate publishCreate) throws JsonProcessingException {
         String data = objectMapper.writeValueAsString(
                 BasicPublish.builder()
                         .code(PublishCode.MONG_CREATE)
@@ -33,10 +33,10 @@ public class NotificationService {
                         .build()
         );
 
-        mqttClient.sendToMqtt(TOPIC_FILTER + email, data);
+        mqttClient.sendToMqtt(TOPIC_FILTER + accountId, data);
     }
 
-    public void publishStatus(String email, PublishStatus publishStatus) throws JsonProcessingException {
+    public void publishStatus(Long accountId, PublishStatus publishStatus) throws JsonProcessingException {
         log.info("{}", publishStatus);
         String data = objectMapper.writeValueAsString(
                 BasicPublish.builder()
@@ -45,10 +45,10 @@ public class NotificationService {
                         .build()
         );
 
-        mqttClient.sendToMqtt(TOPIC_FILTER + email, data);
+        mqttClient.sendToMqtt(TOPIC_FILTER + accountId, data);
     }
 
-    public void publishShift(String email, PublishShift publishShift) throws JsonProcessingException {
+    public void publishShift(Long accountId, PublishShift publishShift) throws JsonProcessingException {
         log.info("{}", publishShift);
         String data = objectMapper.writeValueAsString(
                 BasicPublish.builder()
@@ -57,10 +57,10 @@ public class NotificationService {
                         .build()
         );
 
-        mqttClient.sendToMqtt(TOPIC_FILTER + email, data);
+        mqttClient.sendToMqtt(TOPIC_FILTER + accountId, data);
     }
 
-    public void publishState(String email, PublishState publishState) throws JsonProcessingException {
+    public void publishState(Long accountId, PublishState publishState) throws JsonProcessingException {
         log.info("{}", publishState);
         String data = objectMapper.writeValueAsString(
                 BasicPublish.builder()
@@ -69,6 +69,6 @@ public class NotificationService {
                         .build()
         );
 
-        mqttClient.sendToMqtt(TOPIC_FILTER + email, data);
+        mqttClient.sendToMqtt(TOPIC_FILTER + accountId, data);
     }
 }

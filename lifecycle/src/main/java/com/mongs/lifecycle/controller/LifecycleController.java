@@ -4,6 +4,7 @@ import com.mongs.lifecycle.dto.response.*;
 import com.mongs.lifecycle.service.LifecycleService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.parameters.P;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -12,6 +13,15 @@ import org.springframework.web.bind.annotation.*;
 public class LifecycleController {
 
     private final LifecycleService lifecycleService;
+
+    @PostMapping("/egg/{mongId}")
+    public ResponseEntity<Object> eggMongEvent(@PathVariable("mongId") Long mongId) {
+        lifecycleService.eggEvent(mongId);
+
+        return ResponseEntity.ok().body(EggMongEventResDto.builder()
+                .mongId(mongId)
+                .build());
+    }
 
     @DeleteMapping("/graduation/{mongId}")
     public ResponseEntity<Object> graduationMongEvent(@PathVariable("mongId") Long mongId) {

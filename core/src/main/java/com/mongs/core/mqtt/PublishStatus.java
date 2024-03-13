@@ -9,6 +9,7 @@ public record PublishStatus(
         Double satiety,
         Double strength,
         Double sleep,
+        Boolean isSleeping,
         Integer poopCount
 ) {
 }

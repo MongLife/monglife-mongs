@@ -5,10 +5,7 @@ import com.mongs.core.enums.management.MongShift;
 import com.mongs.core.enums.management.MongState;
 import com.mongs.core.time.BaseTimeEntity;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.hibernate.annotations.DynamicUpdate;
 
 
@@ -19,6 +16,7 @@ import org.hibernate.annotations.DynamicUpdate;
 @AllArgsConstructor
 @DynamicUpdate
 @Builder(toBuilder = true)
+@ToString
 public class Mong extends BaseTimeEntity {
 
     @Id
@@ -33,6 +31,9 @@ public class Mong extends BaseTimeEntity {
     @Column(nullable = false)
     private Boolean isActive = true;
 
+    @Builder.Default
+    @Column(nullable = false)
+    private String mongCode = "CD444";
     @Builder.Default
     @Column(nullable = false)
     private Double weight = 0D;
@@ -69,7 +70,7 @@ public class Mong extends BaseTimeEntity {
 
     @Builder.Default
     @Column(nullable = false)
-    @Enumerated(EnumType.STRING)
+    @Enumerated(EnumType.STRING) // 몽 단계 1, 2, 3을 위해 만들어놓은 필드
     private MongGrade grade = MongGrade.ZERO;
     @Builder.Default
     @Column(nullable = false)
@@ -81,12 +82,12 @@ public class Mong extends BaseTimeEntity {
     private MongState state = MongState.EMPTY;
     @Builder.Default
     @Column(nullable = false)
-    private int evolutionPoint = 0;
+    private Integer evolutionPoint = 0;
 
     @Builder.Default
     @Column(nullable = false)
     private Integer payPoint = 0;
     @Builder.Default
     @Column(nullable = false)
-    private int exp = 0;
+    private Integer exp = 0;
 }

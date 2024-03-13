@@ -1,6 +1,7 @@
 package com.mongs.lifecycle.task;
 
 import com.mongs.lifecycle.code.TaskStatusCode;
+import com.mongs.lifecycle.exception.EventTaskException;
 import com.mongs.lifecycle.service.TaskActiveService;
 import com.mongs.lifecycle.service.TaskService;
 import com.mongs.lifecycle.vo.TaskEventVo;
@@ -48,15 +49,24 @@ public class DeadTask implements BasicTask {
 
     @Override
     public void stop() {
-        taskService.processTask(taskEventVo.taskId());
-        scheduler.cancel(false);
-        taskService.doneTask(taskEventVo.taskId());
+        try {
+            taskService.processTask(taskEventVo.taskId());
+            taskService.doneTask(taskEventVo.taskId());
+        } catch (EventTaskException e) {
+            taskService.doneTask(taskEventVo.taskId());
+        } finally {
+            scheduler.cancel(false);
+        }
     }
 
     private void run() {
-        taskService.processTask(taskEventVo.taskId());
-        taskActiveService.dead(taskEventVo.mongId(), taskEventVo.taskCode());
-        taskService.stopAllTask(taskEventVo.mongId());
-        taskService.doneTask(taskEventVo.taskId());
+        try {
+            taskService.processTask(taskEventVo.taskId());
+            taskActiveService.dead(taskEventVo.mongId(), taskEventVo.taskCode());
+            taskService.stopAllTask(taskEventVo.mongId());
+            taskService.doneTask(taskEventVo.taskId());
+        } catch (EventTaskException e) {
+            taskService.doneTask(taskEventVo.taskId());
+        }
     }
 }

@@ -4,7 +4,7 @@ import lombok.Builder;
 
 @Builder
 public record MqttReqDto<T>(
-        String email,
+        Long accountId,
         T data
 ) {
 }

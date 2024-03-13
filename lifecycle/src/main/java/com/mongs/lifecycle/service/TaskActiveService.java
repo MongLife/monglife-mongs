@@ -2,6 +2,11 @@ package com.mongs.lifecycle.service;
 
 import com.mongs.core.enums.management.MongShift;
 import com.mongs.core.enums.management.MongState;
+import com.mongs.core.mqtt.MqttReqDto;
+import com.mongs.core.mqtt.PublishShift;
+import com.mongs.core.mqtt.PublishState;
+import com.mongs.core.mqtt.PublishStatus;
+import com.mongs.lifecycle.client.NotificationClient;
 import com.mongs.lifecycle.code.TaskCode;
 import com.mongs.lifecycle.entity.Mong;
 import com.mongs.lifecycle.exception.EventTaskException;
@@ -24,6 +29,7 @@ public class TaskActiveService {
     private final boolean isDebug = true;
 
     private final MongRepository mongRepository;
+    private final NotificationClient notificationClient;
 
     @Value("${application.scheduler.sleep-max}")
     private Double SLEEP_MAX;
@@ -31,220 +37,306 @@ public class TaskActiveService {
     private Integer POOP_MAX;
 
     @Transactional
-    public void decreaseWeight(Long mongId, TaskCode taskCode, LocalDateTime createdAt) {
-        try {
-            Mong mong = mongRepository.findByIdAndIsActiveTrue(mongId)
-                    .orElseThrow(() -> new EventTaskException(LifecycleErrorCode.NOT_FOUND_MONG));
+    public void eggEvolution(Long mongId) throws EventTaskException {
+        Mong mong = mongRepository.findByIdAndIsActiveTrue(mongId)
+                .orElseThrow(() -> new EventTaskException(LifecycleErrorCode.NOT_FOUND_MONG));
 
-            long seconds = Math.min(taskCode.getExpiration(), Duration.between(createdAt, LocalDateTime.now()).getSeconds());
-            double subWeight = taskCode.getValue() / taskCode.getExpiration() * seconds;
-            double newWeight = Math.max(0D, mong.getWeight() - subWeight);
+        Mong saveMong = mongRepository.save(mong.toBuilder()
+                .shift(MongShift.EVOLUTION_READY)
+                .build());
 
-            if (isDebug) {
-                log.info("[{}] 몸무게 {} 감소", mongId, mong.getWeight() - newWeight);
-            }
-
-            mongRepository.save(mong.toBuilder()
-                    .weight(newWeight)
-                    .build());
-        } catch (EventTaskException e) {
-            // log.info("[{}] 사망하거나 존재하지 않은 몽", mongId);
-        }
+        notificationClient.publishShift(MqttReqDto.builder()
+                .accountId(saveMong.getAccountId())
+                .data(PublishShift.builder()
+                        .mongId(saveMong.getId())
+                        .shiftCode(saveMong.getShift().getCode())
+                        .build())
+                .build());
+        log.info("[eggEvolution] {}", saveMong);
     }
 
     @Transactional
-    public void decreaseStrength(Long mongId, TaskCode taskCode, LocalDateTime createdAt) {
-        try {
-            Mong mong = mongRepository.findByIdAndIsActiveTrue(mongId)
-                    .orElseThrow(() -> new EventTaskException(LifecycleErrorCode.NOT_FOUND_MONG));
+    public void decreaseWeight(Long mongId, TaskCode taskCode, LocalDateTime createdAt) throws EventTaskException {
+        Mong mong = mongRepository.findByIdAndIsActiveTrue(mongId)
+                .orElseThrow(() -> new EventTaskException(LifecycleErrorCode.NOT_FOUND_MONG));
 
-            long seconds = Math.min(taskCode.getExpiration(), Duration.between(createdAt, LocalDateTime.now()).getSeconds());
-            double subStrength = taskCode.getValue() / taskCode.getExpiration() * seconds;
-            double newStrength = Math.max(0D, mong.getStrength() - subStrength);
+        long seconds = Math.min(taskCode.getExpiration(), Duration.between(createdAt, LocalDateTime.now()).getSeconds());
+        double subWeight = taskCode.getValue() / taskCode.getExpiration() * seconds;
+        double newWeight = Math.max(0D, mong.getWeight() - subWeight);
 
-            if (isDebug) {
-                log.info("[{}] 근력 {} 감소", mongId, mong.getStrength() - newStrength);
-            }
-
-            mongRepository.save(mong.toBuilder()
-                    .strength(newStrength)
-                    .build());
-        } catch (EventTaskException e) {
-            // log.info("[{}] 사망하거나 존재하지 않은 몽", mongId);
+        if (isDebug) {
+            log.info("[{}] 몸무게 {} 감소", mongId, mong.getWeight() - newWeight);
         }
+
+        Mong saveMong = mongRepository.save(mong.toBuilder()
+                .weight(newWeight)
+                .build());
+
+        notificationClient.publishStatus(MqttReqDto.builder()
+                .accountId(saveMong.getAccountId())
+                .data(PublishStatus.builder()
+                        .mongId(saveMong.getId())
+                        .health(saveMong.getHealthy())
+                        .satiety(saveMong.getSatiety())
+                        .strength(saveMong.getStrength())
+                        .sleep(saveMong.getSleep())
+                        .poopCount(saveMong.getNumberOfPoop())
+                        .isSleeping(saveMong.getIsSleeping())
+                        .build())
+                .build());
     }
 
     @Transactional
-    public double decreaseSatiety(Long mongId, TaskCode taskCode, LocalDateTime createdAt) {
-        double newSatiety = -1D;
+    public void decreaseStrength(Long mongId, TaskCode taskCode, LocalDateTime createdAt) throws EventTaskException {
+        Mong mong = mongRepository.findByIdAndIsActiveTrue(mongId)
+                .orElseThrow(() -> new EventTaskException(LifecycleErrorCode.NOT_FOUND_MONG));
 
-        try {
-            Mong mong = mongRepository.findByIdAndIsActiveTrue(mongId)
-                    .orElseThrow(() -> new EventTaskException(LifecycleErrorCode.NOT_FOUND_MONG));
+        long seconds = Math.min(taskCode.getExpiration(), Duration.between(createdAt, LocalDateTime.now()).getSeconds());
+        double subStrength = taskCode.getValue() / taskCode.getExpiration() * seconds;
+        double newStrength = Math.max(0D, mong.getStrength() - subStrength);
 
-            long seconds = Math.min(taskCode.getExpiration(), Duration.between(createdAt, LocalDateTime.now()).getSeconds());
-            double subSatiety = taskCode.getValue() / taskCode.getExpiration() * seconds;
-            newSatiety = Math.max(0D, mong.getSatiety() - subSatiety);
-
-            if (isDebug) {
-                log.info("[{}] 포만감 {} 감소", mongId, mong.getSatiety() - newSatiety);
-            }
-
-            mongRepository.save(mong.toBuilder()
-                    .satiety(newSatiety)
-                    .build());
-        } catch (EventTaskException e) {
-            // log.info("[{}] 사망하거나 존재하지 않은 몽", mongId);
+        if (isDebug) {
+            log.info("[{}] 근력 {} 감소", mongId, mong.getStrength() - newStrength);
         }
+
+        Mong saveMong = mongRepository.save(mong.toBuilder()
+                .strength(newStrength)
+                .build());
+
+        notificationClient.publishStatus(MqttReqDto.builder()
+                .accountId(saveMong.getAccountId())
+                .data(PublishStatus.builder()
+                        .mongId(saveMong.getId())
+                        .health(saveMong.getHealthy())
+                        .satiety(saveMong.getSatiety())
+                        .strength(saveMong.getStrength())
+                        .sleep(saveMong.getSleep())
+                        .poopCount(saveMong.getNumberOfPoop())
+                        .isSleeping(saveMong.getIsSleeping())
+                        .build())
+                .build());
+    }
+
+    @Transactional
+    public double decreaseSatiety(Long mongId, TaskCode taskCode, LocalDateTime createdAt) throws EventTaskException {
+        Mong mong = mongRepository.findByIdAndIsActiveTrue(mongId)
+                .orElseThrow(() -> new EventTaskException(LifecycleErrorCode.NOT_FOUND_MONG));
+
+        long seconds = Math.min(taskCode.getExpiration(), Duration.between(createdAt, LocalDateTime.now()).getSeconds());
+        double subSatiety = taskCode.getValue() / taskCode.getExpiration() * seconds;
+        double newSatiety = Math.max(0D, mong.getSatiety() - subSatiety);
+
+        if (isDebug) {
+            log.info("[{}] 포만감 {} 감소", mongId, mong.getSatiety() - newSatiety);
+        }
+
+        Mong saveMong = mongRepository.save(mong.toBuilder()
+                .satiety(newSatiety)
+                .build());
+
+        notificationClient.publishStatus(MqttReqDto.builder()
+                .accountId(saveMong.getAccountId())
+                .data(PublishStatus.builder()
+                        .mongId(saveMong.getId())
+                        .health(saveMong.getHealthy())
+                        .satiety(saveMong.getSatiety())
+                        .strength(saveMong.getStrength())
+                        .sleep(saveMong.getSleep())
+                        .poopCount(saveMong.getNumberOfPoop())
+                        .isSleeping(saveMong.getIsSleeping())
+                        .build())
+                .build());
 
         return newSatiety;
     }
 
     @Transactional
-    public double decreaseHealthy(Long mongId, TaskCode taskCode, LocalDateTime createdAt) {
-        double newHealthy = -1D;
+    public double decreaseHealthy(Long mongId, TaskCode taskCode, LocalDateTime createdAt) throws EventTaskException {
+        Mong mong = mongRepository.findByIdAndIsActiveTrue(mongId)
+                .orElseThrow(() -> new EventTaskException(LifecycleErrorCode.NOT_FOUND_MONG));
 
-        try {
-            Mong mong = mongRepository.findByIdAndIsActiveTrue(mongId)
-                    .orElseThrow(() -> new EventTaskException(LifecycleErrorCode.NOT_FOUND_MONG));
+        long seconds = Math.min(taskCode.getExpiration(), Duration.between(createdAt, LocalDateTime.now()).getSeconds());
+        double subHealthy = taskCode.getValue() / taskCode.getExpiration() * seconds;
+        double newHealthy = Math.max(0D, mong.getHealthy() - subHealthy);
 
-            long seconds = Math.min(taskCode.getExpiration(), Duration.between(createdAt, LocalDateTime.now()).getSeconds());
-            double subHealthy = taskCode.getValue() / taskCode.getExpiration() * seconds;
-            newHealthy = Math.max(0D, mong.getHealthy() - subHealthy);
-
-            if (isDebug) {
-                log.info("[{}] 체력 {} 감소", mongId, mong.getHealthy() - newHealthy);
-            }
-
-            mongRepository.save(mong.toBuilder()
-                    .healthy(newHealthy)
-                    .build());
-        } catch (EventTaskException e) {
-            // log.info("[{}] 사망하거나 존재하지 않은 몽", mongId);
+        if (isDebug) {
+            log.info("[{}] 체력 {} 감소", mongId, mong.getHealthy() - newHealthy);
         }
+
+        Mong saveMong = mongRepository.save(mong.toBuilder()
+                .healthy(newHealthy)
+                .build());
+
+        notificationClient.publishStatus(MqttReqDto.builder()
+                .accountId(saveMong.getAccountId())
+                .data(PublishStatus.builder()
+                        .mongId(saveMong.getId())
+                        .health(saveMong.getHealthy())
+                        .satiety(saveMong.getSatiety())
+                        .strength(saveMong.getStrength())
+                        .sleep(saveMong.getSleep())
+                        .poopCount(saveMong.getNumberOfPoop())
+                        .isSleeping(saveMong.getIsSleeping())
+                        .build())
+                .build());
 
         return newHealthy;
     }
 
     @Transactional
-    public void decreaseSleep(Long mongId, TaskCode taskCode, LocalDateTime createdAt) {
-        try {
-            Mong mong = mongRepository.findByIdAndIsActiveTrue(mongId)
-                    .orElseThrow(() -> new EventTaskException(LifecycleErrorCode.NOT_FOUND_MONG));
+    public void decreaseSleep(Long mongId, TaskCode taskCode, LocalDateTime createdAt) throws EventTaskException {
+        Mong mong = mongRepository.findByIdAndIsActiveTrue(mongId)
+                .orElseThrow(() -> new EventTaskException(LifecycleErrorCode.NOT_FOUND_MONG));
 
-            long seconds = Math.min(taskCode.getExpiration(), Duration.between(createdAt, LocalDateTime.now()).getSeconds());
-            double subSleep = taskCode.getValue() / taskCode.getExpiration() * seconds;
-            double newSleep = Math.max(0D, mong.getSleep() - subSleep);
+        long seconds = Math.min(taskCode.getExpiration(), Duration.between(createdAt, LocalDateTime.now()).getSeconds());
+        double subSleep = taskCode.getValue() / taskCode.getExpiration() * seconds;
+        double newSleep = Math.max(0D, mong.getSleep() - subSleep);
+
+        if (isDebug) {
+            log.info("[{}] 피로도 {} 감소", mongId, mong.getSleep() - newSleep);
+        }
+
+        Mong saveMong = mongRepository.save(mong.toBuilder()
+                .sleep(newSleep)
+                .build());
+
+        notificationClient.publishStatus(MqttReqDto.builder()
+                .accountId(saveMong.getAccountId())
+                .data(PublishStatus.builder()
+                        .mongId(saveMong.getId())
+                        .health(saveMong.getHealthy())
+                        .satiety(saveMong.getSatiety())
+                        .strength(saveMong.getStrength())
+                        .sleep(saveMong.getSleep())
+                        .poopCount(saveMong.getNumberOfPoop())
+                        .isSleeping(saveMong.getIsSleeping())
+                        .build())
+                .build());
+    }
+
+    @Transactional
+    public void increaseSleep(Long mongId, TaskCode taskCode, LocalDateTime createdAt) throws EventTaskException {
+        Mong mong = mongRepository.findByIdAndIsActiveTrue(mongId)
+                .orElseThrow(() -> new EventTaskException(LifecycleErrorCode.NOT_FOUND_MONG));
+
+        long seconds = Math.min(taskCode.getExpiration(), Duration.between(createdAt, LocalDateTime.now()).getSeconds());
+        double addSleep = taskCode.getValue() / taskCode.getExpiration() * seconds;
+        double newSleep = Math.min(SLEEP_MAX, mong.getSleep() + addSleep);
+
+        if (isDebug) {
+            log.info("[{}] 피로도 {} 증가", mongId, newSleep - mong.getSleep());
+        }
+
+        Mong saveMong = mongRepository.save(mong.toBuilder()
+                .sleep(newSleep)
+                .build());
+
+        notificationClient.publishStatus(MqttReqDto.builder()
+                .accountId(saveMong.getAccountId())
+                .data(PublishStatus.builder()
+                        .mongId(saveMong.getId())
+                        .health(saveMong.getHealthy())
+                        .satiety(saveMong.getSatiety())
+                        .strength(saveMong.getStrength())
+                        .sleep(saveMong.getSleep())
+                        .poopCount(saveMong.getNumberOfPoop())
+                        .isSleeping(saveMong.getIsSleeping())
+                        .build())
+                .build());
+    }
+
+    @Transactional
+    public void increasePayPoint(Long mongId, TaskCode taskCode) throws EventTaskException {
+        Mong mong = mongRepository.findByIdAndIsActiveTrue(mongId)
+                .orElseThrow(() -> new EventTaskException(LifecycleErrorCode.NOT_FOUND_MONG));
+
+        int addPayPoint = taskCode.getValue().intValue();
+        int newPayPoint = mong.getPayPoint() + addPayPoint;
+
+        if (isDebug) {
+            log.info("[{}] 페이포인트 {} 증가", mongId, addPayPoint);
+        }
+
+        mongRepository.save(mong.toBuilder()
+                .payPoint(newPayPoint)
+                .build());
+    }
+
+    @Transactional
+    public void increasePoop(Long mongId, TaskCode taskCode) throws EventTaskException {
+        Mong mong = mongRepository.findByIdAndIsActiveTrue(mongId)
+                .orElseThrow(() -> new EventTaskException(LifecycleErrorCode.NOT_FOUND_MONG));
+
+        int addPoop = taskCode.getValue().intValue();
+        int newPoop = Math.min(POOP_MAX, mong.getNumberOfPoop() + addPoop);
+
+        if (newPoop == POOP_MAX) {
+            int newPenalty = mong.getPenalty() + 1;
+            mongRepository.save(mong.toBuilder()
+                    .penalty(newPenalty)
+                    .build());
 
             if (isDebug) {
-                log.info("[{}] 피로도 {} 감소", mongId, mong.getSleep() - newSleep);
+                log.info("[{}] 똥 {} 개 도달 : 패널티 1 증가 ({})", mongId, POOP_MAX, newPenalty);
             }
 
-            mongRepository.save(mong.toBuilder()
-                    .sleep(newSleep)
-                    .build());
-        } catch (EventTaskException e) {
-            // log.info("[{}] 사망하거나 존재하지 않은 몽", mongId);
-        }
-    }
-
-    @Transactional
-    public void increaseSleep(Long mongId, TaskCode taskCode, LocalDateTime createdAt) {
-        try {
-            Mong mong = mongRepository.findByIdAndIsActiveTrue(mongId)
-                    .orElseThrow(() -> new EventTaskException(LifecycleErrorCode.NOT_FOUND_MONG));
-
-            long seconds = Math.min(taskCode.getExpiration(), Duration.between(createdAt, LocalDateTime.now()).getSeconds());
-            double addSleep = taskCode.getValue() / taskCode.getExpiration() * seconds;
-            double newSleep = Math.min(SLEEP_MAX, mong.getSleep() + addSleep);
-
+        } else {
             if (isDebug) {
-                log.info("[{}] 피로도 {} 증가", mongId, newSleep - mong.getSleep());
+                log.info("[{}] 똥 {} 개 생성", mongId, newPoop - mong.getNumberOfPoop());
             }
 
-            mongRepository.save(mong.toBuilder()
-                    .sleep(newSleep)
+            Mong saveMong = mongRepository.save(mong.toBuilder()
+                    .numberOfPoop(newPoop)
                     .build());
-        } catch (EventTaskException e) {
-            // log.info("[{}] 사망하거나 존재하지 않은 몽", mongId);
+
+            notificationClient.publishStatus(MqttReqDto.builder()
+                    .accountId(saveMong.getAccountId())
+                    .data(PublishStatus.builder()
+                            .mongId(saveMong.getId())
+                            .health(saveMong.getHealthy())
+                            .satiety(saveMong.getSatiety())
+                            .strength(saveMong.getStrength())
+                            .sleep(saveMong.getSleep())
+                            .poopCount(saveMong.getNumberOfPoop())
+                            .isSleeping(saveMong.getIsSleeping())
+                            .build())
+                    .build());
         }
     }
 
     @Transactional
-    public void increasePayPoint(Long mongId, TaskCode taskCode) {
-        try {
-            Mong mong = mongRepository.findByIdAndIsActiveTrue(mongId)
-                    .orElseThrow(() -> new EventTaskException(LifecycleErrorCode.NOT_FOUND_MONG));
+    public void dead(Long mongId, TaskCode taskCode) throws EventTaskException {
+        Mong mong = mongRepository.findByIdAndIsActiveTrue(mongId)
+                .orElseThrow(() -> new EventTaskException(LifecycleErrorCode.NOT_FOUND_MONG));
 
-            int addPayPoint = taskCode.getValue().intValue();
-            int newPayPoint = mong.getPayPoint() + addPayPoint;
+        Mong saveMong = mongRepository.save(mong.toBuilder()
+                .isActive(false)
+                .numberOfPoop(0)
+                .healthy(taskCode.getValue())
+                .satiety(taskCode.getValue())
+                .sleep(taskCode.getValue())
+                .strength(taskCode.getValue())
+                .weight(taskCode.getValue())
+                .shift(MongShift.DIE)
+                .state(MongState.EMPTY)
+                .build());
 
-            if (isDebug) {
-                log.info("[{}] 페이포인트 {} 증가", mongId, addPayPoint);
-            }
+        notificationClient.publishShift(MqttReqDto.builder()
+                .accountId(saveMong.getAccountId())
+                .data(PublishShift.builder()
+                        .mongId(saveMong.getId())
+                        .shiftCode(saveMong.getShift().getCode())
+                        .build())
+                .build());
 
-            mongRepository.save(mong.toBuilder()
-                    .payPoint(newPayPoint)
-                    .build());
-        } catch (EventTaskException e) {
-            // log.info("[{}] 사망하거나 존재하지 않은 몽", mongId);
-        }
-    }
+        notificationClient.publishState(MqttReqDto.builder()
+                .accountId(saveMong.getAccountId())
+                .data(PublishState.builder()
+                        .mongId(saveMong.getId())
+                        .stateCode(saveMong.getState().getCode())
+                        .build())
+                .build());
 
-    @Transactional
-    public void increasePoop(Long mongId, TaskCode taskCode) {
-        try {
-            Mong mong = mongRepository.findByIdAndIsActiveTrue(mongId)
-                    .orElseThrow(() -> new EventTaskException(LifecycleErrorCode.NOT_FOUND_MONG));
-
-            int addPoop = taskCode.getValue().intValue();
-            int newPoop = Math.min(POOP_MAX, mong.getNumberOfPoop() + addPoop);
-
-            if (newPoop == POOP_MAX) {
-                int newPenalty = mong.getPenalty() + 1;
-                mongRepository.save(mong.toBuilder()
-                        .penalty(newPenalty)
-                        .build());
-
-                if (isDebug) {
-                    log.info("[{}] 똥 {} 개 도달 : 패널티 1 증가 ({})", mongId, POOP_MAX, newPenalty);
-                }
-
-            } else {
-                if (isDebug) {
-                    log.info("[{}] 똥 {} 개 생성", mongId, newPoop - mong.getNumberOfPoop());
-                }
-
-                mongRepository.save(mong.toBuilder()
-                        .numberOfPoop(newPoop)
-                        .build());
-            }
-        } catch (EventTaskException e) {
-            // log.info("[{}] 사망하거나 존재하지 않은 몽", mongId);
-        }
-    }
-
-    @Transactional
-    public void dead(Long mongId, TaskCode taskCode) {
-        try {
-            Mong mong = mongRepository.findByIdAndIsActiveTrue(mongId)
-                    .orElseThrow(() -> new EventTaskException(LifecycleErrorCode.NOT_FOUND_MONG));
-
-            mongRepository.save(mong.toBuilder()
-                    .isActive(false)
-                    .numberOfPoop(0)
-                    .healthy(taskCode.getValue())
-                    .satiety(taskCode.getValue())
-                    .sleep(taskCode.getValue())
-                    .strength(taskCode.getValue())
-                    .weight(taskCode.getValue())
-                    .shift(MongShift.DIE)
-                    .state(MongState.EMPTY)
-                    .build());
-
-            log.info("[{}] 몽 사망 ({})", mongId, mong.getName());
-        } catch (EventTaskException e) {
-            // log.info("[{}] 사망하거나 존재하지 않은 몽", mongId);
-        }
+        log.info("[{}] 몽 사망 ({})", mongId, mong.getName());
     }
 }

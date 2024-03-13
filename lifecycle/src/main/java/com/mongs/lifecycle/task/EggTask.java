@@ -14,7 +14,7 @@ import java.util.concurrent.TimeUnit;
 
 @Slf4j
 @Builder
-public class StrengthDownTask implements BasicTask {
+public class EggTask implements BasicTask {
 
     private final TaskService taskService;
     private final TaskActiveService taskActiveService;
@@ -23,20 +23,19 @@ public class StrengthDownTask implements BasicTask {
     private final TaskEventVo taskEventVo;
     private ScheduledFuture<?> scheduler;
 
-    public static StrengthDownTask of(
+    public static EggTask of(
             TaskService taskService,
             TaskActiveService taskActiveService,
             ScheduledExecutorService executor,
             TaskEventVo taskEventVo
     ) {
-        return StrengthDownTask.builder()
+        return EggTask.builder()
                 .taskService(taskService)
                 .taskActiveService(taskActiveService)
                 .executor(executor)
                 .taskEventVo(taskEventVo)
                 .build();
     }
-
     @Override
     public void start() {
         scheduler = this.executor.schedule(this::run, 1000 * taskEventVo.expiration(), TimeUnit.MILLISECONDS);
@@ -52,9 +51,10 @@ public class StrengthDownTask implements BasicTask {
     public void stop() {
         try {
             taskService.processTask(taskEventVo.taskId());
-            taskActiveService.decreaseStrength(taskEventVo.mongId(), taskEventVo.taskCode(), taskEventVo.createdAt());
+            taskActiveService.eggEvolution(taskEventVo.mongId());
             taskService.doneTask(taskEventVo.taskId());
         } catch (EventTaskException e) {
+            e.printStackTrace();
             taskService.doneTask(taskEventVo.taskId());
         } finally {
             scheduler.cancel(false);
@@ -64,10 +64,10 @@ public class StrengthDownTask implements BasicTask {
     private void run() {
         try {
             taskService.processTask(taskEventVo.taskId());
-            taskActiveService.decreaseStrength(taskEventVo.mongId(), taskEventVo.taskCode(), taskEventVo.createdAt());
+            taskActiveService.eggEvolution(taskEventVo.mongId());
             taskService.doneTask(taskEventVo.taskId());
-            taskService.startTask(taskEventVo.mongId(), taskEventVo.taskCode());
         } catch (EventTaskException e) {
+            e.printStackTrace();
             taskService.doneTask(taskEventVo.taskId());
         }
     }

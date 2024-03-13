@@ -43,6 +43,11 @@ public class MongServiceImpl implements MongService {
                 .orElseThrow(() -> new ManagementException(ManagementErrorCode.NOT_FOUND));
     }
 
+    @Transactional
+    public void eggMong(Long mongId) {
+        lifecycleClient.eggMongEvent(mongId);
+    }
+
     // 몽생성
     @Transactional
     @Override
@@ -63,7 +68,7 @@ public class MongServiceImpl implements MongService {
         Mong saveMong = mongRepository.save(mong.toBuilder().mongCode(newMongCode).build());
 
         notificationClient.publishCreate(MqttReqDto.builder()
-                .email(email)
+                .accountId(saveMong.getAccountId())
                 .data(PublishCreate.builder()
                         .mongId(saveMong.getId())
                         .name(saveMong.getName())
@@ -76,7 +81,7 @@ public class MongServiceImpl implements MongService {
                         .poopCount(saveMong.getNumberOfPoop())
                         .stateCode(saveMong.getState().getCode())
                         .shiftCode(saveMong.getShift().getCode())
-                        .payPoint(saveMong.getPaypoint())
+                        .payPoint(saveMong.getPayPoint())
                         .born(saveMong.getCreatedAt())
                         .build())
                 .build());
@@ -136,6 +141,7 @@ public class MongServiceImpl implements MongService {
                 .build());
 
         notificationClient.publishStatus(MqttReqDto.builder()
+                .accountId(saveMong.getAccountId())
                 .data(PublishStatus.builder()
                         .mongId(mongId)
                         .health(saveMong.getHealthy())
@@ -143,6 +149,7 @@ public class MongServiceImpl implements MongService {
                         .strength(saveMong.getStrength())
                         .sleep(saveMong.getSleep())
                         .poopCount(saveMong.getNumberOfPoop())
+                        .isSleeping(saveMong.getIsSleeping())
                         .build())
                 .build());
 
@@ -183,6 +190,7 @@ public class MongServiceImpl implements MongService {
 
 
         notificationClient.publishStatus(MqttReqDto.builder()
+                .accountId(saveMong.getAccountId())
                 .data(PublishStatus.builder()
                         .mongId(mongId)
                         .health(saveMong.getHealthy())
@@ -190,6 +198,7 @@ public class MongServiceImpl implements MongService {
                         .strength(saveMong.getStrength())
                         .sleep(saveMong.getSleep())
                         .poopCount(saveMong.getNumberOfPoop())
+                        .isSleeping(saveMong.getIsSleeping())
                         .build())
                 .build());
 
@@ -203,18 +212,18 @@ public class MongServiceImpl implements MongService {
     public Training mongTraining(Long mongId, Long accountId) {
         Mong mong = getMong(mongId, accountId);
 
-        if(mong.getPaypoint() <= TRAINING_PAIED_POINT) {
+        if(mong.getPayPoint() <= TRAINING_PAIED_POINT) {
             throw new ManagementException(ManagementErrorCode.NOT_ENOUGH_PAYPOINT);
         }
 
-        int newPayPoint = mong.getPaypoint() - TRAINING_PAIED_POINT;
+        int newPayPoint = mong.getPayPoint() - TRAINING_PAIED_POINT;
         int newNumberOfTraining = mong.getNumberOfTraining() + 1;
         double newStrength = mong.getStrength() + TRAINING_STRENGTH;
 
         int newExp = mong.getExp() + MongEXP.TRAINING.getExp();
 
         Mong saveMong = mongRepository.save(mong.toBuilder()
-                .paypoint(newPayPoint)
+                .payPoint(newPayPoint)
                 .numberOfTraining(newNumberOfTraining)
                 .strength(newStrength)
                 .exp(newExp)
@@ -243,7 +252,8 @@ public class MongServiceImpl implements MongService {
                 .mongCode(mongUtil.getNextMongCode(mong, grade))
                 .build());
 
-        notificationClient.publishStatus(MqttReqDto.builder()
+        notificationClient.publishEvolution(MqttReqDto.builder()
+                .accountId(saveMong.getAccountId())
                 .data(PublishShift.builder()
                         .mongId(mongId)
                         .shiftCode(saveMong.getShift().getCode())
@@ -278,6 +288,7 @@ public class MongServiceImpl implements MongService {
                 .build());
 
         notificationClient.publishStatus(MqttReqDto.builder()
+                .accountId(saveMong.getAccountId())
                 .data(PublishStatus.builder()
                         .mongId(mongId)
                         .health(saveMong.getHealthy())
@@ -285,15 +296,18 @@ public class MongServiceImpl implements MongService {
                         .strength(saveMong.getStrength())
                         .sleep(saveMong.getSleep())
                         .poopCount(saveMong.getNumberOfPoop())
+                        .isSleeping(saveMong.getIsSleeping())
                         .build())
                 .build());
-        notificationClient.publishStatus(MqttReqDto.builder()
+        notificationClient.publishState(MqttReqDto.builder()
+                .accountId(saveMong.getAccountId())
                 .data(PublishState.builder()
                         .mongId(mongId)
                         .stateCode(saveMong.getState().getCode())
                         .build())
                 .build());
-        notificationClient.publishStatus(MqttReqDto.builder()
+        notificationClient.publishEvolution(MqttReqDto.builder()
+                .accountId(saveMong.getAccountId())
                 .data(PublishShift.builder()
                         .mongId(mongId)
                         .shiftCode(saveMong.getShift().getCode())

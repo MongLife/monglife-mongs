@@ -42,7 +42,7 @@ public class PassportFilter extends GenericFilterBean {
                 throw new PassportIntegrityException(SecurityErrorCode.UNAUTHORIZED);
             }
 
-            User passport = new PassportDetail(passportVO);
+            User passport = new PassportDetail(passportVO, passportJson);
 
             UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken
                     = new UsernamePasswordAuthenticationToken(passport, null, passport.getAuthorities());

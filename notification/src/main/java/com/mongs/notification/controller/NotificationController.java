@@ -16,18 +16,19 @@ public class NotificationController {
 
     @PostMapping("/create")
     public void publishCreate(@RequestBody MqttReqDto<PublishCreate> request) throws Exception {
-        notificationService.publishCreate(request.email(), request.data());
+        log.info("{}", request.data());
+        notificationService.publishCreate(request.accountId(), request.data());
     }
     @PostMapping("/status")
     public void publishStatus(@RequestBody MqttReqDto<PublishStatus> request) throws Exception {
-        notificationService.publishStatus(request.email(), request.data());
+        notificationService.publishStatus(request.accountId(), request.data());
     }
     @PostMapping("/shift")
-    public void publishEvolution(@RequestBody MqttReqDto<PublishShift> request) throws Exception {
-        notificationService.publishShift(request.email(), request.data());
+    public void publishShift(@RequestBody MqttReqDto<PublishShift> request) throws Exception {
+        notificationService.publishShift(request.accountId(), request.data());
     }
     @PostMapping("/state")
     public void publishState(@RequestBody MqttReqDto<PublishState> request) throws Exception {
-        notificationService.publishState(request.email(), request.data());
+        notificationService.publishState(request.accountId(), request.data());
     }
 }

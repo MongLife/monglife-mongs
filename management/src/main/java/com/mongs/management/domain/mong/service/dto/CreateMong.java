@@ -8,6 +8,7 @@ import java.time.LocalDateTime;
 
 @Builder
 public record CreateMong (
+    Long id,
     String name,
     String mongCode,
     double weight,
@@ -15,6 +16,7 @@ public record CreateMong (
 ){
     public static CreateMong of(Mong mong) {
         return CreateMong.builder()
+                .id(mong.getId())
                 .name(mong.getName())
                 .mongCode(ManagementErrorCode.SUCCESS.getCode())
                 .weight(mong.getWeight())

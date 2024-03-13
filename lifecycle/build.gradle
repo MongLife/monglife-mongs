@@ -15,8 +15,10 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-validation'
 	// kafka
 	implementation 'org.springframework.kafka:spring-kafka'
-	// H2
-	runtimeOnly 'com.h2database:h2'
+	// Feign
+	implementation "org.springframework.cloud:spring-cloud-starter-openfeign"
+	// Mysql
+	runtimeOnly 'com.mysql:mysql-connector-j'
 	// mongo db
 	implementation 'org.springframework.boot:spring-boot-starter-data-mongodb'
 	// JPA

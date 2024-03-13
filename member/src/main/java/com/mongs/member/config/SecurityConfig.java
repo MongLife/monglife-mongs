@@ -32,12 +32,6 @@ public class SecurityConfig {
     private final HmacProvider hmacProvider;
 
     @Bean
-    @ConditionalOnProperty(name = "spring.h2.console.enabled", havingValue = "true")
-    public WebSecurityCustomizer configureH2ConsoleEnable() {
-        return web -> web.ignoring().requestMatchers(PathRequest.toH2Console());
-    }
-
-    @Bean
     public SecurityFilterChain filterChain(
             @Autowired UnAuthorizationHandler unAuthorizationHandler,
             @Autowired ForbiddenHandler forbiddenHandler,
@@ -51,7 +45,7 @@ public class SecurityConfig {
             .addFilterBefore(securityExceptionHandler, PassportFilter.class)
             .authorizeHttpRequests(authorize -> authorize
                     .requestMatchers("/member/admin/**").hasAnyAuthority("ADMIN")
-                    .requestMatchers(HttpMethod.GET,"/member/**").hasAnyAuthority("NORMAL")
+                    .requestMatchers(HttpMethod.GET,"/member/**").permitAll()
                     .requestMatchers(HttpMethod.POST, "/member/**").permitAll()
                     .requestMatchers(HttpMethod.PUT,"/member/**").hasAnyAuthority("NORMAL")
                     .requestMatchers(HttpMethod.DELETE,"/member/**").hasAnyAuthority("NORMAL")

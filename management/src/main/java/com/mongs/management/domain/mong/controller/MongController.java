@@ -1,6 +1,7 @@
 package com.mongs.management.domain.mong.controller;
 
 import com.mongs.core.security.principal.PassportDetail;
+import com.mongs.management.domain.mong.client.LifecycleClient;
 import com.mongs.management.domain.mong.service.MongService;
 import com.mongs.management.domain.mong.service.dto.*;
 import lombok.RequiredArgsConstructor;
@@ -24,9 +25,12 @@ public class MongController {
             @RequestBody InitMong initMong,
             @AuthenticationPrincipal PassportDetail passportDetail
     ) {
+        CreateMong createMong = mongService.createMong(initMong, passportDetail.getId(), passportDetail.getEmail());
+        mongService.eggMong(createMong.id());
+
         return ResponseEntity
                 .ok()
-                .body(mongService.createMong(initMong, passportDetail.getId(), passportDetail.getEmail()));
+                .body(createMong);
     }
 
     // 쓰다듬기 (수정 필_)

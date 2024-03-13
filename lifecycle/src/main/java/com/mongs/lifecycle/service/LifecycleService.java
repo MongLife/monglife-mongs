@@ -18,6 +18,21 @@ public class LifecycleService {
     private final TaskActiveService taskActiveService;
     private final MongRepository mongRepository;
 
+    public void eggEvent(Long mongId) {
+        if (mongRepository.findByIdAndIsActiveTrue(mongId).isEmpty()) {
+            throw new EventTaskException(LifecycleErrorCode.NOT_FOUND_MONG);
+        }
+
+        List<TaskCode> startList = List.of(
+                TaskCode.EGG
+        );
+        List<TaskCode> restartList = List.of();
+        List<TaskCode> pauseList = List.of();
+        List<TaskCode> stopList = List.of();
+
+        exec(mongId, startList, restartList, pauseList, stopList);
+    }
+
     public void graduationEvent(Long mongId) {
         if (mongRepository.findByIdAndIsActiveTrue(mongId).isEmpty()) {
             throw new EventTaskException(LifecycleErrorCode.NOT_FOUND_MONG);

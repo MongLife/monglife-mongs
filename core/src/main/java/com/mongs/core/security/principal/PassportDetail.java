@@ -21,8 +21,13 @@ public class PassportDetail extends User {
     private final String email;
     private final LocalDate loginAt;
     private final String name;
+    private final String passportJson;
 
-    public PassportDetail(PassportVO passportVO) {
+    public PassportDetail(PassportVO passportVo) {
+        this(passportVo, "");
+    }
+
+    public PassportDetail(PassportVO passportVO, String passportJson) {
         super(
                 passportVO.data().account().email(),
                 UUID.randomUUID().toString(),
@@ -36,5 +41,6 @@ public class PassportDetail extends User {
         this.email = passportVO.data().account().email();
         this.loginAt = passportVO.data().account().loginAt();
         this.name = passportVO.data().account().name();
+        this.passportJson = passportJson;
     }
 }

@@ -45,8 +45,8 @@ class CollectionServiceTest {
     @Mock
     private MongCollectionRepository mongCollectionRepository;
 
-    private final MapCode testMapCode =  new MapCode(TestMapCode.MP000.getCode(), TestMapCode.MP000.getName());
-    private final MongCode testMongCode = new MongCode(TestMongCode.CH000.getCode(), TestMongCode.CH000.getName());
+    private final MapCode testMapCode =  new MapCode(TestMapCode.MP000.getCode(), TestMapCode.MP000.getName(), 1L);
+    private final MongCode testMongCode = new MongCode(TestMongCode.CH000.getCode(), TestMongCode.CH000.getName(), 1L);
 
     @Nested
     @DisplayName("조회 단위 테스트")

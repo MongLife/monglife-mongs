@@ -17,9 +17,8 @@ public class MemberController {
 
     private final MemberService memberService;
 
-    @GetMapping("")
-    public ResponseEntity<Object> findMember(@AuthenticationPrincipal PassportDetail passportDetail) {
-        Long accountId = passportDetail.getId();
+    @GetMapping("/{accountId}")
+    public ResponseEntity<Object> findMember(@PathVariable Long accountId) {
         return ResponseEntity.ok().body(memberService.findMember(accountId));
     }
 

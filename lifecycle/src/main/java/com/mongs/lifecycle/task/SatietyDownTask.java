@@ -2,6 +2,7 @@ package com.mongs.lifecycle.task;
 
 import com.mongs.lifecycle.code.TaskCode;
 import com.mongs.lifecycle.code.TaskStatusCode;
+import com.mongs.lifecycle.exception.EventTaskException;
 import com.mongs.lifecycle.service.TaskActiveService;
 import com.mongs.lifecycle.service.TaskService;
 import com.mongs.lifecycle.vo.TaskEventVo;
@@ -50,27 +51,36 @@ public class SatietyDownTask implements BasicTask {
 
     @Override
     public void stop() {
-        taskService.processTask(taskEventVo.taskId());
-        double satiety = taskActiveService.decreaseSatiety(taskEventVo.mongId(), taskEventVo.taskCode(), taskEventVo.createdAt());
+        try {
+            taskService.processTask(taskEventVo.taskId());
+            double satiety = taskActiveService.decreaseSatiety(taskEventVo.mongId(), taskEventVo.taskCode(), taskEventVo.createdAt());
 
-        if (satiety == 0D && !taskService.checkTaskActive(taskEventVo.mongId(), TaskCode.DEAD_SATIETY)) {
-            taskService.startTask(taskEventVo.mongId(), TaskCode.DEAD_SATIETY);
-            log.info("[{}] 포만감 {} 도달 : 죽음 Task 실행", taskEventVo.mongId(), satiety);
+            if (satiety == 0D && !taskService.checkTaskActive(taskEventVo.mongId(), TaskCode.DEAD_SATIETY)) {
+                taskService.startTask(taskEventVo.mongId(), TaskCode.DEAD_SATIETY);
+                log.info("[{}] 포만감 {} 도달 : 죽음 Task 실행", taskEventVo.mongId(), satiety);
+            }
+            taskService.doneTask(taskEventVo.taskId());
+        } catch (EventTaskException e) {
+            taskService.doneTask(taskEventVo.taskId());
+        } finally {
+            scheduler.cancel(false);
         }
-        scheduler.cancel(false);
-        taskService.doneTask(taskEventVo.taskId());
     }
 
     private void run() {
-        taskService.processTask(taskEventVo.taskId());
-        double satiety = taskActiveService.decreaseSatiety(taskEventVo.mongId(), taskEventVo.taskCode(), taskEventVo.createdAt());
+        try {
+            taskService.processTask(taskEventVo.taskId());
+            double satiety = taskActiveService.decreaseSatiety(taskEventVo.mongId(), taskEventVo.taskCode(), taskEventVo.createdAt());
 
-        if (satiety == 0D && !taskService.checkTaskActive(taskEventVo.mongId(), TaskCode.DEAD_SATIETY)) {
-            taskService.startTask(taskEventVo.mongId(), TaskCode.DEAD_SATIETY);
-            log.info("[{}] 포만감 {} 도달 : 죽음 Task 실행", taskEventVo.mongId(), satiety);
+            if (satiety == 0D && !taskService.checkTaskActive(taskEventVo.mongId(), TaskCode.DEAD_SATIETY)) {
+                taskService.startTask(taskEventVo.mongId(), TaskCode.DEAD_SATIETY);
+                log.info("[{}] 포만감 {} 도달 : 죽음 Task 실행", taskEventVo.mongId(), satiety);
+            }
+
+            taskService.doneTask(taskEventVo.taskId());
+            taskService.startTask(taskEventVo.mongId(), taskEventVo.taskCode());
+        } catch (EventTaskException e) {
+            taskService.doneTask(taskEventVo.taskId());
         }
-
-        taskService.doneTask(taskEventVo.taskId());
-        taskService.startTask(taskEventVo.mongId(), taskEventVo.taskCode());
     }
 }

@@ -5,7 +5,7 @@ import com.mongs.management.domain.mong.service.dto.*;
 import java.util.List;
 
 public interface MongService {
-
+    void eggMong(Long mongId);
     CreateMong createMong (InitMong initmong, Long accountId, String email);
     Stroke toMongStroke (Long mongId, Long accountId);
     Sleep toMongSleeping (Long mongId, Long accountId, String email);

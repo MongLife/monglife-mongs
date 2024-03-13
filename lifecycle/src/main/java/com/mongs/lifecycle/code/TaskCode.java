@@ -7,12 +7,14 @@ import lombok.Getter;
 @AllArgsConstructor
 public enum TaskCode {
 
+    // 알
+    EGG(5L, 0D),
     // 주기적 감소
-    WEIGHT_DOWN(60 * 15L, 0.5D),        // 15 분에 0.5 감소
-    STRENGTH_DOWN(60 * 15L, 0.5D),      // 15 분에 0.5 감소
-    SATIETY_DOWN(60 * 15L, 0.5D),       // 15 분에 0.5 감소
-    HEALTHY_DOWN(60 * 15L, 0.5D),       // 15 분에 0.5 감소
-    SLEEP_DOWN(60 * 15L, 0.5D),         // 15 분에 0.5 감소
+    WEIGHT_DOWN(5L, 0.5D),        // 15 분에 0.5 감소
+    STRENGTH_DOWN(5L, 0.5D),      // 15 분에 0.5 감소
+    SATIETY_DOWN(5L, 0.5D),       // 15 분에 0.5 감소
+    HEALTHY_DOWN(5L, 0.5D),       // 15 분에 0.5 감소
+    SLEEP_DOWN(5L, 0.5D),         // 15 분에 0.5 감소
 
     // 주기적 증가
     SLEEP_UP(60 * 15L, 0.5D),           // 15 분에 0.5 증가

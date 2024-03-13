@@ -1,13 +1,17 @@
 package com.mongs.management.domain.mong.client;
 
+import com.mongs.management.config.FeignClientInterceptor;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 
-@FeignClient(name = "LIFECYCLE")
+@FeignClient(name = "LIFECYCLE", configuration = FeignClientInterceptor.class)
 public interface LifecycleClient {
+    @PostMapping("/lifecycle/egg/{mongId}")
+    ResponseEntity<Object> eggMongEvent(@PathVariable("mongId") Long mongId);
     @PutMapping("/lifecycle/sleep/{mongId}")
     ResponseEntity<Object> sleepMongEvent(@PathVariable("mongId") Long mongId);
     @PutMapping("/lifecycle/wakeup/{mongId}")

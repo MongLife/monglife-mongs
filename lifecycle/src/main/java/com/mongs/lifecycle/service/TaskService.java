@@ -37,6 +37,7 @@ public class TaskService {
 
     private BasicTask getTask(TaskEvent taskEvent, TaskCode taskCode) {
         return switch (taskCode) {
+            case EGG -> EggTask.of(this, taskActiveService, scheduledExecutorService, TaskEventVo.of(taskEvent));
             case WEIGHT_DOWN -> WeightDownTask.of(this, taskActiveService, scheduledExecutorService, TaskEventVo.of(taskEvent));
             case STRENGTH_DOWN -> StrengthDownTask.of(this, taskActiveService, scheduledExecutorService, TaskEventVo.of(taskEvent));
             case SATIETY_DOWN -> SatietyDownTask.of(this, taskActiveService, scheduledExecutorService, TaskEventVo.of(taskEvent));
@@ -232,12 +233,14 @@ public class TaskService {
     @Transactional
     public void doneTask(String taskId) {
         try {
+            log.info("[doneTask] {}", taskId);
             TaskEvent taskEvent = taskEventRepository.findByTaskIdAndStatusCode(taskId, TaskStatusCode.PROCESS)
                     .orElseThrow(() -> new EventTaskException(LifecycleErrorCode.NOT_FOUND_TASK));
 
             taskEventRepository.save(taskEvent.toBuilder().statusCode(TaskStatusCode.DONE).build());
             taskMap.remove(taskEvent.getTaskId());
         } catch (EventTaskException e) {
+            e.printStackTrace();
             // log.info("[doneTask] 진행중이지 않은 Task 변경 [{}]", taskId);
         }
     }
@@ -263,11 +266,13 @@ public class TaskService {
     @Transactional
     public void processTask(String taskId) {
         try {
+            log.info("[processTask] {}", taskId);
             TaskEvent taskEvent = taskEventRepository.findByTaskIdAndStatusCode(taskId, TaskStatusCode.WAIT)
                     .orElseThrow(() -> new EventTaskException(LifecycleErrorCode.NOT_FOUND_TASK));
 
             taskEventRepository.save(taskEvent.toBuilder().statusCode(TaskStatusCode.PROCESS).build());
         } catch (EventTaskException e) {
+            e.printStackTrace();
             // log.info("[processTask] 진행중이지 않은 Task 변경 [{}]", taskId);
         }
     }

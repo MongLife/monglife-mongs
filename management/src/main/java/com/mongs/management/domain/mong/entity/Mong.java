@@ -19,6 +19,7 @@ import org.hibernate.annotations.DynamicUpdate;
 @Builder(toBuilder = true)
 public class Mong extends BaseTimeEntity {
 
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "mong_id")
@@ -82,12 +83,12 @@ public class Mong extends BaseTimeEntity {
     private MongState state = MongState.EMPTY;
     @Builder.Default
     @Column(nullable = false)
-    private int evolutionPoint = 0;
+    private Integer evolutionPoint = 0;
 
     @Builder.Default
     @Column(nullable = false)
-    private int paypoint = 0;
+    private Integer payPoint = 0;
     @Builder.Default
     @Column(nullable = false)
-    private int exp = 0;
+    private Integer exp = 0;
 }

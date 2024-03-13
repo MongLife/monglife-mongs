@@ -48,6 +48,9 @@ public class AuthService {
         Account account = accountRepository.findByEmail(email)
                 .orElseGet(() -> this.registerAccount(email, name));
 
+        memberRepository.findMember(account.getId())
+                .orElseThrow(() -> new NotFoundException(AuthErrorCode.ACCOUNT_NOT_FOUND));
+
         /* 이전 RefreshToken 삭제 */
         tokenRepository.findTokenByDeviceIdAndAccountId(deviceId, account.getId())
                 .ifPresent(token -> tokenRepository.deleteById(token.getRefreshToken()));
@@ -85,6 +88,9 @@ public class AuthService {
         Token token = tokenRepository.findById(refreshToken)
                 .orElseThrow(() -> new AuthorizationException(AuthErrorCode.REFRESH_TOKEN_EXPIRED));
 
+        memberRepository.findMember(token.getAccountId())
+                .orElseThrow(() -> new NotFoundException(AuthErrorCode.ACCOUNT_NOT_FOUND));
+
         tokenRepository.deleteById(token.getRefreshToken());
 
         return LogoutResDto.builder()
@@ -97,6 +103,9 @@ public class AuthService {
         /* RefreshToken Redis 존재 여부 확인 */
         Token token = tokenRepository.findById(refreshToken)
                 .orElseThrow(() -> new AuthorizationException(AuthErrorCode.REFRESH_TOKEN_EXPIRED));
+
+        memberRepository.findMember(token.getAccountId())
+                .orElseThrow(() -> new NotFoundException(AuthErrorCode.ACCOUNT_NOT_FOUND));
 
         tokenRepository.deleteById(refreshToken);
 
@@ -127,6 +136,9 @@ public class AuthService {
                 .orElseThrow(() -> new AuthorizationException(AuthErrorCode.ACCESS_TOKEN_EXPIRED));
         String deviceId = tokenProvider.getDeviceId(accessToken)
                 .orElseThrow(() -> new AuthorizationException(AuthErrorCode.ACCESS_TOKEN_EXPIRED));
+
+        memberRepository.findMember(accountId)
+                .orElseThrow(() -> new NotFoundException(AuthErrorCode.ACCOUNT_NOT_FOUND));
 
         /* AccessToken 의 accountId 로 account 조회 */
         Account account = accountRepository.findById(accountId)
@@ -163,7 +175,8 @@ public class AuthService {
                 .email(email)
                 .build());
 
-        memberRepository.registerMember(registerAccount.getId());
+        memberRepository.registerMember(registerAccount.getId())
+                .orElseThrow(() -> new NotFoundException(AuthErrorCode.REGISTER_MEMBER_FAIL));
 
         return registerAccount;
     }

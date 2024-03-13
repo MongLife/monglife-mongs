@@ -8,8 +8,8 @@ import org.springframework.http.HttpStatus;
 @Getter
 @AllArgsConstructor
 public enum MemberErrorCode implements ErrorCode {
-    NOT_FOUND_MEMBER(HttpStatus.NOT_FOUND, "MEMBER-100", "Not Found Member"),
-    INVALID_PARAMETER(HttpStatus.BAD_REQUEST, "MEMBER-101", "Invalid Parameter"),
+    NOT_FOUND_MEMBER(HttpStatus.NO_CONTENT, "MEMBER-100", "Not Found Member"),
+    INVALID_PARAMETER(HttpStatus.NOT_MODIFIED, "MEMBER-101", "Invalid Parameter"),
     INTERNAL_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "MEMBER-102", "Internal Server Error")
     ;
 

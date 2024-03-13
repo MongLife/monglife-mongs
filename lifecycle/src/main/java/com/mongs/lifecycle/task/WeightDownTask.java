@@ -1,6 +1,7 @@
 package com.mongs.lifecycle.task;
 
 import com.mongs.lifecycle.code.TaskStatusCode;
+import com.mongs.lifecycle.exception.EventTaskException;
 import com.mongs.lifecycle.service.TaskActiveService;
 import com.mongs.lifecycle.service.TaskService;
 import com.mongs.lifecycle.vo.TaskEventVo;
@@ -49,16 +50,25 @@ public class WeightDownTask implements BasicTask {
 
     @Override
     public void stop() {
-        taskService.processTask(taskEventVo.taskId());
-        taskActiveService.decreaseWeight(taskEventVo.mongId(), taskEventVo.taskCode(), taskEventVo.createdAt());
-        scheduler.cancel(false);
-        taskService.doneTask(taskEventVo.taskId());
+        try {
+            taskService.processTask(taskEventVo.taskId());
+            taskActiveService.decreaseWeight(taskEventVo.mongId(), taskEventVo.taskCode(), taskEventVo.createdAt());
+            taskService.doneTask(taskEventVo.taskId());
+        } catch (EventTaskException e) {
+            taskService.doneTask(taskEventVo.taskId());
+        } finally {
+            scheduler.cancel(false);
+        }
     }
 
     private void run() {
-        taskService.processTask(taskEventVo.taskId());
-        taskActiveService.decreaseWeight(taskEventVo.mongId(), taskEventVo.taskCode(), taskEventVo.createdAt());
-        taskService.doneTask(taskEventVo.taskId());
-        taskService.startTask(taskEventVo.mongId(), taskEventVo.taskCode());
+        try {
+            taskService.processTask(taskEventVo.taskId());
+            taskActiveService.decreaseWeight(taskEventVo.mongId(), taskEventVo.taskCode(), taskEventVo.createdAt());
+            taskService.doneTask(taskEventVo.taskId());
+            taskService.startTask(taskEventVo.mongId(), taskEventVo.taskCode());
+        } catch (EventTaskException e) {
+            taskService.doneTask(taskEventVo.taskId());
+        }
     }
 }
