@@ -2,13 +2,13 @@ package com.mongs.notification.service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.mongs.core.mqtt.PublishCreate;
-import com.mongs.core.mqtt.PublishShift;
-import com.mongs.core.mqtt.PublishState;
+import com.mongs.core.vo.mqtt.PublishCreateVo;
+import com.mongs.core.vo.mqtt.PublishShiftVo;
+import com.mongs.core.vo.mqtt.PublishStateVo;
 import com.mongs.notification.client.MqttClient;
-import com.mongs.core.mqtt.PublishStatus;
+import com.mongs.core.vo.mqtt.PublishStatusVo;
 import com.mongs.notification.code.PublishCode;
-import com.mongs.notification.dto.request.BasicPublish;
+import com.mongs.notification.dto.response.BasicPublish;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -25,47 +25,47 @@ public class NotificationService {
     @Value("${application.mqtt.topic.mong_data}")
     private String TOPIC_FILTER;
 
-    public void publishCreate(Long accountId, PublishCreate publishCreate) throws JsonProcessingException {
+    public void publishCreate(Long accountId, PublishCreateVo publishCreateVo) throws JsonProcessingException {
         String data = objectMapper.writeValueAsString(
                 BasicPublish.builder()
                         .code(PublishCode.MONG_CREATE)
-                        .data(publishCreate)
+                        .data(publishCreateVo)
                         .build()
         );
 
         mqttClient.sendToMqtt(TOPIC_FILTER + accountId, data);
     }
 
-    public void publishStatus(Long accountId, PublishStatus publishStatus) throws JsonProcessingException {
-        log.info("{}", publishStatus);
+    public void publishStatus(Long accountId, PublishStatusVo publishStatusVo) throws JsonProcessingException {
+        log.info("{}", publishStatusVo);
         String data = objectMapper.writeValueAsString(
                 BasicPublish.builder()
                         .code(PublishCode.MONG_STATUS)
-                        .data(publishStatus)
+                        .data(publishStatusVo)
                         .build()
         );
 
         mqttClient.sendToMqtt(TOPIC_FILTER + accountId, data);
     }
 
-    public void publishShift(Long accountId, PublishShift publishShift) throws JsonProcessingException {
-        log.info("{}", publishShift);
+    public void publishShift(Long accountId, PublishShiftVo publishShiftVo) throws JsonProcessingException {
+        log.info("{}", publishShiftVo);
         String data = objectMapper.writeValueAsString(
                 BasicPublish.builder()
                         .code(PublishCode.MONG_SHIFT)
-                        .data(publishShift)
+                        .data(publishShiftVo)
                         .build()
         );
 
         mqttClient.sendToMqtt(TOPIC_FILTER + accountId, data);
     }
 
-    public void publishState(Long accountId, PublishState publishState) throws JsonProcessingException {
-        log.info("{}", publishState);
+    public void publishState(Long accountId, PublishStateVo publishStateVo) throws JsonProcessingException {
+        log.info("{}", publishStateVo);
         String data = objectMapper.writeValueAsString(
                 BasicPublish.builder()
                         .code(PublishCode.MONG_STATE)
-                        .data(publishState)
+                        .data(publishStateVo)
                         .build()
         );
 

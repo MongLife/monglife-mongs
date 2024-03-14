@@ -5,15 +5,8 @@ import lombok.Builder;
 
 @Builder
 public record RegisterMemberResDto(
-        Long memberId,
+        Long accountId,
         Integer maxSlot,
         Integer startPoint
 ) {
-    public static RegisterMemberResDto of(Member member) {
-        return RegisterMemberResDto.builder()
-                .memberId(member.getAccountId())
-                .maxSlot(member.getMaxSlot())
-                .startPoint(member.getStartPoint())
-                .build();
-    }
 }

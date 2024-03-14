@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/lifecycle")
+@RequestMapping("/lifecycle/admin")
 public class LifecycleController {
 
     private final LifecycleService lifecycleService;
@@ -68,7 +68,7 @@ public class LifecycleController {
                 .build());
     }
 
-    @DeleteMapping("/admin/dead/{mongId}")
+    @DeleteMapping("/dead/{mongId}")
     public ResponseEntity<Object> deadMongEvent(@PathVariable("mongId") Long mongId) {
         lifecycleService.dead(mongId);
 

@@ -69,7 +69,7 @@ public class TaskService {
             BasicTask task = getTask(taskEvent, taskCode);
 
             if (task == null) {
-                throw new EventTaskException(LifecycleErrorCode.GENERATE_TASK_ERROR);
+                throw new EventTaskException(LifecycleErrorCode.GENERATE_TASK_FAIL);
             }
 
             log.info("[{}] {} Task 시작 ({})", taskEvent.getMongId(), taskEvent.getTaskCode(), taskEvent.getTaskId());
@@ -96,7 +96,7 @@ public class TaskService {
             BasicTask task = getTask(taskEvent, taskEvent.getTaskCode());
 
             if (task == null) {
-                throw new EventTaskException(LifecycleErrorCode.GENERATE_TASK_ERROR);
+                throw new EventTaskException(LifecycleErrorCode.GENERATE_TASK_FAIL);
             }
 
             taskMap.put(taskEvent.getTaskId(), task);
@@ -128,7 +128,7 @@ public class TaskService {
                         BasicTask task = getTask(taskEvent, taskEvent.getTaskCode());
 
                         if (task == null) {
-                            throw new EventTaskException(LifecycleErrorCode.GENERATE_TASK_ERROR);
+                            throw new EventTaskException(LifecycleErrorCode.GENERATE_TASK_FAIL);
                         }
 
                         taskMap.put(taskEvent.getTaskId(), task);
@@ -155,7 +155,7 @@ public class TaskService {
                         BasicTask task = getTask(taskEvent, taskEvent.getTaskCode());
 
                         if (task == null) {
-                            throw new EventTaskException(LifecycleErrorCode.GENERATE_TASK_ERROR);
+                            throw new EventTaskException(LifecycleErrorCode.GENERATE_TASK_FAIL);
                         }
 
                         taskMap.put(taskEvent.getTaskId(), task);

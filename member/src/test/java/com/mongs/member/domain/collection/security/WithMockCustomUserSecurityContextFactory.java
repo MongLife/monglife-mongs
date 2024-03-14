@@ -1,8 +1,8 @@
 package com.mongs.member.domain.collection.security;
 
-import com.mongs.core.passport.PassportData;
-import com.mongs.core.passport.PassportAccount;
-import com.mongs.core.passport.PassportVO;
+import com.mongs.core.vo.passport.PassportData;
+import com.mongs.core.vo.passport.PassportAccount;
+import com.mongs.core.vo.passport.PassportVO;
 import com.mongs.core.security.principal.PassportDetail;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;

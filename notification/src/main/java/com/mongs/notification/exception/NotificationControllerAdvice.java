@@ -11,7 +11,6 @@ import java.net.ConnectException;
 
 @RestControllerAdvice
 public class NotificationControllerAdvice {
-
     @ExceptionHandler(JsonProcessingException.class)
     public ResponseEntity<Object> jsonProcessingExceptionHandler() {
         ErrorCode errorCode = NotificationErrorCode.NOTIFICATION_FAIL;
@@ -20,6 +19,11 @@ public class NotificationControllerAdvice {
     @ExceptionHandler(ConnectException.class)
     public ResponseEntity<Object> connectExceptionHandler() {
         ErrorCode errorCode = NotificationErrorCode.CONNECT_REFUSE;
+        return ResponseEntity.status(errorCode.getHttpStatus()).body(ErrorResDto.of(errorCode));
+    }
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity<Object> exceptionHandler() {
+        ErrorCode errorCode = NotificationErrorCode.NOTIFICATION_FAIL;
         return ResponseEntity.status(errorCode.getHttpStatus()).body(ErrorResDto.of(errorCode));
     }
 }

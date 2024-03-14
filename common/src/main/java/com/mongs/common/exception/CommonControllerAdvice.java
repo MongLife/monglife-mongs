@@ -12,7 +12,6 @@ public class CommonControllerAdvice {
     public ResponseEntity<Object> NotFoundVersionExceptionHandler(NotFoundVersionException e) {
         return ResponseEntity.status(e.errorCode.getHttpStatus()).body(ErrorResDto.of(e.errorCode));
     }
-
     @ExceptionHandler(NewestVersionException.class)
     public ResponseEntity<Object> NewestVersionExceptionHandler(NewestVersionException e) {
         return ResponseEntity.status(e.errorCode.getHttpStatus()).body(ErrorResDto.of(e.errorCode));

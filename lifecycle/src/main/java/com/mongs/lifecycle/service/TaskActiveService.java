@@ -2,10 +2,10 @@ package com.mongs.lifecycle.service;
 
 import com.mongs.core.enums.management.MongShift;
 import com.mongs.core.enums.management.MongState;
-import com.mongs.core.mqtt.MqttReqDto;
-import com.mongs.core.mqtt.PublishShift;
-import com.mongs.core.mqtt.PublishState;
-import com.mongs.core.mqtt.PublishStatus;
+import com.mongs.core.vo.mqtt.MqttReqDto;
+import com.mongs.core.vo.mqtt.PublishShiftVo;
+import com.mongs.core.vo.mqtt.PublishStateVo;
+import com.mongs.core.vo.mqtt.PublishStatusVo;
 import com.mongs.lifecycle.client.NotificationClient;
 import com.mongs.lifecycle.code.TaskCode;
 import com.mongs.lifecycle.entity.Mong;
@@ -47,12 +47,11 @@ public class TaskActiveService {
 
         notificationClient.publishShift(MqttReqDto.builder()
                 .accountId(saveMong.getAccountId())
-                .data(PublishShift.builder()
+                .data(PublishShiftVo.builder()
                         .mongId(saveMong.getId())
                         .shiftCode(saveMong.getShift().getCode())
                         .build())
                 .build());
-        log.info("[eggEvolution] {}", saveMong);
     }
 
     @Transactional
@@ -74,7 +73,7 @@ public class TaskActiveService {
 
         notificationClient.publishStatus(MqttReqDto.builder()
                 .accountId(saveMong.getAccountId())
-                .data(PublishStatus.builder()
+                .data(PublishStatusVo.builder()
                         .mongId(saveMong.getId())
                         .health(saveMong.getHealthy())
                         .satiety(saveMong.getSatiety())
@@ -105,7 +104,7 @@ public class TaskActiveService {
 
         notificationClient.publishStatus(MqttReqDto.builder()
                 .accountId(saveMong.getAccountId())
-                .data(PublishStatus.builder()
+                .data(PublishStatusVo.builder()
                         .mongId(saveMong.getId())
                         .health(saveMong.getHealthy())
                         .satiety(saveMong.getSatiety())
@@ -136,7 +135,7 @@ public class TaskActiveService {
 
         notificationClient.publishStatus(MqttReqDto.builder()
                 .accountId(saveMong.getAccountId())
-                .data(PublishStatus.builder()
+                .data(PublishStatusVo.builder()
                         .mongId(saveMong.getId())
                         .health(saveMong.getHealthy())
                         .satiety(saveMong.getSatiety())
@@ -169,7 +168,7 @@ public class TaskActiveService {
 
         notificationClient.publishStatus(MqttReqDto.builder()
                 .accountId(saveMong.getAccountId())
-                .data(PublishStatus.builder()
+                .data(PublishStatusVo.builder()
                         .mongId(saveMong.getId())
                         .health(saveMong.getHealthy())
                         .satiety(saveMong.getSatiety())
@@ -202,7 +201,7 @@ public class TaskActiveService {
 
         notificationClient.publishStatus(MqttReqDto.builder()
                 .accountId(saveMong.getAccountId())
-                .data(PublishStatus.builder()
+                .data(PublishStatusVo.builder()
                         .mongId(saveMong.getId())
                         .health(saveMong.getHealthy())
                         .satiety(saveMong.getSatiety())
@@ -233,7 +232,7 @@ public class TaskActiveService {
 
         notificationClient.publishStatus(MqttReqDto.builder()
                 .accountId(saveMong.getAccountId())
-                .data(PublishStatus.builder()
+                .data(PublishStatusVo.builder()
                         .mongId(saveMong.getId())
                         .health(saveMong.getHealthy())
                         .satiety(saveMong.getSatiety())
@@ -291,7 +290,7 @@ public class TaskActiveService {
 
             notificationClient.publishStatus(MqttReqDto.builder()
                     .accountId(saveMong.getAccountId())
-                    .data(PublishStatus.builder()
+                    .data(PublishStatusVo.builder()
                             .mongId(saveMong.getId())
                             .health(saveMong.getHealthy())
                             .satiety(saveMong.getSatiety())
@@ -323,7 +322,7 @@ public class TaskActiveService {
 
         notificationClient.publishShift(MqttReqDto.builder()
                 .accountId(saveMong.getAccountId())
-                .data(PublishShift.builder()
+                .data(PublishShiftVo.builder()
                         .mongId(saveMong.getId())
                         .shiftCode(saveMong.getShift().getCode())
                         .build())
@@ -331,7 +330,7 @@ public class TaskActiveService {
 
         notificationClient.publishState(MqttReqDto.builder()
                 .accountId(saveMong.getAccountId())
-                .data(PublishState.builder()
+                .data(PublishStateVo.builder()
                         .mongId(saveMong.getId())
                         .stateCode(saveMong.getState().getCode())
                         .build())

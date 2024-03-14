@@ -9,6 +9,8 @@ dependencies {
 	// spring
 	implementation 'org.springframework.boot:spring-boot-starter-web'
 	developmentOnly 'org.springframework.boot:spring-boot-devtools'
+	// spring security
+	implementation 'org.springframework.boot:spring-boot-starter-security'
 	// validation
 	implementation 'org.springframework.boot:spring-boot-starter-validation'
 	// mqtt
@@ -22,9 +24,9 @@ dependencies {
 	testImplementation "org.testcontainers:junit-jupiter:1.16.3"
 }
 
-//tasks.register('copyPrivate', Copy) {
-//	copy {
-//		from '../spring_backend_sub/notification/application-local.yml'
-//		into 'src/main/resources'
-//	}
-//}
+tasks.register('copyPrivate', Copy) {
+	copy {
+		from '../spring_backend_sub/notification/application-local.yml'
+		into 'src/main/resources'
+	}
+}

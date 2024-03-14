@@ -1,6 +1,6 @@
 package com.mongs.member.domain.member.entity;
 
-import com.mongs.core.time.BaseTimeEntity;
+import com.mongs.core.entity.BaseTimeEntity;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -16,7 +16,6 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 @Builder(toBuilder = true)
 public class Member extends BaseTimeEntity {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long accountId;
     @Column(nullable = false)
     @Builder.Default

@@ -45,10 +45,7 @@ public class SecurityConfig {
             .addFilterBefore(securityExceptionHandler, PassportFilter.class)
             .authorizeHttpRequests(authorize -> authorize
                     .requestMatchers("/member/admin/**").hasAnyAuthority("ADMIN")
-                    .requestMatchers(HttpMethod.GET,"/member/**").permitAll()
-                    .requestMatchers(HttpMethod.POST, "/member/**").permitAll()
-                    .requestMatchers(HttpMethod.PUT,"/member/**").hasAnyAuthority("NORMAL")
-                    .requestMatchers(HttpMethod.DELETE,"/member/**").hasAnyAuthority("NORMAL")
+                    .requestMatchers("/member/**").hasAnyAuthority("NORMAL")
 
                     .requestMatchers("/collection/admin/**").hasAnyAuthority("ADMIN")
                     .requestMatchers("/collection/**").hasAnyAuthority("NORMAL")

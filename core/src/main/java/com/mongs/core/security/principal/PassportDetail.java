@@ -1,6 +1,6 @@
 package com.mongs.core.security.principal;
 
-import com.mongs.core.passport.PassportVO;
+import com.mongs.core.vo.passport.PassportVO;
 import lombok.Getter;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;

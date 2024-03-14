@@ -5,7 +5,7 @@ import com.mongs.core.enums.management.MongEXP;
 import com.mongs.core.enums.management.MongGrade;
 import com.mongs.core.enums.management.MongShift;
 import com.mongs.core.enums.management.MongState;
-import com.mongs.core.mqtt.*;
+import com.mongs.core.vo.mqtt.*;
 import com.mongs.management.domain.ateFood.entity.AteFoodHistory;
 import com.mongs.management.domain.ateFood.repository.AteFoodHistoryRepository;
 import com.mongs.management.domain.mong.client.LifecycleClient;
@@ -69,7 +69,7 @@ public class MongServiceImpl implements MongService {
 
         notificationClient.publishCreate(MqttReqDto.builder()
                 .accountId(saveMong.getAccountId())
-                .data(PublishCreate.builder()
+                .data(PublishCreateVo.builder()
                         .mongId(saveMong.getId())
                         .name(saveMong.getName())
                         .code(saveMong.getMongCode())
@@ -142,7 +142,7 @@ public class MongServiceImpl implements MongService {
 
         notificationClient.publishStatus(MqttReqDto.builder()
                 .accountId(saveMong.getAccountId())
-                .data(PublishStatus.builder()
+                .data(PublishStatusVo.builder()
                         .mongId(mongId)
                         .health(saveMong.getHealthy())
                         .satiety(saveMong.getSatiety())
@@ -191,7 +191,7 @@ public class MongServiceImpl implements MongService {
 
         notificationClient.publishStatus(MqttReqDto.builder()
                 .accountId(saveMong.getAccountId())
-                .data(PublishStatus.builder()
+                .data(PublishStatusVo.builder()
                         .mongId(mongId)
                         .health(saveMong.getHealthy())
                         .satiety(saveMong.getSatiety())
@@ -254,7 +254,7 @@ public class MongServiceImpl implements MongService {
 
         notificationClient.publishEvolution(MqttReqDto.builder()
                 .accountId(saveMong.getAccountId())
-                .data(PublishShift.builder()
+                .data(PublishShiftVo.builder()
                         .mongId(mongId)
                         .shiftCode(saveMong.getShift().getCode())
                         .build())
@@ -289,7 +289,7 @@ public class MongServiceImpl implements MongService {
 
         notificationClient.publishStatus(MqttReqDto.builder()
                 .accountId(saveMong.getAccountId())
-                .data(PublishStatus.builder()
+                .data(PublishStatusVo.builder()
                         .mongId(mongId)
                         .health(saveMong.getHealthy())
                         .satiety(saveMong.getSatiety())
@@ -301,14 +301,14 @@ public class MongServiceImpl implements MongService {
                 .build());
         notificationClient.publishState(MqttReqDto.builder()
                 .accountId(saveMong.getAccountId())
-                .data(PublishState.builder()
+                .data(PublishStateVo.builder()
                         .mongId(mongId)
                         .stateCode(saveMong.getState().getCode())
                         .build())
                 .build());
         notificationClient.publishEvolution(MqttReqDto.builder()
                 .accountId(saveMong.getAccountId())
-                .data(PublishShift.builder()
+                .data(PublishShiftVo.builder()
                         .mongId(mongId)
                         .shiftCode(saveMong.getShift().getCode())
                         .build())

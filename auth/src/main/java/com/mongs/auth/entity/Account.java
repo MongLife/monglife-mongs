@@ -1,6 +1,6 @@
 package com.mongs.auth.entity;
 
-import com.mongs.core.time.BaseTimeEntity;
+import com.mongs.core.entity.BaseTimeEntity;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -22,4 +22,10 @@ public class Account extends BaseTimeEntity {
     private String email;
     @Column(nullable = false)
     private String name;
+    @Column(nullable = false)
+    @Builder.Default
+    private Boolean isDeleted = false;
+    @Column(nullable = false)
+    @Builder.Default
+    private String role = "NORMAL";
 }

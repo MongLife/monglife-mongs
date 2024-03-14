@@ -1,24 +1,24 @@
 package com.mongs.auth.service;
 
-import com.mongs.auth.dto.response.LogoutResDto;
-import com.mongs.auth.dto.response.ReissueResDto;
 import com.mongs.auth.entity.AccountLog;
 import com.mongs.auth.exception.AuthorizationException;
 import com.mongs.auth.exception.AuthErrorCode;
 import com.mongs.auth.repository.AccountLogRepository;
 import com.mongs.auth.repository.MemberRepository;
 import com.mongs.auth.repository.TokenRepository;
-import com.mongs.auth.dto.response.LoginResDto;
 import com.mongs.auth.entity.Account;
 import com.mongs.auth.entity.Token;
 import com.mongs.auth.exception.NotFoundException;
 import com.mongs.auth.exception.PassportException;
-import com.mongs.core.passport.PassportVO;
-import com.mongs.core.passport.PassportData;
-import com.mongs.core.passport.PassportAccount;
+import com.mongs.core.vo.passport.PassportVO;
+import com.mongs.core.vo.passport.PassportData;
+import com.mongs.core.vo.passport.PassportAccount;
 import com.mongs.auth.repository.AccountRepository;
 import com.mongs.core.util.HmacProvider;
 import com.mongs.core.util.TokenProvider;
+import com.mongs.core.vo.auth.LoginVo;
+import com.mongs.core.vo.auth.LogoutVo;
+import com.mongs.core.vo.auth.ReissueVo;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -42,14 +42,23 @@ public class AuthService {
     @Value("${application.security.jwt.refresh-expiration}")
     private Long expiration;
 
-    @Transactional
-    public LoginResDto login(String deviceId, String email, String name) throws RuntimeException {
-        /* 회원 가입 (회원 정보가 없는 경우) */
-        Account account = accountRepository.findByEmail(email)
-                .orElseGet(() -> this.registerAccount(email, name));
+    private Account registerAccount(String email, String name) throws RuntimeException {
+        Account registerAccount = accountRepository.save(Account.builder()
+                .name(name)
+                .email(email)
+                .build());
 
-        memberRepository.findMember(account.getId())
-                .orElseThrow(() -> new NotFoundException(AuthErrorCode.ACCOUNT_NOT_FOUND));
+        memberRepository.registerMember(registerAccount.getId())
+                .orElseThrow(() -> new NotFoundException(AuthErrorCode.REGISTER_MEMBER_FAIL));
+
+        return registerAccount;
+    }
+
+    @Transactional
+    public LoginVo login(String deviceId, String email, String name) throws RuntimeException {
+        /* 회원 가입 (회원 정보가 없는 경우) */
+        Account account = accountRepository.findByEmailAndIsDeletedFalse(email)
+                .orElseGet(() -> this.registerAccount(email, name));
 
         /* 이전 RefreshToken 삭제 */
         tokenRepository.findTokenByDeviceIdAndAccountId(deviceId, account.getId())
@@ -77,35 +86,29 @@ public class AuthService {
                 .loginCount(accountLog.getLoginCount() + 1)
                 .build());
 
-        return LoginResDto.builder()
+        return LoginVo.builder()
                 .accessToken(tokenProvider.generateAccessToken(token.getAccountId(), token.getDeviceId()))
                 .refreshToken(token.getRefreshToken())
                 .build();
     }
 
     @Transactional
-    public LogoutResDto logout(String refreshToken) throws RuntimeException {
+    public LogoutVo logout(String refreshToken) throws RuntimeException {
         Token token = tokenRepository.findById(refreshToken)
                 .orElseThrow(() -> new AuthorizationException(AuthErrorCode.REFRESH_TOKEN_EXPIRED));
 
-        memberRepository.findMember(token.getAccountId())
-                .orElseThrow(() -> new NotFoundException(AuthErrorCode.ACCOUNT_NOT_FOUND));
-
         tokenRepository.deleteById(token.getRefreshToken());
 
-        return LogoutResDto.builder()
+        return LogoutVo.builder()
                 .accountId(token.getAccountId())
                 .build();
     }
 
     @Transactional
-    public ReissueResDto reissue(String refreshToken) throws RuntimeException {
+    public ReissueVo reissue(String refreshToken) throws RuntimeException {
         /* RefreshToken Redis 존재 여부 확인 */
         Token token = tokenRepository.findById(refreshToken)
                 .orElseThrow(() -> new AuthorizationException(AuthErrorCode.REFRESH_TOKEN_EXPIRED));
-
-        memberRepository.findMember(token.getAccountId())
-                .orElseThrow(() -> new NotFoundException(AuthErrorCode.ACCOUNT_NOT_FOUND));
 
         tokenRepository.deleteById(refreshToken);
 
@@ -119,7 +122,7 @@ public class AuthService {
                 .build();
         newToken = tokenRepository.save(newToken);
 
-        return ReissueResDto.builder()
+        return ReissueVo.builder()
                 .accessToken(tokenProvider.generateAccessToken(newToken.getAccountId(), newToken.getDeviceId()))
                 .refreshToken(newToken.getRefreshToken())
                 .build();
@@ -137,11 +140,8 @@ public class AuthService {
         String deviceId = tokenProvider.getDeviceId(accessToken)
                 .orElseThrow(() -> new AuthorizationException(AuthErrorCode.ACCESS_TOKEN_EXPIRED));
 
-        memberRepository.findMember(accountId)
-                .orElseThrow(() -> new NotFoundException(AuthErrorCode.ACCOUNT_NOT_FOUND));
-
         /* AccessToken 의 accountId 로 account 조회 */
-        Account account = accountRepository.findById(accountId)
+        Account account = accountRepository.findByIdAndIsDeletedFalse(accountId)
                 .orElseThrow(() -> new NotFoundException(AuthErrorCode.ACCOUNT_NOT_FOUND));
 
         AccountLog accountLog = accountLogRepository.findTopByAccountIdAndDeviceIdOrderByLoginAt(accountId, deviceId)
@@ -155,7 +155,7 @@ public class AuthService {
                                 .email(account.getEmail())
                                 .name(account.getName())
                                 .loginAt(accountLog.getLoginAt())
-                                .role("NORMAL")
+                                .role(account.getRole())
                                 .build())
                         .build())
                 .build();
@@ -167,17 +167,5 @@ public class AuthService {
         return passportVO.toBuilder()
                 .passportIntegrity(passportIntegrity)
                 .build();
-    }
-
-    private Account registerAccount(String email, String name) throws RuntimeException {
-        Account registerAccount = accountRepository.save(Account.builder()
-                .name(name)
-                .email(email)
-                .build());
-
-        memberRepository.registerMember(registerAccount.getId())
-                .orElseThrow(() -> new NotFoundException(AuthErrorCode.REGISTER_MEMBER_FAIL));
-
-        return registerAccount;
     }
 }

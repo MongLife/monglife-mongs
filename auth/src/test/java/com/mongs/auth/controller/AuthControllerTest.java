@@ -4,16 +4,16 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mongs.auth.dto.request.LoginReqDto;
 import com.mongs.auth.dto.request.PassportReqDto;
 import com.mongs.auth.dto.request.ReissueReqDto;
-import com.mongs.auth.dto.response.LoginResDto;
-import com.mongs.auth.dto.response.ReissueResDto;
 import com.mongs.auth.exception.AuthorizationException;
 import com.mongs.auth.exception.AuthErrorCode;
 import com.mongs.auth.exception.NotFoundException;
 import com.mongs.auth.exception.PassportException;
-import com.mongs.core.passport.PassportData;
-import com.mongs.core.passport.PassportAccount;
+import com.mongs.core.vo.passport.PassportData;
+import com.mongs.core.vo.passport.PassportAccount;
 import com.mongs.auth.service.AuthService;
-import com.mongs.core.passport.PassportVO;
+import com.mongs.core.vo.passport.PassportVO;
+import com.mongs.core.vo.auth.LoginVo;
+import com.mongs.core.vo.auth.ReissueVo;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
@@ -58,13 +58,13 @@ public class AuthControllerTest {
         String accessToken = "test-accessToken";
         String refreshToken = "test-refreshToken";
 
-        LoginResDto loginResDto = LoginResDto.builder()
+        LoginVo loginVo = LoginVo.builder()
                 .accessToken(accessToken)
                 .refreshToken(refreshToken)
                 .build();
 
         when(authService.login(deviceId, email, name))
-                .thenReturn(loginResDto);
+                .thenReturn(loginVo);
 
         // when
         // Response
@@ -196,13 +196,13 @@ public class AuthControllerTest {
         String newAccessToken = "test-new-accessToken";
         String newRefreshToken = "test-new-refreshToken";
 
-        ReissueResDto reissueResDto = ReissueResDto.builder()
+        ReissueVo reissueVo = ReissueVo.builder()
                 .accessToken(newAccessToken)
                 .refreshToken(newRefreshToken)
                 .build();
 
         when(authService.reissue(refreshToken))
-                .thenReturn(reissueResDto);
+                .thenReturn(reissueVo);
 
         // when
         ResultActions resultActions = mockMvc.perform(post("/auth/reissue")

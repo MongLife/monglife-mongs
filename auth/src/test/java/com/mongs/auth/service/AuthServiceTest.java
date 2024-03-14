@@ -1,7 +1,5 @@
 package com.mongs.auth.service;
 
-import com.mongs.auth.dto.response.LoginResDto;
-import com.mongs.auth.dto.response.ReissueResDto;
 import com.mongs.auth.entity.Account;
 import com.mongs.auth.entity.Token;
 import com.mongs.auth.exception.AuthorizationException;
@@ -11,7 +9,9 @@ import com.mongs.auth.repository.AccountRepository;
 import com.mongs.auth.repository.TokenRepository;
 import com.mongs.core.util.HmacProvider;
 import com.mongs.core.util.TokenProvider;
-import com.mongs.core.passport.PassportVO;
+import com.mongs.core.vo.passport.PassportVO;
+import com.mongs.core.vo.auth.LoginVo;
+import com.mongs.core.vo.auth.ReissueVo;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -56,7 +56,7 @@ public class AuthServiceTest {
         String accessToken = "test-accessToken";
         String refreshToken = "test-refreshToken";
 
-        when(accountRepository.findByEmail(email))
+        when(accountRepository.findByEmailAndIsDeletedFalse(email))
                 .thenReturn(Optional.of(Account.builder()
                         .id(accountId)
                         .email(email)
@@ -84,7 +84,7 @@ public class AuthServiceTest {
                         .build());
 
         // when
-        LoginResDto result = authService.login(deviceId, email, name);
+        LoginVo result = authService.login(deviceId, email, name);
 
         // then
         assertThat(result.accessToken()).isEqualTo(accessToken);
@@ -123,7 +123,7 @@ public class AuthServiceTest {
                         .build());
 
         // when
-        ReissueResDto result = authService.reissue(refreshToken);
+        ReissueVo result = authService.reissue(refreshToken);
 
         // then
         assertThat(result.accessToken()).isEqualTo(newAccessToken);

@@ -1,7 +1,7 @@
 package com.mongs.core.security.filter;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.mongs.core.passport.PassportVO;
+import com.mongs.core.vo.passport.PassportVO;
 import com.mongs.core.security.exception.PassportIntegrityException;
 import com.mongs.core.security.exception.SecurityErrorCode;
 import com.mongs.core.security.principal.PassportDetail;

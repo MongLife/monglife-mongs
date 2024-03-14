@@ -5,7 +5,7 @@ import com.mongs.gateway.exception.PassportException;
 import com.mongs.gateway.exception.TokenNotFoundException;
 import com.mongs.gateway.service.GatewayService;
 import com.mongs.gateway.util.HttpUtils;
-import com.mongs.core.passport.PassportVO;
+import com.mongs.core.vo.passport.PassportVO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cloud.gateway.filter.GatewayFilter;
 import org.springframework.cloud.gateway.filter.factory.AbstractGatewayFilterFactory;
