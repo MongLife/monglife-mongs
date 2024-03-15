@@ -21,7 +21,9 @@ public enum ManagementErrorCode implements ErrorCode {
     UNKNOWN(HttpStatus.INTERNAL_SERVER_ERROR, "503", "알 수 없음"),
     GATEWAY_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "504", "게이트웨이 통신 에러 입니다."),
     ALREADY_EXIST(HttpStatus.NOT_ACCEPTABLE, "505", "이미 몽이 존재합니다."),
-    UNSUITABLE(HttpStatus.BAD_REQUEST, "506", "적절하지 않은 몽입니다.")
+    UNSUITABLE(HttpStatus.BAD_REQUEST, "506", "적절하지 않은 몽입니다."),
+    INTERNAL_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "MANAGEMENT-100", "Internal Server Error"),
+    INVALID_PARAMETER(HttpStatus.BAD_REQUEST, "MANAGEMENT-101", "Invalid Parameter"),
     ;
 
     private final HttpStatus httpStatus;

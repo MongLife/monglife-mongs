@@ -1,6 +1,7 @@
 package com.mongs.auth.client;
 
-import com.mongs.auth.dto.response.RegisterMemberResDto;
+import com.mongs.auth.client.dto.response.RegisterMemberResDto;
+import com.mongs.core.interceptor.AdminFeignInterceptor;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;

@@ -1,13 +1,13 @@
 package com.mongs.member.domain.member.controller;
 
 import com.mongs.core.enums.member.SlotCountCode;
-import com.mongs.core.vo.member.member.FindMemberVo;
-import com.mongs.core.vo.member.member.ModifySlotCountVo;
-import com.mongs.core.vo.member.member.RegisterMemberVo;
-import com.mongs.member.domain.member.dto.request.ModifyMemberReqDto;
-import com.mongs.member.domain.member.dto.response.FindMemberResDto;
-import com.mongs.member.domain.member.dto.response.ModifySlotCountResDto;
-import com.mongs.member.domain.member.dto.response.RegisterMemberResDto;
+import com.mongs.member.domain.member.service.vo.FindMemberVo;
+import com.mongs.member.domain.member.service.vo.ModifySlotCountVo;
+import com.mongs.member.domain.member.service.vo.RegisterMemberVo;
+import com.mongs.member.domain.member.controller.dto.request.ModifyMemberReqDto;
+import com.mongs.member.domain.member.controller.dto.response.FindMemberResDto;
+import com.mongs.member.domain.member.controller.dto.response.ModifySlotCountResDto;
+import com.mongs.member.domain.member.controller.dto.response.RegisterMemberResDto;
 import com.mongs.member.domain.member.service.MemberService;
 import com.mongs.core.security.principal.PassportDetail;
 import lombok.RequiredArgsConstructor;
@@ -34,7 +34,7 @@ public class MemberController {
     }
 
     @PostMapping("/admin/{accountId}")
-    public ResponseEntity<RegisterMemberResDto> registerMember(@PathVariable Long accountId) {
+    public ResponseEntity<RegisterMemberResDto> registerMember(@PathVariable("accountId") Long accountId) {
         RegisterMemberVo registerMemberVo = memberService.registerMember(accountId);
         return ResponseEntity.ok().body(RegisterMemberResDto.builder()
                 .accountId(registerMemberVo.accountId())
@@ -45,7 +45,7 @@ public class MemberController {
 
     @PutMapping("/admin/{accountId}")
     public ResponseEntity<ModifySlotCountResDto> modifySlotCount(
-            @PathVariable Long accountId,
+            @PathVariable("accountId") Long accountId,
             @RequestBody @Validated ModifyMemberReqDto modifyMemberReqDto
     ) {
         SlotCountCode slotCountCode = modifyMemberReqDto.slotCountCode();

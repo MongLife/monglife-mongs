@@ -9,6 +9,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @Slf4j
 @RestController
 @RequiredArgsConstructor
@@ -17,8 +19,8 @@ public class AteFoodHistoryController {
 
     private final AteFoodHistoryService ateFoodHistoryService;
 
-    @GetMapping("/feed/{mongId}")
-    public ResponseEntity<Object> findAteFoodHistory(
+    @GetMapping("/feedHistory/{mongId}")
+    public ResponseEntity<List<FoodHistory>> findAteFoodHistory(
             @PathVariable("mongId") Long mongId,
             @RequestParam("version") Long version
     ) {

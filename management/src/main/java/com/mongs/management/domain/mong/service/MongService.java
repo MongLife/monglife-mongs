@@ -1,19 +1,18 @@
 package com.mongs.management.domain.mong.service;
 
-import com.mongs.management.domain.mong.service.dto.*;
+import com.mongs.management.domain.mong.controller.dto.response.*;
 
 import java.util.List;
 
 public interface MongService {
-    void eggMong(Long mongId);
-    CreateMong createMong (InitMong initmong, Long accountId, String email);
-    Stroke toMongStroke (Long mongId, Long accountId);
-    Sleep toMongSleeping (Long mongId, Long accountId, String email);
-    Poop toCleanMongsPoop (Long mongId, Long accountId, String email);
-
-    // 음식 먹이기
-    EatTheFeed feedToMong (FeedCode code, Long mongId, Long accountId, String email);
-    Training mongTraining (Long mongId, Long accountId);
-    Evolution mongEvolution (Long mongId, Long accountId, String email);
-    Graduation mongsGraduate(Long mongId, Long accountId, String email);
+    List<FindMongResDto> findAllMong(Long accountId);
+    RegisterMongResDto registerMong(Long accountId, String name, String sleepStart, String sleepEnd);
+    DeleteMongResDto deleteMong(Long accountId, Long mongId);
+    StrokeMongResDto strokeMong(Long accountId, Long mongId);
+    FeedMongResDto feedMong(Long accountId, Long mongId, String feedCode);
+    SleepMongResDto sleepMong(Long accountId, Long mongId);
+    PoopCleanResDto poopClean(Long accountId, Long mongId);
+    TrainingMongResDto trainingMong(Long accountId, Long mongId);
+    GraduateMongResDto graduateMong(Long accountId, Long mongId);
+    EvolutionMongResDto evolutionMong(Long accountId, Long mongId);
 }

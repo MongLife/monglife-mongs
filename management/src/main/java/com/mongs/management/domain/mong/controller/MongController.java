@@ -1,7 +1,10 @@
 package com.mongs.management.domain.mong.controller;
 
 import com.mongs.core.security.principal.PassportDetail;
-import com.mongs.management.domain.mong.client.LifecycleClient;
+import com.mongs.management.domain.mong.controller.dto.request.FeedMongReqDto;
+import com.mongs.management.domain.mong.controller.dto.request.RegisterMongReqDto;
+import com.mongs.management.domain.mong.controller.dto.response.*;
+import com.mongs.management.domain.mong.service.LifecycleService;
 import com.mongs.management.domain.mong.service.MongService;
 import com.mongs.management.domain.mong.service.dto.*;
 import lombok.RequiredArgsConstructor;
@@ -11,6 +14,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @Slf4j
 @RestController
 @RequiredArgsConstructor
@@ -18,96 +23,111 @@ import org.springframework.web.bind.annotation.*;
 public class MongController {
 
     private final MongService mongService;
+    private final LifecycleService lifecycleService;
 
-    // 몽 생성
+    @GetMapping("")
+    public ResponseEntity<List<FindMongResDto>> findAllMong(@AuthenticationPrincipal PassportDetail passportDetail) {
+        Long accountId = passportDetail.getId();
+
+        return ResponseEntity.ok().body(mongService.findAllMong(accountId));
+    }
+
     @PostMapping("")
-    public ResponseEntity<CreateMong> createMong(
-            @RequestBody InitMong initMong,
+    public ResponseEntity<RegisterMongResDto> registerMong(
+            @RequestBody RegisterMongReqDto registerMongReqDto,
             @AuthenticationPrincipal PassportDetail passportDetail
     ) {
-        CreateMong createMong = mongService.createMong(initMong, passportDetail.getId(), passportDetail.getEmail());
-        mongService.eggMong(createMong.id());
+        Long accountId = passportDetail.getId();
+        String name = registerMongReqDto.name();
+        String sleepStart = registerMongReqDto.sleepStart();
+        String sleepEnd = registerMongReqDto.sleepEnd();
 
-        return ResponseEntity
-                .ok()
-                .body(createMong);
+        RegisterMongResDto registerMongResDto = mongService.registerMong(accountId, name, sleepStart, sleepEnd);
+        lifecycleService.eggMongEvent(registerMongResDto.mongId());
+
+        return ResponseEntity.ok().body(registerMongResDto);
     }
 
-    // 쓰다듬기 (수정 필_)
+    @DeleteMapping("/{mongId}")
+    public ResponseEntity<DeleteMongResDto> deleteMong(
+            @PathVariable("mongId") Long mongId,
+            @AuthenticationPrincipal PassportDetail passportDetail
+    ) {
+        Long accountId = passportDetail.getId();
+
+        return ResponseEntity.ok().body(mongService.deleteMong(accountId, mongId));
+    }
+
     @PutMapping("/stroke/{mongId}")
-    public ResponseEntity<Stroke> toMongStroke(
+    public ResponseEntity<StrokeMongResDto> strokeMong(
             @PathVariable("mongId") Long mongId,
             @AuthenticationPrincipal PassportDetail passportDetail
     ) {
-        return ResponseEntity
-                .ok()
-                .body(mongService.toMongStroke(mongId, passportDetail.getId()));
-    }
+        Long accountId = passportDetail.getId();
 
-    // 잠자기 토글
-    @PutMapping("/sleep/{mongId}")
-    public ResponseEntity<Sleep> isMongSleep(
-            @PathVariable("mongId") Long mongId,
-            @AuthenticationPrincipal PassportDetail passportDetail
-    ) {
-        return ResponseEntity
-                .status(HttpStatus.ACCEPTED)
-                .body(mongService.toMongSleeping(mongId, passportDetail.getId(), passportDetail.getEmail()));
-    }
-
-    // 똥 치우기
-    @PutMapping("/poop/{mongId}")
-    public ResponseEntity<Poop> toCleanMongsPoop(
-            @PathVariable("mongId") Long mongId,
-            @AuthenticationPrincipal PassportDetail passportDetail
-    ) {
-        return ResponseEntity
-                .status(HttpStatus.ACCEPTED)
-                .body(mongService.toCleanMongsPoop(mongId, passportDetail.getId(), passportDetail.getEmail()));
+        return ResponseEntity.ok().body(mongService.strokeMong(accountId, mongId));
     }
 
     @PutMapping("/feed/{mongId}")
-    public ResponseEntity<EatTheFeed> feedToMong(
-            @RequestBody FeedCode feed,
+    public ResponseEntity<FeedMongResDto> feedToMong(
+            @RequestBody FeedMongReqDto feedMongReqDto,
             @PathVariable("mongId") Long mongId,
             @AuthenticationPrincipal PassportDetail passportDetail
     ) {
-        return ResponseEntity
-                .status(HttpStatus.ACCEPTED)
-                .body(mongService.feedToMong(feed, mongId, passportDetail.getId(), passportDetail.getEmail()));
+        Long accountId = passportDetail.getId();
+        String feedCode = feedMongReqDto.feedCode();
+
+        return ResponseEntity.status(HttpStatus.ACCEPTED).body(mongService.feedMong(accountId, mongId, feedCode));
     }
 
-    // 훈련
+    @PutMapping("/sleep/{mongId}")
+    public ResponseEntity<SleepMongResDto> isMongSleep(
+            @PathVariable("mongId") Long mongId,
+            @AuthenticationPrincipal PassportDetail passportDetail
+    ) {
+        Long accountId = passportDetail.getId();
+
+        return ResponseEntity.status(HttpStatus.ACCEPTED).body(mongService.sleepMong(accountId, mongId));
+    }
+
+    @PutMapping("/poop/{mongId}")
+    public ResponseEntity<PoopCleanResDto> toCleanMongsPoop(
+            @PathVariable("mongId") Long mongId,
+            @AuthenticationPrincipal PassportDetail passportDetail
+    ) {
+        Long accountId = passportDetail.getId();
+
+        return ResponseEntity.status(HttpStatus.ACCEPTED).body(mongService.poopClean(accountId, mongId));
+    }
+
     @PutMapping("/training/{mongId}")
-    public ResponseEntity<Training> mongTraining(
+    public ResponseEntity<TrainingMongResDto> mongTraining(
             @PathVariable("mongId") Long mongId,
             @AuthenticationPrincipal PassportDetail passportDetail
     ) {
-        return ResponseEntity
-                .status(HttpStatus.ACCEPTED)
-                .body(mongService.mongTraining(mongId, passportDetail.getId()));
+        Long accountId = passportDetail.getId();
+
+        return ResponseEntity.status(HttpStatus.ACCEPTED).body(mongService.trainingMong(accountId, mongId));
     }
 
-    // 졸업
     @PutMapping("/graduation/{mongId}")
-    public ResponseEntity<Graduation> mongsGraduate(
+    public ResponseEntity<GraduateMongResDto> mongsGraduate(
             @PathVariable("mongId") Long mongId,
             @AuthenticationPrincipal PassportDetail passportDetail
     ) {
-        return ResponseEntity
-                .status(HttpStatus.ACCEPTED)
-                .body(mongService.mongsGraduate(mongId, passportDetail.getId(), passportDetail.getEmail()));
+        Long accountId = passportDetail.getId();
+
+        return ResponseEntity.status(HttpStatus.ACCEPTED).body(mongService.graduateMong(accountId, mongId));
 
     }
 
-    // 진화
     @PutMapping("/evolution/{mongId}")
-    public ResponseEntity<Evolution> mongEvolution(
+    public ResponseEntity<EvolutionMongResDto> mongEvolution(
             @PathVariable("mongId") Long mongId,
             @AuthenticationPrincipal PassportDetail passportDetail
     ) {
-        return ResponseEntity
-                .status(HttpStatus.ACCEPTED)
-                .body(mongService.mongEvolution(mongId, passportDetail.getId(), passportDetail.getEmail()));
+        Long accountId = passportDetail.getId();
+
+        return ResponseEntity.status(HttpStatus.ACCEPTED).body(mongService.evolutionMong(accountId, mongId));
     }
 }

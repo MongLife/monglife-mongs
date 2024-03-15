@@ -1,6 +1,6 @@
 package com.mongs.common.controller;
 
-import com.mongs.common.dto.response.FindCodeResDto;
+import com.mongs.common.controller.dto.response.FindCodeResDto;
 import com.mongs.common.service.CommonService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -14,7 +14,7 @@ public class CommonController {
     private final CommonService commonService;
 
     @GetMapping("")
-    public ResponseEntity<Object> findCode(@RequestParam("version") Long version) {
+    public ResponseEntity<FindCodeResDto> findCode(@RequestParam("version") Long version) {
         return ResponseEntity.ok().body(
                 FindCodeResDto.builder()
                         .version(commonService.codeVersionCheckAndNewestCode(version))

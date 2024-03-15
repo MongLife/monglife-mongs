@@ -1,17 +1,17 @@
 package com.mongs.auth.controller;
 
-import com.mongs.auth.dto.request.LoginReqDto;
-import com.mongs.auth.dto.request.LogoutReqDto;
-import com.mongs.auth.dto.request.PassportReqDto;
-import com.mongs.auth.dto.request.ReissueReqDto;
-import com.mongs.auth.dto.response.LoginResDto;
-import com.mongs.auth.dto.response.LogoutResDto;
-import com.mongs.auth.dto.response.ReissueResDto;
+import com.mongs.auth.controller.dto.request.LoginReqDto;
+import com.mongs.auth.controller.dto.request.LogoutReqDto;
+import com.mongs.auth.controller.dto.request.PassportReqDto;
+import com.mongs.auth.controller.dto.request.ReissueReqDto;
+import com.mongs.auth.controller.dto.response.LoginResDto;
+import com.mongs.auth.controller.dto.response.LogoutResDto;
+import com.mongs.auth.controller.dto.response.ReissueResDto;
 import com.mongs.auth.service.AuthService;
 import com.mongs.core.vo.passport.PassportVO;
-import com.mongs.core.vo.auth.LoginVo;
-import com.mongs.core.vo.auth.LogoutVo;
-import com.mongs.core.vo.auth.ReissueVo;
+import com.mongs.auth.service.vo.LoginVo;
+import com.mongs.auth.service.vo.LogoutVo;
+import com.mongs.auth.service.vo.ReissueVo;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;

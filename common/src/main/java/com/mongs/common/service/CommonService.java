@@ -1,14 +1,18 @@
 package com.mongs.common.service;
 
-import com.mongs.common.dto.response.FindFeedbackCodeResDto;
-import com.mongs.common.dto.response.FindFoodCodeResDto;
-import com.mongs.common.dto.response.FindMapCodeResDto;
-import com.mongs.common.dto.response.FindMongCodeResDto;
+import com.mongs.common.controller.dto.response.FindFeedbackCodeResDto;
+import com.mongs.common.controller.dto.response.FindFoodCodeResDto;
+import com.mongs.common.controller.dto.response.FindMapCodeResDto;
+import com.mongs.common.controller.dto.response.FindMongCodeResDto;
 import com.mongs.common.entity.CodeVersion;
 import com.mongs.common.exception.CommonErrorCode;
 import com.mongs.common.exception.NewestVersionException;
 import com.mongs.common.exception.NotFoundVersionException;
 import com.mongs.common.repository.*;
+import com.mongs.common.repository.FeedbackCodeRepository;
+import com.mongs.common.repository.FoodCodeRepository;
+import com.mongs.common.repository.MapCodeRepository;
+import com.mongs.common.repository.MongCodeRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 

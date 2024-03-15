@@ -6,10 +6,11 @@ import com.mongs.core.enums.management.MongGrade;
 import com.mongs.core.enums.management.MongShift;
 import com.mongs.core.enums.management.MongState;
 import com.mongs.core.vo.mqtt.*;
+import com.mongs.core.vo.mqtt.PublishCreateVo;
 import com.mongs.management.domain.ateFood.entity.AteFoodHistory;
 import com.mongs.management.domain.ateFood.repository.AteFoodHistoryRepository;
-import com.mongs.management.domain.mong.client.LifecycleClient;
 import com.mongs.management.domain.mong.client.NotificationClient;
+import com.mongs.management.domain.mong.controller.dto.response.*;
 import com.mongs.management.domain.mong.entity.Mong;
 import com.mongs.management.domain.mong.repository.FoodCodeRepository;
 import com.mongs.management.domain.mong.repository.MongRepository;
@@ -22,6 +23,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 @Slf4j
 @Service
 @RequiredArgsConstructor
@@ -32,67 +35,67 @@ public class MongServiceImpl implements MongService {
     private final AteFoodHistoryRepository ateFoodHistoryRepository;
     private final FoodCodeRepository foodCodeRepository;
 
-    private final LifecycleClient lifecycleClient;
-    private final NotificationClient notificationClient;
-
-//    @Value("${value.traing_paied}")
     private Integer TRAINING_PAIED_POINT = 5;
     private Double TRAINING_STRENGTH = 5D;
+
     private Mong getMong(Long mongId, Long accountId) {
-        return mongRepository.findByIdAndAccountId(mongId, accountId)
+        return mongRepository.findByIdAndAccountIdAndIsActiveTrue(mongId, accountId)
                 .orElseThrow(() -> new ManagementException(ManagementErrorCode.NOT_FOUND));
     }
 
+    @Override
     @Transactional
-    public void eggMong(Long mongId) {
-        lifecycleClient.eggMongEvent(mongId);
+    public List<FindMongResDto> findAllMong(Long accountId) {
+
+        return null;
     }
 
-    // 몽생성
-    @Transactional
     @Override
-    public CreateMong createMong(InitMong initMong, Long accountId, String email) {
-        String sleepTimeStart = mongUtil.timeConverter(initMong.sleepStart());
-        String sleepTimeEnd = mongUtil.timeConverter(initMong.sleepEnd());
-
-        // 몽 이름, 잠 (기상, 취침) -> 이거에 따라서 자는지 안자는지 체크
+    @Transactional
+    public RegisterMongResDto registerMong(Long accountId, String name, String sleepStart, String sleepEnd) {
         Mong mong = Mong.builder()
                 .accountId(accountId)
-                .name(initMong.name())
-                .sleepTime(sleepTimeStart)
-                .wakeUpTime(sleepTimeEnd)
+                .name(name)
+                .sleepTime(sleepStart)
+                .wakeUpTime(sleepEnd)
                 .build();
 
         String newMongCode = mongUtil.getNextMongCode(mong, MongGrade.ZERO);
 
         Mong saveMong = mongRepository.save(mong.toBuilder().mongCode(newMongCode).build());
 
-        notificationClient.publishCreate(MqttReqDto.builder()
-                .accountId(saveMong.getAccountId())
-                .data(PublishCreateVo.builder()
-                        .mongId(saveMong.getId())
-                        .name(saveMong.getName())
-                        .code(saveMong.getMongCode())
-                        .weight(saveMong.getWeight())
-                        .strength(saveMong.getStrength())
-                        .satiety(saveMong.getSatiety())
-                        .health(saveMong.getHealthy())
-                        .sleep(saveMong.getSleep())
-                        .poopCount(saveMong.getNumberOfPoop())
-                        .stateCode(saveMong.getState().getCode())
-                        .shiftCode(saveMong.getShift().getCode())
-                        .payPoint(saveMong.getPayPoint())
-                        .born(saveMong.getCreatedAt())
-                        .build())
-                .build());
+//        notificationClient.publishCreate(MqttReqDto.builder()
+//                .accountId(saveMong.getAccountId())
+//                .data(PublishCreateVo.builder()
+//                        .mongId(saveMong.getId())
+//                        .name(saveMong.getName())
+//                        .code(saveMong.getMongCode())
+//                        .weight(saveMong.getWeight())
+//                        .strength(saveMong.getStrength())
+//                        .satiety(saveMong.getSatiety())
+//                        .health(saveMong.getHealthy())
+//                        .sleep(saveMong.getSleep())
+//                        .poopCount(saveMong.getNumberOfPoop())
+//                        .stateCode(saveMong.getState().getCode())
+//                        .shiftCode(saveMong.getShift().getCode())
+//                        .payPoint(saveMong.getPayPoint())
+//                        .born(saveMong.getCreatedAt())
+//                        .build())
+//                .build());
 
         return CreateMong.of(saveMong);
     }
 
-    // 몽 쓰다듬기 -> 경험치 상승, 몽 쓰다듬 횟수 + 1
     @Transactional
     @Override
-    public Stroke toMongStroke(Long mongId, Long accountId) {
+    public DeleteMongResDto deleteMong(Long accountId, Long mongId) {
+
+        return null;
+    }
+
+    @Transactional
+    @Override
+    public StrokeMongResDto strokeMong(Long accountId, Long mongId) {
         Mong mong = getMong(mongId, accountId);
 
         int newNumberOfStroke = mong.getNumberOfStroke() + 1;
@@ -105,64 +108,12 @@ public class MongServiceImpl implements MongService {
         return Stroke.of(saveMong);
     }
 
-    // 몽 낮잠 3시간 뒤에는 일어나야한다. -> 스케줄러
     @Transactional
     @Override
-    public Sleep toMongSleeping(Long mongId, Long accountId, String email) {
+    public FeedMongResDto feedMong(Long accountId, Long mongId, String feedCode) {
         Mong mong = getMong(mongId, accountId);
 
-        boolean newIsSleeping = !mong.getIsSleeping();
-
-        // TODO("스케줄러 쪽에 수면 중인 경우 exp 증가 로직 추가 필요")
-
-        Mong saveMong = mongRepository.save(mong.toBuilder()
-                .isSleeping(newIsSleeping)
-                .build());
-
-        // 스케줄러 호출 [수면]
-        if (saveMong.getIsSleeping()) {
-            lifecycleClient.sleepMongEvent(mongId);
-        } else {
-            lifecycleClient.wakeupMongEvent(mongId);
-        }
-
-        return Sleep.of(saveMong);
-    }
-    @Transactional
-    @Override
-    public Poop toCleanMongsPoop(Long mongId, Long accountId, String email) {
-        Mong mong = getMong(mongId, accountId);
-
-        int newExp = mong.getExp() + MongEXP.CLEANING_POOP.getExp();
-
-        Mong saveMong = mongRepository.save(mong.toBuilder()
-                .numberOfPoop(0)
-                .exp(newExp)
-                .build());
-
-        notificationClient.publishStatus(MqttReqDto.builder()
-                .accountId(saveMong.getAccountId())
-                .data(PublishStatusVo.builder()
-                        .mongId(mongId)
-                        .health(saveMong.getHealthy())
-                        .satiety(saveMong.getSatiety())
-                        .strength(saveMong.getStrength())
-                        .sleep(saveMong.getSleep())
-                        .poopCount(saveMong.getNumberOfPoop())
-                        .isSleeping(saveMong.getIsSleeping())
-                        .build())
-                .build());
-
-        return Poop.of(saveMong);
-    }
-
-    // 몽 먹이주기, 단백질 음식 먹으면 근력 향상 ( 코드에 있는 FD 뒤에 있는 숫자 / 5 해서 진행 )
-    @Transactional
-    @Override
-    public EatTheFeed feedToMong(FeedCode code, Long mongId, Long accountId, String email) {
-        Mong mong = getMong(mongId, accountId);
-
-        FoodCode foodCode = foodCodeRepository.findByCode(code.feedCode())
+        FoodCode foodCode = foodCodeRepository.findByCode(feedCode)
                 .orElseThrow(() -> new ManagementException(ManagementErrorCode.NOT_FOUND_FOOD_CODE));
 
         double newWeight = mong.getWeight() + foodCode.addWeightValue();
@@ -183,33 +134,82 @@ public class MongServiceImpl implements MongService {
                 .build());
 
         ateFoodHistoryRepository.save(AteFoodHistory.builder()
-                        .mongId(saveMong.getId())
-                        .code(foodCode.code())
-                        .price(foodCode.price())
-                        .build());
-
-
-        notificationClient.publishStatus(MqttReqDto.builder()
-                .accountId(saveMong.getAccountId())
-                .data(PublishStatusVo.builder()
-                        .mongId(mongId)
-                        .health(saveMong.getHealthy())
-                        .satiety(saveMong.getSatiety())
-                        .strength(saveMong.getStrength())
-                        .sleep(saveMong.getSleep())
-                        .poopCount(saveMong.getNumberOfPoop())
-                        .isSleeping(saveMong.getIsSleeping())
-                        .build())
+                .mongId(saveMong.getId())
+                .code(foodCode.code())
+                .price(foodCode.price())
                 .build());
+
+
+//        notificationClient.publishStatus(MqttReqDto.builder()
+//                .accountId(saveMong.getAccountId())
+//                .data(PublishStatusVo.builder()
+//                        .mongId(mongId)
+//                        .health(saveMong.getHealthy())
+//                        .satiety(saveMong.getSatiety())
+//                        .strength(saveMong.getStrength())
+//                        .sleep(saveMong.getSleep())
+//                        .poopCount(saveMong.getNumberOfPoop())
+//                        .isSleeping(saveMong.getIsSleeping())
+//                        .build())
+//                .build());
 
         return EatTheFeed.of(saveMong, foodCode);
     }
 
-    // 몽 훈련 ( paypoint가 traingPaiedPoint (50) 보다 낮으면 훈련 불가 )
-    // 포인트 감소, 훈련 횟수, 근력, 경험치 증가
     @Transactional
     @Override
-    public Training mongTraining(Long mongId, Long accountId) {
+    public SleepMongResDto sleepMong(Long accountId, Long mongId) {
+        Mong mong = getMong(mongId, accountId);
+
+        boolean newIsSleeping = !mong.getIsSleeping();
+
+        // TODO("스케줄러 쪽에 수면 중인 경우 exp 증가 로직 추가 필요")
+
+        Mong saveMong = mongRepository.save(mong.toBuilder()
+                .isSleeping(newIsSleeping)
+                .build());
+
+//        // 스케줄러 호출 [수면]
+//        if (saveMong.getIsSleeping()) {
+//            lifecycleClient.sleepMongEvent(mongId);
+//        } else {
+//            lifecycleClient.wakeupMongEvent(mongId);
+//        }
+
+        return Sleep.of(saveMong);
+    }
+
+    @Transactional
+    @Override
+    public PoopCleanResDto poopClean(Long accountId, Long mongId) {
+        Mong mong = getMong(mongId, accountId);
+
+        int newExp = mong.getExp() + MongEXP.CLEANING_POOP.getExp();
+
+        Mong saveMong = mongRepository.save(mong.toBuilder()
+                .numberOfPoop(0)
+                .exp(newExp)
+                .build());
+
+//        notificationClient.publishStatus(MqttReqDto.builder()
+//                .accountId(saveMong.getAccountId())
+//                .data(PublishStatusVo.builder()
+//                        .mongId(mongId)
+//                        .health(saveMong.getHealthy())
+//                        .satiety(saveMong.getSatiety())
+//                        .strength(saveMong.getStrength())
+//                        .sleep(saveMong.getSleep())
+//                        .poopCount(saveMong.getNumberOfPoop())
+//                        .isSleeping(saveMong.getIsSleeping())
+//                        .build())
+//                .build());
+
+        return Poop.of(saveMong);
+    }
+
+    @Transactional
+    @Override
+    public TrainingMongResDto trainingMong(Long accountId, Long mongId) {
         Mong mong = getMong(mongId, accountId);
 
         if(mong.getPayPoint() <= TRAINING_PAIED_POINT) {
@@ -232,41 +232,9 @@ public class MongServiceImpl implements MongService {
       
     }
 
-    // 몽 진화 실행
     @Transactional
     @Override
-    public Evolution mongEvolution(Long mongId, Long accountId, String email) {
-        Mong mong = getMong(mongId, accountId);
-
-        MongGrade grade = mong.getGrade();
-        if (grade.equals(MongGrade.FOURTH)) {
-            throw new ManagementException(ManagementErrorCode.IMPOSSIBLE);
-        }
-
-        int exp = mong.getExp();
-        if (exp < grade.getEvolutionExp()) {
-            throw new ManagementException(ManagementErrorCode.NOT_ENOUGH_EXP);
-        }
-
-        Mong saveMong = mongRepository.save(mong.toBuilder()
-                .mongCode(mongUtil.getNextMongCode(mong, grade))
-                .build());
-
-        notificationClient.publishEvolution(MqttReqDto.builder()
-                .accountId(saveMong.getAccountId())
-                .data(PublishShiftVo.builder()
-                        .mongId(mongId)
-                        .shiftCode(saveMong.getShift().getCode())
-                        .build())
-                .build());
-
-        return Evolution.of(saveMong);
-    }
-
-    // 몽 졸업 ( 4단계 달성하면 졸업 ) 실행
-    @Transactional
-    @Override
-    public Graduation mongsGraduate(Long mongId, Long accountId, String email) {
+    public GraduateMongResDto graduateMong(Long accountId, Long mongId) {
         Mong mong = getMong(mongId, accountId);
 
         MongGrade grade = mong.getGrade();
@@ -287,33 +255,63 @@ public class MongServiceImpl implements MongService {
                 .shift(MongShift.NORMAL)
                 .build());
 
-        notificationClient.publishStatus(MqttReqDto.builder()
-                .accountId(saveMong.getAccountId())
-                .data(PublishStatusVo.builder()
-                        .mongId(mongId)
-                        .health(saveMong.getHealthy())
-                        .satiety(saveMong.getSatiety())
-                        .strength(saveMong.getStrength())
-                        .sleep(saveMong.getSleep())
-                        .poopCount(saveMong.getNumberOfPoop())
-                        .isSleeping(saveMong.getIsSleeping())
-                        .build())
-                .build());
-        notificationClient.publishState(MqttReqDto.builder()
-                .accountId(saveMong.getAccountId())
-                .data(PublishStateVo.builder()
-                        .mongId(mongId)
-                        .stateCode(saveMong.getState().getCode())
-                        .build())
-                .build());
-        notificationClient.publishEvolution(MqttReqDto.builder()
-                .accountId(saveMong.getAccountId())
-                .data(PublishShiftVo.builder()
-                        .mongId(mongId)
-                        .shiftCode(saveMong.getShift().getCode())
-                        .build())
-                .build());
+//        notificationClient.publishStatus(MqttReqDto.builder()
+//                .accountId(saveMong.getAccountId())
+//                .data(PublishStatusVo.builder()
+//                        .mongId(mongId)
+//                        .health(saveMong.getHealthy())
+//                        .satiety(saveMong.getSatiety())
+//                        .strength(saveMong.getStrength())
+//                        .sleep(saveMong.getSleep())
+//                        .poopCount(saveMong.getNumberOfPoop())
+//                        .isSleeping(saveMong.getIsSleeping())
+//                        .build())
+//                .build());
+//        notificationClient.publishState(MqttReqDto.builder()
+//                .accountId(saveMong.getAccountId())
+//                .data(PublishStateVo.builder()
+//                        .mongId(mongId)
+//                        .stateCode(saveMong.getState().getCode())
+//                        .build())
+//                .build());
+//        notificationClient.publishEvolution(MqttReqDto.builder()
+//                .accountId(saveMong.getAccountId())
+//                .data(PublishShiftVo.builder()
+//                        .mongId(mongId)
+//                        .shiftCode(saveMong.getShift().getCode())
+//                        .build())
+//                .build());
 
         return Graduation.of(saveMong);
+    }
+
+    @Transactional
+    @Override
+    public EvolutionMongResDto evolutionMong(Long accountId, Long mongId) {
+        Mong mong = getMong(mongId, accountId);
+
+        MongGrade grade = mong.getGrade();
+        if (grade.equals(MongGrade.FOURTH)) {
+            throw new ManagementException(ManagementErrorCode.IMPOSSIBLE);
+        }
+
+        int exp = mong.getExp();
+        if (exp < grade.getEvolutionExp()) {
+            throw new ManagementException(ManagementErrorCode.NOT_ENOUGH_EXP);
+        }
+
+        Mong saveMong = mongRepository.save(mong.toBuilder()
+                .mongCode(mongUtil.getNextMongCode(mong, grade))
+                .build());
+
+//        notificationClient.publishEvolution(MqttReqDto.builder()
+//                .accountId(saveMong.getAccountId())
+//                .data(PublishShiftVo.builder()
+//                        .mongId(mongId)
+//                        .shiftCode(saveMong.getShift().getCode())
+//                        .build())
+//                .build());
+
+        return Evolution.of(saveMong);
     }
 }

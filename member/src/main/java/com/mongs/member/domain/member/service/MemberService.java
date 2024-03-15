@@ -1,9 +1,9 @@
 package com.mongs.member.domain.member.service;
 
 import com.mongs.core.enums.member.SlotCountCode;
-import com.mongs.core.vo.member.member.FindMemberVo;
-import com.mongs.core.vo.member.member.ModifySlotCountVo;
-import com.mongs.core.vo.member.member.RegisterMemberVo;
+import com.mongs.member.domain.member.service.vo.FindMemberVo;
+import com.mongs.member.domain.member.service.vo.ModifySlotCountVo;
+import com.mongs.member.domain.member.service.vo.RegisterMemberVo;
 import com.mongs.member.domain.member.entity.Member;
 import com.mongs.member.domain.member.exception.MemberErrorCode;
 import com.mongs.member.domain.member.exception.NotFoundMemberException;

@@ -17,9 +17,10 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 public class MongCollection extends BaseTimeEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "mong_collection_id")
     private Long id;
     @Column(updatable = false, nullable = false)
-    private Long memberId;
+    private Long accountId;
     @Column(updatable = false, nullable = false)
     private String code;
 }

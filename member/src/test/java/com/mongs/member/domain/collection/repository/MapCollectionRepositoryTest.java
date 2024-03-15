@@ -78,7 +78,7 @@ class MapCollectionRepositoryTest {
         }
 
         // when
-        List<MapCollection> mapCollectionList = mapCollectionRepository.findByMemberId(memberId);
+        List<MapCollection> mapCollectionList = mapCollectionRepository.findByAccountId(memberId);
 
         // then
         assertThat(mapCollectionList).isNotEmpty();
@@ -105,7 +105,7 @@ class MapCollectionRepositoryTest {
         MapCollection saveMapCollection = mapCollectionRepository.save(mapCollection);
 
         // when
-        mapCollectionRepository.deleteByMemberIdAndCode(memberId, code);
+        mapCollectionRepository.deleteByAccountIdAndCode(memberId, code);
 
         Optional<MapCollection> expected  = mapCollectionRepository.findById(saveMapCollection.getId());
 

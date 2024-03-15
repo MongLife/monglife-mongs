@@ -2,10 +2,7 @@ package com.mongs.member.domain.collection.service;
 
 import com.mongs.core.entity.MapCode;
 import com.mongs.core.entity.MongCode;
-import com.mongs.member.domain.collection.dto.response.FindMapCollectionResDto;
-import com.mongs.member.domain.collection.dto.response.FindMongCollectionResDto;
-import com.mongs.member.domain.collection.dto.response.RegisterMapCollectionResDto;
-import com.mongs.member.domain.collection.dto.response.RegisterMongCollectionResDto;
+import com.mongs.member.domain.collection.controller.dto.response.*;
 import com.mongs.member.domain.collection.entity.MapCollection;
 import com.mongs.member.domain.collection.entity.MongCollection;
 import com.mongs.member.domain.collection.exception.CollectionErrorCode;
@@ -30,9 +27,9 @@ public class CollectionService {
     private final MongCodeRepository mongCodeRepository;
 
     @Transactional(readOnly = true)
-    public List<FindMapCollectionResDto> findMapCollection(Long memberId) {
+    public List<FindMapCollectionResDto> findMapCollection(Long accountId) {
         List<MapCode> mapCodeList = mapCodeRepository.findAll();
-        List<String> mapCollectionList = mapCollectionRepository.findByMemberId(memberId)
+        List<String> mapCollectionList = mapCollectionRepository.findByAccountId(accountId)
                     .stream()
                     .map(MapCollection::getCode)
                     .toList();
@@ -49,9 +46,9 @@ public class CollectionService {
     }
 
     @Transactional(readOnly = true)
-    public List<FindMongCollectionResDto> findMongCollection(Long memberId) {
+    public List<FindMongCollectionResDto> findMongCollection(Long accountId) {
         List<MongCode> mongCodeList = mongCodeRepository.findAll();
-        List<String> mongCollectionList = mongCollectionRepository.findByMemberId(memberId)
+        List<String> mongCollectionList = mongCollectionRepository.findByAccountId(accountId)
                 .stream()
                 .map(MongCollection::getCode)
                 .toList();
@@ -68,64 +65,72 @@ public class CollectionService {
     }
 
     @Transactional
-    public RegisterMapCollectionResDto registerMapCollection(Long memberId, String mapCode) throws InvalidCodeException {
+    public RegisterMapCollectionResDto registerMapCollection(Long accountId, String mapCode) throws InvalidCodeException {
         /* mapCode 값 유효성 체크 */
         mapCodeRepository.findById(mapCode)
                 .orElseThrow(() -> new InvalidCodeException(CollectionErrorCode.INVALID_MAP_CODE));
 
         /* 중복 등록 여부 체크 */
-        MapCollection mapCollection = mapCollectionRepository.findByMemberIdAndCode(memberId, mapCode)
+        MapCollection mapCollection = mapCollectionRepository.findByAccountIdAndCode(accountId, mapCode)
                 .orElseGet(() ->
                         /* 미등록 시 저장 */
                         mapCollectionRepository.save(MapCollection.builder()
-                        .memberId(memberId)
+                        .accountId(accountId)
                         .code(mapCode)
                         .build()));
 
         return RegisterMapCollectionResDto.builder()
-                .memberId(mapCollection.getMemberId())
+                .accountId(mapCollection.getAccountId())
                 .code(mapCollection.getCode())
                 .createdAt(mapCollection.getCreatedAt())
                 .build();
     }
 
     @Transactional
-    public RegisterMongCollectionResDto registerMongCollection(Long memberId, String mongCode) throws InvalidCodeException {
+    public RegisterMongCollectionResDto registerMongCollection(Long accountId, String mongCode) throws InvalidCodeException {
         /* mongCode 값 유효성 체크 */
         mongCodeRepository.findById(mongCode)
                 .orElseThrow(() -> new InvalidCodeException(CollectionErrorCode.INVALID_MONG_CODE));
 
         /* 중복 등록 여부 체크 */
-        MongCollection mongCollection = mongCollectionRepository.findByMemberIdAndCode(memberId, mongCode)
+        MongCollection mongCollection = mongCollectionRepository.findByAccountIdAndCode(accountId, mongCode)
                 .orElseGet(() ->
                         /* 미등록 시 저장 */
                         mongCollectionRepository.save(MongCollection.builder()
-                        .memberId(memberId)
+                        .accountId(accountId)
                         .code(mongCode)
                         .build()));
 
         return RegisterMongCollectionResDto.builder()
-                .memberId(mongCollection.getMemberId())
+                .accountId(mongCollection.getAccountId())
                 .code(mongCollection.getCode())
                 .createdAt(mongCollection.getCreatedAt())
                 .build();
     }
 
     @Transactional
-    public void removeMapCollection(Long memberId, String mapCode) throws InvalidCodeException {
+    public RemoveMapCollectionResDto removeMapCollection(Long accountId, String mapCode) throws InvalidCodeException {
         /* mapCode 값 유효성 체크 */
         mapCodeRepository.findById(mapCode)
                 .orElseThrow(() -> new InvalidCodeException(CollectionErrorCode.INVALID_MAP_CODE));
 
-        mapCollectionRepository.deleteByMemberIdAndCode(memberId, mapCode);
+        mapCollectionRepository.deleteByAccountIdAndCode(accountId, mapCode);
+
+        return RemoveMapCollectionResDto.builder()
+                .accountId(accountId)
+                .build();
     }
 
     @Transactional
-    public void removeMongCollection(Long memberId, String mongCode) throws InvalidCodeException {
+    public RemoveMongCollectionResDto removeMongCollection(Long accountId, String mongCode) throws InvalidCodeException {
         /* mongCode 값 유효성 체크 */
         mongCodeRepository.findById(mongCode)
                 .orElseThrow(() -> new InvalidCodeException(CollectionErrorCode.INVALID_MONG_CODE));
 
-        mongCollectionRepository.deleteByMemberIdAndCode(memberId, mongCode);
+        mongCollectionRepository.deleteByAccountIdAndCode(accountId, mongCode);
+
+        return RemoveMongCollectionResDto.builder()
+                .accountId(accountId)
+                .build();
     }
 }

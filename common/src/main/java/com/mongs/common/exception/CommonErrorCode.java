@@ -9,8 +9,10 @@ import org.springframework.http.HttpStatus;
 @AllArgsConstructor
 public enum CommonErrorCode implements ErrorCode {
 
-    NOT_FOUND_VERSION(HttpStatus.INTERNAL_SERVER_ERROR, "COMMON-100", "버전 정보를 찾을 수 없습니다."),
-    ALREADY_NEW_VERSION(HttpStatus.ACCEPTED, "COMMON-000", "이미 최신 버전입니다.")
+    INTERNAL_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "COMMON-100", "Internal Server Error"),
+    INVALID_PARAMETER(HttpStatus.BAD_REQUEST, "COMMON-101", "Invalid Parameter"),
+    NOT_FOUND_VERSION(HttpStatus.INTERNAL_SERVER_ERROR, "COMMON-102", "Not Found Version Information"),
+    ALREADY_NEW_VERSION(HttpStatus.ACCEPTED, "COMMON-103", "Already Newest Version")
     ;
 
     private final HttpStatus httpStatus;

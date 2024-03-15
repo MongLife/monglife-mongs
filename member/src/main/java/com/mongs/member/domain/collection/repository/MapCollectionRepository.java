@@ -9,7 +9,7 @@ import java.util.Optional;
 
 @Repository
 public interface MapCollectionRepository extends JpaRepository<MapCollection, Long> {
-    List<MapCollection> findByMemberId(Long memberId);
-    Optional<MapCollection> findByMemberIdAndCode(Long memberId, String code);
-    void deleteByMemberIdAndCode(Long memberId, String code);
+    List<MapCollection> findByAccountId(Long memberId);
+    Optional<MapCollection> findByAccountIdAndCode(Long memberId, String code);
+    void deleteByAccountIdAndCode(Long memberId, String code);
 }

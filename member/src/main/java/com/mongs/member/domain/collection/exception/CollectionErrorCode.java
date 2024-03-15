@@ -8,10 +8,10 @@ import org.springframework.http.HttpStatus;
 @Getter
 @AllArgsConstructor
 public enum CollectionErrorCode implements ErrorCode {
-    INVALID_PARAMETER(HttpStatus.BAD_REQUEST, "COLLECTION-100", "Invalid Parameter"),
-    INVALID_MAP_CODE(HttpStatus.BAD_REQUEST, "COLLECTION-101", "Invalid Map Code"),
-    INVALID_MONG_CODE(HttpStatus.BAD_REQUEST, "COLLECTION-102", "Invalid Map Code"),
-    INTERNAL_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "COLLECTION-103", "Internal Server Error")
+    INTERNAL_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "COLLECTION-100", "Internal Server Error"),
+    INVALID_PARAMETER(HttpStatus.BAD_REQUEST, "COLLECTION-101", "Invalid Parameter"),
+    INVALID_MAP_CODE(HttpStatus.BAD_REQUEST, "COLLECTION-102", "Invalid Map Code"),
+    INVALID_MONG_CODE(HttpStatus.BAD_REQUEST, "COLLECTION-103", "Invalid Map Code"),
     ;
 
     private final HttpStatus httpStatus;

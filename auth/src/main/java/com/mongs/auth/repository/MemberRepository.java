@@ -1,7 +1,7 @@
 package com.mongs.auth.repository;
 
 import com.mongs.auth.client.MemberClient;
-import com.mongs.auth.dto.response.RegisterMemberResDto;
+import com.mongs.auth.client.dto.response.RegisterMemberResDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;

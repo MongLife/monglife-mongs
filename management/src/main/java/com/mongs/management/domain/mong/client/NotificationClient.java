@@ -1,11 +1,12 @@
 package com.mongs.management.domain.mong.client;
 
-import com.mongs.core.vo.mqtt.MqttReqDto;
+import com.mongs.core.interceptor.AccountFeignInterceptor;
+import com.mongs.core.vo.mqtt.*;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
-@FeignClient(name = "NOTIFICATION")
+@FeignClient(name = "NOTIFICATION", configuration = AccountFeignInterceptor.class)
 public interface NotificationClient {
 
     @PostMapping("/notification/create")

@@ -3,6 +3,7 @@ dependencies {
 	implementation(project(':core')) {
 		exclude group: 'io.jsonwebtoken'
 		exclude group: 'org.springframework.boot'
+		exclude group: 'org.springframework.cloud'
 	}
 	// eureka
 	implementation 'org.springframework.cloud:spring-cloud-starter-netflix-eureka-client'

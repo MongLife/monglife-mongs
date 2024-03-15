@@ -1,9 +1,9 @@
 package com.mongs.auth.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.mongs.auth.dto.request.LoginReqDto;
-import com.mongs.auth.dto.request.PassportReqDto;
-import com.mongs.auth.dto.request.ReissueReqDto;
+import com.mongs.auth.controller.dto.request.LoginReqDto;
+import com.mongs.auth.controller.dto.request.PassportReqDto;
+import com.mongs.auth.controller.dto.request.ReissueReqDto;
 import com.mongs.auth.exception.AuthorizationException;
 import com.mongs.auth.exception.AuthErrorCode;
 import com.mongs.auth.exception.NotFoundException;
@@ -12,8 +12,8 @@ import com.mongs.core.vo.passport.PassportData;
 import com.mongs.core.vo.passport.PassportAccount;
 import com.mongs.auth.service.AuthService;
 import com.mongs.core.vo.passport.PassportVO;
-import com.mongs.core.vo.auth.LoginVo;
-import com.mongs.core.vo.auth.ReissueVo;
+import com.mongs.auth.service.vo.LoginVo;
+import com.mongs.auth.service.vo.ReissueVo;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
