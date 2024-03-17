@@ -6,6 +6,8 @@ import lombok.Builder;
 public record EvolutionMongResDto(
         Long mongId,
         String mongCode,
-        String stateCode
+        String shiftCode,
+        String stateCode,
+        Integer exp
 ) {
 }

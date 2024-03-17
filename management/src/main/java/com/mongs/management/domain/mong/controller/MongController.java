@@ -6,7 +6,6 @@ import com.mongs.management.domain.mong.controller.dto.request.RegisterMongReqDt
 import com.mongs.management.domain.mong.controller.dto.response.*;
 import com.mongs.management.domain.mong.service.LifecycleService;
 import com.mongs.management.domain.mong.service.MongService;
-import com.mongs.management.domain.mong.service.dto.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -43,7 +42,7 @@ public class MongController {
         String sleepEnd = registerMongReqDto.sleepEnd();
 
         RegisterMongResDto registerMongResDto = mongService.registerMong(accountId, name, sleepStart, sleepEnd);
-        lifecycleService.eggMongEvent(registerMongResDto.mongId());
+//        lifecycleService.eggMongEvent(registerMongResDto.mongId());
 
         return ResponseEntity.ok().body(registerMongResDto);
     }
@@ -69,7 +68,7 @@ public class MongController {
     }
 
     @PutMapping("/feed/{mongId}")
-    public ResponseEntity<FeedMongResDto> feedToMong(
+    public ResponseEntity<FeedMongResDto> feedMong(
             @RequestBody FeedMongReqDto feedMongReqDto,
             @PathVariable("mongId") Long mongId,
             @AuthenticationPrincipal PassportDetail passportDetail
@@ -81,7 +80,7 @@ public class MongController {
     }
 
     @PutMapping("/sleep/{mongId}")
-    public ResponseEntity<SleepMongResDto> isMongSleep(
+    public ResponseEntity<SleepMongResDto> sleepMong(
             @PathVariable("mongId") Long mongId,
             @AuthenticationPrincipal PassportDetail passportDetail
     ) {
@@ -91,7 +90,7 @@ public class MongController {
     }
 
     @PutMapping("/poop/{mongId}")
-    public ResponseEntity<PoopCleanResDto> toCleanMongsPoop(
+    public ResponseEntity<PoopCleanResDto> poopClean(
             @PathVariable("mongId") Long mongId,
             @AuthenticationPrincipal PassportDetail passportDetail
     ) {
@@ -101,7 +100,7 @@ public class MongController {
     }
 
     @PutMapping("/training/{mongId}")
-    public ResponseEntity<TrainingMongResDto> mongTraining(
+    public ResponseEntity<TrainingMongResDto> trainingMong(
             @PathVariable("mongId") Long mongId,
             @AuthenticationPrincipal PassportDetail passportDetail
     ) {
@@ -110,8 +109,9 @@ public class MongController {
         return ResponseEntity.status(HttpStatus.ACCEPTED).body(mongService.trainingMong(accountId, mongId));
     }
 
+    // 아에 졸업 시키고 삭제 시키는 함수
     @PutMapping("/graduation/{mongId}")
-    public ResponseEntity<GraduateMongResDto> mongsGraduate(
+    public ResponseEntity<GraduateMongResDto> graduateMong(
             @PathVariable("mongId") Long mongId,
             @AuthenticationPrincipal PassportDetail passportDetail
     ) {
@@ -122,7 +122,7 @@ public class MongController {
     }
 
     @PutMapping("/evolution/{mongId}")
-    public ResponseEntity<EvolutionMongResDto> mongEvolution(
+    public ResponseEntity<EvolutionMongResDto> evolutionMong(
             @PathVariable("mongId") Long mongId,
             @AuthenticationPrincipal PassportDetail passportDetail
     ) {

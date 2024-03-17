@@ -4,17 +4,12 @@ import com.mongs.core.entity.FoodCode;
 import com.mongs.core.enums.management.MongEXP;
 import com.mongs.core.enums.management.MongGrade;
 import com.mongs.core.enums.management.MongShift;
-import com.mongs.core.enums.management.MongState;
-import com.mongs.core.vo.mqtt.*;
-import com.mongs.core.vo.mqtt.PublishCreateVo;
 import com.mongs.management.domain.ateFood.entity.AteFoodHistory;
 import com.mongs.management.domain.ateFood.repository.AteFoodHistoryRepository;
-import com.mongs.management.domain.mong.client.NotificationClient;
 import com.mongs.management.domain.mong.controller.dto.response.*;
 import com.mongs.management.domain.mong.entity.Mong;
 import com.mongs.management.domain.mong.repository.FoodCodeRepository;
 import com.mongs.management.domain.mong.repository.MongRepository;
-import com.mongs.management.domain.mong.service.dto.*;
 import com.mongs.management.domain.mong.utils.MongUtil;
 import com.mongs.management.exception.ManagementErrorCode;
 import com.mongs.management.exception.ManagementException;
@@ -46,8 +41,8 @@ public class MongServiceImpl implements MongService {
     @Override
     @Transactional
     public List<FindMongResDto> findAllMong(Long accountId) {
-
-        return null;
+        List<Mong> mongList = mongRepository.findByAccountIdAndIsActiveTrue(accountId);
+        return FindMongResDto.toList(mongList);
     }
 
     @Override
@@ -58,11 +53,15 @@ public class MongServiceImpl implements MongService {
                 .name(name)
                 .sleepTime(sleepStart)
                 .wakeUpTime(sleepEnd)
+                .grade(MongGrade.EMPTY)
                 .build();
 
-        String newMongCode = mongUtil.getNextMongCode(mong, MongGrade.ZERO);
+        String newMongCode = mongUtil.getNextMongCode(mong);
 
-        Mong saveMong = mongRepository.save(mong.toBuilder().mongCode(newMongCode).build());
+        Mong saveMong = mongRepository.save(mong.toBuilder()
+                .mongCode(newMongCode)
+                .grade(MongGrade.ZERO)
+                .build());
 
 //        notificationClient.publishCreate(MqttReqDto.builder()
 //                .accountId(saveMong.getAccountId())
@@ -83,18 +82,25 @@ public class MongServiceImpl implements MongService {
 //                        .build())
 //                .build());
 
-        return CreateMong.of(saveMong);
+        return RegisterMongResDto.of(saveMong);
     }
 
-    @Transactional
     @Override
+    @Transactional
     public DeleteMongResDto deleteMong(Long accountId, Long mongId) {
+        Mong mong = getMong(mongId, accountId);
 
-        return null;
+        Mong saveMong = mongRepository.save(mong.toBuilder()
+                .isActive(false)
+                .build());
+
+        return DeleteMongResDto.builder()
+                .mongId(saveMong.getId())
+                .build();
     }
 
-    @Transactional
     @Override
+    @Transactional
     public StrokeMongResDto strokeMong(Long accountId, Long mongId) {
         Mong mong = getMong(mongId, accountId);
 
@@ -105,11 +111,15 @@ public class MongServiceImpl implements MongService {
                 .numberOfStroke(newNumberOfStroke)
                 .exp(newExp)
                 .build());
-        return Stroke.of(saveMong);
+
+        return StrokeMongResDto.builder()
+                .mongId(saveMong.getId())
+                .exp(saveMong.getExp())
+                .build();
     }
 
-    @Transactional
     @Override
+    @Transactional
     public FeedMongResDto feedMong(Long accountId, Long mongId, String feedCode) {
         Mong mong = getMong(mongId, accountId);
 
@@ -153,11 +163,19 @@ public class MongServiceImpl implements MongService {
 //                        .build())
 //                .build());
 
-        return EatTheFeed.of(saveMong, foodCode);
+        return FeedMongResDto.builder()
+                .mongId(saveMong.getId())
+                .weight(saveMong.getWeight())
+                .health(saveMong.getHealthy())
+                .satiety(saveMong.getSatiety())
+                .strength(saveMong.getStrength())
+                .sleep(saveMong.getSleep())
+                .exp(saveMong.getExp())
+                .build();
     }
 
-    @Transactional
     @Override
+    @Transactional
     public SleepMongResDto sleepMong(Long accountId, Long mongId) {
         Mong mong = getMong(mongId, accountId);
 
@@ -176,11 +194,14 @@ public class MongServiceImpl implements MongService {
 //            lifecycleClient.wakeupMongEvent(mongId);
 //        }
 
-        return Sleep.of(saveMong);
+        return SleepMongResDto.builder()
+                .mongId(saveMong.getId())
+                .isSleeping(saveMong.getIsSleeping())
+                .build();
     }
 
-    @Transactional
     @Override
+    @Transactional
     public PoopCleanResDto poopClean(Long accountId, Long mongId) {
         Mong mong = getMong(mongId, accountId);
 
@@ -204,15 +225,19 @@ public class MongServiceImpl implements MongService {
 //                        .build())
 //                .build());
 
-        return Poop.of(saveMong);
+        return PoopCleanResDto.builder()
+                .mongId(saveMong.getId())
+                .poopCount(saveMong.getNumberOfPoop())
+                .exp(saveMong.getExp())
+                .build();
     }
 
-    @Transactional
     @Override
+    @Transactional
     public TrainingMongResDto trainingMong(Long accountId, Long mongId) {
         Mong mong = getMong(mongId, accountId);
 
-        if(mong.getPayPoint() <= TRAINING_PAIED_POINT) {
+        if(mong.getPayPoint() < TRAINING_PAIED_POINT) {
             throw new ManagementException(ManagementErrorCode.NOT_ENOUGH_PAYPOINT);
         }
 
@@ -228,31 +253,30 @@ public class MongServiceImpl implements MongService {
                 .strength(newStrength)
                 .exp(newExp)
                 .build());
-        return Training.of(saveMong);
-      
+
+        return TrainingMongResDto.of(saveMong);
     }
 
-    @Transactional
     @Override
+    @Transactional
     public GraduateMongResDto graduateMong(Long accountId, Long mongId) {
         Mong mong = getMong(mongId, accountId);
 
         MongGrade grade = mong.getGrade();
-        int exp = mong.getExp();
-        if (exp < grade.getEvolutionExp()) {
-            throw new ManagementException(ManagementErrorCode.NOT_ENOUGH_EXP);
+        if (!grade.equals(MongGrade.GRADUATE)) {
+            throw new ManagementException(ManagementErrorCode.INVALID_EVOLUTION);
         }
 
         Mong saveMong = mongRepository.save(mong.toBuilder()
-//                .isActive(false)
+                .isActive(false)
                 .numberOfPoop(0)
                 .healthy(-1D)
                 .satiety(-1D)
                 .sleep(-1D)
                 .strength(-1D)
-//                .weight(-1D)
-                .state(MongState.NORMAL)
-                .shift(MongShift.NORMAL)
+                .weight(-1D)
+                .shift(mongUtil.getNextShiftCode(mong))
+                .state(mongUtil.getNextStateCode(mong))
                 .build());
 
 //        notificationClient.publishStatus(MqttReqDto.builder()
@@ -282,26 +306,38 @@ public class MongServiceImpl implements MongService {
 //                        .build())
 //                .build());
 
-        return Graduation.of(saveMong);
+        return GraduateMongResDto.builder()
+                .mongId(saveMong.getId())
+                .shiftCode(saveMong.getShift().getCode())
+                .build();
     }
 
-    @Transactional
     @Override
+    @Transactional
     public EvolutionMongResDto evolutionMong(Long accountId, Long mongId) {
         Mong mong = getMong(mongId, accountId);
 
+        MongShift shift = mong.getShift();
+        if (!shift.equals(MongShift.EVOLUTION_READY)) {
+            throw new ManagementException(ManagementErrorCode.INVALID_EVOLUTION);
+        }
+
         MongGrade grade = mong.getGrade();
-        if (grade.equals(MongGrade.FOURTH)) {
-            throw new ManagementException(ManagementErrorCode.IMPOSSIBLE);
+        if (grade.equals(MongGrade.GRADUATE)) {
+            throw new ManagementException(ManagementErrorCode.INVALID_EVOLUTION);
         }
 
         int exp = mong.getExp();
-        if (exp < grade.getEvolutionExp()) {
+        if (exp < grade.getNextGrade().getEvolutionExp()) {
             throw new ManagementException(ManagementErrorCode.NOT_ENOUGH_EXP);
         }
 
         Mong saveMong = mongRepository.save(mong.toBuilder()
-                .mongCode(mongUtil.getNextMongCode(mong, grade))
+                .mongCode(mongUtil.getNextMongCode(mong))
+                .shift(mongUtil.getNextShiftCode(mong))
+                .state(mongUtil.getNextStateCode(mong))
+                .grade(grade.getNextGrade())
+                .exp(0)
                 .build());
 
 //        notificationClient.publishEvolution(MqttReqDto.builder()
@@ -312,6 +348,12 @@ public class MongServiceImpl implements MongService {
 //                        .build())
 //                .build());
 
-        return Evolution.of(saveMong);
+        return EvolutionMongResDto.builder()
+                .mongId(saveMong.getId())
+                .mongCode(saveMong.getMongCode())
+                .shiftCode(saveMong.getShift().getCode())
+                .stateCode(saveMong.getState().getCode())
+                .exp(saveMong.getExp())
+                .build();
     }
 }

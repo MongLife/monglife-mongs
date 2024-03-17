@@ -71,7 +71,7 @@ public class Mong extends BaseTimeEntity {
     @Builder.Default
     @Column(nullable = false)
     @Enumerated(EnumType.STRING) // 몽 단계 1, 2, 3을 위해 만들어놓은 필드
-    private MongGrade grade = MongGrade.ZERO;
+    private MongGrade grade = MongGrade.EMPTY;
     @Builder.Default
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)

@@ -7,11 +7,12 @@ import lombok.Getter;
 @AllArgsConstructor
 public enum MongGrade {
 
-    FOURTH("GD004", "졸업", 800, null),
-    THIRD("GD003", "3단계", 500, MongGrade.FOURTH),
-    SECOND("GD002", "2단계", 300, MongGrade.THIRD),
-    FIRST("GD001", "1단계", 100, MongGrade.SECOND),
-    ZERO("GD000", "알", 0, MongGrade.FIRST),
+    GRADUATE("GD005", "졸업", 500, null),
+    THIRD("GD004", "3단계", 300, MongGrade.GRADUATE),
+    SECOND("GD003", "2단계", 100, MongGrade.THIRD),
+    FIRST("GD002", "1단계", 0, MongGrade.SECOND),
+    ZERO("GD001", "알", 0, MongGrade.FIRST),
+    EMPTY("GD000", "없음",0, MongGrade.ZERO)
     ;
 
     private final String code;

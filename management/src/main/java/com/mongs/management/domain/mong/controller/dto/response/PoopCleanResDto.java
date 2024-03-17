@@ -5,6 +5,7 @@ import lombok.Builder;
 @Builder
 public record PoopCleanResDto(
         Long mongId,
-        Integer poopCount
+        Integer poopCount,
+        Integer exp
 ) {
 }

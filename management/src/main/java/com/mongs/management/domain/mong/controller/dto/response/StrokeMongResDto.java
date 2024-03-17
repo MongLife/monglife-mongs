@@ -4,6 +4,7 @@ import lombok.Builder;
 
 @Builder
 public record StrokeMongResDto(
-        Long mongId
+        Long mongId,
+        Integer exp
 ) {
 }

@@ -1,6 +1,9 @@
 package com.mongs.management.domain.mong.utils;
 
+import com.mongs.core.entity.MongCode;
 import com.mongs.core.enums.management.MongGrade;
+import com.mongs.core.enums.management.MongShift;
+import com.mongs.core.enums.management.MongState;
 import com.mongs.management.domain.mong.entity.Mong;
 import org.springframework.stereotype.Component;
 
@@ -23,28 +26,30 @@ public class MongUtil {
             return !currentTime.isBefore(startTime) && !currentTime.isAfter(endTime);
         }
     }
+
     // HH:mm로 변경하기 위한 컨버터
     public String timeConverter(LocalDateTime time) {
         return time.toLocalTime().format(DateTimeFormatter.ofPattern("HH:mm"));
     }
-    public String getNextMongCode(Mong mong, MongGrade grade) {
 
-        String nextMongCode = "CD444";
+    public String getNextMongCode(Mong mong) {
 
-        switch (grade) {
+        String nextMongCode = "CH444";
+
+        switch (mong.getGrade()) {
+            case EMPTY -> {
+                nextMongCode = "CH000";
+            }
             case ZERO -> {
-                nextMongCode = "CD000";
+                nextMongCode = "CH100";
             }
             case FIRST -> {
-                nextMongCode = "CD100";
+                nextMongCode = "CH200";
             }
             case SECOND -> {
-                nextMongCode = "CD200";
+                nextMongCode = "CH300";
             }
-            case THIRD -> {
-                nextMongCode = "CD300";
-            }
-            case FOURTH -> {
+            case THIRD, GRADUATE -> {
                 nextMongCode = mong.getMongCode();
             }
         }
@@ -52,4 +57,35 @@ public class MongUtil {
         return nextMongCode;
     }
 
+    public MongShift getNextShiftCode(Mong mong) {
+
+        MongShift nextShiftCode = MongShift.EMPTY;
+
+        switch (mong.getGrade()) {
+            case ZERO, FIRST, SECOND, THIRD -> {
+                nextShiftCode = MongShift.NORMAL;
+            }
+            case GRADUATE -> {
+                nextShiftCode = MongShift.GRADUATE;
+            }
+        }
+
+        return nextShiftCode;
+    }
+
+    public MongState getNextStateCode(Mong mong) {
+
+        MongState nextStateCode = MongState.EMPTY;
+
+        switch (mong.getGrade()) {
+            case ZERO, GRADUATE -> {
+                nextStateCode = MongState.NORMAL;
+            }
+            case FIRST, SECOND, THIRD -> {
+                nextStateCode = mong.getState();
+            }
+        }
+
+        return nextStateCode;
+    }
 }
