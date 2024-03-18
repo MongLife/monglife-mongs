@@ -4,8 +4,12 @@ import com.mongs.core.entity.FoodCode;
 import com.mongs.core.enums.management.MongEXP;
 import com.mongs.core.enums.management.MongGrade;
 import com.mongs.core.enums.management.MongShift;
+import com.mongs.core.vo.mqtt.MqttReqDto;
+import com.mongs.core.vo.mqtt.PublishCreateVo;
 import com.mongs.management.domain.ateFood.entity.AteFoodHistory;
 import com.mongs.management.domain.ateFood.repository.AteFoodHistoryRepository;
+import com.mongs.management.domain.mong.client.LifecycleClient;
+import com.mongs.management.domain.mong.client.NotificationClient;
 import com.mongs.management.domain.mong.controller.dto.response.*;
 import com.mongs.management.domain.mong.entity.Mong;
 import com.mongs.management.domain.mong.repository.FoodCodeRepository;
@@ -29,6 +33,7 @@ public class MongServiceImpl implements MongService {
     private final MongRepository mongRepository;
     private final AteFoodHistoryRepository ateFoodHistoryRepository;
     private final FoodCodeRepository foodCodeRepository;
+//    private final NotificationClient notificationClient;
 
     private Integer TRAINING_PAIED_POINT = 5;
     private Double TRAINING_STRENGTH = 5D;
@@ -58,7 +63,7 @@ public class MongServiceImpl implements MongService {
 
         String newMongCode = mongUtil.getNextMongCode(mong);
 
-        Mong saveMong = mongRepository.save(mong.toBuilder()
+        Mong saveMong = mongRepository.saveAndFlush(mong.toBuilder()
                 .mongCode(newMongCode)
                 .grade(MongGrade.ZERO)
                 .build());

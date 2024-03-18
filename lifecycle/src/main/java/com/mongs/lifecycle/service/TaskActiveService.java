@@ -29,7 +29,7 @@ public class TaskActiveService {
     private final boolean isDebug = true;
 
     private final MongRepository mongRepository;
-    private final NotificationClient notificationClient;
+//    private final NotificationClient notificationClient;
 
     @Value("${application.scheduler.sleep-max}")
     private Double SLEEP_MAX;
@@ -45,13 +45,13 @@ public class TaskActiveService {
                 .shift(MongShift.EVOLUTION_READY)
                 .build());
 
-        notificationClient.publishShift(MqttReqDto.builder()
-                .accountId(saveMong.getAccountId())
-                .data(PublishShiftVo.builder()
-                        .mongId(saveMong.getId())
-                        .shiftCode(saveMong.getShift().getCode())
-                        .build())
-                .build());
+//        notificationClient.publishShift(MqttReqDto.builder()
+//                .accountId(saveMong.getAccountId())
+//                .data(PublishShiftVo.builder()
+//                        .mongId(saveMong.getId())
+//                        .shiftCode(saveMong.getShift().getCode())
+//                        .build())
+//                .build());
     }
 
     @Transactional
@@ -71,18 +71,18 @@ public class TaskActiveService {
                 .weight(newWeight)
                 .build());
 
-        notificationClient.publishStatus(MqttReqDto.builder()
-                .accountId(saveMong.getAccountId())
-                .data(PublishStatusVo.builder()
-                        .mongId(saveMong.getId())
-                        .health(saveMong.getHealthy())
-                        .satiety(saveMong.getSatiety())
-                        .strength(saveMong.getStrength())
-                        .sleep(saveMong.getSleep())
-                        .poopCount(saveMong.getNumberOfPoop())
-                        .isSleeping(saveMong.getIsSleeping())
-                        .build())
-                .build());
+//        notificationClient.publishStatus(MqttReqDto.builder()
+//                .accountId(saveMong.getAccountId())
+//                .data(PublishStatusVo.builder()
+//                        .mongId(saveMong.getId())
+//                        .health(saveMong.getHealthy())
+//                        .satiety(saveMong.getSatiety())
+//                        .strength(saveMong.getStrength())
+//                        .sleep(saveMong.getSleep())
+//                        .poopCount(saveMong.getNumberOfPoop())
+//                        .isSleeping(saveMong.getIsSleeping())
+//                        .build())
+//                .build());
     }
 
     @Transactional
@@ -102,18 +102,18 @@ public class TaskActiveService {
                 .strength(newStrength)
                 .build());
 
-        notificationClient.publishStatus(MqttReqDto.builder()
-                .accountId(saveMong.getAccountId())
-                .data(PublishStatusVo.builder()
-                        .mongId(saveMong.getId())
-                        .health(saveMong.getHealthy())
-                        .satiety(saveMong.getSatiety())
-                        .strength(saveMong.getStrength())
-                        .sleep(saveMong.getSleep())
-                        .poopCount(saveMong.getNumberOfPoop())
-                        .isSleeping(saveMong.getIsSleeping())
-                        .build())
-                .build());
+//        notificationClient.publishStatus(MqttReqDto.builder()
+//                .accountId(saveMong.getAccountId())
+//                .data(PublishStatusVo.builder()
+//                        .mongId(saveMong.getId())
+//                        .health(saveMong.getHealthy())
+//                        .satiety(saveMong.getSatiety())
+//                        .strength(saveMong.getStrength())
+//                        .sleep(saveMong.getSleep())
+//                        .poopCount(saveMong.getNumberOfPoop())
+//                        .isSleeping(saveMong.getIsSleeping())
+//                        .build())
+//                .build());
     }
 
     @Transactional
@@ -133,18 +133,18 @@ public class TaskActiveService {
                 .satiety(newSatiety)
                 .build());
 
-        notificationClient.publishStatus(MqttReqDto.builder()
-                .accountId(saveMong.getAccountId())
-                .data(PublishStatusVo.builder()
-                        .mongId(saveMong.getId())
-                        .health(saveMong.getHealthy())
-                        .satiety(saveMong.getSatiety())
-                        .strength(saveMong.getStrength())
-                        .sleep(saveMong.getSleep())
-                        .poopCount(saveMong.getNumberOfPoop())
-                        .isSleeping(saveMong.getIsSleeping())
-                        .build())
-                .build());
+//        notificationClient.publishStatus(MqttReqDto.builder()
+//                .accountId(saveMong.getAccountId())
+//                .data(PublishStatusVo.builder()
+//                        .mongId(saveMong.getId())
+//                        .health(saveMong.getHealthy())
+//                        .satiety(saveMong.getSatiety())
+//                        .strength(saveMong.getStrength())
+//                        .sleep(saveMong.getSleep())
+//                        .poopCount(saveMong.getNumberOfPoop())
+//                        .isSleeping(saveMong.getIsSleeping())
+//                        .build())
+//                .build());
 
         return newSatiety;
     }
@@ -166,18 +166,18 @@ public class TaskActiveService {
                 .healthy(newHealthy)
                 .build());
 
-        notificationClient.publishStatus(MqttReqDto.builder()
-                .accountId(saveMong.getAccountId())
-                .data(PublishStatusVo.builder()
-                        .mongId(saveMong.getId())
-                        .health(saveMong.getHealthy())
-                        .satiety(saveMong.getSatiety())
-                        .strength(saveMong.getStrength())
-                        .sleep(saveMong.getSleep())
-                        .poopCount(saveMong.getNumberOfPoop())
-                        .isSleeping(saveMong.getIsSleeping())
-                        .build())
-                .build());
+//        notificationClient.publishStatus(MqttReqDto.builder()
+//                .accountId(saveMong.getAccountId())
+//                .data(PublishStatusVo.builder()
+//                        .mongId(saveMong.getId())
+//                        .health(saveMong.getHealthy())
+//                        .satiety(saveMong.getSatiety())
+//                        .strength(saveMong.getStrength())
+//                        .sleep(saveMong.getSleep())
+//                        .poopCount(saveMong.getNumberOfPoop())
+//                        .isSleeping(saveMong.getIsSleeping())
+//                        .build())
+//                .build());
 
         return newHealthy;
     }
@@ -199,18 +199,18 @@ public class TaskActiveService {
                 .sleep(newSleep)
                 .build());
 
-        notificationClient.publishStatus(MqttReqDto.builder()
-                .accountId(saveMong.getAccountId())
-                .data(PublishStatusVo.builder()
-                        .mongId(saveMong.getId())
-                        .health(saveMong.getHealthy())
-                        .satiety(saveMong.getSatiety())
-                        .strength(saveMong.getStrength())
-                        .sleep(saveMong.getSleep())
-                        .poopCount(saveMong.getNumberOfPoop())
-                        .isSleeping(saveMong.getIsSleeping())
-                        .build())
-                .build());
+//        notificationClient.publishStatus(MqttReqDto.builder()
+//                .accountId(saveMong.getAccountId())
+//                .data(PublishStatusVo.builder()
+//                        .mongId(saveMong.getId())
+//                        .health(saveMong.getHealthy())
+//                        .satiety(saveMong.getSatiety())
+//                        .strength(saveMong.getStrength())
+//                        .sleep(saveMong.getSleep())
+//                        .poopCount(saveMong.getNumberOfPoop())
+//                        .isSleeping(saveMong.getIsSleeping())
+//                        .build())
+//                .build());
     }
 
     @Transactional
@@ -230,18 +230,18 @@ public class TaskActiveService {
                 .sleep(newSleep)
                 .build());
 
-        notificationClient.publishStatus(MqttReqDto.builder()
-                .accountId(saveMong.getAccountId())
-                .data(PublishStatusVo.builder()
-                        .mongId(saveMong.getId())
-                        .health(saveMong.getHealthy())
-                        .satiety(saveMong.getSatiety())
-                        .strength(saveMong.getStrength())
-                        .sleep(saveMong.getSleep())
-                        .poopCount(saveMong.getNumberOfPoop())
-                        .isSleeping(saveMong.getIsSleeping())
-                        .build())
-                .build());
+//        notificationClient.publishStatus(MqttReqDto.builder()
+//                .accountId(saveMong.getAccountId())
+//                .data(PublishStatusVo.builder()
+//                        .mongId(saveMong.getId())
+//                        .health(saveMong.getHealthy())
+//                        .satiety(saveMong.getSatiety())
+//                        .strength(saveMong.getStrength())
+//                        .sleep(saveMong.getSleep())
+//                        .poopCount(saveMong.getNumberOfPoop())
+//                        .isSleeping(saveMong.getIsSleeping())
+//                        .build())
+//                .build());
     }
 
     @Transactional
@@ -288,18 +288,18 @@ public class TaskActiveService {
                     .numberOfPoop(newPoop)
                     .build());
 
-            notificationClient.publishStatus(MqttReqDto.builder()
-                    .accountId(saveMong.getAccountId())
-                    .data(PublishStatusVo.builder()
-                            .mongId(saveMong.getId())
-                            .health(saveMong.getHealthy())
-                            .satiety(saveMong.getSatiety())
-                            .strength(saveMong.getStrength())
-                            .sleep(saveMong.getSleep())
-                            .poopCount(saveMong.getNumberOfPoop())
-                            .isSleeping(saveMong.getIsSleeping())
-                            .build())
-                    .build());
+//            notificationClient.publishStatus(MqttReqDto.builder()
+//                    .accountId(saveMong.getAccountId())
+//                    .data(PublishStatusVo.builder()
+//                            .mongId(saveMong.getId())
+//                            .health(saveMong.getHealthy())
+//                            .satiety(saveMong.getSatiety())
+//                            .strength(saveMong.getStrength())
+//                            .sleep(saveMong.getSleep())
+//                            .poopCount(saveMong.getNumberOfPoop())
+//                            .isSleeping(saveMong.getIsSleeping())
+//                            .build())
+//                    .build());
         }
     }
 
@@ -320,21 +320,21 @@ public class TaskActiveService {
                 .state(MongState.EMPTY)
                 .build());
 
-        notificationClient.publishShift(MqttReqDto.builder()
-                .accountId(saveMong.getAccountId())
-                .data(PublishShiftVo.builder()
-                        .mongId(saveMong.getId())
-                        .shiftCode(saveMong.getShift().getCode())
-                        .build())
-                .build());
-
-        notificationClient.publishState(MqttReqDto.builder()
-                .accountId(saveMong.getAccountId())
-                .data(PublishStateVo.builder()
-                        .mongId(saveMong.getId())
-                        .stateCode(saveMong.getState().getCode())
-                        .build())
-                .build());
+//        notificationClient.publishShift(MqttReqDto.builder()
+//                .accountId(saveMong.getAccountId())
+//                .data(PublishShiftVo.builder()
+//                        .mongId(saveMong.getId())
+//                        .shiftCode(saveMong.getShift().getCode())
+//                        .build())
+//                .build());
+//
+//        notificationClient.publishState(MqttReqDto.builder()
+//                .accountId(saveMong.getAccountId())
+//                .data(PublishStateVo.builder()
+//                        .mongId(saveMong.getId())
+//                        .stateCode(saveMong.getState().getCode())
+//                        .build())
+//                .build());
 
         log.info("[{}] 몽 사망 ({})", mongId, mong.getName());
     }

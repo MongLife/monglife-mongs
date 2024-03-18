@@ -6,6 +6,7 @@ import com.mongs.management.domain.mong.controller.dto.request.RegisterMongReqDt
 import com.mongs.management.domain.mong.controller.dto.response.*;
 import com.mongs.management.domain.mong.service.LifecycleService;
 import com.mongs.management.domain.mong.service.MongService;
+import feign.FeignException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -40,9 +41,14 @@ public class MongController {
         String name = registerMongReqDto.name();
         String sleepStart = registerMongReqDto.sleepStart();
         String sleepEnd = registerMongReqDto.sleepEnd();
-
+        
         RegisterMongResDto registerMongResDto = mongService.registerMong(accountId, name, sleepStart, sleepEnd);
-//        lifecycleService.eggMongEvent(registerMongResDto.mongId());
+        try {
+            lifecycleService.eggMongEvent(registerMongResDto.mongId());
+        } catch (FeignException e) {
+            // 스케줄러 실행 실패 시, 몽 삭제
+            mongService.deleteMong(accountId, registerMongResDto.mongId());
+        }
 
         return ResponseEntity.ok().body(registerMongResDto);
     }
