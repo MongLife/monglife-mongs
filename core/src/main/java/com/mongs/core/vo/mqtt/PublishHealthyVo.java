@@ -3,8 +3,8 @@ package com.mongs.core.vo.mqtt;
 import lombok.Builder;
 
 @Builder
-public record PublishStateVo(
+public record PublishHealthyVo(
         Long mongId,
-        String stateCode
+        Double health
 ) {
 }

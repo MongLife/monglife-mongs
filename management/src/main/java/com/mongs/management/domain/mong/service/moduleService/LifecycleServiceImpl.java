@@ -1,9 +1,7 @@
-package com.mongs.management.domain.mong.service;
+package com.mongs.management.domain.mong.service.moduleService;
 
 import com.mongs.management.domain.mong.client.LifecycleClient;
 import com.mongs.management.domain.mong.client.dto.response.*;
-import com.mongs.management.domain.mong.controller.dto.response.DeleteMongResDto;
-import com.mongs.management.domain.mong.controller.dto.response.EvolutionMongResDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -15,33 +13,36 @@ public class LifecycleServiceImpl implements LifecycleService {
     private final LifecycleClient lifecycleClient;
 
     @Override
-    @Transactional
     public EggMongEventResDto eggMongEvent(Long mongId) {
         return lifecycleClient.eggMongEvent(mongId).getBody();
     }
 
     @Override
     public DeadMongEventResDto deadMongEvent(Long mongId) {
-        return null;
+        return lifecycleClient.deadMongEvent(mongId).getBody();
     }
 
     @Override
-    public SleepMongEventResDto sleepMongEvent(Long mongId, Boolean isSleeping) {
-        return null;
+    public SleepMongEventResDto sleepMongEvent(Long mongId) {
+        return lifecycleClient.sleepMongEvent(mongId).getBody();
+    }
+
+    public WakeupMongEventResDto wakeUpMongEvent(Long mongId) {
+        return lifecycleClient.wakeupMongEvent(mongId).getBody();
     }
 
     @Override
     public GraduationMongEventResDto graduateMongEvent(Long mongId) {
-        return null;
+        return lifecycleClient.graduationMongEvent(mongId).getBody();
     }
 
     @Override
     public EvolutionReadyMongEventResDto evolutionReadyMongEvent(Long mongId) {
-        return null;
+        return lifecycleClient.evolutionReadyMongEvent(mongId).getBody();
     }
 
     @Override
     public EvolutionMongEventResDto evolutionMongEvent(Long mongId) {
-        return null;
+        return lifecycleClient.evolutionMongEvent(mongId).getBody();
     }
 }

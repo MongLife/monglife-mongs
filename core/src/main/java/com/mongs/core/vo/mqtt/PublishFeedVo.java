@@ -3,13 +3,13 @@ package com.mongs.core.vo.mqtt;
 import lombok.Builder;
 
 @Builder
-public record PublishStatusVo(
+public record PublishFeedVo(
         Long mongId,
-        Double health,
-        Double satiety,
+        Double weight,
         Double strength,
+        Double satiety,
+        Double health,
         Double sleep,
-        Boolean isSleeping,
-        Integer poopCount
+        Integer exp
 ) {
 }

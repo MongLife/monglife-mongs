@@ -4,8 +4,11 @@ import com.mongs.core.security.principal.PassportDetail;
 import com.mongs.management.domain.mong.controller.dto.request.FeedMongReqDto;
 import com.mongs.management.domain.mong.controller.dto.request.RegisterMongReqDto;
 import com.mongs.management.domain.mong.controller.dto.response.*;
-import com.mongs.management.domain.mong.service.LifecycleService;
-import com.mongs.management.domain.mong.service.MongService;
+import com.mongs.management.domain.mong.service.moduleService.LifecycleService;
+import com.mongs.management.domain.mong.service.componentService.ManagementService;
+import com.mongs.management.domain.mong.service.moduleService.NotificationService;
+import com.mongs.management.exception.ManagementErrorCode;
+import com.mongs.management.exception.ManagementException;
 import feign.FeignException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -22,14 +25,14 @@ import java.util.List;
 @RequestMapping("/management")
 public class MongController {
 
-    private final MongService mongService;
+    private final ManagementService managementService;
     private final LifecycleService lifecycleService;
 
     @GetMapping("")
     public ResponseEntity<List<FindMongResDto>> findAllMong(@AuthenticationPrincipal PassportDetail passportDetail) {
         Long accountId = passportDetail.getId();
 
-        return ResponseEntity.ok().body(mongService.findAllMong(accountId));
+        return ResponseEntity.ok().body(managementService.findAllMong(accountId));
     }
 
     @PostMapping("")
@@ -42,13 +45,7 @@ public class MongController {
         String sleepStart = registerMongReqDto.sleepStart();
         String sleepEnd = registerMongReqDto.sleepEnd();
         
-        RegisterMongResDto registerMongResDto = mongService.registerMong(accountId, name, sleepStart, sleepEnd);
-        try {
-            lifecycleService.eggMongEvent(registerMongResDto.mongId());
-        } catch (FeignException e) {
-            // 스케줄러 실행 실패 시, 몽 삭제
-            mongService.deleteMong(accountId, registerMongResDto.mongId());
-        }
+        RegisterMongResDto registerMongResDto = managementService.registerMong(accountId, name, sleepStart, sleepEnd);
 
         return ResponseEntity.ok().body(registerMongResDto);
     }
@@ -60,7 +57,8 @@ public class MongController {
     ) {
         Long accountId = passportDetail.getId();
 
-        return ResponseEntity.ok().body(mongService.deleteMong(accountId, mongId));
+        DeleteMongResDto deleteMongResDto = managementService.deleteMong(accountId, mongId);
+        return ResponseEntity.ok().body(deleteMongResDto);
     }
 
     @PutMapping("/stroke/{mongId}")
@@ -70,7 +68,7 @@ public class MongController {
     ) {
         Long accountId = passportDetail.getId();
 
-        return ResponseEntity.ok().body(mongService.strokeMong(accountId, mongId));
+        return ResponseEntity.ok().body(managementService.strokeMong(accountId, mongId));
     }
 
     @PutMapping("/feed/{mongId}")
@@ -82,7 +80,7 @@ public class MongController {
         Long accountId = passportDetail.getId();
         String feedCode = feedMongReqDto.feedCode();
 
-        return ResponseEntity.status(HttpStatus.ACCEPTED).body(mongService.feedMong(accountId, mongId, feedCode));
+        return ResponseEntity.status(HttpStatus.ACCEPTED).body(managementService.feedMong(accountId, mongId, feedCode));
     }
 
     @PutMapping("/sleep/{mongId}")
@@ -92,7 +90,7 @@ public class MongController {
     ) {
         Long accountId = passportDetail.getId();
 
-        return ResponseEntity.status(HttpStatus.ACCEPTED).body(mongService.sleepMong(accountId, mongId));
+        return ResponseEntity.status(HttpStatus.ACCEPTED).body(managementService.sleepMong(accountId, mongId));
     }
 
     @PutMapping("/poop/{mongId}")
@@ -102,7 +100,7 @@ public class MongController {
     ) {
         Long accountId = passportDetail.getId();
 
-        return ResponseEntity.status(HttpStatus.ACCEPTED).body(mongService.poopClean(accountId, mongId));
+        return ResponseEntity.status(HttpStatus.ACCEPTED).body(managementService.poopClean(accountId, mongId));
     }
 
     @PutMapping("/training/{mongId}")
@@ -112,7 +110,7 @@ public class MongController {
     ) {
         Long accountId = passportDetail.getId();
 
-        return ResponseEntity.status(HttpStatus.ACCEPTED).body(mongService.trainingMong(accountId, mongId));
+        return ResponseEntity.status(HttpStatus.ACCEPTED).body(managementService.trainingMong(accountId, mongId));
     }
 
     // 아에 졸업 시키고 삭제 시키는 함수
@@ -123,7 +121,7 @@ public class MongController {
     ) {
         Long accountId = passportDetail.getId();
 
-        return ResponseEntity.status(HttpStatus.ACCEPTED).body(mongService.graduateMong(accountId, mongId));
+        return ResponseEntity.status(HttpStatus.ACCEPTED).body(managementService.graduateMong(accountId, mongId));
 
     }
 
@@ -134,6 +132,6 @@ public class MongController {
     ) {
         Long accountId = passportDetail.getId();
 
-        return ResponseEntity.status(HttpStatus.ACCEPTED).body(mongService.evolutionMong(accountId, mongId));
+        return ResponseEntity.status(HttpStatus.ACCEPTED).body(managementService.evolutionMong(accountId, mongId));
     }
 }

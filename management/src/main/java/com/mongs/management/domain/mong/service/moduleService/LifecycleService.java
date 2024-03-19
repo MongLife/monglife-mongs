@@ -1,4 +1,4 @@
-package com.mongs.management.domain.mong.service;
+package com.mongs.management.domain.mong.service.moduleService;
 
 import com.mongs.management.domain.mong.client.dto.response.*;
 
@@ -8,7 +8,8 @@ public interface LifecycleService {
     // for deleteMong
     DeadMongEventResDto deadMongEvent(Long mongId);
     // for sleepMong
-    SleepMongEventResDto sleepMongEvent(Long mongId, Boolean isSleeping);
+    SleepMongEventResDto sleepMongEvent(Long mongId);
+    WakeupMongEventResDto wakeUpMongEvent(Long mongId);
     // for graduateMong
     GraduationMongEventResDto graduateMongEvent(Long mongId);
     // for evolutionReadyMong

@@ -19,10 +19,6 @@ public class LifecycleService {
     private final MongRepository mongRepository;
 
     public void eggEvent(Long mongId) {
-        if (mongRepository.findByIdAndIsActiveTrue(mongId).isEmpty()) {
-            throw new EventTaskException(LifecycleErrorCode.NOT_FOUND_MONG);
-        }
-
         List<TaskCode> startList = List.of(
                 TaskCode.EGG
         );
@@ -33,8 +29,8 @@ public class LifecycleService {
         exec(mongId, startList, restartList, pauseList, stopList);
     }
 
-    public void graduationEvent(Long mongId) {
-        if (mongRepository.findByIdAndIsActiveTrue(mongId).isEmpty()) {
+    public void graduationEvent(Long mongId, Long accountId) {
+        if (mongRepository.findByIdAndAccountIdAndIsActiveTrue(mongId, accountId).isEmpty()) {
             throw new EventTaskException(LifecycleErrorCode.NOT_FOUND_MONG);
         }
 
@@ -57,8 +53,8 @@ public class LifecycleService {
         exec(mongId, startList, restartList, pauseList, stopList);
     }
 
-    public void evolutionReadyEvent(Long mongId) {
-        if (mongRepository.findByIdAndIsActiveTrue(mongId).isEmpty()) {
+    public void evolutionReadyEvent(Long mongId, Long accountId) {
+        if (mongRepository.findByIdAndAccountIdAndIsActiveTrue(mongId, accountId).isEmpty()) {
             throw new EventTaskException(LifecycleErrorCode.NOT_FOUND_MONG);
         }
 
@@ -80,8 +76,8 @@ public class LifecycleService {
         exec(mongId, startList, restartList, pauseList, stopList);
     }
 
-    public void evolutionEvent(Long mongId) {
-        if (mongRepository.findByIdAndIsActiveTrue(mongId).isEmpty()) {
+    public void evolutionEvent(Long mongId, Long accountId) {
+        if (mongRepository.findByIdAndAccountIdAndIsActiveTrue(mongId, accountId).isEmpty()) {
             throw new EventTaskException(LifecycleErrorCode.NOT_FOUND_MONG);
         }
 
@@ -103,8 +99,8 @@ public class LifecycleService {
         exec(mongId, startList, restartList, pauseList, stopList);
     }
 
-    public void sleepEvent(Long mongId) {
-        if (mongRepository.findByIdAndIsActiveTrue(mongId).isEmpty()) {
+    public void sleepEvent(Long mongId, Long accountId) {
+        if (mongRepository.findByIdAndAccountIdAndIsActiveTrue(mongId, accountId).isEmpty()) {
             throw new EventTaskException(LifecycleErrorCode.NOT_FOUND_MONG);
         }
 
@@ -125,8 +121,8 @@ public class LifecycleService {
         exec(mongId, startList, restartList, pauseList, stopList);
     }
 
-    public void wakeupEvent(Long mongId) {
-        if (mongRepository.findByIdAndIsActiveTrue(mongId).isEmpty()) {
+    public void wakeupEvent(Long mongId, Long accountId) {
+        if (mongRepository.findByIdAndAccountIdAndIsActiveTrue(mongId, accountId).isEmpty()) {
             throw new EventTaskException(LifecycleErrorCode.NOT_FOUND_MONG);
         }
 
@@ -147,10 +143,11 @@ public class LifecycleService {
         exec(mongId, startList, restartList, pauseList, stopList);
     }
 
-    public void dead(Long mongId) {
-        if (mongRepository.findByIdAndIsActiveTrue(mongId).isEmpty()) {
+    public void dead(Long mongId, Long accountId) {
+        if (mongRepository.findByIdAndAccountIdAndIsActiveTrue(mongId, accountId).isEmpty()) {
             throw new EventTaskException(LifecycleErrorCode.NOT_FOUND_MONG);
         }
+
         taskActiveService.dead(mongId, TaskCode.DEAD);
         taskService.stopAllTask(mongId);
     }

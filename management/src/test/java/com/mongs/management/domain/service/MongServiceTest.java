@@ -1,9 +1,9 @@
 //package com.mongs.management.domain.service;
 //
-//import com.mongs.management.code.TestMongCode;
+//import com.mongs.management.mongCode.TestMongCode;
 //import com.mongs.management.domain.mong.entity.Mong;
 //import com.mongs.management.domain.mong.repository.MongRepository;
-//import com.mongs.management.domain.mong.service.MongService;
+//import com.mongs.management.domain.mong.service.componentService.MongService;
 //import com.mongs.management.domain.mong.service.dto.InitMong;
 //import com.mongs.management.domain.mong.service.dto.TrainingCount;
 //import com.mongs.management.exception.ManagementException;

@@ -40,8 +40,7 @@ public class SecurityConfig {
             .addFilterBefore(passportFilter, UsernamePasswordAuthenticationFilter.class)
             .addFilterBefore(securityExceptionHandler, PassportFilter.class)
             .authorizeHttpRequests(authorize -> authorize
-                    .requestMatchers("/notification/admin/**").hasAnyAuthority("ADMIN")
-                    .requestMatchers("/notification/**").hasAnyAuthority("NORMAL")
+                    .requestMatchers("/notification/**").hasAnyAuthority("ADMIN")
                     .anyRequest().authenticated()
             )
             .exceptionHandling(configurer -> {

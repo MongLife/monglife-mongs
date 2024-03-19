@@ -8,7 +8,7 @@ import java.util.List;
 
 public interface AteFoodHistoryRepository extends MongoRepository<AteFoodHistory, Long> {
     @Aggregation(pipeline = {
-            "{ $group: { _id: '$code', latestData: { $last: '$$ROOT' } } }",
+            "{ $group: { _id: '$mongCode', latestData: { $last: '$$ROOT' } } }",
             "{ $replaceRoot: { newRoot: '$latestData' } }"
     })
     List<AteFoodHistory> findByMongIdOrderByBuyAt(Long mongId);

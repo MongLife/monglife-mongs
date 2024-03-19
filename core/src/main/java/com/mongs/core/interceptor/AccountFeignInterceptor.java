@@ -11,7 +11,7 @@ public final class AccountFeignInterceptor implements RequestInterceptor {
     @Override
     public void apply(RequestTemplate template) {
         Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        PassportDetail passportDetail = (PassportDetail)principal;
+        PassportDetail passportDetail = (PassportDetail) principal;
         template.header("passport", passportDetail.getPassportJson());
     }
 }

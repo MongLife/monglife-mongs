@@ -8,7 +8,7 @@ import java.time.LocalDateTime;
 public record PublishCreateVo(
         Long mongId,
         String name,
-        String code,
+        String mongCode,
         Double weight,
         Double strength,
         Double satiety,
@@ -19,5 +19,6 @@ public record PublishCreateVo(
         String shiftCode,
         Integer payPoint,
         LocalDateTime born
+
 ) {
 }

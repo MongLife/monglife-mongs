@@ -2,7 +2,7 @@ package com.mongs.management.domain.ateFood.service;
 
 import com.mongs.management.domain.ateFood.entity.AteFoodHistory;
 import com.mongs.management.domain.ateFood.repository.AteFoodHistoryRepository;
-import com.mongs.management.domain.ateFood.service.dto.FoodHistory;
+import com.mongs.management.domain.ateFood.service.dto.FoodHistoryResDto;
 import com.mongs.management.domain.mong.repository.FoodCodeRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -24,12 +24,12 @@ public class AteFoodHistoryServiceImpl implements AteFoodHistoryService {
 
     @Override
     @Transactional
-    public List<FoodHistory> findAteFoodHistory(Long mongId, Long version) {
+    public List<FoodHistoryResDto> findAteFoodHistory(Long mongId, Long version) {
         Map<String, AteFoodHistory> ateFoodHistoryMap = ateFoodHistoryRepository.findByMongIdOrderByBuyAt(mongId).stream()
                 .collect(Collectors.toMap(AteFoodHistory::getCode, ateFoodHistory -> ateFoodHistory));
 
         log.info(ateFoodHistoryMap.toString());
-        return FoodHistory.toList(foodCodeRepository.findByVersion(version)).stream()
+        return FoodHistoryResDto.toList(foodCodeRepository.findByVersion(version)).stream()
                 .map(foodHistory -> ateFoodHistoryMap.containsKey(foodHistory.code())
                         ? foodHistory.toBuilder()
                             .lastBuyAt(ateFoodHistoryMap.get(foodHistory.code()).getBuyAt())

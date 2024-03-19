@@ -30,7 +30,6 @@ public class TaskService {
     private final TaskUtil taskUtil;
     private final TaskActiveService taskActiveService;
     private final TaskEventRepository taskEventRepository;
-    private final MongRepository mongRepository;
     private final ScheduledExecutorService scheduledExecutorService;
 
     private final Map<String, BasicTask> taskMap = new ConcurrentHashMap<>();
@@ -56,10 +55,6 @@ public class TaskService {
         try {
             if (taskEventRepository.findByMongIdAndTaskCodeAndStatusCode(mongId, taskCode, TaskStatusCode.WAIT).isPresent()) {
                 throw new EventTaskException(LifecycleErrorCode.EXIST_TASK);
-            }
-
-            if (mongRepository.findByIdAndIsActiveTrue(mongId).isEmpty()) {
-                throw new EventTaskException(LifecycleErrorCode.NOT_FOUND_MONG);
             }
 
             // TaskEvent 저장
@@ -233,7 +228,6 @@ public class TaskService {
     @Transactional
     public void doneTask(String taskId) {
         try {
-            log.info("[doneTask] {}", taskId);
             TaskEvent taskEvent = taskEventRepository.findByTaskIdAndStatusCode(taskId, TaskStatusCode.PROCESS)
                     .orElseThrow(() -> new EventTaskException(LifecycleErrorCode.NOT_FOUND_TASK));
 
@@ -266,7 +260,6 @@ public class TaskService {
     @Transactional
     public void processTask(String taskId) {
         try {
-            log.info("[processTask] {}", taskId);
             TaskEvent taskEvent = taskEventRepository.findByTaskIdAndStatusCode(taskId, TaskStatusCode.WAIT)
                     .orElseThrow(() -> new EventTaskException(LifecycleErrorCode.NOT_FOUND_TASK));
 

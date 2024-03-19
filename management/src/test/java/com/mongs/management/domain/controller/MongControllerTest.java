@@ -1,12 +1,12 @@
 //package com.mongs.management.domain.controller;
 //
 //import com.fasterxml.jackson.databind.ObjectMapper;
-//import com.mongs.management.code.TestMongCode;
+//import com.mongs.management.mongCode.TestMongCode;
 //import com.mongs.management.domain.mong.controller.MongController;
 //import com.mongs.management.domain.mong.entity.Mong;
 //import com.mongs.management.domain.mong.repository.MongRepository;
 //import com.mongs.management.domain.security.WithMockPassportDetail;
-//import com.mongs.management.domain.mong.service.MongService;
+//import com.mongs.management.domain.mong.service.componentService.MongService;
 //import com.mongs.management.domain.mong.service.dto.Poop;
 //import com.mongs.management.domain.mong.service.dto.Sleep;
 //import com.mongs.management.domain.mong.service.dto.Training;

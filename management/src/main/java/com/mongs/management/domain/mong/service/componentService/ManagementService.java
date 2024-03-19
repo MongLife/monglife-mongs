@@ -1,10 +1,10 @@
-package com.mongs.management.domain.mong.service;
+package com.mongs.management.domain.mong.service.componentService;
 
 import com.mongs.management.domain.mong.controller.dto.response.*;
 
 import java.util.List;
 
-public interface MongService {
+public interface ManagementService {
     List<FindMongResDto> findAllMong(Long accountId);
     RegisterMongResDto registerMong(Long accountId, String name, String sleepStart, String sleepEnd);
     DeleteMongResDto deleteMong(Long accountId, Long mongId);

@@ -6,7 +6,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 @Builder(toBuilder = true)
-public record FoodHistory(
+public record FoodHistoryResDto(
         String code,
         Integer price,
         Double addWeightValue,
@@ -16,8 +16,8 @@ public record FoodHistory(
         Double addSleepValue,
         LocalDateTime lastBuyAt
 ) {
-    public static FoodHistory of(FoodCode foodCode) {
-        return FoodHistory.builder()
+    public static FoodHistoryResDto of(FoodCode foodCode) {
+        return FoodHistoryResDto.builder()
                 .code(foodCode.code())
                 .price(foodCode.price())
                 .addWeightValue(foodCode.addWeightValue())
@@ -28,9 +28,9 @@ public record FoodHistory(
                 .build();
     }
 
-    public static List<FoodHistory> toList(List<FoodCode> foodCodeList) {
+    public static List<FoodHistoryResDto> toList(List<FoodCode> foodCodeList) {
         return foodCodeList.stream()
-                .map(FoodHistory::of)
+                .map(FoodHistoryResDto::of)
                 .toList();
     }
 }

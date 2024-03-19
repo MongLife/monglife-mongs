@@ -3,8 +3,8 @@ package com.mongs.core.vo.mqtt;
 import lombok.Builder;
 
 @Builder
-public record PublishShiftVo(
+public record PublishWeightVo(
         Long mongId,
-        String shiftCode
+        Double weight
 ) {
 }

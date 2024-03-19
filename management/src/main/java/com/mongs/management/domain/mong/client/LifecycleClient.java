@@ -1,6 +1,6 @@
 package com.mongs.management.domain.mong.client;
 
-import com.mongs.core.interceptor.AdminFeignInterceptor;
+import com.mongs.core.interceptor.AccountFeignInterceptor;
 import com.mongs.management.domain.mong.client.dto.response.*;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.http.ResponseEntity;
@@ -9,20 +9,20 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 
-@FeignClient(name = "LIFECYCLE", configuration = AdminFeignInterceptor.class)
+@FeignClient(name = "LIFECYCLE", configuration = AccountFeignInterceptor.class)
 public interface LifecycleClient {
-    @PostMapping("/lifecycle/admin/egg/{mongId}")
+    @PostMapping("/lifecycle/egg/{mongId}")
     ResponseEntity<EggMongEventResDto> eggMongEvent(@PathVariable("mongId") Long mongId);
-    @PutMapping("/lifecycle/admin/sleep/{mongId}")
+    @PutMapping("/lifecycle/sleep/{mongId}")
     ResponseEntity<SleepMongEventResDto> sleepMongEvent(@PathVariable("mongId") Long mongId);
-    @PutMapping("/lifecycle/admin/wakeup/{mongId}")
+    @PutMapping("/lifecycle/wakeup/{mongId}")
     ResponseEntity<WakeupMongEventResDto> wakeupMongEvent(@PathVariable("mongId") Long mongId);
-    @DeleteMapping("/lifecycle/admin/evolution/{mongId}")
+    @DeleteMapping("/lifecycle/evolution/{mongId}")
     ResponseEntity<EvolutionReadyMongEventResDto> evolutionReadyMongEvent(@PathVariable("mongId") Long mongId);
-    @PutMapping("/lifecycle/admin/evolution/{mongId}")
+    @PutMapping("/lifecycle/evolution/{mongId}")
     ResponseEntity<EvolutionMongEventResDto> evolutionMongEvent(@PathVariable("mongId") Long mongId);
-    @DeleteMapping("/lifecycle/admin/graduation/{mongId}")
+    @DeleteMapping("/lifecycle/graduation/{mongId}")
     ResponseEntity<GraduationMongEventResDto> graduationMongEvent(@PathVariable("mongId") Long mongId);
-    @DeleteMapping("/dead/{mongId}")
+    @DeleteMapping("/lifecycle/dead/{mongId}")
     ResponseEntity<DeadMongEventResDto> deadMongEvent(@PathVariable("mongId") Long mongId);
 }
