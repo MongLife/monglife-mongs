@@ -1,7 +1,5 @@
 package com.mongs.management.domain.mong.utils;
 
-import com.mongs.core.entity.MongCode;
-import com.mongs.core.enums.management.MongGrade;
 import com.mongs.core.enums.management.MongShift;
 import com.mongs.core.enums.management.MongState;
 import com.mongs.management.domain.mong.entity.Mong;
@@ -49,7 +47,7 @@ public class MongUtil {
             case SECOND -> {
                 nextMongCode = "CH300";
             }
-            case THIRD, GRADUATE -> {
+            case THIRD, LAST -> {
                 nextMongCode = mong.getMongCode();
             }
         }
@@ -65,8 +63,8 @@ public class MongUtil {
             case ZERO, FIRST, SECOND, THIRD -> {
                 nextShiftCode = MongShift.NORMAL;
             }
-            case GRADUATE -> {
-                nextShiftCode = MongShift.GRADUATE;
+            case LAST -> {
+                nextShiftCode = MongShift.GRADUATE_READY;
             }
         }
 
@@ -78,7 +76,7 @@ public class MongUtil {
         MongState nextStateCode = MongState.EMPTY;
 
         switch (mong.getGrade()) {
-            case ZERO, GRADUATE -> {
+            case ZERO, LAST -> {
                 nextStateCode = MongState.NORMAL;
             }
             case FIRST, SECOND, THIRD -> {

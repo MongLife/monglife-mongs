@@ -17,7 +17,7 @@ public class MongServiceImpl implements MongService {
     @Override
     public Mong getMong(Long mongId, Long accountId) {
         return mongRepository.findByIdAndAccountIdAndIsActiveTrue(mongId, accountId)
-                .orElseThrow(() -> new ManagementException(ManagementErrorCode.NOT_FOUND));
+                .orElseThrow(() -> new ManagementException(ManagementErrorCode.NOT_FOUND_MONG));
     }
 
     @Override

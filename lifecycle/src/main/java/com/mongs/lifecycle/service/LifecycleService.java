@@ -1,6 +1,8 @@
 package com.mongs.lifecycle.service;
 
-import com.mongs.lifecycle.code.TaskCode;
+import com.mongs.core.enums.management.MongShift;
+import com.mongs.core.enums.lifecycle.TaskCode;
+import com.mongs.lifecycle.entity.Mong;
 import com.mongs.lifecycle.exception.EventTaskException;
 import com.mongs.lifecycle.exception.LifecycleErrorCode;
 import com.mongs.lifecycle.repository.MongRepository;
@@ -15,13 +17,10 @@ import java.util.List;
 @RequiredArgsConstructor
 public class LifecycleService {
     private final TaskService taskService;
-    private final TaskActiveService taskActiveService;
     private final MongRepository mongRepository;
 
     public void eggEvent(Long mongId) {
-        List<TaskCode> startList = List.of(
-                TaskCode.EGG
-        );
+        List<TaskCode> startList = List.of(TaskCode.EGG);
         List<TaskCode> restartList = List.of();
         List<TaskCode> pauseList = List.of();
         List<TaskCode> stopList = List.of();
@@ -34,46 +33,7 @@ public class LifecycleService {
             throw new EventTaskException(LifecycleErrorCode.NOT_FOUND_MONG);
         }
 
-        List<TaskCode> startList = List.of();
-        List<TaskCode> restartList = List.of();
-        List<TaskCode> pauseList = List.of();
-        List<TaskCode> stopList = List.of(
-                TaskCode.WEIGHT_DOWN,
-                TaskCode.HEALTHY_DOWN,
-                TaskCode.STRENGTH_DOWN,
-                TaskCode.SATIETY_DOWN,
-                TaskCode.SLEEP_DOWN,
-                TaskCode.POOP,
-                TaskCode.SLEEP_UP,
-                TaskCode.PAY_POINT_UP,
-                TaskCode.DEAD_HEALTHY,
-                TaskCode.DEAD_SATIETY
-        );
-
-        exec(mongId, startList, restartList, pauseList, stopList);
-    }
-
-    public void evolutionReadyEvent(Long mongId, Long accountId) {
-        if (mongRepository.findByIdAndAccountIdAndIsActiveTrue(mongId, accountId).isEmpty()) {
-            throw new EventTaskException(LifecycleErrorCode.NOT_FOUND_MONG);
-        }
-
-        List<TaskCode> startList = List.of();
-        List<TaskCode> restartList = List.of();
-        List<TaskCode> pauseList = List.of(
-                TaskCode.DEAD_SATIETY,
-                TaskCode.DEAD_HEALTHY
-        );
-        List<TaskCode> stopList = List.of(
-                TaskCode.WEIGHT_DOWN,
-                TaskCode.HEALTHY_DOWN,
-                TaskCode.STRENGTH_DOWN,
-                TaskCode.SATIETY_DOWN,
-                TaskCode.SLEEP_DOWN,
-                TaskCode.POOP
-        );
-
-        exec(mongId, startList, restartList, pauseList, stopList);
+        taskService.stopAllTask(mongId);
     }
 
     public void evolutionEvent(Long mongId, Long accountId) {
@@ -81,18 +41,8 @@ public class LifecycleService {
             throw new EventTaskException(LifecycleErrorCode.NOT_FOUND_MONG);
         }
 
-        List<TaskCode> startList = List.of(
-                TaskCode.WEIGHT_DOWN,
-                TaskCode.HEALTHY_DOWN,
-                TaskCode.STRENGTH_DOWN,
-                TaskCode.SATIETY_DOWN,
-                TaskCode.SLEEP_DOWN,
-                TaskCode.POOP
-        );
-        List<TaskCode> restartList = List.of(
-                TaskCode.DEAD_SATIETY,
-                TaskCode.DEAD_HEALTHY
-        );
+        List<TaskCode> startList = List.of(TaskCode.WEIGHT_DOWN, TaskCode.HEALTHY_DOWN, TaskCode.STRENGTH_DOWN, TaskCode.SATIETY_DOWN, TaskCode.SLEEP_DOWN, TaskCode.POOP);
+        List<TaskCode> restartList = List.of(TaskCode.DEAD_SATIETY, TaskCode.DEAD_HEALTHY);
         List<TaskCode> pauseList = List.of();
         List<TaskCode> stopList = List.of();
 
@@ -100,55 +50,45 @@ public class LifecycleService {
     }
 
     public void sleepEvent(Long mongId, Long accountId) {
-        if (mongRepository.findByIdAndAccountIdAndIsActiveTrue(mongId, accountId).isEmpty()) {
-            throw new EventTaskException(LifecycleErrorCode.NOT_FOUND_MONG);
-        }
+        Mong mong = mongRepository.findByIdAndAccountIdAndIsActiveTrue(mongId, accountId)
+                .orElseThrow(() -> new EventTaskException(LifecycleErrorCode.NOT_FOUND_MONG));
 
-        List<TaskCode> startList = List.of(
-                TaskCode.SLEEP_UP
-        );
+        List<TaskCode> startList = List.of(TaskCode.SLEEP_UP);
         List<TaskCode> restartList = List.of();
         List<TaskCode> pauseList = List.of();
-        List<TaskCode> stopList = List.of(
-                TaskCode.WEIGHT_DOWN,
-                TaskCode.HEALTHY_DOWN,
-                TaskCode.STRENGTH_DOWN,
-                TaskCode.SATIETY_DOWN,
-                TaskCode.SLEEP_DOWN,
-                TaskCode.POOP
-        );
+        List<TaskCode> stopList;
+
+        if (mong.getShift().equals(MongShift.GRADUATE_READY)) {
+            stopList = List.of();
+        } else {
+            stopList = List.of(TaskCode.WEIGHT_DOWN, TaskCode.HEALTHY_DOWN, TaskCode.STRENGTH_DOWN, TaskCode.SATIETY_DOWN, TaskCode.SLEEP_DOWN, TaskCode.POOP);
+        }
 
         exec(mongId, startList, restartList, pauseList, stopList);
     }
 
     public void wakeupEvent(Long mongId, Long accountId) {
-        if (mongRepository.findByIdAndAccountIdAndIsActiveTrue(mongId, accountId).isEmpty()) {
-            throw new EventTaskException(LifecycleErrorCode.NOT_FOUND_MONG);
-        }
+        Mong mong = mongRepository.findByIdAndAccountIdAndIsActiveTrue(mongId, accountId)
+                .orElseThrow(() -> new EventTaskException(LifecycleErrorCode.NOT_FOUND_MONG));
 
-        List<TaskCode> startList = List.of(
-                TaskCode.WEIGHT_DOWN,
-                TaskCode.HEALTHY_DOWN,
-                TaskCode.STRENGTH_DOWN,
-                TaskCode.SATIETY_DOWN,
-                TaskCode.SLEEP_DOWN,
-                TaskCode.POOP
-        );
+        List<TaskCode> startList;
         List<TaskCode> restartList = List.of();
         List<TaskCode> pauseList = List.of();
-        List<TaskCode> stopList = List.of(
-                TaskCode.SLEEP_UP
-        );
+        List<TaskCode> stopList = List.of(TaskCode.SLEEP_UP);
 
+        if (mong.getShift().equals(MongShift.GRADUATE_READY)) {
+            startList = List.of();
+        } else {
+            startList = List.of(TaskCode.WEIGHT_DOWN, TaskCode.HEALTHY_DOWN, TaskCode.STRENGTH_DOWN, TaskCode.SATIETY_DOWN, TaskCode.SLEEP_DOWN, TaskCode.POOP);
+        }
         exec(mongId, startList, restartList, pauseList, stopList);
     }
 
-    public void dead(Long mongId, Long accountId) {
-        if (mongRepository.findByIdAndAccountIdAndIsActiveTrue(mongId, accountId).isEmpty()) {
+    public void deleteEvent(Long mongId, Long accountId) {
+        if (mongRepository.findByIdAndAccountId(mongId, accountId).isEmpty()) {
             throw new EventTaskException(LifecycleErrorCode.NOT_FOUND_MONG);
         }
 
-        taskActiveService.dead(mongId, TaskCode.DEAD);
         taskService.stopAllTask(mongId);
     }
 

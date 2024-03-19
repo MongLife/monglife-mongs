@@ -1,4 +1,4 @@
-package com.mongs.notification.client;
+package com.mongs.lifecycle.client;
 
 import org.springframework.integration.annotation.MessagingGateway;
 import org.springframework.integration.mqtt.support.MqttHeaders;

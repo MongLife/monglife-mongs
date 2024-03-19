@@ -8,4 +8,5 @@ import java.util.Optional;
 public interface MongRepository extends JpaRepository<Mong, Long> {
     Optional<Mong> findByIdAndIsActiveTrue(Long id);
     Optional<Mong> findByIdAndAccountIdAndIsActiveTrue(Long id, Long accountId);
+    Optional<Mong> findByIdAndAccountId(Long id, Long accountId);
 }

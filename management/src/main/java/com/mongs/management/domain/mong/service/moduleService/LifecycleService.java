@@ -2,18 +2,13 @@ package com.mongs.management.domain.mong.service.moduleService;
 
 import com.mongs.management.domain.mong.client.dto.response.*;
 
+import java.util.Optional;
+
 public interface LifecycleService {
-    // for RegisterMong
-    EggMongEventResDto eggMongEvent(Long mongId);
-    // for deleteMong
-    DeadMongEventResDto deadMongEvent(Long mongId);
-    // for sleepMong
-    SleepMongEventResDto sleepMongEvent(Long mongId);
-    WakeupMongEventResDto wakeUpMongEvent(Long mongId);
-    // for graduateMong
-    GraduationMongEventResDto graduateMongEvent(Long mongId);
-    // for evolutionReadyMong
-    EvolutionReadyMongEventResDto evolutionReadyMongEvent(Long mongId);
-    // for evolutionMong
-    EvolutionMongEventResDto evolutionMongEvent(Long mongId);
+    Optional<EggMongEventResDto> eggMongEvent(Long mongId);
+    Optional<DeleteMongEventResDto> deleteMongEvent(Long mongId);
+    Optional<SleepMongEventResDto> sleepMongEvent(Long mongId);
+    Optional<WakeupMongEventResDto> wakeUpMongEvent(Long mongId);
+    Optional<GraduationMongEventResDto> graduateMongEvent(Long mongId);
+    Optional<EvolutionMongEventResDto> evolutionMongEvent(Long mongId);
 }

@@ -1,4 +1,4 @@
-package com.mongs.lifecycle.code;
+package com.mongs.core.enums.lifecycle;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -26,7 +26,6 @@ public enum TaskCode {
     // 죽음 (조건)
     DEAD_SATIETY(60 * 60 * 12L, -1D),   // 12 시간 이후 사망 (포만감 0 조건)
     DEAD_HEALTHY(60 * 60 * 12L, -1D),   // 12 시간 이후 사망 (포만감 0 조건)
-    DEAD(0L, -1D),                      // 즉시 사망 (관리자)
     ;
 
     private final Long expiration;

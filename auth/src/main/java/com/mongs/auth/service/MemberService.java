@@ -1,7 +1,8 @@
-package com.mongs.auth.repository;
+package com.mongs.auth.service;
 
 import com.mongs.auth.client.MemberClient;
 import com.mongs.auth.client.dto.response.RegisterMemberResDto;
+import feign.FeignException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -12,7 +13,7 @@ import java.util.Optional;
 @Slf4j
 @Repository
 @RequiredArgsConstructor
-public class MemberRepository {
+public class MemberService {
     private final MemberClient memberClient;
 
     public Optional<RegisterMemberResDto> registerMember(Long accountId) {
@@ -22,8 +23,9 @@ public class MemberRepository {
             if (response.getStatusCode().is2xxSuccessful()) {
                 return Optional.ofNullable(response.getBody());
             }
-        } catch (Exception e) {
-            log.error("[{}] MemberClient registerMember 통신 실패 : {}", accountId, e.getMessage());
+
+        } catch (FeignException e) {
+            log.error("[{}] registerMember 통신 실패 : {}", accountId, e.getMessage());
         }
 
         return Optional.empty();

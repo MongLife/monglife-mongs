@@ -23,6 +23,6 @@ public interface LifecycleClient {
     ResponseEntity<EvolutionMongEventResDto> evolutionMongEvent(@PathVariable("mongId") Long mongId);
     @DeleteMapping("/lifecycle/graduation/{mongId}")
     ResponseEntity<GraduationMongEventResDto> graduationMongEvent(@PathVariable("mongId") Long mongId);
-    @DeleteMapping("/lifecycle/dead/{mongId}")
-    ResponseEntity<DeadMongEventResDto> deadMongEvent(@PathVariable("mongId") Long mongId);
+    @DeleteMapping("/lifecycle/delete/{mongId}")
+    ResponseEntity<DeleteMongEventResDto> deleteMongEvent(@PathVariable("mongId") Long mongId);
 }

@@ -4,7 +4,6 @@ import com.mongs.auth.entity.AccountLog;
 import com.mongs.auth.exception.AuthorizationException;
 import com.mongs.auth.exception.AuthErrorCode;
 import com.mongs.auth.repository.AccountLogRepository;
-import com.mongs.auth.repository.MemberRepository;
 import com.mongs.auth.repository.TokenRepository;
 import com.mongs.auth.entity.Account;
 import com.mongs.auth.entity.Token;
@@ -34,10 +33,11 @@ import java.time.LocalDateTime;
 public class AuthService {
     private final AccountRepository accountRepository;
     private final AccountLogRepository accountLogRepository;
-    private final MemberRepository memberRepository;
     private final TokenRepository tokenRepository;
     private final TokenProvider tokenProvider;
     private final HmacProvider hmacProvider;
+
+    private final MemberService memberService;
 
     @Value("${application.security.jwt.refresh-expiration}")
     private Long expiration;
@@ -48,7 +48,7 @@ public class AuthService {
                 .email(email)
                 .build());
 
-        memberRepository.registerMember(registerAccount.getId())
+        memberService.registerMember(registerAccount.getId())
                 .orElseThrow(() -> new NotFoundException(AuthErrorCode.REGISTER_MEMBER_FAIL));
 
         return registerAccount;

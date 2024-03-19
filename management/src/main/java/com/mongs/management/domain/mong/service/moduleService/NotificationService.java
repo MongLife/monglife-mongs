@@ -1,17 +1,17 @@
 package com.mongs.management.domain.mong.service.moduleService;
 
 
-import com.mongs.management.domain.mong.entity.Mong;
+import com.mongs.core.vo.mqtt.*;
 
 public interface NotificationService {
-    void publishCreate(Mong mong);
-    void publishDelete(Mong mong);
-    void publishStroke(Mong mong);
-    void publishFeed(Mong mong);
-    void publishSleeping(Mong mong);
-    void publishPoop(Mong mong);
-    void publishTraining(Mong mong);
-    void publishGraduation(Mong mong);
-    void publishEvolution(Mong mong);
-    void publishEvolutionReady(Mong mong);
+    void publishCreate(Long accountId, PublishCreateVo publishCreateVo);
+    void publishDelete(Long accountId, PublishDeleteVo publishDeleteVo);
+    void publishStroke(Long accountId, PublishStrokeVo publishStrokeVo);
+    void publishFeed(Long accountId, PublishFeedVo publishFeedVo);
+    void publishSleeping(Long accountId, PublishSleepingVo publishSleepingVo);
+    void publishPoop(Long accountId, PublishPoopVo publishPoopVo);
+    void publishTraining(Long accountId, PublishTrainingVo publishTrainingVo);
+    void publishGraduation(Long accountId, PublishGraduationVo publishGraduationVo);
+    void publishEvolution(Long accountId, PublishEvolutionVo publishEvolutionVo);
+    void publishEvolutionReady(Long accountId, PublishEvolutionReadyVo publishEvolutionReadyVo);
 }

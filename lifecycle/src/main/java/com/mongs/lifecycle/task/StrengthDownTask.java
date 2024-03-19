@@ -1,6 +1,6 @@
 package com.mongs.lifecycle.task;
 
-import com.mongs.lifecycle.code.TaskStatusCode;
+import com.mongs.core.enums.lifecycle.TaskStatusCode;
 import com.mongs.lifecycle.exception.EventTaskException;
 import com.mongs.lifecycle.service.TaskActiveService;
 import com.mongs.lifecycle.service.TaskService;

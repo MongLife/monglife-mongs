@@ -1,8 +1,9 @@
-package com.mongs.notification.code;
+package com.mongs.core.enums.mqtt;
 
 public enum PublishCode {
     MONG_CREATE,
     MONG_DELETE,
+    MONG_DEAD,
     MONG_STROKE,
     MONG_FEED,
     MONG_SLEEPING,

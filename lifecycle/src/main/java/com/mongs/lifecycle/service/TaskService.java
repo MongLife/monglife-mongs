@@ -1,11 +1,10 @@
 package com.mongs.lifecycle.service;
 
-import com.mongs.lifecycle.code.TaskStatusCode;
-import com.mongs.lifecycle.code.TaskCode;
+import com.mongs.core.enums.lifecycle.TaskStatusCode;
+import com.mongs.core.enums.lifecycle.TaskCode;
 import com.mongs.lifecycle.entity.TaskEvent;
 import com.mongs.lifecycle.exception.EventTaskException;
 import com.mongs.lifecycle.exception.LifecycleErrorCode;
-import com.mongs.lifecycle.repository.MongRepository;
 import com.mongs.lifecycle.repository.TaskEventRepository;
 import com.mongs.lifecycle.task.*;
 import com.mongs.lifecycle.utils.TaskUtil;
@@ -45,7 +44,7 @@ public class TaskService {
             case SLEEP_UP -> SleepUpTask.of(this, taskActiveService, scheduledExecutorService, TaskEventVo.of(taskEvent));
             case PAY_POINT_UP -> PayPointUpTask.of(this, taskActiveService, scheduledExecutorService, TaskEventVo.of(taskEvent));
             case POOP -> GeneratePoopTask.of(this, taskActiveService, scheduledExecutorService, TaskEventVo.of(taskEvent));
-            case DEAD_SATIETY, DEAD_HEALTHY, DEAD -> DeadTask.of(this, taskActiveService, scheduledExecutorService, TaskEventVo.of(taskEvent));
+            case DEAD_SATIETY, DEAD_HEALTHY -> DeadTask.of(this, taskActiveService, scheduledExecutorService, TaskEventVo.of(taskEvent));
         };
     }
 
@@ -234,7 +233,6 @@ public class TaskService {
             taskEventRepository.save(taskEvent.toBuilder().statusCode(TaskStatusCode.DONE).build());
             taskMap.remove(taskEvent.getTaskId());
         } catch (EventTaskException e) {
-            e.printStackTrace();
             // log.info("[doneTask] 진행중이지 않은 Task 변경 [{}]", taskId);
         }
     }
@@ -265,7 +263,6 @@ public class TaskService {
 
             taskEventRepository.save(taskEvent.toBuilder().statusCode(TaskStatusCode.PROCESS).build());
         } catch (EventTaskException e) {
-            e.printStackTrace();
             // log.info("[processTask] 진행중이지 않은 Task 변경 [{}]", taskId);
         }
     }

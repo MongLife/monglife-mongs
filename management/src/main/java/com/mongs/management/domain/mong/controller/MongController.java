@@ -6,10 +6,6 @@ import com.mongs.management.domain.mong.controller.dto.request.RegisterMongReqDt
 import com.mongs.management.domain.mong.controller.dto.response.*;
 import com.mongs.management.domain.mong.service.moduleService.LifecycleService;
 import com.mongs.management.domain.mong.service.componentService.ManagementService;
-import com.mongs.management.domain.mong.service.moduleService.NotificationService;
-import com.mongs.management.exception.ManagementErrorCode;
-import com.mongs.management.exception.ManagementException;
-import feign.FeignException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -26,11 +22,12 @@ import java.util.List;
 public class MongController {
 
     private final ManagementService managementService;
-    private final LifecycleService lifecycleService;
 
     @GetMapping("")
     public ResponseEntity<List<FindMongResDto>> findAllMong(@AuthenticationPrincipal PassportDetail passportDetail) {
         Long accountId = passportDetail.getId();
+
+//        managementService.checkAttendance(passportDetail.getId());
 
         return ResponseEntity.ok().body(managementService.findAllMong(accountId));
     }
@@ -84,13 +81,13 @@ public class MongController {
     }
 
     @PutMapping("/sleep/{mongId}")
-    public ResponseEntity<SleepMongResDto> sleepMong(
+    public ResponseEntity<SleepMongResDto> sleepingMong(
             @PathVariable("mongId") Long mongId,
             @AuthenticationPrincipal PassportDetail passportDetail
     ) {
         Long accountId = passportDetail.getId();
 
-        return ResponseEntity.status(HttpStatus.ACCEPTED).body(managementService.sleepMong(accountId, mongId));
+        return ResponseEntity.status(HttpStatus.ACCEPTED).body(managementService.sleepingMong(accountId, mongId));
     }
 
     @PutMapping("/poop/{mongId}")

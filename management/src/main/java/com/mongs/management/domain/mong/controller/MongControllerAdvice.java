@@ -9,9 +9,15 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+import java.net.ConnectException;
+
 @RestControllerAdvice(basePackageClasses = { MongControllerAdvice.class })
 public class MongControllerAdvice {
-
+    @ExceptionHandler(ConnectException.class)
+    public ResponseEntity<Object> connectExceptionHandler() {
+        ErrorCode errorCode = ManagementErrorCode.CONNECT_REFUSE;
+        return ResponseEntity.status(errorCode.getHttpStatus()).body(ErrorResDto.of(errorCode));
+    }
     @ExceptionHandler(ManagementException.class)
     public ResponseEntity<Object> managementExceptionHandler(ManagementException e) {
         return ResponseEntity.status(e.errorCode.getHttpStatus()).body(ErrorResDto.of(e.errorCode));

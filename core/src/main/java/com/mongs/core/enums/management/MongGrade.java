@@ -7,8 +7,8 @@ import lombok.Getter;
 @AllArgsConstructor
 public enum MongGrade {
 
-    GRADUATE("GD005", "졸업", 500, null),
-    THIRD("GD004", "3단계", 300, MongGrade.GRADUATE),
+    LAST("GD005", "졸업", 500, null),
+    THIRD("GD004", "3단계", 300, MongGrade.LAST),
     SECOND("GD003", "2단계", 100, MongGrade.THIRD),
     FIRST("GD002", "1단계", 0, MongGrade.SECOND),
     ZERO("GD001", "알", 0, MongGrade.FIRST),

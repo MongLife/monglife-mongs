@@ -1,7 +1,7 @@
 package com.mongs.lifecycle.entity;
 
-import com.mongs.lifecycle.code.TaskStatusCode;
-import com.mongs.lifecycle.code.TaskCode;
+import com.mongs.core.enums.lifecycle.TaskStatusCode;
+import com.mongs.core.enums.lifecycle.TaskCode;
 import lombok.Builder;
 import lombok.Data;
 import org.springframework.data.annotation.Id;

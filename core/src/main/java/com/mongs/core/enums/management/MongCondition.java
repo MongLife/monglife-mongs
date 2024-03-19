@@ -9,9 +9,8 @@ public enum MongCondition {
 
     NORMAL("CD000","정상"),
     SICK("CD001","아픔"),
-    SLEEP("CD002","수면"),
-    SOMNOLENCE("CD003","졸림"),
-    HUNGRY("CD004","배고픔"),
+    SOMNOLENCE("CD002","졸림"),
+    HUNGRY("CD003","배고픔"),
     EMPTY("CD444","없음")
     ;
 

@@ -9,7 +9,7 @@ public enum MongShift {
 
     NORMAL("SH000","정상"),
     DIE("SH001","죽음"),
-    GRADUATE("SH002","졸업"),
+    GRADUATE_READY("SH002","졸업대기"),
     EVOLUTION_READY("SH003","진화대기"),
     EMPTY("SH444","없음"),
     DELETE("SH999","삭제")

@@ -14,6 +14,9 @@ public enum LifecycleErrorCode implements ErrorCode {
     NOT_FOUND_MONG(HttpStatus.INTERNAL_SERVER_ERROR, "LIFECYCLE-102", "Not Found Mong"),
     GENERATE_TASK_FAIL(HttpStatus.INTERNAL_SERVER_ERROR, "LIFECYCLE-103", "Generate Task Fail"),
     EXIST_TASK(HttpStatus.INTERNAL_SERVER_ERROR, "LIFECYCLE-104", "Exist Task"),
+
+    CONNECT_REFUSE(HttpStatus.INTERNAL_SERVER_ERROR, "MANAGEMENT-104", "Mqtt Connect Fail"),
+    GENERATE_DATA_FAIL(HttpStatus.INTERNAL_SERVER_ERROR, "MANAGEMENT-105", "Generate Data Fail (Json Paring Fail)")
     ;
 
     private final HttpStatus httpStatus;

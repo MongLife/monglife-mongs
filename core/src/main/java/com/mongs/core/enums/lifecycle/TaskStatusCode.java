@@ -1,4 +1,4 @@
-package com.mongs.lifecycle.code;
+package com.mongs.core.enums.lifecycle;
 
 public enum TaskStatusCode {
     WAIT,

@@ -1,6 +1,6 @@
-package com.mongs.notification.controller.dto.response;
+package com.mongs.core.vo.mqtt;
 
-import com.mongs.notification.code.PublishCode;
+import com.mongs.core.enums.mqtt.PublishCode;
 import lombok.Builder;
 
 @Builder

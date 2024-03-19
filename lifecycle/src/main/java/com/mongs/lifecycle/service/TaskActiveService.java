@@ -2,7 +2,8 @@ package com.mongs.lifecycle.service;
 
 import com.mongs.core.enums.management.MongShift;
 import com.mongs.core.enums.management.MongState;
-import com.mongs.lifecycle.code.TaskCode;
+import com.mongs.core.vo.mqtt.*;
+import com.mongs.core.enums.lifecycle.TaskCode;
 import com.mongs.lifecycle.entity.Mong;
 import com.mongs.lifecycle.exception.EventTaskException;
 import com.mongs.lifecycle.exception.LifecycleErrorCode;
@@ -40,7 +41,10 @@ public class TaskActiveService {
                 .shift(MongShift.EVOLUTION_READY)
                 .build());
 
-        notificationService.publishEvolutionReady(saveMong);
+        notificationService.publishEvolutionReady(saveMong.getAccountId(), PublishEvolutionReadyVo.builder()
+                .mongId(mong.getId())
+                .shiftCode(mong.getShift().getCode())
+                .build());
     }
 
     @Transactional
@@ -60,7 +64,10 @@ public class TaskActiveService {
                 .weight(newWeight)
                 .build());
 
-        notificationService.publishWeight(saveMong);
+        notificationService.publishWeight(saveMong.getAccountId(), PublishWeightVo.builder()
+                .mongId(mong.getId())
+                .weight(mong.getWeight())
+                .build() );
     }
 
     @Transactional
@@ -80,7 +87,10 @@ public class TaskActiveService {
                 .strength(newStrength)
                 .build());
 
-        notificationService.publishStrength(saveMong);
+        notificationService.publishStrength(saveMong.getAccountId(), PublishStrengthVo.builder()
+                .mongId(mong.getId())
+                .strength(mong.getStrength())
+                .build());
     }
 
     @Transactional
@@ -100,7 +110,10 @@ public class TaskActiveService {
                 .satiety(newSatiety)
                 .build());
 
-        notificationService.publishSatiety(saveMong);
+        notificationService.publishSatiety(saveMong.getAccountId(), PublishSatietyVo.builder()
+                .mongId(mong.getId())
+                .satiety(mong.getSatiety())
+                .build());
 
         return newSatiety;
     }
@@ -122,7 +135,10 @@ public class TaskActiveService {
                 .healthy(newHealthy)
                 .build());
 
-        notificationService.publishHealthy(saveMong);
+        notificationService.publishHealthy(saveMong.getAccountId(), PublishHealthyVo.builder()
+                .mongId(mong.getId())
+                .health(mong.getHealthy())
+                .build());
 
         return newHealthy;
     }
@@ -144,7 +160,10 @@ public class TaskActiveService {
                 .sleep(newSleep)
                 .build());
 
-        notificationService.publishSleep(saveMong);
+        notificationService.publishSleep(saveMong.getAccountId(), PublishSleepVo.builder()
+                .mongId(mong.getId())
+                .sleep(mong.getSleep())
+                .build());
     }
 
     @Transactional
@@ -164,23 +183,9 @@ public class TaskActiveService {
                 .sleep(newSleep)
                 .build());
 
-        notificationService.publishSleep(saveMong);
-    }
-
-    @Transactional
-    public void increasePayPoint(Long mongId, TaskCode taskCode) throws EventTaskException {
-        Mong mong = mongRepository.findByIdAndIsActiveTrue(mongId)
-                .orElseThrow(() -> new EventTaskException(LifecycleErrorCode.NOT_FOUND_MONG));
-
-        int addPayPoint = taskCode.getValue().intValue();
-        int newPayPoint = mong.getPayPoint() + addPayPoint;
-
-        if (isDebug) {
-            log.info("[{}] 페이포인트 {} 증가", mongId, addPayPoint);
-        }
-
-        mongRepository.save(mong.toBuilder()
-                .payPoint(newPayPoint)
+        notificationService.publishSleep(saveMong.getAccountId(), PublishSleepVo.builder()
+                .mongId(mong.getId())
+                .sleep(mong.getSleep())
                 .build());
     }
 
@@ -211,17 +216,20 @@ public class TaskActiveService {
                     .numberOfPoop(newPoop)
                     .build());
 
-            notificationService.publishPoop(saveMong);
+            notificationService.publishPoop(saveMong.getAccountId(), PublishPoopVo.builder()
+                    .mongId(mong.getId())
+                    .poopCount(mong.getNumberOfPoop())
+                    .exp(mong.getExp())
+                    .build());
         }
     }
 
     @Transactional
     public void dead(Long mongId, TaskCode taskCode) throws EventTaskException {
-        Mong mong = mongRepository.findByIdAndIsActiveTrue(mongId)
+        Mong mong = mongRepository.findById(mongId)
                 .orElseThrow(() -> new EventTaskException(LifecycleErrorCode.NOT_FOUND_MONG));
 
         Mong saveMong = mongRepository.save(mong.toBuilder()
-                .isActive(false)
                 .numberOfPoop(0)
                 .healthy(taskCode.getValue())
                 .satiety(taskCode.getValue())
@@ -232,8 +240,27 @@ public class TaskActiveService {
                 .state(MongState.EMPTY)
                 .build());
 
-        notificationService.publishDelete(saveMong);
+        notificationService.publishDead(saveMong.getAccountId(), PublishDeadVo.builder()
+                .mongId(mong.getId())
+                .build());
 
         log.info("[{}] 몽 사망 ({})", mongId, mong.getName());
+    }
+
+    @Transactional
+    public void increasePayPoint(Long mongId, TaskCode taskCode) throws EventTaskException {
+        Mong mong = mongRepository.findByIdAndIsActiveTrue(mongId)
+                .orElseThrow(() -> new EventTaskException(LifecycleErrorCode.NOT_FOUND_MONG));
+
+        int addPayPoint = taskCode.getValue().intValue();
+        int newPayPoint = mong.getPayPoint() + addPayPoint;
+
+        if (isDebug) {
+            log.info("[{}] 페이포인트 {} 증가", mongId, addPayPoint);
+        }
+
+        mongRepository.save(mong.toBuilder()
+                .payPoint(newPayPoint)
+                .build());
     }
 }

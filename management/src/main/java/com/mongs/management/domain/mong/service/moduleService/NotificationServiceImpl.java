@@ -1,173 +1,165 @@
 package com.mongs.management.domain.mong.service.moduleService;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.mongs.core.enums.mqtt.PublishCode;
 import com.mongs.core.vo.mqtt.*;
-import com.mongs.management.domain.mong.client.NotificationClient;
-import com.mongs.management.domain.mong.entity.Mong;
-import feign.FeignException;
+import com.mongs.management.domain.mong.client.MqttClient;
+import com.mongs.management.exception.ManagementErrorCode;
+import com.mongs.management.exception.ManagementException;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class NotificationServiceImpl implements NotificationService {
 
-    private final NotificationClient notificationClient;
+    private final MqttClient mqttClient;
+    private final ObjectMapper objectMapper;
+
+    @Value("${application.mqtt.topic.mong_data}")
+    private String TOPIC_FILTER;
 
     @Override
-    public void publishCreate(Mong mong) {
+    public void publishEvolutionReady(Long accountId, PublishEvolutionReadyVo publishEvolutionReadyVo) {
         try {
-            notificationClient.publishCreate(MqttReqDto.builder()
-                    .accountId(mong.getAccountId())
-                    .data(PublishCreateVo.builder()
-                            .mongId(mong.getId())
-                            .name(mong.getName())
-                            .mongCode(mong.getMongCode())
-                            .weight(mong.getWeight())
-                            .strength(mong.getStrength())
-                            .satiety(mong.getSatiety())
-                            .health(mong.getHealthy())
-                            .sleep(mong.getSleep())
-                            .poopCount(mong.getNumberOfPoop())
-                            .stateCode(mong.getState().getCode())
-                            .shiftCode(mong.getShift().getCode())
-                            .payPoint(mong.getPayPoint())
-                            .born(mong.getCreatedAt())
-                            .build())
-                    .build());
-        } catch (FeignException ignored) {}
+            String data = objectMapper.writeValueAsString(
+                    BasicPublish.builder()
+                            .code(PublishCode.MONG_EVOLUTION_READY)
+                            .data(publishEvolutionReadyVo)
+                            .build());
+            mqttClient.sendToMqtt(TOPIC_FILTER + accountId, data);
+        } catch (JsonProcessingException e) {
+            throw new ManagementException(ManagementErrorCode.GENERATE_DATA_FAIL);
+        }
+    }
+    
+    @Override
+    public void publishCreate(Long accountId, PublishCreateVo publishCreateVo) {
+        try {
+            String data = objectMapper.writeValueAsString(
+                    BasicPublish.builder()
+                            .code(PublishCode.MONG_CREATE)
+                            .data(publishCreateVo)
+                            .build());
+            mqttClient.sendToMqtt(TOPIC_FILTER + accountId, data);
+        } catch (JsonProcessingException e) {
+            throw new ManagementException(ManagementErrorCode.GENERATE_DATA_FAIL);
+        }
     }
 
     @Override
-    public void publishDelete(Mong mong) {
-        try{
-            notificationClient.publishDelete(MqttReqDto.builder()
-                    .accountId(mong.getAccountId())
-                    .data(PublishDeleteVo.builder()
-                            .mongId(mong.getId())
-                            .build())
-                    .build());
-        } catch (FeignException ignored) {}
+    public void publishDelete(Long accountId, PublishDeleteVo publishDeleteVo) {
+        try {
+            String data = objectMapper.writeValueAsString(
+                    BasicPublish.builder()
+                            .code(PublishCode.MONG_DELETE)
+                            .data(publishDeleteVo)
+                            .build());
+            mqttClient.sendToMqtt(TOPIC_FILTER + accountId, data);
+        } catch (JsonProcessingException e) {
+            throw new ManagementException(ManagementErrorCode.GENERATE_DATA_FAIL);
+        }
     }
 
     @Override
-    public void publishStroke(Mong mong) {
+    public void publishStroke(Long accountId, PublishStrokeVo publishStrokeVo) {
         try {
-            notificationClient.publishStroke(MqttReqDto.builder()
-                    .accountId(mong.getAccountId())
-                    .data(PublishStrokeVo.builder()
-                            .mongId(mong.getId())
-                            .exp(mong.getExp())
-                            .build())
-                    .build());
-        } catch (FeignException ignored) {}
+            String data = objectMapper.writeValueAsString(
+                    BasicPublish.builder()
+                            .code(PublishCode.MONG_STROKE)
+                            .data(publishStrokeVo)
+                            .build());
+            mqttClient.sendToMqtt(TOPIC_FILTER + accountId, data);
+        } catch (JsonProcessingException e) {
+            throw new ManagementException(ManagementErrorCode.GENERATE_DATA_FAIL);
+        }
     }
 
     @Override
-    public void publishFeed(Mong mong) {
+    public void publishFeed(Long accountId, PublishFeedVo publishFeedVo) {
         try {
-            notificationClient.publishFeed(MqttReqDto.builder()
-                    .accountId(mong.getAccountId())
-                    .data(PublishFeedVo.builder()
-                            .mongId(mong.getId())
-                            .weight(mong.getWeight())
-                            .strength(mong.getStrength())
-                            .satiety(mong.getSatiety())
-                            .health(mong.getHealthy())
-                            .sleep(mong.getSleep())
-                            .exp(mong.getExp())
-                            .build())
-                    .build());
-        } catch (FeignException ignored) {}
+            String data = objectMapper.writeValueAsString(
+                    BasicPublish.builder()
+                            .code(PublishCode.MONG_FEED)
+                            .data(publishFeedVo)
+                            .build());
+            mqttClient.sendToMqtt(TOPIC_FILTER + accountId, data);
+        } catch (JsonProcessingException e) {
+            throw new ManagementException(ManagementErrorCode.GENERATE_DATA_FAIL);
+        }
     }
 
     @Override
-    public void publishSleeping(Mong mong) {
+    public void publishSleeping(Long accountId, PublishSleepingVo publishSleepingVo) {
         try {
-            notificationClient.publishSleep(MqttReqDto.builder()
-                    .accountId(mong.getAccountId())
-                    .data(PublishSleepingVo.builder()
-                            .mongId(mong.getId())
-                            .isSleeping(mong.getIsSleeping())
-                            .build())
-                    .build());
-        } catch (FeignException ignored) {}
+            String data = objectMapper.writeValueAsString(
+                    BasicPublish.builder()
+                            .code(PublishCode.MONG_SLEEPING)
+                            .data(publishSleepingVo)
+                            .build());
+            mqttClient.sendToMqtt(TOPIC_FILTER + accountId, data);
+        } catch (JsonProcessingException e) {
+            throw new ManagementException(ManagementErrorCode.GENERATE_DATA_FAIL);
+        }
     }
 
     @Override
-    public void publishPoop(Mong mong) {
+    public void publishPoop(Long accountId, PublishPoopVo publishPoopVo) {
         try {
-            notificationClient.publishPoop(MqttReqDto.builder()
-                    .data(PublishPoopVo.builder()
-                            .mongId(mong.getId())
-                            .poopCount(mong.getNumberOfPoop())
-                            .exp(mong.getExp())
-                            .build())
-                    .build());
-        } catch (FeignException ignored) {}
+            String data = objectMapper.writeValueAsString(
+                    BasicPublish.builder()
+                            .code(PublishCode.MONG_POOP)
+                            .data(publishPoopVo)
+                            .build());
+            mqttClient.sendToMqtt(TOPIC_FILTER + accountId, data);
+        } catch (JsonProcessingException e) {
+            throw new ManagementException(ManagementErrorCode.GENERATE_DATA_FAIL);
+        }
     }
 
     @Override
-    public void publishTraining(Mong mong) {
+    public void publishTraining(Long accountId, PublishTrainingVo publishTrainingVo) {
         try {
-            notificationClient.publishTraining(MqttReqDto.builder()
-                    .accountId(mong.getAccountId())
-                    .data(PublishTrainingVo.builder()
-                            .mongId(mong.getId())
-                            .payPoint(mong.getPayPoint())
-                            .strength(mong.getStrength())
-                            .exp(mong.getExp())
-                            .build())
-                    .build());
-        } catch (FeignException ignored) {}
+            String data = objectMapper.writeValueAsString(
+                    BasicPublish.builder()
+                            .code(PublishCode.MONG_TRAINING)
+                            .data(publishTrainingVo)
+                            .build());
+            mqttClient.sendToMqtt(TOPIC_FILTER + accountId, data);
+        } catch (JsonProcessingException e) {
+            throw new ManagementException(ManagementErrorCode.GENERATE_DATA_FAIL);
+        }
     }
 
     @Override
-    public void publishGraduation(Mong mong) {
+    public void publishGraduation(Long accountId, PublishGraduationVo publishGraduationVo) {
         try {
-            notificationClient.publishGraduation(MqttReqDto.builder()
-                    .accountId(mong.getAccountId())
-                    .data(PublishGraduationVo.builder()
-                            .mongId(mong.getId())
-                            .isActive(mong.getIsActive())
-                            .poopCount(mong.getNumberOfPoop())
-                            .health(mong.getHealthy())
-                            .satiety(mong.getSatiety())
-                            .sleep(mong.getSleep())
-                            .strength(mong.getStrength())
-                            .weight(mong.getWeight())
-                            .shiftCode(mong.getShift().getCode())
-                            .stateCode(mong.getState().getCode())
-                            .build())
-                    .build());
-        } catch (FeignException ignored) {}
+            String data = objectMapper.writeValueAsString(
+                    BasicPublish.builder()
+                            .code(PublishCode.MONG_GRADUATION)
+                            .data(publishGraduationVo)
+                            .build());
+            mqttClient.sendToMqtt(TOPIC_FILTER + accountId, data);
+        } catch (JsonProcessingException e) {
+            throw new ManagementException(ManagementErrorCode.GENERATE_DATA_FAIL);
+        }
     }
 
     @Override
-    public void publishEvolution(Mong mong) {
+    public void publishEvolution(Long accountId, PublishEvolutionVo publishEvolutionVo) {
         try {
-            notificationClient.publishEvolution(MqttReqDto.builder()
-                    .accountId(mong.getAccountId())
-                    .data(PublishEvolutionVo.builder()
-                            .mongId(mong.getId())
-                            .mongCode(mong.getMongCode())
-                            .shiftCode(mong.getShift().getCode())
-                            .stateCode(mong.getState().getCode())
-                            .exp(mong.getExp())
-                            .build())
-                    .build());
-        } catch (FeignException ignored) {}
-    }
-
-    @Override
-    public void publishEvolutionReady(Mong mong) {
-        try {
-            notificationClient.publishEvolutionReady(MqttReqDto.builder()
-                    .accountId(mong.getAccountId())
-                    .data(PublishEvolutionReadyVo.builder()
-                            .mongId(mong.getId())
-                            .shiftCode(mong.getShift().getCode())
-                            .build())
-                    .build());
-        } catch (FeignException ignored) {}
+            String data = objectMapper.writeValueAsString(
+                    BasicPublish.builder()
+                            .code(PublishCode.MONG_EVOLUTION)
+                            .data(publishEvolutionVo)
+                            .build());
+            mqttClient.sendToMqtt(TOPIC_FILTER + accountId, data);
+        } catch (JsonProcessingException e) {
+            throw new ManagementException(ManagementErrorCode.GENERATE_DATA_FAIL);
+        }
     }
 }

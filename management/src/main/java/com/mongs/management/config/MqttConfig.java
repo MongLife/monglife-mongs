@@ -1,4 +1,4 @@
-package com.mongs.notification.config;
+package com.mongs.management.config;
 
 import org.eclipse.paho.client.mqttv3.MqttAsyncClient;
 import org.eclipse.paho.client.mqttv3.MqttConnectOptions;

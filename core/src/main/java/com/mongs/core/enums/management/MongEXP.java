@@ -12,8 +12,8 @@ public enum MongEXP {
     TRAINING(20, "20EXP per training"),
     ATTENDANCE(5, "5EXP per attendance"),
     CLEANING_POOP(5, "5EXP per attendance"),
-    EAT_THE_FOOD(10, "5EXP per attendance"),
-    NAP(5, "5EXP per nap");
+    EAT_THE_FOOD(10, "5EXP per attendance")
+    ;
 
     private final Integer exp;
     private final String name;

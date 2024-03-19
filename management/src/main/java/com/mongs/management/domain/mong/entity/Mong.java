@@ -19,7 +19,6 @@ import org.hibernate.annotations.DynamicUpdate;
 @Builder(toBuilder = true)
 public class Mong extends BaseTimeEntity {
 
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "mong_id")

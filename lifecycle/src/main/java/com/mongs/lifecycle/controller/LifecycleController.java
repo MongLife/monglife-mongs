@@ -6,7 +6,6 @@ import com.mongs.lifecycle.service.LifecycleService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.parameters.P;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -34,19 +33,6 @@ public class LifecycleController {
         lifecycleService.graduationEvent(mongId, accountId);
 
         return ResponseEntity.ok().body(GraduationMongEventResDto.builder()
-                .mongId(mongId)
-                .build());
-    }
-
-    @DeleteMapping("/evolution/{mongId}")
-    public ResponseEntity<Object> evolutionReadyMongEvent(
-            @PathVariable("mongId") Long mongId,
-            @AuthenticationPrincipal PassportDetail passportDetail
-    ) {
-        Long accountId = passportDetail.getId();
-        lifecycleService.evolutionReadyEvent(mongId, accountId);
-
-        return ResponseEntity.ok().body(EvolutionMongEventResDto.builder()
                 .mongId(mongId)
                 .build());
     }
@@ -90,15 +76,15 @@ public class LifecycleController {
                 .build());
     }
 
-    @DeleteMapping("/dead/{mongId}")
-    public ResponseEntity<Object> deadMongEvent(
+    @DeleteMapping("/delete/{mongId}")
+    public ResponseEntity<Object> deleteMongEvent(
             @PathVariable("mongId") Long mongId,
             @AuthenticationPrincipal PassportDetail passportDetail
     ) {
         Long accountId = passportDetail.getId();
-        lifecycleService.dead(mongId, accountId);
+        lifecycleService.deleteEvent(mongId, accountId);
 
-        return ResponseEntity.ok().body(DeadMongEventResDto.builder()
+        return ResponseEntity.ok().body(DeleteMongEventResDto.builder()
                 .mongId(mongId)
                 .build());
     }
