@@ -1,4 +1,4 @@
-package com.mongs.core.exception;
+package com.mongs.core.interceptor.exception;
 
 import com.mongs.core.error.ErrorCode;
 import lombok.AllArgsConstructor;

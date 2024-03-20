@@ -16,7 +16,7 @@ public record TrainingMongResDto(
         Double sleep,
         Integer poopCount,
         Boolean isSleeping,
-        Integer exp,
+        Double exp,
         LocalDateTime born,
         String stateCode,
         String shiftCode,

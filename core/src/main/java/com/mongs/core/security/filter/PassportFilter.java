@@ -5,7 +5,7 @@ import com.mongs.core.vo.passport.PassportVO;
 import com.mongs.core.security.exception.PassportIntegrityException;
 import com.mongs.core.security.exception.SecurityErrorCode;
 import com.mongs.core.security.principal.PassportDetail;
-import com.mongs.core.util.HmacProvider;
+import com.mongs.core.utils.HmacProvider;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.ServletRequest;

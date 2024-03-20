@@ -17,7 +17,7 @@ public record FindMongResDto(
         Double sleep,
         Integer poopCount,
         Boolean isSleeping,
-        Integer exp,
+        Double exp,
         LocalDateTime born,
         String stateCode,
         String shiftCode,

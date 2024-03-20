@@ -1,15 +1,15 @@
-package com.mongs.management.domain.ateFood.repository;
+package com.mongs.management.domain.feedHistory.repository;
 
-import com.mongs.management.domain.ateFood.entity.AteFoodHistory;
+import com.mongs.management.domain.feedHistory.entity.FeedHistory;
 import org.springframework.data.mongodb.repository.Aggregation;
 import org.springframework.data.mongodb.repository.MongoRepository;
 
 import java.util.List;
 
-public interface AteFoodHistoryRepository extends MongoRepository<AteFoodHistory, Long> {
+public interface FeedHistoryRepository extends MongoRepository<FeedHistory, Long> {
     @Aggregation(pipeline = {
             "{ $group: { _id: '$mongCode', latestData: { $last: '$$ROOT' } } }",
             "{ $replaceRoot: { newRoot: '$latestData' } }"
     })
-    List<AteFoodHistory> findByMongIdOrderByBuyAt(Long mongId);
+    List<FeedHistory> findByMongIdOrderByBuyAt(Long mongId);
 }

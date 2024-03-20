@@ -1,4 +1,4 @@
-package com.mongs.lifecycle.service;
+package com.mongs.lifecycle.service.componentService;
 
 import com.mongs.core.enums.lifecycle.TaskStatusCode;
 import com.mongs.core.enums.lifecycle.TaskCode;
@@ -27,8 +27,10 @@ import java.util.concurrent.ScheduledExecutorService;
 public class TaskService {
 
     private final TaskUtil taskUtil;
-    private final TaskActiveService taskActiveService;
     private final TaskEventRepository taskEventRepository;
+
+    // Task 전달용
+    private final TaskActiveService taskActiveService;
     private final ScheduledExecutorService scheduledExecutorService;
 
     private final Map<String, BasicTask> taskMap = new ConcurrentHashMap<>();

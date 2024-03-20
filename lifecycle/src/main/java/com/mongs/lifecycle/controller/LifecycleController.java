@@ -2,7 +2,7 @@ package com.mongs.lifecycle.controller;
 
 import com.mongs.core.security.principal.PassportDetail;
 import com.mongs.lifecycle.dto.response.*;
-import com.mongs.lifecycle.service.LifecycleService;
+import com.mongs.lifecycle.service.componentService.LifecycleService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;

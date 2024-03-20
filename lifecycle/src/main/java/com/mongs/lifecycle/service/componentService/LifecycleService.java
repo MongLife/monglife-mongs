@@ -1,4 +1,4 @@
-package com.mongs.lifecycle.service;
+package com.mongs.lifecycle.service.componentService;
 
 import com.mongs.core.enums.management.MongShift;
 import com.mongs.core.enums.lifecycle.TaskCode;
@@ -16,8 +16,8 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 public class LifecycleService {
-    private final TaskService taskService;
     private final MongRepository mongRepository;
+    private final TaskService taskService;
 
     public void eggEvent(Long mongId) {
         List<TaskCode> startList = List.of(TaskCode.EGG);

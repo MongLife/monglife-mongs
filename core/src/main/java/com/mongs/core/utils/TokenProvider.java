@@ -1,4 +1,4 @@
-package com.mongs.core.util;
+package com.mongs.core.utils;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;

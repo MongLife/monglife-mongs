@@ -11,7 +11,6 @@ public record FoodCode(
         String code,
         String name,
         String groupCode,
-        Integer fullness,
         Integer price,
         Double addWeightValue,
         Double addStrengthValue,

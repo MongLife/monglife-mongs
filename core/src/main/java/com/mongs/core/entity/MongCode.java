@@ -11,7 +11,5 @@ public record MongCode(
         String code,
         String name,
         Long version
-        
-        // TODO("몽 진화 조건, 정의 필요")
 ) {
 }

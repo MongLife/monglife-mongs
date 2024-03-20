@@ -1,4 +1,4 @@
-package com.mongs.lifecycle.service;
+package com.mongs.lifecycle.service.moduleService;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;

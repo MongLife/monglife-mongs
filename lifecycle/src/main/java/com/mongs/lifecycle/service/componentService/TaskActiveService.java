@@ -1,5 +1,6 @@
-package com.mongs.lifecycle.service;
+package com.mongs.lifecycle.service.componentService;
 
+import com.mongs.core.enums.management.MongActive;
 import com.mongs.core.enums.management.MongShift;
 import com.mongs.core.enums.management.MongState;
 import com.mongs.core.vo.mqtt.*;
@@ -8,6 +9,8 @@ import com.mongs.lifecycle.entity.Mong;
 import com.mongs.lifecycle.exception.EventTaskException;
 import com.mongs.lifecycle.exception.LifecycleErrorCode;
 import com.mongs.lifecycle.repository.MongRepository;
+import com.mongs.lifecycle.service.moduleService.MongHistoryService;
+import com.mongs.lifecycle.service.moduleService.NotificationService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -26,6 +29,7 @@ public class TaskActiveService {
 
     private final MongRepository mongRepository;
     private final NotificationService notificationService;
+    private final MongHistoryService mongHistoryService;
 
     @Value("${application.scheduler.sleep-max}")
     private Double SLEEP_MAX;
@@ -45,6 +49,8 @@ public class TaskActiveService {
                 .mongId(mong.getId())
                 .shiftCode(mong.getShift().getCode())
                 .build());
+
+        mongHistoryService.saveMongHistory(saveMong.getId(), MongActive.EVOLUTION);
     }
 
     @Transactional
@@ -67,7 +73,7 @@ public class TaskActiveService {
         notificationService.publishWeight(saveMong.getAccountId(), PublishWeightVo.builder()
                 .mongId(mong.getId())
                 .weight(mong.getWeight())
-                .build() );
+                .build());
     }
 
     @Transactional
@@ -115,7 +121,7 @@ public class TaskActiveService {
                 .satiety(mong.getSatiety())
                 .build());
 
-        return newSatiety;
+        return saveMong.getSatiety();
     }
 
     @Transactional
@@ -140,7 +146,7 @@ public class TaskActiveService {
                 .health(mong.getHealthy())
                 .build());
 
-        return newHealthy;
+        return saveMong.getHealthy();
     }
 
     @Transactional
@@ -199,13 +205,15 @@ public class TaskActiveService {
 
         if (newPoop == POOP_MAX) {
             int newPenalty = mong.getPenalty() + 1;
-            mongRepository.save(mong.toBuilder()
+            Mong saveMong = mongRepository.save(mong.toBuilder()
                     .penalty(newPenalty)
                     .build());
 
             if (isDebug) {
                 log.info("[{}] 똥 {} 개 도달 : 패널티 1 증가 ({})", mongId, POOP_MAX, newPenalty);
             }
+
+            mongHistoryService.saveMongHistory(saveMong.getId(), MongActive.PENALTY);
 
         } else {
             if (isDebug) {
@@ -236,13 +244,15 @@ public class TaskActiveService {
                 .sleep(taskCode.getValue())
                 .strength(taskCode.getValue())
                 .weight(taskCode.getValue())
-                .shift(MongShift.DIE)
+                .shift(MongShift.DEAD)
                 .state(MongState.EMPTY)
                 .build());
 
         notificationService.publishDead(saveMong.getAccountId(), PublishDeadVo.builder()
                 .mongId(mong.getId())
                 .build());
+
+        mongHistoryService.saveMongHistory(saveMong.getId(), MongActive.DEAD);
 
         log.info("[{}] 몽 사망 ({})", mongId, mong.getName());
     }

@@ -1,12 +1,11 @@
 package com.mongs.core.enums.management;
 
-
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 @Getter
 @AllArgsConstructor
-public enum MongEXP {
+public enum MongExp {
 
     STROKE(10, "10EXP per stroke"),
     TRAINING(20, "20EXP per training"),

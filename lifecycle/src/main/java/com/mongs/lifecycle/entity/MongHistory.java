@@ -1,5 +1,6 @@
-package com.mongs.management.domain.ateFood.entity;
+package com.mongs.lifecycle.entity;
 
+import com.mongs.core.enums.management.MongActive;
 import lombok.Builder;
 import lombok.Getter;
 import org.springframework.data.annotation.Id;
@@ -10,14 +11,14 @@ import java.util.UUID;
 
 @Builder
 @Getter
-@Document(collection = "ate_food_history")
-public class AteFoodHistory {
+@Document(collection = "mong_history")
+public class MongHistory {
         @Id
         @Builder.Default
         private String id = UUID.randomUUID().toString();
         private Long mongId;
-        private String code;
-        private Integer price;
+        private MongActive code;
+        private String message;
         @Builder.Default
-        private LocalDateTime buyAt = LocalDateTime.now();
+        private LocalDateTime createdAt = LocalDateTime.now();
 }

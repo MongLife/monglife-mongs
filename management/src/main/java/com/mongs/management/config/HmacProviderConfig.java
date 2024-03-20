@@ -1,7 +1,7 @@
 package com.mongs.management.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.mongs.core.util.HmacProvider;
+import com.mongs.core.utils.HmacProvider;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;

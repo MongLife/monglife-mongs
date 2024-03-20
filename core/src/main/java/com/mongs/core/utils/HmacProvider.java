@@ -1,4 +1,4 @@
-package com.mongs.core.util;
+package com.mongs.core.utils;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.AllArgsConstructor;

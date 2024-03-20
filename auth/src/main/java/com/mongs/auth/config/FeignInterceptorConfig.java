@@ -2,7 +2,7 @@ package com.mongs.auth.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mongs.core.interceptor.AdminFeignInterceptor;
-import com.mongs.core.util.HmacProvider;
+import com.mongs.core.utils.HmacProvider;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
