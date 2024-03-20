@@ -38,7 +38,7 @@ public final class AdminFeignInterceptor implements RequestInterceptor {
                                     .deviceId("-")
                                     .email(UUID.randomUUID().toString())
                                     .name("-")
-                                    .loginAt(LocalDate.now())
+                                    .loginCount(0)
                                     .role("ADMIN")
                                     .build())
                             .build())

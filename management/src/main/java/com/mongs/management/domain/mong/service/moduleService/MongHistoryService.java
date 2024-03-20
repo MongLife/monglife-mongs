@@ -1,8 +1,8 @@
 package com.mongs.management.domain.mong.service.moduleService;
 
-import com.mongs.core.enums.management.MongActive;
-import com.mongs.management.domain.mong.entity.MongHistory;
+import com.mongs.core.enums.management.MongHistoryCode;
+import com.mongs.core.entity.MongHistory;
 
 public interface MongHistoryService {
-    MongHistory saveMongHistory(Long mongId, MongActive mongActive);
+    MongHistory saveMongHistory(Long mongId, MongHistoryCode mongHistoryCode);
 }

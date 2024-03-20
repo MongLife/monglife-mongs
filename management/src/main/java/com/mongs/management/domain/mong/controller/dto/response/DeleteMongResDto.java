@@ -4,6 +4,7 @@ import lombok.Builder;
 
 @Builder
 public record DeleteMongResDto(
-        Long mongId
+        Long mongId,
+        String shiftCode
 ) {
 }

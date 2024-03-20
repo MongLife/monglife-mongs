@@ -15,6 +15,8 @@ public record PublishCreateVo(
         Double health,
         Double sleep,
         Integer poopCount,
+        Boolean isSleeping,
+        Double exp,
         String stateCode,
         String shiftCode,
         Integer payPoint,

@@ -6,8 +6,13 @@ import lombok.Builder;
 public record PublishEvolutionVo(
         Long mongId,
         String mongCode,
+        Double weight,
+        Double strength,
+        Double satiety,
+        Double health,
+        Double sleep,
         String shiftCode,
         String stateCode,
-        Integer exp
+        Double exp
 ) {
 }

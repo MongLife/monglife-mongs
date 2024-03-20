@@ -10,6 +10,6 @@ public record FeedMongResDto(
         Double satiety,
         Double strength,
         Double sleep,
-        Integer exp
+        Double exp
 ) {
 }

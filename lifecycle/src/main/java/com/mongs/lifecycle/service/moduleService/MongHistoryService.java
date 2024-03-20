@@ -1,7 +1,7 @@
 package com.mongs.lifecycle.service.moduleService;
 
-import com.mongs.core.enums.management.MongActive;
-import com.mongs.lifecycle.entity.MongHistory;
+import com.mongs.core.enums.management.MongHistoryCode;
+import com.mongs.core.entity.MongHistory;
 import com.mongs.lifecycle.repository.MongHistoryRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -12,11 +12,11 @@ public class MongHistoryService {
 
     private final MongHistoryRepository mongHistoryRepository;
 
-    public MongHistory saveMongHistory(Long mongId, MongActive mongActive) {
+    public MongHistory saveMongHistory(Long mongId, MongHistoryCode mongHistoryCode) {
         return mongHistoryRepository.save(MongHistory.builder()
                 .mongId(mongId)
-                .code(mongActive)
-                .message(mongActive.getMessage())
+                .historyCode(mongHistoryCode)
+                .message(mongHistoryCode.getMessage())
                 .build());
     }
 }

@@ -1,35 +1,13 @@
-package com.mongs.management.domain.mong.utils;
+package com.mongs.lifecycle.utils;
 
 import com.mongs.core.enums.management.MongGrade;
 import com.mongs.core.enums.management.MongShift;
 import com.mongs.core.enums.management.MongState;
-import com.mongs.management.domain.mong.entity.Mong;
+import com.mongs.lifecycle.entity.Mong;
 import org.springframework.stereotype.Component;
-
-import java.time.LocalDateTime;
-import java.time.LocalTime;
-import java.time.format.DateTimeFormatter;
 
 @Component
 public class MongUtil {
-
-    // 자는지 확인하는 메서드
-    public Boolean isSleep(String sleepStart, String sleepEnd) {
-        LocalTime startTime = LocalTime.parse(sleepStart, DateTimeFormatter.ofPattern("HH:mm"));
-        LocalTime endTime = LocalTime.parse(sleepEnd, DateTimeFormatter.ofPattern("HH:mm"));
-        LocalTime currentTime = LocalTime.now();
-
-        if (endTime.isBefore(startTime)) {
-            return !currentTime.isBefore(startTime) || !currentTime.isAfter(endTime);
-        } else {
-            return !currentTime.isBefore(startTime) && !currentTime.isAfter(endTime);
-        }
-    }
-
-    // HH:mm로 변경하기 위한 컨버터
-    public String timeConverter(LocalDateTime time) {
-        return time.toLocalTime().format(DateTimeFormatter.ofPattern("HH:mm"));
-    }
 
     public String getNextMongCode(Mong mong) {
 
@@ -88,12 +66,8 @@ public class MongUtil {
         return nextStateCode;
     }
 
-    public Double statusToPercent(Double status, MongGrade mongGrade) {
+    public Double stateToPercent(Double status, MongGrade mongGrade) {
         double maxStatus = mongGrade.getMaxStatus();
-
-        if (maxStatus == 0D) {
-            return 0D;
-        }
 
         return status / maxStatus * 100;
     }

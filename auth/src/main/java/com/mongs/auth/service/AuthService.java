@@ -154,7 +154,7 @@ public class AuthService {
                                 .deviceId(deviceId)
                                 .email(account.getEmail())
                                 .name(account.getName())
-                                .loginAt(accountLog.getLoginAt())
+                                .loginCount(accountLog.getLoginCount())
                                 .role(account.getRole())
                                 .build())
                         .build())

@@ -36,7 +36,7 @@ public class NotificationServiceImpl implements NotificationService {
             throw new ManagementException(ManagementErrorCode.GENERATE_DATA_FAIL);
         }
     }
-    
+
     @Override
     public void publishCreate(Long accountId, PublishCreateVo publishCreateVo) {
         try {
@@ -156,6 +156,34 @@ public class NotificationServiceImpl implements NotificationService {
                     BasicPublish.builder()
                             .code(PublishCode.MONG_EVOLUTION)
                             .data(publishEvolutionVo)
+                            .build());
+            mqttClient.sendToMqtt(TOPIC_FILTER + accountId, data);
+        } catch (JsonProcessingException e) {
+            throw new ManagementException(ManagementErrorCode.GENERATE_DATA_FAIL);
+        }
+    }
+
+    @Override
+    public void publishState(Long accountId, PublishStateVo publishStateVo) {
+        try {
+            String data = objectMapper.writeValueAsString(
+                    BasicPublish.builder()
+                            .code(PublishCode.MONG_STATE)
+                            .data(publishStateVo)
+                            .build());
+            mqttClient.sendToMqtt(TOPIC_FILTER + accountId, data);
+        } catch (JsonProcessingException e) {
+            throw new ManagementException(ManagementErrorCode.GENERATE_DATA_FAIL);
+        }
+    }
+
+    @Override
+    public void publishAttendance(Long accountId, PublishAttendanceVo publishAttendanceVo) {
+        try {
+            String data = objectMapper.writeValueAsString(
+                    BasicPublish.builder()
+                            .code(PublishCode.MONG_ATTENDANCE)
+                            .data(publishAttendanceVo)
                             .build());
             mqttClient.sendToMqtt(TOPIC_FILTER + accountId, data);
         } catch (JsonProcessingException e) {

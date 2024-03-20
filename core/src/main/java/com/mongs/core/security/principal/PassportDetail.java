@@ -19,7 +19,7 @@ public class PassportDetail extends User {
     private final long id;
     private final String deviceId;
     private final String email;
-    private final LocalDate loginAt;
+    private final Integer loginCount;
     private final String name;
     private final String passportJson;
 
@@ -39,7 +39,7 @@ public class PassportDetail extends User {
         this.id = passportVO.data().account().id();
         this.deviceId = passportVO.data().account().deviceId();
         this.email = passportVO.data().account().email();
-        this.loginAt = passportVO.data().account().loginAt();
+        this.loginCount = passportVO.data().account().loginCount();
         this.name = passportVO.data().account().name();
         this.passportJson = passportJson;
     }

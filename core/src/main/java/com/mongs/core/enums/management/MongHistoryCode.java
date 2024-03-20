@@ -5,7 +5,7 @@ import lombok.Getter;
 
 @Getter
 @AllArgsConstructor
-public enum MongActive {
+public enum MongHistoryCode {
 
     FEED("AT000", "먹이"),
     BOWEL("AT001", "배변"),

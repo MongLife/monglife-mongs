@@ -16,5 +16,7 @@ public enum PublishCode {
     MONG_HEALTH,
     MONG_SATIETY,
     MONG_STRENGTH,
-    MONG_WEIGHT
+    MONG_WEIGHT,
+    MONG_STATE,
+    MONG_ATTENDANCE
 }

@@ -1,6 +1,7 @@
 package com.mongs.lifecycle.service.componentService;
 
-import com.mongs.core.enums.management.MongActive;
+import com.mongs.core.enums.management.MongGrade;
+import com.mongs.core.enums.management.MongHistoryCode;
 import com.mongs.core.enums.management.MongShift;
 import com.mongs.core.enums.management.MongState;
 import com.mongs.core.vo.mqtt.*;
@@ -11,6 +12,7 @@ import com.mongs.lifecycle.exception.LifecycleErrorCode;
 import com.mongs.lifecycle.repository.MongRepository;
 import com.mongs.lifecycle.service.moduleService.MongHistoryService;
 import com.mongs.lifecycle.service.moduleService.NotificationService;
+import com.mongs.lifecycle.utils.MongUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -27,12 +29,11 @@ public class TaskActiveService {
 
     private final boolean isDebug = false;
 
+    private final MongUtil mongUtil;
     private final MongRepository mongRepository;
     private final NotificationService notificationService;
     private final MongHistoryService mongHistoryService;
 
-    @Value("${application.scheduler.sleep-max}")
-    private Double SLEEP_MAX;
     @Value("${application.scheduler.poop-max}")
     private Integer POOP_MAX;
 
@@ -50,7 +51,7 @@ public class TaskActiveService {
                 .shiftCode(mong.getShift().getCode())
                 .build());
 
-        mongHistoryService.saveMongHistory(saveMong.getId(), MongActive.EVOLUTION);
+        mongHistoryService.saveMongHistory(saveMong.getId(), MongHistoryCode.EVOLUTION);
     }
 
     @Transactional
@@ -72,7 +73,7 @@ public class TaskActiveService {
 
         notificationService.publishWeight(saveMong.getAccountId(), PublishWeightVo.builder()
                 .mongId(mong.getId())
-                .weight(mong.getWeight())
+                .weight(mongUtil.stateToPercent(saveMong.getWeight(), saveMong.getGrade()))
                 .build());
     }
 
@@ -95,7 +96,7 @@ public class TaskActiveService {
 
         notificationService.publishStrength(saveMong.getAccountId(), PublishStrengthVo.builder()
                 .mongId(mong.getId())
-                .strength(mong.getStrength())
+                .strength(mongUtil.stateToPercent(saveMong.getStrength(), saveMong.getGrade()))
                 .build());
     }
 
@@ -118,7 +119,7 @@ public class TaskActiveService {
 
         notificationService.publishSatiety(saveMong.getAccountId(), PublishSatietyVo.builder()
                 .mongId(mong.getId())
-                .satiety(mong.getSatiety())
+                .satiety(mongUtil.stateToPercent(saveMong.getSatiety(), saveMong.getGrade()))
                 .build());
 
         return saveMong.getSatiety();
@@ -143,7 +144,7 @@ public class TaskActiveService {
 
         notificationService.publishHealthy(saveMong.getAccountId(), PublishHealthyVo.builder()
                 .mongId(mong.getId())
-                .health(mong.getHealthy())
+                .health(mongUtil.stateToPercent(saveMong.getHealthy(), saveMong.getGrade()))
                 .build());
 
         return saveMong.getHealthy();
@@ -168,7 +169,7 @@ public class TaskActiveService {
 
         notificationService.publishSleep(saveMong.getAccountId(), PublishSleepVo.builder()
                 .mongId(mong.getId())
-                .sleep(mong.getSleep())
+                .sleep(mongUtil.stateToPercent(saveMong.getSleep(), saveMong.getGrade()))
                 .build());
     }
 
@@ -179,7 +180,7 @@ public class TaskActiveService {
 
         long seconds = Math.min(taskCode.getExpiration(), Duration.between(createdAt, LocalDateTime.now()).getSeconds());
         double addSleep = taskCode.getValue() / taskCode.getExpiration() * seconds;
-        double newSleep = Math.min(SLEEP_MAX, mong.getSleep() + addSleep);
+        double newSleep = Math.min(mong.getGrade().getMaxStatus(), mong.getSleep() + addSleep);
 
         if (isDebug) {
             log.info("[{}] 피로도 {} 증가", mongId, newSleep - mong.getSleep());
@@ -190,8 +191,8 @@ public class TaskActiveService {
                 .build());
 
         notificationService.publishSleep(saveMong.getAccountId(), PublishSleepVo.builder()
-                .mongId(mong.getId())
-                .sleep(mong.getSleep())
+                .mongId(saveMong.getId())
+                .sleep(mongUtil.stateToPercent(saveMong.getSleep(), saveMong.getGrade()))
                 .build());
     }
 
@@ -213,7 +214,7 @@ public class TaskActiveService {
                 log.info("[{}] 똥 {} 개 도달 : 패널티 1 증가 ({})", mongId, POOP_MAX, newPenalty);
             }
 
-            mongHistoryService.saveMongHistory(saveMong.getId(), MongActive.PENALTY);
+            mongHistoryService.saveMongHistory(saveMong.getId(), MongHistoryCode.PENALTY);
 
         } else {
             if (isDebug) {
@@ -225,9 +226,9 @@ public class TaskActiveService {
                     .build());
 
             notificationService.publishPoop(saveMong.getAccountId(), PublishPoopVo.builder()
-                    .mongId(mong.getId())
-                    .poopCount(mong.getNumberOfPoop())
-                    .exp(mong.getExp())
+                    .mongId(saveMong.getId())
+                    .poopCount(saveMong.getNumberOfPoop())
+                    .exp(mongUtil.stateToPercent((double) saveMong.getExp(), saveMong.getGrade()))
                     .build());
         }
     }
@@ -250,9 +251,10 @@ public class TaskActiveService {
 
         notificationService.publishDead(saveMong.getAccountId(), PublishDeadVo.builder()
                 .mongId(mong.getId())
+                .shiftCode(MongShift.DEAD.getCode())
                 .build());
 
-        mongHistoryService.saveMongHistory(saveMong.getId(), MongActive.DEAD);
+        mongHistoryService.saveMongHistory(saveMong.getId(), MongHistoryCode.DEAD);
 
         log.info("[{}] 몽 사망 ({})", mongId, mong.getName());
     }

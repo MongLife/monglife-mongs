@@ -10,7 +10,7 @@ public record PassportAccount(
         String deviceId,
         String email,
         String name,
-        LocalDate loginAt,
+        Integer loginCount,
         String role
 ) {
 }

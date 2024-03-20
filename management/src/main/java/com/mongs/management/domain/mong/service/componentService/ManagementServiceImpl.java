@@ -1,6 +1,7 @@
 package com.mongs.management.domain.mong.service.componentService;
 
 import com.mongs.core.entity.FoodCode;
+import com.mongs.core.entity.MongHistory;
 import com.mongs.core.enums.management.*;
 import com.mongs.core.enums.management.MongExp;
 import com.mongs.core.enums.management.MongGrade;
@@ -11,10 +12,8 @@ import com.mongs.management.domain.feedHistory.repository.FeedHistoryRepository;
 import com.mongs.management.domain.mong.controller.dto.response.*;
 import com.mongs.management.domain.mong.entity.Mong;
 import com.mongs.management.domain.mong.repository.FoodCodeRepository;
-import com.mongs.management.domain.mong.service.moduleService.LifecycleService;
-import com.mongs.management.domain.mong.service.moduleService.MongHistoryService;
-import com.mongs.management.domain.mong.service.moduleService.MongService;
-import com.mongs.management.domain.mong.service.moduleService.NotificationService;
+import com.mongs.management.domain.mong.repository.MongHistoryRepository;
+import com.mongs.management.domain.mong.service.moduleService.*;
 import com.mongs.management.domain.mong.utils.MongUtil;
 import com.mongs.management.exception.ManagementErrorCode;
 import com.mongs.management.exception.ManagementException;
@@ -26,6 +25,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicReference;
 
 @Slf4j
 @Service
@@ -35,8 +35,10 @@ public class ManagementServiceImpl implements ManagementService {
     private final MongUtil mongUtil;
     private final FoodCodeRepository foodCodeRepository;
     private final FeedHistoryRepository feedHistoryRepository;
+    private final MongHistoryRepository mongHistoryRepository;
 
     private final MongService mongService;
+    private final CollectionService collectionService;
     private final LifecycleService lifecycleService;
     private final NotificationService notificationService;
     private final MongHistoryService mongHistoryService;
@@ -46,7 +48,9 @@ public class ManagementServiceImpl implements ManagementService {
     @Value("${application.management.training-strength}")
     private Double TRAINING_STRENGTH;
 
-
+    /*
+    * 진화 체크 함수
+    */
     private void evolutionValid(Mong mong) {
         if (mong.getExp() >= mong.getGrade().getNextGrade().getEvolutionExp() && !mong.getGrade().equals(MongGrade.ZERO)) {
             Mong saveMong = mongService.saveMong(mong.toBuilder()
@@ -54,31 +58,62 @@ public class ManagementServiceImpl implements ManagementService {
                     .build());
 
             notificationService.publishEvolutionReady(saveMong.getAccountId(), PublishEvolutionReadyVo.builder()
-                    .mongId(mong.getId())
-                    .shiftCode(mong.getShift().getCode())
+                    .mongId(saveMong.getId())
+                    .shiftCode(saveMong.getShift().getCode())
                     .build());
         }
     }
+    /*
+     * 상태 체크 함수
+     */
+    private void stateChangeCheck(Mong mong) {
+        AtomicReference<MongState> nextState = new AtomicReference<>(mong.getState());
 
-//    private void stateChangeCheck(Mong mong) {
-//        Arrays.stream(MongState.values())
-//                .forEach(mongState -> {
-//                    if (mong.getWeight() < mongState.getWeightPercent())
-//                });
-//    }
+        Arrays.stream(MongState.values())
+                .forEach(mongState -> {
+                    if (mongUtil.statusToPercent(mong.getWeight(), mong.getGrade()) < mongState.getWeightPercent() ||
+                        mongUtil.statusToPercent(mong.getStrength(), mong.getGrade()) < mongState.getStrengthPercent() ||
+                        mongUtil.statusToPercent(mong.getSatiety(), mong.getGrade()) < mongState.getSatietyPercent() ||
+                        mongUtil.statusToPercent(mong.getHealthy(), mong.getGrade()) < mongState.getHealthyPercent() ||
+                        mongUtil.statusToPercent(mong.getSleep(), mong.getGrade()) < mongState.getSleepPercent()
+                    ) {
+                        nextState.set(mongState);
+                    }
+                });
 
-//    @Override
-//    public void checkAttendance(Long accountId) {
-//        mongService.getAllMong(accountId).forEach(mong -> {
-//
-//        });
-//    }
+        Mong saveMong = mongService.saveMong(mong.toBuilder()
+                .state(nextState.get())
+                .build());
 
-    @Override
+        notificationService.publishState(saveMong.getAccountId(), PublishStateVo.builder()
+                .mongId(saveMong.getId())
+                .stateCode(saveMong.getState().getCode())
+                .build());
+    }
+
     @Transactional
-    public List<FindMongResDto> findAllMong(Long accountId) {
+    public List<FindMongResDto> findAllMongAndCheckAttendance(Long accountId) {
         List<Mong> mongList = mongService.getAllMong(accountId);
-        return FindMongResDto.toList(mongList);
+
+        return mongList.stream()
+                .map(mong -> FindMongResDto.builder()
+                        .mongId(mong.getId())
+                        .name(mong.getName())
+                        .mongCode(mong.getMongCode())
+                        .weight(mongUtil.statusToPercent(mong.getWeight(), mong.getGrade()))
+                        .strength(mongUtil.statusToPercent(mong.getStrength(), mong.getGrade()))
+                        .satiety(mongUtil.statusToPercent(mong.getSatiety(), mong.getGrade()))
+                        .health(mongUtil.statusToPercent(mong.getHealthy(), mong.getGrade()))
+                        .sleep(mongUtil.statusToPercent(mong.getSleep(), mong.getGrade()))
+                        .exp(mongUtil.statusToPercent((double) mong.getExp(), mong.getGrade()))
+                        .poopCount(mong.getNumberOfPoop())
+                        .isSleeping(mong.getIsSleeping())
+                        .stateCode(mong.getState().getCode())
+                        .shiftCode(mong.getShift().getCode())
+                        .payPoint(mong.getPayPoint())
+                        .born(mong.getCreatedAt())
+                        .build())
+                .toList();
     }
 
     @Override
@@ -103,24 +138,42 @@ public class ManagementServiceImpl implements ManagementService {
                 .orElseThrow(() -> new ManagementException(ManagementErrorCode.FEIGN_CLIENT_FAIL));
 
         notificationService.publishCreate(saveMong.getAccountId(), PublishCreateVo.builder()
-                .mongId(mong.getId())
-                .name(mong.getName())
-                .mongCode(mong.getMongCode())
-                .weight(mong.getWeight())
-                .strength(mong.getStrength())
-                .satiety(mong.getSatiety())
-                .health(mong.getHealthy())
-                .sleep(mong.getSleep())
-                .poopCount(mong.getNumberOfPoop())
-                .stateCode(mong.getState().getCode())
-                .shiftCode(mong.getShift().getCode())
-                .payPoint(mong.getPayPoint())
-                .born(mong.getCreatedAt())
+                .mongId(saveMong.getId())
+                .name(saveMong.getName())
+                .mongCode(saveMong.getMongCode())
+                .weight(mongUtil.statusToPercent(saveMong.getWeight(), saveMong.getGrade()))
+                .strength(mongUtil.statusToPercent(saveMong.getStrength(), saveMong.getGrade()))
+                .satiety(mongUtil.statusToPercent(saveMong.getSatiety(), saveMong.getGrade()))
+                .health(mongUtil.statusToPercent(saveMong.getHealthy(), saveMong.getGrade()))
+                .sleep(mongUtil.statusToPercent(saveMong.getSleep(), saveMong.getGrade()))
+                .exp(mongUtil.statusToPercent((double) saveMong.getExp(), saveMong.getGrade()))
+                .poopCount(saveMong.getNumberOfPoop())
+                .isSleeping(saveMong.getIsSleeping())
+                .stateCode(saveMong.getState().getCode())
+                .shiftCode(saveMong.getShift().getCode())
+                .payPoint(saveMong.getPayPoint())
+                .born(saveMong.getCreatedAt())
                 .build());
 
-        mongHistoryService.saveMongHistory(saveMong.getId(), MongActive.CREATE);
+        mongHistoryService.saveMongHistory(saveMong.getId(), MongHistoryCode.CREATE);
 
-        return RegisterMongResDto.of(saveMong);
+        return RegisterMongResDto.builder()
+                .mongId(saveMong.getId())
+                .name(saveMong.getName())
+                .mongCode(saveMong.getMongCode())
+                .weight(mongUtil.statusToPercent(saveMong.getWeight(), saveMong.getGrade()))
+                .strength(mongUtil.statusToPercent(saveMong.getStrength(), saveMong.getGrade()))
+                .satiety(mongUtil.statusToPercent(saveMong.getSatiety(), saveMong.getGrade()))
+                .health(mongUtil.statusToPercent(saveMong.getHealthy(), saveMong.getGrade()))
+                .sleep(mongUtil.statusToPercent(saveMong.getSleep(), saveMong.getGrade()))
+                .exp(mongUtil.statusToPercent((double) saveMong.getExp(), saveMong.getGrade()))
+                .poopCount(saveMong.getNumberOfPoop())
+                .isSleeping(saveMong.getIsSleeping())
+                .stateCode(saveMong.getState().getCode())
+                .shiftCode(saveMong.getShift().getCode())
+                .payPoint(saveMong.getPayPoint())
+                .born(saveMong.getCreatedAt())
+                .build();
     }
 
     @Override
@@ -144,13 +197,15 @@ public class ManagementServiceImpl implements ManagementService {
                 .orElseThrow(() -> new ManagementException(ManagementErrorCode.FEIGN_CLIENT_FAIL));
 
         notificationService.publishDelete(saveMong.getAccountId(), PublishDeleteVo.builder()
-                .mongId(mong.getId())
+                .mongId(saveMong.getId())
+                .shiftCode(MongShift.DELETE.getCode())
                 .build());
 
-        mongHistoryService.saveMongHistory(saveMong.getId(), MongActive.DELETE);
+        mongHistoryService.saveMongHistory(saveMong.getId(), MongHistoryCode.DELETE);
 
         return DeleteMongResDto.builder()
                 .mongId(saveMong.getId())
+                .shiftCode(MongShift.DELETE.getCode())
                 .build();
     }
 
@@ -173,17 +228,17 @@ public class ManagementServiceImpl implements ManagementService {
                 .build());
 
         notificationService.publishStroke(saveMong.getAccountId(), PublishStrokeVo.builder()
-                .mongId(mong.getId())
-                .exp(mong.getExp())
+                .mongId(saveMong.getId())
+                .exp(mongUtil.statusToPercent((double) saveMong.getExp(), saveMong.getGrade()))
                 .build());
 
-        mongHistoryService.saveMongHistory(saveMong.getId(), MongActive.STROKE);
+        mongHistoryService.saveMongHistory(saveMong.getId(), MongHistoryCode.STROKE);
 
         this.evolutionValid(saveMong);
 
         return StrokeMongResDto.builder()
                 .mongId(saveMong.getId())
-                .exp(saveMong.getExp())
+                .exp(mongUtil.statusToPercent((double) saveMong.getExp(), saveMong.getGrade()))
                 .build();
     }
 
@@ -219,27 +274,28 @@ public class ManagementServiceImpl implements ManagementService {
                 .build());
 
         notificationService.publishFeed(saveMong.getAccountId(), PublishFeedVo.builder()
-                .mongId(mong.getId())
-                .weight(mong.getWeight())
-                .strength(mong.getStrength())
-                .satiety(mong.getSatiety())
-                .health(mong.getHealthy())
-                .sleep(mong.getSleep())
-                .exp(mong.getExp())
+                .mongId(saveMong.getId())
+                .weight(mongUtil.statusToPercent(saveMong.getWeight(), saveMong.getGrade()))
+                .strength(mongUtil.statusToPercent(saveMong.getStrength(), saveMong.getGrade()))
+                .satiety(mongUtil.statusToPercent(saveMong.getSatiety(), saveMong.getGrade()))
+                .health(mongUtil.statusToPercent(saveMong.getHealthy(), saveMong.getGrade()))
+                .sleep(mongUtil.statusToPercent(saveMong.getSleep(), saveMong.getGrade()))
+                .exp(mongUtil.statusToPercent((double) saveMong.getExp(), saveMong.getGrade()))
                 .build());
 
-        mongHistoryService.saveMongHistory(saveMong.getId(), MongActive.FEED);
+        mongHistoryService.saveMongHistory(saveMong.getId(), MongHistoryCode.FEED);
 
         this.evolutionValid(saveMong);
+        this.stateChangeCheck(saveMong);
 
         return FeedMongResDto.builder()
                 .mongId(saveMong.getId())
-                .weight(saveMong.getWeight())
-                .health(saveMong.getHealthy())
-                .satiety(saveMong.getSatiety())
-                .strength(saveMong.getStrength())
-                .sleep(saveMong.getSleep())
-                .exp(saveMong.getExp())
+                .weight(mongUtil.statusToPercent(saveMong.getWeight(), saveMong.getGrade()))
+                .strength(mongUtil.statusToPercent(saveMong.getStrength(), saveMong.getGrade()))
+                .satiety(mongUtil.statusToPercent(saveMong.getSatiety(), saveMong.getGrade()))
+                .health(mongUtil.statusToPercent(saveMong.getHealthy(), saveMong.getGrade()))
+                .sleep(mongUtil.statusToPercent(saveMong.getSleep(), saveMong.getGrade()))
+                .exp(mongUtil.statusToPercent((double) saveMong.getExp(), saveMong.getGrade()))
                 .build();
     }
 
@@ -263,11 +319,11 @@ public class ManagementServiceImpl implements ManagementService {
         }
 
         notificationService.publishSleeping(saveMong.getAccountId(), PublishSleepingVo.builder()
-                .mongId(mong.getId())
-                .isSleeping(mong.getIsSleeping())
+                .mongId(saveMong.getId())
+                .isSleeping(saveMong.getIsSleeping())
                 .build());
 
-        mongHistoryService.saveMongHistory(saveMong.getId(), MongActive.SLEEP);
+        mongHistoryService.saveMongHistory(saveMong.getId(), MongHistoryCode.SLEEP);
 
         return SleepMongResDto.builder()
                 .mongId(saveMong.getId())
@@ -288,19 +344,19 @@ public class ManagementServiceImpl implements ManagementService {
                 .build());
 
         notificationService.publishPoop(saveMong.getAccountId(), PublishPoopVo.builder()
-                .mongId(mong.getId())
-                .poopCount(mong.getNumberOfPoop())
-                .exp(mong.getExp())
+                .mongId(saveMong.getId())
+                .poopCount(saveMong.getNumberOfPoop())
+                .exp(mongUtil.statusToPercent((double) saveMong.getExp(), saveMong.getGrade()))
                 .build());
 
-        mongHistoryService.saveMongHistory(saveMong.getId(), MongActive.POOP_CLEAN);
+        mongHistoryService.saveMongHistory(saveMong.getId(), MongHistoryCode.POOP_CLEAN);
 
         this.evolutionValid(saveMong);
 
         return PoopCleanResDto.builder()
                 .mongId(saveMong.getId())
                 .poopCount(saveMong.getNumberOfPoop())
-                .exp(saveMong.getExp())
+                .exp(mongUtil.statusToPercent((double) saveMong.getExp(), saveMong.getGrade()))
                 .build();
     }
 
@@ -327,17 +383,23 @@ public class ManagementServiceImpl implements ManagementService {
                 .build());
 
         notificationService.publishTraining(saveMong.getAccountId(), PublishTrainingVo.builder()
-                .mongId(mong.getId())
-                .payPoint(mong.getPayPoint())
-                .strength(mong.getStrength())
-                .exp(mong.getExp())
+                .mongId(saveMong.getId())
+                .payPoint(saveMong.getPayPoint())
+                .strength(mongUtil.statusToPercent(saveMong.getStrength(), saveMong.getGrade()))
+                .exp(mongUtil.statusToPercent((double) saveMong.getExp(), saveMong.getGrade()))
                 .build());
 
-        mongHistoryService.saveMongHistory(saveMong.getId(), MongActive.TRAINING);
+        mongHistoryService.saveMongHistory(saveMong.getId(), MongHistoryCode.TRAINING);
 
         this.evolutionValid(saveMong);
+        this.stateChangeCheck(saveMong);
 
-        return TrainingMongResDto.of(saveMong);
+        return TrainingMongResDto.builder()
+                .mongId(saveMong.getId())
+                .payPoint(saveMong.getPayPoint())
+                .strength(mongUtil.statusToPercent(saveMong.getStrength(), saveMong.getGrade()))
+                .exp(mongUtil.statusToPercent((double) saveMong.getExp(), saveMong.getGrade()))
+                .build();
     }
 
     @Override
@@ -363,23 +425,15 @@ public class ManagementServiceImpl implements ManagementService {
                 .build());
 
         notificationService.publishGraduation(saveMong.getAccountId(), PublishGraduationVo.builder()
-                .mongId(mong.getId())
-                .isActive(mong.getIsActive())
-                .poopCount(mong.getNumberOfPoop())
-                .health(mong.getHealthy())
-                .satiety(mong.getSatiety())
-                .sleep(mong.getSleep())
-                .strength(mong.getStrength())
-                .weight(mong.getWeight())
-                .shiftCode(mong.getShift().getCode())
-                .stateCode(mong.getState().getCode())
+                .mongId(saveMong.getId())
+                .shiftCode(MongShift.DELETE.getCode())
                 .build());
 
-        mongHistoryService.saveMongHistory(saveMong.getId(), MongActive.GRADUATION);
+        mongHistoryService.saveMongHistory(saveMong.getId(), MongHistoryCode.GRADUATION);
 
         return GraduateMongResDto.builder()
                 .mongId(saveMong.getId())
-                .shiftCode(saveMong.getShift().getCode())
+                .shiftCode(MongShift.DELETE.getCode())
                 .build();
     }
 
@@ -408,13 +462,37 @@ public class ManagementServiceImpl implements ManagementService {
             throw new ManagementException(ManagementErrorCode.NOT_ENOUGH_EXP);
         }
 
+        /* 비율 만큼 증가 */
+        double weightPercent = mongUtil.statusToPercent(mong.getWeight(), mong.getGrade());
+        double strengthPercent = mongUtil.statusToPercent(mong.getStrength(), mong.getGrade());
+        double satietyPercent = mongUtil.statusToPercent(mong.getSatiety(), mong.getGrade());
+        double healthyPercent = mongUtil.statusToPercent(mong.getHealthy(), mong.getGrade());
+        double sleepPercent = mongUtil.statusToPercent(mong.getSleep(), mong.getGrade());
+
+        double maxStatus = grade.getNextGrade().getMaxStatus();
+        double newWeight = weightPercent / 100 * maxStatus;
+        double newStrength = strengthPercent / 100 * maxStatus;
+        double newSatiety = satietyPercent / 100 * maxStatus;
+        double newHealthy = healthyPercent / 100 * maxStatus;
+        double newSleep = sleepPercent / 100 * maxStatus;
+
+        String preMongCode = mong.getMongCode();
+
         Mong saveMong = mongService.saveMong(mong.toBuilder()
                 .mongCode(mongUtil.getNextMongCode(mong))
                 .shift(mongUtil.getNextShiftCode(mong))
                 .state(mongUtil.getNextStateCode(mong))
                 .grade(grade.getNextGrade())
+                .weight(newWeight)
+                .strength(newStrength)
+                .satiety(newSatiety)
+                .healthy(newHealthy)
+                .sleep(newSleep)
                 .exp(0)
                 .build());
+
+        collectionService.registerMongCollection(saveMong.getAccountId(), preMongCode)
+                .orElseThrow(() -> new ManagementException(ManagementErrorCode.FEIGN_CLIENT_FAIL));
 
         if (saveMong.getGrade().equals(MongGrade.LAST)) {
             lifecycleService.graduateMongEvent(saveMong.getId())
@@ -424,22 +502,32 @@ public class ManagementServiceImpl implements ManagementService {
                 .orElseThrow(() -> new ManagementException(ManagementErrorCode.FEIGN_CLIENT_FAIL));
         }
 
-        notificationService.publishEvolution(saveMong.getAccountId(), PublishEvolutionVo.builder()
-                .mongId(mong.getId())
-                .mongCode(mong.getMongCode())
-                .shiftCode(mong.getShift().getCode())
-                .stateCode(mong.getState().getCode())
-                .exp(mong.getExp())
-                .build());
+        mongHistoryService.saveMongHistory(saveMong.getId(), MongHistoryCode.EVOLUTION);
 
-        mongHistoryService.saveMongHistory(saveMong.getId(), MongActive.EVOLUTION);
+        notificationService.publishEvolution(saveMong.getAccountId(), PublishEvolutionVo.builder()
+                .mongId(saveMong.getId())
+                .mongCode(saveMong.getMongCode())
+                .weight(mongUtil.statusToPercent(saveMong.getWeight(), saveMong.getGrade()))
+                .strength(mongUtil.statusToPercent(saveMong.getStrength(), saveMong.getGrade()))
+                .satiety(mongUtil.statusToPercent(saveMong.getSatiety(), saveMong.getGrade()))
+                .health(mongUtil.statusToPercent(saveMong.getHealthy(), saveMong.getGrade()))
+                .sleep(mongUtil.statusToPercent(saveMong.getSleep(), saveMong.getGrade()))
+                .exp(mongUtil.statusToPercent((double) saveMong.getExp(), saveMong.getGrade()))
+                .shiftCode(saveMong.getShift().getCode())
+                .stateCode(saveMong.getState().getCode())
+                .build());
 
         return EvolutionMongResDto.builder()
                 .mongId(saveMong.getId())
                 .mongCode(saveMong.getMongCode())
                 .shiftCode(saveMong.getShift().getCode())
                 .stateCode(saveMong.getState().getCode())
-                .exp(saveMong.getExp())
+                .weight(mongUtil.statusToPercent(saveMong.getWeight(), saveMong.getGrade()))
+                .strength(mongUtil.statusToPercent(saveMong.getStrength(), saveMong.getGrade()))
+                .satiety(mongUtil.statusToPercent(saveMong.getSatiety(), saveMong.getGrade()))
+                .health(mongUtil.statusToPercent(saveMong.getHealthy(), saveMong.getGrade()))
+                .sleep(mongUtil.statusToPercent(saveMong.getSleep(), saveMong.getGrade()))
+                .exp(mongUtil.statusToPercent((double) saveMong.getExp(), saveMong.getGrade()))
                 .build();
     }
 }

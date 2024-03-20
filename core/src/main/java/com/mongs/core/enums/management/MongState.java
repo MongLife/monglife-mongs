@@ -7,11 +7,11 @@ import lombok.Getter;
 @AllArgsConstructor
 public enum MongState {
 
-    EMPTY("CD444","없음", -1D, -1D, -1D, -1D, -1D),
-    NORMAL("CD000","정상", 100D, 100D, 100D, 100D, 100D),
     SOMNOLENCE("CD001","졸림", 100D, 100D, 100D, 100D, 10D),
     HUNGRY("CD002","배고픔", 100D, 100D, 10D, 100D, 100D),
     SICK("CD003","아픔", 100D, 100D, 100D, 10D, 100D),
+    EMPTY("CD444","없음", 100D, 100D, 100D, 100D, 100D),
+    NORMAL("CD000","정상", 100D, 100D, 100D, 100D, 100D),
     ;
 
     private final String code;

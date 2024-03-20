@@ -4,7 +4,6 @@ import com.mongs.core.security.principal.PassportDetail;
 import com.mongs.management.domain.mong.controller.dto.request.FeedMongReqDto;
 import com.mongs.management.domain.mong.controller.dto.request.RegisterMongReqDto;
 import com.mongs.management.domain.mong.controller.dto.response.*;
-import com.mongs.management.domain.mong.service.moduleService.LifecycleService;
 import com.mongs.management.domain.mong.service.componentService.ManagementService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -27,9 +26,7 @@ public class MongController {
     public ResponseEntity<List<FindMongResDto>> findAllMong(@AuthenticationPrincipal PassportDetail passportDetail) {
         Long accountId = passportDetail.getId();
 
-//        managementService.checkAttendance(passportDetail.getId());
-
-        return ResponseEntity.ok().body(managementService.findAllMong(accountId));
+        return ResponseEntity.ok().body(managementService.findAllMongAndCheckAttendance(accountId));
     }
 
     @PostMapping("")

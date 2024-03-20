@@ -10,6 +10,6 @@ public record PublishFeedVo(
         Double satiety,
         Double health,
         Double sleep,
-        Integer exp
+        Double exp
 ) {
 }

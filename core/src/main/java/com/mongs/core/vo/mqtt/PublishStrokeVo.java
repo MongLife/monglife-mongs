@@ -5,6 +5,6 @@ import lombok.Builder;
 @Builder
 public record PublishStrokeVo(
         Long mongId,
-        Integer exp
+        Double exp
 ) {
 }

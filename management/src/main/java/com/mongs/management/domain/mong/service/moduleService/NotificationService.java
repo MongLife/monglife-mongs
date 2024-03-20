@@ -3,6 +3,8 @@ package com.mongs.management.domain.mong.service.moduleService;
 
 import com.mongs.core.vo.mqtt.*;
 
+import java.time.LocalDate;
+
 public interface NotificationService {
     void publishCreate(Long accountId, PublishCreateVo publishCreateVo);
     void publishDelete(Long accountId, PublishDeleteVo publishDeleteVo);
@@ -14,4 +16,6 @@ public interface NotificationService {
     void publishGraduation(Long accountId, PublishGraduationVo publishGraduationVo);
     void publishEvolution(Long accountId, PublishEvolutionVo publishEvolutionVo);
     void publishEvolutionReady(Long accountId, PublishEvolutionReadyVo publishEvolutionReadyVo);
+    void publishState(Long accountId, PublishStateVo publishStateVo);
+    void publishAttendance(Long accountId, PublishAttendanceVo publishAttendanceVo);
 }

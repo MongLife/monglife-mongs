@@ -11,8 +11,8 @@ public enum MongShift {
     DEAD("SH001","죽음"),
     GRADUATE_READY("SH002","졸업 대기"),
     EVOLUTION_READY("SH003","진화 대기"),
+    DELETE("SH999","삭제"),
     EMPTY("SH444","없음"),
-    DELETE("SH999","삭제")
     ;
 
     private final String code;

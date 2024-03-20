@@ -4,6 +4,7 @@ import lombok.Builder;
 
 @Builder
 public record PublishDeleteVo(
-        Long mongId
+        Long mongId,
+        String shiftCode
 ) {
 }

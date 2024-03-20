@@ -6,6 +6,6 @@ import lombok.Builder;
 public record PublishPoopVo(
         Long mongId,
         Integer poopCount,
-        Integer exp
+        Double exp
 ) {
 }
