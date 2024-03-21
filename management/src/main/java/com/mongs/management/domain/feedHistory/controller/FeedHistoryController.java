@@ -20,9 +20,9 @@ public class FeedHistoryController {
     private final FeedHistoryService feedHistoryService;
 
     @GetMapping("/feedHistory/{mongId}")
-    public ResponseEntity<List<FindFeedHistoryResDto>> findAteFoodHistory(@PathVariable("mongId") Long mongId, @RequestParam("version") Long version) {
+    public ResponseEntity<List<FindFeedHistoryResDto>> findFeedHistory(@PathVariable("mongId") Long mongId) {
 
-        List<FindFeedHistoryVo> findFeedHistoryVoList = feedHistoryService.findFeedHistory(mongId, version);
+        List<FindFeedHistoryVo> findFeedHistoryVoList = feedHistoryService.findFeedHistory(mongId);
         List<FindFeedHistoryResDto> findFeedHistoryResDtoList = findFeedHistoryVoList.stream()
                 .map(FindFeedHistoryResDto::of)
                 .toList();

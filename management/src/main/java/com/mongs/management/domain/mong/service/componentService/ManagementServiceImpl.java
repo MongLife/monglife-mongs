@@ -1,7 +1,6 @@
 package com.mongs.management.domain.mong.service.componentService;
 
 import com.mongs.core.entity.FoodCode;
-import com.mongs.core.entity.MongHistory;
 import com.mongs.core.enums.management.*;
 import com.mongs.core.enums.management.MongExp;
 import com.mongs.core.enums.management.MongGrade;
@@ -12,7 +11,6 @@ import com.mongs.management.domain.feedHistory.repository.FeedHistoryRepository;
 import com.mongs.management.domain.mong.controller.dto.response.*;
 import com.mongs.management.domain.mong.entity.Mong;
 import com.mongs.management.domain.mong.repository.FoodCodeRepository;
-import com.mongs.management.domain.mong.repository.MongHistoryRepository;
 import com.mongs.management.domain.mong.service.moduleService.*;
 import com.mongs.management.domain.mong.utils.MongUtil;
 import com.mongs.management.exception.ManagementErrorCode;
@@ -35,7 +33,6 @@ public class ManagementServiceImpl implements ManagementService {
     private final MongUtil mongUtil;
     private final FoodCodeRepository foodCodeRepository;
     private final FeedHistoryRepository feedHistoryRepository;
-    private final MongHistoryRepository mongHistoryRepository;
 
     private final MongService mongService;
     private final CollectionService collectionService;
@@ -103,7 +100,7 @@ public class ManagementServiceImpl implements ManagementService {
                         .weight(mongUtil.statusToPercent(mong.getWeight(), mong.getGrade()))
                         .strength(mongUtil.statusToPercent(mong.getStrength(), mong.getGrade()))
                         .satiety(mongUtil.statusToPercent(mong.getSatiety(), mong.getGrade()))
-                        .health(mongUtil.statusToPercent(mong.getHealthy(), mong.getGrade()))
+                        .healthy(mongUtil.statusToPercent(mong.getHealthy(), mong.getGrade()))
                         .sleep(mongUtil.statusToPercent(mong.getSleep(), mong.getGrade()))
                         .exp(mongUtil.statusToPercent((double) mong.getExp(), mong.getGrade()))
                         .poopCount(mong.getNumberOfPoop())
@@ -144,7 +141,7 @@ public class ManagementServiceImpl implements ManagementService {
                 .weight(mongUtil.statusToPercent(saveMong.getWeight(), saveMong.getGrade()))
                 .strength(mongUtil.statusToPercent(saveMong.getStrength(), saveMong.getGrade()))
                 .satiety(mongUtil.statusToPercent(saveMong.getSatiety(), saveMong.getGrade()))
-                .health(mongUtil.statusToPercent(saveMong.getHealthy(), saveMong.getGrade()))
+                .healthy(mongUtil.statusToPercent(saveMong.getHealthy(), saveMong.getGrade()))
                 .sleep(mongUtil.statusToPercent(saveMong.getSleep(), saveMong.getGrade()))
                 .exp(mongUtil.statusToPercent((double) saveMong.getExp(), saveMong.getGrade()))
                 .poopCount(saveMong.getNumberOfPoop())
@@ -164,7 +161,7 @@ public class ManagementServiceImpl implements ManagementService {
                 .weight(mongUtil.statusToPercent(saveMong.getWeight(), saveMong.getGrade()))
                 .strength(mongUtil.statusToPercent(saveMong.getStrength(), saveMong.getGrade()))
                 .satiety(mongUtil.statusToPercent(saveMong.getSatiety(), saveMong.getGrade()))
-                .health(mongUtil.statusToPercent(saveMong.getHealthy(), saveMong.getGrade()))
+                .healthy(mongUtil.statusToPercent(saveMong.getHealthy(), saveMong.getGrade()))
                 .sleep(mongUtil.statusToPercent(saveMong.getSleep(), saveMong.getGrade()))
                 .exp(mongUtil.statusToPercent((double) saveMong.getExp(), saveMong.getGrade()))
                 .poopCount(saveMong.getNumberOfPoop())
@@ -244,17 +241,17 @@ public class ManagementServiceImpl implements ManagementService {
 
     @Override
     @Transactional
-    public FeedMongResDto feedMong(Long accountId, Long mongId, String feedCode) {
+    public FeedMongResDto feedMong(Long accountId, Long mongId, String foodCode) {
         Mong mong = mongService.getMong(mongId, accountId);
 
-        FoodCode foodCode = foodCodeRepository.findByCode(feedCode)
+        FoodCode code = foodCodeRepository.findByCode(foodCode)
                 .orElseThrow(() -> new ManagementException(ManagementErrorCode.NOT_FOUND_FOOD_CODE));
 
-        double newWeight = mong.getWeight() + foodCode.addWeightValue();
-        double newStrength = mong.getStrength() + foodCode.addStrengthValue();
-        double newSatiety = mong.getSatiety() + foodCode.addSatietyValue();
-        double newHealthy = mong.getHealthy() + foodCode.addHealthyValue();
-        double newSleep = mong.getSleep() + foodCode.addSleepValue();
+        double newWeight = mong.getWeight() + code.addWeightValue();
+        double newStrength = mong.getStrength() + code.addStrengthValue();
+        double newSatiety = mong.getSatiety() + code.addSatietyValue();
+        double newHealthy = mong.getHealthy() + code.addHealthyValue();
+        double newSleep = mong.getSleep() + code.addSleepValue();
 
         int newExp = Math.min(mong.getExp() + MongExp.EAT_THE_FOOD.getExp(), mong.getGrade().getNextGrade().getEvolutionExp());
 
@@ -269,8 +266,8 @@ public class ManagementServiceImpl implements ManagementService {
 
         feedHistoryRepository.save(FeedHistory.builder()
                 .mongId(saveMong.getId())
-                .code(foodCode.code())
-                .price(foodCode.price())
+                .code(code.code())
+                .price(code.price())
                 .build());
 
         notificationService.publishFeed(saveMong.getAccountId(), PublishFeedVo.builder()
@@ -294,7 +291,7 @@ public class ManagementServiceImpl implements ManagementService {
                 .weight(mongUtil.statusToPercent(saveMong.getWeight(), saveMong.getGrade()))
                 .strength(mongUtil.statusToPercent(saveMong.getStrength(), saveMong.getGrade()))
                 .satiety(mongUtil.statusToPercent(saveMong.getSatiety(), saveMong.getGrade()))
-                .health(mongUtil.statusToPercent(saveMong.getHealthy(), saveMong.getGrade()))
+                .healthy(mongUtil.statusToPercent(saveMong.getHealthy(), saveMong.getGrade()))
                 .sleep(mongUtil.statusToPercent(saveMong.getSleep(), saveMong.getGrade()))
                 .exp(mongUtil.statusToPercent((double) saveMong.getExp(), saveMong.getGrade()))
                 .build();
@@ -302,7 +299,7 @@ public class ManagementServiceImpl implements ManagementService {
 
     @Override
     @Transactional
-    public SleepMongResDto sleepingMong(Long accountId, Long mongId) {
+    public SleepingMongResDto sleepingMong(Long accountId, Long mongId) {
         Mong mong = mongService.getMong(mongId, accountId);
 
         boolean newIsSleeping = !mong.getIsSleeping();
@@ -326,7 +323,7 @@ public class ManagementServiceImpl implements ManagementService {
 
         mongHistoryService.saveMongHistory(saveMong.getId(), MongHistoryCode.SLEEP);
 
-        return SleepMongResDto.builder()
+        return SleepingMongResDto.builder()
                 .mongId(saveMong.getId())
                 .isSleeping(saveMong.getIsSleeping())
                 .build();
@@ -526,7 +523,7 @@ public class ManagementServiceImpl implements ManagementService {
                 .weight(mongUtil.statusToPercent(saveMong.getWeight(), saveMong.getGrade()))
                 .strength(mongUtil.statusToPercent(saveMong.getStrength(), saveMong.getGrade()))
                 .satiety(mongUtil.statusToPercent(saveMong.getSatiety(), saveMong.getGrade()))
-                .health(mongUtil.statusToPercent(saveMong.getHealthy(), saveMong.getGrade()))
+                .healthy(mongUtil.statusToPercent(saveMong.getHealthy(), saveMong.getGrade()))
                 .sleep(mongUtil.statusToPercent(saveMong.getSleep(), saveMong.getGrade()))
                 .exp(mongUtil.statusToPercent((double) saveMong.getExp(), saveMong.getGrade()))
                 .build();

@@ -10,7 +10,7 @@ public record FindMongResDto(
         String name,
         String mongCode,
         Double weight,
-        Double health,
+        Double healthy,
         Double satiety,
         Double strength,
         Double sleep,

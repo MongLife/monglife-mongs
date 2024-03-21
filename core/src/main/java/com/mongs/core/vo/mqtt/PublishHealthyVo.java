@@ -5,6 +5,6 @@ import lombok.Builder;
 @Builder
 public record PublishHealthyVo(
         Long mongId,
-        Double health
+        Double healthy
 ) {
 }

@@ -144,7 +144,7 @@ public class TaskActiveService {
 
         notificationService.publishHealthy(saveMong.getAccountId(), PublishHealthyVo.builder()
                 .mongId(mong.getId())
-                .health(mongUtil.stateToPercent(saveMong.getHealthy(), saveMong.getGrade()))
+                .healthy(mongUtil.stateToPercent(saveMong.getHealthy(), saveMong.getGrade()))
                 .build());
 
         return saveMong.getHealthy();

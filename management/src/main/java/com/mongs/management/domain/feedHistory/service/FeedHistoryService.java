@@ -7,6 +7,6 @@ import java.util.List;
 
 @Service
 public interface FeedHistoryService {
-    List<FindFeedHistoryVo> findFeedHistory(Long mongId, Long version);
+    List<FindFeedHistoryVo> findFeedHistory(Long mongId);
 
 }

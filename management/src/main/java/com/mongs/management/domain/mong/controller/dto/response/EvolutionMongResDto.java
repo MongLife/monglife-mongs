@@ -9,7 +9,7 @@ public record EvolutionMongResDto(
         Double weight,
         Double strength,
         Double satiety,
-        Double health,
+        Double healthy,
         Double sleep,
         String shiftCode,
         String stateCode,

@@ -12,7 +12,7 @@ public record PublishCreateVo(
         Double weight,
         Double strength,
         Double satiety,
-        Double health,
+        Double healthy,
         Double sleep,
         Integer poopCount,
         Boolean isSleeping,

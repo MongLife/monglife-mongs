@@ -9,6 +9,4 @@ import java.util.Optional;
 
 public interface FoodCodeRepository extends MongoRepository<FoodCode, String> {
     Optional<FoodCode> findByCode(String code);
-    @Query("{ 'version': { '$lte' : ?0 } }")
-    List<FoodCode> findByVersion(Long version);
 }

@@ -72,13 +72,13 @@ public class MongController {
             @AuthenticationPrincipal PassportDetail passportDetail
     ) {
         Long accountId = passportDetail.getId();
-        String feedCode = feedMongReqDto.feedCode();
+        String foodCode = feedMongReqDto.foodCode();
 
-        return ResponseEntity.status(HttpStatus.ACCEPTED).body(managementService.feedMong(accountId, mongId, feedCode));
+        return ResponseEntity.status(HttpStatus.ACCEPTED).body(managementService.feedMong(accountId, mongId, foodCode));
     }
 
     @PutMapping("/sleep/{mongId}")
-    public ResponseEntity<SleepMongResDto> sleepingMong(
+    public ResponseEntity<SleepingMongResDto> sleepingMong(
             @PathVariable("mongId") Long mongId,
             @AuthenticationPrincipal PassportDetail passportDetail
     ) {

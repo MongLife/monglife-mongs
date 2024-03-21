@@ -6,9 +6,9 @@ import lombok.Builder;
 public record FeedMongResDto(
         Long mongId,
         Double weight,
-        Double health,
-        Double satiety,
         Double strength,
+        Double satiety,
+        Double healthy,
         Double sleep,
         Double exp
 ) {
