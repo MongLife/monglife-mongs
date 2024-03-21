@@ -5,6 +5,6 @@ import lombok.Builder;
 @Builder
 public record PublishAttendanceVo(
         Long mongId,
-        Integer exp
+        Double exp
 ) {
 }

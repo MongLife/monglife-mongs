@@ -8,12 +8,14 @@ import java.util.List;
 @Builder
 public record FindMapCodeResDto(
         String code,
-        String name
+        String name,
+        Long version
 ) {
     public static FindMapCodeResDto of(MapCode mapCode) {
         return FindMapCodeResDto.builder()
                 .code(mapCode.code())
                 .name(mapCode.name())
+                .version(mapCode.version())
                 .build();
     }
 

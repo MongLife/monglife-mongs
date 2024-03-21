@@ -6,6 +6,6 @@ import lombok.Builder;
 public record FindMemberResDto(
         Long accountId,
         Integer maxSlot,
-        Integer startPoint
+        Integer starPoint
 ) {
 }

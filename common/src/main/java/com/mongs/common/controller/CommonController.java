@@ -1,7 +1,9 @@
 package com.mongs.common.controller;
 
 import com.mongs.common.controller.dto.response.FindCodeResDto;
+import com.mongs.common.controller.dto.response.FindVersionResDto;
 import com.mongs.common.service.CommonService;
+import com.mongs.common.vo.FindVersionVo;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -13,35 +15,25 @@ public class CommonController {
 
     private final CommonService commonService;
 
-    @GetMapping("")
-    public ResponseEntity<FindCodeResDto> findCode(@RequestParam("version") Long version) {
+    @GetMapping("/version")
+    public ResponseEntity<FindVersionResDto> findNewestVersion() {
+
+        FindVersionVo findVersionVo = commonService.findVersion();
+
+        return ResponseEntity.ok().body(FindVersionResDto.builder()
+                .version(findVersionVo.version())
+                .createdAt(findVersionVo.createdAt())
+                .build());
+    }
+
+    @GetMapping("/code")
+    public ResponseEntity<FindCodeResDto> findCode(@RequestParam(value = "version", defaultValue = "0") Long version) {
         return ResponseEntity.ok().body(
                 FindCodeResDto.builder()
-                        .version(commonService.codeVersionCheckAndNewestCode(version))
-                        .mapCodeList(commonService.findMapCode())
-                        .mongCodeList(commonService.findMongCode())
-                        .feedbackCodeList(commonService.findFeedbackCode())
-                        .build()
-        );
-    }
-
-    @GetMapping("/map")
-    public ResponseEntity<Object> findMapCode() {
-        return ResponseEntity.ok().body(commonService.findMapCode());
-    }
-
-    @GetMapping("/mong")
-    public ResponseEntity<Object> findMongCode() {
-        return ResponseEntity.ok().body(commonService.findMongCode());
-    }
-
-    @GetMapping("/food")
-    public ResponseEntity<Object> findFoodCode() {
-        return ResponseEntity.ok().body(commonService.findFoodCode());
-    }
-
-    @GetMapping("/feedback")
-    public ResponseEntity<Object> findFeedbackCode() {
-        return ResponseEntity.ok().body(commonService.findFeedbackCode());
+                        .mapCodeList(commonService.findMapCode(version))
+                        .mongCodeList(commonService.findMongCode(version))
+                        .foodCodeList(commonService.findFoodCode(version))
+                        .feedbackCodeList(commonService.findFeedbackCode(version))
+                        .build());
     }
 }

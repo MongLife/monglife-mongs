@@ -7,6 +7,6 @@ import lombok.Builder;
 public record RegisterMemberResDto(
         Long accountId,
         Integer maxSlot,
-        Integer startPoint
+        Integer starPoint
 ) {
 }

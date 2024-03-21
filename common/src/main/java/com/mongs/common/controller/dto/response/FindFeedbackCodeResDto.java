@@ -9,13 +9,15 @@ import java.util.List;
 public record FindFeedbackCodeResDto(
         String code,
         String groupCode,
-        String message
+        String message,
+        Long version
 ) {
     public static FindFeedbackCodeResDto of(FeedbackCode feedbackCode) {
         return FindFeedbackCodeResDto.builder()
                 .code(feedbackCode.code())
                 .groupCode(feedbackCode.groupCode())
                 .message(feedbackCode.message())
+                .version(feedbackCode.version())
                 .build();
     }
 

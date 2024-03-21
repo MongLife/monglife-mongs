@@ -6,6 +6,6 @@ import lombok.Builder;
 public record RegisterMemberVo(
         Long accountId,
         Integer maxSlot,
-        Integer startPoint
+        Integer starPoint
 ) {
 }

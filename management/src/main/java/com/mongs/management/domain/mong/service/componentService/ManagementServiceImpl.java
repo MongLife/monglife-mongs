@@ -281,6 +281,7 @@ public class ManagementServiceImpl implements ManagementService {
                 .health(mongUtil.statusToPercent(saveMong.getHealthy(), saveMong.getGrade()))
                 .sleep(mongUtil.statusToPercent(saveMong.getSleep(), saveMong.getGrade()))
                 .exp(mongUtil.statusToPercent((double) saveMong.getExp(), saveMong.getGrade()))
+                .payPoint(saveMong.getPayPoint())
                 .build());
 
         mongHistoryService.saveMongHistory(saveMong.getId(), MongHistoryCode.FEED);

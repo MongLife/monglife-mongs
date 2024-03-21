@@ -29,7 +29,7 @@ public class MemberController {
         return ResponseEntity.ok().body(FindMemberResDto.builder()
                 .accountId(findMemberVo.accountId())
                 .maxSlot(findMemberVo.maxSlot())
-                .startPoint(findMemberVo.startPoint())
+                .starPoint(findMemberVo.starPoint())
                 .build());
     }
 
@@ -39,7 +39,7 @@ public class MemberController {
         return ResponseEntity.ok().body(RegisterMemberResDto.builder()
                 .accountId(registerMemberVo.accountId())
                 .maxSlot(registerMemberVo.maxSlot())
-                .startPoint(registerMemberVo.startPoint())
+                .starPoint(registerMemberVo.starPoint())
                 .build());
     }
 
@@ -55,7 +55,7 @@ public class MemberController {
         return ResponseEntity.ok().body(ModifySlotCountResDto.builder()
                 .accountId(modifySlotCountVo.accountId())
                 .maxSlot(modifySlotCountVo.maxSlot())
-                .startPoint(modifySlotCountVo.startPoint())
+                .starPoint(modifySlotCountVo.starPoint())
                 .build());
     }
 }

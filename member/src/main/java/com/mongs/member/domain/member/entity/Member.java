@@ -22,7 +22,7 @@ public class Member extends BaseTimeEntity {
     private Integer maxSlot = 1;
     @Column(nullable = false)
     @Builder.Default
-    private Integer startPoint = 0;
+    private Integer starPoint = 0;
     @Column(nullable = false)
     @Builder.Default
     private Boolean isDeleted = false;

@@ -8,12 +8,14 @@ import java.util.List;
 @Builder
 public record FindMongCodeResDto(
         String code,
-        String name
+        String name,
+        Long version
 ) {
     public static FindMongCodeResDto of(MongCode mongCode) {
         return FindMongCodeResDto.builder()
                 .code(mongCode.code())
                 .name(mongCode.name())
+                .version(mongCode.version())
                 .build();
     }
 

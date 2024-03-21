@@ -24,7 +24,7 @@ public class MemberService {
         return FindMemberVo.builder()
                 .accountId(member.getAccountId())
                 .maxSlot(member.getMaxSlot())
-                .startPoint(member.getStartPoint())
+                .starPoint(member.getStarPoint())
                 .build();
     }
 
@@ -37,7 +37,7 @@ public class MemberService {
         return RegisterMemberVo.builder()
                 .accountId(savedMember.getAccountId())
                 .maxSlot(savedMember.getMaxSlot())
-                .startPoint(savedMember.getStartPoint())
+                .starPoint(savedMember.getStarPoint())
                 .build();
     }
 
@@ -54,7 +54,7 @@ public class MemberService {
         return ModifySlotCountVo.builder()
                 .accountId(modifiedMember.getAccountId())
                 .maxSlot(modifiedMember.getMaxSlot())
-                .startPoint(modifiedMember.getStartPoint())
+                .starPoint(modifiedMember.getStarPoint())
                 .build();
     }
 }

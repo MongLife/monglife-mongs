@@ -10,14 +10,16 @@ public record FindFoodCodeResDto(
         String code,
         String name,
         String groupCode,
-        Integer point
+        Integer price,
+        Long version
 ) {
-    public static FindFoodCodeResDto of(FoodCode mongCode) {
+    public static FindFoodCodeResDto of(FoodCode foodCode) {
         return FindFoodCodeResDto.builder()
-                .code(mongCode.code())
-                .name(mongCode.name())
-                .groupCode(mongCode.groupCode())
-                .point(mongCode.price())
+                .code(foodCode.code())
+                .name(foodCode.name())
+                .groupCode(foodCode.groupCode())
+                .price(foodCode.price())
+                .version(foodCode.version())
                 .build();
     }
 

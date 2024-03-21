@@ -6,6 +6,6 @@ import lombok.Builder;
 public record ModifySlotCountVo(
         Long accountId,
         Integer maxSlot,
-        Integer startPoint
+        Integer starPoint
 ) {
 }

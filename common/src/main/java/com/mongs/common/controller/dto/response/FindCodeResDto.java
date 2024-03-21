@@ -6,9 +6,9 @@ import java.util.List;
 
 @Builder
 public record FindCodeResDto(
-        Long version,
         List<FindMapCodeResDto> mapCodeList,
         List<FindMongCodeResDto> mongCodeList,
+        List<FindFoodCodeResDto> foodCodeList,
         List<FindFeedbackCodeResDto> feedbackCodeList
 ) {
 }
