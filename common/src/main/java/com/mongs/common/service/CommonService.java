@@ -10,10 +10,12 @@ import com.mongs.common.exception.NotFoundVersionException;
 import com.mongs.common.repository.*;
 import com.mongs.common.vo.FindVersionVo;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class CommonService {
@@ -24,29 +26,39 @@ public class CommonService {
     private final FoodCodeRepository foodCodeRepository;
     private final FeedbackCodeRepository feedbackCodeRepository;
 
-    public FindVersionVo findVersion() {
-        CodeVersion codeVersion = codeVersionRepository.findTopByOrderByCreatedAtDesc()
+    public FindVersionVo findVersion(String buildVersion) {
+        CodeVersion codeVersion = codeVersionRepository.findTopByOrderByBuildVersionDesc()
                 .orElseThrow(() -> new NotFoundVersionException(CommonErrorCode.NOT_FOUND_VERSION));
 
+        int clientVersionFirst = Integer.parseInt(buildVersion.split("\\.")[0]);
+        int serverVersionFirst = Integer.parseInt(codeVersion.buildVersion().split("\\.")[0]);
+        boolean mustUpdateApp = clientVersionFirst < serverVersionFirst;
+
+        int clientVersionSecond = Integer.parseInt(buildVersion.split("\\.")[1]);
+        int serverVersionSecond = Integer.parseInt(codeVersion.buildVersion().split("\\.")[1]);
+        boolean mustUpdateCode = clientVersionSecond < serverVersionSecond;
+
         return FindVersionVo.builder()
-                .version(codeVersion.version())
+                .newestBuildVersion(codeVersion.buildVersion())
                 .createdAt(codeVersion.createdAt())
+                .mustUpdateApp(mustUpdateApp)
+                .mustUpdateCode(mustUpdateCode || mustUpdateApp)
                 .build();
     }
 
-    public List<FindMapCodeResDto> findMapCode(Long version) {
-        return FindMapCodeResDto.toList(mapCodeRepository.findByVersionIsAfter(version));
+    public List<FindMapCodeResDto> findMapCode() {
+        return FindMapCodeResDto.toList(mapCodeRepository.findAll());
     }
 
-    public List<FindMongCodeResDto> findMongCode(Long version) {
-        return FindMongCodeResDto.toList(mongCodeRepository.findByVersionIsAfter(version));
+    public List<FindMongCodeResDto> findMongCode() {
+        return FindMongCodeResDto.toList(mongCodeRepository.findAll());
     }
 
-    public List<FindFoodCodeResDto> findFoodCode(Long version) {
-        return FindFoodCodeResDto.toList(foodCodeRepository.findByVersionIsAfter(version));
+    public List<FindFoodCodeResDto> findFoodCode() {
+        return FindFoodCodeResDto.toList(foodCodeRepository.findAll());
     }
 
-    public List<FindFeedbackCodeResDto> findFeedbackCode(Long version) {
-        return FindFeedbackCodeResDto.toList(feedbackCodeRepository.findByVersionIsAfter(version));
+    public List<FindFeedbackCodeResDto> findFeedbackCode() {
+        return FindFeedbackCodeResDto.toList(feedbackCodeRepository.findAll());
     }
 }

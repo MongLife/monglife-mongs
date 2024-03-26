@@ -75,11 +75,11 @@ public class Mong extends BaseTimeEntity {
     @Builder.Default
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
-    private MongShift shift = MongShift.EMPTY;
+    private MongShift shift = MongShift.NORMAL;
     @Builder.Default
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
-    private MongState state = MongState.EMPTY;
+    private MongState state = MongState.NORMAL;
     @Builder.Default
     @Column(nullable = false)
     private Integer evolutionPoint = 0;

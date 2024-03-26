@@ -24,6 +24,18 @@ public class NotificationServiceImpl implements NotificationService {
     private String TOPIC_FILTER;
 
     @Override
+    public void publishGraduationReady(Long accountId, PublishGraduationReadyVo publishGraduationReadyVo) {
+        try {
+            String data = objectMapper.writeValueAsString(
+                    BasicPublish.builder()
+                            .code(PublishCode.MONG_GRADUATION_READY)
+                            .data(publishGraduationReadyVo)
+                            .build());
+            mqttClient.sendToMqtt(TOPIC_FILTER + accountId, data);
+        } catch (JsonProcessingException ignored) {}
+    }
+
+    @Override
     public void publishEvolutionReady(Long accountId, PublishEvolutionReadyVo publishEvolutionReadyVo) {
         try {
             String data = objectMapper.writeValueAsString(

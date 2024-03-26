@@ -109,7 +109,7 @@ public class MongController {
 
     // 아에 졸업 시키고 삭제 시키는 함수
     @PutMapping("/graduation/{mongId}")
-    public ResponseEntity<GraduateMongResDto> graduateMong(
+    public ResponseEntity<GraduateReadyMongResDto> graduateMong(
             @PathVariable("mongId") Long mongId,
             @AuthenticationPrincipal PassportDetail passportDetail
     ) {

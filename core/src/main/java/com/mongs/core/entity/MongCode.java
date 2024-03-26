@@ -10,6 +10,6 @@ public record MongCode(
         @Id
         String code,
         String name,
-        Long version
+        String buildVersion
 ) {
 }

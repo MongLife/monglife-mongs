@@ -27,17 +27,17 @@ public class CodeInitializer implements ApplicationRunner {
     @Override
     public void run(ApplicationArguments args) {
 
-        Long version = 1L;
+        String buildVersion = "1.0.0";
         codeVersionRepository.deleteAll();
         codeVersionRepository.save(CodeVersion.builder()
-                .version(version)
+                .buildVersion(buildVersion)
                 .createdAt(LocalDateTime.now())
                 .build());
 
         foodCodeRepository.deleteAll();
         Arrays.stream(InitFoodCodeData.values()).forEach(foodCode -> {
             foodCodeRepository.save(FoodCode.builder()
-                    .version(version)
+                    .buildVersion(buildVersion)
                     .code(foodCode.getCode())
                     .name(foodCode.getName())
                     .groupCode(foodCode.getGroupCode())
@@ -53,7 +53,7 @@ public class CodeInitializer implements ApplicationRunner {
         mapCodeRepository.deleteAll();
         Arrays.stream(InitMapCodeData.values()).forEach(mapCode -> {
             mapCodeRepository.save(MapCode.builder()
-                    .version(version)
+                    .buildVersion(buildVersion)
                     .code(mapCode.getCode())
                     .name(mapCode.getName())
                     .build());
@@ -62,7 +62,7 @@ public class CodeInitializer implements ApplicationRunner {
         mongCodeRepository.deleteAll();
         Arrays.stream(InitMongCodeData.values()).forEach(mongCode -> {
             mongCodeRepository.save(MongCode.builder()
-                    .version(version)
+                    .buildVersion(buildVersion)
                     .code(mongCode.getCode())
                     .name(mongCode.getName())
                     .build());
@@ -71,7 +71,7 @@ public class CodeInitializer implements ApplicationRunner {
         feedbackCodeRepository.deleteAll();
         Arrays.stream(InitFeedbackCodeData.values()).forEach(feedbackCode -> {
             feedbackCodeRepository.save(FeedbackCode.builder()
-                    .version(version)
+                    .buildVersion(buildVersion)
                     .code(feedbackCode.getCode())
                     .groupCode(feedbackCode.getGroupCode())
                     .message(feedbackCode.getMessage())

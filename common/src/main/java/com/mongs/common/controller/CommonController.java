@@ -16,24 +16,25 @@ public class CommonController {
     private final CommonService commonService;
 
     @GetMapping("/version")
-    public ResponseEntity<FindVersionResDto> findNewestVersion() {
-
-        FindVersionVo findVersionVo = commonService.findVersion();
+    public ResponseEntity<FindVersionResDto> findNewestVersion(@RequestParam(value = "buildVersion", defaultValue = "0.0.0") String buildVersion) {
+        FindVersionVo findVersionVo = commonService.findVersion(buildVersion);
 
         return ResponseEntity.ok().body(FindVersionResDto.builder()
-                .version(findVersionVo.version())
+                .newestBuildVersion(findVersionVo.newestBuildVersion())
                 .createdAt(findVersionVo.createdAt())
+                .mustUpdateApp(findVersionVo.mustUpdateApp())
+                .mustUpdateCode(findVersionVo.mustUpdateCode())
                 .build());
     }
 
     @GetMapping("/code")
-    public ResponseEntity<FindCodeResDto> findCode(@RequestParam(value = "version", defaultValue = "0") Long version) {
+    public ResponseEntity<FindCodeResDto> findCode() {
         return ResponseEntity.ok().body(
                 FindCodeResDto.builder()
-                        .mapCodeList(commonService.findMapCode(version))
-                        .mongCodeList(commonService.findMongCode(version))
-                        .foodCodeList(commonService.findFoodCode(version))
-                        .feedbackCodeList(commonService.findFeedbackCode(version))
+                        .mapCodeList(commonService.findMapCode())
+                        .mongCodeList(commonService.findMongCode())
+                        .foodCodeList(commonService.findFoodCode())
+                        .feedbackCodeList(commonService.findFeedbackCode())
                         .build());
     }
 }

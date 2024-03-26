@@ -83,9 +83,9 @@ public class LifecycleServiceImpl implements LifecycleService {
     }
 
     @Override
-    public Optional<GraduationMongEventResDto> graduateMongEvent(Long mongId) {
+    public Optional<GraduationMongEventResDto> graduateReadyMongEvent(Long mongId) {
         try {
-            ResponseEntity<GraduationMongEventResDto> response = lifecycleClient.graduationMongEvent(mongId);
+            ResponseEntity<GraduationMongEventResDto> response = lifecycleClient.graduationReadyMongEvent(mongId);
 
             if (response.getStatusCode().is2xxSuccessful()) {
                 return Optional.ofNullable(response.getBody());
@@ -99,9 +99,9 @@ public class LifecycleServiceImpl implements LifecycleService {
     }
 
     @Override
-    public Optional<EvolutionMongEventResDto> evolutionMongEvent(Long mongId) {
+    public Optional<EvolutionMongEventResDto> eggEvolutionMongEvent(Long mongId) {
         try {
-            ResponseEntity<EvolutionMongEventResDto> response = lifecycleClient.evolutionMongEvent(mongId);
+            ResponseEntity<EvolutionMongEventResDto> response = lifecycleClient.eggEvolutionMongEvent(mongId);
 
             if (response.getStatusCode().is2xxSuccessful()) {
                 return Optional.ofNullable(response.getBody());

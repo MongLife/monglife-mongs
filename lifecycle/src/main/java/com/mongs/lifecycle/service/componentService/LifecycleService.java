@@ -28,7 +28,7 @@ public class LifecycleService {
         exec(mongId, startList, restartList, pauseList, stopList);
     }
 
-    public void graduationEvent(Long mongId, Long accountId) {
+    public void graduationReadyEvent(Long mongId, Long accountId) {
         if (mongRepository.findByIdAndAccountIdAndIsActiveTrue(mongId, accountId).isEmpty()) {
             throw new EventTaskException(LifecycleErrorCode.NOT_FOUND_MONG);
         }
@@ -36,7 +36,7 @@ public class LifecycleService {
         taskService.stopAllTask(mongId);
     }
 
-    public void evolutionEvent(Long mongId, Long accountId) {
+    public void eggEvolutionEvent(Long mongId, Long accountId) {
         if (mongRepository.findByIdAndAccountIdAndIsActiveTrue(mongId, accountId).isEmpty()) {
             throw new EventTaskException(LifecycleErrorCode.NOT_FOUND_MONG);
         }
@@ -55,13 +55,15 @@ public class LifecycleService {
 
         List<TaskCode> startList = List.of(TaskCode.SLEEP_UP);
         List<TaskCode> restartList = List.of();
-        List<TaskCode> pauseList = List.of();
+        List<TaskCode> pauseList;
         List<TaskCode> stopList;
 
         if (mong.getShift().equals(MongShift.GRADUATE_READY)) {
             stopList = List.of();
+            pauseList = List.of();
         } else {
-            stopList = List.of(TaskCode.WEIGHT_DOWN, TaskCode.HEALTHY_DOWN, TaskCode.STRENGTH_DOWN, TaskCode.SATIETY_DOWN, TaskCode.SLEEP_DOWN, TaskCode.POOP);
+            stopList = List.of(TaskCode.WEIGHT_DOWN, TaskCode.HEALTHY_DOWN, TaskCode.STRENGTH_DOWN, TaskCode.SATIETY_DOWN, TaskCode.SLEEP_DOWN);
+            pauseList = List.of(TaskCode.POOP);
         }
 
         exec(mongId, startList, restartList, pauseList, stopList);
@@ -72,14 +74,16 @@ public class LifecycleService {
                 .orElseThrow(() -> new EventTaskException(LifecycleErrorCode.NOT_FOUND_MONG));
 
         List<TaskCode> startList;
-        List<TaskCode> restartList = List.of();
+        List<TaskCode> restartList;
         List<TaskCode> pauseList = List.of();
         List<TaskCode> stopList = List.of(TaskCode.SLEEP_UP);
 
         if (mong.getShift().equals(MongShift.GRADUATE_READY)) {
             startList = List.of();
+            restartList = List.of();
         } else {
-            startList = List.of(TaskCode.WEIGHT_DOWN, TaskCode.HEALTHY_DOWN, TaskCode.STRENGTH_DOWN, TaskCode.SATIETY_DOWN, TaskCode.SLEEP_DOWN, TaskCode.POOP);
+            startList = List.of(TaskCode.WEIGHT_DOWN, TaskCode.HEALTHY_DOWN, TaskCode.STRENGTH_DOWN, TaskCode.SATIETY_DOWN, TaskCode.SLEEP_DOWN);
+            restartList = List.of(TaskCode.POOP);
         }
         exec(mongId, startList, restartList, pauseList, stopList);
     }

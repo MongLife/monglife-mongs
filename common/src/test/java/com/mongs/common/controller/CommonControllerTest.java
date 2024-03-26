@@ -67,9 +67,8 @@ class CommonControllerTest {
     @DisplayName("맵 코드 값 리스트를 반환한다.")
     void findMap() throws Exception {
         // given
-        Long version = 1L;
 
-        when(commonService.findMapCode(version))
+        when(commonService.findMapCode())
                 .thenReturn(FindMapCodeResDto.toList(mapCodeList));
 
         // when
@@ -92,9 +91,8 @@ class CommonControllerTest {
     @DisplayName("몽 코드 값 리스트를 반환한다.")
     void findMong() throws Exception {
         // given
-        Long version = 1L;
 
-        when(commonService.findMongCode(version))
+        when(commonService.findMongCode())
                 .thenReturn(FindMongCodeResDto.toList(mongCodeList));
 
         // when
@@ -117,9 +115,8 @@ class CommonControllerTest {
     @DisplayName("음식 코드 값 리스트를 반환한다.")
     void findFood() throws Exception {
         // given
-        Long version = 1L;
 
-        when(commonService.findFoodCode(version))
+        when(commonService.findFoodCode())
                 .thenReturn(FindFoodCodeResDto.toList(foodCodeList));
 
         // when

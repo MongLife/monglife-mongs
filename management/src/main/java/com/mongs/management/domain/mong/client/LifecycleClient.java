@@ -17,12 +17,10 @@ public interface LifecycleClient {
     ResponseEntity<SleepMongEventResDto> sleepMongEvent(@PathVariable("mongId") Long mongId);
     @PutMapping("/lifecycle/wakeup/{mongId}")
     ResponseEntity<WakeupMongEventResDto> wakeupMongEvent(@PathVariable("mongId") Long mongId);
-    @DeleteMapping("/lifecycle/evolution/{mongId}")
-    ResponseEntity<EvolutionReadyMongEventResDto> evolutionReadyMongEvent(@PathVariable("mongId") Long mongId);
     @PutMapping("/lifecycle/evolution/{mongId}")
-    ResponseEntity<EvolutionMongEventResDto> evolutionMongEvent(@PathVariable("mongId") Long mongId);
+    ResponseEntity<EvolutionMongEventResDto> eggEvolutionMongEvent(@PathVariable("mongId") Long mongId);
     @DeleteMapping("/lifecycle/graduation/{mongId}")
-    ResponseEntity<GraduationMongEventResDto> graduationMongEvent(@PathVariable("mongId") Long mongId);
+    ResponseEntity<GraduationMongEventResDto> graduationReadyMongEvent(@PathVariable("mongId") Long mongId);
     @DeleteMapping("/lifecycle/delete/{mongId}")
     ResponseEntity<DeleteMongEventResDto> deleteMongEvent(@PathVariable("mongId") Long mongId);
 }

@@ -44,7 +44,6 @@ class CommonServiceTest {
     @DisplayName("맵 코드 값을 반환한다.")
     void findMapCode() {
         // given
-        Long version = 1L;
 
         List<MapCode> mapCodeList = Arrays.stream(TestMapCode.values())
                 .map(testMapCode -> MapCode.builder()
@@ -57,7 +56,7 @@ class CommonServiceTest {
                 .thenReturn(mapCodeList);
 
         // when
-        List<FindMapCodeResDto> findMapCodeResDtoList = commonService.findMapCode(version);
+        List<FindMapCodeResDto> findMapCodeResDtoList = commonService.findMapCode();
 
         Set<String> expected1 =
                 Arrays.stream(TestMapCode.values())
@@ -93,7 +92,7 @@ class CommonServiceTest {
                 .thenReturn(mongCodeList);
 
         // when
-        List<FindMongCodeResDto> findMongCodeResDtoList = commonService.findMongCode(version);
+        List<FindMongCodeResDto> findMongCodeResDtoList = commonService.findMongCode();
 
         Set<String> expected1 =
                 Arrays.stream(TestMongCode.values())
@@ -129,7 +128,7 @@ class CommonServiceTest {
                 .thenReturn(foodCodeList);
 
         // when
-        List<FindFoodCodeResDto> findFoodCodeResDtoList = commonService.findFoodCode(version);
+        List<FindFoodCodeResDto> findFoodCodeResDtoList = commonService.findFoodCode();
 
         Set<String> expected1 =
                 Arrays.stream(TestFoodCode.values())

@@ -6,7 +6,9 @@ import java.time.LocalDateTime;
 
 @Builder
 public record FindVersionVo(
-        Long version,
-        LocalDateTime createdAt
+        String newestBuildVersion,
+        LocalDateTime createdAt,
+        Boolean mustUpdateApp,
+        Boolean mustUpdateCode
 ) {
 }

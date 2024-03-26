@@ -28,6 +28,7 @@ public class AuthController {
     public ResponseEntity<LoginResDto> login(@RequestBody @Validated LoginReqDto loginReqDto) {
         LoginVo loginVo = authService.login(loginReqDto.deviceId(), loginReqDto.email(), loginReqDto.name());
         return ResponseEntity.ok().body(LoginResDto.builder()
+                .accountId(loginVo.accountId())
                 .accessToken(loginVo.accessToken())
                 .refreshToken(loginVo.refreshToken())
                 .build());

@@ -11,6 +11,6 @@ public record FeedbackCode(
         String code,
         String groupCode,
         String message,
-        Long version
+        String buildVersion
 ) {
 }

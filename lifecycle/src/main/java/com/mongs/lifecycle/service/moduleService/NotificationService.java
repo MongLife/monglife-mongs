@@ -69,7 +69,7 @@ public class NotificationService {
         try {
             String data = objectMapper.writeValueAsString(
                     BasicPublish.builder()
-                            .code(PublishCode.MONG_HEALTH)
+                            .code(PublishCode.MONG_HEALTHY)
                             .data(publishHealthyVo)
                             .build());
             mqttClient.sendToMqtt(TOPIC_FILTER + accountId, data);

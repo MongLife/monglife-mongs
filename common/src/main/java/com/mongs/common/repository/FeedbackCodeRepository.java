@@ -6,5 +6,4 @@ import org.springframework.data.mongodb.repository.MongoRepository;
 import java.util.List;
 
 public interface FeedbackCodeRepository extends MongoRepository<FeedbackCode, String> {
-    List<FeedbackCode> findByVersionIsAfter(Long version);
 }

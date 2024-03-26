@@ -7,7 +7,9 @@ import java.util.List;
 
 @Builder
 public record FindVersionResDto(
-        Long version,
-        LocalDateTime createdAt
+        String newestBuildVersion,
+        LocalDateTime createdAt,
+        Boolean mustUpdateApp,
+        Boolean mustUpdateCode
 ) {
 }

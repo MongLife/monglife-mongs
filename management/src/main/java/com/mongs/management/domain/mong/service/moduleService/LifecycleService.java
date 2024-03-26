@@ -9,6 +9,6 @@ public interface LifecycleService {
     Optional<DeleteMongEventResDto> deleteMongEvent(Long mongId);
     Optional<SleepMongEventResDto> sleepMongEvent(Long mongId);
     Optional<WakeupMongEventResDto> wakeUpMongEvent(Long mongId);
-    Optional<GraduationMongEventResDto> graduateMongEvent(Long mongId);
-    Optional<EvolutionMongEventResDto> evolutionMongEvent(Long mongId);
+    Optional<GraduationMongEventResDto> graduateReadyMongEvent(Long mongId);
+    Optional<EvolutionMongEventResDto> eggEvolutionMongEvent(Long mongId);
 }

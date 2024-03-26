@@ -14,6 +14,7 @@ public interface NotificationService {
     void publishPoop(Long accountId, PublishPoopVo publishPoopVo);
     void publishTraining(Long accountId, PublishTrainingVo publishTrainingVo);
     void publishGraduation(Long accountId, PublishGraduationVo publishGraduationVo);
+    void publishGraduationReady(Long accountId, PublishGraduationReadyVo publishGraduationReadyVo);
     void publishEvolution(Long accountId, PublishEvolutionVo publishEvolutionVo);
     void publishEvolutionReady(Long accountId, PublishEvolutionReadyVo publishEvolutionReadyVo);
     void publishState(Long accountId, PublishStateVo publishStateVo);

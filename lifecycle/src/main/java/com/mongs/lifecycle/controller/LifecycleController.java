@@ -25,25 +25,25 @@ public class LifecycleController {
     }
 
     @DeleteMapping("/graduation/{mongId}")
-    public ResponseEntity<Object> graduationMongEvent(
+    public ResponseEntity<Object> graduationReadyMongEvent(
             @PathVariable("mongId") Long mongId,
             @AuthenticationPrincipal PassportDetail passportDetail
     ) {
         Long accountId = passportDetail.getId();
-        lifecycleService.graduationEvent(mongId, accountId);
+        lifecycleService.graduationReadyEvent(mongId, accountId);
 
-        return ResponseEntity.ok().body(GraduationMongEventResDto.builder()
+        return ResponseEntity.ok().body(GraduationReadyMongEventResDto.builder()
                 .mongId(mongId)
                 .build());
     }
 
     @PutMapping("/evolution/{mongId}")
-    public ResponseEntity<Object> evolutionMongEvent(
+    public ResponseEntity<Object> eggEvolutionMongEvent(
             @PathVariable("mongId") Long mongId,
             @AuthenticationPrincipal PassportDetail passportDetail
     ) {
         Long accountId = passportDetail.getId();
-        lifecycleService.evolutionEvent(mongId, accountId);
+        lifecycleService.eggEvolutionEvent(mongId, accountId);
 
         return ResponseEntity.ok().body(EvolutionMongEventResDto.builder()
                 .mongId(mongId)

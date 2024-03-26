@@ -10,14 +10,14 @@ public record FindFeedbackCodeResDto(
         String code,
         String groupCode,
         String message,
-        Long version
+        String buildVersion
 ) {
     public static FindFeedbackCodeResDto of(FeedbackCode feedbackCode) {
         return FindFeedbackCodeResDto.builder()
                 .code(feedbackCode.code())
                 .groupCode(feedbackCode.groupCode())
                 .message(feedbackCode.message())
-                .version(feedbackCode.version())
+                .buildVersion(feedbackCode.buildVersion())
                 .build();
     }
 

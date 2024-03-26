@@ -87,6 +87,7 @@ public class AuthService {
                 .build());
 
         return LoginVo.builder()
+                .accountId(account.getId())
                 .accessToken(tokenProvider.generateAccessToken(token.getAccountId(), token.getDeviceId()))
                 .refreshToken(token.getRefreshToken())
                 .build();

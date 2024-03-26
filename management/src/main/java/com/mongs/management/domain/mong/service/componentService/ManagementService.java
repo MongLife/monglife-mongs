@@ -29,6 +29,6 @@ public interface ManagementService {
      * 필요 함수 : 상태 체크, 진화 체크
      */
     TrainingMongResDto trainingMong(Long accountId, Long mongId);
-    GraduateMongResDto graduateMong(Long accountId, Long mongId);
+    GraduateReadyMongResDto graduateMong(Long accountId, Long mongId);
     EvolutionMongResDto evolutionMong(Long accountId, Long mongId);
 }

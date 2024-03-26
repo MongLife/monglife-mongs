@@ -3,7 +3,7 @@ package com.mongs.lifecycle.dto.response;
 import lombok.Builder;
 
 @Builder
-public record GraduationMongEventResDto(
+public record GraduationReadyMongEventResDto(
         Long mongId
 ) {
 }
