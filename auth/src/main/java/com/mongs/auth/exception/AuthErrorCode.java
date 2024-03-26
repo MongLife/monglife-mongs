@@ -8,13 +8,14 @@ import org.springframework.http.HttpStatus;
 @Getter
 @AllArgsConstructor
 public enum AuthErrorCode implements ErrorCode {
-    INVALID_PARAMETER(HttpStatus.BAD_REQUEST, "AUTH-100", "Invalid Parameter"),
-    REFRESH_TOKEN_EXPIRED(HttpStatus.NOT_ACCEPTABLE, "AUTH-101", "RefreshToken Expired"),
-    ACCESS_TOKEN_EXPIRED(HttpStatus.UNAUTHORIZED, "AUTH-102", "AccessToken Expired"),
-    ACCOUNT_NOT_FOUND(HttpStatus.BAD_REQUEST, "AUTH-103", "Not Found Account"),
-    PASSPORT_GENERATE_FAIL(HttpStatus.INTERNAL_SERVER_ERROR, "AUTH-104", "Passport Generate Fail"),
-    INTERNAL_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "AUTH-105", "Internal Server Error"),
-    ACCOUNT_LOG_NOT_FOUND(HttpStatus.INTERNAL_SERVER_ERROR, "AUTH-106", "Not Found Account Log")
+    INTERNAL_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "AUTH-100", "Internal Server Error"),
+    INVALID_PARAMETER(HttpStatus.BAD_REQUEST, "AUTH-101", "Invalid Parameter"),
+    REFRESH_TOKEN_EXPIRED(HttpStatus.NOT_ACCEPTABLE, "AUTH-102", "RefreshToken Expired"),
+    ACCESS_TOKEN_EXPIRED(HttpStatus.UNAUTHORIZED, "AUTH-103", "AccessToken Expired"),
+    ACCOUNT_NOT_FOUND(HttpStatus.BAD_REQUEST, "AUTH-104", "Not Found Account"),
+    ACCOUNT_LOG_NOT_FOUND(HttpStatus.INTERNAL_SERVER_ERROR, "AUTH-105", "Not Found Account Log"),
+    REGISTER_MEMBER_FAIL(HttpStatus.BAD_REQUEST, "AUTH-106", "Can't Make Member"),
+    PASSPORT_GENERATE_FAIL(HttpStatus.INTERNAL_SERVER_ERROR, "AUTH-107", "Passport Generate Fail"),
     ;
 
     private final HttpStatus httpStatus;

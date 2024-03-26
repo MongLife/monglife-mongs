@@ -1,6 +1,6 @@
 package com.mongs.auth.config;
 
-import com.mongs.core.util.TokenProvider;
+import com.mongs.core.utils.TokenProvider;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

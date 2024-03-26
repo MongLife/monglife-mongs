@@ -1,10 +1,9 @@
 package com.mongs.member.domain.member.service;
 
-import com.mongs.core.code.enums.member.SlotCountCode;
-import com.mongs.member.domain.member.dto.response.FindMemberResDto;
-import com.mongs.member.domain.member.dto.response.ModifyMemberResDto;
-import com.mongs.member.domain.member.dto.response.RegisterMemberResDto;
-import com.mongs.member.domain.member.dto.response.RemoveMemberResDto;
+import com.mongs.core.enums.member.SlotCountCode;
+import com.mongs.member.domain.member.service.vo.FindMemberVo;
+import com.mongs.member.domain.member.service.vo.ModifySlotCountVo;
+import com.mongs.member.domain.member.service.vo.RegisterMemberVo;
 import com.mongs.member.domain.member.entity.Member;
 import com.mongs.member.domain.member.exception.MemberErrorCode;
 import com.mongs.member.domain.member.exception.NotFoundMemberException;
@@ -18,49 +17,44 @@ public class MemberService {
 
     private final MemberRepository memberRepository;
 
-    public FindMemberResDto findMember(Long accountId) {
+    public FindMemberVo findMember(Long accountId) {
         Member member = memberRepository.findByAccountIdAndIsDeletedIsFalse(accountId)
                 .orElseThrow(() -> new NotFoundMemberException(MemberErrorCode.NOT_FOUND_MEMBER));
 
-        return FindMemberResDto.of(member);
+        return FindMemberVo.builder()
+                .accountId(member.getAccountId())
+                .maxSlot(member.getMaxSlot())
+                .starPoint(member.getStarPoint())
+                .build();
     }
 
-    public RegisterMemberResDto registerMember(Long accountId) {
+    public RegisterMemberVo registerMember(Long accountId) {
         Member savedMember = memberRepository.findByAccountIdAndIsDeletedIsFalse(accountId)
                 .orElseGet(() -> memberRepository.save(Member.builder()
                         .accountId(accountId)
                         .build()));
 
-        return RegisterMemberResDto.of(savedMember);
+        return RegisterMemberVo.builder()
+                .accountId(savedMember.getAccountId())
+                .maxSlot(savedMember.getMaxSlot())
+                .starPoint(savedMember.getStarPoint())
+                .build();
     }
 
-    public ModifyMemberResDto modifySlotCount(Long accountId, SlotCountCode slotCountCode) {
-        int slotCount = 0;
-
-        switch (slotCountCode) {
-            case NORMAL -> slotCount = 1;
-            case SPECIAL -> slotCount = 3;
-            case ADMIN -> slotCount = 10;
-        }
-
+    public ModifySlotCountVo modifySlotCount(Long accountId, SlotCountCode slotCountCode) {
         Member member = memberRepository.findByAccountIdAndIsDeletedIsFalse(accountId)
                 .orElseThrow(() -> new NotFoundMemberException(MemberErrorCode.NOT_FOUND_MEMBER));
+
+        int slotCount = slotCountCode.getCount();
 
         Member modifiedMember = memberRepository.save(member.toBuilder()
                 .maxSlot(slotCount)
                 .build());
 
-        return ModifyMemberResDto.of(modifiedMember);
-    }
-
-    public RemoveMemberResDto removeMember(Long accountId) {
-        Member member = memberRepository.findByAccountIdAndIsDeletedIsFalse(accountId)
-                .orElseThrow(() -> new NotFoundMemberException(MemberErrorCode.NOT_FOUND_MEMBER));
-
-        Member deletedMember = memberRepository.save(member.toBuilder()
-                .isDeleted(true)
-                .build());
-
-        return RemoveMemberResDto.of(deletedMember);
+        return ModifySlotCountVo.builder()
+                .accountId(modifiedMember.getAccountId())
+                .maxSlot(modifiedMember.getMaxSlot())
+                .starPoint(modifiedMember.getStarPoint())
+                .build();
     }
 }

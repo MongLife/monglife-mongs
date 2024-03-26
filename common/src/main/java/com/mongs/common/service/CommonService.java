@@ -1,19 +1,21 @@
 package com.mongs.common.service;
 
-import com.mongs.common.dto.response.FindFeedbackCodeResDto;
-import com.mongs.common.dto.response.FindFoodCodeResDto;
-import com.mongs.common.dto.response.FindMapCodeResDto;
-import com.mongs.common.dto.response.FindMongCodeResDto;
+import com.mongs.common.controller.dto.response.FindFeedbackCodeResDto;
+import com.mongs.common.controller.dto.response.FindFoodCodeResDto;
+import com.mongs.common.controller.dto.response.FindMapCodeResDto;
+import com.mongs.common.controller.dto.response.FindMongCodeResDto;
 import com.mongs.common.entity.CodeVersion;
 import com.mongs.common.exception.CommonErrorCode;
-import com.mongs.common.exception.NewestVersionException;
 import com.mongs.common.exception.NotFoundVersionException;
 import com.mongs.common.repository.*;
+import com.mongs.common.vo.FindVersionVo;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class CommonService {
@@ -24,15 +26,24 @@ public class CommonService {
     private final FoodCodeRepository foodCodeRepository;
     private final FeedbackCodeRepository feedbackCodeRepository;
 
-    public String codeVersionCheckAndNewestCode(String version) {
-        CodeVersion newestVersion = codeVersionRepository.findTopByOrderByCreatedAtDesc()
+    public FindVersionVo findVersion(String buildVersion) {
+        CodeVersion codeVersion = codeVersionRepository.findTopByOrderByBuildVersionDesc()
                 .orElseThrow(() -> new NotFoundVersionException(CommonErrorCode.NOT_FOUND_VERSION));
 
-        if (version.equals(newestVersion.version())) {
-            throw new NewestVersionException(CommonErrorCode.ALREADY_NEW_VERSION);
-        }
+        int clientVersionFirst = Integer.parseInt(buildVersion.split("\\.")[0]);
+        int serverVersionFirst = Integer.parseInt(codeVersion.buildVersion().split("\\.")[0]);
+        boolean mustUpdateApp = clientVersionFirst < serverVersionFirst;
 
-        return newestVersion.version();
+        int clientVersionSecond = Integer.parseInt(buildVersion.split("\\.")[1]);
+        int serverVersionSecond = Integer.parseInt(codeVersion.buildVersion().split("\\.")[1]);
+        boolean mustUpdateCode = clientVersionSecond < serverVersionSecond;
+
+        return FindVersionVo.builder()
+                .newestBuildVersion(codeVersion.buildVersion())
+                .createdAt(codeVersion.createdAt())
+                .mustUpdateApp(mustUpdateApp)
+                .mustUpdateCode(mustUpdateCode || mustUpdateApp)
+                .build();
     }
 
     public List<FindMapCodeResDto> findMapCode() {

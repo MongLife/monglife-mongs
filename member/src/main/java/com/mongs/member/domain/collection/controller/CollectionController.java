@@ -1,10 +1,10 @@
 package com.mongs.member.domain.collection.controller;
 
 import com.mongs.core.security.principal.PassportDetail;
-import com.mongs.member.domain.collection.dto.request.RegisterMapCollectionReqDto;
-import com.mongs.member.domain.collection.dto.request.RegisterMongCollectionReqDto;
-import com.mongs.member.domain.collection.dto.request.RemoveMapCollectionReqDto;
-import com.mongs.member.domain.collection.dto.request.RemoveMongCollectionReqDto;
+import com.mongs.member.domain.collection.controller.dto.request.RegisterMapCollectionReqDto;
+import com.mongs.member.domain.collection.controller.dto.request.RegisterMongCollectionReqDto;
+import com.mongs.member.domain.collection.controller.dto.request.RemoveMapCollectionReqDto;
+import com.mongs.member.domain.collection.controller.dto.request.RemoveMongCollectionReqDto;
 import com.mongs.member.domain.collection.service.CollectionService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -28,46 +28,33 @@ public class CollectionController {
     public ResponseEntity<Object> findMongCollection(@AuthenticationPrincipal PassportDetail passportDetail) {
         return ResponseEntity.ok().body(collectionService.findMongCollection(passportDetail.getId()));
     }
-
-    @PostMapping("/map")
+    @PostMapping("/admin/map/{accountId}")
     public ResponseEntity<Object> registerMapCollection(
-            @AuthenticationPrincipal PassportDetail passportDetail,
+            @PathVariable("accountId") Long accountId,
             @RequestBody @Validated RegisterMapCollectionReqDto registerMapCollectionReqDto
     ) {
-        return ResponseEntity.ok().body(
-                collectionService.registerMapCollection(
-                        passportDetail.getId(),
-                        registerMapCollectionReqDto.mapCode()
-                ));
+        return ResponseEntity.ok().body(collectionService.registerMapCollection(accountId, registerMapCollectionReqDto.mapCode()));
     }
-
-    @PostMapping("/mong")
+    @PostMapping("/admin/mong/{accountId}")
     public ResponseEntity<Object> registerMongCollection(
-            @AuthenticationPrincipal PassportDetail passportDetail,
+            @PathVariable("accountId") Long accountId,
             @RequestBody @Validated RegisterMongCollectionReqDto registerMongCollectionReqDto
     ) {
-        return ResponseEntity.ok().body(
-                collectionService.registerMongCollection(
-                        passportDetail.getId(),
-                        registerMongCollectionReqDto.mongCode()
-                ));
+        return ResponseEntity.ok().body(collectionService.registerMongCollection(accountId, registerMongCollectionReqDto.mongCode()));
     }
 
-    @DeleteMapping("/admin/map")
+    @DeleteMapping("/admin/map/{accountId}")
     public ResponseEntity<Object> removeMapCollection(
-            @AuthenticationPrincipal PassportDetail passportDetail,
+            @PathVariable("accountId") Long accountId,
             @RequestBody @Validated RemoveMapCollectionReqDto removeMapCollectionReqDto
     ) {
-        collectionService.removeMapCollection(passportDetail.getId(), removeMapCollectionReqDto.mapCode());
-        return ResponseEntity.ok().body(null);
+        return ResponseEntity.ok().body(collectionService.removeMapCollection(accountId, removeMapCollectionReqDto.mapCode()));
     }
-
-    @DeleteMapping("/admin/mong")
+    @DeleteMapping("/admin/mong/{accountId}")
     public ResponseEntity<Object> removeMongCollection(
-            @AuthenticationPrincipal PassportDetail passportDetail,
+            @PathVariable("accountId") Long accountId,
             @RequestBody @Validated RemoveMongCollectionReqDto removeMongCollectionReqDto
     ) {
-        collectionService.removeMongCollection(passportDetail.getId(), removeMongCollectionReqDto.mongCode());
-        return ResponseEntity.ok().body(null);
+        return ResponseEntity.ok().body(collectionService.removeMongCollection(accountId, removeMongCollectionReqDto.mongCode()));
     }
 }

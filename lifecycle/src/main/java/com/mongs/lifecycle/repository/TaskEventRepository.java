@@ -1,7 +1,7 @@
 package com.mongs.lifecycle.repository;
 
-import com.mongs.lifecycle.code.TaskCode;
-import com.mongs.lifecycle.code.TaskStatusCode;
+import com.mongs.core.enums.lifecycle.TaskCode;
+import com.mongs.core.enums.lifecycle.TaskStatusCode;
 import com.mongs.lifecycle.entity.TaskEvent;
 import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.stereotype.Repository;

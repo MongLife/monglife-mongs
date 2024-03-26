@@ -1,6 +1,6 @@
 package com.mongs.lifecycle.vo;
 
-import com.mongs.lifecycle.code.TaskCode;
+import com.mongs.core.enums.lifecycle.TaskCode;
 import com.mongs.lifecycle.entity.TaskEvent;
 import lombok.Builder;
 

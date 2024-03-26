@@ -1,6 +1,6 @@
 package com.mongs.auth.entity;
 
-import com.mongs.core.time.BaseTimeEntity;
+import com.mongs.core.entity.BaseTimeEntity;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -20,6 +20,7 @@ import java.time.LocalDate;
 public class AccountLog extends BaseTimeEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "account_log_id")
     private Long id;
     @Column(updatable = false, nullable = false)
     private Long accountId;

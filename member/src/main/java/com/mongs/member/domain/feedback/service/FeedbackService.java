@@ -1,15 +1,15 @@
 package com.mongs.member.domain.feedback.service;
 
-import com.mongs.member.domain.feedback.dto.response.FindFeedbackResDto;
-import com.mongs.member.domain.feedback.dto.response.RegisterFeedbackResDto;
-import com.mongs.member.domain.feedback.dto.response.SolveFeedbackResDto;
+import com.mongs.member.domain.feedback.controller.dto.response.FindFeedbackResDto;
+import com.mongs.member.domain.feedback.controller.dto.response.RegisterFeedbackResDto;
+import com.mongs.member.domain.feedback.controller.dto.response.SolveFeedbackResDto;
 import com.mongs.member.domain.feedback.entity.Feedback;
 import com.mongs.member.domain.feedback.entity.FeedbackLog;
 import com.mongs.member.domain.feedback.exception.FeedbackErrorCode;
 import com.mongs.member.domain.feedback.exception.NotFoundFeedbackException;
 import com.mongs.member.domain.feedback.repository.FeedbackRepository;
-import com.mongs.member.domain.feedback.vo.FeedbackLogVO;
-import com.mongs.member.domain.feedback.vo.FeedbackVO;
+import com.mongs.member.domain.feedback.service.vo.FeedbackLogVo;
+import com.mongs.member.domain.feedback.service.vo.FeedbackVo;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -25,7 +25,6 @@ public class FeedbackService {
     @Transactional(readOnly = true)
     public List<FindFeedbackResDto> findFeedbackByAccountId(Long accountId) {
         List<Feedback> feedbackList = feedbackRepository.findByAccountId(accountId);
-
         return FindFeedbackResDto.toList(feedbackList);
     }
 
@@ -33,8 +32,8 @@ public class FeedbackService {
     public RegisterFeedbackResDto registerFeedback(
             Long accountId,
             String deviceId,
-            FeedbackVO feedbackVO,
-            List<FeedbackLogVO> feedbackLogVOList
+            FeedbackVo feedbackVO,
+            List<FeedbackLogVo> feedbackLogVoList
     ) {
         Feedback feedback = Feedback.builder()
                 .accountId(accountId)
@@ -44,11 +43,11 @@ public class FeedbackService {
                 .content(feedbackVO.content())
                 .build();
 
-        feedbackLogVOList.forEach(feedbackLogVO -> {
+        feedbackLogVoList.forEach(feedbackLogVo -> {
             feedback.addFeedbackLog(FeedbackLog.builder()
-                        .location(feedbackLogVO.location())
-                        .message(feedbackLogVO.message())
-                        .createdAt(feedbackLogVO.createdAt())
+                        .location(feedbackLogVo.location())
+                        .message(feedbackLogVo.message())
+                        .createdAt(feedbackLogVo.createdAt())
                         .build());
         });
 

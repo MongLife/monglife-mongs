@@ -1,6 +1,6 @@
 package com.mongs.auth.util;
 
-import com.mongs.core.util.TokenProvider;
+import com.mongs.core.utils.TokenProvider;
 import org.awaitility.Awaitility;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

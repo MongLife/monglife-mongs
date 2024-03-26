@@ -2,10 +2,10 @@ package com.mongs.member.domain.collection.service;
 
 import com.mongs.member.domain.collection.code.TestMapCode;
 import com.mongs.member.domain.collection.code.TestMongCode;
-import com.mongs.core.code.entity.MapCode;
-import com.mongs.core.code.entity.MongCode;
-import com.mongs.member.domain.collection.dto.response.FindMapCollectionResDto;
-import com.mongs.member.domain.collection.dto.response.FindMongCollectionResDto;
+import com.mongs.core.entity.MapCode;
+import com.mongs.core.entity.MongCode;
+import com.mongs.member.domain.collection.controller.dto.response.FindMapCollectionResDto;
+import com.mongs.member.domain.collection.controller.dto.response.FindMongCollectionResDto;
 import com.mongs.member.domain.collection.entity.MapCollection;
 import com.mongs.member.domain.collection.entity.MongCollection;
 import com.mongs.member.domain.collection.exception.CollectionErrorCode;
@@ -45,8 +45,8 @@ class CollectionServiceTest {
     @Mock
     private MongCollectionRepository mongCollectionRepository;
 
-    private final MapCode testMapCode =  new MapCode(TestMapCode.MP000.getCode(), TestMapCode.MP000.getName());
-    private final MongCode testMongCode = new MongCode(TestMongCode.CH000.getCode(), TestMongCode.CH000.getName());
+    private final MapCode testMapCode =  new MapCode(TestMapCode.MP000.getCode(), TestMapCode.MP000.getName(), 1L);
+    private final MongCode testMongCode = new MongCode(TestMongCode.CH000.getCode(), TestMongCode.CH000.getName(), 1L);
 
     @Nested
     @DisplayName("조회 단위 테스트")
@@ -76,7 +76,7 @@ class CollectionServiceTest {
                                     .name(code.getName())
                                     .build())
                             .toList());
-            when(mapCollectionRepository.findByMemberId(memberId))
+            when(mapCollectionRepository.findByAccountId(memberId))
                     .thenReturn(mapCollectionList);
 
             // when
@@ -121,7 +121,7 @@ class CollectionServiceTest {
                                     .name(code.getName())
                                     .build())
                             .toList());
-            when(mongCollectionRepository.findByMemberId(memberId))
+            when(mongCollectionRepository.findByAccountId(memberId))
                     .thenReturn(mongCollectionList);
 
             // when
@@ -256,7 +256,7 @@ class CollectionServiceTest {
 
             when(mapCodeRepository.findById(mapCode))
                     .thenReturn(Optional.of(testMapCode));
-            doNothing().when(mapCollectionRepository).deleteByMemberIdAndCode(memberId, mapCode);
+            doNothing().when(mapCollectionRepository).deleteByAccountIdAndCode(memberId, mapCode);
 
             // when
             Throwable e = catchThrowable(() -> collectionService.removeMapCollection(memberId, mapCode));
@@ -297,7 +297,7 @@ class CollectionServiceTest {
 
             when(mongCodeRepository.findById(mongCode))
                     .thenReturn(Optional.of(testMongCode));
-            doNothing().when(mongCollectionRepository).deleteByMemberIdAndCode(memberId, mongCode);
+            doNothing().when(mongCollectionRepository).deleteByAccountIdAndCode(memberId, mongCode);
 
             // when
             Throwable e = catchThrowable(() -> collectionService.removeMongCollection(memberId, mongCode));

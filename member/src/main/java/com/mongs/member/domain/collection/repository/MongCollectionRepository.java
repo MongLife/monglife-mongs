@@ -9,7 +9,7 @@ import java.util.Optional;
 
 @Repository
 public interface MongCollectionRepository extends JpaRepository<MongCollection, Long> {
-    List<MongCollection> findByMemberId(Long memberId);
-    Optional<MongCollection> findByMemberIdAndCode(Long memberId, String code);
-    void deleteByMemberIdAndCode(Long memberId, String code);
+    List<MongCollection> findByAccountId(Long memberId);
+    Optional<MongCollection> findByAccountIdAndCode(Long memberId, String code);
+    void deleteByAccountIdAndCode(Long memberId, String code);
 }

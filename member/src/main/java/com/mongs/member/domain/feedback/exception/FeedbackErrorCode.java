@@ -9,7 +9,8 @@ import org.springframework.http.HttpStatus;
 @AllArgsConstructor
 public enum FeedbackErrorCode implements ErrorCode {
     INTERNAL_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "FEEDBACK-100", "Internal Server Error"),
-    NOT_FOUND_FEEDBACK(HttpStatus.BAD_REQUEST, "FEEDBACK-101", "Not Found Feedback")
+    INVALID_PARAMETER(HttpStatus.BAD_REQUEST, "FEEDBACK-101", "Invalid Parameter"),
+    NOT_FOUND_FEEDBACK(HttpStatus.BAD_REQUEST, "FEEDBACK-102", "Not Found Feedback")
     ;
 
     private final HttpStatus httpStatus;

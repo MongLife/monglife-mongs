@@ -15,6 +15,7 @@ import java.time.LocalDateTime;
 public class FeedbackLog {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "feedback_log_id")
     private Long id;
     @Column(updatable = false, nullable = false)
     private String location;

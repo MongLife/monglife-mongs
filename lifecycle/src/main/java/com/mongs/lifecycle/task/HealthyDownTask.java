@@ -1,9 +1,10 @@
 package com.mongs.lifecycle.task;
 
-import com.mongs.lifecycle.code.TaskCode;
-import com.mongs.lifecycle.code.TaskStatusCode;
-import com.mongs.lifecycle.service.TaskActiveService;
-import com.mongs.lifecycle.service.TaskService;
+import com.mongs.core.enums.lifecycle.TaskCode;
+import com.mongs.core.enums.lifecycle.TaskStatusCode;
+import com.mongs.lifecycle.exception.EventTaskException;
+import com.mongs.lifecycle.service.componentService.TaskActiveService;
+import com.mongs.lifecycle.service.componentService.TaskService;
 import com.mongs.lifecycle.vo.TaskEventVo;
 import lombok.Builder;
 import lombok.extern.slf4j.Slf4j;
@@ -50,27 +51,36 @@ public class HealthyDownTask implements BasicTask {
 
     @Override
     public void stop() {
-        taskService.processTask(taskEventVo.taskId());
-        double healthy = taskActiveService.decreaseHealthy(taskEventVo.mongId(), taskEventVo.taskCode(), taskEventVo.createdAt());
+        try {
+            taskService.processTask(taskEventVo.taskId());
+            double healthy = taskActiveService.decreaseHealthy(taskEventVo.mongId(), taskEventVo.taskCode(), taskEventVo.createdAt());
 
-        if (healthy == 0D && !taskService.checkTaskActive(taskEventVo.mongId(), TaskCode.DEAD_HEALTHY)) {
-            taskService.startTask(taskEventVo.mongId(), TaskCode.DEAD_HEALTHY);
-            log.info("[{}] 체력 {} 도달 : 죽음 Task 실행", taskEventVo.mongId(), healthy);
+            if (healthy == 0D && !taskService.checkTaskActive(taskEventVo.mongId(), TaskCode.DEAD_HEALTHY)) {
+                taskService.startTask(taskEventVo.mongId(), TaskCode.DEAD_HEALTHY);
+                log.info("[{}] 체력 {} 도달 : 죽음 Task 실행", taskEventVo.mongId(), healthy);
+            }
+            taskService.doneTask(taskEventVo.taskId());
+        } catch (EventTaskException e) {
+            taskService.doneTask(taskEventVo.taskId());
+        } finally {
+            scheduler.cancel(false);
         }
-        scheduler.cancel(false);
-        taskService.doneTask(taskEventVo.taskId());
     }
 
     private void run() {
-        taskService.processTask(taskEventVo.taskId());
-        double healthy = taskActiveService.decreaseHealthy(taskEventVo.mongId(), taskEventVo.taskCode(), taskEventVo.createdAt());
+        try {
+            taskService.processTask(taskEventVo.taskId());
+            double healthy = taskActiveService.decreaseHealthy(taskEventVo.mongId(), taskEventVo.taskCode(), taskEventVo.createdAt());
 
-        if (healthy == 0D && !taskService.checkTaskActive(taskEventVo.mongId(), TaskCode.DEAD_HEALTHY)) {
-            taskService.startTask(taskEventVo.mongId(), TaskCode.DEAD_HEALTHY);
-            log.info("[{}] 체력 {} 도달 : 죽음 Task 실행", taskEventVo.mongId(), healthy);
+            if (healthy == 0D && !taskService.checkTaskActive(taskEventVo.mongId(), TaskCode.DEAD_HEALTHY)) {
+                taskService.startTask(taskEventVo.mongId(), TaskCode.DEAD_HEALTHY);
+                log.info("[{}] 체력 {} 도달 : 죽음 Task 실행", taskEventVo.mongId(), healthy);
+            }
+
+            taskService.doneTask(taskEventVo.taskId());
+            taskService.startTask(taskEventVo.mongId(), taskEventVo.taskCode());
+        } catch (EventTaskException e) {
+            taskService.doneTask(taskEventVo.taskId());
         }
-
-        taskService.doneTask(taskEventVo.taskId());
-        taskService.startTask(taskEventVo.mongId(), taskEventVo.taskCode());
     }
 }

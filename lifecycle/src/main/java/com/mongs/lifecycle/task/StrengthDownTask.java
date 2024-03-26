@@ -1,8 +1,9 @@
 package com.mongs.lifecycle.task;
 
-import com.mongs.lifecycle.code.TaskStatusCode;
-import com.mongs.lifecycle.service.TaskActiveService;
-import com.mongs.lifecycle.service.TaskService;
+import com.mongs.core.enums.lifecycle.TaskStatusCode;
+import com.mongs.lifecycle.exception.EventTaskException;
+import com.mongs.lifecycle.service.componentService.TaskActiveService;
+import com.mongs.lifecycle.service.componentService.TaskService;
 import com.mongs.lifecycle.vo.TaskEventVo;
 import lombok.Builder;
 import lombok.extern.slf4j.Slf4j;
@@ -49,16 +50,25 @@ public class StrengthDownTask implements BasicTask {
 
     @Override
     public void stop() {
-        taskService.processTask(taskEventVo.taskId());
-        taskActiveService.decreaseStrength(taskEventVo.mongId(), taskEventVo.taskCode(), taskEventVo.createdAt());
-        scheduler.cancel(false);
-        taskService.doneTask(taskEventVo.taskId());
+        try {
+            taskService.processTask(taskEventVo.taskId());
+            taskActiveService.decreaseStrength(taskEventVo.mongId(), taskEventVo.taskCode(), taskEventVo.createdAt());
+            taskService.doneTask(taskEventVo.taskId());
+        } catch (EventTaskException e) {
+            taskService.doneTask(taskEventVo.taskId());
+        } finally {
+            scheduler.cancel(false);
+        }
     }
 
     private void run() {
-        taskService.processTask(taskEventVo.taskId());
-        taskActiveService.decreaseStrength(taskEventVo.mongId(), taskEventVo.taskCode(), taskEventVo.createdAt());
-        taskService.doneTask(taskEventVo.taskId());
-        taskService.startTask(taskEventVo.mongId(), taskEventVo.taskCode());
+        try {
+            taskService.processTask(taskEventVo.taskId());
+            taskActiveService.decreaseStrength(taskEventVo.mongId(), taskEventVo.taskCode(), taskEventVo.createdAt());
+            taskService.doneTask(taskEventVo.taskId());
+            taskService.startTask(taskEventVo.mongId(), taskEventVo.taskCode());
+        } catch (EventTaskException e) {
+            taskService.doneTask(taskEventVo.taskId());
+        }
     }
 }

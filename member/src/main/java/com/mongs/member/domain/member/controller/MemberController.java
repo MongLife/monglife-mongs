@@ -1,7 +1,13 @@
 package com.mongs.member.domain.member.controller;
 
-import com.mongs.core.code.enums.member.SlotCountCode;
-import com.mongs.member.domain.member.dto.request.ModifyMemberReqDto;
+import com.mongs.core.enums.member.SlotCountCode;
+import com.mongs.member.domain.member.service.vo.FindMemberVo;
+import com.mongs.member.domain.member.service.vo.ModifySlotCountVo;
+import com.mongs.member.domain.member.service.vo.RegisterMemberVo;
+import com.mongs.member.domain.member.controller.dto.request.ModifyMemberReqDto;
+import com.mongs.member.domain.member.controller.dto.response.FindMemberResDto;
+import com.mongs.member.domain.member.controller.dto.response.ModifySlotCountResDto;
+import com.mongs.member.domain.member.controller.dto.response.RegisterMemberResDto;
 import com.mongs.member.domain.member.service.MemberService;
 import com.mongs.core.security.principal.PassportDetail;
 import lombok.RequiredArgsConstructor;
@@ -18,30 +24,38 @@ public class MemberController {
     private final MemberService memberService;
 
     @GetMapping("")
-    public ResponseEntity<Object> findMember(@AuthenticationPrincipal PassportDetail passportDetail) {
-        Long accountId = passportDetail.getId();
-        return ResponseEntity.ok().body(memberService.findMember(accountId));
+    public ResponseEntity<FindMemberResDto> findMember(@AuthenticationPrincipal PassportDetail passportDetail) {
+        FindMemberVo findMemberVo = memberService.findMember(passportDetail.getId());
+        return ResponseEntity.ok().body(FindMemberResDto.builder()
+                .accountId(findMemberVo.accountId())
+                .maxSlot(findMemberVo.maxSlot())
+                .starPoint(findMemberVo.starPoint())
+                .build());
     }
 
-    @PostMapping("/{accountId}")
-    public ResponseEntity<Object> registerMember(@PathVariable Long accountId) {
-        return ResponseEntity.ok().body(memberService.registerMember(accountId));
+    @PostMapping("/admin/{accountId}")
+    public ResponseEntity<RegisterMemberResDto> registerMember(@PathVariable("accountId") Long accountId) {
+        RegisterMemberVo registerMemberVo = memberService.registerMember(accountId);
+        return ResponseEntity.ok().body(RegisterMemberResDto.builder()
+                .accountId(registerMemberVo.accountId())
+                .maxSlot(registerMemberVo.maxSlot())
+                .starPoint(registerMemberVo.starPoint())
+                .build());
     }
 
-    @PutMapping("")
-    public ResponseEntity<Object> modifySlotCount(
-            @AuthenticationPrincipal PassportDetail passportDetail,
+    @PutMapping("/admin/{accountId}")
+    public ResponseEntity<ModifySlotCountResDto> modifySlotCount(
+            @PathVariable("accountId") Long accountId,
             @RequestBody @Validated ModifyMemberReqDto modifyMemberReqDto
     ) {
-        Long accountId = passportDetail.getId();
         SlotCountCode slotCountCode = modifyMemberReqDto.slotCountCode();
 
-        return ResponseEntity.ok().body(memberService.modifySlotCount(accountId, slotCountCode));
-    }
+        ModifySlotCountVo modifySlotCountVo = memberService.modifySlotCount(accountId, slotCountCode);
 
-    @DeleteMapping("")
-    public ResponseEntity<Object> removeMember(@AuthenticationPrincipal PassportDetail passportDetail) {
-        Long accountId = passportDetail.getId();
-        return ResponseEntity.ok().body(memberService.removeMember(accountId));
+        return ResponseEntity.ok().body(ModifySlotCountResDto.builder()
+                .accountId(modifySlotCountVo.accountId())
+                .maxSlot(modifySlotCountVo.maxSlot())
+                .starPoint(modifySlotCountVo.starPoint())
+                .build());
     }
 }

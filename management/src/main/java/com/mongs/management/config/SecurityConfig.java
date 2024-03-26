@@ -5,7 +5,7 @@ import com.mongs.core.security.exception.ForbiddenHandler;
 import com.mongs.core.security.exception.SecurityExceptionHandler;
 import com.mongs.core.security.exception.UnAuthorizationHandler;
 import com.mongs.core.security.filter.PassportFilter;
-import com.mongs.core.util.HmacProvider;
+import com.mongs.core.utils.HmacProvider;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;

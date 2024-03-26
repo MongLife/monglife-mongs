@@ -1,6 +1,6 @@
 package com.mongs.member.domain.collection.entity;
 
-import com.mongs.core.time.BaseTimeEntity;
+import com.mongs.core.entity.BaseTimeEntity;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -17,9 +17,10 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 public class MapCollection extends BaseTimeEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "map_collection_id")
     private Long id;
     @Column(updatable = false, nullable = false)
-    private Long memberId;
+    private Long accountId;
     @Column(updatable = false, nullable = false)
     private String code;
 }

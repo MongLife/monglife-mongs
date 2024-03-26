@@ -10,7 +10,7 @@ import java.time.LocalDateTime;
 @Document(collection = "code_version")
 public record CodeVersion(
         @Id
-        String version,
+        String buildVersion,
         LocalDateTime createdAt
 ) {
 }

@@ -1,6 +1,6 @@
 package com.mongs.member.domain.feedback.entity;
 
-import com.mongs.core.time.BaseTimeEntity;
+import com.mongs.core.entity.BaseTimeEntity;
 import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
@@ -17,6 +17,7 @@ import java.util.List;
 public class Feedback extends BaseTimeEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "feedback_id")
     private Long id;
     @Column(updatable = false, nullable = false)
     private Long accountId;

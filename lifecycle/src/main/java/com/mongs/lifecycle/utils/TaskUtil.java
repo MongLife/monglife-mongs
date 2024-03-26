@@ -1,6 +1,6 @@
 package com.mongs.lifecycle.utils;
 
-import com.mongs.lifecycle.code.TaskCode;
+import com.mongs.core.enums.lifecycle.TaskCode;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;

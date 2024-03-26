@@ -2,19 +2,19 @@ package com.mongs.member.domain.collection.controller;
 
 import com.mongs.member.domain.collection.code.TestMapCode;
 import com.mongs.member.domain.collection.code.TestMongCode;
-import com.mongs.member.domain.collection.dto.request.RegisterMapCollectionReqDto;
-import com.mongs.member.domain.collection.dto.request.RegisterMongCollectionReqDto;
-import com.mongs.member.domain.collection.dto.request.RemoveMapCollectionReqDto;
-import com.mongs.member.domain.collection.dto.request.RemoveMongCollectionReqDto;
-import com.mongs.member.domain.collection.dto.response.FindMapCollectionResDto;
-import com.mongs.member.domain.collection.dto.response.FindMongCollectionResDto;
-import com.mongs.member.domain.collection.dto.response.RegisterMapCollectionResDto;
-import com.mongs.member.domain.collection.dto.response.RegisterMongCollectionResDto;
+import com.mongs.member.domain.collection.controller.dto.request.RegisterMapCollectionReqDto;
+import com.mongs.member.domain.collection.controller.dto.request.RegisterMongCollectionReqDto;
+import com.mongs.member.domain.collection.controller.dto.request.RemoveMapCollectionReqDto;
+import com.mongs.member.domain.collection.controller.dto.request.RemoveMongCollectionReqDto;
+import com.mongs.member.domain.collection.controller.dto.response.FindMapCollectionResDto;
+import com.mongs.member.domain.collection.controller.dto.response.FindMongCollectionResDto;
+import com.mongs.member.domain.collection.controller.dto.response.RegisterMapCollectionResDto;
+import com.mongs.member.domain.collection.controller.dto.response.RegisterMongCollectionResDto;
 import com.mongs.member.domain.collection.exception.CollectionErrorCode;
 import com.mongs.member.domain.collection.exception.InvalidCodeException;
 import com.mongs.member.domain.collection.security.WithMockPassportDetail;
-import com.mongs.core.code.entity.MapCode;
-import com.mongs.core.code.entity.MongCode;
+import com.mongs.core.entity.MapCode;
+import com.mongs.core.entity.MongCode;
 import com.mongs.core.error.ErrorCode;
 import com.mongs.member.domain.collection.service.CollectionService;
 import org.junit.jupiter.api.DisplayName;
@@ -55,8 +55,8 @@ public class CollectionControllerTest {
     @MockBean
     private CollectionService collectionService;
 
-    private final MapCode testMapCode =  new MapCode(TestMapCode.MP000.getCode(), TestMapCode.MP000.getName());
-    private final MongCode testMongCode = new MongCode(TestMongCode.CH000.getCode(), TestMongCode.CH000.getName());
+    private final MapCode testMapCode =  new MapCode(TestMapCode.MP000.getCode(), TestMapCode.MP000.getName(), 1L);
+    private final MongCode testMongCode = new MongCode(TestMongCode.CH000.getCode(), TestMongCode.CH000.getName(), 1L);
 
     @Nested
     @DisplayName("조회 단위 테스트")
@@ -65,11 +65,11 @@ public class CollectionControllerTest {
 
         private final List<MapCode> mapCodeList =
                 Arrays.stream(TestMapCode.values())
-                        .map(mapCode -> new MapCode(mapCode.getCode(), mapCode.getName()))
+                        .map(mapCode -> new MapCode(mapCode.getCode(), mapCode.getName(), 1L))
                         .toList();
         private final List<MongCode> mongCodeList =
                 Arrays.stream(TestMongCode.values())
-                        .map(mongCode -> new MongCode(mongCode.getCode(), mongCode.getName()))
+                        .map(mongCode -> new MongCode(mongCode.getCode(), mongCode.getName(), 1L))
                         .toList();
 
         @Test
@@ -78,9 +78,9 @@ public class CollectionControllerTest {
             // given
             Long memberId = 1L;
             List<MapCode> enable = List.of(
-                    new MapCode(TestMapCode.MP000.getCode(), TestMapCode.MP000.getName()),
-                    new MapCode(TestMapCode.MP001.getCode(), TestMapCode.MP001.getName()),
-                    new MapCode(TestMapCode.MP002.getCode(), TestMapCode.MP002.getName())
+                    new MapCode(TestMapCode.MP000.getCode(), TestMapCode.MP000.getName(), 1L),
+                    new MapCode(TestMapCode.MP001.getCode(), TestMapCode.MP001.getName(), 1L),
+                    new MapCode(TestMapCode.MP002.getCode(), TestMapCode.MP002.getName(), 1L)
             );
             List<String> enableList = enable.stream().map(MapCode::code).toList();
             List<MapCode> disable = mapCodeList.stream()
@@ -123,9 +123,9 @@ public class CollectionControllerTest {
             // given
             Long memberId = 1L;
             List<MongCode> enable = List.of(
-                    new MongCode(TestMongCode.CH000.getCode(), TestMongCode.CH000.getName()),
-                    new MongCode(TestMongCode.CH001.getCode(), TestMongCode.CH001.getName()),
-                    new MongCode(TestMongCode.CH002.getCode(), TestMongCode.CH002.getName())
+                    new MongCode(TestMongCode.CH000.getCode(), TestMongCode.CH000.getName(), 1L),
+                    new MongCode(TestMongCode.CH001.getCode(), TestMongCode.CH001.getName(), 1L),
+                    new MongCode(TestMongCode.CH002.getCode(), TestMongCode.CH002.getName(), 1L)
             );
             List<String> enableList = enable.stream().map(MongCode::code).toList();
             List<MongCode> disable = mongCodeList.stream()

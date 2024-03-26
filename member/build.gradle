@@ -3,6 +3,7 @@ dependencies {
 	implementation(project(':core')) {
 		exclude group: 'io.jsonwebtoken'
 		exclude group: 'org.springframework.boot'
+		exclude group: 'org.springframework.cloud'
 	}
 	// eureka
 	implementation 'org.springframework.cloud:spring-cloud-starter-netflix-eureka-client'
@@ -13,8 +14,8 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-security'
 	// validation
 	implementation 'org.springframework.boot:spring-boot-starter-validation'
-	// H2
-	runtimeOnly 'com.h2database:h2'
+	// Mysql
+	runtimeOnly 'com.mysql:mysql-connector-j'
 	// JPA
 	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
 	// mongo db

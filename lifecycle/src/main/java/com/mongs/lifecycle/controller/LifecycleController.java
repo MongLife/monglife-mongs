@@ -1,9 +1,11 @@
 package com.mongs.lifecycle.controller;
 
+import com.mongs.core.security.principal.PassportDetail;
 import com.mongs.lifecycle.dto.response.*;
-import com.mongs.lifecycle.service.LifecycleService;
+import com.mongs.lifecycle.service.componentService.LifecycleService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -13,27 +15,35 @@ public class LifecycleController {
 
     private final LifecycleService lifecycleService;
 
-    @DeleteMapping("/graduation/{mongId}")
-    public ResponseEntity<Object> graduationMongEvent(@PathVariable("mongId") Long mongId) {
-        lifecycleService.graduationEvent(mongId);
+    @PostMapping("/egg/{mongId}")
+    public ResponseEntity<Object> eggMongEvent(@PathVariable("mongId") Long mongId) {
+        lifecycleService.eggEvent(mongId);
 
-        return ResponseEntity.ok().body(GraduationMongEventResDto.builder()
+        return ResponseEntity.ok().body(EggMongEventResDto.builder()
                 .mongId(mongId)
                 .build());
     }
 
-    @DeleteMapping("/evolution/{mongId}")
-    public ResponseEntity<Object> evolutionReadyMongEvent(@PathVariable("mongId") Long mongId) {
-        lifecycleService.evolutionReadyEvent(mongId);
+    @DeleteMapping("/graduation/{mongId}")
+    public ResponseEntity<Object> graduationReadyMongEvent(
+            @PathVariable("mongId") Long mongId,
+            @AuthenticationPrincipal PassportDetail passportDetail
+    ) {
+        Long accountId = passportDetail.getId();
+        lifecycleService.graduationReadyEvent(mongId, accountId);
 
-        return ResponseEntity.ok().body(EvolutionMongEventResDto.builder()
+        return ResponseEntity.ok().body(GraduationReadyMongEventResDto.builder()
                 .mongId(mongId)
                 .build());
     }
 
     @PutMapping("/evolution/{mongId}")
-    public ResponseEntity<Object> evolutionMongEvent(@PathVariable("mongId") Long mongId) {
-        lifecycleService.evolutionEvent(mongId);
+    public ResponseEntity<Object> eggEvolutionMongEvent(
+            @PathVariable("mongId") Long mongId,
+            @AuthenticationPrincipal PassportDetail passportDetail
+    ) {
+        Long accountId = passportDetail.getId();
+        lifecycleService.eggEvolutionEvent(mongId, accountId);
 
         return ResponseEntity.ok().body(EvolutionMongEventResDto.builder()
                 .mongId(mongId)
@@ -41,8 +51,12 @@ public class LifecycleController {
     }
 
     @PutMapping("/sleep/{mongId}")
-    public ResponseEntity<Object> sleepMongEvent(@PathVariable("mongId") Long mongId) {
-        lifecycleService.sleepEvent(mongId);
+    public ResponseEntity<Object> sleepMongEvent(
+            @PathVariable("mongId") Long mongId,
+            @AuthenticationPrincipal PassportDetail passportDetail
+    ) {
+        Long accountId = passportDetail.getId();
+        lifecycleService.sleepEvent(mongId, accountId);
 
         return ResponseEntity.ok().body(SleepMongEventResDto.builder()
                 .mongId(mongId)
@@ -50,19 +64,27 @@ public class LifecycleController {
     }
 
     @PutMapping("/wakeup/{mongId}")
-    public ResponseEntity<Object> wakeupMongEvent(@PathVariable("mongId") Long mongId) {
-        lifecycleService.wakeupEvent(mongId);
+    public ResponseEntity<Object> wakeupMongEvent(
+            @PathVariable("mongId") Long mongId,
+            @AuthenticationPrincipal PassportDetail passportDetail
+    ) {
+        Long accountId = passportDetail.getId();
+        lifecycleService.wakeupEvent(mongId, accountId);
 
         return ResponseEntity.ok().body(WakeupMongEventResDto.builder()
                 .mongId(mongId)
                 .build());
     }
 
-    @DeleteMapping("/admin/dead/{mongId}")
-    public ResponseEntity<Object> deadMongEvent(@PathVariable("mongId") Long mongId) {
-        lifecycleService.dead(mongId);
+    @DeleteMapping("/delete/{mongId}")
+    public ResponseEntity<Object> deleteMongEvent(
+            @PathVariable("mongId") Long mongId,
+            @AuthenticationPrincipal PassportDetail passportDetail
+    ) {
+        Long accountId = passportDetail.getId();
+        lifecycleService.deleteEvent(mongId, accountId);
 
-        return ResponseEntity.ok().body(DeadMongEventResDto.builder()
+        return ResponseEntity.ok().body(DeleteMongEventResDto.builder()
                 .mongId(mongId)
                 .build());
     }

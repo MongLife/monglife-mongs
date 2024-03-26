@@ -1,6 +1,6 @@
 package com.mongs.core.security.principal;
 
-import com.mongs.core.passport.PassportVO;
+import com.mongs.core.vo.passport.PassportVO;
 import lombok.Getter;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
@@ -19,10 +19,15 @@ public class PassportDetail extends User {
     private final long id;
     private final String deviceId;
     private final String email;
-    private final LocalDate loginAt;
+    private final Integer loginCount;
     private final String name;
+    private final String passportJson;
 
-    public PassportDetail(PassportVO passportVO) {
+    public PassportDetail(PassportVO passportVo) {
+        this(passportVo, "");
+    }
+
+    public PassportDetail(PassportVO passportVO, String passportJson) {
         super(
                 passportVO.data().account().email(),
                 UUID.randomUUID().toString(),
@@ -34,7 +39,8 @@ public class PassportDetail extends User {
         this.id = passportVO.data().account().id();
         this.deviceId = passportVO.data().account().deviceId();
         this.email = passportVO.data().account().email();
-        this.loginAt = passportVO.data().account().loginAt();
+        this.loginCount = passportVO.data().account().loginCount();
         this.name = passportVO.data().account().name();
+        this.passportJson = passportJson;
     }
 }

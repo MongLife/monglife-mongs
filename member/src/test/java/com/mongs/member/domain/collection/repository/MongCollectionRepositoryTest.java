@@ -78,7 +78,7 @@ public class MongCollectionRepositoryTest {
         }
 
         // when
-        List<MongCollection> mapCollectionList = mongCollectionRepository.findByMemberId(memberId);
+        List<MongCollection> mapCollectionList = mongCollectionRepository.findByAccountId(memberId);
 
         // then
         assertThat(mapCollectionList).isNotEmpty();
@@ -105,7 +105,7 @@ public class MongCollectionRepositoryTest {
         MongCollection saveMongCollection = mongCollectionRepository.save(mongCollection);
 
         // when
-        mongCollectionRepository.deleteByMemberIdAndCode(memberId, code);
+        mongCollectionRepository.deleteByAccountIdAndCode(memberId, code);
 
         Optional<MongCollection> expected  = mongCollectionRepository.findById(saveMongCollection.getId());
 

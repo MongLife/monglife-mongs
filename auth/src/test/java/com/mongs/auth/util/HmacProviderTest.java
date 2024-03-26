@@ -1,9 +1,9 @@
 package com.mongs.auth.util;
 
-import com.mongs.core.passport.PassportVO;
-import com.mongs.core.passport.PassportData;
-import com.mongs.core.passport.PassportAccount;
-import com.mongs.core.util.HmacProvider;
+import com.mongs.core.vo.passport.PassportVO;
+import com.mongs.core.vo.passport.PassportData;
+import com.mongs.core.vo.passport.PassportAccount;
+import com.mongs.core.utils.HmacProvider;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

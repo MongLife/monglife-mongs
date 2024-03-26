@@ -1,10 +1,13 @@
 package com.mongs.member.domain.feedback.controller;
 
 import com.mongs.core.security.principal.PassportDetail;
-import com.mongs.member.domain.feedback.dto.request.RegisterFeedbackReqDto;
+import com.mongs.member.domain.feedback.controller.dto.request.RegisterFeedbackReqDto;
+import com.mongs.member.domain.feedback.controller.dto.response.FindFeedbackResDto;
+import com.mongs.member.domain.feedback.controller.dto.response.RegisterFeedbackResDto;
+import com.mongs.member.domain.feedback.controller.dto.response.SolveFeedbackResDto;
 import com.mongs.member.domain.feedback.service.FeedbackService;
-import com.mongs.member.domain.feedback.vo.FeedbackLogVO;
-import com.mongs.member.domain.feedback.vo.FeedbackVO;
+import com.mongs.member.domain.feedback.service.vo.FeedbackLogVo;
+import com.mongs.member.domain.feedback.service.vo.FeedbackVo;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -19,31 +22,30 @@ public class FeedbackController {
 
     private final FeedbackService feedbackService;
 
-    @GetMapping("/admin/account")
-    public ResponseEntity<Object> findFeedbackByAccountId(@AuthenticationPrincipal PassportDetail passportDetail) {
-        Long accountId = passportDetail.getId();
-        return ResponseEntity.ok().body(feedbackService.findFeedbackByAccountId(accountId));
-    }
     @PostMapping("")
-    public ResponseEntity<Object> registerFeedback(
+    public ResponseEntity<RegisterFeedbackResDto> registerFeedback(
             @AuthenticationPrincipal PassportDetail passportDetail,
             @RequestBody RegisterFeedbackReqDto registerFeedbackReqDto
     ) {
         Long accountId = passportDetail.getId();
         String deviceId = passportDetail.getDeviceId();
 
-        FeedbackVO feedbackVO = registerFeedbackReqDto.feedback();
-        List<FeedbackLogVO> feedbackLogVOList = registerFeedbackReqDto.feedbackLogList();
+        FeedbackVo feedbackVO = registerFeedbackReqDto.feedback();
+        List<FeedbackLogVo> feedbackLogVoList = registerFeedbackReqDto.feedbackLogList();
 
         return ResponseEntity.ok().body(feedbackService.registerFeedback(
                 accountId,
                 deviceId,
                 feedbackVO,
-                feedbackLogVOList
+                feedbackLogVoList
         ));
     }
+    @GetMapping("/admin/account/{accountId}")
+    public ResponseEntity<List<FindFeedbackResDto>> findFeedbackByAccountId(@PathVariable("accountId") Long accountId) {
+        return ResponseEntity.ok().body(feedbackService.findFeedbackByAccountId(accountId));
+    }
     @PutMapping("/admin/{feedbackId}")
-    public ResponseEntity<Object> solveFeedback(@PathVariable Long feedbackId) {
+    public ResponseEntity<SolveFeedbackResDto> solveFeedback(@PathVariable("feedbackId") Long feedbackId) {
         return ResponseEntity.ok().body(feedbackService.solveFeedback(feedbackId));
     }
 }

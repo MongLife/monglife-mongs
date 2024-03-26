@@ -5,18 +5,14 @@ import com.mongs.core.security.exception.ForbiddenHandler;
 import com.mongs.core.security.exception.SecurityExceptionHandler;
 import com.mongs.core.security.exception.UnAuthorizationHandler;
 import com.mongs.core.security.filter.PassportFilter;
-import com.mongs.core.util.HmacProvider;
+import com.mongs.core.utils.HmacProvider;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
-import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -32,12 +28,6 @@ public class SecurityConfig {
     private final HmacProvider hmacProvider;
 
     @Bean
-    @ConditionalOnProperty(name = "spring.h2.console.enabled", havingValue = "true")
-    public WebSecurityCustomizer configureH2ConsoleEnable() {
-        return web -> web.ignoring().requestMatchers(PathRequest.toH2Console());
-    }
-
-    @Bean
     public SecurityFilterChain filterChain(
             @Autowired UnAuthorizationHandler unAuthorizationHandler,
             @Autowired ForbiddenHandler forbiddenHandler,
@@ -50,14 +40,11 @@ public class SecurityConfig {
             .addFilterBefore(passportFilter, UsernamePasswordAuthenticationFilter.class)
             .addFilterBefore(securityExceptionHandler, PassportFilter.class)
             .authorizeHttpRequests(authorize -> authorize
-                    .requestMatchers("/member/admin/**").hasAnyAuthority("ADMIN")
-                    .requestMatchers(HttpMethod.GET,"/member/**").hasAnyAuthority("NORMAL")
-                    .requestMatchers(HttpMethod.POST, "/member/**").permitAll()
-                    .requestMatchers(HttpMethod.PUT,"/member/**").hasAnyAuthority("NORMAL")
-                    .requestMatchers(HttpMethod.DELETE,"/member/**").hasAnyAuthority("NORMAL")
-
                     .requestMatchers("/collection/admin/**").hasAnyAuthority("ADMIN")
                     .requestMatchers("/collection/**").hasAnyAuthority("NORMAL")
+
+                    .requestMatchers("/member/admin/**").hasAnyAuthority("ADMIN")
+                    .requestMatchers("/member/**").hasAnyAuthority("NORMAL")
 
                     .requestMatchers("/feedback/admin/**").hasAnyAuthority("ADMIN")
                     .requestMatchers("/feedback/**").hasAnyAuthority("NORMAL")

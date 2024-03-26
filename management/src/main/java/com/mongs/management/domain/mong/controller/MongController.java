@@ -1,8 +1,10 @@
 package com.mongs.management.domain.mong.controller;
 
 import com.mongs.core.security.principal.PassportDetail;
-import com.mongs.management.domain.mong.service.MongService;
-import com.mongs.management.domain.mong.service.dto.*;
+import com.mongs.management.domain.mong.controller.dto.request.FeedMongReqDto;
+import com.mongs.management.domain.mong.controller.dto.request.RegisterMongReqDto;
+import com.mongs.management.domain.mong.controller.dto.response.*;
+import com.mongs.management.domain.mong.service.componentService.ManagementService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -10,82 +12,120 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @Slf4j
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/management")
 public class MongController {
 
-    private final MongService mongService;
+    private final ManagementService managementService;
 
-    @GetMapping("/test")
-    public String test(@AuthenticationPrincipal PassportDetail passportDetail) {
-        // passport : 인증 객체 (gateway 로 부터 넘어오는 사용자 정보 값)
-        return passportDetail.toString();
+    @GetMapping("")
+    public ResponseEntity<List<FindMongResDto>> findAllMong(@AuthenticationPrincipal PassportDetail passportDetail) {
+        Long accountId = passportDetail.getId();
+
+        return ResponseEntity.ok().body(managementService.findAllMongAndCheckAttendance(accountId));
     }
 
-    // 몽 생성
-    @PostMapping("/")
-    public ResponseEntity<CreateMong> createMong(@RequestBody InitMong initMong,
-                                                 @AuthenticationPrincipal PassportDetail passportDetail) {
-        return ResponseEntity
-                .ok()
-                .body(mongService.createMong(initMong, passportDetail.getId()));
+    @PostMapping("")
+    public ResponseEntity<RegisterMongResDto> registerMong(
+            @RequestBody RegisterMongReqDto registerMongReqDto,
+            @AuthenticationPrincipal PassportDetail passportDetail
+    ) {
+        Long accountId = passportDetail.getId();
+        String name = registerMongReqDto.name();
+        String sleepStart = registerMongReqDto.sleepStart();
+        String sleepEnd = registerMongReqDto.sleepEnd();
+        
+        RegisterMongResDto registerMongResDto = managementService.registerMong(accountId, name, sleepStart, sleepEnd);
+
+        return ResponseEntity.ok().body(registerMongResDto);
     }
 
-    // 쓰다듬기 (수정 필_)
-    @PutMapping("/stroke")
-    public ResponseEntity<Stroke> toMongStroke(@AuthenticationPrincipal PassportDetail passportDetail) {
-        return ResponseEntity
-                .ok()
-                .body(mongService.toMongStroke(passportDetail.getId()));
+    @DeleteMapping("/{mongId}")
+    public ResponseEntity<DeleteMongResDto> deleteMong(
+            @PathVariable("mongId") Long mongId,
+            @AuthenticationPrincipal PassportDetail passportDetail
+    ) {
+        Long accountId = passportDetail.getId();
+
+        DeleteMongResDto deleteMongResDto = managementService.deleteMong(accountId, mongId);
+        return ResponseEntity.ok().body(deleteMongResDto);
     }
 
-    // 똥 치우기
-    @PutMapping("/poop")
-    public ResponseEntity<Poop> toCleanMongsPoop(@AuthenticationPrincipal PassportDetail passportDetail) {
-        return ResponseEntity
-                .status(HttpStatus.ACCEPTED)
-                .body(mongService.toCleanMongsPoop(passportDetail.getId()));
+    @PutMapping("/stroke/{mongId}")
+    public ResponseEntity<StrokeMongResDto> strokeMong(
+            @PathVariable("mongId") Long mongId,
+            @AuthenticationPrincipal PassportDetail passportDetail
+    ) {
+        Long accountId = passportDetail.getId();
+
+        return ResponseEntity.ok().body(managementService.strokeMong(accountId, mongId));
     }
 
-    // 훈련
-    @PutMapping("/training")
-    public ResponseEntity<Training> mongTraining(@RequestBody TrainingCount trainingCount, @AuthenticationPrincipal PassportDetail passportDetail) {
-        return ResponseEntity
-                .status(HttpStatus.ACCEPTED)
-                .body(mongService.mongTraining(trainingCount, passportDetail.getId()));
+    @PutMapping("/feed/{mongId}")
+    public ResponseEntity<FeedMongResDto> feedMong(
+            @RequestBody FeedMongReqDto feedMongReqDto,
+            @PathVariable("mongId") Long mongId,
+            @AuthenticationPrincipal PassportDetail passportDetail
+    ) {
+        Long accountId = passportDetail.getId();
+        String foodCode = feedMongReqDto.foodCode();
+
+        return ResponseEntity.status(HttpStatus.ACCEPTED).body(managementService.feedMong(accountId, mongId, foodCode));
     }
 
-    // 잠자기 토글
-    @PutMapping("/sleep/toggle")
-    public ResponseEntity<Sleep> isMongSleep(@AuthenticationPrincipal PassportDetail passportDetail) {
-        return ResponseEntity
-                .status(HttpStatus.ACCEPTED)
-                .body(mongService.toCheckMongsLifetime(passportDetail.getId()));
+    @PutMapping("/sleep/{mongId}")
+    public ResponseEntity<SleepingMongResDto> sleepingMong(
+            @PathVariable("mongId") Long mongId,
+            @AuthenticationPrincipal PassportDetail passportDetail
+    ) {
+        Long accountId = passportDetail.getId();
+
+        return ResponseEntity.status(HttpStatus.ACCEPTED).body(managementService.sleepingMong(accountId, mongId));
     }
 
-    // 졸업
-    @PutMapping("/graduation")
-    public ResponseEntity<Graduation> mongsGraduate(@AuthenticationPrincipal PassportDetail passportDetail) {
-        return ResponseEntity
-                .status(HttpStatus.ACCEPTED)
-                .body(mongService.mongsGraduate(passportDetail.getId()));
+    @PutMapping("/poop/{mongId}")
+    public ResponseEntity<PoopCleanResDto> poopClean(
+            @PathVariable("mongId") Long mongId,
+            @AuthenticationPrincipal PassportDetail passportDetail
+    ) {
+        Long accountId = passportDetail.getId();
+
+        return ResponseEntity.status(HttpStatus.ACCEPTED).body(managementService.poopClean(accountId, mongId));
+    }
+
+    @PutMapping("/training/{mongId}")
+    public ResponseEntity<TrainingMongResDto> trainingMong(
+            @PathVariable("mongId") Long mongId,
+            @AuthenticationPrincipal PassportDetail passportDetail
+    ) {
+        Long accountId = passportDetail.getId();
+
+        return ResponseEntity.status(HttpStatus.ACCEPTED).body(managementService.trainingMong(accountId, mongId));
+    }
+
+    // 아에 졸업 시키고 삭제 시키는 함수
+    @PutMapping("/graduation/{mongId}")
+    public ResponseEntity<GraduateReadyMongResDto> graduateMong(
+            @PathVariable("mongId") Long mongId,
+            @AuthenticationPrincipal PassportDetail passportDetail
+    ) {
+        Long accountId = passportDetail.getId();
+
+        return ResponseEntity.status(HttpStatus.ACCEPTED).body(managementService.graduateMong(accountId, mongId));
 
     }
 
-    // 진화
-    @PutMapping("/evolution")
-    public ResponseEntity<Evolution> mongEvolution(@AuthenticationPrincipal PassportDetail passportDetail) {
-        return ResponseEntity
-                .status(HttpStatus.ACCEPTED)
-                .body(mongService.mongEvolution(passportDetail.getId()));
-    }
+    @PutMapping("/evolution/{mongId}")
+    public ResponseEntity<EvolutionMongResDto> evolutionMong(
+            @PathVariable("mongId") Long mongId,
+            @AuthenticationPrincipal PassportDetail passportDetail
+    ) {
+        Long accountId = passportDetail.getId();
 
-    @PutMapping("/feed")
-    public ResponseEntity<EatTheFeed> feedToMong(@RequestBody FeedCode feed, @AuthenticationPrincipal PassportDetail passportDetail) {
-        return ResponseEntity
-                .status(HttpStatus.ACCEPTED)
-                .body(mongService.feedToMong(feed, passportDetail.getId()));
+        return ResponseEntity.status(HttpStatus.ACCEPTED).body(managementService.evolutionMong(accountId, mongId));
     }
 }
