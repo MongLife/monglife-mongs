@@ -45,8 +45,8 @@ class CollectionServiceTest {
     @Mock
     private MongCollectionRepository mongCollectionRepository;
 
-    private final MapCode testMapCode =  new MapCode(TestMapCode.MP000.getCode(), TestMapCode.MP000.getName(), 1L);
-    private final MongCode testMongCode = new MongCode(TestMongCode.CH000.getCode(), TestMongCode.CH000.getName(), 1L);
+    private final MapCode testMapCode =  new MapCode(TestMapCode.MP000.getCode(), TestMapCode.MP000.getName(), "1.0.0");
+    private final MongCode testMongCode = new MongCode(TestMongCode.CH000.getCode(), TestMongCode.CH000.getName(), "1.0.0");
 
     @Nested
     @DisplayName("조회 단위 테스트")
@@ -55,7 +55,7 @@ class CollectionServiceTest {
         @DisplayName("회원 id 로 맵 컬렉션을 조회하면 맵 컬렉션 리스트를 반환한다.")
         void findMapCollection() {
             // given
-            Long memberId = 1L;
+            Long accountId = 1L;
             List<TestMapCode> mapCollectionCodeList = List.of(
                     TestMapCode.MP000,
                     TestMapCode.MP001,
@@ -64,7 +64,7 @@ class CollectionServiceTest {
             List<MapCollection> mapCollectionList = mapCollectionCodeList.stream()
                     .map(mapCode -> MapCollection.builder()
                             .id(1L)
-                            .memberId(memberId)
+                            .accountId(accountId)
                             .code(mapCode.getCode())
                             .build())
                     .toList();
@@ -76,11 +76,11 @@ class CollectionServiceTest {
                                     .name(code.getName())
                                     .build())
                             .toList());
-            when(mapCollectionRepository.findByAccountId(memberId))
+            when(mapCollectionRepository.findByAccountId(accountId))
                     .thenReturn(mapCollectionList);
 
             // when
-            List<FindMapCollectionResDto> findMapCollectionResDtoList = collectionService.findMapCollection(memberId);
+            List<FindMapCollectionResDto> findMapCollectionResDtoList = collectionService.findMapCollection(accountId);
 
             // then
             assertThat(findMapCollectionResDtoList).isNotNull();
@@ -100,7 +100,7 @@ class CollectionServiceTest {
         @DisplayName("회원 id 로 몽 컬렉션을 조회하면 몽 컬렉션 리스트를 반환한다.")
         void findMongCollection() {
             // given
-            Long memberId = 1L;
+            Long accountId = 1L;
             List<TestMongCode> mongCollectionCodeList = List.of(
                     TestMongCode.CH000,
                     TestMongCode.CH001,
@@ -109,7 +109,7 @@ class CollectionServiceTest {
             List<MongCollection> mongCollectionList = mongCollectionCodeList.stream()
                     .map(mongCode -> MongCollection.builder()
                             .id(1L)
-                            .memberId(memberId)
+                            .accountId(accountId)
                             .code(mongCode.getCode())
                             .build())
                     .toList();
@@ -121,11 +121,11 @@ class CollectionServiceTest {
                                     .name(code.getName())
                                     .build())
                             .toList());
-            when(mongCollectionRepository.findByAccountId(memberId))
+            when(mongCollectionRepository.findByAccountId(accountId))
                     .thenReturn(mongCollectionList);
 
             // when
-            List<FindMongCollectionResDto> findMongCollectionResDtoList = collectionService.findMongCollection(memberId);
+            List<FindMongCollectionResDto> findMongCollectionResDtoList = collectionService.findMongCollection(accountId);
 
             // then
             assertThat(findMongCollectionResDtoList).isNotNull();
@@ -149,11 +149,11 @@ class CollectionServiceTest {
         @DisplayName("회원 id, 맵 코드로 맵 컬렉션을 등록하고, 등록된 값을 반환한다.")
         void registerMapCollection() {
             // given
-            Long memberId = 1L;
+            Long accountId = 1L;
             String mapCode = testMapCode.code();
             MapCollection mapCollection = MapCollection.builder()
                     .id(1L)
-                    .memberId(memberId)
+                    .accountId(accountId)
                     .code(mapCode)
                     .build();
 
@@ -163,11 +163,11 @@ class CollectionServiceTest {
                     .thenReturn(mapCollection);
 
             // when
-            var registerMapCollectionResDto = collectionService.registerMapCollection(memberId, mapCode);
+            var registerMapCollectionResDto = collectionService.registerMapCollection(accountId, mapCode);
 
             // then
             assertThat(registerMapCollectionResDto).isNotNull();
-            assertThat(registerMapCollectionResDto.memberId()).isEqualTo(memberId);
+            assertThat(registerMapCollectionResDto.accountId()).isEqualTo(accountId);
             assertThat(registerMapCollectionResDto.code()).isEqualTo(mapCode);
         }
 
@@ -175,14 +175,14 @@ class CollectionServiceTest {
         @DisplayName("존재하지 않는 맵 코드로 등록하면 InvalidCodeException 이 발생한다.")
         void registerMapCollectionNotFoundMapCode() {
             // given
-            Long memberId = 1L;
+            Long accountId = 1L;
             String mapCode = "INVALID_CODE";
 
             when(mapCodeRepository.findById(mapCode))
                     .thenReturn(Optional.empty());
 
             // when
-            Throwable e = catchThrowable(() -> collectionService.registerMapCollection(memberId, mapCode));
+            Throwable e = catchThrowable(() -> collectionService.registerMapCollection(accountId, mapCode));
 
             var expected = ((InvalidCodeException) e).errorCode;
             var errorCode = CollectionErrorCode.INVALID_MAP_CODE;
@@ -198,11 +198,11 @@ class CollectionServiceTest {
         @DisplayName("회원 id, 몽 코드로 몽 컬렉션을 등록하고, 등록된 값을 반환한다.")
         void registerMongCollection() {
             // given
-            Long memberId = 1L;
+            Long accountId = 1L;
             String mongCode = testMongCode.code();
             MongCollection mongCollection = MongCollection.builder()
                     .id(1L)
-                    .memberId(memberId)
+                    .accountId(accountId)
                     .code(mongCode)
                     .build();
 
@@ -212,11 +212,11 @@ class CollectionServiceTest {
                     .thenReturn(mongCollection);
 
             // when
-            var registerMongCollectionResDto = collectionService.registerMongCollection(memberId, mongCode);
+            var registerMongCollectionResDto = collectionService.registerMongCollection(accountId, mongCode);
 
             // then
             assertThat(registerMongCollectionResDto).isNotNull();
-            assertThat(registerMongCollectionResDto.memberId()).isEqualTo(memberId);
+            assertThat(registerMongCollectionResDto.accountId()).isEqualTo(accountId);
             assertThat(registerMongCollectionResDto.code()).isEqualTo(mongCode);
         }
 
@@ -224,14 +224,14 @@ class CollectionServiceTest {
         @DisplayName("존재하지 않는 몽 코드로 등록하면 InvalidCodeException 이 발생한다.")
         void registerMongCollectionNotFoundMongCode() {
             // given
-            Long memberId = 1L;
+            Long accountId = 1L;
             String mongCode = "INVALID_CODE";
 
             when(mongCodeRepository.findById(mongCode))
                     .thenReturn(Optional.empty());
 
             // when
-            Throwable e = catchThrowable(() -> collectionService.registerMongCollection(memberId, mongCode));
+            Throwable e = catchThrowable(() -> collectionService.registerMongCollection(accountId, mongCode));
 
             var expected = ((InvalidCodeException) e).errorCode;
             var errorCode = CollectionErrorCode.INVALID_MONG_CODE;
@@ -251,15 +251,15 @@ class CollectionServiceTest {
         @DisplayName("회원 id, 맵 코드로 맵 컬렉션을 삭제한다.")
         void removeMapCollection() {
             // given
-            Long memberId = 1L;
+            Long accountId = 1L;
             String mapCode = testMapCode.code();
 
             when(mapCodeRepository.findById(mapCode))
                     .thenReturn(Optional.of(testMapCode));
-            doNothing().when(mapCollectionRepository).deleteByAccountIdAndCode(memberId, mapCode);
+            doNothing().when(mapCollectionRepository).deleteByAccountIdAndCode(accountId, mapCode);
 
             // when
-            Throwable e = catchThrowable(() -> collectionService.removeMapCollection(memberId, mapCode));
+            Throwable e = catchThrowable(() -> collectionService.removeMapCollection(accountId, mapCode));
 
             // then
             assertThat(e).isNull();
@@ -269,14 +269,14 @@ class CollectionServiceTest {
         @DisplayName("존재하지 않는 맵 코드로 삭제하면 InvalidCodeException 이 발생한다.")
         void removeMapCollectionNotFoundMapCode() {
             // given
-            Long memberId = 1L;
+            Long accountId = 1L;
             String mapCode = "INVALID_CODE";
 
             when(mapCodeRepository.findById(mapCode))
                     .thenReturn(Optional.empty());
 
             // when
-            Throwable e = catchThrowable(() -> collectionService.removeMapCollection(memberId, mapCode));
+            Throwable e = catchThrowable(() -> collectionService.removeMapCollection(accountId, mapCode));
 
             var expected = ((InvalidCodeException) e).errorCode;
             var errorCode = CollectionErrorCode.INVALID_MAP_CODE;
@@ -292,15 +292,15 @@ class CollectionServiceTest {
         @DisplayName("회원 id, 몽 코드로 몽 컬렉션을 삭제한다.")
         void removeMongCollection() {
             // given
-            Long memberId = 1L;
+            Long accountId = 1L;
             String mongCode = testMongCode.code();
 
             when(mongCodeRepository.findById(mongCode))
                     .thenReturn(Optional.of(testMongCode));
-            doNothing().when(mongCollectionRepository).deleteByAccountIdAndCode(memberId, mongCode);
+            doNothing().when(mongCollectionRepository).deleteByAccountIdAndCode(accountId, mongCode);
 
             // when
-            Throwable e = catchThrowable(() -> collectionService.removeMongCollection(memberId, mongCode));
+            Throwable e = catchThrowable(() -> collectionService.removeMongCollection(accountId, mongCode));
 
             // then
             assertThat(e).isNull();
@@ -310,14 +310,14 @@ class CollectionServiceTest {
         @DisplayName("존재하지 않는 몽 코드로 삭제하면 InvalidCodeException 이 발생한다.")
         void removeMongCollectionNotFoundMongCode() {
             // given
-            Long memberId = 1L;
+            Long accountId = 1L;
             String mongCode = "INVALID_CODE";
 
             when(mongCodeRepository.findById(mongCode))
                     .thenReturn(Optional.empty());
 
             // when
-            Throwable e = catchThrowable(() -> collectionService.removeMongCollection(memberId, mongCode));
+            Throwable e = catchThrowable(() -> collectionService.removeMongCollection(accountId, mongCode));
 
             var expected = ((InvalidCodeException) e).errorCode;
             var errorCode = CollectionErrorCode.INVALID_MONG_CODE;
