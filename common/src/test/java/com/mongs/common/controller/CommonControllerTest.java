@@ -1,12 +1,15 @@
 package com.mongs.common.controller;
 
+import com.mongs.common.code.TestFeedbackCode;
 import com.mongs.common.code.TestFoodCode;
 import com.mongs.common.code.TestMapCode;
 import com.mongs.common.code.TestMongCode;
+import com.mongs.common.controller.dto.response.FindFeedbackCodeResDto;
 import com.mongs.common.controller.dto.response.FindFoodCodeResDto;
 import com.mongs.common.controller.dto.response.FindMapCodeResDto;
 import com.mongs.common.controller.dto.response.FindMongCodeResDto;
 import com.mongs.common.service.CommonService;
+import com.mongs.core.entity.FeedbackCode;
 import com.mongs.core.entity.FoodCode;
 import com.mongs.core.entity.MapCode;
 import com.mongs.core.entity.MongCode;
@@ -39,9 +42,12 @@ class CommonControllerTest {
     @MockBean
     private CommonService commonService;
 
+    private final String buildVersion = "1.0.0";
+
     private final List<MapCode> mapCodeList =
             Arrays.stream(TestMapCode.values())
             .map(testMapCode -> MapCode.builder()
+                    .buildVersion(buildVersion)
                     .code(testMapCode.getCode())
                     .name(testMapCode.getName())
                     .build())
@@ -50,6 +56,7 @@ class CommonControllerTest {
     private final List<MongCode> mongCodeList =
             Arrays.stream(TestMongCode.values())
             .map(testMongCode -> MongCode.builder()
+                    .buildVersion(buildVersion)
                     .code(testMongCode.getCode())
                     .name(testMongCode.getName())
                     .build())
@@ -58,21 +65,45 @@ class CommonControllerTest {
     private final List<FoodCode> foodCodeList =
             Arrays.stream(TestFoodCode.values())
             .map(testFoodCode -> FoodCode.builder()
-                    .code(testFoodCode.getCode())
+                    .buildVersion(buildVersion)
                     .name(testFoodCode.getName())
+                    .code(testFoodCode.getCode())
+                    .groupCode(testFoodCode.getGroupCode())
+                    .price(testFoodCode.getPrice())
+                    .addWeightValue(testFoodCode.getAddWeightValue())
+                    .addStrengthValue(testFoodCode.getAddStrengthValue())
+                    .addSatietyValue(testFoodCode.getAddSatietyValue())
+                    .addHealthyValue(testFoodCode.getAddHealthyValue())
+                    .addSleepValue(testFoodCode.getAddSleepValue())
                     .build())
             .toList();
 
-    @Test
-    @DisplayName("맵 코드 값 리스트를 반환한다.")
-    void findMap() throws Exception {
-        // given
+    private final List<FeedbackCode> feedbackCodeList =
+            Arrays.stream(TestFeedbackCode.values())
+                    .map(testFeedbackCode -> FeedbackCode.builder()
+                            .buildVersion(buildVersion)
+                            .code(testFeedbackCode.getCode())
+                            .groupCode(testFeedbackCode.getGroupCode())
+                            .message(testFeedbackCode.getMessage())
+                            .build())
+                    .toList();
 
+
+    @Test
+    @DisplayName("코드 값 리스트를 반환한다.")
+    void findCode() throws Exception {
+        // given
         when(commonService.findMapCode())
                 .thenReturn(FindMapCodeResDto.toList(mapCodeList));
+        when(commonService.findMongCode())
+                .thenReturn(FindMongCodeResDto.toList(mongCodeList));
+        when(commonService.findFoodCode())
+                .thenReturn(FindFoodCodeResDto.toList(foodCodeList));
+        when(commonService.findFeedbackCode())
+                .thenReturn(FindFeedbackCodeResDto.toList(feedbackCodeList));
 
         // when
-        ResultActions resultActions = mockMvc.perform(get("/common/map")
+        ResultActions resultActions = mockMvc.perform(get("/common/code")
                 .contentType(MediaType.APPLICATION_JSON));
 
         // then
@@ -82,58 +113,33 @@ class CommonControllerTest {
 
         for (int idx = 0; idx < mapCodeList.size(); idx++) {
             MapCode mapCode = mapCodeList.get(idx);
-            resultActions.andExpect(jsonPath("$.[" + idx + "].code").value(mapCode.code()));
-            resultActions.andExpect(jsonPath("$.[" + idx + "].name").value(mapCode.name()));
+            resultActions.andExpect(jsonPath("$.mapCodeList.[" + idx + "].code").value(mapCode.code()));
+            resultActions.andExpect(jsonPath("$.mapCodeList.[" + idx + "].name").value(mapCode.name()));
+            resultActions.andExpect(jsonPath("$.mapCodeList.[" + idx + "].buildVersion").value(buildVersion));
         }
-    }
-
-    @Test
-    @DisplayName("몽 코드 값 리스트를 반환한다.")
-    void findMong() throws Exception {
-        // given
-
-        when(commonService.findMongCode())
-                .thenReturn(FindMongCodeResDto.toList(mongCodeList));
-
-        // when
-        ResultActions resultActions = mockMvc.perform(get("/common/mong")
-                .contentType(MediaType.APPLICATION_JSON));
-
-        // then
-        resultActions
-                .andExpect(status().isOk())
-                .andExpect(content().contentType(MediaType.APPLICATION_JSON));
 
         for (int idx = 0; idx < mongCodeList.size(); idx++) {
             MongCode mongCode = mongCodeList.get(idx);
-            resultActions.andExpect(jsonPath("$.[" + idx + "].code").value(mongCode.code()));
-            resultActions.andExpect(jsonPath("$.[" + idx + "].name").value(mongCode.name()));
+            resultActions.andExpect(jsonPath("$.mongCodeList.[" + idx + "].code").value(mongCode.code()));
+            resultActions.andExpect(jsonPath("$.mongCodeList.[" + idx + "].name").value(mongCode.name()));
+            resultActions.andExpect(jsonPath("$.mongCodeList.[" + idx + "].buildVersion").value(buildVersion));
         }
-    }
-
-    @Test
-    @DisplayName("음식 코드 값 리스트를 반환한다.")
-    void findFood() throws Exception {
-        // given
-
-        when(commonService.findFoodCode())
-                .thenReturn(FindFoodCodeResDto.toList(foodCodeList));
-
-        // when
-        ResultActions resultActions = mockMvc.perform(get("/common/food")
-                .contentType(MediaType.APPLICATION_JSON));
-
-        // then
-        resultActions
-                .andExpect(status().isOk())
-                .andExpect(content().contentType(MediaType.APPLICATION_JSON));
 
         for (int idx = 0; idx < foodCodeList.size(); idx++) {
             FoodCode foodCode = foodCodeList.get(idx);
-            resultActions.andExpect(jsonPath("$.[" + idx + "].code").value(foodCode.code()));
-            resultActions.andExpect(jsonPath("$.[" + idx + "].name").value(foodCode.name()));
-            resultActions.andExpect(jsonPath("$.[" + idx + "].groupCode").value(foodCode.groupCode()));
-            resultActions.andExpect(jsonPath("$.[" + idx + "].point").value(foodCode.price()));
+            resultActions.andExpect(jsonPath("$.foodCodeList.[" + idx + "].code").value(foodCode.code()));
+            resultActions.andExpect(jsonPath("$.foodCodeList.[" + idx + "].name").value(foodCode.name()));
+            resultActions.andExpect(jsonPath("$.foodCodeList.[" + idx + "].groupCode").value(foodCode.groupCode()));
+            resultActions.andExpect(jsonPath("$.foodCodeList.[" + idx + "].price").value(foodCode.price()));
+            resultActions.andExpect(jsonPath("$.foodCodeList.[" + idx + "].buildVersion").value(buildVersion));
+        }
+
+        for (int idx = 0; idx < feedbackCodeList.size(); idx++) {
+            FeedbackCode feedbackCode = feedbackCodeList.get(idx);
+            resultActions.andExpect(jsonPath("$.feedbackCodeList.[" + idx + "].code").value(feedbackCode.code()));
+            resultActions.andExpect(jsonPath("$.feedbackCodeList.[" + idx + "].groupCode").value(feedbackCode.groupCode()));
+            resultActions.andExpect(jsonPath("$.feedbackCodeList.[" + idx + "].message").value(feedbackCode.message()));
+            resultActions.andExpect(jsonPath("$.feedbackCodeList.[" + idx + "].buildVersion").value(buildVersion));
         }
     }
 }

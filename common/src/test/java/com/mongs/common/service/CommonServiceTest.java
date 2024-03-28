@@ -1,14 +1,18 @@
 package com.mongs.common.service;
 
+import com.mongs.common.code.TestFeedbackCode;
 import com.mongs.common.code.TestFoodCode;
 import com.mongs.common.code.TestMapCode;
 import com.mongs.common.code.TestMongCode;
+import com.mongs.common.controller.dto.response.FindFeedbackCodeResDto;
 import com.mongs.common.controller.dto.response.FindFoodCodeResDto;
 import com.mongs.common.controller.dto.response.FindMapCodeResDto;
 import com.mongs.common.controller.dto.response.FindMongCodeResDto;
+import com.mongs.common.repository.FeedbackCodeRepository;
 import com.mongs.common.repository.FoodCodeRepository;
 import com.mongs.common.repository.MapCodeRepository;
 import com.mongs.common.repository.MongCodeRepository;
+import com.mongs.core.entity.FeedbackCode;
 import com.mongs.core.entity.FoodCode;
 import com.mongs.core.entity.MapCode;
 import com.mongs.core.entity.MongCode;
@@ -22,6 +26,7 @@ import org.springframework.test.context.ActiveProfiles;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -39,14 +44,18 @@ class CommonServiceTest {
     private MongCodeRepository mongCodeRepository;
     @Mock
     private FoodCodeRepository foodCodeRepository;
+    @Mock
+    private FeedbackCodeRepository feedbackCodeRepository;
 
     @Test
     @DisplayName("맵 코드 값을 반환한다.")
     void findMapCode() {
         // given
+        String buildVersion = "1.0.0";
 
         List<MapCode> mapCodeList = Arrays.stream(TestMapCode.values())
                 .map(testMapCode -> MapCode.builder()
+                        .buildVersion(buildVersion)
                         .code(testMapCode.getCode())
                         .name(testMapCode.getName())
                         .build())
@@ -72,6 +81,7 @@ class CommonServiceTest {
                 .forEach(findMapCodeResDto -> {
                     assertThat(expected1.contains(findMapCodeResDto.code())).isTrue();
                     assertThat(expected2.contains(findMapCodeResDto.name())).isTrue();
+                    assertThat(findMapCodeResDto.buildVersion()).isEqualTo(buildVersion);
                 });
     }
 
@@ -79,10 +89,11 @@ class CommonServiceTest {
     @DisplayName("몽 코드 값을 반환한다.")
     void findMongCode() {
         // given
-        Long version = 1L;
+        String buildVersion = "1.0.0";
 
         List<MongCode> mongCodeList = Arrays.stream(TestMongCode.values())
                 .map(testMongCode -> MongCode.builder()
+                        .buildVersion(buildVersion)
                         .code(testMongCode.getCode())
                         .name(testMongCode.getName())
                         .build())
@@ -108,6 +119,7 @@ class CommonServiceTest {
                 .forEach(findMongCodeResDto -> {
                     assertThat(expected1.contains(findMongCodeResDto.code())).isTrue();
                     assertThat(expected2.contains(findMongCodeResDto.name())).isTrue();
+                    assertThat(findMongCodeResDto.buildVersion()).isEqualTo(buildVersion);
                 });
     }
 
@@ -115,12 +127,20 @@ class CommonServiceTest {
     @DisplayName("음식 코드 값을 반환한다.")
     void findFoodCode() {
         // given
-        Long version = 1L;
+        String buildVersion = "1.0.0";
 
         List<FoodCode> foodCodeList = Arrays.stream(TestFoodCode.values())
                 .map(testFoodCode -> FoodCode.builder()
-                        .code(testFoodCode.getCode())
+                        .buildVersion(buildVersion)
                         .name(testFoodCode.getName())
+                        .code(testFoodCode.getCode())
+                        .groupCode(testFoodCode.getGroupCode())
+                        .price(testFoodCode.getPrice())
+                        .addWeightValue(testFoodCode.getAddWeightValue())
+                        .addStrengthValue(testFoodCode.getAddStrengthValue())
+                        .addSatietyValue(testFoodCode.getAddSatietyValue())
+                        .addHealthyValue(testFoodCode.getAddHealthyValue())
+                        .addSleepValue(testFoodCode.getAddSleepValue())
                         .build())
                 .toList();
 
@@ -132,18 +152,69 @@ class CommonServiceTest {
 
         Set<String> expected1 =
                 Arrays.stream(TestFoodCode.values())
-                        .map(TestFoodCode::getCode)
+                        .map(TestFoodCode::getName)
                         .collect(Collectors.toSet());
         Set<String> expected2 =
                 Arrays.stream(TestFoodCode.values())
-                        .map(TestFoodCode::getName)
+                        .map(TestFoodCode::getCode)
+                        .collect(Collectors.toSet());
+        Set<String> expected3 =
+                Arrays.stream(TestFoodCode.values())
+                        .map(TestFoodCode::getGroupCode)
                         .collect(Collectors.toSet());
 
         // then
         findFoodCodeResDtoList
                 .forEach(findFoodCodeResDto -> {
-                    assertThat(expected1.contains(findFoodCodeResDto.code())).isTrue();
-                    assertThat(expected2.contains(findFoodCodeResDto.name())).isTrue();
+                    assertThat(expected1.contains(findFoodCodeResDto.name())).isTrue();
+                    assertThat(expected2.contains(findFoodCodeResDto.code())).isTrue();
+                    assertThat(expected3.contains(findFoodCodeResDto.groupCode())).isTrue();
+                    assertThat(findFoodCodeResDto.price()).isNotNull();
+                    assertThat(findFoodCodeResDto.buildVersion()).isEqualTo(buildVersion);
+                });
+    }
+
+    @Test
+    @DisplayName("피드백 코드 값을 반환한다.")
+    void findFeedbackCode() {
+        // given
+        String buildVersion = "1.0.0";
+
+        List<FeedbackCode> feedbackCodeList = Arrays.stream(TestFeedbackCode.values())
+                .map(testFeedbackCode -> FeedbackCode.builder()
+                        .buildVersion(buildVersion)
+                        .code(testFeedbackCode.getCode())
+                        .groupCode(testFeedbackCode.getGroupCode())
+                        .message(testFeedbackCode.getMessage())
+                        .build())
+                .toList();
+
+        when(feedbackCodeRepository.findAll())
+                .thenReturn(feedbackCodeList);
+
+        // when
+        List<FindFeedbackCodeResDto> findFeedbackCodeResDtoList = commonService.findFeedbackCode();
+
+        Set<String> expected1 =
+                Arrays.stream(TestFeedbackCode.values())
+                        .map(TestFeedbackCode::getCode)
+                        .collect(Collectors.toSet());
+        Set<String> expected2 =
+                Arrays.stream(TestFeedbackCode.values())
+                        .map(TestFeedbackCode::getGroupCode)
+                        .collect(Collectors.toSet());
+        Set<String> expected3 =
+                Arrays.stream(TestFeedbackCode.values())
+                        .map(TestFeedbackCode::getMessage)
+                        .collect(Collectors.toSet());
+
+        // then
+        findFeedbackCodeResDtoList
+                .forEach(findFeedbackCodeResDto -> {
+                    assertThat(expected1.contains(findFeedbackCodeResDto.code())).isTrue();
+                    assertThat(expected2.contains(findFeedbackCodeResDto.groupCode())).isTrue();
+                    assertThat(expected3.contains(findFeedbackCodeResDto.message())).isTrue();
+                    assertThat(findFeedbackCodeResDto.buildVersion()).isEqualTo(buildVersion);
                 });
     }
 }
