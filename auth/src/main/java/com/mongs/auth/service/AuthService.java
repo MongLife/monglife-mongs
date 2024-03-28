@@ -9,7 +9,7 @@ import com.mongs.auth.entity.Account;
 import com.mongs.auth.entity.Token;
 import com.mongs.auth.exception.NotFoundException;
 import com.mongs.auth.exception.PassportException;
-import com.mongs.core.vo.passport.PassportVO;
+import com.mongs.core.vo.passport.PassportVo;
 import com.mongs.core.vo.passport.PassportData;
 import com.mongs.core.vo.passport.PassportAccount;
 import com.mongs.auth.repository.AccountRepository;
@@ -130,7 +130,7 @@ public class AuthService {
     }
 
     @Transactional
-    public PassportVO passport(String accessToken) throws RuntimeException {
+    public PassportVo passport(String accessToken) throws RuntimeException {
         /* AccessToken 검증 */
         if (tokenProvider.isTokenExpired(accessToken)) {
             throw new AuthorizationException(AuthErrorCode.ACCESS_TOKEN_EXPIRED);
@@ -148,7 +148,7 @@ public class AuthService {
         AccountLog accountLog = accountLogRepository.findTopByAccountIdAndDeviceIdOrderByLoginAt(accountId, deviceId)
                 .orElseThrow(() -> new NotFoundException(AuthErrorCode.ACCOUNT_LOG_NOT_FOUND));
 
-        PassportVO passportVO = PassportVO.builder()
+        PassportVo passportVO = PassportVo.builder()
                 .data(PassportData.builder()
                         .account(PassportAccount.builder()
                                 .id(accountId)

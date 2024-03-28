@@ -8,7 +8,7 @@ import com.mongs.auth.controller.dto.response.LoginResDto;
 import com.mongs.auth.controller.dto.response.LogoutResDto;
 import com.mongs.auth.controller.dto.response.ReissueResDto;
 import com.mongs.auth.service.AuthService;
-import com.mongs.core.vo.passport.PassportVO;
+import com.mongs.core.vo.passport.PassportVo;
 import com.mongs.auth.service.vo.LoginVo;
 import com.mongs.auth.service.vo.LogoutVo;
 import com.mongs.auth.service.vo.ReissueVo;
@@ -52,7 +52,7 @@ public class AuthController {
     }
 
     @PostMapping("/passport")
-    public ResponseEntity<PassportVO> passport(@RequestBody @Validated PassportReqDto passportReqDto) {
+    public ResponseEntity<PassportVo> passport(@RequestBody @Validated PassportReqDto passportReqDto) {
         return ResponseEntity.ok().body(authService.passport(passportReqDto.accessToken()));
     }
 }

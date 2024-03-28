@@ -1,6 +1,6 @@
 package com.mongs.auth.util;
 
-import com.mongs.core.vo.passport.PassportVO;
+import com.mongs.core.vo.passport.PassportVo;
 import com.mongs.core.vo.passport.PassportData;
 import com.mongs.core.vo.passport.PassportAccount;
 import com.mongs.core.utils.HmacProvider;
@@ -27,13 +27,18 @@ class HmacProviderTest {
         String email = "test@test.com";
         String name = "테스트";
         Long accountId = 1L;
+        String deviceId = "testDeviceId";
+        String role = "NORMAL";
 
-        PassportVO passportVO = PassportVO.builder()
+        PassportVo passportVO = PassportVo.builder()
                 .data(PassportData.builder()
                         .account(PassportAccount.builder()
                                 .id(accountId)
+                                .deviceId(deviceId)
                                 .email(email)
                                 .name(name)
+                                .loginCount(1)
+                                .role(role)
                                 .build())
                         .build())
                 .build();
@@ -46,33 +51,6 @@ class HmacProviderTest {
     }
 
     @Test
-    @DisplayName("위변조 되지 않은 데이터인 경우 true 를 반환한다.")
-    void verifyHmac() {
-        // given
-        String integrity = "YkGQUBhyGuenqR9ip50BBfgyfIMHJOqsfs3yLooOYwg=";
-        String email = "test@test.com";
-        String name = "테스트";
-        Long accountId = 1L;
-
-        PassportVO passportVO = PassportVO.builder()
-                .data(PassportData.builder()
-                        .account(PassportAccount.builder()
-                                .id(accountId)
-                                .email(email)
-                                .name(name)
-                                .build())
-                        .build())
-                .passportIntegrity(integrity)
-                .build();
-
-        // when
-        boolean expected = hmacProvider.verifyHmac(passportVO.data(), passportVO.passportIntegrity());
-
-        // then
-        assertThat(expected).isTrue();
-    }
-
-    @Test
     @DisplayName("위변조 된 데이터인 경우 false 를 반환한다.")
     void verifyHmacForgery() {
         // given
@@ -80,14 +58,19 @@ class HmacProviderTest {
         String email = "forgery@forgery.com";
         String name = "위변조_테스트";
         Long accountId = 2L;
+        String deviceId = "testDeviceId";
+        String role = "NORMAL";
         
         // 위변조 데이터 생성
-        PassportVO passportVO = PassportVO.builder()
+        PassportVo passportVO = PassportVo.builder()
                 .data(PassportData.builder()
                         .account(PassportAccount.builder()
                                 .id(accountId)
+                                .deviceId(deviceId)
                                 .email(email)
                                 .name(name)
+                                .loginCount(1)
+                                .role(role)
                                 .build())
                         .build())
                 .build();

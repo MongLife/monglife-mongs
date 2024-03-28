@@ -7,14 +7,13 @@ import com.mongs.core.interceptor.exception.GenerateException;
 import com.mongs.core.utils.HmacProvider;
 import com.mongs.core.vo.passport.PassportAccount;
 import com.mongs.core.vo.passport.PassportData;
-import com.mongs.core.vo.passport.PassportVO;
+import com.mongs.core.vo.passport.PassportVo;
 import feign.RequestInterceptor;
 import feign.RequestTemplate;
 import lombok.extern.slf4j.Slf4j;
 
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
-import java.time.LocalDate;
 import java.util.UUID;
 
 @Slf4j
@@ -31,7 +30,7 @@ public final class AdminFeignInterceptor implements RequestInterceptor {
     @Override
     public void apply(RequestTemplate template) {
         try {
-            PassportVO passportVO = PassportVO.builder()
+            PassportVo passportVO = PassportVo.builder()
                     .data(PassportData.builder()
                             .account(PassportAccount.builder()
                                     .id(0L)
