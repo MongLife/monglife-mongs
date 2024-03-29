@@ -6,16 +6,14 @@ import com.mongs.member.domain.collection.controller.dto.request.RegisterMapColl
 import com.mongs.member.domain.collection.controller.dto.request.RegisterMongCollectionReqDto;
 import com.mongs.member.domain.collection.controller.dto.request.RemoveMapCollectionReqDto;
 import com.mongs.member.domain.collection.controller.dto.request.RemoveMongCollectionReqDto;
-import com.mongs.member.domain.collection.controller.dto.response.FindMapCollectionResDto;
-import com.mongs.member.domain.collection.controller.dto.response.FindMongCollectionResDto;
-import com.mongs.member.domain.collection.controller.dto.response.RegisterMapCollectionResDto;
-import com.mongs.member.domain.collection.controller.dto.response.RegisterMongCollectionResDto;
+import com.mongs.member.domain.collection.controller.dto.response.*;
 import com.mongs.member.domain.collection.exception.CollectionErrorCode;
 import com.mongs.member.domain.collection.exception.InvalidCodeException;
 import com.mongs.member.domain.collection.security.WithMockPassportDetail;
 import com.mongs.core.entity.MapCode;
 import com.mongs.core.entity.MongCode;
 import com.mongs.core.error.ErrorCode;
+import com.mongs.member.domain.collection.security.WithMockPassportDetailAdmin;
 import com.mongs.member.domain.collection.service.CollectionService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -55,8 +53,8 @@ public class CollectionControllerTest {
     @MockBean
     private CollectionService collectionService;
 
-    private final MapCode testMapCode =  new MapCode(TestMapCode.MP000.getCode(), TestMapCode.MP000.getName(), 1L);
-    private final MongCode testMongCode = new MongCode(TestMongCode.CH000.getCode(), TestMongCode.CH000.getName(), 1L);
+    private final MapCode testMapCode =  new MapCode(TestMapCode.MP000.getCode(), TestMapCode.MP000.getName(), "1.0.0");
+    private final MongCode testMongCode = new MongCode(TestMongCode.CH000.getCode(), TestMongCode.CH000.getName(), "1.0.0");
 
     @Nested
     @DisplayName("조회 단위 테스트")
@@ -65,22 +63,22 @@ public class CollectionControllerTest {
 
         private final List<MapCode> mapCodeList =
                 Arrays.stream(TestMapCode.values())
-                        .map(mapCode -> new MapCode(mapCode.getCode(), mapCode.getName(), 1L))
+                        .map(mapCode -> new MapCode(mapCode.getCode(), mapCode.getName(), "1.0.0"))
                         .toList();
         private final List<MongCode> mongCodeList =
                 Arrays.stream(TestMongCode.values())
-                        .map(mongCode -> new MongCode(mongCode.getCode(), mongCode.getName(), 1L))
+                        .map(mongCode -> new MongCode(mongCode.getCode(), mongCode.getName(), "1.0.0"))
                         .toList();
 
         @Test
         @DisplayName("맵 컬렉션을 조회하면 맵 컬렉션 리스트를 반환한다.")
         void findMapCollection() throws Exception {
             // given
-            Long memberId = 1L;
+            Long accountId = 1L;
             List<MapCode> enable = List.of(
-                    new MapCode(TestMapCode.MP000.getCode(), TestMapCode.MP000.getName(), 1L),
-                    new MapCode(TestMapCode.MP001.getCode(), TestMapCode.MP001.getName(), 1L),
-                    new MapCode(TestMapCode.MP002.getCode(), TestMapCode.MP002.getName(), 1L)
+                    new MapCode(TestMapCode.MP000.getCode(), TestMapCode.MP000.getName(), "1.0.0"),
+                    new MapCode(TestMapCode.MP001.getCode(), TestMapCode.MP001.getName(), "1.0.0"),
+                    new MapCode(TestMapCode.MP002.getCode(), TestMapCode.MP002.getName(), "1.0.0")
             );
             List<String> enableList = enable.stream().map(MapCode::code).toList();
             List<MapCode> disable = mapCodeList.stream()
@@ -90,7 +88,7 @@ public class CollectionControllerTest {
             List<FindMapCollectionResDto> findMapCollectionResDtoList =
                     FindMapCollectionResDto.toList(enable, disable);
 
-            when(collectionService.findMapCollection(memberId))
+            when(collectionService.findMapCollection(accountId))
                     .thenReturn(findMapCollectionResDtoList);
 
             // when
@@ -110,22 +108,22 @@ public class CollectionControllerTest {
                         .andExpect(jsonPath("$["+idx+"].disable").value(false));
             }
             // Parameter
-            var memberIdCaptor = ArgumentCaptor.forClass(Long.class);
-            verify(collectionService, times(1)).findMapCollection(memberIdCaptor.capture());
+            var accountIdCaptor = ArgumentCaptor.forClass(Long.class);
+            verify(collectionService, times(1)).findMapCollection(accountIdCaptor.capture());
 
-            var passedMemberId = memberIdCaptor.getValue();
-            assertThat(passedMemberId).isEqualTo(memberId);
+            var passedAccountId = accountIdCaptor.getValue();
+            assertThat(passedAccountId).isEqualTo(accountId);
         }
 
         @Test
         @DisplayName("몽 컬렉션을 조회하면 몽 컬렉션 리스트를 반환한다.")
         void findMongCollection() throws Exception {
             // given
-            Long memberId = 1L;
+            Long accountId = 1L;
             List<MongCode> enable = List.of(
-                    new MongCode(TestMongCode.CH000.getCode(), TestMongCode.CH000.getName(), 1L),
-                    new MongCode(TestMongCode.CH001.getCode(), TestMongCode.CH001.getName(), 1L),
-                    new MongCode(TestMongCode.CH002.getCode(), TestMongCode.CH002.getName(), 1L)
+                    new MongCode(TestMongCode.CH000.getCode(), TestMongCode.CH000.getName(), "1.0.0"),
+                    new MongCode(TestMongCode.CH001.getCode(), TestMongCode.CH001.getName(), "1.0.0"),
+                    new MongCode(TestMongCode.CH002.getCode(), TestMongCode.CH002.getName(), "1.0.0")
             );
             List<String> enableList = enable.stream().map(MongCode::code).toList();
             List<MongCode> disable = mongCodeList.stream()
@@ -135,7 +133,7 @@ public class CollectionControllerTest {
             List<FindMongCollectionResDto> findMongCollectionResDtoList =
                     FindMongCollectionResDto.toList(enable, disable);
 
-            when(collectionService.findMongCollection(memberId))
+            when(collectionService.findMongCollection(accountId))
                     .thenReturn(findMongCollectionResDtoList);
 
             // when
@@ -155,36 +153,36 @@ public class CollectionControllerTest {
                         .andExpect(jsonPath("$["+idx+"].disable").value(false));
             }
             // Parameter
-            var memberIdCaptor = ArgumentCaptor.forClass(Long.class);
-            verify(collectionService, times(1)).findMongCollection(memberIdCaptor.capture());
+            var accountIdCaptor = ArgumentCaptor.forClass(Long.class);
+            verify(collectionService, times(1)).findMongCollection(accountIdCaptor.capture());
 
-            var passedMemberId = memberIdCaptor.getValue();
-            assertThat(passedMemberId).isEqualTo(memberId);
+            var passedAccountId = accountIdCaptor.getValue();
+            assertThat(passedAccountId).isEqualTo(accountId);
         }
     }
 
     @Nested
     @DisplayName("등록 단위 테스트")
-    @WithMockPassportDetail
+    @WithMockPassportDetailAdmin
     class Register {
         @Test
         @DisplayName("맵 코드로 맵 컬렉션을 등록한다.")
         void registerMapCollection() throws Exception {
             // given
-            Long memberId = 1L;
+            Long accountId = 1L;
             String mapCode = testMapCode.code();
             RegisterMapCollectionResDto registerMapCollectionResDto =
                     RegisterMapCollectionResDto.builder()
-                            .memberId(memberId)
+                            .accountId(accountId)
                             .code(mapCode)
                             .createdAt(LocalDateTime.now())
                             .build();
 
-            when(collectionService.registerMapCollection(memberId, mapCode))
+            when(collectionService.registerMapCollection(accountId, mapCode))
                     .thenReturn(registerMapCollectionResDto);
 
             // when
-            ResultActions resultActions = mockMvc.perform(post("/collection/map")
+            ResultActions resultActions = mockMvc.perform(post("/collection/admin/map/" + accountId)
                     .contentType(MediaType.APPLICATION_JSON)
                     .content(objectMapper.writeValueAsBytes(new RegisterMapCollectionReqDto(mapCode))));
 
@@ -195,17 +193,17 @@ public class CollectionControllerTest {
                     .andExpect(content().contentType(MediaType.APPLICATION_JSON));
             // data
             resultActions
-                    .andExpect(jsonPath("$.memberId").value(1L))
+                    .andExpect(jsonPath("$.accountId").value(1L))
                     .andExpect(jsonPath("$.code").value(mapCode))
                     .andExpect(jsonPath("$.createdAt").exists());
             // Parameter
-            var memberIdCaptor = ArgumentCaptor.forClass(Long.class);
+            var accountIdCaptor = ArgumentCaptor.forClass(Long.class);
             var mapCodeCaptor = ArgumentCaptor.forClass(String.class);
-            verify(collectionService, times(1)).registerMapCollection(memberIdCaptor.capture(), mapCodeCaptor.capture());
+            verify(collectionService, times(1)).registerMapCollection(accountIdCaptor.capture(), mapCodeCaptor.capture());
 
-            var passedMemberId = memberIdCaptor.getValue();
+            var passedAccountId = accountIdCaptor.getValue();
             var passedMapCode = mapCodeCaptor.getValue();
-            assertThat(passedMemberId).isEqualTo(memberId);
+            assertThat(passedAccountId).isEqualTo(accountId);
             assertThat(passedMapCode).isEqualTo(mapCode);
         }
 
@@ -213,10 +211,11 @@ public class CollectionControllerTest {
         @DisplayName("맵 코드 없이 맵 컬렉션을 등록하면 Invalid Parameter 에러 메시지를 반환한다.")
         void registerMapCollectionNotFoundMapCode() throws Exception {
             // given
+            long accountId = 1L;
             ErrorCode errorCode = CollectionErrorCode.INVALID_PARAMETER;
 
             // when
-            ResultActions resultActions = mockMvc.perform(post("/collection/map")
+            ResultActions resultActions = mockMvc.perform(post("/collection/admin/map/" + accountId)
                     .contentType(MediaType.APPLICATION_JSON)
                     .content(objectMapper.writeValueAsBytes(new RegisterMapCollectionReqDto(null))));
 
@@ -235,15 +234,15 @@ public class CollectionControllerTest {
         @DisplayName("맵 코드가 아닌 코드로 맵 컬렉션을 등록하면 INVALID_MAP_CODE 에러 코드를 반환한다.")
         void registerMapCollectionInvalidMapCode() throws Exception {
             // given
-            Long memberId = 1L;
+            Long accountId = 1L;
             String mapCode = "INVALID_CODE";
             ErrorCode errorCode = CollectionErrorCode.INVALID_MAP_CODE;
 
-            when(collectionService.registerMapCollection(memberId, mapCode))
+            when(collectionService.registerMapCollection(accountId, mapCode))
                     .thenThrow(new InvalidCodeException(errorCode));
 
             // when
-            ResultActions resultActions = mockMvc.perform(post("/collection/map")
+            ResultActions resultActions = mockMvc.perform(post("/collection/admin/map/" + accountId)
                     .contentType(MediaType.APPLICATION_JSON)
                     .content(objectMapper.writeValueAsBytes(new RegisterMapCollectionReqDto(mapCode))));
 
@@ -262,20 +261,20 @@ public class CollectionControllerTest {
         @DisplayName("몽 코드로 몽 컬렉션을 등록한다.")
         void registerMongCollection() throws Exception {
             // given
-            Long memberId = 1L;
+            Long accountId = 1L;
             String mongCode = testMongCode.code();
             RegisterMongCollectionResDto registerMongCollectionResDto =
                     RegisterMongCollectionResDto.builder()
-                            .memberId(memberId)
+                            .accountId(accountId)
                             .code(mongCode)
                             .createdAt(LocalDateTime.now())
                             .build();
 
-            when(collectionService.registerMongCollection(memberId, mongCode))
+            when(collectionService.registerMongCollection(accountId, mongCode))
                     .thenReturn(registerMongCollectionResDto);
 
             // when
-            ResultActions resultActions = mockMvc.perform(post("/collection/mong")
+            ResultActions resultActions = mockMvc.perform(post("/collection/admin/mong/" + accountId)
                     .contentType(MediaType.APPLICATION_JSON)
                     .content(objectMapper.writeValueAsBytes(new RegisterMongCollectionReqDto(mongCode))));
 
@@ -286,17 +285,17 @@ public class CollectionControllerTest {
                     .andExpect(content().contentType(MediaType.APPLICATION_JSON));
             // data
             resultActions
-                    .andExpect(jsonPath("$.memberId").value(1L))
+                    .andExpect(jsonPath("$.accountId").value(1L))
                     .andExpect(jsonPath("$.code").value(mongCode))
                     .andExpect(jsonPath("$.createdAt").exists());
             // Parameter
-            var memberIdCaptor = ArgumentCaptor.forClass(Long.class);
+            var accountIdCaptor = ArgumentCaptor.forClass(Long.class);
             var mongCodeCaptor = ArgumentCaptor.forClass(String.class);
-            verify(collectionService, times(1)).registerMongCollection(memberIdCaptor.capture(), mongCodeCaptor.capture());
+            verify(collectionService, times(1)).registerMongCollection(accountIdCaptor.capture(), mongCodeCaptor.capture());
 
-            var passedMemberId = memberIdCaptor.getValue();
+            var passedAccountId = accountIdCaptor.getValue();
             var passedMongCode = mongCodeCaptor.getValue();
-            assertThat(passedMemberId).isEqualTo(memberId);
+            assertThat(passedAccountId).isEqualTo(accountId);
             assertThat(passedMongCode).isEqualTo(mongCode);
         }
 
@@ -304,10 +303,11 @@ public class CollectionControllerTest {
         @DisplayName("몽 코드 없이 몽 컬렉션을 등록하면 INVALID_PARAMETER 에러 코드를 반환한다.")
         void registerMongCollectionNotFoundMong() throws Exception {
             // given
+            long accountId = 1L;
             ErrorCode errorCode = CollectionErrorCode.INVALID_PARAMETER;
 
             // when
-            ResultActions resultActions = mockMvc.perform(post("/collection/mong")
+            ResultActions resultActions = mockMvc.perform(post("/collection/admin/mong/" + accountId)
                     .contentType(MediaType.APPLICATION_JSON)
                     .content(objectMapper.writeValueAsBytes(new RegisterMongCollectionReqDto(null))));
 
@@ -326,15 +326,15 @@ public class CollectionControllerTest {
         @DisplayName("몽 코드가 아닌 코드로 몽 컬렉션을 등록하면 INVALID_MONG_CODE 에러 코드를 반환한다.")
         void registerMongCollectionInvalidMongCode() throws Exception {
             // given
-            Long memberId = 1L;
+            Long accountId = 1L;
             String mongCode = "INVALID_CODE";
             ErrorCode errorCode = CollectionErrorCode.INVALID_MONG_CODE;
 
-            when(collectionService.registerMongCollection(memberId, mongCode))
+            when(collectionService.registerMongCollection(accountId, mongCode))
                     .thenThrow(new InvalidCodeException(errorCode));
 
             // when
-            ResultActions resultActions = mockMvc.perform(post("/collection/mong")
+            ResultActions resultActions = mockMvc.perform(post("/collection/admin/mong/" + accountId)
                     .contentType(MediaType.APPLICATION_JSON)
                     .content(objectMapper.writeValueAsBytes(new RegisterMongCollectionReqDto(mongCode))));
 
@@ -352,19 +352,22 @@ public class CollectionControllerTest {
 
     @Nested
     @DisplayName("삭제 단위 테스트")
-    @WithMockPassportDetail
+    @WithMockPassportDetailAdmin
     class Remove {
         @Test
         @DisplayName("맵 코드로 맵 컬렉션을 삭제한다.")
         void removeMapCollection() throws Exception {
             // given
-            Long memberId = 1L;
+            Long accountId = 1L;
             String mapCode = testMapCode.code();
 
-            doNothing().when(collectionService).removeMapCollection(memberId, mapCode);
+            when(collectionService.removeMapCollection(accountId, mapCode))
+                    .thenReturn(RemoveMapCollectionResDto.builder()
+                            .accountId(accountId)
+                            .build());
 
             // when
-            ResultActions resultActions = mockMvc.perform(delete("/collection/map")
+            ResultActions resultActions = mockMvc.perform(delete("/collection/admin/map/" + accountId)
                     .contentType(MediaType.APPLICATION_JSON)
                     .content(objectMapper.writeValueAsBytes(new RemoveMapCollectionReqDto(mapCode))));
 
@@ -373,13 +376,13 @@ public class CollectionControllerTest {
             resultActions
                     .andExpect(status().isOk());
             // Parameter
-            var memberIdCaptor = ArgumentCaptor.forClass(Long.class);
+            var accountIdCaptor = ArgumentCaptor.forClass(Long.class);
             var mapCodeCaptor = ArgumentCaptor.forClass(String.class);
-            verify(collectionService, times(1)).removeMapCollection(memberIdCaptor.capture(), mapCodeCaptor.capture());
+            verify(collectionService, times(1)).removeMapCollection(accountIdCaptor.capture(), mapCodeCaptor.capture());
 
-            var passedMemberId = memberIdCaptor.getValue();
+            var passedAccountId = accountIdCaptor.getValue();
             var passedMapCode = mapCodeCaptor.getValue();
-            assertThat(passedMemberId).isEqualTo(memberId);
+            assertThat(passedAccountId).isEqualTo(accountId);
             assertThat(passedMapCode).isEqualTo(mapCode);
         }
 
@@ -387,10 +390,11 @@ public class CollectionControllerTest {
         @DisplayName("맵 코드 없이 맵 컬렉션을 삭제하면 INVALID_PARAMETER 에러 코드를 반환한다.")
         void removeMapCollectionNotFoundMapCode() throws Exception {
             // given
+            long accountId = 1L;
             ErrorCode errorCode = CollectionErrorCode.INVALID_PARAMETER;
 
             // when
-            ResultActions resultActions = mockMvc.perform(delete("/collection/map")
+            ResultActions resultActions = mockMvc.perform(delete("/collection/admin/map/" + accountId)
                     .contentType(MediaType.APPLICATION_JSON)
                     .content(objectMapper.writeValueAsBytes(new RemoveMapCollectionReqDto(null))));
 
@@ -408,15 +412,15 @@ public class CollectionControllerTest {
         @DisplayName("맵 코드가 아닌 코드로 맵 컬렉션을 삭제하면 INVALID_MAP_CODE 에러 코드를 반환한다.")
         void removeMapCollectionInvalidMapCode() throws Exception {
             // given
-            Long memberId = 1L;
+            Long accountId = 1L;
             String mapCode = "INVALID_CODE";
             ErrorCode errorCode = CollectionErrorCode.INVALID_MAP_CODE;
 
             doThrow(new InvalidCodeException(errorCode))
-                    .when(collectionService).removeMapCollection(memberId, mapCode);
+                    .when(collectionService).removeMapCollection(accountId, mapCode);
 
             // when
-            ResultActions resultActions = mockMvc.perform(delete("/collection/map")
+            ResultActions resultActions = mockMvc.perform(delete("/collection/admin/map/" + accountId)
                     .contentType(MediaType.APPLICATION_JSON)
                     .content(objectMapper.writeValueAsBytes(new RemoveMapCollectionReqDto(mapCode))));
 
@@ -431,13 +435,13 @@ public class CollectionControllerTest {
                     .andExpect(jsonPath("$.message").value(errorCode.getMessage()));
 
             // Parameter
-            var memberIdCaptor = ArgumentCaptor.forClass(Long.class);
+            var accountIdCaptor = ArgumentCaptor.forClass(Long.class);
             var mapCodeCaptor = ArgumentCaptor.forClass(String.class);
-            verify(collectionService, times(1)).removeMapCollection(memberIdCaptor.capture(), mapCodeCaptor.capture());
+            verify(collectionService, times(1)).removeMapCollection(accountIdCaptor.capture(), mapCodeCaptor.capture());
 
-            var passedMemberId = memberIdCaptor.getValue();
+            var passedAccountId = accountIdCaptor.getValue();
             var passedMapCode = mapCodeCaptor.getValue();
-            assertThat(passedMemberId).isEqualTo(memberId);
+            assertThat(passedAccountId).isEqualTo(accountId);
             assertThat(passedMapCode).isEqualTo(mapCode);
         }
 
@@ -445,13 +449,16 @@ public class CollectionControllerTest {
         @DisplayName("몽 코드로 몽 컬렉션을 삭제한다.")
         void removeMongCollection() throws Exception {
             // given
-            Long memberId = 1L;
+            Long accountId = 1L;
             String mongCode = testMongCode.code();
 
-            doNothing().when(collectionService).removeMongCollection(memberId, mongCode);
+            when(collectionService.removeMongCollection(accountId, mongCode))
+                    .thenReturn(RemoveMongCollectionResDto.builder()
+                            .accountId(accountId)
+                            .build());
 
             // when
-            ResultActions resultActions = mockMvc.perform(delete("/collection/mong")
+            ResultActions resultActions = mockMvc.perform(delete("/collection/admin/mong/" + accountId)
                     .contentType(MediaType.APPLICATION_JSON)
                     .content(objectMapper.writeValueAsBytes(new RemoveMongCollectionReqDto(mongCode))));
 
@@ -460,13 +467,13 @@ public class CollectionControllerTest {
             resultActions
                     .andExpect(status().isOk());
             // Parameter
-            var memberIdCaptor = ArgumentCaptor.forClass(Long.class);
+            var accountIdCaptor = ArgumentCaptor.forClass(Long.class);
             var mongCodeCaptor = ArgumentCaptor.forClass(String.class);
-            verify(collectionService, times(1)).removeMongCollection(memberIdCaptor.capture(), mongCodeCaptor.capture());
+            verify(collectionService, times(1)).removeMongCollection(accountIdCaptor.capture(), mongCodeCaptor.capture());
 
-            var passedMemberId = memberIdCaptor.getValue();
+            var passedAccountId = accountIdCaptor.getValue();
             var passedMapCode = mongCodeCaptor.getValue();
-            assertThat(passedMemberId).isEqualTo(memberId);
+            assertThat(passedAccountId).isEqualTo(accountId);
             assertThat(passedMapCode).isEqualTo(mongCode);
         }
 
@@ -474,10 +481,11 @@ public class CollectionControllerTest {
         @DisplayName("몽 코드 없이 몽 컬렉션을 삭제하면 INVALID_PARAMETER 에러 코드를 반환한다.")
         void removeMongCollectionNotFoundMongCode() throws Exception {
             // given
+            long accountId = 1L;
             ErrorCode errorCode = CollectionErrorCode.INVALID_PARAMETER;
 
             // when
-            ResultActions resultActions = mockMvc.perform(delete("/collection/mong")
+            ResultActions resultActions = mockMvc.perform(delete("/collection/admin/mong/" + accountId)
                     .contentType(MediaType.APPLICATION_JSON)
                     .content(objectMapper.writeValueAsBytes(new RemoveMongCollectionReqDto(null))));
 
@@ -495,15 +503,15 @@ public class CollectionControllerTest {
         @DisplayName("몽 코드가 아닌 코드로 몽 컬렉션을 삭제하면 INVALID_MONG_CODE 에러 코드를 반환한다.")
         void removeMongCollectionInvalidMongCode() throws Exception {
             // given
-            Long memberId = 1L;
+            Long accountId = 1L;
             String mongCode = "INVALID_CODE";
             ErrorCode errorCode = CollectionErrorCode.INVALID_MONG_CODE;
 
             doThrow(new InvalidCodeException(errorCode))
-                    .when(collectionService).removeMongCollection(memberId, mongCode);
+                    .when(collectionService).removeMongCollection(accountId, mongCode);
 
             // when
-            ResultActions resultActions = mockMvc.perform(delete("/collection/mong")
+            ResultActions resultActions = mockMvc.perform(delete("/collection/admin/mong/" + accountId)
                     .contentType(MediaType.APPLICATION_JSON)
                     .content(objectMapper.writeValueAsBytes(new RemoveMongCollectionReqDto(mongCode))));
 
@@ -516,13 +524,13 @@ public class CollectionControllerTest {
                     .andExpect(jsonPath("$.code").value(errorCode.getCode()))
                     .andExpect(jsonPath("$.message").value(errorCode.getMessage()));
             // Parameter
-            var memberIdCaptor = ArgumentCaptor.forClass(Long.class);
+            var accountIdCaptor = ArgumentCaptor.forClass(Long.class);
             var mongCodeCaptor = ArgumentCaptor.forClass(String.class);
-            verify(collectionService, times(1)).removeMongCollection(memberIdCaptor.capture(), mongCodeCaptor.capture());
+            verify(collectionService, times(1)).removeMongCollection(accountIdCaptor.capture(), mongCodeCaptor.capture());
 
-            var passedMemberId = memberIdCaptor.getValue();
+            var passedAccountId = accountIdCaptor.getValue();
             var passedMapCode = mongCodeCaptor.getValue();
-            assertThat(passedMemberId).isEqualTo(memberId);
+            assertThat(passedAccountId).isEqualTo(accountId);
             assertThat(passedMapCode).isEqualTo(mongCode);
         }
     }
