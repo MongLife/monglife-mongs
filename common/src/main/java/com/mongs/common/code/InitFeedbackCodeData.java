@@ -1,4 +1,4 @@
-package com.mongs.common.config;
+package com.mongs.common.code;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

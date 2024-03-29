@@ -1,6 +1,11 @@
 package com.mongs.common.code;
 
-public enum TestFoodCode {
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+
+@Getter
+@AllArgsConstructor
+public enum InitFoodCodeData {
 
     STAR_CANDY("별사탕","FD000", "FD", 0, 10D, 10D, 10D, 10D, 10D),
     APPLE("사과", "FD010","FD", 0, 10D, 10D, 10D, 10D, 10D),
@@ -28,52 +33,4 @@ public enum TestFoodCode {
     private final Double addSatietyValue;
     private final Double addHealthyValue;
     private final Double addSleepValue;
-
-    TestFoodCode(String name, String code, String groupCode, Integer price, Double addWeightValue, Double addStrengthValue, Double addSatietyValue, Double addHealthyValue, Double addSleepValue) {
-        this.name = name;
-        this.code = code;
-        this.groupCode = groupCode;
-        this.price = price;
-        this.addWeightValue = addWeightValue;
-        this.addStrengthValue = addStrengthValue;
-        this.addSatietyValue = addSatietyValue;
-        this.addHealthyValue = addHealthyValue;
-        this.addSleepValue = addSleepValue;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public String getCode() {
-        return code;
-    }
-
-    public String getGroupCode() {
-        return groupCode;
-    }
-
-    public Integer getPrice() {
-        return price;
-    }
-
-    public Double getAddWeightValue() {
-        return addWeightValue;
-    }
-
-    public Double getAddStrengthValue() {
-        return addStrengthValue;
-    }
-
-    public Double getAddSatietyValue() {
-        return addSatietyValue;
-    }
-
-    public Double getAddHealthyValue() {
-        return addHealthyValue;
-    }
-
-    public Double getAddSleepValue() {
-        return addSleepValue;
-    }
 }

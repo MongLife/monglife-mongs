@@ -15,8 +15,14 @@ public class CommonController {
 
     private final CommonService commonService;
 
+    @DeleteMapping("/initialize")
+    public ResponseEntity<Object> initializeCode() {
+        commonService.initializeCode();
+        return ResponseEntity.ok().body(null);
+    }
+
     @GetMapping("/version")
-    public ResponseEntity<FindVersionResDto> findNewestVersion(@RequestParam(value = "buildVersion", defaultValue = "0.0.0") String buildVersion) {
+    public ResponseEntity<FindVersionResDto> findNewestVersion(@RequestParam(value = "buildVersion", defaultValue = "1.0.0") String buildVersion) {
         FindVersionVo findVersionVo = commonService.findVersion(buildVersion);
 
         return ResponseEntity.ok().body(FindVersionResDto.builder()
