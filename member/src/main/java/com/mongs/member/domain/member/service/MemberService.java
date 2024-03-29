@@ -3,7 +3,6 @@ package com.mongs.member.domain.member.service;
 import com.mongs.core.enums.member.SlotCountCode;
 import com.mongs.member.domain.member.service.vo.FindMemberVo;
 import com.mongs.member.domain.member.service.vo.ModifySlotCountVo;
-import com.mongs.member.domain.member.service.vo.RegisterMemberVo;
 import com.mongs.member.domain.member.entity.Member;
 import com.mongs.member.domain.member.exception.MemberErrorCode;
 import com.mongs.member.domain.member.exception.NotFoundMemberException;
@@ -19,25 +18,14 @@ public class MemberService {
 
     public FindMemberVo findMember(Long accountId) {
         Member member = memberRepository.findByAccountIdAndIsDeletedIsFalse(accountId)
-                .orElseThrow(() -> new NotFoundMemberException(MemberErrorCode.NOT_FOUND_MEMBER));
+                .orElseGet(() -> memberRepository.save(Member.builder()
+                        .accountId(accountId)
+                        .build()));
 
         return FindMemberVo.builder()
                 .accountId(member.getAccountId())
                 .maxSlot(member.getMaxSlot())
                 .starPoint(member.getStarPoint())
-                .build();
-    }
-
-    public RegisterMemberVo registerMember(Long accountId) {
-        Member savedMember = memberRepository.findByAccountIdAndIsDeletedIsFalse(accountId)
-                .orElseGet(() -> memberRepository.save(Member.builder()
-                        .accountId(accountId)
-                        .build()));
-
-        return RegisterMemberVo.builder()
-                .accountId(savedMember.getAccountId())
-                .maxSlot(savedMember.getMaxSlot())
-                .starPoint(savedMember.getStarPoint())
                 .build();
     }
 

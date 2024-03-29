@@ -4,20 +4,20 @@ dependencies {
         exclude group: 'org.springframework.boot'
         exclude group: 'org.springframework.cloud'
     }
-    implementation 'org.springframework.cloud:spring-cloud-starter-netflix-eureka-client'
+    // spring
     implementation 'org.springframework.boot:spring-boot-starter-web'
     developmentOnly 'org.springframework.boot:spring-boot-devtools'
+    // validation
     implementation 'org.springframework.boot:spring-boot-starter-validation'
-    implementation "org.springframework.cloud:spring-cloud-starter-openfeign"
-
+    // dataSource
 	runtimeOnly 'com.mysql:mysql-connector-j'
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
     implementation 'org.springframework.boot:spring-boot-starter-data-redis'
-
+    // dataSource
     implementation group: 'io.jsonwebtoken', name: 'jjwt-api', version: '0.11.5'
     runtimeOnly group: 'io.jsonwebtoken', name: 'jjwt-impl', version: '0.11.5'
     runtimeOnly group: 'io.jsonwebtoken', name: 'jjwt-jackson', version: '0.11.5'
-
+    // test
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation 'org.awaitility:awaitility:4.2.0'
     testImplementation "org.junit.jupiter:junit-jupiter:5.8.1"
@@ -25,10 +25,6 @@ dependencies {
 }
 
 tasks.register('copyPrivate', Copy) {
-    copy {
-        from '../spring_backend_sub/auth/application-release.yml'
-        into 'src/main/resources'
-    }
     copy {
         from '../spring_backend_sub/auth/application-local.yml'
         into 'src/main/resources'

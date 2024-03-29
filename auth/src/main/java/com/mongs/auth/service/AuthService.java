@@ -37,21 +37,14 @@ public class AuthService {
     private final TokenProvider tokenProvider;
     private final HmacProvider hmacProvider;
 
-    private final MemberService memberService;
-
     @Value("${application.security.jwt.refresh-expiration}")
     private Long expiration;
 
     private Account registerAccount(String email, String name) throws RuntimeException {
-        Account registerAccount = accountRepository.save(Account.builder()
+        return accountRepository.save(Account.builder()
                 .name(name)
                 .email(email)
                 .build());
-
-        memberService.registerMember(registerAccount.getId())
-                .orElseThrow(() -> new NotFoundException(AuthErrorCode.REGISTER_MEMBER_FAIL));
-
-        return registerAccount;
     }
 
     @Transactional

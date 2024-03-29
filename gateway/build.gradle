@@ -7,7 +7,7 @@ dependencies {
 	}
 	// eureka
 	implementation 'org.springframework.cloud:spring-cloud-starter-netflix-eureka-client'
-	// spring gateway
+	// gateway
 	implementation 'org.springframework.cloud:spring-cloud-starter-gateway'
 	developmentOnly 'org.springframework.boot:spring-boot-devtools'
 	// resilience4j

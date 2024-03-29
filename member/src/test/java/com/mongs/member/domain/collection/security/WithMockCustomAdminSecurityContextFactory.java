@@ -3,7 +3,7 @@ package com.mongs.member.domain.collection.security;
 import com.mongs.core.security.principal.PassportDetail;
 import com.mongs.core.vo.passport.PassportAccount;
 import com.mongs.core.vo.passport.PassportData;
-import com.mongs.core.vo.passport.PassportVO;
+import com.mongs.core.vo.passport.PassportVo;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
@@ -17,7 +17,7 @@ public class WithMockCustomAdminSecurityContextFactory implements WithSecurityCo
     public SecurityContext createSecurityContext(WithMockPassportDetailAdmin passportDetail) {
         SecurityContext context = SecurityContextHolder.createEmptyContext();
 
-        PassportVO passportVO = PassportVO.builder()
+        PassportVo passportVO = PassportVo.builder()
                 .data(PassportData.builder()
                         .account(PassportAccount.builder()
                                 .id(1L)
