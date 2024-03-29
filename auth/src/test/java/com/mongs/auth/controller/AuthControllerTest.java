@@ -11,7 +11,7 @@ import com.mongs.auth.exception.PassportException;
 import com.mongs.core.vo.passport.PassportData;
 import com.mongs.core.vo.passport.PassportAccount;
 import com.mongs.auth.service.AuthService;
-import com.mongs.core.vo.passport.PassportVO;
+import com.mongs.core.vo.passport.PassportVo;
 import com.mongs.auth.service.vo.LoginVo;
 import com.mongs.auth.service.vo.ReissueVo;
 import org.junit.jupiter.api.DisplayName;
@@ -260,7 +260,7 @@ public class AuthControllerTest {
         // then
         // HttpStatus & contentType
         resultActions
-                .andExpect(status().isUnauthorized())
+                .andExpect(status().isNotAcceptable())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON));
         // data
         resultActions
@@ -277,7 +277,7 @@ public class AuthControllerTest {
         Long accountId = 1L;
         String accessToken = "test-accessToken";
 
-        PassportVO passportVO = PassportVO.builder()
+        PassportVo passportVO = PassportVo.builder()
                 .data(PassportData.builder()
                         .account(PassportAccount.builder()
                                 .id(accountId)

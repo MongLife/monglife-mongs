@@ -1,7 +1,7 @@
 package com.mongs.gateway.service;
 
 import com.mongs.gateway.dto.request.PassportReqDto;
-import com.mongs.core.vo.passport.PassportVO;
+import com.mongs.core.vo.passport.PassportVo;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.MediaType;
@@ -19,7 +19,7 @@ public class GatewayService {
         this.authWebClient = authWebClient;
     }
 
-    public Mono<PassportVO> getPassport(String accessToken) {
+    public Mono<PassportVo> getPassport(String accessToken) {
         return authWebClient.post()
                 .uri("/auth/passport")
                 .accept(MediaType.APPLICATION_JSON)
@@ -27,6 +27,6 @@ public class GatewayService {
                         .accessToken(accessToken)
                         .build()), PassportReqDto.class)
                 .retrieve()
-                .bodyToMono(PassportVO.class);
+                .bodyToMono(PassportVo.class);
     }
 }

@@ -1,7 +1,7 @@
 package com.mongs.core.security.filter;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.mongs.core.vo.passport.PassportVO;
+import com.mongs.core.vo.passport.PassportVo;
 import com.mongs.core.security.exception.PassportIntegrityException;
 import com.mongs.core.security.exception.SecurityErrorCode;
 import com.mongs.core.security.principal.PassportDetail;
@@ -36,7 +36,7 @@ public class PassportFilter extends GenericFilterBean {
         String passportJson = request.getHeader("passport");
 
         if (passportJson != null) {
-            PassportVO passportVO = objectMapper.readValue(URLDecoder.decode(passportJson, StandardCharsets.UTF_8), PassportVO.class);
+            PassportVo passportVO = objectMapper.readValue(URLDecoder.decode(passportJson, StandardCharsets.UTF_8), PassportVo.class);
 
             if (!hmacProvider.verifyHmac(passportVO.data(), passportVO.passportIntegrity())) {
                 throw new PassportIntegrityException(SecurityErrorCode.UNAUTHORIZED);

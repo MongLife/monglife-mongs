@@ -5,7 +5,7 @@ import com.mongs.gateway.exception.PassportException;
 import com.mongs.gateway.exception.TokenNotFoundException;
 import com.mongs.gateway.service.GatewayService;
 import com.mongs.gateway.util.HttpUtils;
-import com.mongs.core.vo.passport.PassportVO;
+import com.mongs.core.vo.passport.PassportVo;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cloud.gateway.filter.GatewayFilter;
 import org.springframework.cloud.gateway.filter.factory.AbstractGatewayFilterFactory;
@@ -38,7 +38,7 @@ public class GeneratePassportFilter extends AbstractGatewayFilterFactory<FilterC
                     .orElseThrow(() -> new TokenNotFoundException(GatewayErrorCode.ACCESS_TOKEN_NOT_FOUND))
                     .substring(7);
 
-            Mono<PassportVO> passportMono = gatewayService.getPassport(accessToken);
+            Mono<PassportVo> passportMono = gatewayService.getPassport(accessToken);
 
             return passportMono
                     .onErrorMap(throwable -> new PassportException(GatewayErrorCode.PASSPORT_GENERATE_FAIL))
