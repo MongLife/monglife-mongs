@@ -4,7 +4,8 @@ import com.mongs.auth.entity.Account;
 import com.mongs.auth.entity.AccountLog;
 import com.mongs.auth.entity.Token;
 import com.mongs.auth.exception.AuthorizationException;
-import com.mongs.auth.exception.NotFoundException;
+import com.mongs.auth.exception.NotFoundAccountException;
+import com.mongs.auth.exception.NotFoundAccountLogException;
 import com.mongs.auth.exception.PassportException;
 import com.mongs.auth.repository.AccountLogRepository;
 import com.mongs.auth.repository.AccountRepository;
@@ -211,7 +212,7 @@ public class AuthServiceTest {
     }
 
     @Test
-    @DisplayName("accessToken 으로 passport 정보를 조회할 때, 회원 정보가 없으면 NotFoundException 을 발생 시킨다.")
+    @DisplayName("accessToken 으로 passport 정보를 조회할 때, 회원 정보가 없으면 NotFoundAccountException 을 발생 시킨다.")
     void passportNotFoundMember() {
         // given
         String accessToken = "test-accessToken";
@@ -231,7 +232,7 @@ public class AuthServiceTest {
         Throwable expected = catchThrowable(() -> authService.passport(accessToken));
 
         // then
-        assertThat(expected).isInstanceOf(NotFoundException.class);
+        assertThat(expected).isInstanceOf(NotFoundAccountException.class);
     }
 
     @Test
