@@ -61,11 +61,11 @@ class CommonServiceTest {
                         .build())
                 .toList();
 
-        when(mapCodeRepository.findAll())
+        when(mapCodeRepository.findByBuildVersionIsLessThanEqual(buildVersion))
                 .thenReturn(mapCodeList);
 
         // when
-        List<FindMapCodeResDto> findMapCodeResDtoList = commonService.findMapCode();
+        List<FindMapCodeResDto> findMapCodeResDtoList = commonService.findMapCode(buildVersion);
 
         Set<String> expected1 =
                 Arrays.stream(TestMapCode.values())
@@ -99,11 +99,11 @@ class CommonServiceTest {
                         .build())
                 .toList();
 
-        when(mongCodeRepository.findAll())
+        when(mongCodeRepository.findByBuildVersionIsLessThanEqual(buildVersion))
                 .thenReturn(mongCodeList);
 
         // when
-        List<FindMongCodeResDto> findMongCodeResDtoList = commonService.findMongCode();
+        List<FindMongCodeResDto> findMongCodeResDtoList = commonService.findMongCode(buildVersion);
 
         Set<String> expected1 =
                 Arrays.stream(TestMongCode.values())
@@ -144,11 +144,11 @@ class CommonServiceTest {
                         .build())
                 .toList();
 
-        when(foodCodeRepository.findAll())
+        when(foodCodeRepository.findByBuildVersionIsLessThanEqual(buildVersion))
                 .thenReturn(foodCodeList);
 
         // when
-        List<FindFoodCodeResDto> findFoodCodeResDtoList = commonService.findFoodCode();
+        List<FindFoodCodeResDto> findFoodCodeResDtoList = commonService.findFoodCode(buildVersion);
 
         Set<String> expected1 =
                 Arrays.stream(TestFoodCode.values())
@@ -189,11 +189,11 @@ class CommonServiceTest {
                         .build())
                 .toList();
 
-        when(feedbackCodeRepository.findAll())
+        when(feedbackCodeRepository.findByBuildVersionIsLessThanEqual(buildVersion))
                 .thenReturn(feedbackCodeList);
 
         // when
-        List<FindFeedbackCodeResDto> findFeedbackCodeResDtoList = commonService.findFeedbackCode();
+        List<FindFeedbackCodeResDto> findFeedbackCodeResDtoList = commonService.findFeedbackCode(buildVersion);
 
         Set<String> expected1 =
                 Arrays.stream(TestFeedbackCode.values())

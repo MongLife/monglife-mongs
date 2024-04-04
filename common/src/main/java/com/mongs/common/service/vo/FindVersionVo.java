@@ -1,4 +1,4 @@
-package com.mongs.common.vo;
+package com.mongs.common.service.vo;
 
 import lombok.Builder;
 

@@ -93,13 +93,15 @@ class CommonControllerTest {
     @DisplayName("코드 값 리스트를 반환한다.")
     void findCode() throws Exception {
         // given
-        when(commonService.findMapCode())
+        String buildVersion = "1.0.0";
+
+        when(commonService.findMapCode(buildVersion))
                 .thenReturn(FindMapCodeResDto.toList(mapCodeList));
-        when(commonService.findMongCode())
+        when(commonService.findMongCode(buildVersion))
                 .thenReturn(FindMongCodeResDto.toList(mongCodeList));
-        when(commonService.findFoodCode())
+        when(commonService.findFoodCode(buildVersion))
                 .thenReturn(FindFoodCodeResDto.toList(foodCodeList));
-        when(commonService.findFeedbackCode())
+        when(commonService.findFeedbackCode(buildVersion))
                 .thenReturn(FindFeedbackCodeResDto.toList(feedbackCodeList));
 
         // when

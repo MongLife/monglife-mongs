@@ -1,6 +1,7 @@
 package com.mongs.common.controller;
 
 import com.mongs.common.exception.CommonErrorCode;
+import com.mongs.common.exception.NotFoundVersionException;
 import com.mongs.core.error.ErrorCode;
 import com.mongs.core.error.ErrorResDto;
 import org.springframework.http.ResponseEntity;
@@ -10,11 +11,14 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 @RestControllerAdvice
 public class CommonControllerAdvice {
-
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<Object> validatedExceptionHandler() {
         ErrorCode errorCode = CommonErrorCode.INVALID_PARAMETER;
         return ResponseEntity.status(errorCode.getHttpStatus()).body(ErrorResDto.of(errorCode));
+    }
+    @ExceptionHandler(NotFoundVersionException.class)
+    public ResponseEntity<Object> notFoundVersionExceptionHandler(NotFoundVersionException e) {
+        return ResponseEntity.status(e.errorCode.getHttpStatus()).body(ErrorResDto.of(e.errorCode));
     }
     @ExceptionHandler(RuntimeException.class)
     public ResponseEntity<Object> runtimeExceptionHandler() {
