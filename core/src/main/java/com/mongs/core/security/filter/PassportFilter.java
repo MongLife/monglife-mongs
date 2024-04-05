@@ -29,6 +29,17 @@ public class PassportFilter extends GenericFilterBean {
     private final ObjectMapper objectMapper;
     private final HmacProvider hmacProvider;
 
+    /**
+     * Header 에 담긴 Passport Json 문자열을 파싱하여 인증 객체를 생성하고, SecurityContext 에 저장한다.
+     *
+     * @param servletRequest  The request to process
+     * @param response The response associated with the request
+     * @param chain    Provides access to the next filter in the chain for this filter to pass the request and response
+     *                     to for further processing
+     *
+     * @throws IOException
+     * @throws ServletException
+     */
     @Override
     public void doFilter(ServletRequest servletRequest, ServletResponse response, FilterChain chain) throws IOException, ServletException {
         HttpServletRequest request = (HttpServletRequest) servletRequest;

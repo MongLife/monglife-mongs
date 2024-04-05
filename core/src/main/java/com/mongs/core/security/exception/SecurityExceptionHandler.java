@@ -18,6 +18,17 @@ public class SecurityExceptionHandler extends GenericFilterBean {
 
     private final ObjectMapper objectMapper;
 
+    /**
+     * 최하위 Exception 필터
+     * 각 모듈 ControllerAdvice 에서 걸러지지 않은 예외들을 처리한다.
+     *
+     * @param servletRequest  The request to process
+     * @param servletResponse The response associated with the request
+     * @param chain    Provides access to the next filter in the chain for this filter to pass the request and response
+     *                     to for further processing
+     *
+     * @throws IOException
+     */
     @Override
     public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain chain) throws IOException {
         HttpServletRequest request = (HttpServletRequest) servletRequest;

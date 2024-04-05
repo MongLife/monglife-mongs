@@ -17,8 +17,15 @@ public class ForbiddenHandler implements AccessDeniedHandler {
 
     private final ObjectMapper objectMapper;
 
-    // 인가 실패 핸들러
-    // Passport 의 인가 정보에 따른 접근 권한이 없어 인가가 불가한 경우에 응답
+    /**
+     * 인가 실패 핸들러
+     * Passport 의 인가 정보에 따른 접근 권한이 없어 인가가 불가한 경우에 응답
+     *
+     * @param request that resulted in an <code>AccessDeniedException</code>
+     * @param response so that the user agent can be advised of the failure
+     * @param accessDeniedException that caused the invocation
+     * @throws IOException
+     */
     @Override
     public void handle(HttpServletRequest request, HttpServletResponse response, AccessDeniedException accessDeniedException) throws IOException {
         response.setContentType("application/json; charset=UTF-8");
