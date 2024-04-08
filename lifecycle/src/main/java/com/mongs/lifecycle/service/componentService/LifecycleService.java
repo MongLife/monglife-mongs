@@ -28,14 +28,6 @@ public class LifecycleService {
         exec(mongId, startList, restartList, pauseList, stopList);
     }
 
-    public void graduationReadyEvent(Long mongId, Long accountId) {
-        if (mongRepository.findByIdAndAccountIdAndIsActiveTrue(mongId, accountId).isEmpty()) {
-            throw new EventTaskException(LifecycleErrorCode.NOT_FOUND_MONG);
-        }
-
-        taskService.stopAllTask(mongId);
-    }
-
     public void eggEvolutionEvent(Long mongId, Long accountId) {
         if (mongRepository.findByIdAndAccountIdAndIsActiveTrue(mongId, accountId).isEmpty()) {
             throw new EventTaskException(LifecycleErrorCode.NOT_FOUND_MONG);
@@ -86,6 +78,14 @@ public class LifecycleService {
             restartList = List.of(TaskCode.POOP);
         }
         exec(mongId, startList, restartList, pauseList, stopList);
+    }
+
+    public void graduationReadyEvent(Long mongId, Long accountId) {
+        if (mongRepository.findByIdAndAccountIdAndIsActiveTrue(mongId, accountId).isEmpty()) {
+            throw new EventTaskException(LifecycleErrorCode.NOT_FOUND_MONG);
+        }
+
+        taskService.stopAllTask(mongId);
     }
 
     public void deleteEvent(Long mongId, Long accountId) {

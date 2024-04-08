@@ -6,9 +6,8 @@ import com.mongs.lifecycle.entity.TaskEvent;
 import com.mongs.lifecycle.exception.EventTaskException;
 import com.mongs.lifecycle.exception.LifecycleErrorCode;
 import com.mongs.lifecycle.repository.TaskEventRepository;
-import com.mongs.lifecycle.task.*;
-import com.mongs.lifecycle.utils.TaskUtil;
-import com.mongs.lifecycle.vo.TaskEventVo;
+import com.mongs.lifecycle.service.task.*;
+import com.mongs.lifecycle.service.vo.TaskEventVo;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -21,12 +20,12 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ScheduledExecutorService;
 
+import static com.mongs.core.utils.TaskUtil.*;
+
 @Slf4j
 @Service
 @RequiredArgsConstructor
 public class TaskService {
-
-    private final TaskUtil taskUtil;
     private final TaskEventRepository taskEventRepository;
 
     // Task 전달용
@@ -59,7 +58,7 @@ public class TaskService {
             }
 
             // TaskEvent 저장
-            TaskEvent taskEvent = TaskEvent.of(mongId, taskCode, LocalDateTime.now(), taskUtil.getExpiration(taskCode));
+            TaskEvent taskEvent = TaskEvent.of(mongId, taskCode, LocalDateTime.now(), getExpiration(taskCode));
             taskEventRepository.save(taskEvent);
 
             BasicTask task = getTask(taskEvent, taskCode);

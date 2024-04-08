@@ -1,9 +1,9 @@
 package com.mongs.lifecycle.service.componentService;
 
-import com.mongs.core.enums.management.MongGrade;
 import com.mongs.core.enums.management.MongHistoryCode;
 import com.mongs.core.enums.management.MongShift;
 import com.mongs.core.enums.management.MongState;
+import com.mongs.core.utils.MongStatusUtil;
 import com.mongs.core.vo.mqtt.*;
 import com.mongs.core.enums.lifecycle.TaskCode;
 import com.mongs.lifecycle.entity.Mong;
@@ -12,7 +12,6 @@ import com.mongs.lifecycle.exception.LifecycleErrorCode;
 import com.mongs.lifecycle.repository.MongRepository;
 import com.mongs.lifecycle.service.moduleService.MongHistoryService;
 import com.mongs.lifecycle.service.moduleService.NotificationService;
-import com.mongs.lifecycle.utils.MongUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -29,13 +28,12 @@ public class TaskActiveService {
 
     private final boolean isDebug = false;
 
-    private final MongUtil mongUtil;
+    private final MongStatusUtil mongStatusUtil;
     private final MongRepository mongRepository;
     private final NotificationService notificationService;
     private final MongHistoryService mongHistoryService;
 
-    @Value("${application.scheduler.poop-max}")
-    private Integer POOP_MAX;
+    private static final Integer POOP_MAX = 4;
 
     @Transactional
     public void eggEvolution(Long mongId) throws EventTaskException {
@@ -73,7 +71,7 @@ public class TaskActiveService {
 
         notificationService.publishWeight(saveMong.getAccountId(), PublishWeightVo.builder()
                 .mongId(mong.getId())
-                .weight(mongUtil.stateToPercent(saveMong.getWeight(), saveMong.getGrade()))
+                .weight(mongStatusUtil.statusToPercent(saveMong.getWeight(), saveMong.getGrade()))
                 .build());
     }
 
@@ -96,7 +94,7 @@ public class TaskActiveService {
 
         notificationService.publishStrength(saveMong.getAccountId(), PublishStrengthVo.builder()
                 .mongId(mong.getId())
-                .strength(mongUtil.stateToPercent(saveMong.getStrength(), saveMong.getGrade()))
+                .strength(mongStatusUtil.statusToPercent(saveMong.getStrength(), saveMong.getGrade()))
                 .build());
     }
 
@@ -119,7 +117,7 @@ public class TaskActiveService {
 
         notificationService.publishSatiety(saveMong.getAccountId(), PublishSatietyVo.builder()
                 .mongId(mong.getId())
-                .satiety(mongUtil.stateToPercent(saveMong.getSatiety(), saveMong.getGrade()))
+                .satiety(mongStatusUtil.statusToPercent(saveMong.getSatiety(), saveMong.getGrade()))
                 .build());
 
         return saveMong.getSatiety();
@@ -144,7 +142,7 @@ public class TaskActiveService {
 
         notificationService.publishHealthy(saveMong.getAccountId(), PublishHealthyVo.builder()
                 .mongId(mong.getId())
-                .healthy(mongUtil.stateToPercent(saveMong.getHealthy(), saveMong.getGrade()))
+                .healthy(mongStatusUtil.statusToPercent(saveMong.getHealthy(), saveMong.getGrade()))
                 .build());
 
         return saveMong.getHealthy();
@@ -169,7 +167,7 @@ public class TaskActiveService {
 
         notificationService.publishSleep(saveMong.getAccountId(), PublishSleepVo.builder()
                 .mongId(mong.getId())
-                .sleep(mongUtil.stateToPercent(saveMong.getSleep(), saveMong.getGrade()))
+                .sleep(mongStatusUtil.statusToPercent(saveMong.getSleep(), saveMong.getGrade()))
                 .build());
     }
 
@@ -192,7 +190,7 @@ public class TaskActiveService {
 
         notificationService.publishSleep(saveMong.getAccountId(), PublishSleepVo.builder()
                 .mongId(saveMong.getId())
-                .sleep(mongUtil.stateToPercent(saveMong.getSleep(), saveMong.getGrade()))
+                .sleep(mongStatusUtil.statusToPercent(saveMong.getSleep(), saveMong.getGrade()))
                 .build());
     }
 
@@ -228,7 +226,7 @@ public class TaskActiveService {
             notificationService.publishPoop(saveMong.getAccountId(), PublishPoopVo.builder()
                     .mongId(saveMong.getId())
                     .poopCount(saveMong.getNumberOfPoop())
-                    .exp(mongUtil.stateToPercent((double) saveMong.getExp(), saveMong.getGrade()))
+                    .exp(mongStatusUtil.statusToPercent((double) saveMong.getExp(), saveMong.getGrade()))
                     .build());
         }
     }

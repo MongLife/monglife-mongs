@@ -1,7 +1,7 @@
 package com.mongs.lifecycle.controller;
 
 import com.mongs.core.security.principal.PassportDetail;
-import com.mongs.lifecycle.dto.response.*;
+import com.mongs.lifecycle.controller.dto.response.*;
 import com.mongs.lifecycle.service.componentService.LifecycleService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -24,6 +24,19 @@ public class LifecycleController {
                 .build());
     }
 
+    @PutMapping("/eggEvolution/{mongId}")
+    public ResponseEntity<Object> eggEvolutionMongEvent(
+            @PathVariable("mongId") Long mongId,
+            @AuthenticationPrincipal PassportDetail passportDetail
+    ) {
+        Long accountId = passportDetail.getId();
+        lifecycleService.eggEvolutionEvent(mongId, accountId);
+
+        return ResponseEntity.ok().body(EvolutionMongEventResDto.builder()
+                .mongId(mongId)
+                .build());
+    }
+
     @DeleteMapping("/graduation/{mongId}")
     public ResponseEntity<Object> graduationReadyMongEvent(
             @PathVariable("mongId") Long mongId,
@@ -33,19 +46,6 @@ public class LifecycleController {
         lifecycleService.graduationReadyEvent(mongId, accountId);
 
         return ResponseEntity.ok().body(GraduationReadyMongEventResDto.builder()
-                .mongId(mongId)
-                .build());
-    }
-
-    @PutMapping("/evolution/{mongId}")
-    public ResponseEntity<Object> eggEvolutionMongEvent(
-            @PathVariable("mongId") Long mongId,
-            @AuthenticationPrincipal PassportDetail passportDetail
-    ) {
-        Long accountId = passportDetail.getId();
-        lifecycleService.eggEvolutionEvent(mongId, accountId);
-
-        return ResponseEntity.ok().body(EvolutionMongEventResDto.builder()
                 .mongId(mongId)
                 .build());
     }

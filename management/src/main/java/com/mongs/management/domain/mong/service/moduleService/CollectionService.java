@@ -6,6 +6,6 @@ import com.mongs.management.domain.mong.client.dto.response.RegisterMongCollecti
 import java.util.Optional;
 
 public interface CollectionService {
-    Optional<RegisterMapCollectionResDto> registerMapCollection(Long accountId, String mapCode);
-    Optional<RegisterMongCollectionResDto> registerMongCollection(Long accountId, String mongCode);
+    Optional<RegisterMapCollectionResDto> registerMapCollection(String mapCode);
+    Optional<RegisterMongCollectionResDto> registerMongCollection(String mongCode);
 }

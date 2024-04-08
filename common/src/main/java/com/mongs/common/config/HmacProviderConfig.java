@@ -12,8 +12,9 @@ import org.springframework.context.annotation.Configuration;
 public class HmacProviderConfig {
 
     private final ObjectMapper objectMapper;
+    private final String secretKey = "E32723575+MIGQkE5D+hlIlStxSSmA+7z32MPidF";
     @Bean
     public HmacProvider hmacProvider() {
-        return new HmacProvider(objectMapper, "E32723575+MIGQkE5D+hlIlStxSSmA+7z32MPidF");
+        return new HmacProvider(objectMapper, secretKey);
     }
 }

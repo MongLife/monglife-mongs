@@ -100,6 +100,74 @@ public class CommonService {
         return FindFeedbackCodeResDto.toList(feedbackCodeRepository.findByBuildVersionIsLessThanEqual(buildVersion));
     }
 
+    /**
+     * 코드의 값을 buildVersion 1.0.0 으로 초기화 시킨다.
+     *
+     */
+    public void initializeCode() {
+        String buildVersion = "1.0.0";
+
+        foodCodeRepository.deleteAll();
+        Arrays.stream(InitFoodCodeData.values()).forEach(foodCode -> {
+            foodCodeRepository.save(FoodCode.builder()
+                    .buildVersion(buildVersion)
+                    .code(foodCode.getCode())
+                    .name(foodCode.getName())
+                    .groupCode(foodCode.getGroupCode())
+                    .addHealthyValue(foodCode.getAddHealthyValue())
+                    .addSleepValue(foodCode.getAddSleepValue())
+                    .addSatietyValue(foodCode.getAddSatietyValue())
+                    .addWeightValue(foodCode.getAddWeightValue())
+                    .addStrengthValue(foodCode.getAddStrengthValue())
+                    .price(foodCode.getPrice())
+                    .build());
+        });
+
+        mapCodeRepository.deleteAll();
+        Arrays.stream(InitMapCodeData.values()).forEach(mapCode -> {
+            mapCodeRepository.save(MapCode.builder()
+                    .buildVersion(buildVersion)
+                    .code(mapCode.getCode())
+                    .name(mapCode.getName())
+                    .build());
+        });
+
+        mongCodeRepository.deleteAll();
+        Arrays.stream(InitMongCodeData.values()).forEach(mongCode -> {
+            mongCodeRepository.save(MongCode.builder()
+                    .buildVersion(buildVersion)
+                    .code(mongCode.getCode())
+                    .name(mongCode.getName())
+                    .build());
+        });
+
+        feedbackCodeRepository.deleteAll();
+        Arrays.stream(InitFeedbackCodeData.values()).forEach(feedbackCode -> {
+            feedbackCodeRepository.save(FeedbackCode.builder()
+                    .buildVersion(buildVersion)
+                    .code(feedbackCode.getCode())
+                    .groupCode(feedbackCode.getGroupCode())
+                    .message(feedbackCode.getMessage())
+                    .build());
+        });
+
+        String codeIntegrity = hmacProvider.generateHmac(FindCodeResDto.builder()
+                    .mapCodeList(this.findMapCode(buildVersion))
+                    .mongCodeList(this.findMongCode(buildVersion))
+                    .foodCodeList(this.findFoodCode(buildVersion))
+                    .feedbackCodeList(this.findFeedbackCode(buildVersion))
+                    .build())
+                .orElseThrow(RuntimeException::new);
+
+        codeVersionRepository.deleteAll();
+        codeVersionRepository.save(CodeVersion.builder()
+                .buildVersion(buildVersion)
+                .codeIntegrity(codeIntegrity)
+                .mustUpdateApp(false)
+                .createdAt(LocalDateTime.now())
+                .build());
+    }
+
 //    private void modifyMustUpdateApp(String buildVersion) {
 //        CodeVersion newestCodeVersion = codeVersionRepository.findByBuildVersion(buildVersion)
 //                        .orElseGet(() -> {
@@ -162,69 +230,6 @@ public class CommonService {
 //                .groupCode(registerFeedbackCodeVo.groupCode())
 //                .message(registerFeedbackCodeVo.message())
 //                .buildVersion(buildVersion)
-//                .build());
-//    }
-//    public void initializeCode() {
-//        String buildVersion = "1.0.0";
-//
-//        foodCodeRepository.deleteAll();
-//        Arrays.stream(InitFoodCodeData.values()).forEach(foodCode -> {
-//            foodCodeRepository.save(FoodCode.builder()
-//                    .buildVersion(buildVersion)
-//                    .code(foodCode.getCode())
-//                    .name(foodCode.getName())
-//                    .groupCode(foodCode.getGroupCode())
-//                    .addHealthyValue(foodCode.getAddHealthyValue())
-//                    .addSleepValue(foodCode.getAddSleepValue())
-//                    .addSatietyValue(foodCode.getAddSatietyValue())
-//                    .addWeightValue(foodCode.getAddWeightValue())
-//                    .addStrengthValue(foodCode.getAddStrengthValue())
-//                    .price(foodCode.getPrice())
-//                    .build());
-//        });
-//
-//        mapCodeRepository.deleteAll();
-//        Arrays.stream(InitMapCodeData.values()).forEach(mapCode -> {
-//            mapCodeRepository.save(MapCode.builder()
-//                    .buildVersion(buildVersion)
-//                    .code(mapCode.getCode())
-//                    .name(mapCode.getName())
-//                    .build());
-//        });
-//
-//        mongCodeRepository.deleteAll();
-//        Arrays.stream(InitMongCodeData.values()).forEach(mongCode -> {
-//            mongCodeRepository.save(MongCode.builder()
-//                    .buildVersion(buildVersion)
-//                    .code(mongCode.getCode())
-//                    .name(mongCode.getName())
-//                    .build());
-//        });
-//
-//        feedbackCodeRepository.deleteAll();
-//        Arrays.stream(InitFeedbackCodeData.values()).forEach(feedbackCode -> {
-//            feedbackCodeRepository.save(FeedbackCode.builder()
-//                    .buildVersion(buildVersion)
-//                    .code(feedbackCode.getCode())
-//                    .groupCode(feedbackCode.getGroupCode())
-//                    .message(feedbackCode.getMessage())
-//                    .build());
-//        });
-//
-//        String codeIntegrity = hmacProvider.generateHmac(FindCodeResDto.builder()
-//                    .mapCodeList(this.findMapCode(buildVersion))
-//                    .mongCodeList(this.findMongCode(buildVersion))
-//                    .foodCodeList(this.findFoodCode(buildVersion))
-//                    .feedbackCodeList(this.findFeedbackCode(buildVersion))
-//                    .build())
-//                .orElseThrow(RuntimeException::new);
-//
-//        codeVersionRepository.deleteAll();
-//        codeVersionRepository.save(CodeVersion.builder()
-//                .buildVersion(buildVersion)
-//                .codeIntegrity(codeIntegrity)
-//                .mustUpdateApp(false)
-//                .createdAt(LocalDateTime.now())
 //                .build());
 //    }
 }

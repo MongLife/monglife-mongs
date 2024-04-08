@@ -19,10 +19,10 @@ import java.util.Optional;
 public class CollectionServiceImpl implements CollectionService {
     private final CollectionClient collectionClient;
 
-    public Optional<RegisterMapCollectionResDto> registerMapCollection(Long accountId, String mapCode) {
+    public Optional<RegisterMapCollectionResDto> registerMapCollection(String mapCode) {
         try {
             ResponseEntity<RegisterMapCollectionResDto> response =
-                    collectionClient.registerMapCollection(accountId, RegisterMapCollectionReqDto.builder()
+                    collectionClient.registerMapCollection(RegisterMapCollectionReqDto.builder()
                             .mapCode(mapCode)
                             .build());
 
@@ -31,17 +31,17 @@ public class CollectionServiceImpl implements CollectionService {
             }
 
         } catch (FeignException e) {
-            log.error("[{}] registerMapCollection 통신 실패 : {}", accountId, e.getMessage());
+            log.error("registerMapCollection 통신 실패 : {}", e.getMessage());
         }
 
         return Optional.empty();
     }
 
 
-    public Optional<RegisterMongCollectionResDto> registerMongCollection(Long accountId, String mongCode) {
+    public Optional<RegisterMongCollectionResDto> registerMongCollection(String mongCode) {
         try {
             ResponseEntity<RegisterMongCollectionResDto> response =
-                    collectionClient.registerMongCollection(accountId, RegisterMongCollectionReqDto.builder()
+                    collectionClient.registerMongCollection(RegisterMongCollectionReqDto.builder()
                             .mongCode(mongCode)
                             .build());
 
@@ -50,7 +50,7 @@ public class CollectionServiceImpl implements CollectionService {
             }
 
         } catch (FeignException e) {
-            log.error("[{}] registerMongCollection 통신 실패 : {}", accountId, e.getMessage());
+            log.error("registerMongCollection 통신 실패 : {}", e.getMessage());
         }
 
         return Optional.empty();

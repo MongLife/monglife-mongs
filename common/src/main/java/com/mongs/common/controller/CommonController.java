@@ -60,11 +60,11 @@ public class CommonController {
                         .build());
     }
 
-//    @DeleteMapping("/admin/initialize")
-//    public ResponseEntity<Object> initializeCode() {
-//        commonService.initializeCode();
-//        return ResponseEntity.ok().body(null);
-//    }
+    @DeleteMapping("/admin/initialize")
+    public ResponseEntity<Object> initializeCode() {
+        commonService.initializeCode();
+        return ResponseEntity.ok().body(null);
+    }
 //
 //    @PostMapping("/admin/code/food")
 //    public ResponseEntity<Object> registerFoodCode(@RequestBody RegisterFoodCodeReqDto registerFoodCodeReqDto) {
