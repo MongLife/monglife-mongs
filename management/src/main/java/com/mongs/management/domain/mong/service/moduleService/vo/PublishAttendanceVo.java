@@ -1,4 +1,4 @@
-package com.mongs.management.domain.mong.controller.dto.response;
+package com.mongs.management.domain.mong.service.moduleService.vo;
 
 import com.mongs.management.domain.mong.service.componentService.vo.MongVo;
 import lombok.Builder;
@@ -6,12 +6,12 @@ import lombok.Builder;
 import static com.mongs.core.utils.MongStatusUtil.statusToPercent;
 
 @Builder
-public record StrokeMongResDto(
+public record PublishAttendanceVo(
         Long mongId,
         Double exp
 ) {
-    public static StrokeMongResDto of(MongVo mongVo) {
-        return StrokeMongResDto.builder()
+    public static PublishAttendanceVo of(MongVo mongVo) {
+        return PublishAttendanceVo.builder()
                 .mongId(mongVo.mongId())
                 .exp(statusToPercent(mongVo.exp(), mongVo.grade()))
                 .build();

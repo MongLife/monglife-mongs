@@ -16,7 +16,7 @@ public class LifecycleController {
     private final LifecycleService lifecycleService;
 
     @PostMapping("/egg/{mongId}")
-    public ResponseEntity<Object> eggMongEvent(@PathVariable("mongId") Long mongId) {
+    public ResponseEntity<EggMongEventResDto> eggMongEvent(@PathVariable("mongId") Long mongId) {
         lifecycleService.eggEvent(mongId);
 
         return ResponseEntity.ok().body(EggMongEventResDto.builder()
@@ -25,7 +25,7 @@ public class LifecycleController {
     }
 
     @PutMapping("/eggEvolution/{mongId}")
-    public ResponseEntity<Object> eggEvolutionMongEvent(
+    public ResponseEntity<EvolutionMongEventResDto> eggEvolutionMongEvent(
             @PathVariable("mongId") Long mongId,
             @AuthenticationPrincipal PassportDetail passportDetail
     ) {
@@ -38,7 +38,7 @@ public class LifecycleController {
     }
 
     @DeleteMapping("/graduation/{mongId}")
-    public ResponseEntity<Object> graduationReadyMongEvent(
+    public ResponseEntity<GraduationReadyMongEventResDto> graduationReadyMongEvent(
             @PathVariable("mongId") Long mongId,
             @AuthenticationPrincipal PassportDetail passportDetail
     ) {
@@ -51,7 +51,7 @@ public class LifecycleController {
     }
 
     @PutMapping("/sleep/{mongId}")
-    public ResponseEntity<Object> sleepMongEvent(
+    public ResponseEntity<SleepMongEventResDto> sleepMongEvent(
             @PathVariable("mongId") Long mongId,
             @AuthenticationPrincipal PassportDetail passportDetail
     ) {
@@ -64,7 +64,7 @@ public class LifecycleController {
     }
 
     @PutMapping("/wakeup/{mongId}")
-    public ResponseEntity<Object> wakeupMongEvent(
+    public ResponseEntity<WakeupMongEventResDto> wakeupMongEvent(
             @PathVariable("mongId") Long mongId,
             @AuthenticationPrincipal PassportDetail passportDetail
     ) {
@@ -77,7 +77,7 @@ public class LifecycleController {
     }
 
     @DeleteMapping("/delete/{mongId}")
-    public ResponseEntity<Object> deleteMongEvent(
+    public ResponseEntity<DeleteMongEventResDto> deleteMongEvent(
             @PathVariable("mongId") Long mongId,
             @AuthenticationPrincipal PassportDetail passportDetail
     ) {

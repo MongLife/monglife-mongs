@@ -1,15 +1,15 @@
-package com.mongs.management.domain.mong.controller.dto.response;
+package com.mongs.management.domain.mong.service.moduleService.vo;
 
 import com.mongs.management.domain.mong.service.componentService.vo.MongVo;
 import lombok.Builder;
 
 @Builder
-public record DeleteMongResDto(
+public record PublishEvolutionReadyVo(
         Long mongId,
         String shiftCode
 ) {
-    public static DeleteMongResDto of(MongVo mongVo) {
-        return DeleteMongResDto.builder()
+    public static PublishEvolutionReadyVo of(MongVo mongVo) {
+        return PublishEvolutionReadyVo.builder()
                 .mongId(mongVo.mongId())
                 .shiftCode(mongVo.shift().getCode())
                 .build();

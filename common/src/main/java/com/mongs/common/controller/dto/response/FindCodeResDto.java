@@ -6,6 +6,7 @@ import java.util.List;
 
 @Builder
 public record FindCodeResDto(
+        String codeIntegrity,
         List<FindMapCodeResDto> mapCodeList,
         List<FindMongCodeResDto> mongCodeList,
         List<FindFoodCodeResDto> foodCodeList,

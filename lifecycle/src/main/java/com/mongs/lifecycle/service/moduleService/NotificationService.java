@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mongs.core.enums.mqtt.PublishCode;
 import com.mongs.core.vo.mqtt.*;
 import com.mongs.lifecycle.client.MqttClient;
+import com.mongs.lifecycle.service.moduleService.vo.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -104,6 +105,17 @@ public class NotificationService {
                     BasicPublish.builder()
                             .code(PublishCode.MONG_DEAD)
                             .data(publishDeadVo)
+                            .build());
+            mqttClient.sendToMqtt(TOPIC_FILTER + accountId, data);
+        } catch (JsonProcessingException ignored) {}
+    }
+
+    public void publishState(Long accountId, PublishStateVo publishStateVo) {
+        try {
+            String data = objectMapper.writeValueAsString(
+                    BasicPublish.builder()
+                            .code(PublishCode.MONG_STATE)
+                            .data(publishStateVo)
                             .build());
             mqttClient.sendToMqtt(TOPIC_FILTER + accountId, data);
         } catch (JsonProcessingException ignored) {}

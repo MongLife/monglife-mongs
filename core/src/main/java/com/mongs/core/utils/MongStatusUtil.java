@@ -24,7 +24,7 @@ public class MongStatusUtil {
      * @return 지수 퍼센트 값을 지수 값으로 변환한 값
      */
     public static Double percentToStatus(Double percent, MongGrade mongGrade) {
-        double maxStatus = mongGrade.getMaxStatus();
+        double maxStatus = mongGrade.getNextGrade().getMaxStatus();
         return percent / 100 * maxStatus;
     }
 }

@@ -2,6 +2,7 @@ package com.mongs.core.utils;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.tomcat.util.codec.binary.Base64;
 
 import javax.crypto.Mac;
@@ -10,6 +11,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+@Slf4j
 @AllArgsConstructor
 public class HmacProvider {
 
@@ -27,7 +29,6 @@ public class HmacProvider {
         return this.generateHmac(data, this.secretKey);
     }
 
-
     /**
      * data 에서 Hmac 해싱 값을 추출한다.
      * secretKey 는 파라미터로 주어지는 값을 사용한다.
@@ -40,7 +41,7 @@ public class HmacProvider {
             Mac mac = Mac.getInstance("HmacSHA256");
             mac.init(new SecretKeySpec(secretKey.getBytes(StandardCharsets.UTF_8), "HmacSHA256"));
 
-            byte[] hash = mac.doFinal(objectMapper.writeValueAsBytes(data));
+            byte[] hash = mac.doFinal(objectMapper.writeValueAsString(data).getBytes());
             return Optional.of(Base64.encodeBase64String(hash));
         } catch (Exception e) {
             return Optional.empty();

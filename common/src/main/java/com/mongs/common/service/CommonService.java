@@ -51,8 +51,10 @@ public class CommonService {
         return FindVersionVo.builder()
                 .newestBuildVersion(codeVersion.buildVersion())
                 .createdAt(codeVersion.createdAt())
-                .mustUpdateApp(codeVersion.mustUpdateApp())                             /* 리소스가 추가되어 이전 버전들에 대한 앱 업데이트 여부 확인 */
-                .mustUpdateCode(!codeVersion.codeIntegrity().equals(codeIntegrity))     /* 해싱 값이 다르면 코드 업데이트 */
+                /* 리소스가 추가되어 이전 버전들에 대한 앱 업데이트 여부 확인 */
+                .mustUpdateApp(codeVersion.mustUpdateApp())
+                /* 해싱 값이 다르면 코드 업데이트 */
+                .mustUpdateCode(!codeVersion.codeIntegrity().equals(codeIntegrity))
                 .build();
     }
 
@@ -101,7 +103,24 @@ public class CommonService {
     }
 
     /**
+     * 앱 빌드 버전에 해당하는 코드 해싱 값을 생성 한다.
+     *
+     * @param buildVersion 앱 빌드 버전
+     * @return 코드 해싱 값
+     */
+    public String generateIntegrity(String buildVersion) {
+        return hmacProvider.generateHmac(FindCodeResDto.builder()
+                        .mapCodeList(this.findMapCode(buildVersion))
+                        .mongCodeList(this.findMongCode(buildVersion))
+                        .foodCodeList(this.findFoodCode(buildVersion))
+                        .feedbackCodeList(this.findFeedbackCode(buildVersion))
+                        .build())
+                .orElseThrow(RuntimeException::new);
+    }
+
+    /**
      * 코드의 값을 buildVersion 1.0.0 으로 초기화 시킨다.
+     * 코드 동일성 확인을 위한 해싱 값도 초기화 시킨다.
      *
      */
     public void initializeCode() {
@@ -151,13 +170,7 @@ public class CommonService {
                     .build());
         });
 
-        String codeIntegrity = hmacProvider.generateHmac(FindCodeResDto.builder()
-                    .mapCodeList(this.findMapCode(buildVersion))
-                    .mongCodeList(this.findMongCode(buildVersion))
-                    .foodCodeList(this.findFoodCode(buildVersion))
-                    .feedbackCodeList(this.findFeedbackCode(buildVersion))
-                    .build())
-                .orElseThrow(RuntimeException::new);
+        String codeIntegrity = this.generateIntegrity(buildVersion);
 
         codeVersionRepository.deleteAll();
         codeVersionRepository.save(CodeVersion.builder()
@@ -168,68 +181,113 @@ public class CommonService {
                 .build());
     }
 
-//    private void modifyMustUpdateApp(String buildVersion) {
-//        CodeVersion newestCodeVersion = codeVersionRepository.findByBuildVersion(buildVersion)
-//                        .orElseGet(() -> {
-//                            String codeIntegrity = hmacProvider.generateHmac(FindCodeResDto.builder()
-//                                            .mapCodeList(this.findMapCode(buildVersion))
-//                                            .mongCodeList(this.findMongCode(buildVersion))
-//                                            .foodCodeList(this.findFoodCode(buildVersion))
-//                                            .feedbackCodeList(this.findFeedbackCode(buildVersion))
-//                                            .build())
-//                                    .orElseThrow(RuntimeException::new);
-//
-//                            return codeVersionRepository.save(CodeVersion.builder()
-//                                    .buildVersion(buildVersion)
-//                                    .codeIntegrity(codeIntegrity)
-//                                    .mustUpdateApp(false)
-//                                    .createdAt(LocalDateTime.now())
-//                                    .build());
-//                        });
-//
-//        codeVersionRepository.findByBuildVersionIsBefore(newestCodeVersion.buildVersion()).forEach(codeVersion -> {
-//            codeVersionRepository.save(codeVersion.toBuilder()
-//                    .mustUpdateApp(true)
-//                    .build());
-//        });
-//    }
-//    public void registerFoodCode(RegisterFoodCodeVo registerFoodCodeVo, String buildVersion) {
-//        foodCodeRepository.save(FoodCode.builder()
-//                .code(registerFoodCodeVo.code())
-//                .name(registerFoodCodeVo.name())
-//                .groupCode(registerFoodCodeVo.groupCode())
-//                .price(registerFoodCodeVo.price())
-//                .addWeightValue(registerFoodCodeVo.addWeightValue())
-//                .addStrengthValue(registerFoodCodeVo.addStrengthValue())
-//                .addSatietyValue(registerFoodCodeVo.addSatietyValue())
-//                .addHealthyValue(registerFoodCodeVo.addHealthyValue())
-//                .addSleepValue(registerFoodCodeVo.addSleepValue())
-//                .buildVersion(buildVersion)
-//                .build());
-//        this.modifyMustUpdateApp(buildVersion);
-//    }
-//    public void registerMapCode(RegisterMapCodeVo registerMapCodeVo, String buildVersion) {
-//        mapCodeRepository.save(MapCode.builder()
-//                .code(registerMapCodeVo.code())
-//                .name(registerMapCodeVo.name())
-//                .buildVersion(buildVersion)
-//                .build());
-//        this.modifyMustUpdateApp(buildVersion);
-//    }
-//    public void registerMongCode(RegisterMongCodeVo registerMongCodeVo, String buildVersion) {
-//        mongCodeRepository.save(MongCode.builder()
-//                .code(registerMongCodeVo.code())
-//                .name(registerMongCodeVo.name())
-//                .buildVersion(buildVersion)
-//                .build());
-//        this.modifyMustUpdateApp(buildVersion);
-//    }
-//    public void registerFeedbackCode(RegisterFeedbackCodeVo registerFeedbackCodeVo, String buildVersion) {
-//        feedbackCodeRepository.save(FeedbackCode.builder()
-//                .code(registerFeedbackCodeVo.code())
-//                .groupCode(registerFeedbackCodeVo.groupCode())
-//                .message(registerFeedbackCodeVo.message())
-//                .buildVersion(buildVersion)
-//                .build());
-//    }
+    /**
+     * 리소스가 추가되는 코드인 맵, 몽, 음식 코드를 추가하는 경우
+     * 해당 이전 앱 빌드 버전에 대한 앱 업데이트가 필요하기 때문에,
+     * 앱 업데이트 필요하다는 플래그를 true 로 변경한다.
+     *
+     * @param buildVersion 앱 빌드 버전
+     */
+    private void modifyMustUpdateApp(String buildVersion) {
+        CodeVersion newestCodeVersion = codeVersionRepository.findByBuildVersion(buildVersion)
+                        .orElseGet(() -> {
+                            String codeIntegrity = this.generateIntegrity(buildVersion);
+                            return codeVersionRepository.save(CodeVersion.builder()
+                                    .buildVersion(buildVersion)
+                                    .codeIntegrity(codeIntegrity)
+                                    .mustUpdateApp(false)
+                                    .createdAt(LocalDateTime.now())
+                                    .build());
+                        });
+
+        /* 이전 버전들에 대해 업데이트 여부 true 로 변경 */
+        codeVersionRepository.findByBuildVersionIsBefore(newestCodeVersion.buildVersion()).forEach(codeVersion -> {
+            codeVersionRepository.save(codeVersion.toBuilder()
+                    .mustUpdateApp(true)
+                    .build());
+        });
+    }
+
+    private void modifyIntegrity(String buildVersion) {
+        CodeVersion codeVersion = codeVersionRepository.findByBuildVersion(buildVersion)
+                        .orElseGet(() -> CodeVersion.builder()
+                                    .buildVersion(buildVersion)
+                                    .mustUpdateApp(false)
+                                    .createdAt(LocalDateTime.now())
+                                    .build());
+
+        String codeIntegrity = this.generateIntegrity(buildVersion);
+
+        codeVersionRepository.save(codeVersion.toBuilder()
+                .codeIntegrity(codeIntegrity)
+                .build());
+    }
+
+    /**
+     * 음식 코드 정보를 등록한다.
+     *
+     * @param registerFoodCodeVo 음식 코드 정보
+     * @param buildVersion 앱 빌드 버전
+     */
+    public void registerFoodCode(RegisterFoodCodeVo registerFoodCodeVo, String buildVersion) {
+        foodCodeRepository.save(FoodCode.builder()
+                .code(registerFoodCodeVo.code())
+                .name(registerFoodCodeVo.name())
+                .groupCode(registerFoodCodeVo.groupCode())
+                .price(registerFoodCodeVo.price())
+                .addWeightValue(registerFoodCodeVo.addWeightValue())
+                .addStrengthValue(registerFoodCodeVo.addStrengthValue())
+                .addSatietyValue(registerFoodCodeVo.addSatietyValue())
+                .addHealthyValue(registerFoodCodeVo.addHealthyValue())
+                .addSleepValue(registerFoodCodeVo.addSleepValue())
+                .buildVersion(buildVersion)
+                .build());
+        this.modifyMustUpdateApp(buildVersion);
+    }
+
+    /**
+     * 맵 코드 정보를 등록한다.
+     *
+     * @param registerMapCodeVo 맵 코드 정보
+     * @param buildVersion 앱 빌드 버전
+     */
+    public void registerMapCode(RegisterMapCodeVo registerMapCodeVo, String buildVersion) {
+        mapCodeRepository.save(MapCode.builder()
+                .code(registerMapCodeVo.code())
+                .name(registerMapCodeVo.name())
+                .buildVersion(buildVersion)
+                .build());
+        this.modifyMustUpdateApp(buildVersion);
+    }
+
+    /**
+     * 몽 코드 정보를 등록한다.
+     *
+     * @param registerMongCodeVo 몽 코드 정보
+     * @param buildVersion 앱 빌드 버전
+     */
+    public void registerMongCode(RegisterMongCodeVo registerMongCodeVo, String buildVersion) {
+        mongCodeRepository.save(MongCode.builder()
+                .code(registerMongCodeVo.code())
+                .name(registerMongCodeVo.name())
+                .buildVersion(buildVersion)
+                .build());
+        this.modifyMustUpdateApp(buildVersion);
+    }
+
+    /**
+     * 피드백 코드 정보를 등록한다.
+     *
+     * @param registerFeedbackCodeVo 피드백 코드 정보
+     * @param buildVersion 앱 빌드 버전
+     */
+    public void registerFeedbackCode(RegisterFeedbackCodeVo registerFeedbackCodeVo, String buildVersion) {
+        feedbackCodeRepository.save(FeedbackCode.builder()
+                .code(registerFeedbackCodeVo.code())
+                .groupCode(registerFeedbackCodeVo.groupCode())
+                .message(registerFeedbackCodeVo.message())
+                .buildVersion(buildVersion)
+                .build());
+        this.modifyIntegrity(buildVersion);
+    }
 }

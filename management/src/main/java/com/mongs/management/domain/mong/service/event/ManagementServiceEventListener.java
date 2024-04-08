@@ -3,24 +3,25 @@ package com.mongs.management.domain.mong.service.event;
 import com.mongs.core.enums.management.MongHistoryCode;
 import com.mongs.core.enums.management.MongShift;
 import com.mongs.core.enums.management.MongState;
-import com.mongs.core.vo.mqtt.*;
 import com.mongs.management.domain.mong.entity.Mong;
+import com.mongs.management.domain.mong.service.componentService.ManagementService;
 import com.mongs.management.domain.mong.service.componentService.vo.MongVo;
 import com.mongs.management.domain.mong.service.event.vo.*;
 import com.mongs.management.domain.mong.service.moduleService.MongHistoryService;
 import com.mongs.management.domain.mong.service.moduleService.MongService;
 import com.mongs.management.domain.mong.service.moduleService.NotificationService;
-import com.mongs.management.domain.mong.service.moduleService.vo.PublishCreateVo;
+import com.mongs.management.domain.mong.service.moduleService.vo.*;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.event.TransactionPhase;
 import org.springframework.transaction.event.TransactionalEventListener;
 
-import static com.mongs.core.utils.MongStatusUtil.statusToPercent;
 import static com.mongs.core.utils.MongUtil.*;
 
+@Slf4j
 @Component
 @RequiredArgsConstructor
 public class ManagementServiceEventListener {
@@ -38,6 +39,8 @@ public class ManagementServiceEventListener {
     @Transactional(propagation = Propagation.REQUIRES_NEW)
     public void evolutionCheckEventListener(EvolutionCheckEvent event) {
         Mong mong = event.mong();
+
+        log.info("[{}] evolutionCheckEventListener", mong.getId());
 
         if (isEvolutionReady(mong.getExp(), mong.getGrade())) {
             Mong saveMong = mongService.saveMong(mong.toBuilder()
@@ -60,6 +63,8 @@ public class ManagementServiceEventListener {
     @Transactional(propagation = Propagation.REQUIRES_NEW)
     public void stateCheckEventListener(StateCheckEvent event) {
         Mong mong = event.mong();
+
+        log.info("[{}] stateCheckEventListener", mong.getId());
 
         MongState nextState = getNextState(
                 mong.getState(),
@@ -89,6 +94,8 @@ public class ManagementServiceEventListener {
     public void registerMongEventListener(RegisterMongEvent event) {
         MongVo mongVo = event.mongVo();
 
+        log.info("[{}] registerMongEventListener", mongVo.mongId());
+
         /* 몽 생성 알림 전송 */
         notificationService.publishCreate(mongVo.accountId(), PublishCreateVo.of(mongVo));
 
@@ -103,6 +110,8 @@ public class ManagementServiceEventListener {
     @Transactional(propagation = Propagation.REQUIRES_NEW)
     public void deleteMongEventListener(DeleteMongEvent event) {
         MongVo mongVo = event.mongVo();
+
+        log.info("[{}] deleteMongEventListener", mongVo.mongId());
 
         notificationService.publishDelete(mongVo.accountId(), PublishDeleteVo.of(mongVo));
 
@@ -119,6 +128,8 @@ public class ManagementServiceEventListener {
     public void strokeMongEventListener(StrokeMongEvent event) {
         MongVo mongVo = event.mongVo();
 
+        log.info("[{}] strokeMongEventListener", mongVo.mongId());
+
         notificationService.publishStroke(mongVo.accountId(), PublishStrokeVo.of(mongVo));
 
         mongHistoryService.saveMongHistory(mongVo.mongId(), MongHistoryCode.STROKE);
@@ -133,41 +144,100 @@ public class ManagementServiceEventListener {
     public void feedMongEventListener(FeedMongEvent event) {
         MongVo mongVo = event.mongVo();
 
+        log.info("[{}] feedMongEventListener", mongVo.mongId());
+
         notificationService.publishFeed(mongVo.accountId(), PublishFeedVo.of(mongVo));
 
         mongHistoryService.saveMongHistory(mongVo.mongId(), MongHistoryCode.FEED);
     }
 
-
+    /**
+     *
+     * @param event 몽 수면 이벤트
+     */
     @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
     @Transactional(propagation = Propagation.REQUIRES_NEW)
     public void sleepingMongEventListener(SleepingMongEvent event) {
+        MongVo mongVo = event.mongVo();
 
+        log.info("[{}] sleepingMongEventListener", mongVo.mongId());
+
+        notificationService.publishSleeping(mongVo.accountId(), PublishSleepingVo.of(mongVo));
+
+        mongHistoryService.saveMongHistory(mongVo.mongId(), MongHistoryCode.SLEEP);
     }
 
-
+    /**
+     *
+     * @param event 몽 배변 처리 이벤트
+     */
     @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
     @Transactional(propagation = Propagation.REQUIRES_NEW)
     public void poopCleanEventListener(PoopCleanEvent event) {
+        MongVo mongVo = event.mongVo();
 
+        log.info("[{}] poopCleanEventListener", mongVo.mongId());
+
+        notificationService.publishPoop(mongVo.accountId(), PublishPoopVo.of(mongVo));
+
+        mongHistoryService.saveMongHistory(mongVo.mongId(), MongHistoryCode.POOP_CLEAN);
     }
 
+    /**
+     *
+     * @param event 몽 훈련 이벤트
+     */
     @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
     @Transactional(propagation = Propagation.REQUIRES_NEW)
     public void trainingMongEventListener(TrainingMongEvent event) {
+        MongVo mongVo = event.mongVo();
+
+        log.info("[{}] trainingMongEventListener", mongVo.mongId());
+
+        notificationService.publishTraining(mongVo.accountId(), PublishTrainingVo.of(mongVo));
+
+        mongHistoryService.saveMongHistory(mongVo.mongId(), MongHistoryCode.TRAINING);
 
     }
 
-
+    /**
+     *
+     * @param event 몽 졸업 이벤트
+     */
     @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
     @Transactional(propagation = Propagation.REQUIRES_NEW)
     public void graduateMongEventListener(GraduateMongEvent event) {
+        MongVo mongVo = event.mongVo();
+
+        log.info("[{}] graduateMongEventListener", mongVo.mongId());
+
+        notificationService.publishGraduation(mongVo.accountId(), PublishGraduationVo.of(mongVo));
+
+        mongHistoryService.saveMongHistory(mongVo.mongId(), MongHistoryCode.GRADUATION);
 
     }
 
+    /**
+     *
+     * @param event 몽 진화 이벤트
+     */
     @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
     @Transactional(propagation = Propagation.REQUIRES_NEW)
     public void evolutionMongEventListener(EvolutionMongEvent event) {
+        MongVo mongVo = event.mongVo();
 
+        log.info("[{}] evolutionMongEventListener", mongVo.mongId());
+
+        /* 알림 전송 부분 */
+        if (isLastGrade(mongVo.grade())) {
+            // 마지막 진화인 경우 졸업 준비 알림 전송
+            notificationService.publishGraduationReady(mongVo.accountId(), PublishGraduationReadyVo.of(mongVo));
+        } else {
+            // 마지막 진화가 아닌 경우 변경 사항 알림 전송
+            notificationService.publishEvolution(mongVo.accountId(), PublishEvolutionVo.of(mongVo));
+        }
+
+        /* 몽 변경 로그 저장 부분 */
+        mongHistoryService.saveMongHistory(mongVo.mongId(), MongHistoryCode.EVOLUTION);
     }
 }

@@ -3,18 +3,18 @@ package com.mongs.lifecycle.service.componentService;
 import com.mongs.core.enums.management.MongHistoryCode;
 import com.mongs.core.enums.management.MongShift;
 import com.mongs.core.enums.management.MongState;
-import com.mongs.core.utils.MongStatusUtil;
-import com.mongs.core.vo.mqtt.*;
 import com.mongs.core.enums.lifecycle.TaskCode;
 import com.mongs.lifecycle.entity.Mong;
 import com.mongs.lifecycle.exception.EventTaskException;
 import com.mongs.lifecycle.exception.LifecycleErrorCode;
 import com.mongs.lifecycle.repository.MongRepository;
+import com.mongs.lifecycle.service.event.vo.StateCheckEvent;
 import com.mongs.lifecycle.service.moduleService.MongHistoryService;
 import com.mongs.lifecycle.service.moduleService.NotificationService;
+import com.mongs.lifecycle.service.moduleService.vo.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -28,10 +28,11 @@ public class TaskActiveService {
 
     private final boolean isDebug = false;
 
-    private final MongStatusUtil mongStatusUtil;
     private final MongRepository mongRepository;
     private final NotificationService notificationService;
     private final MongHistoryService mongHistoryService;
+
+    private final ApplicationEventPublisher publisher;
 
     private static final Integer POOP_MAX = 4;
 
@@ -44,11 +45,7 @@ public class TaskActiveService {
                 .shift(MongShift.EVOLUTION_READY)
                 .build());
 
-        notificationService.publishEvolutionReady(saveMong.getAccountId(), PublishEvolutionReadyVo.builder()
-                .mongId(mong.getId())
-                .shiftCode(mong.getShift().getCode())
-                .build());
-
+        notificationService.publishEvolutionReady(saveMong.getAccountId(), PublishEvolutionReadyVo.of(saveMong));
         mongHistoryService.saveMongHistory(saveMong.getId(), MongHistoryCode.EVOLUTION);
     }
 
@@ -69,10 +66,9 @@ public class TaskActiveService {
                 .weight(newWeight)
                 .build());
 
-        notificationService.publishWeight(saveMong.getAccountId(), PublishWeightVo.builder()
-                .mongId(mong.getId())
-                .weight(mongStatusUtil.statusToPercent(saveMong.getWeight(), saveMong.getGrade()))
-                .build());
+        notificationService.publishWeight(saveMong.getAccountId(), PublishWeightVo.of(saveMong));
+
+        publisher.publishEvent(new StateCheckEvent(saveMong));
     }
 
     @Transactional
@@ -92,10 +88,9 @@ public class TaskActiveService {
                 .strength(newStrength)
                 .build());
 
-        notificationService.publishStrength(saveMong.getAccountId(), PublishStrengthVo.builder()
-                .mongId(mong.getId())
-                .strength(mongStatusUtil.statusToPercent(saveMong.getStrength(), saveMong.getGrade()))
-                .build());
+        notificationService.publishStrength(saveMong.getAccountId(), PublishStrengthVo.of(saveMong));
+
+        publisher.publishEvent(new StateCheckEvent(saveMong));
     }
 
     @Transactional
@@ -115,10 +110,9 @@ public class TaskActiveService {
                 .satiety(newSatiety)
                 .build());
 
-        notificationService.publishSatiety(saveMong.getAccountId(), PublishSatietyVo.builder()
-                .mongId(mong.getId())
-                .satiety(mongStatusUtil.statusToPercent(saveMong.getSatiety(), saveMong.getGrade()))
-                .build());
+        notificationService.publishSatiety(saveMong.getAccountId(), PublishSatietyVo.of(saveMong));
+
+        publisher.publishEvent(new StateCheckEvent(saveMong));
 
         return saveMong.getSatiety();
     }
@@ -140,10 +134,9 @@ public class TaskActiveService {
                 .healthy(newHealthy)
                 .build());
 
-        notificationService.publishHealthy(saveMong.getAccountId(), PublishHealthyVo.builder()
-                .mongId(mong.getId())
-                .healthy(mongStatusUtil.statusToPercent(saveMong.getHealthy(), saveMong.getGrade()))
-                .build());
+        notificationService.publishHealthy(saveMong.getAccountId(), PublishHealthyVo.of(saveMong));
+
+        publisher.publishEvent(new StateCheckEvent(saveMong));
 
         return saveMong.getHealthy();
     }
@@ -165,10 +158,9 @@ public class TaskActiveService {
                 .sleep(newSleep)
                 .build());
 
-        notificationService.publishSleep(saveMong.getAccountId(), PublishSleepVo.builder()
-                .mongId(mong.getId())
-                .sleep(mongStatusUtil.statusToPercent(saveMong.getSleep(), saveMong.getGrade()))
-                .build());
+        notificationService.publishSleep(saveMong.getAccountId(), PublishSleepVo.of(saveMong));
+
+        publisher.publishEvent(new StateCheckEvent(saveMong));
     }
 
     @Transactional
@@ -188,10 +180,9 @@ public class TaskActiveService {
                 .sleep(newSleep)
                 .build());
 
-        notificationService.publishSleep(saveMong.getAccountId(), PublishSleepVo.builder()
-                .mongId(saveMong.getId())
-                .sleep(mongStatusUtil.statusToPercent(saveMong.getSleep(), saveMong.getGrade()))
-                .build());
+        notificationService.publishSleep(saveMong.getAccountId(), PublishSleepVo.of(saveMong));
+
+        publisher.publishEvent(new StateCheckEvent(saveMong));
     }
 
     @Transactional
@@ -214,6 +205,8 @@ public class TaskActiveService {
 
             mongHistoryService.saveMongHistory(saveMong.getId(), MongHistoryCode.PENALTY);
 
+            publisher.publishEvent(new StateCheckEvent(saveMong));
+
         } else {
             if (isDebug) {
                 log.info("[{}] 똥 {} 개 생성", mongId, newPoop - mong.getNumberOfPoop());
@@ -223,11 +216,9 @@ public class TaskActiveService {
                     .numberOfPoop(newPoop)
                     .build());
 
-            notificationService.publishPoop(saveMong.getAccountId(), PublishPoopVo.builder()
-                    .mongId(saveMong.getId())
-                    .poopCount(saveMong.getNumberOfPoop())
-                    .exp(mongStatusUtil.statusToPercent((double) saveMong.getExp(), saveMong.getGrade()))
-                    .build());
+            notificationService.publishPoop(saveMong.getAccountId(), PublishPoopVo.of(saveMong));
+
+            publisher.publishEvent(new StateCheckEvent(saveMong));
         }
     }
 
@@ -247,10 +238,7 @@ public class TaskActiveService {
                 .state(MongState.EMPTY)
                 .build());
 
-        notificationService.publishDead(saveMong.getAccountId(), PublishDeadVo.builder()
-                .mongId(mong.getId())
-                .shiftCode(MongShift.DEAD.getCode())
-                .build());
+        notificationService.publishDead(saveMong.getAccountId(), PublishDeadVo.of(saveMong));
 
         mongHistoryService.saveMongHistory(saveMong.getId(), MongHistoryCode.DEAD);
 

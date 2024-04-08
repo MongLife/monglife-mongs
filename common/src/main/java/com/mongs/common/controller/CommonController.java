@@ -53,6 +53,7 @@ public class CommonController {
     ) {
         return ResponseEntity.ok().body(
                 FindCodeResDto.builder()
+                        .codeIntegrity(commonService.generateIntegrity(buildVersion))
                         .mapCodeList(commonService.findMapCode(buildVersion))
                         .mongCodeList(commonService.findMongCode(buildVersion))
                         .foodCodeList(commonService.findFoodCode(buildVersion))
@@ -60,53 +61,82 @@ public class CommonController {
                         .build());
     }
 
+    /**
+     * 앱 빌드 버전을 1.0.0 으로 초기화 한다.
+     *
+     * @return null
+     */
     @DeleteMapping("/admin/initialize")
     public ResponseEntity<Object> initializeCode() {
         commonService.initializeCode();
         return ResponseEntity.ok().body(null);
     }
-//
-//    @PostMapping("/admin/code/food")
-//    public ResponseEntity<Object> registerFoodCode(@RequestBody RegisterFoodCodeReqDto registerFoodCodeReqDto) {
-//        commonService.registerFoodCode(RegisterFoodCodeVo.builder()
-//                .code(registerFoodCodeReqDto.code())
-//                .name(registerFoodCodeReqDto.name())
-//                .groupCode(registerFoodCodeReqDto.groupCode())
-//                .price(registerFoodCodeReqDto.price())
-//                .addWeightValue(registerFoodCodeReqDto.addWeightValue())
-//                .addStrengthValue(registerFoodCodeReqDto.addStrengthValue())
-//                .addSatietyValue(registerFoodCodeReqDto.addSatietyValue())
-//                .addHealthyValue(registerFoodCodeReqDto.addHealthyValue())
-//                .addSleepValue(registerFoodCodeReqDto.addSleepValue())
-//                .build(), registerFoodCodeReqDto.buildVersion());
-//        return ResponseEntity.ok().body(null);
-//    }
-//
-//    @PostMapping("/admin/code/map")
-//    public ResponseEntity<Object> registerMapCode(@RequestBody RegisterMapCodeReqDto registerMapCodeReqDto) {
-//        commonService.registerMapCode(RegisterMapCodeVo.builder()
-//                .code(registerMapCodeReqDto.code())
-//                .name(registerMapCodeReqDto.name())
-//                .build(), registerMapCodeReqDto.buildVersion());
-//        return ResponseEntity.ok().body(null);
-//    }
-//
-//    @PostMapping("/admin/code/mong")
-//    public ResponseEntity<Object> registerMongCode(@RequestBody RegisterMongCodeReqDto registerMongCodeReqDto) {
-//        commonService.registerMongCode(RegisterMongCodeVo.builder()
-//                .code(registerMongCodeReqDto.code())
-//                .name(registerMongCodeReqDto.name())
-//                .build(), registerMongCodeReqDto.buildVersion());
-//        return ResponseEntity.ok().body(null);
-//    }
-//
-//    @PostMapping("/admin/code/feedback")
-//    public ResponseEntity<Object> registerFeedbackCode(@RequestBody RegisterFeedbackCodeReqDto registerFeedbackCodeReqDto) {
-//        commonService.registerFeedbackCode(RegisterFeedbackCodeVo.builder()
-//                .code(registerFeedbackCodeReqDto.code())
-//                .groupCode(registerFeedbackCodeReqDto.groupCode())
-//                .message(registerFeedbackCodeReqDto.message())
-//                .build(), registerFeedbackCodeReqDto.buildVersion());
-//        return ResponseEntity.ok().body(null);
-//    }
+
+    /**
+     * 새로운 음식 코드를 등록한다.
+     *
+     * @param registerFoodCodeReqDto 새로운 음식 정보
+     * @return null
+     */
+    @PostMapping("/admin/code/food")
+    public ResponseEntity<Object> registerFoodCode(@RequestBody RegisterFoodCodeReqDto registerFoodCodeReqDto) {
+        commonService.registerFoodCode(RegisterFoodCodeVo.builder()
+                .code(registerFoodCodeReqDto.code())
+                .name(registerFoodCodeReqDto.name())
+                .groupCode(registerFoodCodeReqDto.groupCode())
+                .price(registerFoodCodeReqDto.price())
+                .addWeightValue(registerFoodCodeReqDto.addWeightValue())
+                .addStrengthValue(registerFoodCodeReqDto.addStrengthValue())
+                .addSatietyValue(registerFoodCodeReqDto.addSatietyValue())
+                .addHealthyValue(registerFoodCodeReqDto.addHealthyValue())
+                .addSleepValue(registerFoodCodeReqDto.addSleepValue())
+                .build(), registerFoodCodeReqDto.buildVersion());
+        return ResponseEntity.ok().body(null);
+    }
+
+    /**
+     * 새로운 맵 코드를 등록한다.
+     *
+     * @param registerMapCodeReqDto 새로운 맵 정보
+     * @return null
+     */
+    @PostMapping("/admin/code/map")
+    public ResponseEntity<Object> registerMapCode(@RequestBody RegisterMapCodeReqDto registerMapCodeReqDto) {
+        commonService.registerMapCode(RegisterMapCodeVo.builder()
+                .code(registerMapCodeReqDto.code())
+                .name(registerMapCodeReqDto.name())
+                .build(), registerMapCodeReqDto.buildVersion());
+        return ResponseEntity.ok().body(null);
+    }
+
+    /**
+     * 새로운 몽 코드를 등록한다.
+     *
+     * @param registerMongCodeReqDto 새로운 몽 정보
+     * @return null
+     */
+    @PostMapping("/admin/code/mong")
+    public ResponseEntity<Object> registerMongCode(@RequestBody RegisterMongCodeReqDto registerMongCodeReqDto) {
+        commonService.registerMongCode(RegisterMongCodeVo.builder()
+                .code(registerMongCodeReqDto.code())
+                .name(registerMongCodeReqDto.name())
+                .build(), registerMongCodeReqDto.buildVersion());
+        return ResponseEntity.ok().body(null);
+    }
+
+    /**
+     * 새로운 피드백 코드를 등록한다.
+     *
+     * @param registerFeedbackCodeReqDto 새로운 피드백 정보
+     * @return null
+     */
+    @PostMapping("/admin/code/feedback")
+    public ResponseEntity<Object> registerFeedbackCode(@RequestBody RegisterFeedbackCodeReqDto registerFeedbackCodeReqDto) {
+        commonService.registerFeedbackCode(RegisterFeedbackCodeVo.builder()
+                .code(registerFeedbackCodeReqDto.code())
+                .groupCode(registerFeedbackCodeReqDto.groupCode())
+                .message(registerFeedbackCodeReqDto.message())
+                .build(), registerFeedbackCodeReqDto.buildVersion());
+        return ResponseEntity.ok().body(null);
+    }
 }

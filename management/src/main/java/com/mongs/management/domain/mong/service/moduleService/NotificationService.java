@@ -1,8 +1,7 @@
 package com.mongs.management.domain.mong.service.moduleService;
 
 
-import com.mongs.core.vo.mqtt.*;
-import com.mongs.management.domain.mong.service.moduleService.vo.PublishCreateVo;
+import com.mongs.management.domain.mong.service.moduleService.vo.*;
 
 public interface NotificationService {
     void publishCreate(Long accountId, PublishCreateVo publishCreateVo);
