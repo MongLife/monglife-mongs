@@ -1,4 +1,6 @@
 dependencies {
+    // actuator
+    implementation 'org.springframework.boot:spring-boot-starter-actuator:3.2.1'
     // eureka
     implementation 'org.springframework.cloud:spring-cloud-starter-netflix-eureka-server'
     // spring

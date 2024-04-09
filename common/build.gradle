@@ -4,6 +4,8 @@ dependencies {
 		exclude group: 'org.springframework.boot'
 		exclude group: 'org.springframework.cloud'
 	}
+	// actuator
+	implementation 'org.springframework.boot:spring-boot-starter-actuator:3.2.1'
 	// spring
 	implementation 'org.springframework.boot:spring-boot-starter-web'
 	developmentOnly 'org.springframework.boot:spring-boot-devtools'

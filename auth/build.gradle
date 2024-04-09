@@ -7,6 +7,8 @@ dependencies {
     // spring
     implementation 'org.springframework.boot:spring-boot-starter-web'
     developmentOnly 'org.springframework.boot:spring-boot-devtools'
+    // actuator
+    implementation 'org.springframework.boot:spring-boot-starter-actuator:3.2.1'
     // validation
     implementation 'org.springframework.boot:spring-boot-starter-validation'
     // dataSource

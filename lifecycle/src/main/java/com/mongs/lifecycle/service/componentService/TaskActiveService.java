@@ -21,20 +21,18 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.Duration;
 import java.time.LocalDateTime;
 
+import static com.mongs.core.utils.MongUtil.getNextState;
+
 @Slf4j
 @Service
 @RequiredArgsConstructor
 public class TaskActiveService {
-
     private final boolean isDebug = false;
+    private static final Integer POOP_MAX = 4;
 
     private final MongRepository mongRepository;
     private final NotificationService notificationService;
     private final MongHistoryService mongHistoryService;
-
-    private final ApplicationEventPublisher publisher;
-
-    private static final Integer POOP_MAX = 4;
 
     @Transactional
     public void eggEvolution(Long mongId) throws EventTaskException {
@@ -57,6 +55,15 @@ public class TaskActiveService {
         long seconds = Math.min(taskCode.getExpiration(), Duration.between(createdAt, LocalDateTime.now()).getSeconds());
         double subWeight = taskCode.getValue() / taskCode.getExpiration() * seconds;
         double newWeight = Math.max(0D, mong.getWeight() - subWeight);
+        MongState nextState = getNextState(
+                mong.getState(),
+                mong.getGrade(),
+                newWeight,
+                mong.getStrength(),
+                mong.getSatiety(),
+                mong.getHealthy(),
+                mong.getSleep()
+        );
 
         if (isDebug) {
             log.info("[{}] 몸무게 {} 감소", mongId, mong.getWeight() - newWeight);
@@ -64,11 +71,10 @@ public class TaskActiveService {
 
         Mong saveMong = mongRepository.save(mong.toBuilder()
                 .weight(newWeight)
+                .state(nextState)
                 .build());
 
         notificationService.publishWeight(saveMong.getAccountId(), PublishWeightVo.of(saveMong));
-
-        publisher.publishEvent(new StateCheckEvent(saveMong));
     }
 
     @Transactional
@@ -79,6 +85,15 @@ public class TaskActiveService {
         long seconds = Math.min(taskCode.getExpiration(), Duration.between(createdAt, LocalDateTime.now()).getSeconds());
         double subStrength = taskCode.getValue() / taskCode.getExpiration() * seconds;
         double newStrength = Math.max(0D, mong.getStrength() - subStrength);
+        MongState nextState = getNextState(
+                mong.getState(),
+                mong.getGrade(),
+                mong.getWeight(),
+                newStrength,
+                mong.getSatiety(),
+                mong.getHealthy(),
+                mong.getSleep()
+        );
 
         if (isDebug) {
             log.info("[{}] 근력 {} 감소", mongId, mong.getStrength() - newStrength);
@@ -86,11 +101,10 @@ public class TaskActiveService {
 
         Mong saveMong = mongRepository.save(mong.toBuilder()
                 .strength(newStrength)
+                .state(nextState)
                 .build());
 
         notificationService.publishStrength(saveMong.getAccountId(), PublishStrengthVo.of(saveMong));
-
-        publisher.publishEvent(new StateCheckEvent(saveMong));
     }
 
     @Transactional
@@ -101,6 +115,15 @@ public class TaskActiveService {
         long seconds = Math.min(taskCode.getExpiration(), Duration.between(createdAt, LocalDateTime.now()).getSeconds());
         double subSatiety = taskCode.getValue() / taskCode.getExpiration() * seconds;
         double newSatiety = Math.max(0D, mong.getSatiety() - subSatiety);
+        MongState nextState = getNextState(
+                mong.getState(),
+                mong.getGrade(),
+                mong.getWeight(),
+                mong.getStrength(),
+                newSatiety,
+                mong.getHealthy(),
+                mong.getSleep()
+        );
 
         if (isDebug) {
             log.info("[{}] 포만감 {} 감소", mongId, mong.getSatiety() - newSatiety);
@@ -108,11 +131,10 @@ public class TaskActiveService {
 
         Mong saveMong = mongRepository.save(mong.toBuilder()
                 .satiety(newSatiety)
+                .state(nextState)
                 .build());
 
         notificationService.publishSatiety(saveMong.getAccountId(), PublishSatietyVo.of(saveMong));
-
-        publisher.publishEvent(new StateCheckEvent(saveMong));
 
         return saveMong.getSatiety();
     }
@@ -125,6 +147,15 @@ public class TaskActiveService {
         long seconds = Math.min(taskCode.getExpiration(), Duration.between(createdAt, LocalDateTime.now()).getSeconds());
         double subHealthy = taskCode.getValue() / taskCode.getExpiration() * seconds;
         double newHealthy = Math.max(0D, mong.getHealthy() - subHealthy);
+        MongState nextState = getNextState(
+                mong.getState(),
+                mong.getGrade(),
+                mong.getWeight(),
+                mong.getStrength(),
+                mong.getSatiety(),
+                newHealthy,
+                mong.getSleep()
+        );
 
         if (isDebug) {
             log.info("[{}] 체력 {} 감소", mongId, mong.getHealthy() - newHealthy);
@@ -132,11 +163,10 @@ public class TaskActiveService {
 
         Mong saveMong = mongRepository.save(mong.toBuilder()
                 .healthy(newHealthy)
+                .state(nextState)
                 .build());
 
         notificationService.publishHealthy(saveMong.getAccountId(), PublishHealthyVo.of(saveMong));
-
-        publisher.publishEvent(new StateCheckEvent(saveMong));
 
         return saveMong.getHealthy();
     }
@@ -149,6 +179,15 @@ public class TaskActiveService {
         long seconds = Math.min(taskCode.getExpiration(), Duration.between(createdAt, LocalDateTime.now()).getSeconds());
         double subSleep = taskCode.getValue() / taskCode.getExpiration() * seconds;
         double newSleep = Math.max(0D, mong.getSleep() - subSleep);
+        MongState nextState = getNextState(
+                mong.getState(),
+                mong.getGrade(),
+                mong.getWeight(),
+                mong.getStrength(),
+                mong.getSatiety(),
+                mong.getHealthy(),
+                newSleep
+        );
 
         if (isDebug) {
             log.info("[{}] 피로도 {} 감소", mongId, mong.getSleep() - newSleep);
@@ -156,11 +195,10 @@ public class TaskActiveService {
 
         Mong saveMong = mongRepository.save(mong.toBuilder()
                 .sleep(newSleep)
+                .state(nextState)
                 .build());
 
         notificationService.publishSleep(saveMong.getAccountId(), PublishSleepVo.of(saveMong));
-
-        publisher.publishEvent(new StateCheckEvent(saveMong));
     }
 
     @Transactional
@@ -171,6 +209,15 @@ public class TaskActiveService {
         long seconds = Math.min(taskCode.getExpiration(), Duration.between(createdAt, LocalDateTime.now()).getSeconds());
         double addSleep = taskCode.getValue() / taskCode.getExpiration() * seconds;
         double newSleep = Math.min(mong.getGrade().getMaxStatus(), mong.getSleep() + addSleep);
+        MongState nextState = getNextState(
+                mong.getState(),
+                mong.getGrade(),
+                mong.getWeight(),
+                mong.getStrength(),
+                mong.getSatiety(),
+                mong.getHealthy(),
+                newSleep
+        );
 
         if (isDebug) {
             log.info("[{}] 피로도 {} 증가", mongId, newSleep - mong.getSleep());
@@ -178,11 +225,11 @@ public class TaskActiveService {
 
         Mong saveMong = mongRepository.save(mong.toBuilder()
                 .sleep(newSleep)
+                .state(nextState)
                 .build());
 
         notificationService.publishSleep(saveMong.getAccountId(), PublishSleepVo.of(saveMong));
 
-        publisher.publishEvent(new StateCheckEvent(saveMong));
     }
 
     @Transactional
@@ -205,8 +252,6 @@ public class TaskActiveService {
 
             mongHistoryService.saveMongHistory(saveMong.getId(), MongHistoryCode.PENALTY);
 
-            publisher.publishEvent(new StateCheckEvent(saveMong));
-
         } else {
             if (isDebug) {
                 log.info("[{}] 똥 {} 개 생성", mongId, newPoop - mong.getNumberOfPoop());
@@ -217,8 +262,6 @@ public class TaskActiveService {
                     .build());
 
             notificationService.publishPoop(saveMong.getAccountId(), PublishPoopVo.of(saveMong));
-
-            publisher.publishEvent(new StateCheckEvent(saveMong));
         }
     }
 

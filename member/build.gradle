@@ -5,6 +5,8 @@ dependencies {
 		exclude group: 'org.springframework.boot'
 		exclude group: 'org.springframework.cloud'
 	}
+	// actuator
+	implementation 'org.springframework.boot:spring-boot-starter-actuator:3.2.1'
 	// eureka
 	implementation 'org.springframework.cloud:spring-cloud-starter-netflix-eureka-client'
 	// spring
