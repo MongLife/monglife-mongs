@@ -12,8 +12,8 @@ import org.springframework.scheduling.annotation.EnableAsync;
 @SpringBootApplication
 public class LifecycleApplication {
 
-	public static void main(String[] args) {
-		SpringApplication.run(LifecycleApplication.class, args);
-	}
+    public static void main(String[] args) {
+        SpringApplication.run(LifecycleApplication.class, args);
+    }
 
 }
