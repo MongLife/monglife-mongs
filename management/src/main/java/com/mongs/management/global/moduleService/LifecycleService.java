@@ -6,9 +6,9 @@ import java.util.Optional;
 
 public interface LifecycleService {
     Optional<EggMongEventResDto> eggMongEvent(Long mongId);
-    Optional<DeleteMongEventResDto> deleteMongEvent(Long mongId);
+    Optional<EvolutionMongEventResDto> eggEvolutionMongEvent(Long mongId);
+    Optional<GraduationMongEventResDto> graduateReadyMongEvent(Long mongId);
     Optional<SleepMongEventResDto> sleepMongEvent(Long mongId);
     Optional<WakeupMongEventResDto> wakeUpMongEvent(Long mongId);
-    Optional<GraduationMongEventResDto> graduateReadyMongEvent(Long mongId);
-    Optional<EvolutionMongEventResDto> eggEvolutionMongEvent(Long mongId);
+    Optional<DeleteMongEventResDto> deleteMongEvent(Long mongId);
 }

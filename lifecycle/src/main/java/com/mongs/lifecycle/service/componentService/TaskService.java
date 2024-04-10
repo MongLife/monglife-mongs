@@ -222,8 +222,6 @@ public class TaskService {
         }
     }
 
-
-
     /* TaskStatusCode 변경 */
     @Transactional
     public void doneTask(String taskId) {
@@ -232,11 +230,13 @@ public class TaskService {
                     .orElseThrow(() -> new EventTaskException(LifecycleErrorCode.NOT_FOUND_TASK));
 
             taskEventRepository.save(taskEvent.toBuilder().statusCode(TaskStatusCode.DONE).build());
-            taskMap.remove(taskEvent.getTaskId());
         } catch (EventTaskException e) {
             // log.info("[doneTask] 진행중이지 않은 Task 변경 [{}]", taskId);
+        } finally {
+            taskMap.remove(taskId);
         }
     }
+
     @Transactional
     public void pauseTask(String taskId, TaskStatusCode taskStatusCode) {
         try {
@@ -248,14 +248,16 @@ public class TaskService {
             taskEventRepository.save(taskEvent.toBuilder()
                     .expiration(newExpiration)
                     .statusCode(taskStatusCode).build());
-            taskMap.remove(taskEvent.getTaskId());
 
             log.info("[{}] {} Task 일시중지 ({}), 남은 시간 : {} 초", taskEvent.getMongId(), taskEvent.getTaskCode(), taskEvent.getTaskId(), newExpiration);
 
         } catch (EventTaskException e) {
             // log.info("[doneTask] 진행중이지 않은 Task 변경 [{}]", taskId);
+        } finally {
+            taskMap.remove(taskId);
         }
     }
+
     @Transactional
     public void processTask(String taskId) {
         try {
@@ -267,7 +269,15 @@ public class TaskService {
             // log.info("[processTask] 진행중이지 않은 Task 변경 [{}]", taskId);
         }
     }
-    public Boolean checkTaskActive(Long mongId, TaskCode taskCode) {
+
+    /**
+     * 몽 Id 와 테스크 코드를 통해 해당 몽의 특정 테스크가 실행 중인지 확인한다.
+     *
+     * @param mongId 몽 Id
+     * @param taskCode 테스크 Code
+     * @return 실행 여부
+     */
+    public Boolean isTaskActive(Long mongId, TaskCode taskCode) {
         return taskEventRepository.findByMongIdAndTaskCodeAndStatusCodeIn(
                 mongId, taskCode, List.of(TaskStatusCode.WAIT, TaskStatusCode.PROCESS, TaskStatusCode.PAUSE)).isPresent();
     }

@@ -1,5 +1,6 @@
 package com.mongs.lifecycle.service.componentService;
 
+import com.mongs.core.enums.lifecycle.TaskStatusCode;
 import com.mongs.core.enums.management.MongHistoryCode;
 import com.mongs.core.enums.management.MongShift;
 import com.mongs.core.enums.management.MongState;
@@ -8,18 +9,17 @@ import com.mongs.lifecycle.entity.Mong;
 import com.mongs.lifecycle.exception.EventTaskException;
 import com.mongs.lifecycle.exception.LifecycleErrorCode;
 import com.mongs.lifecycle.repository.MongRepository;
-import com.mongs.lifecycle.service.event.vo.StateCheckEvent;
 import com.mongs.lifecycle.service.moduleService.MongHistoryService;
 import com.mongs.lifecycle.service.moduleService.NotificationService;
 import com.mongs.lifecycle.service.moduleService.vo.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
+import java.util.List;
 
 import static com.mongs.core.utils.MongUtil.getNextState;
 
@@ -27,7 +27,6 @@ import static com.mongs.core.utils.MongUtil.getNextState;
 @Service
 @RequiredArgsConstructor
 public class TaskActiveService {
-    private final boolean isDebug = false;
     private static final Integer POOP_MAX = 4;
 
     private final MongRepository mongRepository;
@@ -65,9 +64,7 @@ public class TaskActiveService {
                 mong.getSleep()
         );
 
-        if (isDebug) {
-            log.info("[{}] 몸무게 {} 감소", mongId, mong.getWeight() - newWeight);
-        }
+        // log.info("[{}] 몸무게 {} 감소", mongId, mong.getWeight() - newWeight);
 
         Mong saveMong = mongRepository.save(mong.toBuilder()
                 .weight(newWeight)
@@ -95,9 +92,7 @@ public class TaskActiveService {
                 mong.getSleep()
         );
 
-        if (isDebug) {
-            log.info("[{}] 근력 {} 감소", mongId, mong.getStrength() - newStrength);
-        }
+        // log.info("[{}] 근력 {} 감소", mongId, mong.getStrength() - newStrength);
 
         Mong saveMong = mongRepository.save(mong.toBuilder()
                 .strength(newStrength)
@@ -125,9 +120,7 @@ public class TaskActiveService {
                 mong.getSleep()
         );
 
-        if (isDebug) {
-            log.info("[{}] 포만감 {} 감소", mongId, mong.getSatiety() - newSatiety);
-        }
+        // log.info("[{}] 포만감 {} 감소", mongId, mong.getSatiety() - newSatiety);
 
         Mong saveMong = mongRepository.save(mong.toBuilder()
                 .satiety(newSatiety)
@@ -157,9 +150,7 @@ public class TaskActiveService {
                 mong.getSleep()
         );
 
-        if (isDebug) {
-            log.info("[{}] 체력 {} 감소", mongId, mong.getHealthy() - newHealthy);
-        }
+        // log.info("[{}] 체력 {} 감소", mongId, mong.getHealthy() - newHealthy);
 
         Mong saveMong = mongRepository.save(mong.toBuilder()
                 .healthy(newHealthy)
@@ -189,9 +180,7 @@ public class TaskActiveService {
                 newSleep
         );
 
-        if (isDebug) {
-            log.info("[{}] 피로도 {} 감소", mongId, mong.getSleep() - newSleep);
-        }
+        // log.info("[{}] 피로도 {} 감소", mongId, mong.getSleep() - newSleep);
 
         Mong saveMong = mongRepository.save(mong.toBuilder()
                 .sleep(newSleep)
@@ -219,9 +208,7 @@ public class TaskActiveService {
                 newSleep
         );
 
-        if (isDebug) {
-            log.info("[{}] 피로도 {} 증가", mongId, newSleep - mong.getSleep());
-        }
+        // log.info("[{}] 피로도 {} 증가", mongId, newSleep - mong.getSleep());
 
         Mong saveMong = mongRepository.save(mong.toBuilder()
                 .sleep(newSleep)
@@ -246,16 +233,12 @@ public class TaskActiveService {
                     .penalty(newPenalty)
                     .build());
 
-            if (isDebug) {
-                log.info("[{}] 똥 {} 개 도달 : 패널티 1 증가 ({})", mongId, POOP_MAX, newPenalty);
-            }
+            // log.info("[{}] 똥 {} 개 도달 : 패널티 1 증가 ({})", mongId, POOP_MAX, newPenalty);
 
             mongHistoryService.saveMongHistory(saveMong.getId(), MongHistoryCode.PENALTY);
 
         } else {
-            if (isDebug) {
-                log.info("[{}] 똥 {} 개 생성", mongId, newPoop - mong.getNumberOfPoop());
-            }
+            // log.info("[{}] 똥 {} 개 생성", mongId, newPoop - mong.getNumberOfPoop());
 
             Mong saveMong = mongRepository.save(mong.toBuilder()
                     .numberOfPoop(newPoop)
@@ -296,12 +279,20 @@ public class TaskActiveService {
         int addPayPoint = taskCode.getValue().intValue();
         int newPayPoint = mong.getPayPoint() + addPayPoint;
 
-        if (isDebug) {
-            log.info("[{}] 페이포인트 {} 증가", mongId, addPayPoint);
-        }
+        // log.info("[{}] 페이포인트 {} 증가", mongId, addPayPoint);
 
         mongRepository.save(mong.toBuilder()
                 .payPoint(newPayPoint)
                 .build());
+    }
+
+    /**
+     * 몽이 현재 살아있는지 확인한다.
+     *
+     * @param mongId 몽 Id
+     * @return 몽 생존 여부
+     */
+    public Boolean isMongActive(Long mongId) {
+        return mongRepository.findByIdAndIsActiveTrue(mongId).isPresent();
     }
 }

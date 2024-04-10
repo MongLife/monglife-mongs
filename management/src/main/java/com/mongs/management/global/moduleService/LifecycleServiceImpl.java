@@ -35,9 +35,25 @@ public class LifecycleServiceImpl implements LifecycleService {
     }
 
     @Override
-    public Optional<DeleteMongEventResDto> deleteMongEvent(Long mongId) {
+    public Optional<EvolutionMongEventResDto> eggEvolutionMongEvent(Long mongId) {
         try {
-            ResponseEntity<DeleteMongEventResDto> response = lifecycleClient.deleteMongEvent(mongId);
+            ResponseEntity<EvolutionMongEventResDto> response = lifecycleClient.eggEvolutionMongEvent(mongId);
+
+            if (response.getStatusCode().is2xxSuccessful()) {
+                return Optional.ofNullable(response.getBody());
+            }
+
+        } catch (FeignException e) {
+            log.error("[{}] 통신 실패 : {}", mongId, e.getMessage());
+        }
+
+        return Optional.empty();
+    }
+
+    @Override
+    public Optional<GraduationMongEventResDto> graduateReadyMongEvent(Long mongId) {
+        try {
+            ResponseEntity<GraduationMongEventResDto> response = lifecycleClient.graduationReadyMongEvent(mongId);
 
             if (response.getStatusCode().is2xxSuccessful()) {
                 return Optional.ofNullable(response.getBody());
@@ -83,25 +99,9 @@ public class LifecycleServiceImpl implements LifecycleService {
     }
 
     @Override
-    public Optional<GraduationMongEventResDto> graduateReadyMongEvent(Long mongId) {
+    public Optional<DeleteMongEventResDto> deleteMongEvent(Long mongId) {
         try {
-            ResponseEntity<GraduationMongEventResDto> response = lifecycleClient.graduationReadyMongEvent(mongId);
-
-            if (response.getStatusCode().is2xxSuccessful()) {
-                return Optional.ofNullable(response.getBody());
-            }
-
-        } catch (FeignException e) {
-            log.error("[{}] 통신 실패 : {}", mongId, e.getMessage());
-        }
-
-        return Optional.empty();
-    }
-
-    @Override
-    public Optional<EvolutionMongEventResDto> eggEvolutionMongEvent(Long mongId) {
-        try {
-            ResponseEntity<EvolutionMongEventResDto> response = lifecycleClient.eggEvolutionMongEvent(mongId);
+            ResponseEntity<DeleteMongEventResDto> response = lifecycleClient.deleteMongEvent(mongId);
 
             if (response.getStatusCode().is2xxSuccessful()) {
                 return Optional.ofNullable(response.getBody());

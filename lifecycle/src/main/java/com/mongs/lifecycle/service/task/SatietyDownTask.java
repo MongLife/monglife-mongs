@@ -55,9 +55,16 @@ public class SatietyDownTask implements BasicTask {
             taskService.processTask(taskEventVo.taskId());
             double satiety = taskActiveService.decreaseSatiety(taskEventVo.mongId(), taskEventVo.taskCode(), taskEventVo.createdAt());
 
-            if (satiety == 0D && !taskService.checkTaskActive(taskEventVo.mongId(), TaskCode.DEAD_SATIETY)) {
+            /*
+            * 포만감이 0이고
+            * 포만감 죽음 테스크가 실행중이지 않고
+            * 몽이 생존해 있는 경우 포만감 죽음 테스크가 실행된다.
+             */
+            if (satiety == 0D &&
+                    !taskService.isTaskActive(taskEventVo.mongId(), TaskCode.DEAD_SATIETY) &&
+                    taskActiveService.isMongActive(taskEventVo.mongId())
+            ) {
                 taskService.startTask(taskEventVo.mongId(), TaskCode.DEAD_SATIETY);
-                log.info("[{}] 포만감 {} 도달 : 죽음 Task 실행", taskEventVo.mongId(), satiety);
             }
             taskService.doneTask(taskEventVo.taskId());
         } catch (EventTaskException e) {
@@ -72,9 +79,16 @@ public class SatietyDownTask implements BasicTask {
             taskService.processTask(taskEventVo.taskId());
             double satiety = taskActiveService.decreaseSatiety(taskEventVo.mongId(), taskEventVo.taskCode(), taskEventVo.createdAt());
 
-            if (satiety == 0D && !taskService.checkTaskActive(taskEventVo.mongId(), TaskCode.DEAD_SATIETY)) {
+            /*
+             * 포만감이 0이고
+             * 포만감 죽음 테스크가 실행중이지 않고
+             * 몽이 생존해 있는 경우 포만감 죽음 테스크가 실행된다.
+             */
+            if (satiety == 0D &&
+                    !taskService.isTaskActive(taskEventVo.mongId(), TaskCode.DEAD_SATIETY) &&
+                    taskActiveService.isMongActive(taskEventVo.mongId())
+            ) {
                 taskService.startTask(taskEventVo.mongId(), TaskCode.DEAD_SATIETY);
-                log.info("[{}] 포만감 {} 도달 : 죽음 Task 실행", taskEventVo.mongId(), satiety);
             }
 
             taskService.doneTask(taskEventVo.taskId());

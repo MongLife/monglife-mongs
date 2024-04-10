@@ -55,9 +55,16 @@ public class HealthyDownTask implements BasicTask {
             taskService.processTask(taskEventVo.taskId());
             double healthy = taskActiveService.decreaseHealthy(taskEventVo.mongId(), taskEventVo.taskCode(), taskEventVo.createdAt());
 
-            if (healthy == 0D && !taskService.checkTaskActive(taskEventVo.mongId(), TaskCode.DEAD_HEALTHY)) {
+            /*
+            * 체력이 0이고
+            * 체력 죽음 테스크가 실행중이지 않고
+            * 몽이 생존해 있는 경우 체력 죽음 테스크가 실행된다.
+            * */
+            if (healthy == 0D &&
+                    !taskService.isTaskActive(taskEventVo.mongId(), TaskCode.DEAD_HEALTHY) &&
+                    taskActiveService.isMongActive(taskEventVo.mongId())
+            ) {
                 taskService.startTask(taskEventVo.mongId(), TaskCode.DEAD_HEALTHY);
-                log.info("[{}] 체력 {} 도달 : 죽음 Task 실행", taskEventVo.mongId(), healthy);
             }
             taskService.doneTask(taskEventVo.taskId());
         } catch (EventTaskException e) {
@@ -72,9 +79,11 @@ public class HealthyDownTask implements BasicTask {
             taskService.processTask(taskEventVo.taskId());
             double healthy = taskActiveService.decreaseHealthy(taskEventVo.mongId(), taskEventVo.taskCode(), taskEventVo.createdAt());
 
-            if (healthy == 0D && !taskService.checkTaskActive(taskEventVo.mongId(), TaskCode.DEAD_HEALTHY)) {
+            if (healthy == 0D &&
+                    !taskService.isTaskActive(taskEventVo.mongId(), TaskCode.DEAD_HEALTHY) &&
+                    taskActiveService.isMongActive(taskEventVo.mongId())
+            ) {
                 taskService.startTask(taskEventVo.mongId(), TaskCode.DEAD_HEALTHY);
-                log.info("[{}] 체력 {} 도달 : 죽음 Task 실행", taskEventVo.mongId(), healthy);
             }
 
             taskService.doneTask(taskEventVo.taskId());

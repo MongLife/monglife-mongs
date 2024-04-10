@@ -14,8 +14,8 @@ public record PublishEvolutionVo(
         Double satiety,
         Double healthy,
         Double sleep,
-        String shiftCode,
         String stateCode,
+        String shiftCode,
         Double exp
 ) {
     public static PublishEvolutionVo of(MongVo mongVo) {
