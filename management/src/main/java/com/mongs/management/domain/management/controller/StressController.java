@@ -8,6 +8,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.parameters.P;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
@@ -39,43 +40,36 @@ public class StressController {
         return ResponseEntity.ok().body(mongIdList);
     }
 
-    @PutMapping("")
-    public ResponseEntity<List<Long>> evolutionMong(
-            @RequestBody List<Long> mongIdList,
+    @PutMapping("/{start}/{end}")
+    public ResponseEntity<Object> evolutionMong(
+            @PathVariable("start") Long start,
+            @PathVariable("end") Long end,
             @AuthenticationPrincipal PassportDetail passportDetail
     ) {
         Long accountId = passportDetail.getId();
 
-        List<Long> evolutionMongIdList = new ArrayList<>();
-        for (Long mongId : mongIdList) {
+        for (long mongId = start; mongId <= end; mongId++) {
             try {
-                MongVo mongVo = managementService.evolutionMong(accountId, mongId);
-                evolutionMongIdList.add(mongVo.mongId());
+                managementService.evolutionMong(accountId, mongId);
             } catch (Exception ignored) {}
         }
-        for (Long mongId: evolutionMongIdList) {
-            mongIdList.remove(mongId);
-        }
-        return ResponseEntity.status(HttpStatus.ACCEPTED).body(mongIdList);
+
+        return ResponseEntity.status(HttpStatus.ACCEPTED).body(null);
     }
 
-    @DeleteMapping("")
-    public ResponseEntity<List<Long>> deleteMong(
-            @RequestBody List<Long> mongIdList,
+    @DeleteMapping("/{start}/{end}")
+    public ResponseEntity<Object> deleteMong(
+            @PathVariable("start") Long start,
+            @PathVariable("end") Long end,
             @AuthenticationPrincipal PassportDetail passportDetail
     ) {
         Long accountId = passportDetail.getId();
 
-        List<Long> deleteMongIdList = new ArrayList<>();
-        for (Long mongId : mongIdList) {
+        for (long mongId = start; mongId <= end; mongId++) {
             try {
-                MongVo mongVo = managementService.deleteMong(accountId, mongId);
-                deleteMongIdList.add(mongVo.mongId());
+                managementService.deleteMong(accountId, mongId);
             } catch (Exception ignored) {}
         }
-        for (Long mongId: deleteMongIdList) {
-            mongIdList.remove(mongId);
-        }
-        return ResponseEntity.status(HttpStatus.ACCEPTED).body(mongIdList);
+        return ResponseEntity.status(HttpStatus.ACCEPTED).body(null);
     }
 }
