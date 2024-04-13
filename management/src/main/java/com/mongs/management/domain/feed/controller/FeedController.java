@@ -36,7 +36,6 @@ public class FeedController {
             @PathVariable("mongId") Long mongId,
             @RequestParam(value = "buildVersion", defaultValue = "1.0.0") String buildVersion
     ) {
-
         List<FindFeedHistoryVo> findFeedHistoryVoList = feedService.findFeedHistory(mongId, buildVersion);
         List<FindFeedHistoryResDto> findFeedHistoryResDtoList = findFeedHistoryVoList.stream()
                 .map(FindFeedHistoryResDto::of)

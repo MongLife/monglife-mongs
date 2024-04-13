@@ -139,6 +139,7 @@ public class CommonService {
                     .addWeightValue(foodCode.getAddWeightValue())
                     .addStrengthValue(foodCode.getAddStrengthValue())
                     .price(foodCode.getPrice())
+                    .delaySeconds(foodCode.getDelaySeconds())
                     .build());
         });
 

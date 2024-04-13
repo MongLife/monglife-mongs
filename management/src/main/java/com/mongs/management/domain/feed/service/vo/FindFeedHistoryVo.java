@@ -13,6 +13,7 @@ public record FindFeedHistoryVo(
     public static FindFeedHistoryVo of(FoodCode foodCode) {
         return FindFeedHistoryVo.builder()
                 .code(foodCode.code())
+                .lastBuyAt(LocalDateTime.now().minusSeconds(foodCode.delaySeconds()))
                 .build();
     }
 

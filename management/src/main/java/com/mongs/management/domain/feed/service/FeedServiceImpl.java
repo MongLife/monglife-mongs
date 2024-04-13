@@ -49,20 +49,21 @@ public class FeedServiceImpl implements FeedService {
         Map<String, FeedHistory> feedHistoryMap = feedHistoryRepository.findByMongIdOrderByBuyAt(mongId).stream()
                 .collect(Collectors.toMap(FeedHistory::getCode, feedHistory -> feedHistory));
 
+        /* 음식 코드 리스트 조회 */
         List<FoodCode> foodCodeList = foodCodeRepository.findByBuildVersionIsLessThanEqual(buildVersion);
-
+        /* 살 수 있는 상태로 다 초기화 */
         List<FindFeedHistoryVo> findFeedHistoryVoList = FindFeedHistoryVo.toList(foodCodeList);
 
         return findFeedHistoryVoList.stream()
                 .map(findFeedHistoryVo -> {
                     if (feedHistoryMap.containsKey(findFeedHistoryVo.code())) {
+                        /* 음식 구매 이력 확인 후 존재하는 경우 */
                         return findFeedHistoryVo.toBuilder()
                                 .lastBuyAt(feedHistoryMap.get(findFeedHistoryVo.code()).getBuyAt())
                                 .build();
                     } else {
-                        return findFeedHistoryVo.toBuilder()
-                                .lastBuyAt(LocalDateTime.now())
-                                .build();
+                        /* 음식 구매 이력 확인 후 없는 경우에는 그대로 반환 */
+                        return findFeedHistoryVo;
                     }
                 }).toList();
     }
