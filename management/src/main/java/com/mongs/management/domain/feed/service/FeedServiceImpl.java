@@ -45,11 +45,11 @@ public class FeedServiceImpl implements FeedService {
      */
     @Override
     @Transactional
-    public List<FindFeedHistoryVo> findFeedHistory(Long mongId) {
+    public List<FindFeedHistoryVo> findFeedHistory(Long mongId, String buildVersion) {
         Map<String, FeedHistory> feedHistoryMap = feedHistoryRepository.findByMongIdOrderByBuyAt(mongId).stream()
                 .collect(Collectors.toMap(FeedHistory::getCode, feedHistory -> feedHistory));
 
-        List<FoodCode> foodCodeList = foodCodeRepository.findAll();
+        List<FoodCode> foodCodeList = foodCodeRepository.findByBuildVersionIsLessThanEqual(buildVersion);
 
         List<FindFeedHistoryVo> findFeedHistoryVoList = FindFeedHistoryVo.toList(foodCodeList);
 

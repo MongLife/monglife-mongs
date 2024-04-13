@@ -28,12 +28,16 @@ public class FeedController {
      * 몽 Id 에 대해 음식 기록 목록을 반환한다.
      *
      * @param mongId 몽 Id
+     * @param buildVersion 앱 빌드 버전
      * @return 음식 목록에 대한 식사 기록 (마지막으로 해당 음식을 먹은 시각)
      */
     @GetMapping("/feed/{mongId}")
-    public ResponseEntity<List<FindFeedHistoryResDto>> findFeedHistory(@PathVariable("mongId") Long mongId) {
+    public ResponseEntity<List<FindFeedHistoryResDto>> findFeedHistory(
+            @PathVariable("mongId") Long mongId,
+            @RequestParam(value = "buildVersion", defaultValue = "1.0.0") String buildVersion
+    ) {
 
-        List<FindFeedHistoryVo> findFeedHistoryVoList = feedService.findFeedHistory(mongId);
+        List<FindFeedHistoryVo> findFeedHistoryVoList = feedService.findFeedHistory(mongId, buildVersion);
         List<FindFeedHistoryResDto> findFeedHistoryResDtoList = findFeedHistoryVoList.stream()
                 .map(FindFeedHistoryResDto::of)
                 .toList();

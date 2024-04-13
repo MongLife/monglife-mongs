@@ -9,4 +9,5 @@ import java.util.Optional;
 
 public interface FoodCodeRepository extends MongoRepository<FoodCode, String> {
     Optional<FoodCode> findByCode(String code);
+    List<FoodCode> findByBuildVersionIsLessThanEqual(String buildVersion);
 }

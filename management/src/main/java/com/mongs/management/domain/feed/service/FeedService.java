@@ -8,6 +8,6 @@ import java.util.List;
 
 @Service
 public interface FeedService {
-    List<FindFeedHistoryVo> findFeedHistory(Long mongId);
+    List<FindFeedHistoryVo> findFeedHistory(Long mongId, String buildVersion);
     FeedMongVo feedMong(Long accountId, Long mongId, String foodCode);
 }
