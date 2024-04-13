@@ -10,8 +10,9 @@ import java.util.List;
 public interface FeedHistoryRepository extends MongoRepository<FeedHistory, Long> {
     @Aggregation(pipeline = {
             "{ $match: { mongId: ?0 } }",
-            "{ $group: { _id: '$mongCode', latestData: { $last: '$$ROOT' } } }",
-            "{ $replaceRoot: { newRoot: '$latestData' } }"
+            "{ $sort: { buyAt: -1 } }",
+            "{ $group: { _id: '$code', latestDocument: { $first: '$$ROOT' } } }",
+            "{ $replaceRoot: { newRoot: '$latestDocument' } }"
     })
-    List<FeedHistory> findByMongIdOrderByBuyAt(@Param("mongId") Long mongId);
+    List<FeedHistory> findByMongIdOrderByBuyAt(Long mongId);
 }

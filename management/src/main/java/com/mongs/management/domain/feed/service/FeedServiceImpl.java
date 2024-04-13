@@ -41,6 +41,7 @@ public class FeedServiceImpl implements FeedService {
      * 음식을 마지막으로 먹은 시각을 포함한 데이터 목록을 반환한다.
      *
      * @param mongId 몽 Id
+     * @param buildVersion 앱 빌드 버전
      * @return {@link List<FindFeedHistoryVo>}
      */
     @Override
@@ -107,6 +108,8 @@ public class FeedServiceImpl implements FeedService {
                 .sleep(newSleep)
                 .exp(newExp)
                 .build());
+
+        log.info(LocalDateTime.now().toString());
 
         /* 식사 기록 저장 */
         feedHistoryRepository.save(FeedHistory.builder()
