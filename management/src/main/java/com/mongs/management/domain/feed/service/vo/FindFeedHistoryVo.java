@@ -8,12 +8,14 @@ import java.util.List;
 @Builder(toBuilder = true)
 public record FindFeedHistoryVo(
         String code,
-        LocalDateTime lastBuyAt
+        LocalDateTime lastBuyAt,
+        Integer delaySeconds
 ) {
     public static FindFeedHistoryVo of(FoodCode foodCode) {
         return FindFeedHistoryVo.builder()
                 .code(foodCode.code())
                 .lastBuyAt(LocalDateTime.now().minusSeconds(foodCode.delaySeconds()))
+                .delaySeconds(foodCode.delaySeconds())
                 .build();
     }
 

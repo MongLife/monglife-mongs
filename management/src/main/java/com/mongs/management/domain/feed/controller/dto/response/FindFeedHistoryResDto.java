@@ -7,12 +7,14 @@ import java.time.LocalDateTime;
 @Builder(toBuilder = true)
 public record FindFeedHistoryResDto(
         String code,
-        LocalDateTime lastBuyAt
+        LocalDateTime lastBuyAt,
+        Integer delaySeconds
 ) {
     public static FindFeedHistoryResDto of(FindFeedHistoryVo findFeedHistoryVo) {
         return FindFeedHistoryResDto.builder()
                 .code(findFeedHistoryVo.code())
                 .lastBuyAt(findFeedHistoryVo.lastBuyAt())
+                .delaySeconds(findFeedHistoryVo.delaySeconds())
                 .build();
     }
 }
