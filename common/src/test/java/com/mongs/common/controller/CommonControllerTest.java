@@ -75,6 +75,7 @@ class CommonControllerTest {
                     .addSatietyValue(testFoodCode.getAddSatietyValue())
                     .addHealthyValue(testFoodCode.getAddHealthyValue())
                     .addSleepValue(testFoodCode.getAddSleepValue())
+                    .delaySeconds(testFoodCode.getDelaySeconds())
                     .build())
             .toList();
 

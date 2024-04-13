@@ -11,7 +11,6 @@ public record FindFoodCodeResDto(
         String name,
         String groupCode,
         Integer price,
-        Integer delaySeconds,
         String buildVersion
 ) {
     public static FindFoodCodeResDto of(FoodCode foodCode) {
@@ -20,7 +19,6 @@ public record FindFoodCodeResDto(
                 .name(foodCode.name())
                 .groupCode(foodCode.groupCode())
                 .price(foodCode.price())
-                .delaySeconds(foodCode.delaySeconds())
                 .buildVersion(foodCode.buildVersion())
                 .build();
     }

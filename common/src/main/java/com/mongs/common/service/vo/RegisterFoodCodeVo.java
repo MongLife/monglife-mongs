@@ -12,6 +12,7 @@ public record RegisterFoodCodeVo(
         Double addStrengthValue,
         Double addSatietyValue,
         Double addHealthyValue,
-        Double addSleepValue
+        Double addSleepValue,
+        Integer delaySeconds
 ) {
 }

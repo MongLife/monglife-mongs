@@ -241,6 +241,7 @@ public class CommonService {
                 .addSatietyValue(registerFoodCodeVo.addSatietyValue())
                 .addHealthyValue(registerFoodCodeVo.addHealthyValue())
                 .addSleepValue(registerFoodCodeVo.addSleepValue())
+                .delaySeconds(registerFoodCodeVo.delaySeconds())
                 .buildVersion(buildVersion)
                 .build());
         this.modifyMustUpdateApp(buildVersion);
