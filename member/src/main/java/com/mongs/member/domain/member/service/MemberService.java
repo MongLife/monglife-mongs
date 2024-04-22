@@ -15,7 +15,7 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class MemberService {
 
-    @Value("${application.buySlotPrice}")
+    @Value("${application.buy-slot-price}")
     private Integer buySlotPrice;
 
     private final MemberRepository memberRepository;
