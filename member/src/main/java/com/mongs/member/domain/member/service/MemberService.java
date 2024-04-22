@@ -37,12 +37,12 @@ public class MemberService {
         Member member = memberRepository.findByAccountIdAndIsDeletedIsFalse(accountId)
                 .orElseThrow(() -> new NotFoundMemberException(MemberErrorCode.NOT_FOUND_MEMBER));
 
-        if (member.getStarPoint() < buySlotPrice) {
+        if (member.getStarPoint() < buySlotPrice * slotCount) {
             throw new InvalidModifySlotCountException(MemberErrorCode.INVALID_MODIFY_SLOT_COUNT);
         }
 
         Member modifiedMember = memberRepository.save(member.toBuilder()
-                .maxSlot(slotCount)
+                .maxSlot(member.getMaxSlot() + slotCount)
                 .build());
 
         return ModifySlotCountVo.builder()
