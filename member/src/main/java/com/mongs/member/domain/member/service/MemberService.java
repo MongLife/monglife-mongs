@@ -16,7 +16,10 @@ import org.springframework.stereotype.Service;
 public class MemberService {
 
     @Value("${application.buy-slot-price}")
-    private Integer buySlotPrice;
+    private Integer BUY_SLOT_PRICE;
+
+    @Value("${application.max-slot-count}")
+    private Integer MAX_SLOT_COUNT;
 
     private final MemberRepository memberRepository;
 
@@ -30,6 +33,7 @@ public class MemberService {
                 .accountId(member.getAccountId())
                 .maxSlot(member.getMaxSlot())
                 .starPoint(member.getStarPoint())
+                .buySlotPrice(BUY_SLOT_PRICE)
                 .build();
     }
 
@@ -37,12 +41,16 @@ public class MemberService {
         Member member = memberRepository.findByAccountIdAndIsDeletedIsFalse(accountId)
                 .orElseThrow(() -> new NotFoundMemberException(MemberErrorCode.NOT_FOUND_MEMBER));
 
-        if (member.getStarPoint() < buySlotPrice * slotCount) {
+        if (member.getStarPoint() < BUY_SLOT_PRICE * slotCount) {
+            throw new InvalidModifySlotCountException(MemberErrorCode.INVALID_MODIFY_SLOT_COUNT);
+        }
+        if (member.getMaxSlot() <= MAX_SLOT_COUNT) {
             throw new InvalidModifySlotCountException(MemberErrorCode.INVALID_MODIFY_SLOT_COUNT);
         }
 
         Member modifiedMember = memberRepository.save(member.toBuilder()
                 .maxSlot(member.getMaxSlot() + slotCount)
+                .starPoint(member.getStarPoint() - BUY_SLOT_PRICE * slotCount)
                 .build());
 
         return ModifySlotCountVo.builder()

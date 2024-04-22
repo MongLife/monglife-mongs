@@ -25,6 +25,7 @@ public class MemberController {
                 .accountId(findMemberVo.accountId())
                 .maxSlot(findMemberVo.maxSlot())
                 .starPoint(findMemberVo.starPoint())
+                .buySlotPrice(findMemberVo.buySlotPrice())
                 .build());
     }
 
