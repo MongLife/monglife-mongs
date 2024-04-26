@@ -66,6 +66,8 @@ public class MemberService {
         Member member = memberRepository.findByAccountIdAndIsDeletedIsFalse(accountId)
                 .orElseThrow(() -> new NotFoundMemberException(MemberErrorCode.NOT_FOUND_MEMBER));
 
+        // TODO("구글 플레이 영수증 검증 로직")
+
         Member modifiedMember = memberRepository.save(member.toBuilder()
                 .starPoint(member.getStarPoint() + starPoint)
                 .build());

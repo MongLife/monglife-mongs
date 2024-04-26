@@ -1,5 +1,6 @@
 package com.mongs.member.domain.member.controller;
 
+import com.mongs.member.domain.member.controller.dto.request.ChargeStarPointReqDto;
 import com.mongs.member.domain.member.controller.dto.response.ChargeStarPointResDto;
 import com.mongs.member.domain.member.controller.dto.response.ExchangeStarPointResDto;
 import com.mongs.member.domain.member.service.vo.ChargeStarPointVo;
@@ -46,9 +47,11 @@ public class MemberController {
     }
 
     @PostMapping("/starPoint")
-    public ResponseEntity<ChargeStarPointResDto> chargeStartPoint(@AuthenticationPrincipal PassportDetail passportDetail) {
-
-        ChargeStarPointVo chargeStarPointVo = memberService.chargeStarPoint(passportDetail.getId(), 10);
+    public ResponseEntity<ChargeStarPointResDto> chargeStartPoint(
+            @AuthenticationPrincipal PassportDetail passportDetail,
+            @RequestBody ChargeStarPointReqDto chargeStarPointReqDto
+    ) {
+        ChargeStarPointVo chargeStarPointVo = memberService.chargeStarPoint(passportDetail.getId(), chargeStarPointReqDto.starPoint());
 
         return ResponseEntity.ok().body(ChargeStarPointResDto.builder()
                 .accountId(chargeStarPointVo.accountId())
