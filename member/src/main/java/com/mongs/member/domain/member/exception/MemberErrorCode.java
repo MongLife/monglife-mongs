@@ -12,6 +12,7 @@ public enum MemberErrorCode implements ErrorCode {
     INVALID_PARAMETER(HttpStatus.BAD_REQUEST, "MEMBER-101", "Invalid Parameter"),
     INTERNAL_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "MEMBER-102", "Internal Server Error"),
     INVALID_MODIFY_SLOT_COUNT(HttpStatus.BAD_REQUEST, "MEMBER-103", "Invalid Modify Slot Count"),
+    INVALID_MODIFY_STAR_POINT(HttpStatus.BAD_REQUEST, "MEMBER-104", "Invalid Modify Star Point"),
     ;
 
     private final HttpStatus httpStatus;

@@ -3,9 +3,8 @@ package com.mongs.member.domain.member.service.vo;
 import lombok.Builder;
 
 @Builder
-public record ModifySlotCountVo(
+public record ChargeStarPointVo(
         Long accountId,
-        Integer maxSlot,
         Integer starPoint
 ) {
 }

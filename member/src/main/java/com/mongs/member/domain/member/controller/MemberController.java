@@ -1,9 +1,13 @@
 package com.mongs.member.domain.member.controller;
 
+import com.mongs.member.domain.member.controller.dto.response.ChargeStarPointResDto;
+import com.mongs.member.domain.member.controller.dto.response.ExchangeStarPointResDto;
+import com.mongs.member.domain.member.service.vo.ChargeStarPointVo;
+import com.mongs.member.domain.member.service.vo.ExchangeStarPointVo;
 import com.mongs.member.domain.member.service.vo.FindMemberVo;
-import com.mongs.member.domain.member.service.vo.ModifySlotCountVo;
+import com.mongs.member.domain.member.service.vo.AddSlotCountVo;
 import com.mongs.member.domain.member.controller.dto.response.FindMemberResDto;
-import com.mongs.member.domain.member.controller.dto.response.ModifySlotCountResDto;
+import com.mongs.member.domain.member.controller.dto.response.AddSlotCountResDto;
 import com.mongs.member.domain.member.service.MemberService;
 import com.mongs.core.security.principal.PassportDetail;
 import lombok.RequiredArgsConstructor;
@@ -30,14 +34,38 @@ public class MemberController {
     }
 
     @PutMapping("/slot")
-    public ResponseEntity<ModifySlotCountResDto> modifySlotCount(@AuthenticationPrincipal PassportDetail passportDetail) {
+    public ResponseEntity<AddSlotCountResDto> addSlotCount(@AuthenticationPrincipal PassportDetail passportDetail) {
 
-        ModifySlotCountVo modifySlotCountVo = memberService.modifySlotCount(passportDetail.getId(), 1);
+        AddSlotCountVo addSlotCountVo = memberService.addSlotCount(passportDetail.getId(), 1);
 
-        return ResponseEntity.ok().body(ModifySlotCountResDto.builder()
-                .accountId(modifySlotCountVo.accountId())
-                .maxSlot(modifySlotCountVo.maxSlot())
-                .starPoint(modifySlotCountVo.starPoint())
+        return ResponseEntity.ok().body(AddSlotCountResDto.builder()
+                .accountId(addSlotCountVo.accountId())
+                .maxSlot(addSlotCountVo.maxSlot())
+                .starPoint(addSlotCountVo.starPoint())
+                .build());
+    }
+
+    @PostMapping("/starPoint")
+    public ResponseEntity<ChargeStarPointResDto> chargeStartPoint(@AuthenticationPrincipal PassportDetail passportDetail) {
+
+        ChargeStarPointVo chargeStarPointVo = memberService.chargeStarPoint(passportDetail.getId(), 10);
+
+        return ResponseEntity.ok().body(ChargeStarPointResDto.builder()
+                .accountId(chargeStarPointVo.accountId())
+                .starPoint(chargeStarPointVo.starPoint())
+                .build());
+    }
+
+    @PutMapping("/payPoint/{mongId}")
+    public ResponseEntity<ExchangeStarPointResDto> exchangeStartPoint(
+            @AuthenticationPrincipal PassportDetail passportDetail,
+            @PathVariable("mongId") Long mongId
+    ) {
+        ExchangeStarPointVo exchangeStarPointVo = memberService.exchangeStarPoint(passportDetail.getId(), mongId, 10);
+
+        return ResponseEntity.ok().body(ExchangeStarPointResDto.builder()
+                .accountId(exchangeStarPointVo.accountId())
+                .starPoint(exchangeStarPointVo.starPoint())
                 .build());
     }
 }

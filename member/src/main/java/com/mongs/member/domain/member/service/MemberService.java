@@ -1,8 +1,10 @@
 package com.mongs.member.domain.member.service;
 
 import com.mongs.member.domain.member.exception.InvalidModifySlotCountException;
+import com.mongs.member.domain.member.service.vo.ChargeStarPointVo;
+import com.mongs.member.domain.member.service.vo.ExchangeStarPointVo;
 import com.mongs.member.domain.member.service.vo.FindMemberVo;
-import com.mongs.member.domain.member.service.vo.ModifySlotCountVo;
+import com.mongs.member.domain.member.service.vo.AddSlotCountVo;
 import com.mongs.member.domain.member.entity.Member;
 import com.mongs.member.domain.member.exception.MemberErrorCode;
 import com.mongs.member.domain.member.exception.NotFoundMemberException;
@@ -37,7 +39,7 @@ public class MemberService {
                 .build();
     }
 
-    public ModifySlotCountVo modifySlotCount(Long accountId, int slotCount) {
+    public AddSlotCountVo addSlotCount(Long accountId, int slotCount) {
         Member member = memberRepository.findByAccountIdAndIsDeletedIsFalse(accountId)
                 .orElseThrow(() -> new NotFoundMemberException(MemberErrorCode.NOT_FOUND_MEMBER));
 
@@ -53,10 +55,49 @@ public class MemberService {
                 .starPoint(member.getStarPoint() - BUY_SLOT_PRICE * slotCount)
                 .build());
 
-        return ModifySlotCountVo.builder()
+        return AddSlotCountVo.builder()
                 .accountId(modifiedMember.getAccountId())
                 .maxSlot(modifiedMember.getMaxSlot())
                 .starPoint(modifiedMember.getStarPoint())
                 .build();
+    }
+
+    public ChargeStarPointVo chargeStarPoint(Long accountId, int starPoint) {
+        Member member = memberRepository.findByAccountIdAndIsDeletedIsFalse(accountId)
+                .orElseThrow(() -> new NotFoundMemberException(MemberErrorCode.NOT_FOUND_MEMBER));
+
+        if (member.getStarPoint() < starPoint) {
+            throw new InvalidModifySlotCountException(MemberErrorCode.INVALID_MODIFY_STAR_POINT);
+        }
+
+        Member modifiedMember = memberRepository.save(member.toBuilder()
+                .starPoint(member.getStarPoint() + starPoint)
+                .build());
+
+        return ChargeStarPointVo.builder()
+                .accountId(modifiedMember.getAccountId())
+                .starPoint(modifiedMember.getStarPoint())
+                .build();
+    }
+
+    public ExchangeStarPointVo exchangeStarPoint(Long accountId, Long mongId, int starPoint) {
+        Member member = memberRepository.findByAccountIdAndIsDeletedIsFalse(accountId)
+                .orElseThrow(() -> new NotFoundMemberException(MemberErrorCode.NOT_FOUND_MEMBER));
+
+        if (member.getStarPoint() < starPoint) {
+            throw new InvalidModifySlotCountException(MemberErrorCode.INVALID_MODIFY_STAR_POINT);
+        }
+        
+        // TODO("몽에 해당하는 paypoint 증가")
+
+        Member modifiedMember = memberRepository.save(member.toBuilder()
+                .starPoint(member.getStarPoint() - starPoint)
+                .build());
+
+        return ExchangeStarPointVo.builder()
+                .accountId(modifiedMember.getAccountId())
+                .starPoint(modifiedMember.getStarPoint())
+                .build();
+        
     }
 }
