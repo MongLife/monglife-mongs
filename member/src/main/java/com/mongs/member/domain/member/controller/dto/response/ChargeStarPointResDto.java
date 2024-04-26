@@ -5,7 +5,6 @@ import lombok.Builder;
 @Builder
 public record ChargeStarPointResDto(
         Long accountId,
-        Integer maxSlot,
         Integer starPoint
 ) {
 }

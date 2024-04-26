@@ -46,7 +46,7 @@ public class MemberService {
         if (member.getStarPoint() < BUY_SLOT_PRICE * slotCount) {
             throw new InvalidModifySlotCountException(MemberErrorCode.INVALID_MODIFY_SLOT_COUNT);
         }
-        if (member.getMaxSlot() <= MAX_SLOT_COUNT) {
+        if (member.getMaxSlot() >= MAX_SLOT_COUNT) {
             throw new InvalidModifySlotCountException(MemberErrorCode.INVALID_MODIFY_SLOT_COUNT);
         }
 
@@ -65,10 +65,6 @@ public class MemberService {
     public ChargeStarPointVo chargeStarPoint(Long accountId, int starPoint) {
         Member member = memberRepository.findByAccountIdAndIsDeletedIsFalse(accountId)
                 .orElseThrow(() -> new NotFoundMemberException(MemberErrorCode.NOT_FOUND_MEMBER));
-
-        if (member.getStarPoint() < starPoint) {
-            throw new InvalidModifySlotCountException(MemberErrorCode.INVALID_MODIFY_STAR_POINT);
-        }
 
         Member modifiedMember = memberRepository.save(member.toBuilder()
                 .starPoint(member.getStarPoint() + starPoint)

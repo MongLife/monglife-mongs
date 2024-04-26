@@ -1,6 +1,7 @@
 package com.mongs.member.domain.member.controller;
 
 import com.mongs.core.error.ErrorCode;
+import com.mongs.core.error.ErrorException;
 import com.mongs.core.error.ErrorResDto;
 import com.mongs.member.domain.member.controller.MemberController;
 import com.mongs.member.domain.member.exception.MemberErrorCode;
@@ -14,13 +15,14 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 @Slf4j
 @RestControllerAdvice(basePackageClasses = {MemberController.class})
 public class MemberControllerAdvice {
-    @ExceptionHandler(NotFoundMemberException.class)
-    public ResponseEntity<Object> notFoundMemberExceptionHandler(NotFoundMemberException e) {
-        return ResponseEntity.status(e.errorCode.getHttpStatus()).body(ErrorResDto.of(e.errorCode));
-    }
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<Object> validatedExceptionHandler() {
         ErrorCode errorCode = MemberErrorCode.INVALID_PARAMETER;
+        return ResponseEntity.status(errorCode.getHttpStatus()).body(ErrorResDto.of(errorCode));
+    }
+    @ExceptionHandler(ErrorException.class)
+    public ResponseEntity<Object> errorExceptionHandler(ErrorException e) {
+        ErrorCode errorCode = e.errorCode;
         return ResponseEntity.status(errorCode.getHttpStatus()).body(ErrorResDto.of(errorCode));
     }
     @ExceptionHandler(RuntimeException.class)
