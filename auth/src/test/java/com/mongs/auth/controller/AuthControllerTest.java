@@ -6,7 +6,7 @@ import com.mongs.auth.controller.dto.request.PassportReqDto;
 import com.mongs.auth.controller.dto.request.ReissueReqDto;
 import com.mongs.auth.exception.AuthorizationException;
 import com.mongs.auth.exception.AuthErrorCode;
-import com.mongs.auth.exception.NotFoundException;
+import com.mongs.auth.exception.NotFoundAccountLogException;
 import com.mongs.auth.exception.PassportException;
 import com.mongs.core.vo.passport.PassportData;
 import com.mongs.core.vo.passport.PassportAccount;
@@ -347,7 +347,7 @@ public class AuthControllerTest {
         String accessToken = "test-accessToken";
 
         when(authService.passport(accessToken))
-                .thenThrow(new NotFoundException(AuthErrorCode.ACCOUNT_NOT_FOUND));
+                .thenThrow(new NotFoundAccountLogException(AuthErrorCode.ACCOUNT_NOT_FOUND));
 
         // when
         ResultActions resultActions = mockMvc.perform(post("/auth/passport")

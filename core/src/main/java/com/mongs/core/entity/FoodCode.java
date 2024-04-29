@@ -17,6 +17,7 @@ public record FoodCode(
         Double addSatietyValue,
         Double addHealthyValue,
         Double addSleepValue,
+        Integer delaySeconds,
         String buildVersion
 ){
 }

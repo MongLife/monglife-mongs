@@ -28,18 +28,9 @@ public class LifecycleService {
         exec(mongId, startList, restartList, pauseList, stopList);
     }
 
-    public void graduationReadyEvent(Long mongId, Long accountId) {
-        if (mongRepository.findByIdAndAccountIdAndIsActiveTrue(mongId, accountId).isEmpty()) {
-            throw new EventTaskException(LifecycleErrorCode.NOT_FOUND_MONG);
-        }
-
-        taskService.stopAllTask(mongId);
-    }
-
     public void eggEvolutionEvent(Long mongId, Long accountId) {
-        if (mongRepository.findByIdAndAccountIdAndIsActiveTrue(mongId, accountId).isEmpty()) {
-            throw new EventTaskException(LifecycleErrorCode.NOT_FOUND_MONG);
-        }
+        mongRepository.findByIdAndAccountIdAndIsActiveTrue(mongId, accountId)
+                .orElseThrow(() -> new EventTaskException(LifecycleErrorCode.NOT_FOUND_MONG));
 
         List<TaskCode> startList = List.of(TaskCode.WEIGHT_DOWN, TaskCode.HEALTHY_DOWN, TaskCode.STRENGTH_DOWN, TaskCode.SATIETY_DOWN, TaskCode.SLEEP_DOWN, TaskCode.POOP);
         List<TaskCode> restartList = List.of(TaskCode.DEAD_SATIETY, TaskCode.DEAD_HEALTHY);
@@ -47,6 +38,13 @@ public class LifecycleService {
         List<TaskCode> stopList = List.of();
 
         exec(mongId, startList, restartList, pauseList, stopList);
+    }
+
+    public void graduationReadyEvent(Long mongId, Long accountId) {
+        mongRepository.findByIdAndAccountIdAndIsActiveTrue(mongId, accountId)
+                .orElseThrow(() -> new EventTaskException(LifecycleErrorCode.NOT_FOUND_MONG));
+
+        taskService.stopAllTask(mongId);
     }
 
     public void sleepEvent(Long mongId, Long accountId) {
@@ -89,9 +87,8 @@ public class LifecycleService {
     }
 
     public void deleteEvent(Long mongId, Long accountId) {
-        if (mongRepository.findByIdAndAccountId(mongId, accountId).isEmpty()) {
-            throw new EventTaskException(LifecycleErrorCode.NOT_FOUND_MONG);
-        }
+        mongRepository.findByIdAndAccountIdAndIsActiveTrue(mongId, accountId)
+                .orElseThrow(() -> new EventTaskException(LifecycleErrorCode.NOT_FOUND_MONG));
 
         taskService.stopAllTask(mongId);
     }

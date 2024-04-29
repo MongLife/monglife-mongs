@@ -40,6 +40,8 @@ public class SecurityConfig {
             .addFilterBefore(passportFilter, UsernamePasswordAuthenticationFilter.class)
             .addFilterBefore(securityExceptionHandler, PassportFilter.class)
             .authorizeHttpRequests(authorize -> authorize
+                    .requestMatchers("/member/prometheus").permitAll()
+
                     .requestMatchers("/collection/admin/**").hasAnyAuthority("ADMIN")
                     .requestMatchers("/collection/**").hasAnyAuthority("NORMAL")
 

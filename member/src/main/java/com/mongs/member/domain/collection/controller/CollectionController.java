@@ -28,19 +28,19 @@ public class CollectionController {
     public ResponseEntity<Object> findMongCollection(@AuthenticationPrincipal PassportDetail passportDetail) {
         return ResponseEntity.ok().body(collectionService.findMongCollection(passportDetail.getId()));
     }
-    @PostMapping("/admin/map/{accountId}")
+    @PostMapping("/map")
     public ResponseEntity<Object> registerMapCollection(
-            @PathVariable("accountId") Long accountId,
+            @AuthenticationPrincipal PassportDetail passportDetail,
             @RequestBody @Validated RegisterMapCollectionReqDto registerMapCollectionReqDto
     ) {
-        return ResponseEntity.ok().body(collectionService.registerMapCollection(accountId, registerMapCollectionReqDto.mapCode()));
+        return ResponseEntity.ok().body(collectionService.registerMapCollection(passportDetail.getId(), registerMapCollectionReqDto.mapCode()));
     }
-    @PostMapping("/admin/mong/{accountId}")
+    @PostMapping("/mong")
     public ResponseEntity<Object> registerMongCollection(
-            @PathVariable("accountId") Long accountId,
+            @AuthenticationPrincipal PassportDetail passportDetail,
             @RequestBody @Validated RegisterMongCollectionReqDto registerMongCollectionReqDto
     ) {
-        return ResponseEntity.ok().body(collectionService.registerMongCollection(accountId, registerMongCollectionReqDto.mongCode()));
+        return ResponseEntity.ok().body(collectionService.registerMongCollection(passportDetail.getId(), registerMongCollectionReqDto.mongCode()));
     }
 
     @DeleteMapping("/admin/map/{accountId}")

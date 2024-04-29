@@ -14,8 +14,7 @@ public enum AuthErrorCode implements ErrorCode {
     ACCESS_TOKEN_EXPIRED(HttpStatus.UNAUTHORIZED, "AUTH-103", "AccessToken Expired"),
     ACCOUNT_NOT_FOUND(HttpStatus.BAD_REQUEST, "AUTH-104", "Not Found Account"),
     ACCOUNT_LOG_NOT_FOUND(HttpStatus.INTERNAL_SERVER_ERROR, "AUTH-105", "Not Found Account Log"),
-    REGISTER_MEMBER_FAIL(HttpStatus.BAD_REQUEST, "AUTH-106", "Can't Make Member"),
-    PASSPORT_GENERATE_FAIL(HttpStatus.INTERNAL_SERVER_ERROR, "AUTH-107", "Passport Generate Fail"),
+    PASSPORT_GENERATE_FAIL(HttpStatus.INTERNAL_SERVER_ERROR, "AUTH-106", "Passport Generate Fail"),
     ;
 
     private final HttpStatus httpStatus;
