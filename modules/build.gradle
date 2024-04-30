@@ -1,0 +1,13 @@
+
+subprojects {
+    dependencies {
+    }
+
+    tasks.named('jar') {
+        enabled = true
+    }
+
+    tasks.named('test') {
+        useJUnitPlatform()
+    }
+}

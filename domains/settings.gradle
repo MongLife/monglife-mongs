@@ -1,0 +1,10 @@
+rootProject.name = 'domains'
+
+include 'play-account-domain'
+include 'play-code-domain'
+include 'play-collection-domain'
+include 'play-feedback-domain'
+include 'play-member-domain'
+include 'play-mong-domain'
+include 'play-payment-domain'
+include 'play-session-domain'

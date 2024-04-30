@@ -6,7 +6,7 @@ plugins {
 }
 
 allprojects {
-    group = 'com.mongs'
+    group = 'com.mongs.play'
     version = '0.0.1-SNAPSHOT'
     sourceCompatibility = '17'
 
@@ -29,14 +29,12 @@ subprojects {
     dependencies {
         compileOnly 'org.projectlombok:lombok'
         annotationProcessor 'org.projectlombok:lombok'
-    }
-
-    tasks.named('bootJar') {
-        enabled = true
-    }
-
-    tasks.named('jar') {
-        enabled = false
+        // spring
+        implementation 'org.springframework.boot:spring-boot-starter-web'
+        developmentOnly 'org.springframework.boot:spring-boot-devtools'
+        // test
+        testImplementation 'org.springframework.boot:spring-boot-starter-test'
+        testImplementation "org.junit.jupiter:junit-jupiter:5.8.1"
     }
 
     tasks.named('test') {

@@ -1,0 +1,5 @@
+rootProject.name = 'modules'
+
+include 'play-hmac-module'
+include 'play-jwt-module'
+include 'play-security-module'

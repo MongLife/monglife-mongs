@@ -1,0 +1,4 @@
+rootProject.name = 'clients'
+
+include 'play-member-event-publisher-client'
+include 'play-mong-event-publisher-client'
