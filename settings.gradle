@@ -9,3 +9,29 @@ include('member')
 include('management')
 include('lifecycle')
 include('common')
+
+include 'apps:play-auth-app-external-api'
+include 'apps:play-auth-app-internal-api'
+include 'apps:play-common-app-external-api'
+include 'apps:play-gateway-app-external-api'
+include 'apps:play-management-app-external-api'
+include 'apps:play-management-app-internal-api'
+include 'apps:play-management-app-worker'
+include 'apps:play-member-app-external-api'
+include 'apps:play-member-app-internal-api'
+
+include 'domains:play-account-domain'
+include 'domains:play-code-domain'
+include 'domains:play-collection-domain'
+include 'domains:play-feedback-domain'
+include 'domains:play-member-domain'
+include 'domains:play-mong-domain'
+include 'domains:play-payment-domain'
+include 'domains:play-session-domain'
+
+include 'modules:play-hmac-module'
+include 'modules:play-jwt-module'
+include 'modules:play-security-module'
+
+include 'clients:play-member-event-publisher-client'
+include 'clients:play-mong-event-publisher-client'
