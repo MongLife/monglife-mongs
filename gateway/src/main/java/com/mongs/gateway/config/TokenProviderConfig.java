@@ -1,6 +1,6 @@
 package com.mongs.gateway.config;
 
-import com.mongs.core.utils.TokenProvider;
+import com.mongs.core.utils.JwtTokenProvider;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -12,7 +12,7 @@ public class TokenProviderConfig {
     private String JWT_KEY;
 
     @Bean
-    public TokenProvider tokenProvider() {
-        return new TokenProvider(JWT_KEY);
+    public JwtTokenProvider tokenProvider() {
+        return new JwtTokenProvider(JWT_KEY);
     }
 }

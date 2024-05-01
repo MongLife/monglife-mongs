@@ -1,2 +1,6 @@
 dependencies {
+    // Jackson
+    api 'com.fasterxml.jackson.core:jackson-databind:2.16.1'
+    // Base64
+    implementation 'commons-codec:commons-codec:1.15'
 }
