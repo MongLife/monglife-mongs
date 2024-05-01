@@ -1,5 +1,6 @@
 rootProject.name = 'apps'
 
+include 'play-core-app'
 include 'play-auth-app-external-api'
 include 'play-auth-app-internal-api'
 include 'play-common-app-external-api'
