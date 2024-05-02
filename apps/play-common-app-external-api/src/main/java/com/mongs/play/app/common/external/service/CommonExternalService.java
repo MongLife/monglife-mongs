@@ -1,8 +1,6 @@
 package com.mongs.play.app.common.external.service;
 
 import com.mongs.play.app.common.external.vo.*;
-import com.mongs.play.app.core.error.CommonExternalErrorCode;
-import com.mongs.play.app.core.exception.CommonExternalException;
 import com.mongs.play.domain.code.entity.*;
 import com.mongs.play.domain.code.service.CodeService;
 import com.mongs.play.domain.code.service.CodeVersionService;
@@ -22,8 +20,7 @@ public class CommonExternalService {
     @Transactional(readOnly = true)
     public FindCodeVersionVo findCodeVersion(String buildVersion, String codeIntegrity) {
 
-        CodeVersion codeVersion = codeVersionService.getCodeVersion(buildVersion)
-                .orElseThrow(() -> new CommonExternalException(CommonExternalErrorCode.NOT_FOUND_VERSION));
+        CodeVersion codeVersion = codeVersionService.getCodeVersion(buildVersion);
 
         return FindCodeVersionVo.builder()
                 .newestBuildVersion(codeVersion.buildVersion())
@@ -36,8 +33,7 @@ public class CommonExternalService {
     @Transactional(readOnly = true)
     public FindCodeVo findCode(String buildVersion) {
 
-        CodeVersion codeVersion = codeVersionService.getCodeVersion(buildVersion)
-                .orElseThrow(() -> new CommonExternalException(CommonExternalErrorCode.NOT_FOUND_VERSION));
+        CodeVersion codeVersion = codeVersionService.getCodeVersion(buildVersion);
 
         List<MapCode> mapCodeList = codeService.getMapCodeByBuildVersion(buildVersion);
         List<MongCode> mongCodeList = codeService.getMongCodeByBuildVersion(buildVersion);

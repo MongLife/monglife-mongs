@@ -4,10 +4,7 @@ import com.mongs.play.app.common.internal.data.FeedbackCodeData;
 import com.mongs.play.app.common.internal.data.FoodCodeData;
 import com.mongs.play.app.common.internal.data.MapCodeData;
 import com.mongs.play.app.common.internal.data.MongCodeData;
-import com.mongs.play.app.common.internal.vo.RegisterFeedbackCodeVo;
-import com.mongs.play.app.common.internal.vo.RegisterFoodCodeVo;
-import com.mongs.play.app.common.internal.vo.RegisterMapCodeVo;
-import com.mongs.play.app.common.internal.vo.RegisterMongCodeVo;
+import com.mongs.play.app.common.internal.vo.*;
 import com.mongs.play.domain.code.entity.*;
 import com.mongs.play.domain.code.service.CodeService;
 import com.mongs.play.domain.code.service.CodeVersionService;
@@ -25,57 +22,13 @@ public class CommonInternalService {
     private final CodeService codeService;
 
     @Transactional
-    public void resetCode() {
-        String buildVersion = "1.0.0";
+    public RegisterCodeVersionVo registerCodeVersion(String buildVersion) {
 
-        codeVersionService.removeCodeVersion();
-        codeService.removeMapCode();
-        Arrays.stream(MapCodeData.values()).forEach(mapCode -> {
-            codeService.addMapCode(MapCode.builder()
-                    .buildVersion(buildVersion)
-                    .code(mapCode.getCode())
-                    .name(mapCode.getName())
-                    .build());
-        });
+        CodeVersion codeVersion = codeVersionService.addCodeVersion(buildVersion);
 
-        codeService.removeMongCode();
-        Arrays.stream(MongCodeData.values()).forEach(mongCode -> {
-            codeService.addMongCode(MongCode.builder()
-                    .buildVersion(buildVersion)
-                    .code(mongCode.getCode())
-                    .name(mongCode.getName())
-                    .build());
-        });
-
-        codeService.removeFoodCode();
-        Arrays.stream(FoodCodeData.values()).forEach(foodCode -> {
-            codeService.addFoodCode(FoodCode.builder()
-                    .buildVersion(buildVersion)
-                    .code(foodCode.getCode())
-                    .name(foodCode.getName())
-                    .groupCode(foodCode.getGroupCode())
-                    .addHealthyValue(foodCode.getAddHealthyValue())
-                    .addSleepValue(foodCode.getAddSleepValue())
-                    .addSatietyValue(foodCode.getAddSatietyValue())
-                    .addWeightValue(foodCode.getAddWeightValue())
-                    .addStrengthValue(foodCode.getAddStrengthValue())
-                    .price(foodCode.getPrice())
-                    .delaySeconds(foodCode.getDelaySeconds())
-                    .build());
-        });
-
-        codeService.removeFeedbackCode();
-        Arrays.stream(FeedbackCodeData.values()).forEach(feedbackCode -> {
-            codeService.addFeedbackCode(FeedbackCode.builder()
-                    .buildVersion(buildVersion)
-                    .code(feedbackCode.getCode())
-                    .groupCode(feedbackCode.getGroupCode())
-                    .message(feedbackCode.getMessage())
-                    .build());
-        });
-
-        codeVersionService.updateCode(buildVersion);
-        codeVersionService.updateCodeWithUpdateApp(buildVersion);
+        return RegisterCodeVersionVo.builder()
+                .buildVersion(codeVersion.buildVersion())
+                .build();
     }
 
     @Transactional
@@ -162,5 +115,60 @@ public class CommonInternalService {
                 .groupCode(feedbackCode.groupCode())
                 .message(feedbackCode.message())
                 .build();
+    }
+
+    @Transactional
+    public void resetCode() {
+        String buildVersion = "1.0.0";
+
+        codeService.removeMapCode();
+        Arrays.stream(MapCodeData.values()).forEach(mapCode -> {
+            codeService.addMapCode(MapCode.builder()
+                    .buildVersion(buildVersion)
+                    .code(mapCode.getCode())
+                    .name(mapCode.getName())
+                    .build());
+        });
+
+        codeService.removeMongCode();
+        Arrays.stream(MongCodeData.values()).forEach(mongCode -> {
+            codeService.addMongCode(MongCode.builder()
+                    .buildVersion(buildVersion)
+                    .code(mongCode.getCode())
+                    .name(mongCode.getName())
+                    .build());
+        });
+
+        codeService.removeFoodCode();
+        Arrays.stream(FoodCodeData.values()).forEach(foodCode -> {
+            codeService.addFoodCode(FoodCode.builder()
+                    .buildVersion(buildVersion)
+                    .code(foodCode.getCode())
+                    .name(foodCode.getName())
+                    .groupCode(foodCode.getGroupCode())
+                    .addHealthyValue(foodCode.getAddHealthyValue())
+                    .addSleepValue(foodCode.getAddSleepValue())
+                    .addSatietyValue(foodCode.getAddSatietyValue())
+                    .addWeightValue(foodCode.getAddWeightValue())
+                    .addStrengthValue(foodCode.getAddStrengthValue())
+                    .price(foodCode.getPrice())
+                    .delaySeconds(foodCode.getDelaySeconds())
+                    .build());
+        });
+
+        codeService.removeFeedbackCode();
+        Arrays.stream(FeedbackCodeData.values()).forEach(feedbackCode -> {
+            codeService.addFeedbackCode(FeedbackCode.builder()
+                    .buildVersion(buildVersion)
+                    .code(feedbackCode.getCode())
+                    .groupCode(feedbackCode.getGroupCode())
+                    .message(feedbackCode.getMessage())
+                    .build());
+        });
+
+        codeVersionService.removeCodeVersion();
+        codeVersionService.addCodeVersion(buildVersion);
+
+        codeVersionService.updateCodeWithUpdateApp(buildVersion);
     }
 }

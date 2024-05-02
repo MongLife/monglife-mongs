@@ -1,23 +1,17 @@
 package com.mongs.play.app.auth.external.service;
 
-import com.mongs.play.app.core.error.AuthExternalErrorCode;
-import com.mongs.play.app.core.exception.AuthExternalException;
 import com.mongs.play.app.auth.external.vo.LoginVo;
 import com.mongs.play.app.auth.external.vo.LogoutVo;
 import com.mongs.play.app.auth.external.vo.ReissueVo;
 import com.mongs.play.domain.account.entity.Account;
-import com.mongs.play.domain.account.entity.AccountLog;
 import com.mongs.play.domain.account.service.AccountLogService;
 import com.mongs.play.domain.account.service.AccountService;
-import com.mongs.play.jwt.JwtTokenProvider;
+import com.mongs.play.module.jwt.JwtTokenProvider;
 import com.mongs.play.session.entity.Session;
 import com.mongs.play.session.service.SessionService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-
-import java.time.LocalDate;
-import java.time.LocalDateTime;
 
 @Service
 @RequiredArgsConstructor
@@ -43,8 +37,7 @@ public class AuthExternalService {
     public LoginVo login(String deviceId, String email, String name) {
 
         /* 회원 가입 (계정 정보가 없는 경우) */
-        Account account = accountService.getAccountByEmail(email)
-                .orElseGet(() -> accountService.addAccount(email, name));
+        Account account = accountService.getAccountByEmailAddIfNotExist(email, name);
 
         /* 이전 RefreshToken 삭제 */
         sessionService.removeSessionIfExists(deviceId, account.getId());
@@ -54,28 +47,10 @@ public class AuthExternalService {
         String newRefreshToken = jwtTokenProvider.generateRefreshToken();
         String newAccessToken = jwtTokenProvider.generateAccessToken(account.getId(), deviceId);
 
-        Session newSession = Session.builder()
-                .refreshToken(newRefreshToken)
-                .deviceId(deviceId)
-                .accountId(account.getId())
-                .createdAt(LocalDateTime.now())
-                .expiration(refreshTokenExpiration)
-                .build();
-
-        sessionService.addSession(newSession);
+        sessionService.addSession(newRefreshToken, deviceId, account.getId(), refreshTokenExpiration);
 
         /* 로그인 로그 저장 */
-        LocalDate today = LocalDate.now();
-        AccountLog accountLog = accountLogService.getAccountLogByLoginAtToday(account.getId(), deviceId, today)
-                .orElseGet(() -> AccountLog.builder()
-                        .accountId(account.getId())
-                        .deviceId(deviceId)
-                        .loginAt(today)
-                        .build());
-
-        accountLogService.addAccountLog(accountLog.toBuilder()
-                .loginCount(accountLog.getLoginCount() + 1)
-                .build());
+        accountLogService.modifyLoginCountAddAccountLogIfNotExist(account.getId(), deviceId);
 
         return LoginVo.builder()
                 .accountId(account.getId())
@@ -92,10 +67,9 @@ public class AuthExternalService {
      * @return Account 생성에 성공하면 저장한 {@link Account}를 반환한다.
      */
     @Transactional
-    public LogoutVo logout(String refreshToken) throws RuntimeException {
+    public LogoutVo logout(String refreshToken) {
 
-        Session session = sessionService.getSession(refreshToken)
-                .orElseThrow(() -> new AuthExternalException(AuthExternalErrorCode.REFRESH_TOKEN_EXPIRED));
+        Session session = sessionService.getSession(refreshToken);
 
         sessionService.removeSession(session.getRefreshToken());
 
@@ -110,14 +84,12 @@ public class AuthExternalService {
      *
      * @param refreshToken 리프래시 토큰
      * @return 토큰 재발급에 성공하면 {@link ReissueVo}를 반환한다.
-     * @throws AuthExternalException RefreshToken 이 만료되었을 때 발생한다.
      */
     @Transactional
-    public ReissueVo reissue(String refreshToken) throws AuthExternalException {
+    public ReissueVo reissue(String refreshToken) {
 
         /* RefreshToken Redis 존재 여부 확인 */
-        Session session = sessionService.getSession(refreshToken)
-                .orElseThrow(() -> new AuthExternalException(AuthExternalErrorCode.REFRESH_TOKEN_EXPIRED));
+        Session session = sessionService.getSession(refreshToken);
 
         sessionService.removeSession(session.getRefreshToken());
 
@@ -126,15 +98,7 @@ public class AuthExternalService {
         String newRefreshToken = jwtTokenProvider.generateRefreshToken();
         String newAccessToken = jwtTokenProvider.generateAccessToken(session.getAccountId(), session.getDeviceId());
 
-        Session newSession = Session.builder()
-                .refreshToken(newRefreshToken)
-                .deviceId(session.getDeviceId())
-                .accountId(session.getAccountId())
-                .createdAt(LocalDateTime.now())
-                .expiration(refreshTokenExpiration)
-                .build();
-
-        sessionService.addSession(newSession);
+        sessionService.addSession(newRefreshToken, session.getDeviceId(), session.getAccountId(), refreshTokenExpiration);
 
         return ReissueVo.builder()
                 .accessToken(newAccessToken)

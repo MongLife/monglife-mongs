@@ -1,22 +1,29 @@
 package com.mongs.play.app.common.internal.controller;
 
 import com.mongs.play.app.common.internal.dto.req.*;
-import com.mongs.play.app.common.internal.dto.res.RegisterFeedbackCodeResDto;
-import com.mongs.play.app.common.internal.dto.res.RegisterFoodCodeResDto;
-import com.mongs.play.app.common.internal.dto.res.RegisterMapCodeResDto;
-import com.mongs.play.app.common.internal.dto.res.RegisterMongCodeResDto;
+import com.mongs.play.app.common.internal.dto.res.*;
 import com.mongs.play.app.common.internal.service.CommonInternalService;
 import com.mongs.play.app.common.internal.vo.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-@RequestMapping("/common")
+@RequestMapping("/internal/common")
 @RequiredArgsConstructor
 @RestController
 public class CommonInternalController {
 
     private final CommonInternalService commonInternalService;
+
+    @PostMapping("/version")
+    public ResponseEntity<Object> registerCodeVersion(@RequestBody RegisterCodeVersionReqDto registerCodeVersionReqDto) {
+
+        RegisterCodeVersionVo registerCodeVersionVo = commonInternalService.registerCodeVersion(registerCodeVersionReqDto.buildVersion());
+
+        return ResponseEntity.ok().body(RegisterCodeVersionResDto.builder()
+                .buildVersion(registerCodeVersionVo.buildVersion())
+                .build());
+    }
 
     /**
      * 새로운 맵 코드를 등록한다.
@@ -24,7 +31,7 @@ public class CommonInternalController {
      * @param registerMapCodeReqDto 새로운 맵 정보
      * @return null
      */
-    @PostMapping("/admin/code/map")
+    @PostMapping("/code/map")
     public ResponseEntity<RegisterMapCodeResDto> registerMapCode(@RequestBody RegisterMapCodeReqDto registerMapCodeReqDto) {
 
         RegisterMapCodeVo registerMapCodeVo = commonInternalService.registerMapCode(registerMapCodeReqDto.buildVersion(), RegisterMapCodeVo.builder()
@@ -44,7 +51,7 @@ public class CommonInternalController {
      * @param registerMongCodeReqDto 새로운 몽 정보
      * @return null
      */
-    @PostMapping("/admin/code/mong")
+    @PostMapping("/code/mong")
     public ResponseEntity<RegisterMongCodeResDto> registerMongCode(@RequestBody RegisterMongCodeReqDto registerMongCodeReqDto) {
 
         RegisterMongCodeVo registerMongCodeVo = commonInternalService.registerMongCode(registerMongCodeReqDto.buildVersion(), RegisterMongCodeVo.builder()
@@ -64,7 +71,7 @@ public class CommonInternalController {
      * @param registerFoodCodeReqDto 새로운 음식 정보
      * @return null
      */
-    @PostMapping("/admin/code/food")
+    @PostMapping("/code/food")
     public ResponseEntity<RegisterFoodCodeResDto> registerFoodCode(@RequestBody RegisterFoodCodeReqDto registerFoodCodeReqDto) {
 
         RegisterFoodCodeVo registerFoodCodeVo = commonInternalService.registerFoodCode(registerFoodCodeReqDto.buildVersion(), RegisterFoodCodeVo.builder()
@@ -98,7 +105,7 @@ public class CommonInternalController {
      * @param registerFeedbackCodeReqDto 새로운 피드백 정보
      * @return null
      */
-    @PostMapping("/admin/code/feedback")
+    @PostMapping("/code/feedback")
     public ResponseEntity<RegisterFeedbackCodeResDto> registerFeedbackCode(@RequestBody RegisterFeedbackCodeReqDto registerFeedbackCodeReqDto) {
 
         RegisterFeedbackCodeVo registerFeedbackCodeVo = commonInternalService.registerFeedbackCode(registerFeedbackCodeReqDto.buildVersion(), RegisterFeedbackCodeVo.builder()
@@ -119,7 +126,7 @@ public class CommonInternalController {
      *
      * @return null
      */
-    @DeleteMapping("/admin/code/reset")
+    @DeleteMapping("/code/reset")
     public ResponseEntity<Object> resetCode() {
         commonInternalService.resetCode();
         return ResponseEntity.ok().body(null);

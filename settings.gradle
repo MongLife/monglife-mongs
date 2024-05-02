@@ -1,26 +1,19 @@
 rootProject.name = 'backend'
-include('core')
-include('eureka')
-include('gateway')
-//include('auth')
-include('member')
-//include('battle')
-//include('training')
-include('management')
-include('lifecycle')
-//include('common')
 
-include 'apps:play-core-app'
+include 'core'
+
+include 'discoveries:play-eureka-discovery'
+include 'discoveries:play-gateway-discovery'
+
 include 'apps:play-auth-app-external-api'
 include 'apps:play-auth-app-internal-api'
 include 'apps:play-common-app-external-api'
 include 'apps:play-common-app-internal-api'
-include 'apps:play-gateway-app-external-api'
 include 'apps:play-management-app-external-api'
 include 'apps:play-management-app-internal-api'
 include 'apps:play-management-app-worker'
-include 'apps:play-member-app-external-api'
-include 'apps:play-member-app-internal-api'
+include 'apps:play-player-app-external-api'
+include 'apps:play-player-app-internal-api'
 
 include 'domains:play-core-jpa-domain'
 include 'domains:play-account-domain'

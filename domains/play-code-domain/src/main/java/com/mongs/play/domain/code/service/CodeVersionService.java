@@ -1,15 +1,19 @@
 package com.mongs.play.domain.code.service;
 
+import com.mongs.play.core.error.domain.CodeErrorCode;
+import com.mongs.play.core.error.module.HmacErrorCode;
+import com.mongs.play.core.exception.domain.GenerateException;
+import com.mongs.play.core.exception.domain.NotFoundException;
 import com.mongs.play.domain.code.entity.*;
 import com.mongs.play.domain.code.repository.*;
 import com.mongs.play.domain.code.vo.CodeVo;
-import com.mongs.play.hmac.HmacProvider;
+import com.mongs.play.module.hmac.HmacProvider;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -35,12 +39,19 @@ public class CodeVersionService {
                 .build());
     }
 
-    public Optional<CodeVersion> getCodeVersion(String buildVersion) {
-        return codeVersionRepository.findByBuildVersion(buildVersion);
+    public CodeVersion getCodeVersion(String buildVersion) throws NotFoundException {
+        return codeVersionRepository.findByBuildVersion(buildVersion)
+                .orElseThrow(() -> new NotFoundException(CodeErrorCode.NOT_FOUND_CODE_VERSION));
     }
 
-    public void updateCodeWithUpdateApp(String buildVersion) {
-        CodeVersion codeVersion = this.updateCode(buildVersion);
+    @Transactional
+    public CodeVersion updateCodeWithUpdateApp(String buildVersion) throws NotFoundException, GenerateException {
+        CodeVersion codeVersion = codeVersionRepository.findByBuildVersion(buildVersion)
+                .orElseThrow(() -> new NotFoundException(CodeErrorCode.NOT_FOUND_CODE_VERSION));
+
+        codeVersionRepository.save(codeVersion.toBuilder()
+                .codeIntegrity(this.getIntegrity(buildVersion))
+                .build());
 
         /* 이전 버전들에 대해 업데이트 여부 true 로 변경 */
         List<CodeVersion> pastCodeVersionList = codeVersionRepository.findByBuildVersionIsBefore(codeVersion.buildVersion());
@@ -50,11 +61,14 @@ public class CodeVersionService {
                     .mustUpdateApp(true)
                     .build());
         });
+
+        return codeVersion;
     }
 
-    public CodeVersion updateCode(String buildVersion) {
+    @Transactional
+    public CodeVersion updateCode(String buildVersion) throws NotFoundException, GenerateException {
         CodeVersion codeVersion = codeVersionRepository.findByBuildVersion(buildVersion)
-                .orElseGet(() -> this.addCodeVersion(buildVersion));
+                        .orElseThrow(() -> new NotFoundException(CodeErrorCode.NOT_FOUND_CODE_VERSION));
 
         codeVersionRepository.save(codeVersion.toBuilder()
                 .codeIntegrity(this.getIntegrity(buildVersion))
@@ -63,7 +77,7 @@ public class CodeVersionService {
         return codeVersion;
     }
 
-    private String getIntegrity(String buildVersion) {
+    private String getIntegrity(String buildVersion) throws GenerateException {
 
         List<MapCode> mapCodeList = mapCodeRepository.findByBuildVersionIsLessThanEqual(buildVersion);
         List<MongCode> mongCodeList = mongCodeRepository.findByBuildVersionIsLessThanEqual(buildVersion);
@@ -76,7 +90,7 @@ public class CodeVersionService {
                         .foodCodeList(foodCodeList)
                         .feedbackCodeList(feedbackCodeList)
                         .build())
-                .orElse("");
+                .orElseThrow(() -> new GenerateException(HmacErrorCode.GENERATE_HMAC));
     }
 
     public void removeCodeVersion() {
