@@ -8,12 +8,13 @@ include('member')
 //include('training')
 include('management')
 include('lifecycle')
-include('common')
+//include('common')
 
 include 'apps:play-core-app'
 include 'apps:play-auth-app-external-api'
 include 'apps:play-auth-app-internal-api'
 include 'apps:play-common-app-external-api'
+include 'apps:play-common-app-internal-api'
 include 'apps:play-gateway-app-external-api'
 include 'apps:play-management-app-external-api'
 include 'apps:play-management-app-internal-api'
