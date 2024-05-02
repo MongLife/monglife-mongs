@@ -14,15 +14,11 @@ public class AccountLogService {
 
     private final AccountLogRepository accountLogRepository;
 
-    public AccountLog addAccountLong(AccountLog accountLog) {
+    public AccountLog addAccountLog(AccountLog accountLog) {
         return accountLogRepository.save(accountLog);
     }
 
     public Optional<AccountLog> getAccountLogByLoginAtToday(Long accountId, String deviceId, LocalDate loginAt) {
         return accountLogRepository.findByAccountIdAndDeviceIdAndLoginAt(accountId, deviceId, loginAt);
-    }
-
-    public Optional<AccountLog> getTopAccountLog(Long accountId, String deviceId) {
-        return accountLogRepository.findTopByAccountIdAndDeviceIdOrderByLoginAt(accountId, deviceId);
     }
 }

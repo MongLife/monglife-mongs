@@ -1,6 +1,6 @@
 package com.mongs.play.session.service;
 
-import com.mongs.play.session.domain.Session;
+import com.mongs.play.session.entity.Session;
 import com.mongs.play.session.repository.SessionRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
