@@ -4,6 +4,7 @@ import com.mongs.play.core.error.domain.FeedbackErrorCode;
 import com.mongs.play.core.exception.domain.NotFoundException;
 import com.mongs.play.domain.feedback.entity.Feedback;
 import com.mongs.play.domain.feedback.entity.FeedbackLog;
+import com.mongs.play.domain.feedback.repository.FeedbackLogRepository;
 import com.mongs.play.domain.feedback.repository.FeedbackRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -15,6 +16,7 @@ import java.util.List;
 public class FeedbackService {
 
     private final FeedbackRepository feedbackRepository;
+    private final FeedbackLogRepository feedbackLogRepository;
 
     public List<Feedback> getFeedback(Long accountId) {
         return feedbackRepository.findByAccountId(accountId);
@@ -22,7 +24,19 @@ public class FeedbackService {
 
     public Feedback addFeedback(Feedback feedback, List<FeedbackLog> feedbackLogList) {
 
-        feedbackLogList.forEach(feedback::addFeedbackLog);
+        List<String> feedbackLogIdList = feedbackLogList.stream()
+                .map(FeedbackLog::getId)
+                .toList();
+
+        List<String> existFeedbackLogIdList = feedbackLogRepository.findByIdIn(feedbackLogIdList).stream()
+                .map(FeedbackLog::getId)
+                .toList();
+
+        feedbackLogList.forEach(feedbackLog -> {
+            if (!existFeedbackLogIdList.contains(feedbackLog.getId())) {
+                feedbackLogRepository.save(feedbackLog);
+            }
+        });
 
         return feedbackRepository.save(feedback);
     }

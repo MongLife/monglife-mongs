@@ -22,7 +22,7 @@ public class Member extends BaseTimeEntity {
     private Long accountId;
     @Column(nullable = false)
     @Builder.Default
-    private Integer maxSlot = 1;
+    private Integer slotCount = 1;
     @Column(nullable = false)
     @Builder.Default
     private Integer starPoint = 0;

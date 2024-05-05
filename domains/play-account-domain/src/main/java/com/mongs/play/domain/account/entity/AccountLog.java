@@ -27,7 +27,6 @@ public class AccountLog extends BaseTimeEntity {
     @Column(updatable = false, nullable = false)
     private String deviceId;
     @Column(updatable = false, nullable = false)
-    @CreatedDate
     private LocalDate loginAt;
     @Column(nullable = false)
     @Builder.Default

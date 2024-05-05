@@ -8,7 +8,8 @@ import org.springframework.http.HttpStatus;
 @Getter
 @AllArgsConstructor
 public enum FeedbackErrorCode implements ErrorCode {
-    NOT_FOUND_FEEDBACK(HttpStatus.NOT_FOUND, "FEEDBACK-100", "not found feedback.")
+    NOT_FOUND_FEEDBACK(HttpStatus.NOT_FOUND, "FEEDBACK-100", "not found feedback."),
+    ALREADY_EXIST_FEEDBACK_ITEM(HttpStatus.NOT_FOUND, "FEEDBACK-101", "already exist feedback item.")
     ;
 
     private final HttpStatus httpStatus;

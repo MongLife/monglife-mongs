@@ -8,7 +8,10 @@ import org.springframework.http.HttpStatus;
 @Getter
 @AllArgsConstructor
 public enum MemberErrorCode implements ErrorCode {
-    NOT_FOUND_MEMBER(HttpStatus.NOT_FOUND, "MEMBER-100", "not found member.")
+    NOT_FOUND_MEMBER(HttpStatus.NOT_FOUND, "MEMBER-100", "not found member."),
+    NOT_ENOUGH_STAR_POINT(HttpStatus.NOT_ACCEPTABLE, "MEMBER-101", "not enough star point."),
+    ALREADY_MAX_SLOT_COUNT(HttpStatus.NOT_ACCEPTABLE, "MEMBER-102", "already max slot count."),
+    ALREADY_MIN_SLOT_COUNT(HttpStatus.NOT_ACCEPTABLE, "MEMBER-103", "already min slot count.")
     ;
 
     private final HttpStatus httpStatus;

@@ -45,9 +45,7 @@ public class SessionService {
 
     public void removeSessionIfExists(String deviceId, Long accountId) throws NotFoundException {
 
-        Session session = sessionRepository.findByDeviceIdAndAccountId(deviceId, accountId)
-                .orElseThrow(() -> new NotFoundException(SessionErrorCode.NOT_FOUND_SESSION));
-
-        sessionRepository.deleteById(session.getRefreshToken());
+        sessionRepository.findByDeviceIdAndAccountId(deviceId, accountId)
+                .ifPresent(session -> sessionRepository.deleteById(session.getRefreshToken()));
     }
 }

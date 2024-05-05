@@ -3,6 +3,7 @@ dependencies {
     implementation project(":domains:play-collection-domain")
     implementation project(":domains:play-feedback-domain")
     implementation project(":domains:play-member-domain")
+    implementation project(":domains:play-payment-domain")
     implementation project(":modules:play-security-module")
 
     // eureka
@@ -24,6 +25,7 @@ tasks.register('copyPrivate', Copy) {
     copy {
         from '../../spring_backend_sub/core/'
         include 'application-hmac.yml'
+        include 'application-player.yml'
         into 'src/main/resources'
     }
 }

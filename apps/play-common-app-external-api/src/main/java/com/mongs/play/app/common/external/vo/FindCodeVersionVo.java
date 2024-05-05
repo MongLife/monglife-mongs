@@ -8,7 +8,7 @@ import java.time.LocalDateTime;
 public record FindCodeVersionVo(
         String newestBuildVersion,
         LocalDateTime createdAt,
-        Boolean mustUpdateApp,
-        Boolean mustUpdateCode
+        Boolean updateApp,
+        Boolean updateCode
 ) {
 }

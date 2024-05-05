@@ -1,6 +1,5 @@
 package com.mongs.play.app.common.internal.service;
 
-import com.mongs.play.app.common.internal.data.FeedbackCodeData;
 import com.mongs.play.app.common.internal.data.FoodCodeData;
 import com.mongs.play.app.common.internal.data.MapCodeData;
 import com.mongs.play.app.common.internal.data.MongCodeData;
@@ -40,11 +39,12 @@ public class CommonInternalService {
                 .buildVersion(buildVersion)
                 .build());
 
-        codeVersionService.updateCodeWithUpdateApp(buildVersion);
+        CodeVersion codeVersion = codeVersionService.updateCode(buildVersion);
 
         return RegisterMapCodeVo.builder()
                 .code(mapCode.code())
                 .name(mapCode.name())
+                .buildVersion(codeVersion.buildVersion())
                 .build();
     }
 
@@ -57,11 +57,12 @@ public class CommonInternalService {
                 .buildVersion(buildVersion)
                 .build());
 
-        codeVersionService.updateCodeWithUpdateApp(buildVersion);
+        CodeVersion codeVersion = codeVersionService.updateCode(buildVersion);
 
         return RegisterMongCodeVo.builder()
                 .code(mongCode.code())
                 .name(mongCode.name())
+                .buildVersion(codeVersion.buildVersion())
                 .build();
     }
 
@@ -82,7 +83,7 @@ public class CommonInternalService {
                 .buildVersion(buildVersion)
                 .build());
 
-        codeVersionService.updateCodeWithUpdateApp(buildVersion);
+        CodeVersion codeVersion = codeVersionService.updateCode(buildVersion);
 
         return RegisterFoodCodeVo.builder()
                 .code(foodCode.code())
@@ -95,25 +96,7 @@ public class CommonInternalService {
                 .addHealthyValue(foodCode.addHealthyValue())
                 .addSleepValue(foodCode.addSleepValue())
                 .delaySeconds(foodCode.delaySeconds())
-                .build();
-    }
-
-    @Transactional
-    public RegisterFeedbackCodeVo registerFeedbackCode(String buildVersion, RegisterFeedbackCodeVo registerFeedbackCodeVo) {
-
-        FeedbackCode feedbackCode = codeService.addFeedbackCode(FeedbackCode.builder()
-                .code(registerFeedbackCodeVo.code())
-                .groupCode(registerFeedbackCodeVo.groupCode())
-                .message(registerFeedbackCodeVo.message())
-                .buildVersion(buildVersion)
-                .build());
-
-        codeVersionService.updateCode(buildVersion);
-
-        return RegisterFeedbackCodeVo.builder()
-                .code(feedbackCode.code())
-                .groupCode(feedbackCode.groupCode())
-                .message(feedbackCode.message())
+                .buildVersion(codeVersion.buildVersion())
                 .build();
     }
 
@@ -122,26 +105,21 @@ public class CommonInternalService {
         String buildVersion = "1.0.0";
 
         codeService.removeMapCode();
-        Arrays.stream(MapCodeData.values()).forEach(mapCode -> {
-            codeService.addMapCode(MapCode.builder()
+        Arrays.stream(MapCodeData.values()).forEach(mapCode -> codeService.addMapCode(MapCode.builder()
                     .buildVersion(buildVersion)
                     .code(mapCode.getCode())
                     .name(mapCode.getName())
-                    .build());
-        });
+                    .build()));
 
         codeService.removeMongCode();
-        Arrays.stream(MongCodeData.values()).forEach(mongCode -> {
-            codeService.addMongCode(MongCode.builder()
+        Arrays.stream(MongCodeData.values()).forEach(mongCode -> codeService.addMongCode(MongCode.builder()
                     .buildVersion(buildVersion)
                     .code(mongCode.getCode())
                     .name(mongCode.getName())
-                    .build());
-        });
+                    .build()));
 
         codeService.removeFoodCode();
-        Arrays.stream(FoodCodeData.values()).forEach(foodCode -> {
-            codeService.addFoodCode(FoodCode.builder()
+        Arrays.stream(FoodCodeData.values()).forEach(foodCode -> codeService.addFoodCode(FoodCode.builder()
                     .buildVersion(buildVersion)
                     .code(foodCode.getCode())
                     .name(foodCode.getName())
@@ -153,22 +131,11 @@ public class CommonInternalService {
                     .addStrengthValue(foodCode.getAddStrengthValue())
                     .price(foodCode.getPrice())
                     .delaySeconds(foodCode.getDelaySeconds())
-                    .build());
-        });
-
-        codeService.removeFeedbackCode();
-        Arrays.stream(FeedbackCodeData.values()).forEach(feedbackCode -> {
-            codeService.addFeedbackCode(FeedbackCode.builder()
-                    .buildVersion(buildVersion)
-                    .code(feedbackCode.getCode())
-                    .groupCode(feedbackCode.getGroupCode())
-                    .message(feedbackCode.getMessage())
-                    .build());
-        });
+                    .build()));
 
         codeVersionService.removeCodeVersion();
         codeVersionService.addCodeVersion(buildVersion);
 
-        codeVersionService.updateCodeWithUpdateApp(buildVersion);
+        codeVersionService.updateCode(buildVersion);
     }
 }

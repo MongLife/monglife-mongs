@@ -4,7 +4,8 @@ import lombok.Builder;
 
 @Builder
 public record RegisterMapCodeVo(
+        String code,
         String name,
-        String code
+        String buildVersion
 ) {
 }

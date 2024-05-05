@@ -18,7 +18,7 @@ public class HmacProvider {
 
     private final ObjectMapper objectMapper;
 
-    @Value("${hmac.secret-key}")
+    @Value("${env.hmac.secret-key}")
     private String secretKey;
 
     /**

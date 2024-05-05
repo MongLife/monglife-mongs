@@ -14,18 +14,12 @@ import java.time.LocalDateTime;
 @Builder(toBuilder = true)
 public class FeedbackLog {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "feedback_log_id")
-    private Long id;
+    private String id;
     @Column(updatable = false, nullable = false)
     private String location;
     @Column(updatable = false, nullable = false)
     private String message;
     @Column(updatable = false, nullable = false)
     private LocalDateTime createdAt;
-
-    @Setter
-    @ManyToOne
-    @JoinColumn(name = "feedback_id")
-    private Feedback feedback;
 }

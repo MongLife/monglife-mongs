@@ -4,7 +4,6 @@ import io.netty.channel.ChannelOption;
 import io.netty.handler.timeout.ReadTimeoutHandler;
 import io.netty.handler.timeout.WriteTimeoutHandler;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.client.loadbalancer.LoadBalanced;
 import org.springframework.cloud.client.loadbalancer.reactive.ReactorLoadBalancerExchangeFilterFunction;
@@ -21,15 +20,15 @@ import java.util.concurrent.TimeUnit;
 @RequiredArgsConstructor
 public class WebClientConfig {
 
-    @Value("${application.webclient.connect-timeout}")
+    @Value("${env.webclient.connect-timeout}")
     private int CONNECT_TIMEOUT;
-    @Value("${application.webclient.read-timeout}")
+    @Value("${env.webclient.read-timeout}")
     private int READ_TIMEOUT;
-    @Value("${application.webclient.write-timeout}")
+    @Value("${env.webclient.write-timeout}")
     private int WRITE_TIMEOUT;
 
     /** Auth Module **/
-    @Value("${application.webclient.routes.auth.url}")
+    @Value("${env.webclient.routes.auth.url}")
     private String AUTH_URL;
 
     private final ReactorLoadBalancerExchangeFilterFunction lbFunction;

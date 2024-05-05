@@ -24,7 +24,6 @@ public class CodeVersionService {
     private final MapCodeRepository mapCodeRepository;
     private final MongCodeRepository mongCodeRepository;
     private final FoodCodeRepository foodCodeRepository;
-    private final FeedbackCodeRepository feedbackCodeRepository;
 
     public CodeVersion addCodeVersion(String buildVersion) {
 
@@ -45,7 +44,7 @@ public class CodeVersionService {
     }
 
     @Transactional
-    public CodeVersion updateCodeWithUpdateApp(String buildVersion) throws NotFoundException, GenerateException {
+    public CodeVersion updateCode(String buildVersion) throws NotFoundException, GenerateException {
         CodeVersion codeVersion = codeVersionRepository.findByBuildVersion(buildVersion)
                 .orElseThrow(() -> new NotFoundException(CodeErrorCode.NOT_FOUND_CODE_VERSION));
 
@@ -65,30 +64,16 @@ public class CodeVersionService {
         return codeVersion;
     }
 
-    @Transactional
-    public CodeVersion updateCode(String buildVersion) throws NotFoundException, GenerateException {
-        CodeVersion codeVersion = codeVersionRepository.findByBuildVersion(buildVersion)
-                        .orElseThrow(() -> new NotFoundException(CodeErrorCode.NOT_FOUND_CODE_VERSION));
-
-        codeVersionRepository.save(codeVersion.toBuilder()
-                .codeIntegrity(this.getIntegrity(buildVersion))
-                .build());
-
-        return codeVersion;
-    }
-
     private String getIntegrity(String buildVersion) throws GenerateException {
 
         List<MapCode> mapCodeList = mapCodeRepository.findByBuildVersionIsLessThanEqual(buildVersion);
         List<MongCode> mongCodeList = mongCodeRepository.findByBuildVersionIsLessThanEqual(buildVersion);
         List<FoodCode> foodCodeList = foodCodeRepository.findByBuildVersionIsLessThanEqual(buildVersion);
-        List<FeedbackCode> feedbackCodeList = feedbackCodeRepository.findByBuildVersionIsLessThanEqual(buildVersion);
 
         return hmacProvider.generateHmac(CodeVo.builder()
                         .mapCodeList(mapCodeList)
                         .mongCodeList(mongCodeList)
                         .foodCodeList(foodCodeList)
-                        .feedbackCodeList(feedbackCodeList)
                         .build())
                 .orElseThrow(() -> new GenerateException(HmacErrorCode.GENERATE_HMAC));
     }

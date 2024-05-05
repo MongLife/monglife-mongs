@@ -13,8 +13,7 @@ public enum CodeErrorCode implements ErrorCode {
     NOT_FOUND_MONG_CODE(HttpStatus.NOT_FOUND, "CODE-102", "not found mong code."),
     ALREADY_EXIST_MAP_CODE(HttpStatus.BAD_REQUEST, "CODE-103", "already exist map code."),
     ALREADY_EXIST_MONG_CODE(HttpStatus.BAD_REQUEST, "CODE-104", "already exist mong code."),
-    ALREADY_EXIST_FOOD_CODE(HttpStatus.BAD_REQUEST, "CODE-105", "already exist food code."),
-    ALREADY_EXIST_FEEDBACK_CODE(HttpStatus.BAD_REQUEST, "CODE-106", "already exist feedback code.")
+    ALREADY_EXIST_FOOD_CODE(HttpStatus.BAD_REQUEST, "CODE-105", "already exist food code.")
     ;
 
     private final HttpStatus httpStatus;

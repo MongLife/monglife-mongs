@@ -8,10 +8,10 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-@RequestMapping("/internal/common")
+@RequestMapping("/internal/common/admin")
 @RequiredArgsConstructor
 @RestController
-public class CommonInternalController {
+public class CommonInternalAdminController {
 
     private final CommonInternalService commonInternalService;
 
@@ -84,6 +84,7 @@ public class CommonInternalController {
                 .addSatietyValue(registerFoodCodeReqDto.addSatietyValue())
                 .addHealthyValue(registerFoodCodeReqDto.addHealthyValue())
                 .addSleepValue(registerFoodCodeReqDto.addSleepValue())
+                .delaySeconds(registerFoodCodeReqDto.delaySeconds())
                 .build());
 
         return ResponseEntity.ok().body(RegisterFoodCodeResDto.builder()
@@ -96,28 +97,7 @@ public class CommonInternalController {
                 .addSatietyValue(registerFoodCodeVo.addSatietyValue())
                 .addHealthyValue(registerFoodCodeVo.addHealthyValue())
                 .addSleepValue(registerFoodCodeVo.addSleepValue())
-                .build());
-    }
-
-    /**
-     * 새로운 피드백 코드를 등록한다.
-     *
-     * @param registerFeedbackCodeReqDto 새로운 피드백 정보
-     * @return null
-     */
-    @PostMapping("/code/feedback")
-    public ResponseEntity<RegisterFeedbackCodeResDto> registerFeedbackCode(@RequestBody RegisterFeedbackCodeReqDto registerFeedbackCodeReqDto) {
-
-        RegisterFeedbackCodeVo registerFeedbackCodeVo = commonInternalService.registerFeedbackCode(registerFeedbackCodeReqDto.buildVersion(), RegisterFeedbackCodeVo.builder()
-                .code(registerFeedbackCodeReqDto.code())
-                .groupCode(registerFeedbackCodeReqDto.groupCode())
-                .message(registerFeedbackCodeReqDto.message())
-                .build());
-
-        return ResponseEntity.ok().body(RegisterFeedbackCodeResDto.builder()
-                .code(registerFeedbackCodeVo.code())
-                .groupCode(registerFeedbackCodeVo.groupCode())
-                .message(registerFeedbackCodeVo.message())
+                .delaySeconds(registerFoodCodeVo.delaySeconds())
                 .build());
     }
 

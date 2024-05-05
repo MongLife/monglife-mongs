@@ -21,11 +21,11 @@ import java.util.Optional;
 @Component
 public class JwtTokenProvider {
 
-    @Value("${jwt.secret-key}")
+    @Value("${env.jwt.secret-key}")
     private String JWT_KEY;
-    @Value("${jwt.access-expiration}")
+    @Value("${env.jwt.access-expiration}")
     private Long ACCESS_TOKEN_EXPIRED;
-    @Value("${jwt.refresh-expiration}")
+    @Value("${env.jwt.refresh-expiration}")
     private Long REFRESH_TOKEN_EXPIRED;
 
     public Long getRefreshTokenExpiration() {

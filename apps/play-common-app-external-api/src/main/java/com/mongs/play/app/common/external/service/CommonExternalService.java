@@ -25,8 +25,8 @@ public class CommonExternalService {
         return FindCodeVersionVo.builder()
                 .newestBuildVersion(codeVersion.buildVersion())
                 .createdAt(codeVersion.createdAt())
-                .mustUpdateApp(codeVersion.mustUpdateApp())                             /* 리소스가 추가되어 이전 버전들에 대한 앱 업데이트 여부 확인 */
-                .mustUpdateCode(!codeVersion.codeIntegrity().equals(codeIntegrity))     /* 해싱 값이 다르면 코드 업데이트 */
+                .updateApp(codeVersion.mustUpdateApp())                             /* 리소스가 추가되어 이전 버전들에 대한 앱 업데이트 여부 확인 */
+                .updateCode(!codeVersion.codeIntegrity().equals(codeIntegrity))     /* 해싱 값이 다르면 코드 업데이트 */
                 .build();
     }
 
@@ -38,14 +38,12 @@ public class CommonExternalService {
         List<MapCode> mapCodeList = codeService.getMapCodeByBuildVersion(buildVersion);
         List<MongCode> mongCodeList = codeService.getMongCodeByBuildVersion(buildVersion);
         List<FoodCode> foodCodeList = codeService.getFoodCodeByBuildVersion(buildVersion);
-        List<FeedbackCode> feedbackCodeList = codeService.getFeedbackCodeByBuildVersion(buildVersion);
 
         return FindCodeVo.builder()
                 .codeIntegrity(codeVersion.codeIntegrity())
                 .mapCodeList(FindMapCodeVo.toList(mapCodeList))
                 .mongCodeList(FindMongCodeVo.toList(mongCodeList))
                 .foodCodeList(FindFoodCodeVo.toList(foodCodeList))
-                .feedbackCodeList(FindFeedbackCodeVo.toList(feedbackCodeList))
                 .build();
     }
 }

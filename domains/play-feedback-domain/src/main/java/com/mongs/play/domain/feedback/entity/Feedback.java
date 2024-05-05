@@ -8,9 +8,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
-import java.util.ArrayList;
-import java.util.List;
-
 @Entity
 @Getter
 @NoArgsConstructor
@@ -27,21 +24,8 @@ public class Feedback extends BaseTimeEntity {
     @Column(updatable = false, nullable = false)
     private String deviceId;
     @Column(updatable = false, nullable = false)
-    private String code;
-    @Column(updatable = false, nullable = false)
-    private String title;
-    @Column(updatable = false, nullable = false)
-    private String content;
+    private String message;
     @Column(nullable = false)
     @Builder.Default
     private Boolean isSolved = false;
-
-    @Builder.Default
-    @OneToMany(mappedBy = "feedback", cascade = CascadeType.ALL)
-    private List<FeedbackLog> feedbackLogList = new ArrayList<>();
-
-    public void addFeedbackLog(FeedbackLog feedbackLog) {
-        this.feedbackLogList.add(feedbackLog);
-        feedbackLog.setFeedback(this);
-    }
 }

@@ -17,7 +17,6 @@ public class CodeService {
     private final MapCodeRepository mapCodeRepository;
     private final MongCodeRepository mongCodeRepository;
     private final FoodCodeRepository foodCodeRepository;
-    private final FeedbackCodeRepository feedbackCodeRepository;
 
     public MapCode getMapCode(String mapCode) throws NotFoundException {
         return mapCodeRepository.findById(mapCode)
@@ -41,10 +40,6 @@ public class CodeService {
         return foodCodeRepository.findAll();
     }
 
-    public List<FeedbackCode> getFeedbackCode() {
-        return feedbackCodeRepository.findAll();
-    }
-
     public List<MapCode> getMapCodeByBuildVersion(String buildVersion) {
         return mapCodeRepository.findByBuildVersionIsLessThanEqual(buildVersion);
     }
@@ -55,10 +50,6 @@ public class CodeService {
 
     public List<FoodCode> getFoodCodeByBuildVersion(String buildVersion) {
         return foodCodeRepository.findByBuildVersionIsLessThanEqual(buildVersion);
-    }
-
-    public List<FeedbackCode> getFeedbackCodeByBuildVersion(String buildVersion) {
-        return feedbackCodeRepository.findByBuildVersionIsLessThanEqual(buildVersion);
     }
 
     public MapCode addMapCode(MapCode mapCode) {
@@ -88,15 +79,6 @@ public class CodeService {
         return foodCodeRepository.save(foodCode);
     }
 
-    public FeedbackCode addFeedbackCode(FeedbackCode feedbackCode) {
-
-        if (feedbackCodeRepository.findById(feedbackCode.code()).isPresent()) {
-            throw new AlreadyExistException(CodeErrorCode.ALREADY_EXIST_FEEDBACK_CODE);
-        }
-
-        return feedbackCodeRepository.save(feedbackCode);
-    }
-
     public void removeMapCode() {
         mapCodeRepository.deleteAll();
     }
@@ -107,9 +89,5 @@ public class CodeService {
 
     public void removeFoodCode() {
         foodCodeRepository.deleteAll();
-    }
-
-    public void removeFeedbackCode() {
-        feedbackCodeRepository.deleteAll();
     }
 }
