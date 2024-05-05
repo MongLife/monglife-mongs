@@ -3,7 +3,7 @@ package com.mongs.play.app.auth.internal.controller;
 import com.mongs.play.app.auth.internal.dto.req.PassportReqDto;
 import com.mongs.play.app.auth.internal.dto.res.PassportResDto;
 import com.mongs.play.app.auth.internal.service.AuthInternalService;
-import com.mongs.play.app.core.vo.PassportVo;
+import com.mongs.play.core.vo.PassportVo;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-@RequestMapping("/auth")
+@RequestMapping("/internal/auth")
 @RequiredArgsConstructor
 @RestController
 public class AuthInternalController {

@@ -33,8 +33,8 @@ public class CommonExternalController {
         return ResponseEntity.ok().body(FindCodeVersionResDto.builder()
                 .newestBuildVersion(findCodeVersionVo.newestBuildVersion())
                 .createdAt(findCodeVersionVo.createdAt())
-                .mustUpdateApp(findCodeVersionVo.mustUpdateApp())
-                .mustUpdateCode(findCodeVersionVo.mustUpdateCode())
+                .updateApp(findCodeVersionVo.updateApp())
+                .updateCode(findCodeVersionVo.updateCode())
                 .build());
     }
 
@@ -55,7 +55,6 @@ public class CommonExternalController {
                         .mapCodeList(findCodeVo.mapCodeList())
                         .mongCodeList(findCodeVo.mongCodeList())
                         .foodCodeList(findCodeVo.foodCodeList())
-                        .feedbackCodeList(findCodeVo.feedbackCodeList())
                         .build());
     }
 }

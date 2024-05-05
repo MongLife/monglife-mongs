@@ -4,3 +4,11 @@ dependencies {
     runtimeOnly group: 'io.jsonwebtoken', name: 'jjwt-impl', version: '0.11.5'
     runtimeOnly group: 'io.jsonwebtoken', name: 'jjwt-jackson', version: '0.11.5'
 }
+
+tasks.register('copyPrivate', Copy) {
+    copy {
+        from '../../spring_backend_sub/core/'
+        include 'application-jwt.yml'
+        into 'src/main/resources'
+    }
+}

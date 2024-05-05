@@ -1,13 +1,9 @@
 package com.mongs.play.app.common.internal.service;
 
-import com.mongs.play.app.common.internal.data.FeedbackCodeData;
 import com.mongs.play.app.common.internal.data.FoodCodeData;
 import com.mongs.play.app.common.internal.data.MapCodeData;
 import com.mongs.play.app.common.internal.data.MongCodeData;
-import com.mongs.play.app.common.internal.vo.RegisterFeedbackCodeVo;
-import com.mongs.play.app.common.internal.vo.RegisterFoodCodeVo;
-import com.mongs.play.app.common.internal.vo.RegisterMapCodeVo;
-import com.mongs.play.app.common.internal.vo.RegisterMongCodeVo;
+import com.mongs.play.app.common.internal.vo.*;
 import com.mongs.play.domain.code.entity.*;
 import com.mongs.play.domain.code.service.CodeService;
 import com.mongs.play.domain.code.service.CodeVersionService;
@@ -25,95 +21,59 @@ public class CommonInternalService {
     private final CodeService codeService;
 
     @Transactional
-    public void resetCode() {
-        String buildVersion = "1.0.0";
+    public RegisterCodeVersionVo registerCodeVersion(String buildVersion) {
 
-        codeVersionService.removeCodeVersion();
-        codeService.removeMapCode();
-        Arrays.stream(MapCodeData.values()).forEach(mapCode -> {
-            codeService.addMapCode(MapCode.builder()
-                    .buildVersion(buildVersion)
-                    .code(mapCode.getCode())
-                    .name(mapCode.getName())
-                    .build());
-        });
+        CodeVersion codeVersion = codeVersionService.addCodeVersion(buildVersion);
 
-        codeService.removeMongCode();
-        Arrays.stream(MongCodeData.values()).forEach(mongCode -> {
-            codeService.addMongCode(MongCode.builder()
-                    .buildVersion(buildVersion)
-                    .code(mongCode.getCode())
-                    .name(mongCode.getName())
-                    .build());
-        });
-
-        codeService.removeFoodCode();
-        Arrays.stream(FoodCodeData.values()).forEach(foodCode -> {
-            codeService.addFoodCode(FoodCode.builder()
-                    .buildVersion(buildVersion)
-                    .code(foodCode.getCode())
-                    .name(foodCode.getName())
-                    .groupCode(foodCode.getGroupCode())
-                    .addHealthyValue(foodCode.getAddHealthyValue())
-                    .addSleepValue(foodCode.getAddSleepValue())
-                    .addSatietyValue(foodCode.getAddSatietyValue())
-                    .addWeightValue(foodCode.getAddWeightValue())
-                    .addStrengthValue(foodCode.getAddStrengthValue())
-                    .price(foodCode.getPrice())
-                    .delaySeconds(foodCode.getDelaySeconds())
-                    .build());
-        });
-
-        codeService.removeFeedbackCode();
-        Arrays.stream(FeedbackCodeData.values()).forEach(feedbackCode -> {
-            codeService.addFeedbackCode(FeedbackCode.builder()
-                    .buildVersion(buildVersion)
-                    .code(feedbackCode.getCode())
-                    .groupCode(feedbackCode.getGroupCode())
-                    .message(feedbackCode.getMessage())
-                    .build());
-        });
-
-        codeVersionService.updateCode(buildVersion);
-        codeVersionService.updateCodeWithUpdateApp(buildVersion);
+        return RegisterCodeVersionVo.builder()
+                .buildVersion(codeVersion.buildVersion())
+                .build();
     }
 
     @Transactional
     public RegisterMapCodeVo registerMapCode(String buildVersion, RegisterMapCodeVo registerMapCodeVo) {
 
+        CodeVersion codeVersion = codeVersionService.getCodeVersion(buildVersion);
+
         MapCode mapCode = codeService.addMapCode(MapCode.builder()
                 .code(registerMapCodeVo.code())
                 .name(registerMapCodeVo.name())
-                .buildVersion(buildVersion)
+                .buildVersion(codeVersion.buildVersion())
                 .build());
 
-        codeVersionService.updateCodeWithUpdateApp(buildVersion);
+        codeVersionService.updateCode(buildVersion);
 
         return RegisterMapCodeVo.builder()
                 .code(mapCode.code())
                 .name(mapCode.name())
+                .buildVersion(codeVersion.buildVersion())
                 .build();
     }
 
     @Transactional
     public RegisterMongCodeVo registerMongCode(String buildVersion, RegisterMongCodeVo registerMongCodeVo) {
 
+        CodeVersion codeVersion = codeVersionService.getCodeVersion(buildVersion);
+
         MongCode mongCode = codeService.addMongCode(MongCode.builder()
                 .code(registerMongCodeVo.code())
                 .name(registerMongCodeVo.name())
-                .buildVersion(buildVersion)
+                .buildVersion(codeVersion.buildVersion())
                 .build());
 
-        codeVersionService.updateCodeWithUpdateApp(buildVersion);
+        codeVersionService.updateCode(buildVersion);
 
         return RegisterMongCodeVo.builder()
                 .code(mongCode.code())
                 .name(mongCode.name())
+                .buildVersion(codeVersion.buildVersion())
                 .build();
     }
 
     @Transactional
     public RegisterFoodCodeVo registerFoodCode(String buildVersion, RegisterFoodCodeVo registerFoodCodeVo) {
+
+        CodeVersion codeVersion = codeVersionService.getCodeVersion(buildVersion);
 
         FoodCode foodCode = codeService.addFoodCode(FoodCode.builder()
                 .code(registerFoodCodeVo.code())
@@ -126,10 +86,10 @@ public class CommonInternalService {
                 .addHealthyValue(registerFoodCodeVo.addHealthyValue())
                 .addSleepValue(registerFoodCodeVo.addSleepValue())
                 .delaySeconds(registerFoodCodeVo.delaySeconds())
-                .buildVersion(buildVersion)
+                .buildVersion(codeVersion.buildVersion())
                 .build());
 
-        codeVersionService.updateCodeWithUpdateApp(buildVersion);
+        codeVersionService.updateCode(buildVersion);
 
         return RegisterFoodCodeVo.builder()
                 .code(foodCode.code())
@@ -142,25 +102,46 @@ public class CommonInternalService {
                 .addHealthyValue(foodCode.addHealthyValue())
                 .addSleepValue(foodCode.addSleepValue())
                 .delaySeconds(foodCode.delaySeconds())
+                .buildVersion(codeVersion.buildVersion())
                 .build();
     }
 
     @Transactional
-    public RegisterFeedbackCodeVo registerFeedbackCode(String buildVersion, RegisterFeedbackCodeVo registerFeedbackCodeVo) {
+    public void resetCode() {
+        String buildVersion = "1.0.0";
 
-        FeedbackCode feedbackCode = codeService.addFeedbackCode(FeedbackCode.builder()
-                .code(registerFeedbackCodeVo.code())
-                .groupCode(registerFeedbackCodeVo.groupCode())
-                .message(registerFeedbackCodeVo.message())
-                .buildVersion(buildVersion)
-                .build());
+        codeService.removeMapCode();
+        Arrays.stream(MapCodeData.values()).forEach(mapCode -> codeService.addMapCode(MapCode.builder()
+                    .buildVersion(buildVersion)
+                    .code(mapCode.getCode())
+                    .name(mapCode.getName())
+                    .build()));
+
+        codeService.removeMongCode();
+        Arrays.stream(MongCodeData.values()).forEach(mongCode -> codeService.addMongCode(MongCode.builder()
+                    .buildVersion(buildVersion)
+                    .code(mongCode.getCode())
+                    .name(mongCode.getName())
+                    .build()));
+
+        codeService.removeFoodCode();
+        Arrays.stream(FoodCodeData.values()).forEach(foodCode -> codeService.addFoodCode(FoodCode.builder()
+                    .buildVersion(buildVersion)
+                    .code(foodCode.getCode())
+                    .name(foodCode.getName())
+                    .groupCode(foodCode.getGroupCode())
+                    .addHealthyValue(foodCode.getAddHealthyValue())
+                    .addSleepValue(foodCode.getAddSleepValue())
+                    .addSatietyValue(foodCode.getAddSatietyValue())
+                    .addWeightValue(foodCode.getAddWeightValue())
+                    .addStrengthValue(foodCode.getAddStrengthValue())
+                    .price(foodCode.getPrice())
+                    .delaySeconds(foodCode.getDelaySeconds())
+                    .build()));
+
+        codeVersionService.removeCodeVersion();
+        codeVersionService.addCodeVersion(buildVersion);
 
         codeVersionService.updateCode(buildVersion);
-
-        return RegisterFeedbackCodeVo.builder()
-                .code(feedbackCode.code())
-                .groupCode(feedbackCode.groupCode())
-                .message(feedbackCode.message())
-                .build();
     }
 }

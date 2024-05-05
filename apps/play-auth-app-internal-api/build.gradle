@@ -1,27 +1,13 @@
 dependencies {
-    implementation project(':apps:play-core-app')
     implementation project(':domains:play-account-domain')
     implementation project(':modules:play-jwt-module')
     implementation project(':modules:play-hmac-module')
-
-    // actuator
-    implementation 'org.springframework.boot:spring-boot-starter-actuator:3.2.1'
-    // prometheus
-    runtimeOnly 'io.micrometer:micrometer-registry-prometheus'
-    // validation
-    implementation 'org.springframework.boot:spring-boot-starter-validation'
 }
 
 tasks.register('copyPrivate', Copy) {
     copy {
         from '../../spring_backend_sub/auth-app-internal-api/'
         include 'application*.yml'
-        into 'src/main/resources'
-    }
-    copy {
-        from '../../spring_backend_sub/core/'
-        include 'application-jwt.yml'
-        include 'application-hmac.yml'
         into 'src/main/resources'
     }
 }

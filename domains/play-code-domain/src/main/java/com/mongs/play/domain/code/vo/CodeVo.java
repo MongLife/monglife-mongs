@@ -1,6 +1,5 @@
 package com.mongs.play.domain.code.vo;
 
-import com.mongs.play.domain.code.entity.FeedbackCode;
 import com.mongs.play.domain.code.entity.FoodCode;
 import com.mongs.play.domain.code.entity.MapCode;
 import com.mongs.play.domain.code.entity.MongCode;
@@ -12,7 +11,6 @@ import java.util.List;
 public record CodeVo(
         List<MapCode> mapCodeList,
         List<MongCode> mongCodeList,
-        List<FoodCode> foodCodeList,
-        List<FeedbackCode> feedbackCodeList
+        List<FoodCode> foodCodeList
 ) {
 }

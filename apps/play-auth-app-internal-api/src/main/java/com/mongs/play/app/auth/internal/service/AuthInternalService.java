@@ -1,14 +1,14 @@
 package com.mongs.play.app.auth.internal.service;
 
-import com.mongs.play.app.core.error.AuthInternalErrorCode;
-import com.mongs.play.app.core.exception.AuthInternalException;
-import com.mongs.play.app.core.vo.PassportAccountVo;
-import com.mongs.play.app.core.vo.PassportDataVo;
-import com.mongs.play.app.core.vo.PassportVo;
+import com.mongs.play.core.error.app.AuthInternalErrorCode;
+import com.mongs.play.core.exception.app.AuthInternalException;
+import com.mongs.play.core.vo.PassportAccountVo;
+import com.mongs.play.core.vo.PassportDataVo;
+import com.mongs.play.core.vo.PassportVo;
 import com.mongs.play.domain.account.entity.Account;
 import com.mongs.play.domain.account.service.AccountService;
-import com.mongs.play.hmac.HmacProvider;
-import com.mongs.play.jwt.JwtTokenProvider;
+import com.mongs.play.module.hmac.HmacProvider;
+import com.mongs.play.module.jwt.JwtTokenProvider;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -41,8 +41,7 @@ public class AuthInternalService {
                 .orElseThrow(() -> new AuthInternalException(AuthInternalErrorCode.ACCESS_TOKEN_EXPIRED));
 
         /* AccessToken 의 accountId 로 account 조회 */
-        Account account = accountService.getAccountById(accountId)
-                .orElseThrow(() -> new AuthInternalException(AuthInternalErrorCode.ACCOUNT_NOT_FOUND));
+        Account account = accountService.getAccountById(accountId);
 
         PassportVo passportVo = PassportVo.builder()
                 .data(PassportDataVo.builder()

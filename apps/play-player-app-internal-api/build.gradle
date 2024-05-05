@@ -1,0 +1,21 @@
+dependencies {
+    implementation project(":domains:play-code-domain")
+    implementation project(":domains:play-collection-domain")
+    implementation project(":domains:play-feedback-domain")
+    implementation project(":domains:play-member-domain")
+    implementation project(":domains:play-payment-domain")
+    implementation project(":modules:play-security-module")
+}
+
+tasks.register('copyPrivate', Copy) {
+    copy {
+        from '../../spring_backend_sub/player-app-internal-api/'
+        include 'application*.yml'
+        into 'src/main/resources'
+    }
+    copy {
+        from '../../spring_backend_sub/core/'
+        include 'application-player.yml'
+        into 'src/main/resources'
+    }
+}

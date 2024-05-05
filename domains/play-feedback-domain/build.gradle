@@ -1,2 +1,5 @@
 dependencies {
+    api project(':domains:play-core-jpa-domain')
+
+    runtimeOnly 'com.mysql:mysql-connector-j'
 }

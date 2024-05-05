@@ -13,6 +13,7 @@ public record RegisterFoodCodeReqDto(
         Double addSatietyValue,
         Double addHealthyValue,
         Double addSleepValue,
+        Integer delaySeconds,
         String buildVersion
 ) {
 }

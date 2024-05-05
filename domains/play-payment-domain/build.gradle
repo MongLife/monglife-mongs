@@ -1,2 +1,13 @@
 dependencies {
+    api project(':domains:play-core-jpa-domain')
+
+    runtimeOnly 'com.mysql:mysql-connector-j'
+}
+
+tasks.register('copyPrivate', Copy) {
+    copy {
+        from '../../spring_backend_sub/core/'
+        include 'application-payment.yml'
+        into 'src/main/resources'
+    }
 }

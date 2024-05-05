@@ -2,5 +2,13 @@ dependencies {
     // Jackson
     api 'com.fasterxml.jackson.core:jackson-databind:2.16.1'
     // Base64
-    implementation 'commons-codec:commons-codec:1.15'
+    api 'commons-codec:commons-codec:1.15'
+}
+
+tasks.register('copyPrivate', Copy) {
+    copy {
+        from '../../spring_backend_sub/core/'
+        include 'application-hmac.yml'
+        into 'src/main/resources'
+    }
 }
