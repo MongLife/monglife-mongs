@@ -33,13 +33,15 @@ public class CommonInternalService {
     @Transactional
     public RegisterMapCodeVo registerMapCode(String buildVersion, RegisterMapCodeVo registerMapCodeVo) {
 
+        CodeVersion codeVersion = codeVersionService.getCodeVersion(buildVersion);
+
         MapCode mapCode = codeService.addMapCode(MapCode.builder()
                 .code(registerMapCodeVo.code())
                 .name(registerMapCodeVo.name())
-                .buildVersion(buildVersion)
+                .buildVersion(codeVersion.buildVersion())
                 .build());
 
-        CodeVersion codeVersion = codeVersionService.updateCode(buildVersion);
+        codeVersionService.updateCode(buildVersion);
 
         return RegisterMapCodeVo.builder()
                 .code(mapCode.code())
@@ -51,13 +53,15 @@ public class CommonInternalService {
     @Transactional
     public RegisterMongCodeVo registerMongCode(String buildVersion, RegisterMongCodeVo registerMongCodeVo) {
 
+        CodeVersion codeVersion = codeVersionService.getCodeVersion(buildVersion);
+
         MongCode mongCode = codeService.addMongCode(MongCode.builder()
                 .code(registerMongCodeVo.code())
                 .name(registerMongCodeVo.name())
-                .buildVersion(buildVersion)
+                .buildVersion(codeVersion.buildVersion())
                 .build());
 
-        CodeVersion codeVersion = codeVersionService.updateCode(buildVersion);
+        codeVersionService.updateCode(buildVersion);
 
         return RegisterMongCodeVo.builder()
                 .code(mongCode.code())
@@ -68,6 +72,8 @@ public class CommonInternalService {
 
     @Transactional
     public RegisterFoodCodeVo registerFoodCode(String buildVersion, RegisterFoodCodeVo registerFoodCodeVo) {
+
+        CodeVersion codeVersion = codeVersionService.getCodeVersion(buildVersion);
 
         FoodCode foodCode = codeService.addFoodCode(FoodCode.builder()
                 .code(registerFoodCodeVo.code())
@@ -80,10 +86,10 @@ public class CommonInternalService {
                 .addHealthyValue(registerFoodCodeVo.addHealthyValue())
                 .addSleepValue(registerFoodCodeVo.addSleepValue())
                 .delaySeconds(registerFoodCodeVo.delaySeconds())
-                .buildVersion(buildVersion)
+                .buildVersion(codeVersion.buildVersion())
                 .build());
 
-        CodeVersion codeVersion = codeVersionService.updateCode(buildVersion);
+        codeVersionService.updateCode(buildVersion);
 
         return RegisterFoodCodeVo.builder()
                 .code(foodCode.code())

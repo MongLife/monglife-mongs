@@ -28,10 +28,10 @@ tasks.register('copyPrivate', Copy) {
         include 'application*.yml'
         into 'src/main/resources'
     }
-    copy {
-        from '../../spring_backend_sub/core/'
-        include 'application-jwt.yml'
-        include 'application-hmac.yml'
-        into 'src/main/resources'
-    }
+//    copy {
+//        from '../../spring_backend_sub/core/'
+//        include 'application-jwt.yml'
+//        include 'application-hmac.yml'
+//        into 'src/main/resources'
+//    }
 }

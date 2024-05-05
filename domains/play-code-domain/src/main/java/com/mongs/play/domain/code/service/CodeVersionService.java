@@ -43,7 +43,6 @@ public class CodeVersionService {
                 .orElseThrow(() -> new NotFoundException(CodeErrorCode.NOT_FOUND_CODE_VERSION));
     }
 
-    @Transactional
     public CodeVersion updateCode(String buildVersion) throws NotFoundException, GenerateException {
         CodeVersion codeVersion = codeVersionRepository.findByBuildVersion(buildVersion)
                 .orElseThrow(() -> new NotFoundException(CodeErrorCode.NOT_FOUND_CODE_VERSION));

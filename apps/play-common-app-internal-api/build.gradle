@@ -1,25 +1,11 @@
 dependencies {
     implementation project(':domains:play-code-domain')
-
-    // eureka
-    implementation 'org.springframework.cloud:spring-cloud-starter-netflix-eureka-client'
-    // actuator
-    implementation 'org.springframework.boot:spring-boot-starter-actuator:3.2.1'
-    // prometheus
-    runtimeOnly 'io.micrometer:micrometer-registry-prometheus'
-    // validation
-    implementation 'org.springframework.boot:spring-boot-starter-validation'
 }
 
 tasks.register('copyPrivate', Copy) {
     copy {
         from '../../spring_backend_sub/common-app-internal-api/'
         include 'application*.yml'
-        into 'src/main/resources'
-    }
-    copy {
-        from '../../spring_backend_sub/core/'
-        include 'application-hmac.yml'
         into 'src/main/resources'
     }
 }
