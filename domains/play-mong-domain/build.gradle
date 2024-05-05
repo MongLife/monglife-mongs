@@ -1,2 +1,10 @@
 dependencies {
 }
+
+tasks.register('copyPrivate', Copy) {
+    copy {
+        from '../../spring_backend_sub/domains/play-mong-domain/'
+        include 'application-*.yml'
+        into 'src/main/resources'
+    }
+}

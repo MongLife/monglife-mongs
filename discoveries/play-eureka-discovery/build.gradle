@@ -16,7 +16,7 @@ dependencies {
 
 tasks.register('copyPrivate', Copy) {
     copy {
-        from '../../spring_backend_sub/eureka-app-internal-discovery/'
+        from '../../spring_backend_sub/discoveries/play-eureka-discovery/'
         include 'application*.yml'
         into 'src/main/resources'
     }

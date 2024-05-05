@@ -24,14 +24,8 @@ dependencies {
 
 tasks.register('copyPrivate', Copy) {
     copy {
-        from '../../spring_backend_sub/gateway-app-external-api/'
+        from '../../spring_backend_sub/discoveries/play-gateway-discovery/'
         include 'application*.yml'
         into 'src/main/resources'
     }
-//    copy {
-//        from '../../spring_backend_sub/core/'
-//        include 'application-jwt.yml'
-//        include 'application-hmac.yml'
-//        into 'src/main/resources'
-//    }
 }

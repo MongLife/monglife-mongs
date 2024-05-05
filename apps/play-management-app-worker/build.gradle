@@ -1,9 +1,10 @@
 dependencies {
+    implementation project(":modules:play-security-module")
 }
 
 tasks.register('copyPrivate', Copy) {
     copy {
-        from '../../spring_backend_sub/management-app-worker/'
+        from '../../spring_backend_sub/apps/play-management-app-worker/'
         include 'application*.yml'
         into 'src/main/resources'
     }

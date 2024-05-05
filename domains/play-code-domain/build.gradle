@@ -6,3 +6,11 @@ dependencies {
     // dataSource
     api 'org.springframework.boot:spring-boot-starter-data-mongodb'
 }
+
+tasks.register('copyPrivate', Copy) {
+    copy {
+        from '../../spring_backend_sub/domains/play-code-domain/'
+        include 'application-*.yml'
+        into 'src/main/resources'
+    }
+}

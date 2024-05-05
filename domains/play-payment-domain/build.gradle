@@ -6,8 +6,8 @@ dependencies {
 
 tasks.register('copyPrivate', Copy) {
     copy {
-        from '../../spring_backend_sub/core/'
-        include 'application-payment.yml'
+        from '../../spring_backend_sub/domains/play-payment-domain/'
+        include 'application-*.yml'
         into 'src/main/resources'
     }
 }

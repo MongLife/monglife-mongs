@@ -4,11 +4,9 @@ dependencies {
     implementation project(':modules:play-jwt-module')
 }
 
-
-
 tasks.register('copyPrivate', Copy) {
     copy {
-        from '../../spring_backend_sub/auth-app-external-api/'
+        from '../../spring_backend_sub/apps/play-auth-app-external-api/'
         include 'application*.yml'
         into 'src/main/resources'
     }
