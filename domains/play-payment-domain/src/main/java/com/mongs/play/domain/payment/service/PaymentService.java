@@ -58,7 +58,7 @@ public class PaymentService {
                 .build());
     }
 
-    public PaymentLog paymentItemReward(Long paymentLogId) {
+    public PaymentLog itemReward(Long paymentLogId) {
 
         PaymentLog paymentLog = paymentLogRepository.findById(paymentLogId)
                 .orElseThrow(() -> new NotFoundException(PaymentErrorCode.NOT_FOUND_PAYMENT_LOG));

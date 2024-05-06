@@ -57,9 +57,9 @@ public class PlayerExternalMemberService {
 
         PaymentLog paymentLog = paymentService.addBuySlotLog(accountId, deviceId);
 
-        Member member = memberService.modifyIncrementSlotCount(accountId, 1);
+        Member member = memberService.modifyIncreaseSlotCount(accountId, 1);
 
-        paymentService.paymentItemReward(paymentLog.getId());
+        paymentService.itemReward(paymentLog.getId());
 
         return BuySlotVo.builder()
                 .accountId(member.getAccountId())
@@ -75,9 +75,9 @@ public class PlayerExternalMemberService {
 
         ChargeItem chargeItem = chargeItemService.getChargeItem(chargeItemId);
 
-        Member member = memberService.modifyIncrementStarPoint(accountId,  chargeItem.getStarPoint());
+        Member member = memberService.modifyIncreaseStarPoint(accountId,  chargeItem.getStarPoint());
 
-        paymentService.paymentItemReward(paymentLog.getId());
+        paymentService.itemReward(paymentLog.getId());
 
         return ChargeStarPointVo.builder()
                 .accountId(member.getAccountId())
@@ -92,12 +92,12 @@ public class PlayerExternalMemberService {
 
         ExchangeItem exchangeItem = exchangeItemService.getExchangeItem(exchangeItemId);
 
-        Member member = memberService.modifyDecrementStarPoint(accountId, exchangeItem.getStarPoint());
+        Member member = memberService.modifyDecreaseStarPoint(accountId, exchangeItem.getStarPoint());
 
         // TODO("몽 페이포인트 추가 로직")
         Integer payPoint = 10;
 
-        paymentService.paymentItemReward(paymentLog.getId());
+        paymentService.itemReward(paymentLog.getId());
 
         return ExchangePayPointVo.builder()
                 .accountId(member.getAccountId())

@@ -1,5 +1,7 @@
 dependencies {
+    implementation project(':domains:play-mong-domain')
     implementation project(":modules:play-security-module")
+    implementation project(":modules:play-kafka-module")
 }
 
 tasks.register('copyPrivate', Copy) {

@@ -7,7 +7,7 @@ dependencies {
 
 tasks.register('copyPrivate', Copy) {
     copy {
-        from '../../spring_backend_sub/modules/'
+        from '../../spring_backend_sub/modules/play-hmac-module/'
         include 'application-hmac.yml'
         into 'src/main/resources'
     }

@@ -1,12 +1,11 @@
 package com.mongs.play.domain.account.entity;
 
-import com.mongs.play.domain.core.jpa.baseEntity.BaseTimeEntity;
+import com.mongs.play.module.jpa.baseEntity.BaseTimeEntity;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.LocalDate;

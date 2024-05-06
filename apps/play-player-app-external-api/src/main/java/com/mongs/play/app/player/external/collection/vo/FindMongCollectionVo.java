@@ -1,6 +1,6 @@
 package com.mongs.play.app.player.external.collection.vo;
 
-import com.mongs.play.domain.code.entity.MongCode;
+import com.mongs.play.module.code.entity.MongCode;
 import lombok.Builder;
 
 import java.util.Comparator;

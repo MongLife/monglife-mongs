@@ -1,4 +1,8 @@
 dependencies {
+    api project(':modules:play-jpa-module')
+    api project(':modules:play-code-module')
+
+    runtimeOnly 'com.mysql:mysql-connector-j'
 }
 
 tasks.register('copyPrivate', Copy) {

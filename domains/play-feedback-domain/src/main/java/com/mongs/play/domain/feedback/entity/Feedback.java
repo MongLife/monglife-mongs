@@ -1,6 +1,6 @@
 package com.mongs.play.domain.feedback.entity;
 
-import com.mongs.play.domain.core.jpa.baseEntity.BaseTimeEntity;
+import com.mongs.play.module.jpa.baseEntity.BaseTimeEntity;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;

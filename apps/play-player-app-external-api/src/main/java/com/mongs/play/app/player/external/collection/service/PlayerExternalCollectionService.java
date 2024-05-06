@@ -2,9 +2,9 @@ package com.mongs.play.app.player.external.collection.service;
 
 import com.mongs.play.app.player.external.collection.vo.FindMapCollectionVo;
 import com.mongs.play.app.player.external.collection.vo.FindMongCollectionVo;
-import com.mongs.play.domain.code.entity.MapCode;
-import com.mongs.play.domain.code.entity.MongCode;
-import com.mongs.play.domain.code.service.CodeService;
+import com.mongs.play.module.code.entity.MapCode;
+import com.mongs.play.module.code.entity.MongCode;
+import com.mongs.play.module.code.service.CodeService;
 import com.mongs.play.domain.collection.entity.MapCollection;
 import com.mongs.play.domain.collection.entity.MongCollection;
 import com.mongs.play.domain.collection.service.CollectionService;
@@ -58,6 +58,4 @@ public class PlayerExternalCollectionService {
 
         return FindMongCollectionVo.toList(enableList, disableList);
     }
-
-
 }

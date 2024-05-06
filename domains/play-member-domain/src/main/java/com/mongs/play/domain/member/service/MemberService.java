@@ -32,7 +32,7 @@ public class MemberService {
                         .build()));
     }
 
-    public Member modifyIncrementSlotCount(Long accountId, Integer addSlotCount) throws NotFoundException {
+    public Member modifyIncreaseSlotCount(Long accountId, Integer slotCount) throws NotFoundException {
 
         Member member = memberRepository.findByAccountIdAndIsDeletedIsFalse(accountId)
                 .orElseThrow(() -> new NotFoundException(MemberErrorCode.NOT_FOUND_MEMBER));
@@ -46,11 +46,11 @@ public class MemberService {
 
         return memberRepository.save(member.toBuilder()
                 .starPoint(member.getStarPoint() - buySlotPrice)
-                .slotCount(member.getSlotCount() + addSlotCount)
+                .slotCount(member.getSlotCount() + slotCount)
                 .build());
     }
 
-    public Member modifyDecrementSlotCount(Long accountId, Integer subSlotCount) throws NotFoundException {
+    public Member modifyDecreaseSlotCount(Long accountId, Integer slotCount) throws NotFoundException {
 
         Member member = memberRepository.findByAccountIdAndIsDeletedIsFalse(accountId)
                 .orElseThrow(() -> new NotFoundException(MemberErrorCode.NOT_FOUND_MEMBER));
@@ -61,22 +61,22 @@ public class MemberService {
 
         return memberRepository.save(member.toBuilder()
                 .starPoint(member.getStarPoint() + buySlotPrice)
-                .slotCount(member.getSlotCount() - subSlotCount)
+                .slotCount(member.getSlotCount() - slotCount)
                 .build());
 
     }
 
-    public Member modifyIncrementStarPoint(Long accountId, Integer addStarPoint) throws NotFoundException {
+    public Member modifyIncreaseStarPoint(Long accountId, Integer starPoint) throws NotFoundException {
 
         Member member = memberRepository.findByAccountIdAndIsDeletedIsFalse(accountId)
                 .orElseThrow(() -> new NotFoundException(MemberErrorCode.NOT_FOUND_MEMBER));
 
         return memberRepository.save(member.toBuilder()
-                .starPoint(member.getStarPoint() + addStarPoint)
+                .starPoint(member.getStarPoint() + starPoint)
                 .build());
     }
 
-    public Member modifyDecrementStarPoint(Long accountId, Integer subStarPoint) throws NotFoundException {
+    public Member modifyDecreaseStarPoint(Long accountId, Integer starPoint) throws NotFoundException {
 
         Member member = memberRepository.findByAccountIdAndIsDeletedIsFalse(accountId)
                 .orElseThrow(() -> new NotFoundException(MemberErrorCode.NOT_FOUND_MEMBER));
@@ -86,7 +86,7 @@ public class MemberService {
         }
 
         return memberRepository.save(member.toBuilder()
-                .starPoint(member.getStarPoint() - subStarPoint)
+                .starPoint(member.getStarPoint() - starPoint)
                 .build());
     }
 }
