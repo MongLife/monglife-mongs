@@ -38,17 +38,8 @@ public class KafkaConsumerConfig {
         props.put(ConsumerConfig.GROUP_ID_CONFIG, groupId);
         props.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
         props.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, JsonDeserializer.class);
-//        props.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, JsonDeserializer.class);
         props.put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "earliest");
-
         props.put(JsonDeserializer.TYPE_MAPPINGS, "KafkaEventDto:com.mongs.play.module.kafka.dto.KafkaEventDto");
-
-
-//        List<Class<?>> classes = scan("com.mongs.play.module.kafka.dto");
-//
-//        StringBuilder typeMappings = new StringBuilder();
-//        classes.forEach(clazz -> typeMappings.append(clazz.getSimpleName()).append(":").append(clazz.getCanonicalName()).append(","));
-//        props.put(JsonDeserializer.TYPE_MAPPINGS, typeMappings.substring(0, typeMappings.length() - 1));
 
         return new DefaultKafkaConsumerFactory<>(props);
     }
@@ -59,57 +50,4 @@ public class KafkaConsumerConfig {
         factory.setConsumerFactory(consumerFactory());
         return factory;
     }
-
-//    private static List<Class<?>> scan(String basePackageName) {
-//        ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
-//        String path = basePackageName.replace('.', '/');
-//
-//        List<Class<?>> classes = new ArrayList<Class<?>>();
-//
-//        try {
-//            List<File> files = new ArrayList<File>();
-//            Enumeration<URL> resources = classLoader.getResources(path);
-//            while (resources.hasMoreElements()) {
-//                URL resource = resources.nextElement();
-//                files.add(new File(resource.getFile()));
-//            }
-//            for (File file : files) {
-//                if (file.isDirectory()) {
-//                    System.out.println("[Directory] " + file.getAbsolutePath());
-//                    classes.addAll(findClasses(file, basePackageName));
-//                }
-//            }
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        }
-//
-//        return classes;
-//    }
-//
-//    private static List<Class<?>> findClasses(File directory, String packageName) {
-//        List<Class<?>> classes = new ArrayList<Class<?>>();
-//        if (!directory.exists()) {
-//            return classes;
-//        }
-//
-//        File[] files = directory.listFiles();
-//        assert files != null;
-//        for (File file : files) {
-//            if (file.isDirectory()) {
-//                System.out.println("[Directory] " + file.getAbsolutePath());
-//                classes.addAll(findClasses(file, packageName + "." + file.getName()));
-//            } else if (file.getName().endsWith(".class")) {
-//                System.out.println("[File] " + file.getAbsolutePath());
-//                String className = packageName + '.' + file.getName().substring(0, file.getName().length() - 6);
-//                ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
-//                try {
-//                    classes.add(Class.forName(className, false, classLoader));
-//                } catch (ClassNotFoundException e) {
-//                    e.printStackTrace();
-//                }
-//            }
-//        }
-//
-//        return classes;
-//    }
 }

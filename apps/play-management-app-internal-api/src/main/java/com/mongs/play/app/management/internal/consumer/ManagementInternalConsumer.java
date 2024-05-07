@@ -15,20 +15,12 @@ public class ManagementInternalConsumer {
 
     private final ObjectMapper objectMapper;
 
-    @KafkaListener(topics = { "management-internal.test" })
-    public void increaseWeight(KafkaEventDto<TestReqDto> kafkaEventDto) {
+    @KafkaListener(topics = { "management-internal.decreaseWeight" })
+    public void increaseWeight(KafkaEventDto<TestReqDto> payload) {
 
-        TestReqDto testReqDto = objectMapper.convertValue(kafkaEventDto.getData(), TestReqDto.class);
+        TestReqDto testReqDto = objectMapper.convertValue(payload.data(), TestReqDto.class);
 
-        log.info("kafkaEventDto: {}", kafkaEventDto);
-//        log.info("data: {}", kafkaEventDto.data().message());
-//        log.info("data: {}", testReqDto.message());
-//        log.info("message: {}", kafkaEventDto.data().message());
-        // TestReqDto testReqDto = kafkaEventDto.data();
 
-        // log.info("message: {}, count: {}", testReqDto.message(), testReqDto.count());
-//        log.info("data: {}", kafkaEventDto.data().getMessage());
-//        log.info(kafkaEventDto.data().message());
     }
 
 }

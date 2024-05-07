@@ -17,12 +17,14 @@ public class ManagementWorkerService {
     private final KafkaTemplate<String, KafkaEventDto<?>> kafkaTemplate;
 
     public void test() {
-        KafkaEventDto<TestReqDto> kafkaEventDto =
-                new KafkaEventDto<TestReqDto>("testId", TestReqDto.builder()
+        KafkaEventDto<TestReqDto> kafkaEventDto = KafkaEventDto.<TestReqDto>builder()
+                .id("testId")
+                .data(TestReqDto.builder()
                         .message("testMessage")
                         .count(1)
                         .createdAt(LocalDateTime.now())
-                        .build());
+                        .build())
+                .build();
 
         String topic = "management-internal.test";
 
