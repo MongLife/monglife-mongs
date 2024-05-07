@@ -24,7 +24,7 @@ public class ManagementWorkerService {
                         .createdAt(LocalDateTime.now())
                         .build());
 
-        String topic = "test";
+        String topic = "management-internal.test";
 
         kafkaTemplate.send(topic, kafkaEventDto);
 

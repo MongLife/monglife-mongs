@@ -7,9 +7,8 @@ import java.time.LocalDateTime;
 
 @Builder
 @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
-public record TestReqDto(
-        String message,
-        Integer count,
-        LocalDateTime createdAt
-) {
+public class TestReqDto {
+    private String message;
+    private Integer count;
+    private LocalDateTime createdAt;
 }

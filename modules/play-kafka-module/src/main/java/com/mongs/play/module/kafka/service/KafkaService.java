@@ -8,15 +8,15 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class KafkaService {
 
-    @Value("${application.kafka.group-id.management-external}")
+    @Value("${application.kafka.base-topic.management-external}")
     private String managementExternalTopic;
-    @Value("${application.kafka.group-id.management-internal}")
+    @Value("${application.kafka.base-topic.management-internal}")
     private String managementInternalTopic;
-    @Value("${application.kafka.group-id.management-worker}")
+    @Value("${application.kafka.base-topic.management-worker}")
     private String managementWorkerTopic;
-    @Value("${application.kafka.group-id.player-external}")
+    @Value("${application.kafka.base-topic.player-external}")
     private String playerExternalTopic;
-    @Value("${application.kafka.group-id.player-internal}")
+    @Value("${application.kafka.base-topic.player-internal}")
     private String playerInternalTopic;
 
     public String getManagementExternalTopic() {
