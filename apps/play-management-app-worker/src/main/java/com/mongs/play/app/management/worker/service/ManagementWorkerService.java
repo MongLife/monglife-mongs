@@ -1,7 +1,6 @@
 package com.mongs.play.app.management.worker.service;
 
-import com.mongs.play.module.kafka.dto.KafkaEventDto;
-import com.mongs.play.module.kafka.dto.req.TestReqDto;
+import com.mongs.play.module.kafka.event.commit.DecreaseWeightCommitEvent;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.kafka.core.KafkaTemplate;
@@ -14,23 +13,21 @@ import java.time.LocalDateTime;
 @RequiredArgsConstructor
 public class ManagementWorkerService {
 
-    private final KafkaTemplate<String, KafkaEventDto<?>> kafkaTemplate;
+    private final KafkaTemplate<String, Object> kafkaTemplate;
 
     public void test() {
-        KafkaEventDto<TestReqDto> kafkaEventDto = KafkaEventDto.<TestReqDto>builder()
+        DecreaseWeightCommitEvent decreaseWeightCommitEventDto = DecreaseWeightCommitEvent.builder()
                 .id("testId")
-                .data(TestReqDto.builder()
-                        .message("testMessage")
-                        .count(1)
-                        .createdAt(LocalDateTime.now())
-                        .build())
+                .message("testMessage")
+                .count(1)
+                .createdAt(LocalDateTime.now())
                 .build();
 
-        String topic = "management-internal.test";
+        String topic = "management-internal.decreaseWeight";
 
-        kafkaTemplate.send(topic, kafkaEventDto);
+        kafkaTemplate.send(topic, decreaseWeightCommitEventDto);
 
-        log.info("Send Test Event: {}", kafkaEventDto);
+        log.info("Send Test Event: {}", decreaseWeightCommitEventDto);
     }
 
 }
