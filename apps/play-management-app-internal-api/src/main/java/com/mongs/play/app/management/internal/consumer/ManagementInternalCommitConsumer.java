@@ -21,6 +21,6 @@ public class ManagementInternalCommitConsumer {
     public void decreaseWeight(DecreaseWeightCommitPayload payload) {
         log.info("payload: {}", payload);
 
-        throw new KafkaTransactionException(KafkaErrorCode.TEST);
+//        throw new KafkaTransactionException(KafkaErrorCode.TEST);
     }
 }
