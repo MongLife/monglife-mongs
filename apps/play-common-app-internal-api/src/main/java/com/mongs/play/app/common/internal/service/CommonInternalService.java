@@ -4,9 +4,12 @@ import com.mongs.play.app.common.internal.data.FoodCodeData;
 import com.mongs.play.app.common.internal.data.MapCodeData;
 import com.mongs.play.app.common.internal.data.MongCodeData;
 import com.mongs.play.app.common.internal.vo.*;
-import com.mongs.play.domain.code.entity.*;
-import com.mongs.play.domain.code.service.CodeService;
-import com.mongs.play.domain.code.service.CodeVersionService;
+import com.mongs.play.module.code.entity.CodeVersion;
+import com.mongs.play.module.code.entity.FoodCode;
+import com.mongs.play.module.code.entity.MapCode;
+import com.mongs.play.module.code.entity.MongCode;
+import com.mongs.play.module.code.service.CodeService;
+import com.mongs.play.module.code.service.CodeVersionService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -58,6 +61,8 @@ public class CommonInternalService {
         MongCode mongCode = codeService.addMongCode(MongCode.builder()
                 .code(registerMongCodeVo.code())
                 .name(registerMongCodeVo.name())
+                .level(registerMongCodeVo.level())
+                .evolutionPoint(registerMongCodeVo.evolutionPoint())
                 .buildVersion(codeVersion.buildVersion())
                 .build());
 
@@ -66,6 +71,8 @@ public class CommonInternalService {
         return RegisterMongCodeVo.builder()
                 .code(mongCode.code())
                 .name(mongCode.name())
+                .level(mongCode.level())
+                .evolutionPoint(mongCode.evolutionPoint())
                 .buildVersion(codeVersion.buildVersion())
                 .build();
     }
@@ -122,6 +129,8 @@ public class CommonInternalService {
                     .buildVersion(buildVersion)
                     .code(mongCode.getCode())
                     .name(mongCode.getName())
+                    .level(mongCode.getLevel())
+                    .evolutionPoint(mongCode.getEvolutionPoint())
                     .build()));
 
         codeService.removeFoodCode();

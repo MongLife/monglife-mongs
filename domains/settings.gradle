@@ -1,8 +1,6 @@
 rootProject.name = 'domains'
 
-include 'play-core-jpa-domain'
 include 'play-account-domain'
-include 'play-code-domain'
 include 'play-collection-domain'
 include 'play-feedback-domain'
 include 'play-member-domain'

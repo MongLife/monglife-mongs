@@ -57,11 +57,15 @@ public class CommonInternalAdminController {
         RegisterMongCodeVo registerMongCodeVo = commonInternalService.registerMongCode(registerMongCodeReqDto.buildVersion(), RegisterMongCodeVo.builder()
                 .code(registerMongCodeReqDto.code())
                 .name(registerMongCodeReqDto.name())
+                .level(registerMongCodeReqDto.level())
+                .evolutionPoint(registerMongCodeReqDto.evolutionPoint())
                 .build());
 
         return ResponseEntity.ok().body(RegisterMongCodeResDto.builder()
                 .code(registerMongCodeVo.code())
                 .name(registerMongCodeVo.name())
+                .level(registerMongCodeVo.level())
+                .evolutionPoint(registerMongCodeVo.evolutionPoint())
                 .build());
     }
 

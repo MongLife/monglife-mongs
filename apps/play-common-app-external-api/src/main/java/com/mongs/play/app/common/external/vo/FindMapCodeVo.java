@@ -1,6 +1,6 @@
 package com.mongs.play.app.common.external.vo;
 
-import com.mongs.play.domain.code.entity.MapCode;
+import com.mongs.play.module.code.entity.MapCode;
 import lombok.Builder;
 
 import java.util.List;

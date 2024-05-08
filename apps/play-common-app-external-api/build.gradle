@@ -1,10 +1,10 @@
 dependencies {
-    implementation project(':domains:play-code-domain')
+    implementation project(':modules:play-code-module')
 }
 
 tasks.register('copyPrivate', Copy) {
     copy {
-        from '../../spring_backend_sub/common-app-external-api/'
+        from '../../spring_backend_sub/apps/play-common-app-external-api/'
         include 'application*.yml'
         into 'src/main/resources'
     }

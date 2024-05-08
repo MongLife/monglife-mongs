@@ -1,2 +1,14 @@
 dependencies {
+    api project(':modules:play-jpa-module')
+    api project(':modules:play-code-module')
+
+    runtimeOnly 'com.mysql:mysql-connector-j'
+}
+
+tasks.register('copyPrivate', Copy) {
+    copy {
+        from '../../spring_backend_sub/domains/play-mong-domain/'
+        include 'application-*.yml'
+        into 'src/main/resources'
+    }
 }

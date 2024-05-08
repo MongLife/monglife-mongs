@@ -1,6 +1,6 @@
 package com.mongs.play.domain.payment.entity;
 
-import com.mongs.play.domain.core.jpa.baseEntity.BaseTimeEntity;
+import com.mongs.play.module.jpa.baseEntity.BaseTimeEntity;
 import com.mongs.play.domain.payment.enums.PaymentCode;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -30,5 +30,6 @@ public class PaymentLog extends BaseTimeEntity {
     @Builder.Default
     private Boolean isReward = false;
     @Column(updatable = false, nullable = false)
+    @Enumerated(EnumType.STRING)
     private PaymentCode code;
 }

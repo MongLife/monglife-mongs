@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/internal/collection")
 @RequiredArgsConstructor
 @RestController
-public class PlayerInternalCollectionController {
+public class  PlayerInternalCollectionController {
 
     private final PlayerInternalCollectionService playerInternalCollectionService;
 

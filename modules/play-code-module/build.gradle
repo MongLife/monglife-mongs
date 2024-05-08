@@ -1,0 +1,14 @@
+dependencies {
+    api project(':modules:play-hmac-module')
+
+    api 'com.google.code.gson:gson:2.10.1'
+    api 'org.springframework.boot:spring-boot-starter-data-mongodb'
+}
+
+tasks.register('copyPrivate', Copy) {
+    copy {
+        from '../../spring_backend_sub/modules/play-code-module/'
+        include 'application-*.yml'
+        into 'src/main/resources'
+    }
+}

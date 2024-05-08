@@ -6,6 +6,8 @@ import lombok.Builder;
 public record RegisterMongCodeReqDto(
         String name,
         String code,
+        Integer level,
+        Integer evolutionPoint,
         String buildVersion
 ) {
 }

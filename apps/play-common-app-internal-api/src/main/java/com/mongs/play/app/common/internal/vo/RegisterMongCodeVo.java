@@ -6,6 +6,8 @@ import lombok.Builder;
 public record RegisterMongCodeVo(
         String code,
         String name,
+        Integer level,
+        Integer evolutionPoint,
         String buildVersion
 ) {
 }

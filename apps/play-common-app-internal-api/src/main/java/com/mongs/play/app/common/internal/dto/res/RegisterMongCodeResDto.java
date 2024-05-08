@@ -4,7 +4,9 @@ import lombok.Builder;
 
 @Builder
 public record RegisterMongCodeResDto(
+        String code,
         String name,
-        String code
+        Integer level,
+        Integer evolutionPoint
 ) {
 }
