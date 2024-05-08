@@ -16,7 +16,7 @@ public class ManagementWorkerController {
 
     @GetMapping("")
     public ResponseEntity<Object> test() {
-        managementWorkerService.test();
+        managementWorkerService.decreaseWeight(1L, 10.0);
         return ResponseEntity.ok().body(null);
     }
 }

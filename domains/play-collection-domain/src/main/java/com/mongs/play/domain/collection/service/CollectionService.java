@@ -1,7 +1,7 @@
 package com.mongs.play.domain.collection.service;
 
 import com.mongs.play.core.error.domain.CollectionErrorCode;
-import com.mongs.play.core.exception.domain.NotFoundException;
+import com.mongs.play.core.exception.common.NotFoundException;
 import com.mongs.play.domain.collection.entity.MapCollection;
 import com.mongs.play.domain.collection.entity.MongCollection;
 import com.mongs.play.domain.collection.repository.MapCollectionRepository;

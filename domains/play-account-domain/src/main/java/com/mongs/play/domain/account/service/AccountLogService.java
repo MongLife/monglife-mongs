@@ -1,7 +1,7 @@
 package com.mongs.play.domain.account.service;
 
 import com.mongs.play.core.error.domain.AccountErrorCode;
-import com.mongs.play.core.exception.domain.NotFoundException;
+import com.mongs.play.core.exception.common.NotFoundException;
 import com.mongs.play.domain.account.entity.AccountLog;
 import com.mongs.play.domain.account.repository.AccountLogRepository;
 import com.mongs.play.domain.account.repository.AccountRepository;

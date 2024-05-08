@@ -1,4 +1,4 @@
-package com.mongs.play.core.exception.domain;
+package com.mongs.play.core.exception.common;
 
 
 import com.mongs.play.core.error.ErrorCode;

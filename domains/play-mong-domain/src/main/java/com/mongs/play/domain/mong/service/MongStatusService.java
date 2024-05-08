@@ -1,7 +1,7 @@
 package com.mongs.play.domain.mong.service;
 
 import com.mongs.play.core.error.domain.MongErrorCode;
-import com.mongs.play.core.exception.domain.NotFoundException;
+import com.mongs.play.core.exception.common.NotFoundException;
 import com.mongs.play.domain.mong.entity.Mong;
 import com.mongs.play.domain.mong.entity.MongLog;
 import com.mongs.play.domain.mong.enums.MongLogCode;

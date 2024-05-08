@@ -1,16 +1,15 @@
 package com.mongs.play.module.kafka.event;
 
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import lombok.experimental.SuperBuilder;
 
 import java.time.LocalDateTime;
-import java.util.UUID;
+import java.util.*;
 
 @Getter
+@Setter
+@ToString
 @SuperBuilder
 @AllArgsConstructor
 @NoArgsConstructor
@@ -20,5 +19,7 @@ public class BasicEvent {
     private String id = UUID.randomUUID().toString();
     @Builder.Default
     private LocalDateTime createdAt = LocalDateTime.now();
+    @Builder.Default
+    private Map<String, byte[]> history = new LinkedHashMap<>();
 }
 

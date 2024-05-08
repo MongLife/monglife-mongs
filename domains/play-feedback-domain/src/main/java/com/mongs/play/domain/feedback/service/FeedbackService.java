@@ -1,7 +1,7 @@
 package com.mongs.play.domain.feedback.service;
 
 import com.mongs.play.core.error.domain.FeedbackErrorCode;
-import com.mongs.play.core.exception.domain.NotFoundException;
+import com.mongs.play.core.exception.common.NotFoundException;
 import com.mongs.play.domain.feedback.entity.Feedback;
 import com.mongs.play.domain.feedback.entity.FeedbackLog;
 import com.mongs.play.domain.feedback.repository.FeedbackLogRepository;

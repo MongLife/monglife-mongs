@@ -1,12 +1,29 @@
 package com.mongs.play.module.kafka.service;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.mongs.play.core.error.module.KafkaErrorCode;
+import com.mongs.play.core.exception.common.GenerateException;
+import com.mongs.play.core.exception.common.InvalidException;
+import com.mongs.play.module.kafka.event.BasicEvent;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class KafkaService {
+
+    public enum KafkaTopic {
+        MANAGEMENT_EXTERNAL,
+        MANAGEMENT_INTERNAL,
+        MANAGEMENT_WORKER,
+        PLAYER_EXTERNAL,
+        PLAYER_INTERNAL,
+    }
 
     @Value("${application.kafka.base-topic.management-external}")
     private String managementExternalTopic;
@@ -19,23 +36,42 @@ public class KafkaService {
     @Value("${application.kafka.base-topic.player-internal}")
     private String playerInternalTopic;
 
-    public String getManagementExternalTopic() {
-        return managementExternalTopic;
-    }
+    private final ObjectMapper objectMapper;
+    private final KafkaTemplate<String, Object> kafkaTemplate;
 
-    public String getManagementInternalTopic() {
-        return managementInternalTopic;
-    }
+    public <T extends BasicEvent> BasicEvent send(KafkaTopic kafkaTopic, String subTopic, T event) {
 
-    public String getManagementWorkerTopic() {
-        return managementWorkerTopic;
-    }
+        String topic = "";
 
-    public String getPlayerExternalTopic() {
-        return playerExternalTopic;
-    }
+        switch (kafkaTopic) {
+            case MANAGEMENT_EXTERNAL -> {
+                topic = managementExternalTopic;
+            }
+            case MANAGEMENT_INTERNAL -> {
+                topic = managementInternalTopic;
+            }
+            case MANAGEMENT_WORKER -> {
+                topic = managementWorkerTopic;
+            }
+            case PLAYER_EXTERNAL -> {
+                topic = playerExternalTopic;
+            }
+            case PLAYER_INTERNAL -> {
+                topic = playerInternalTopic;
+            }
+            default -> {
+                throw new InvalidException(KafkaErrorCode.NOT_FOUND_TOPIC);
+            }
+        }
 
-    public String getPlayerInternalTopic() {
-        return playerInternalTopic;
+        String sendTopic = String.format("%s.commit.%s", topic, subTopic);
+
+        try {
+            event.getHistory().put(sendTopic, objectMapper.writeValueAsBytes(event));
+            kafkaTemplate.send(sendTopic, event);
+            return event;
+        } catch (JsonProcessingException e) {
+            throw new GenerateException(KafkaErrorCode.GENERATE_HISTORY);
+        }
     }
 }

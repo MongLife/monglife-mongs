@@ -1,8 +1,8 @@
 package com.mongs.play.domain.mong.service;
 
 import com.mongs.play.core.error.domain.MongErrorCode;
-import com.mongs.play.core.exception.domain.InvalidException;
-import com.mongs.play.core.exception.domain.NotFoundException;
+import com.mongs.play.core.exception.common.InvalidException;
+import com.mongs.play.core.exception.common.NotFoundException;
 import com.mongs.play.module.code.entity.FoodCode;
 import com.mongs.play.module.code.entity.MongCode;
 import com.mongs.play.module.code.service.CodeService;

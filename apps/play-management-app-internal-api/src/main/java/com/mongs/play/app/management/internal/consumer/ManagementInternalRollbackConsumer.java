@@ -1,6 +1,5 @@
 package com.mongs.play.app.management.internal.consumer;
 
-import com.mongs.play.module.kafka.event.commit.DecreaseWeightCommitEvent;
 import com.mongs.play.module.kafka.event.rollback.DecreaseWeightRollbackEvent;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

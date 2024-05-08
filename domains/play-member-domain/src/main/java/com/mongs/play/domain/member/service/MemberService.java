@@ -1,8 +1,8 @@
 package com.mongs.play.domain.member.service;
 
 import com.mongs.play.core.error.domain.MemberErrorCode;
-import com.mongs.play.core.exception.domain.InvalidException;
-import com.mongs.play.core.exception.domain.NotFoundException;
+import com.mongs.play.core.exception.common.InvalidException;
+import com.mongs.play.core.exception.common.NotFoundException;
 import com.mongs.play.domain.member.entity.Member;
 import com.mongs.play.domain.member.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;

@@ -2,8 +2,8 @@ package com.mongs.play.module.code.service;
 
 import com.mongs.play.core.error.domain.CodeErrorCode;
 import com.mongs.play.core.error.module.HmacErrorCode;
-import com.mongs.play.core.exception.domain.GenerateException;
-import com.mongs.play.core.exception.domain.NotFoundException;
+import com.mongs.play.core.exception.common.GenerateException;
+import com.mongs.play.core.exception.common.NotFoundException;
 import com.mongs.play.module.code.vo.CodeVo;
 import com.mongs.play.module.code.entity.CodeVersion;
 import com.mongs.play.module.code.entity.FoodCode;

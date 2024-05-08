@@ -1,5 +1,4 @@
 dependencies {
-    api 'org.springframework.boot:spring-boot-starter-aop'
     api 'org.springframework.kafka:spring-kafka'
     testImplementation 'org.springframework.kafka:spring-kafka-test'
 }

@@ -1,8 +1,8 @@
 package com.mongs.play.domain.payment.service;
 
 import com.mongs.play.core.error.domain.PaymentErrorCode;
-import com.mongs.play.core.exception.domain.InvalidException;
-import com.mongs.play.core.exception.domain.NotFoundException;
+import com.mongs.play.core.exception.common.InvalidException;
+import com.mongs.play.core.exception.common.NotFoundException;
 import com.mongs.play.domain.payment.entity.PaymentLog;
 import com.mongs.play.domain.payment.enums.PaymentCode;
 import com.mongs.play.domain.payment.repository.PaymentLogRepository;

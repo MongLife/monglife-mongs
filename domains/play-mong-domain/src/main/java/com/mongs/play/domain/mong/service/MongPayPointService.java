@@ -1,11 +1,10 @@
 package com.mongs.play.domain.mong.service;
 
 import com.mongs.play.core.error.domain.MongErrorCode;
-import com.mongs.play.core.exception.domain.NotFoundException;
+import com.mongs.play.core.exception.common.NotFoundException;
 import com.mongs.play.domain.mong.entity.Mong;
 import com.mongs.play.domain.mong.repository.MongRepository;
 import lombok.RequiredArgsConstructor;
-import org.aspectj.weaver.ast.Not;
 import org.springframework.stereotype.Service;
 
 @Service
