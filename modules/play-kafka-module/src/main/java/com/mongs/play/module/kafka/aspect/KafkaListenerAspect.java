@@ -1,6 +1,6 @@
 package com.mongs.play.module.kafka.aspect;
 
-import com.mongs.play.module.kafka.event.rollback.EvolutionMongRollbackEvent;
+import com.mongs.play.module.kafka.event.BasicEvent;
 import com.mongs.play.module.kafka.service.KafkaService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -10,8 +10,6 @@ import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Pointcut;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Component;
-
-import java.util.Arrays;
 
 @Slf4j
 @Aspect
@@ -24,23 +22,24 @@ public class KafkaListenerAspect {
     @Pointcut("execution(* com.mongs.play..*.*(..))")
     public void cut() {}
 
-    @Around("cut() && @annotation(kafkaListener)")
-    public Object around(ProceedingJoinPoint joinPoint, KafkaListener kafkaListener) throws Throwable {
+    @Around(value = "cut() && @annotation(kafkaListener)")
+    public Object around(ProceedingJoinPoint joinPoint, KafkaListener kafkaListener) {
+
+        Object returnValue = null;
+
         try {
-            return joinPoint.proceed();
-        } catch (Exception e) {
-            String[] topics = kafkaListener.topics();
-
-            log.info("topics: {}", Arrays.toString(topics));
-
-            kafkaService.sendRollback(KafkaService.KafkaTopic.EVOLUTION_MONG, EvolutionMongRollbackEvent.builder()
-                    .id(event.getId())
-                    .createdAt(event.getCreatedAt())
-                    .accountId(accountId)
-                    .mongCode(mongCode)
-                    .build());
+            returnValue = joinPoint.proceed();
+        } catch (Throwable e) {
+            for (Object arg : joinPoint.getArgs()) {
+                if (arg instanceof BasicEvent) {
+                    for (String topic : kafkaListener.topics()) {
+                        BasicEvent event = (BasicEvent) arg;
+                        kafkaService.sendRollback(topic.replace("commit", "rollback"), event);
+                    }
+                }
+            }
         }
 
-        return new Object();
+        return returnValue;
     }
 }

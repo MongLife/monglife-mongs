@@ -61,6 +61,7 @@ public class PlayerInternalCollectionService {
 
         return RemoveMapCollectionVo.builder()
                 .accountId(accountId)
+                .code(mapCode.code())
                 .build();
     }
 
@@ -74,7 +75,7 @@ public class PlayerInternalCollectionService {
 
         return RemoveMongCollectionVo.builder()
                 .accountId(accountId)
+                .code(mongCode.code())
                 .build();
     }
-
 }

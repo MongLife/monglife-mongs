@@ -1,16 +1,15 @@
-package com.mongs.play.app.management.external.vo;
+package com.mongs.play.domain.mong.vo;
 
+import com.mongs.play.domain.mong.enums.MongGrade;
 import lombok.Builder;
 
 @Builder
-public record TrainingMongVo(
-        Long mongId,
+public record MongStatusVo(
         Double weight,
         Double strength,
         Double satiety,
         Double healthy,
         Double sleep,
-        Double exp,
-        Integer payPoint
+        Double exp
 ) {
 }

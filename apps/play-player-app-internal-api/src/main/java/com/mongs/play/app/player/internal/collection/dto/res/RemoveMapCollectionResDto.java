@@ -4,6 +4,7 @@ import lombok.Builder;
 
 @Builder
 public record RemoveMapCollectionResDto(
-        Long accountId
+        Long accountId,
+        String code
 ) {
 }

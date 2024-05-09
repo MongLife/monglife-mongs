@@ -3,6 +3,8 @@ package com.mongs.play.domain.mong.service;
 import com.mongs.play.core.error.domain.MongErrorCode;
 import com.mongs.play.core.exception.common.InvalidException;
 import com.mongs.play.core.exception.common.NotFoundException;
+import com.mongs.play.domain.mong.vo.MongStatusPercentVo;
+import com.mongs.play.domain.mong.vo.MongStatusVo;
 import com.mongs.play.module.code.entity.FoodCode;
 import com.mongs.play.module.code.entity.MongCode;
 import com.mongs.play.module.code.service.CodeService;
@@ -28,8 +30,13 @@ public class MongService {
     private final MongRepository mongRepository;
     private final MongLogRepository mongLogRepository;
 
-    public List<Mong> findMong(Long accountId) {
+    public List<Mong> findMongByAccountId(Long accountId) {
         return mongRepository.findByAccountIdAndIsActiveTrue(accountId);
+    }
+
+    public Mong findMongByMongId(Long mongId) {
+        return mongRepository.findById(mongId)
+                .orElseThrow(() -> new NotFoundException(MongErrorCode.NOT_FOUND_MONG));
     }
 
     public Mong addMong(Long accountId, String name, String sleepStart, String sleepEnd) {
@@ -68,7 +75,7 @@ public class MongService {
                 .grade(MongGrade.EMPTY)
                 .shift(MongShift.DELETE)
                 .state(MongState.NORMAL)
-                .exp(0)
+                .exp(0D)
                 .weight(0D)
                 .strength(0D)
                 .satiety(0D)
@@ -93,12 +100,18 @@ public class MongService {
         Mong mong = mongRepository.findByIdAndIsActiveTrue(mongId)
                 .orElseThrow(() -> new NotFoundException(MongErrorCode.NOT_FOUND_MONG));
 
+        if (MongGrade.EMPTY.equals(mong.getGrade())) {
+            throw new InvalidException(MongErrorCode.INVALID_STROKE);
+        }
         if (MongGrade.ZERO.equals(mong.getGrade())) {
+            throw new InvalidException(MongErrorCode.INVALID_STROKE);
+        }
+        if (MongGrade.LAST.equals(mong.getGrade())) {
             throw new InvalidException(MongErrorCode.INVALID_STROKE);
         }
 
         int numberOfStroke = mong.getNumberOfStroke() + strokeCount;
-        int exp = mong.getExp() + MongExp.STROKE.exp;
+        double exp = mong.getExp() + MongExp.STROKE.exp;
 
         mong = mongRepository.save(mong.toBuilder()
                 .exp(exp)
@@ -119,6 +132,16 @@ public class MongService {
 
         Mong mong = mongRepository.findByIdAndIsActiveTrue(mongId)
                 .orElseThrow(() -> new NotFoundException(MongErrorCode.NOT_FOUND_MONG));
+
+        if (MongGrade.EMPTY.equals(mong.getGrade())) {
+            throw new InvalidException(mong.getIsSleeping() ? MongErrorCode.INVALID_AWAKE : MongErrorCode.INVALID_SLEEPING);
+        }
+        if (MongGrade.ZERO.equals(mong.getGrade())) {
+            throw new InvalidException(mong.getIsSleeping() ? MongErrorCode.INVALID_AWAKE : MongErrorCode.INVALID_SLEEPING);
+        }
+        if (MongGrade.LAST.equals(mong.getGrade())) {
+            throw new InvalidException(mong.getIsSleeping() ? MongErrorCode.INVALID_AWAKE : MongErrorCode.INVALID_SLEEPING);
+        }
 
         boolean isSleeping = !mong.getIsSleeping();
 
@@ -141,7 +164,17 @@ public class MongService {
         Mong mong = mongRepository.findByIdAndIsActiveTrue(mongId)
                 .orElseThrow(() -> new NotFoundException(MongErrorCode.NOT_FOUND_MONG));
 
-        int exp = mong.getExp() + MongExp.CLEANING_POOP.exp;
+        if (MongGrade.EMPTY.equals(mong.getGrade())) {
+            throw new InvalidException(MongErrorCode.INVALID_POOP_CLEAN);
+        }
+        if (MongGrade.ZERO.equals(mong.getGrade())) {
+            throw new InvalidException(MongErrorCode.INVALID_POOP_CLEAN);
+        }
+        if (MongGrade.LAST.equals(mong.getGrade())) {
+            throw new InvalidException(MongErrorCode.INVALID_POOP_CLEAN);
+        }
+
+        double exp = mong.getExp() + MongExp.CLEANING_POOP.exp;
 
         mong = mongRepository.save(mong.toBuilder()
                 .exp(exp)
@@ -175,7 +208,7 @@ public class MongService {
             throw new InvalidException(MongErrorCode.INVALID_TRAINING);
         }
 
-        int exp = mong.getExp() + mongTrainingCode.exp;
+        double exp = mong.getExp() + mongTrainingCode.exp;
         double weight = mong.getWeight() + mongTrainingCode.addWeightValue;
         double strength = mong.getStrength() + mongTrainingCode.addStrengthValue;
         double satiety = mong.getSatiety() + mongTrainingCode.addSatietyValue;
@@ -222,7 +255,7 @@ public class MongService {
                 .grade(MongGrade.EMPTY)
                 .shift(MongShift.GRADUATE)
                 .state(MongState.EMPTY)
-                .exp(0)
+                .exp(0D)
                 .weight(0D)
                 .strength(0D)
                 .satiety(0D)
@@ -268,32 +301,25 @@ public class MongService {
 
         String mongCode = mongCodeList.get(mongCodeList.size() - 1).code();
 
-        double weightPercent = MongUtil.statusToPercent(mong.getGrade(), mong.getWeight());
-        double strengthPercent = MongUtil.statusToPercent(mong.getGrade(), mong.getStrength());
-        double satietyPercent = MongUtil.statusToPercent(mong.getGrade(), mong.getSatiety());
-        double healthyPercent = MongUtil.statusToPercent(mong.getGrade(), mong.getHealthy());
-        double sleepPercent = MongUtil.statusToPercent(mong.getGrade(), mong.getSleep());
-
-        double weight = MongUtil.percentToStatus(mong.getGrade(), weightPercent);
-        double strength = MongUtil.percentToStatus(mong.getGrade(), strengthPercent);
-        double satiety = MongUtil.percentToStatus(mong.getGrade(), satietyPercent);
-        double healthy = MongUtil.percentToStatus(mong.getGrade(), healthyPercent);
-        double sleep = MongUtil.percentToStatus(mong.getGrade(), sleepPercent);
+        MongStatusPercentVo mongStatusPercentVo = MongUtil.statusToPercent(mong.getGrade(), mong);
 
         MongShift mongShift = MongGrade.LAST.equals(mong.getGrade().nextGrade) ? MongShift.GRADUATE_READY : mong.getShift();
         MongState mongState = MongGrade.LAST.equals(mong.getGrade().nextGrade) ? MongState.NORMAL : mong.getState();
-        MongGrade mongGrade = MongGrade.LAST;
+        MongGrade mongGrade = mong.getGrade().nextGrade;
+
+        MongStatusVo mongStatusVo = MongUtil.percentToStatus(mongGrade, mongStatusPercentVo);
 
         mong = mongRepository.save(mong.toBuilder()
                 .mongCode(mongCode)
                 .grade(mongGrade)
                 .shift(mongShift)
                 .state(mongState)
-                .weight(weight)
-                .strength(strength)
-                .satiety(satiety)
-                .healthy(healthy)
-                .sleep(sleep)
+                .weight(mongStatusVo.weight())
+                .strength(mongStatusVo.strength())
+                .satiety(mongStatusVo.satiety())
+                .healthy(mongStatusVo.healthy())
+                .sleep(mongStatusVo.sleep())
+                .exp(mongStatusVo.exp())
                 .build());
 
         MongLogCode mongLogCode = MongLogCode.EVOLUTION;
@@ -316,7 +342,7 @@ public class MongService {
                 .grade(MongGrade.EMPTY)
                 .shift(MongShift.DEAD)
                 .state(MongState.EMPTY)
-                .exp(0)
+                .exp(0D)
                 .weight(0D)
                 .strength(0D)
                 .satiety(0D)
@@ -341,9 +367,16 @@ public class MongService {
         Mong mong = mongRepository.findByIdAndIsActiveTrue(mongId)
                 .orElseThrow(() -> new NotFoundException(MongErrorCode.NOT_FOUND_MONG));
 
+        if (MongGrade.EMPTY.equals(mong.getGrade())) {
+            throw new InvalidException(MongErrorCode.INVALID_FEED);
+        }
+        if (MongGrade.ZERO.equals(mong.getGrade())) {
+            throw new InvalidException(MongErrorCode.INVALID_FEED);
+        }
+
         FoodCode food = codeService.getFoodCode(foodCode);
 
-        int exp = mong.getExp() + MongExp.EAT_THE_FOOD.exp;
+        double exp = mong.getExp() + MongExp.EAT_THE_FOOD.exp;
         double weight = mong.getWeight() + food.addWeightValue();
         double strength = mong.getStrength() + food.addStrengthValue();
         double satiety = mong.getSatiety() + food.addSatietyValue();

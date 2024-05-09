@@ -29,6 +29,15 @@ public class PaymentService {
                 .build());
     }
 
+    public PaymentLog addIncreaseStarPointLog(Long accountId) {
+        return paymentLogRepository.save(PaymentLog.builder()
+                .accountId(accountId)
+                .deviceId(UUID.randomUUID().toString().replace("-", ""))
+                .receipt(UUID.randomUUID().toString().replace("-", ""))
+                .code(PaymentCode.CHARGE_STAR_POINT)
+                .build());
+    }
+
     public PaymentLog addChargeStarPointLog(Long accountId, String deviceId, String receipt) throws InvalidException {
 
         // TODO(" 영수증 확인 로직 ")

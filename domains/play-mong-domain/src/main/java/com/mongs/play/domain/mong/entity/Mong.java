@@ -10,12 +10,14 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.DynamicUpdate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 @Entity
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-@DynamicUpdate
+//@DynamicUpdate
+@EntityListeners(AuditingEntityListener.class)
 @Builder(toBuilder = true)
 public class Mong extends BaseTimeEntity {
 
@@ -57,7 +59,7 @@ public class Mong extends BaseTimeEntity {
 
     @Builder.Default
     @Column(nullable = false)
-    private Integer exp = 0;
+    private Double exp = 0D;
     @Builder.Default
     @Column(nullable = false)
     private Double weight = 0D;
@@ -93,7 +95,7 @@ public class Mong extends BaseTimeEntity {
     @Column(nullable = false)
     private Integer numberOfStroke = 0;
 
-    public void setExp(Integer exp) {
+    public void setExp(Double exp) {
         this.exp = Math.max(0, Math.min(exp, this.grade.nextGrade.evolutionExp));
     }
     public void setWeight(Double weight) {

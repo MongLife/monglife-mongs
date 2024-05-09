@@ -7,6 +7,6 @@ import org.springframework.data.jpa.repository.Query;
 import java.util.List;
 
 public interface MongFeedLogRepository extends JpaRepository<MongFeedLog, Long> {
-    @Query("SELECT MongFeedLog FROM MongFeedLog WHERE mongId = :mongId GROUP BY code ORDER BY createdAt")
+    @Query("SELECT L FROM MongFeedLog L WHERE L.mongId = :mongId ORDER BY L.createdAt DESC")
     List<MongFeedLog> findByMongId(Long mongId);
 }

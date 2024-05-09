@@ -1,5 +1,6 @@
 package com.mongs.play.app.player.external.member.controllerAdvice;
 
+import com.mongs.play.app.player.external.member.controller.PlayerExternalMemberController;
 import com.mongs.play.core.dto.res.ErrorResDto;
 import com.mongs.play.core.error.ErrorCode;
 import com.mongs.play.core.error.GlobalErrorCode;
@@ -10,7 +11,7 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
-@RestControllerAdvice
+@RestControllerAdvice(basePackageClasses = PlayerExternalMemberController.class)
 public class PlayerExternalMemberControllerAdvice {
 
     @ExceptionHandler(MethodArgumentNotValidException.class)

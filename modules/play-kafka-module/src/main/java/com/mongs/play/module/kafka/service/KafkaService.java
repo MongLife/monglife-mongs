@@ -21,8 +21,7 @@ public class KafkaService {
         kafkaTemplate.send(sendTopic, event);
     }
 
-    public <T extends BasicEvent> void sendRollback(KafkaTopic kafkaTopic, T event) {
-        String sendTopic = String.format("rollback.%s", kafkaTopic.topic);
+    public <T extends BasicEvent> void sendRollback(String sendTopic, T event) {
         event.setTopic(sendTopic);
         kafkaTemplate.send(sendTopic, event);
     }
@@ -31,11 +30,11 @@ public class KafkaService {
     @AllArgsConstructor
     public enum KafkaTopic {
 
-        EVOLUTION_MONG("management-external", "evolutionMong"),
-        REGISTER_MONG_COLLECTION("player-internal", "registerMongCollection"),
+        EVOLUTION_MONG("evolutionMong"),
+        REGISTER_MONG_COLLECTION("registerMongCollection"),
+        INCREASE_STAR_POINT("increaseStartPoint"),
         ;
 
-        public final String moduleName;
         public final String topic;
     }
 }

@@ -1,18 +1,16 @@
-package com.mongs.play.app.management.external.dto.res;
+package com.mongs.play.app.management.external.vo;
 
 import lombok.Builder;
 
 @Builder
-public record EvolutionMongResDto(
+public record FeedMongVo(
         Long mongId,
-        String mongCode,
         Double weight,
         Double strength,
         Double satiety,
         Double healthy,
         Double sleep,
         Double exp,
-        String shiftCode,
-        String stateCode
+        Integer payPoint
 ) {
 }

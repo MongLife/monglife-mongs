@@ -8,6 +8,7 @@ import org.springframework.http.HttpStatus;
 @Getter
 @AllArgsConstructor
 public enum ManagementExternalErrorCode implements ErrorCode {
+    INVALID_CHANGE_MONG(HttpStatus.FORBIDDEN, "MANAGEMENT_EXTERNAL-100", "invalid change mong.")
     ;
 
     private final HttpStatus httpStatus;

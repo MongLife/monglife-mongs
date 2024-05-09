@@ -3,8 +3,9 @@ package com.mongs.play.app.management.external.vo;
 import lombok.Builder;
 
 @Builder
-public record SleepingMongVo(
+public record FindFeedLogVo(
         Long mongId,
-        Boolean isSleeping
+        String code,
+        Boolean isCanBuy
 ) {
 }
