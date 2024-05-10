@@ -58,11 +58,11 @@ public class CodeService {
     }
 
     public List<MongCode> getMongCodeByLevel(Integer level) {
-        return mongCodeRepository.findByLevelIsLessThanEqual(level);
+        return mongCodeRepository.findByLevel(level);
     }
 
-    public List<MongCode> getMongCodeByEvolutionPoint(Integer evolutionPoint) {
-        return mongCodeRepository.findByEvolutionPointIsLessThanEqualOrderByEvolutionPointDesc(evolutionPoint);
+    public List<MongCode> getMongCodeByLevelAndEvolutionPoint(Integer level, Integer evolutionPoint) {
+        return mongCodeRepository.findByLevelAndEvolutionPointIsLessThanEqualOrderByEvolutionPointDesc(level, evolutionPoint);
     }
 
     public List<FoodCode> getFoodCodeByBuildVersion(String buildVersion) {

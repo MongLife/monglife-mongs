@@ -28,7 +28,7 @@ public class MongUtil {
         double satietyPercent = MongUtil.statusToPercent(mongGrade.maxStatus, mong.getSatiety());
         double healthyPercent = MongUtil.statusToPercent(mongGrade.maxStatus, mong.getHealthy());
         double sleepPercent = MongUtil.statusToPercent(mongGrade.maxStatus, mong.getSleep());
-        double expPercent = MongUtil.statusToPercent(mongGrade.nextGrade.evolutionExp, mong.getExp());
+        double expPercent = MongUtil.statusToPercent(mongGrade.evolutionExp, mong.getExp());
 
         return MongStatusPercentVo.builder()
                 .weight(weightPercent)
@@ -47,7 +47,7 @@ public class MongUtil {
         double satiety = MongUtil.percentToStatus(mongGrade.maxStatus, mongStatusPercentVo.satiety());
         double healthy = MongUtil.percentToStatus(mongGrade.maxStatus, mongStatusPercentVo.healthy());
         double sleep = MongUtil.percentToStatus(mongGrade.maxStatus, mongStatusPercentVo.sleep());
-        double exp = MongUtil.percentToStatus(mongGrade.nextGrade.evolutionExp, mongStatusPercentVo.exp());
+        double exp = MongUtil.percentToStatus(mongGrade.evolutionExp, mongStatusPercentVo.exp());
 
         return MongStatusVo.builder()
                 .weight(weight)

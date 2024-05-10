@@ -1,9 +1,9 @@
-package com.mongs.play.app.management.external.vo;
+package com.mongs.play.app.management.external.dto.res;
 
 import lombok.Builder;
 
 @Builder
-public record ValidationTrainingMongVo(
+public record ValidationTrainingMongResDto(
         String trainingId,
         Long mongId,
         Boolean isPossible

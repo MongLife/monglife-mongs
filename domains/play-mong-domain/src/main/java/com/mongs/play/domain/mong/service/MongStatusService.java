@@ -2,6 +2,8 @@ package com.mongs.play.domain.mong.service;
 
 import com.mongs.play.core.error.domain.MongErrorCode;
 import com.mongs.play.core.exception.common.NotFoundException;
+import com.mongs.play.domain.mong.annotation.MongStateValidation;
+import com.mongs.play.domain.mong.annotation.MongStatusValidation;
 import com.mongs.play.domain.mong.entity.Mong;
 import com.mongs.play.domain.mong.entity.MongLog;
 import com.mongs.play.domain.mong.enums.MongLogCode;
@@ -17,6 +19,8 @@ public class MongStatusService {
     private final MongRepository mongRepository;
     private final MongLogRepository mongLogRepository;
 
+    @MongStatusValidation
+    @MongStateValidation
     public Mong decreaseWeight(Long mongId, Double weight) {
 
         Mong mong = mongRepository.findByIdAndIsActiveTrue(mongId)
@@ -36,6 +40,8 @@ public class MongStatusService {
         return mong;
     }
 
+    @MongStatusValidation
+    @MongStateValidation
     public Mong decreaseStrength(Long mongId, Double strength) {
 
         Mong mong = mongRepository.findByIdAndIsActiveTrue(mongId)
@@ -55,6 +61,8 @@ public class MongStatusService {
         return mong;
     }
 
+    @MongStatusValidation
+    @MongStateValidation
     public Mong decreaseSatiety(Long mongId, Double satiety) {
 
         Mong mong = mongRepository.findByIdAndIsActiveTrue(mongId)
@@ -74,6 +82,8 @@ public class MongStatusService {
         return mong;
     }
 
+    @MongStatusValidation
+    @MongStateValidation
     public Mong decreaseHealthy(Long mongId, Double healthy) {
 
         Mong mong = mongRepository.findByIdAndIsActiveTrue(mongId)
@@ -93,6 +103,8 @@ public class MongStatusService {
         return mong;
     }
 
+    @MongStatusValidation
+    @MongStateValidation
     public Mong decreaseSleep(Long mongId, Double sleep) {
 
         Mong mong = mongRepository.findByIdAndIsActiveTrue(mongId)
@@ -112,6 +124,8 @@ public class MongStatusService {
         return mong;
     }
 
+    @MongStatusValidation
+    @MongStateValidation
     public Mong increaseWeight(Long mongId, Double weight) {
 
         Mong mong = mongRepository.findByIdAndIsActiveTrue(mongId)
@@ -131,6 +145,8 @@ public class MongStatusService {
         return mong;
     }
 
+    @MongStatusValidation
+    @MongStateValidation
     public Mong increaseStrength(Long mongId, Double strength) {
 
         Mong mong = mongRepository.findByIdAndIsActiveTrue(mongId)
@@ -150,6 +166,8 @@ public class MongStatusService {
         return mong;
     }
 
+    @MongStatusValidation
+    @MongStateValidation
     public Mong increaseSatiety(Long mongId, Double satiety) {
 
         Mong mong = mongRepository.findByIdAndIsActiveTrue(mongId)
@@ -169,6 +187,8 @@ public class MongStatusService {
         return mong;
     }
 
+    @MongStatusValidation
+    @MongStateValidation
     public Mong increaseHealthy(Long mongId, Double healthy) {
 
         Mong mong = mongRepository.findByIdAndIsActiveTrue(mongId)
@@ -188,6 +208,8 @@ public class MongStatusService {
         return mong;
     }
 
+    @MongStatusValidation
+    @MongStateValidation
     public Mong increaseSleep(Long mongId, Double sleep) {
 
         Mong mong = mongRepository.findByIdAndIsActiveTrue(mongId)

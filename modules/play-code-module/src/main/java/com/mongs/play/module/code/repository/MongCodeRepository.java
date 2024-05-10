@@ -7,6 +7,6 @@ import java.util.List;
 
 public interface MongCodeRepository extends MongoRepository<MongCode, String> {
     List<MongCode> findByBuildVersionIsLessThanEqual(String buildVersion);
-    List<MongCode> findByLevelIsLessThanEqual(Integer level);
-    List<MongCode> findByEvolutionPointIsLessThanEqualOrderByEvolutionPointDesc(Integer evolutionPoint);
+    List<MongCode> findByLevel(Integer level);
+    List<MongCode> findByLevelAndEvolutionPointIsLessThanEqualOrderByEvolutionPointDesc(Integer level, Integer evolutionPoint);
 }

@@ -13,10 +13,11 @@ public record MongFeedLogVo(
         Integer delaySeconds
 ) {
     public static MongFeedLogVo of(FoodCode foodCode) {
+        Integer delaySecond = foodCode.delaySeconds();
         return MongFeedLogVo.builder()
                 .code(foodCode.code())
-                .lastBuyAt(LocalDateTime.now().minusSeconds(foodCode.delaySeconds()))
-                .delaySeconds(foodCode.delaySeconds())
+                .lastBuyAt(LocalDateTime.now().minusSeconds(delaySecond + 1))
+                .delaySeconds(delaySecond)
                 .build();
     }
 

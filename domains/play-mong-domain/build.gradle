@@ -2,6 +2,7 @@ dependencies {
     api project(':modules:play-jpa-module')
     api project(':modules:play-code-module')
 
+    api 'org.springframework.boot:spring-boot-starter-aop'
     runtimeOnly 'com.mysql:mysql-connector-j'
 }
 

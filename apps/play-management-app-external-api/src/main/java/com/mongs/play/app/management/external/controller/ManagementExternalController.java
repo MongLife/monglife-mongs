@@ -3,7 +3,6 @@ package com.mongs.play.app.management.external.controller;
 import com.mongs.play.app.management.external.dto.req.FeedMongReqDto;
 import com.mongs.play.app.management.external.dto.req.RegisterMongReqDto;
 import com.mongs.play.app.management.external.dto.req.TrainingMongReqDto;
-import com.mongs.play.app.management.external.dto.req.ValidationTrainingMongReqDto;
 import com.mongs.play.app.management.external.dto.res.*;
 import com.mongs.play.app.management.external.service.ManagementExternalService;
 import com.mongs.play.app.management.external.vo.*;
@@ -141,14 +140,15 @@ public class ManagementExternalController {
     }
 
     @GetMapping("/validationTraining/{mongId}")
-    public ResponseEntity<ValidationTrainingMongVo> validationTrainingMong(
+    public ResponseEntity<ValidationTrainingMongResDto> validationTrainingMong(
             @PathVariable("mongId") Long mongId, @RequestParam("trainingCode") String trainingCode) {
 
         ValidationTrainingMongVo validationTrainingMongVo = managementExternalService.validationTrainingMong(mongId, trainingCode);
 
-        return ResponseEntity.ok().body(ValidationTrainingMongVo.builder()
+        return ResponseEntity.ok().body(ValidationTrainingMongResDto.builder()
                 .mongId(validationTrainingMongVo.mongId())
                 .isPossible(validationTrainingMongVo.isPossible())
+                .trainingId(validationTrainingMongVo.trainingId())
                 .build());
     }
 
@@ -158,9 +158,10 @@ public class ManagementExternalController {
             @RequestBody TrainingMongReqDto trainingMongReqDto) {
 
         Long accountId = passportDetail.getId();
+        String trainingId = trainingMongReqDto.trainingId();
         String trainingCode = trainingMongReqDto.trainingCode();
 
-        TrainingMongVo trainingMongVo = managementExternalService.trainingMong(accountId, mongId, trainingCode);
+        TrainingMongVo trainingMongVo = managementExternalService.trainingMong(accountId, mongId, trainingId, trainingCode);
 
         return ResponseEntity.ok().body(TrainingMongResDto.builder()
                 .mongId(trainingMongVo.mongId())

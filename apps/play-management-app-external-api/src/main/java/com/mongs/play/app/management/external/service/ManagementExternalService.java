@@ -5,14 +5,11 @@ import com.mongs.play.core.error.app.ManagementExternalErrorCode;
 import com.mongs.play.core.exception.app.ManagementExternalException;
 import com.mongs.play.domain.mong.entity.Mong;
 import com.mongs.play.domain.mong.enums.MongTrainingCode;
-import com.mongs.play.domain.mong.service.MongFeedLogService;
 import com.mongs.play.domain.mong.service.MongService;
 import com.mongs.play.domain.mong.utils.MongUtil;
 import com.mongs.play.domain.mong.vo.MongFeedLogVo;
 import com.mongs.play.domain.mong.vo.MongStatusPercentVo;
-import com.mongs.play.module.kafka.event.commit.EvolutionMongEvent;
 import com.mongs.play.module.kafka.service.KafkaService;
-import com.mongs.play.module.kafka.service.KafkaService.KafkaTopic;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -20,6 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.UUID;
 
 @Slf4j
 @Service
@@ -27,7 +25,6 @@ import java.util.List;
 public class ManagementExternalService {
 
     private final MongService mongService;
-    private final MongFeedLogService mongFeedLogService;
     private final KafkaService kafkaService;
 
     @Transactional(readOnly = true)
@@ -113,7 +110,7 @@ public class ManagementExternalService {
             throw new ManagementExternalException(ManagementExternalErrorCode.INVALID_CHANGE_MONG);
         }
 
-        double exp = MongUtil.statusToPercent(mong.getGrade().nextGrade.evolutionExp, mong.getExp());
+        double exp = MongUtil.statusToPercent(mong.getGrade().evolutionExp, mong.getExp());
 
         return StrokeMongVo.builder()
                 .mongId(mong.getId())
@@ -145,7 +142,7 @@ public class ManagementExternalService {
             throw new ManagementExternalException(ManagementExternalErrorCode.INVALID_CHANGE_MONG);
         }
 
-        double exp = MongUtil.statusToPercent(mong.getGrade().nextGrade.evolutionExp, mong.getExp());
+        double exp = MongUtil.statusToPercent(mong.getGrade().evolutionExp, mong.getExp());
 
         return PoopCleanMongVo.builder()
                 .mongId(mong.getId())
@@ -164,13 +161,19 @@ public class ManagementExternalService {
         return ValidationTrainingMongVo.builder()
                 .mongId(mongId)
                 .isPossible(isPossible)
+                .trainingId(UUID.randomUUID().toString().replace("-", ""))
                 .build();
     }
 
     @Transactional
-    public TrainingMongVo trainingMong(Long accountId, Long mongId, String trainingCode) {
+    public TrainingMongVo trainingMong(Long accountId, Long mongId, String trainingId, String trainingCode) {
 
         MongTrainingCode mongTrainingCode = MongTrainingCode.findMongTrainingCode(trainingCode);
+
+        // TODO(트레이닝 아이디 유효성 체크: validationTrainingMong() 에서 생성한 trainingId 가 맞는지 확인)
+//        if () {
+//            throw new ManagementExternalException(ManagementExternalErrorCode.INVALID_TRAINING_ID);
+//        }
 
         Mong mong = mongService.trainingMong(mongId, 1, mongTrainingCode);
 
@@ -179,7 +182,7 @@ public class ManagementExternalService {
         }
 
         double strength = MongUtil.statusToPercent(mong.getGrade().maxStatus, mong.getStrength());
-        double exp = MongUtil.statusToPercent(mong.getGrade().nextGrade.evolutionExp, mong.getExp());
+        double exp = MongUtil.statusToPercent(mong.getGrade().evolutionExp, mong.getExp());
 
         return TrainingMongVo.builder()
                 .mongId(mong.getId())
@@ -246,7 +249,7 @@ public class ManagementExternalService {
             throw new ManagementExternalException(ManagementExternalErrorCode.INVALID_CHANGE_MONG);
         }
 
-        List<MongFeedLogVo> mongFeedLogVoList = mongFeedLogService.getFeedLog(mongId);
+        List<MongFeedLogVo> mongFeedLogVoList = mongService.findMongFeedLog(mongId);
 
         return mongFeedLogVoList.stream()
                 .map(mongFeedLogVo -> FindFeedLogVo.builder()

@@ -15,13 +15,13 @@ import lombok.Getter;
 @AllArgsConstructor
 public enum MongGrade {
 
-    END("GD006", "졸업 완료", 0D, 0D, null),
-    LAST("GD005", "졸업 준비", 500D, 1000D, MongGrade.END),
-    THIRD("GD004", "3단계", 300D, 500D, MongGrade.LAST),
-    SECOND("GD003", "2단계", 100D, 300D, MongGrade.THIRD),
-    FIRST("GD002", "1단계", 0D, 100D, MongGrade.SECOND),
-    ZERO("GD001", "알", 0D, 100D, MongGrade.FIRST),
-    EMPTY("GD000", "없음",0D, 0D, MongGrade.ZERO)
+    END("GD006", "졸업 완료", Double.MAX_VALUE, Double.MAX_VALUE, null, -1),
+    LAST("GD005", "졸업 준비", Double.MAX_VALUE, Double.MAX_VALUE, MongGrade.END, -1),
+    THIRD("GD004", "3단계", 500D, 500D, MongGrade.LAST, 3),
+    SECOND("GD003", "2단계", 300D, 300D, MongGrade.THIRD, 2),
+    FIRST("GD002", "1단계", 100D, 100D, MongGrade.SECOND, 1),
+    ZERO("GD001", "알", 0D, 100D, MongGrade.FIRST, 0),
+    EMPTY("GD000", "없음",0D, 0D, MongGrade.ZERO, -1)
     ;
 
     public final String code;
@@ -29,4 +29,5 @@ public enum MongGrade {
     public final Double evolutionExp;
     public final Double maxStatus;
     public final MongGrade nextGrade;
+    public final Integer level;
 }
