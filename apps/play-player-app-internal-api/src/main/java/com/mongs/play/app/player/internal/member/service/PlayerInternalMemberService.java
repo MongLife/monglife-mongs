@@ -24,7 +24,7 @@ public class PlayerInternalMemberService {
 
         return IncreaseStarPointVo.builder()
                 .accountId(member.getAccountId())
-                .starPoint(member.getStarPoint())
+                .addStarPoint(member.getStarPoint())
                 .build();
     }
 }

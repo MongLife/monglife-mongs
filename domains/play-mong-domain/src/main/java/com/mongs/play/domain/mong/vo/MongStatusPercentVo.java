@@ -5,7 +5,6 @@ import lombok.Builder;
 
 @Builder
 public record MongStatusPercentVo(
-        Double weight,
         Double strength,
         Double satiety,
         Double healthy,

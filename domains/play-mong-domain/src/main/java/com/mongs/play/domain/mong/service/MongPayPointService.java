@@ -13,7 +13,7 @@ public class MongPayPointService {
 
     private final MongRepository mongRepository;
 
-    public Mong modifyIncreasePayPoint(Long mongId, Integer payPoint) throws NotFoundException {
+    public Mong increasePayPoint(Long mongId, Integer payPoint) throws NotFoundException {
 
         Mong mong = mongRepository.findByIdAndIsActiveTrue(mongId)
                 .orElseThrow(() -> new NotFoundException(MongErrorCode.NOT_FOUND_MONG));
@@ -23,7 +23,7 @@ public class MongPayPointService {
                 .build());
     }
 
-    public Mong modifyDecreasePayPoint(Long mongId, Integer payPoint) throws NotFoundException {
+    public Mong decreasePayPoint(Long mongId, Integer payPoint) throws NotFoundException {
 
         Mong mong = mongRepository.findByIdAndIsActiveTrue(mongId)
                 .orElseThrow(() -> new NotFoundException(MongErrorCode.NOT_FOUND_MONG));

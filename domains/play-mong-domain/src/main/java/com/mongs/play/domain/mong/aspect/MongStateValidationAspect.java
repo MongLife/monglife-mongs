@@ -3,6 +3,7 @@ package com.mongs.play.domain.mong.aspect;
 import com.mongs.play.domain.mong.annotation.MongStateValidation;
 import com.mongs.play.domain.mong.entity.Mong;
 import com.mongs.play.domain.mong.service.MongService;
+import com.mongs.play.domain.mong.vo.MongVo;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.ProceedingJoinPoint;
@@ -26,10 +27,13 @@ public class MongStateValidationAspect {
 
     @Around(value = "cut() && @annotation(mongStateValidation)")
     public Object afterReturnStateValidation(ProceedingJoinPoint joinPoint, MongStateValidation mongStateValidation) throws Throwable {
-        Mong returnMong = (Mong) joinPoint.proceed();
 
-        // TODO(state 변경 로직 생성)
+        Object returnValue = joinPoint.proceed();
 
-        return returnMong;
+        if (returnValue instanceof MongVo mongVo) {
+            // TODO(state 변경 로직 생성)
+        }
+
+        return returnValue;
     }
 }

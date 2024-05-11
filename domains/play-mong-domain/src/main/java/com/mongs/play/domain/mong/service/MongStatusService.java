@@ -21,20 +21,20 @@ public class MongStatusService {
 
     @MongStatusValidation
     @MongStateValidation
-    public Mong decreaseWeight(Long mongId, Double weight) {
+    public Mong decreaseWeight(Long mongId, Double subWeight) {
 
         Mong mong = mongRepository.findByIdAndIsActiveTrue(mongId)
                 .orElseThrow(() -> new NotFoundException(MongErrorCode.NOT_FOUND_MONG));
 
         mong = mongRepository.save(mong.toBuilder()
-                .weight(mong.getWeight() - weight)
+                .weight(mong.getWeight() - subWeight)
                 .build());
 
         MongLogCode mongLogCode = MongLogCode.DECREASE_WEIGHT;
         mongLogRepository.save(MongLog.builder()
                 .mongId(mong.getId())
                 .mongLogCode(mongLogCode)
-                .message(String.format("%s 만큼 %s", weight, mongLogCode.message))
+                .message(String.format("%s:%s", mongLogCode.message, subWeight))
                 .build());
 
         return mong;
@@ -42,20 +42,20 @@ public class MongStatusService {
 
     @MongStatusValidation
     @MongStateValidation
-    public Mong decreaseStrength(Long mongId, Double strength) {
+    public Mong decreaseStrength(Long mongId, Double subStrength) {
 
         Mong mong = mongRepository.findByIdAndIsActiveTrue(mongId)
                 .orElseThrow(() -> new NotFoundException(MongErrorCode.NOT_FOUND_MONG));
 
         mong = mongRepository.save(mong.toBuilder()
-                .strength(mong.getStrength() - strength)
+                .strength(mong.getStrength() - subStrength)
                 .build());
 
         MongLogCode mongLogCode = MongLogCode.DECREASE_STRENGTH;
         mongLogRepository.save(MongLog.builder()
                 .mongId(mong.getId())
                 .mongLogCode(mongLogCode)
-                .message(String.format("%s 만큼 %s", strength, mongLogCode.message))
+                .message(String.format("%s:%s", mongLogCode.message, subStrength))
                 .build());
 
         return mong;
@@ -63,20 +63,20 @@ public class MongStatusService {
 
     @MongStatusValidation
     @MongStateValidation
-    public Mong decreaseSatiety(Long mongId, Double satiety) {
+    public Mong decreaseSatiety(Long mongId, Double subSatiety) {
 
         Mong mong = mongRepository.findByIdAndIsActiveTrue(mongId)
                 .orElseThrow(() -> new NotFoundException(MongErrorCode.NOT_FOUND_MONG));
 
         mong = mongRepository.save(mong.toBuilder()
-                .satiety(mong.getSatiety() - satiety)
+                .satiety(mong.getSatiety() - subSatiety)
                 .build());
 
         MongLogCode mongLogCode = MongLogCode.DECREASE_SATIETY;
         mongLogRepository.save(MongLog.builder()
                 .mongId(mong.getId())
                 .mongLogCode(mongLogCode)
-                .message(String.format("%s 만큼 %s", satiety, mongLogCode.message))
+                .message(String.format("%s:%s", mongLogCode.message, subSatiety))
                 .build());
 
         return mong;
@@ -84,20 +84,20 @@ public class MongStatusService {
 
     @MongStatusValidation
     @MongStateValidation
-    public Mong decreaseHealthy(Long mongId, Double healthy) {
+    public Mong decreaseHealthy(Long mongId, Double subHealthy) {
 
         Mong mong = mongRepository.findByIdAndIsActiveTrue(mongId)
                 .orElseThrow(() -> new NotFoundException(MongErrorCode.NOT_FOUND_MONG));
 
         mong = mongRepository.save(mong.toBuilder()
-                .healthy(mong.getHealthy() - healthy)
+                .healthy(mong.getHealthy() - subHealthy)
                 .build());
 
         MongLogCode mongLogCode = MongLogCode.DECREASE_HEALTHY;
         mongLogRepository.save(MongLog.builder()
                 .mongId(mong.getId())
                 .mongLogCode(mongLogCode)
-                .message(String.format("%s 만큼 %s", healthy, mongLogCode.message))
+                .message(String.format("%s:%s", mongLogCode.message, subHealthy))
                 .build());
 
         return mong;
@@ -105,20 +105,39 @@ public class MongStatusService {
 
     @MongStatusValidation
     @MongStateValidation
-    public Mong decreaseSleep(Long mongId, Double sleep) {
+    public Mong decreaseSleep(Long mongId, Double subSleep) {
 
         Mong mong = mongRepository.findByIdAndIsActiveTrue(mongId)
                 .orElseThrow(() -> new NotFoundException(MongErrorCode.NOT_FOUND_MONG));
 
         mong = mongRepository.save(mong.toBuilder()
-                .sleep(mong.getSleep() - sleep)
+                .sleep(mong.getSleep() - subSleep)
                 .build());
 
         MongLogCode mongLogCode = MongLogCode.DECREASE_SLEEP;
         mongLogRepository.save(MongLog.builder()
                 .mongId(mong.getId())
                 .mongLogCode(mongLogCode)
-                .message(String.format("%s 만큼 %s", sleep, mongLogCode.message))
+                .message(String.format("%s:%s", mongLogCode.message, subSleep))
+                .build());
+
+        return mong;
+    }
+
+    public Mong decreasePoopCount(Long mongId, Integer subPoopCount) {
+
+        Mong mong = mongRepository.findByIdAndIsActiveTrue(mongId)
+                .orElseThrow(() -> new NotFoundException(MongErrorCode.NOT_FOUND_MONG));
+
+        mong = mongRepository.save(mong.toBuilder()
+                .poopCount(mong.getPoopCount() - subPoopCount)
+                .build());
+
+        MongLogCode mongLogCode = MongLogCode.INCREASE_POOP_COUNT;
+        mongLogRepository.save(MongLog.builder()
+                .mongId(mong.getId())
+                .mongLogCode(mongLogCode)
+                .message(String.format("%s:%s", mongLogCode.message, subPoopCount))
                 .build());
 
         return mong;
@@ -126,20 +145,20 @@ public class MongStatusService {
 
     @MongStatusValidation
     @MongStateValidation
-    public Mong increaseWeight(Long mongId, Double weight) {
+    public Mong increaseWeight(Long mongId, Double addWeight) {
 
         Mong mong = mongRepository.findByIdAndIsActiveTrue(mongId)
                 .orElseThrow(() -> new NotFoundException(MongErrorCode.NOT_FOUND_MONG));
 
         mong = mongRepository.save(mong.toBuilder()
-                .weight(mong.getWeight() + weight)
+                .weight(mong.getWeight() + addWeight)
                 .build());
 
         MongLogCode mongLogCode = MongLogCode.INCREASE_WEIGHT;
         mongLogRepository.save(MongLog.builder()
                 .mongId(mong.getId())
                 .mongLogCode(mongLogCode)
-                .message(String.format("%s 만큼 %s", weight, mongLogCode.message))
+                .message(String.format("%s:%s", mongLogCode.message, addWeight))
                 .build());
 
         return mong;
@@ -147,20 +166,20 @@ public class MongStatusService {
 
     @MongStatusValidation
     @MongStateValidation
-    public Mong increaseStrength(Long mongId, Double strength) {
+    public Mong increaseStrength(Long mongId, Double addStrength) {
 
         Mong mong = mongRepository.findByIdAndIsActiveTrue(mongId)
                 .orElseThrow(() -> new NotFoundException(MongErrorCode.NOT_FOUND_MONG));
 
         mong = mongRepository.save(mong.toBuilder()
-                .strength(mong.getStrength() + strength)
+                .strength(mong.getStrength() + addStrength)
                 .build());
 
         MongLogCode mongLogCode = MongLogCode.INCREASE_STRENGTH;
         mongLogRepository.save(MongLog.builder()
                 .mongId(mong.getId())
                 .mongLogCode(mongLogCode)
-                .message(String.format("%s 만큼 %s", strength, mongLogCode.message))
+                .message(String.format("%s:%s", mongLogCode.message, addStrength))
                 .build());
 
         return mong;
@@ -168,20 +187,20 @@ public class MongStatusService {
 
     @MongStatusValidation
     @MongStateValidation
-    public Mong increaseSatiety(Long mongId, Double satiety) {
+    public Mong increaseSatiety(Long mongId, Double addSatiety) {
 
         Mong mong = mongRepository.findByIdAndIsActiveTrue(mongId)
                 .orElseThrow(() -> new NotFoundException(MongErrorCode.NOT_FOUND_MONG));
 
         mong = mongRepository.save(mong.toBuilder()
-                .satiety(mong.getSatiety() + satiety)
+                .satiety(mong.getSatiety() + addSatiety)
                 .build());
 
         MongLogCode mongLogCode = MongLogCode.INCREASE_SATIETY;
         mongLogRepository.save(MongLog.builder()
                 .mongId(mong.getId())
                 .mongLogCode(mongLogCode)
-                .message(String.format("%s 만큼 %s", satiety, mongLogCode.message))
+                .message(String.format("%s:%s", mongLogCode.message, addSatiety))
                 .build());
 
         return mong;
@@ -189,20 +208,20 @@ public class MongStatusService {
 
     @MongStatusValidation
     @MongStateValidation
-    public Mong increaseHealthy(Long mongId, Double healthy) {
+    public Mong increaseHealthy(Long mongId, Double addHealthy) {
 
         Mong mong = mongRepository.findByIdAndIsActiveTrue(mongId)
                 .orElseThrow(() -> new NotFoundException(MongErrorCode.NOT_FOUND_MONG));
 
         mong = mongRepository.save(mong.toBuilder()
-                .healthy(mong.getHealthy() + healthy)
+                .healthy(mong.getHealthy() + addHealthy)
                 .build());
 
         MongLogCode mongLogCode = MongLogCode.INCREASE_HEALTHY;
         mongLogRepository.save(MongLog.builder()
                 .mongId(mong.getId())
                 .mongLogCode(mongLogCode)
-                .message(String.format("%s 만큼 %s", healthy, mongLogCode.message))
+                .message(String.format("%s:%s", mongLogCode.message, addHealthy))
                 .build());
 
         return mong;
@@ -210,20 +229,39 @@ public class MongStatusService {
 
     @MongStatusValidation
     @MongStateValidation
-    public Mong increaseSleep(Long mongId, Double sleep) {
+    public Mong increaseSleep(Long mongId, Double addSleep) {
 
         Mong mong = mongRepository.findByIdAndIsActiveTrue(mongId)
                 .orElseThrow(() -> new NotFoundException(MongErrorCode.NOT_FOUND_MONG));
 
         mong = mongRepository.save(mong.toBuilder()
-                .sleep(mong.getSleep() + sleep)
+                .sleep(mong.getSleep() + addSleep)
                 .build());
 
         MongLogCode mongLogCode = MongLogCode.INCREASE_SLEEP;
         mongLogRepository.save(MongLog.builder()
                 .mongId(mong.getId())
                 .mongLogCode(mongLogCode)
-                .message(String.format("%s 만큼 %s", sleep, mongLogCode.message))
+                .message(String.format("%s:%s", mongLogCode.message, addSleep))
+                .build());
+
+        return mong;
+    }
+
+    public Mong increasePoopCount(Long mongId, Integer addPoopCount) {
+
+        Mong mong = mongRepository.findByIdAndIsActiveTrue(mongId)
+                .orElseThrow(() -> new NotFoundException(MongErrorCode.NOT_FOUND_MONG));
+
+        mong = mongRepository.save(mong.toBuilder()
+                .poopCount(mong.getPoopCount() + addPoopCount)
+                .build());
+
+        MongLogCode mongLogCode = MongLogCode.INCREASE_POOP_COUNT;
+        mongLogRepository.save(MongLog.builder()
+                .mongId(mong.getId())
+                .mongLogCode(mongLogCode)
+                .message(String.format("%s:%s", mongLogCode.message, addPoopCount))
                 .build());
 
         return mong;

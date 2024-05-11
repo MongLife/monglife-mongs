@@ -1,5 +1,6 @@
 rootProject.name = 'domains'
 
+include 'play-task-domain'
 include 'play-account-domain'
 include 'play-collection-domain'
 include 'play-feedback-domain'

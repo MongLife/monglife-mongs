@@ -23,7 +23,6 @@ public class MongUtil {
 
     public static MongStatusPercentVo statusToPercent(MongGrade mongGrade, Mong mong) {
 
-        double weightPercent = MongUtil.statusToPercent(mongGrade.maxStatus, mong.getWeight());
         double strengthPercent = MongUtil.statusToPercent(mongGrade.maxStatus, mong.getStrength());
         double satietyPercent = MongUtil.statusToPercent(mongGrade.maxStatus, mong.getSatiety());
         double healthyPercent = MongUtil.statusToPercent(mongGrade.maxStatus, mong.getHealthy());
@@ -31,7 +30,6 @@ public class MongUtil {
         double expPercent = MongUtil.statusToPercent(mongGrade.evolutionExp, mong.getExp());
 
         return MongStatusPercentVo.builder()
-                .weight(weightPercent)
                 .strength(strengthPercent)
                 .satiety(satietyPercent)
                 .healthy(healthyPercent)
@@ -42,7 +40,6 @@ public class MongUtil {
 
     public static MongStatusVo percentToStatus(MongGrade mongGrade, MongStatusPercentVo mongStatusPercentVo) {
 
-        double weight = MongUtil.percentToStatus(mongGrade.maxStatus, mongStatusPercentVo.weight());
         double strength = MongUtil.percentToStatus(mongGrade.maxStatus, mongStatusPercentVo.strength());
         double satiety = MongUtil.percentToStatus(mongGrade.maxStatus, mongStatusPercentVo.satiety());
         double healthy = MongUtil.percentToStatus(mongGrade.maxStatus, mongStatusPercentVo.healthy());
@@ -50,7 +47,6 @@ public class MongUtil {
         double exp = MongUtil.percentToStatus(mongGrade.evolutionExp, mongStatusPercentVo.exp());
 
         return MongStatusVo.builder()
-                .weight(weight)
                 .strength(strength)
                 .satiety(satiety)
                 .healthy(healthy)

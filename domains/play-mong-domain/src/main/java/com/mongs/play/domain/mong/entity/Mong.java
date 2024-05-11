@@ -95,12 +95,39 @@ public class Mong extends BaseTimeEntity {
 
     public Mong validation() {
         this.exp = Math.max(0, Math.min(this.exp, this.grade.evolutionExp));
-        this.weight = Math.max(0, Math.min(this.weight, this.grade.maxStatus));
         this.strength = Math.max(0, Math.min(this.strength, this.grade.maxStatus));
         this.satiety = Math.max(0, Math.min(this.satiety, this.grade.maxStatus));
         this.healthy = Math.max(0, Math.min(this.healthy, this.grade.maxStatus));
         this.sleep = Math.max(0, Math.min(this.sleep, this.grade.maxStatus));
         this.poopCount = Math.max(0, Math.min(this.poopCount, 4));
         return this;
+    }
+
+    public static Mong copy(Mong mong) {
+        return Mong.builder()
+                .isActive(mong.getIsActive())
+                .id(mong.getId())
+                .accountId(mong.getAccountId())
+                .name(mong.getName())
+                .sleepTime(mong.getSleepTime())
+                .wakeUpTime(mong.getWakeUpTime())
+                .mongCode(mong.getMongCode())
+                .payPoint(mong.getPayPoint())
+                .grade(mong.getGrade())
+                .shift(mong.getShift())
+                .state(mong.getState())
+                .exp(mong.getExp())
+                .weight(mong.getWeight())
+                .strength(mong.getStrength())
+                .satiety(mong.getSatiety())
+                .healthy(mong.getHealthy())
+                .sleep(mong.getSleep())
+                .poopCount(mong.getPoopCount())
+                .isSleeping(mong.getIsSleeping())
+                .evolutionPoint(mong.getEvolutionPoint())
+                .penalty(mong.getPenalty())
+                .numberOfTraining(mong.getNumberOfTraining())
+                .numberOfStroke(mong.getNumberOfStroke())
+                .build();
     }
 }

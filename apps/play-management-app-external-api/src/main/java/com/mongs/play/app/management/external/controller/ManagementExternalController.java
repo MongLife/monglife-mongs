@@ -148,7 +148,6 @@ public class ManagementExternalController {
         return ResponseEntity.ok().body(ValidationTrainingMongResDto.builder()
                 .mongId(validationTrainingMongVo.mongId())
                 .isPossible(validationTrainingMongVo.isPossible())
-                .trainingId(validationTrainingMongVo.trainingId())
                 .build());
     }
 
@@ -158,14 +157,17 @@ public class ManagementExternalController {
             @RequestBody TrainingMongReqDto trainingMongReqDto) {
 
         Long accountId = passportDetail.getId();
-        String trainingId = trainingMongReqDto.trainingId();
         String trainingCode = trainingMongReqDto.trainingCode();
 
-        TrainingMongVo trainingMongVo = managementExternalService.trainingMong(accountId, mongId, trainingId, trainingCode);
+        TrainingMongVo trainingMongVo = managementExternalService.trainingMong(accountId, mongId, trainingCode);
 
         return ResponseEntity.ok().body(TrainingMongResDto.builder()
                 .mongId(trainingMongVo.mongId())
+                .weight(trainingMongVo.weight())
                 .strength(trainingMongVo.strength())
+                .satiety(trainingMongVo.satiety())
+                .healthy(trainingMongVo.healthy())
+                .sleep(trainingMongVo.sleep())
                 .exp(trainingMongVo.exp())
                 .payPoint(trainingMongVo.payPoint())
                 .build());

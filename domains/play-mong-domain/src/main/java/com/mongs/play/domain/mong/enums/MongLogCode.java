@@ -32,6 +32,7 @@ public enum MongLogCode {
     INCREASE_SATIETY("AT202", "포만감 증가"),
     INCREASE_HEALTHY("AT203", "체력 증가"),
     INCREASE_SLEEP("AT204", "피로도 증가"),
+    INCREASE_POOP_COUNT("AT205", "배변 증가"),
     ;
 
     public final String code;

@@ -15,6 +15,7 @@ include 'apps:play-management-app-worker'
 include 'apps:play-player-app-external-api'
 include 'apps:play-player-app-internal-api'
 
+include 'domains:play-task-domain'
 include 'domains:play-account-domain'
 include 'domains:play-collection-domain'
 include 'domains:play-feedback-domain'

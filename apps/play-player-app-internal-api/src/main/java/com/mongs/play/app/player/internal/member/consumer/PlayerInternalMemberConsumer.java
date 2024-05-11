@@ -2,7 +2,7 @@ package com.mongs.play.app.player.internal.member.consumer;
 
 import com.mongs.play.app.player.internal.member.service.PlayerInternalMemberService;
 import com.mongs.play.app.player.internal.member.vo.IncreaseStarPointVo;
-import com.mongs.play.module.kafka.event.commit.IncreaseStarPointEvent;
+import com.mongs.play.module.kafka.event.playerInternal.IncreaseStarPointEvent;
 import com.mongs.play.module.kafka.service.KafkaService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -21,14 +21,18 @@ public class PlayerInternalMemberConsumer {
     public void increaseStarPoint(IncreaseStarPointEvent event) {
 
         Long accountId = event.getAccountId();
-        Integer starPoint = event.getStarPoint();
+        Integer starPoint = event.getAddStarPoint();
 
-        IncreaseStarPointVo increaseStarPointVo =
-                playerInternalMemberService.increaseStarPoint(accountId, starPoint);
+        IncreaseStarPointVo increaseStarPointVo = playerInternalMemberService.increaseStarPoint(accountId, starPoint);
 
         kafkaService.sendCommit(KafkaService.KafkaTopic.INCREASE_STAR_POINT, IncreaseStarPointEvent.builder()
                 .accountId(increaseStarPointVo.accountId())
-                .starPoint(increaseStarPointVo.starPoint())
+                .addStarPoint(increaseStarPointVo.addStarPoint())
                 .build());
+    }
+
+    @KafkaListener(topics = { "commit.increasePayPoint" })
+    public void increasePayPoint() {
+
     }
 }

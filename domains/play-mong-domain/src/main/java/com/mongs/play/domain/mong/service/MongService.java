@@ -11,6 +11,7 @@ import com.mongs.play.domain.mong.repository.MongFeedLogRepository;
 import com.mongs.play.domain.mong.vo.MongFeedLogVo;
 import com.mongs.play.domain.mong.vo.MongStatusPercentVo;
 import com.mongs.play.domain.mong.vo.MongStatusVo;
+import com.mongs.play.domain.mong.vo.MongVo;
 import com.mongs.play.module.code.entity.FoodCode;
 import com.mongs.play.module.code.entity.MongCode;
 import com.mongs.play.module.code.service.CodeService;
@@ -43,9 +44,15 @@ public class MongService {
         return mongRepository.findByAccountIdAndIsActiveTrue(accountId);
     }
 
-    public Mong findMongByMongId(Long mongId) {
-        return mongRepository.findById(mongId)
+    public MongVo findMongVoByMongId(Long mongId) {
+
+        Mong mong = mongRepository.findByIdAndIsActiveTrue(mongId)
                 .orElseThrow(() -> new NotFoundException(MongErrorCode.NOT_FOUND_MONG));
+
+        return MongVo.builder()
+                .pastMong(Mong.copy(mong))
+                .mong(mong)
+                .build();
     }
 
     @MongStatusValidation
@@ -78,10 +85,9 @@ public class MongService {
     @MongStatusValidation
     public Mong removeMong(Long mongId) throws NotFoundException {
 
-        Mong mong = mongRepository.findByIdAndIsActiveTrue(mongId)
-                .orElseThrow(() -> new NotFoundException(MongErrorCode.NOT_FOUND_MONG));
+        Mong mong = findMongVoByMongId(mongId).mong();
 
-        Mong newMong = mongRepository.save(mong.toBuilder()
+        mong = mongRepository.save(mong.toBuilder()
                 .isActive(false)
                 .grade(MongGrade.EMPTY)
                 .shift(MongShift.DELETE)
@@ -98,20 +104,20 @@ public class MongService {
 
         MongLogCode mongLogCode = MongLogCode.DELETE;
         mongLogRepository.save(MongLog.builder()
-                .mongId(newMong.getId())
+                .mongId(mong.getId())
                 .mongLogCode(mongLogCode)
                 .message(String.format("%s", mongLogCode.message))
                 .build());
 
-        return newMong;
+        return mong;
     }
 
     @MongStatusValidation
     @MongEvolutionValidation
-    public Mong strokeMong(Long mongId, Integer strokeCount) throws NotFoundException {
+    public MongVo strokeMong(Long mongId, Integer strokeCount) throws NotFoundException {
 
-        Mong mong = mongRepository.findByIdAndIsActiveTrue(mongId)
-                .orElseThrow(() -> new NotFoundException(MongErrorCode.NOT_FOUND_MONG));
+        MongVo mongVo = findMongVoByMongId(mongId);
+        Mong mong = mongVo.mong();
 
         if (MongGrade.EMPTY.equals(mong.getGrade())) {
             throw new InvalidException(MongErrorCode.INVALID_STROKE);
@@ -126,25 +132,25 @@ public class MongService {
         int numberOfStroke = mong.getNumberOfStroke() + strokeCount;
         double exp = mong.getExp() + MongExp.STROKE.exp;
 
-        Mong newMong = mongRepository.save(mong.toBuilder()
+        mong = mongRepository.save(mong.toBuilder()
                 .exp(exp)
                 .numberOfStroke(numberOfStroke)
                 .build());
 
         MongLogCode mongLogCode = MongLogCode.STROKE;
         mongLogRepository.save(MongLog.builder()
-                .mongId(newMong.getId())
+                .mongId(mong.getId())
                 .mongLogCode(mongLogCode)
                 .message(String.format("%s:%d", mongLogCode.message, strokeCount))
                 .build());
 
-        return newMong;
+        return mongVo;
     }
 
-    public Mong sleepingMong(Long mongId) throws NotFoundException {
+    public MongVo sleepingMong(Long mongId) throws NotFoundException {
 
-        Mong mong = mongRepository.findByIdAndIsActiveTrue(mongId)
-                .orElseThrow(() -> new NotFoundException(MongErrorCode.NOT_FOUND_MONG));
+        MongVo mongVo = findMongVoByMongId(mongId);
+        Mong mong = mongVo.mong();
 
         if (MongGrade.EMPTY.equals(mong.getGrade())) {
             throw new InvalidException(mong.getIsSleeping() ? MongErrorCode.INVALID_AWAKE : MongErrorCode.INVALID_SLEEPING);
@@ -158,26 +164,26 @@ public class MongService {
 
         boolean isSleeping = !mong.getIsSleeping();
 
-        Mong newMong = mongRepository.save(mong.toBuilder()
+        mong = mongRepository.save(mong.toBuilder()
                 .isSleeping(isSleeping)
                 .build());
 
-        MongLogCode mongLogCode = newMong.getIsSleeping() ? MongLogCode.SLEEP : MongLogCode.AWAKE;
+        MongLogCode mongLogCode = mong.getIsSleeping() ? MongLogCode.SLEEP : MongLogCode.AWAKE;
         mongLogRepository.save(MongLog.builder()
-                .mongId(newMong.getId())
+                .mongId(mong.getId())
                 .mongLogCode(mongLogCode)
                 .message(String.format("%s", mongLogCode.message))
                 .build());
 
-        return newMong;
+        return mongVo;
     }
 
     @MongStatusValidation
     @MongEvolutionValidation
-    public Mong poopCleanMong(Long mongId) throws NotFoundException {
+    public MongVo poopCleanMong(Long mongId) throws NotFoundException {
 
-        Mong mong = mongRepository.findByIdAndIsActiveTrue(mongId)
-                .orElseThrow(() -> new NotFoundException(MongErrorCode.NOT_FOUND_MONG));
+        MongVo mongVo = findMongVoByMongId(mongId);
+        Mong mong = mongVo.mong();
 
         if (MongGrade.EMPTY.equals(mong.getGrade())) {
             throw new InvalidException(MongErrorCode.INVALID_POOP_CLEAN);
@@ -191,25 +197,24 @@ public class MongService {
 
         double exp = mong.getExp() + MongExp.CLEANING_POOP.exp;
 
-        Mong newMong = mongRepository.save(mong.toBuilder()
+        mong = mongRepository.save(mong.toBuilder()
                 .exp(exp)
                 .poopCount(0)
                 .build());
 
         MongLogCode mongLogCode = MongLogCode.POOP_CLEAN;
         mongLogRepository.save(MongLog.builder()
-                .mongId(newMong.getId())
+                .mongId(mong.getId())
                 .mongLogCode(mongLogCode)
                 .message(String.format("%s", mongLogCode.message))
                 .build());
 
-        return newMong;
+        return mongVo;
     }
 
     public Boolean validationTrainingMong(Long mongId, MongTrainingCode mongTrainingCode) throws NotFoundException {
 
-        Mong mong = mongRepository.findByIdAndIsActiveTrue(mongId)
-                .orElseThrow(() -> new NotFoundException(MongErrorCode.NOT_FOUND_MONG));
+        Mong mong = findMongVoByMongId(mongId).mong();
 
         if (MongGrade.EMPTY.equals(mong.getGrade())) {
             throw new InvalidException(MongErrorCode.INVALID_TRAINING);
@@ -224,13 +229,19 @@ public class MongService {
     @MongStatusValidation
     @MongStateValidation
     @MongEvolutionValidation
-    public Mong trainingMong(Long mongId, Integer trainingCount, MongTrainingCode mongTrainingCode) throws NotFoundException {
+    public MongVo trainingMong(Long mongId, Integer trainingCount, MongTrainingCode mongTrainingCode) throws NotFoundException {
 
-        Mong mong = mongRepository.findByIdAndIsActiveTrue(mongId)
-                .orElseThrow(() -> new NotFoundException(MongErrorCode.NOT_FOUND_MONG));
+        MongVo mongVo = findMongVoByMongId(mongId);
+        Mong mong = mongVo.mong();
 
         if (mong.getPayPoint() < mongTrainingCode.point) {
             throw new InvalidException(MongErrorCode.NOT_ENOUGH_PAY_POINT);
+        }
+        if (MongGrade.EMPTY.equals(mong.getGrade())) {
+            throw new InvalidException(MongErrorCode.INVALID_TRAINING);
+        }
+        if (MongGrade.ZERO.equals(mong.getGrade())) {
+            throw new InvalidException(MongErrorCode.INVALID_TRAINING);
         }
 
         double exp = mong.getExp() + mongTrainingCode.exp;
@@ -242,7 +253,7 @@ public class MongService {
         int payPoint = mong.getPayPoint() - mongTrainingCode.point;
         int numberOfTraining = mong.getNumberOfTraining() + trainingCount;
 
-        Mong newMong = mongRepository.save(mong.toBuilder()
+        mong = mongRepository.save(mong.toBuilder()
                 .exp(exp)
                 .weight(weight)
                 .strength(strength)
@@ -255,19 +266,19 @@ public class MongService {
 
         MongLogCode mongLogCode = MongLogCode.TRAINING;
         mongLogRepository.save(MongLog.builder()
-                .mongId(newMong.getId())
+                .mongId(mong.getId())
                 .mongLogCode(mongLogCode)
-                .message(String.format("%s:%s:%d", mongLogCode.message, mongTrainingCode.code, newMong.getNumberOfTraining()))
+                .message(String.format("%s:%s:%d", mongLogCode.message, mongTrainingCode.code, trainingCount))
                 .build());
 
-        return newMong;
+        return mongVo;
     }
 
     @MongStatusValidation
-    public Mong graduateMong(Long mongId) throws NotFoundException {
+    public MongVo graduateMong(Long mongId) throws NotFoundException {
 
-        Mong mong = mongRepository.findByIdAndIsActiveTrue(mongId)
-                .orElseThrow(() -> new NotFoundException(MongErrorCode.NOT_FOUND_MONG));
+        MongVo mongVo = findMongVoByMongId(mongId);
+        Mong mong = mongVo.mong();
 
         if (!MongGrade.LAST.equals(mong.getGrade())) {
             throw new InvalidException(MongErrorCode.INVALID_GRADUATION);
@@ -276,7 +287,7 @@ public class MongService {
             throw new InvalidException(MongErrorCode.INVALID_GRADUATION);
         }
 
-        Mong newMong = mongRepository.save(mong.toBuilder()
+        mong = mongRepository.save(mong.toBuilder()
                 .isActive(false)
                 .grade(MongGrade.EMPTY)
                 .shift(MongShift.GRADUATE)
@@ -293,40 +304,40 @@ public class MongService {
 
         MongLogCode mongLogCode = MongLogCode.GRADUATE;
         mongLogRepository.save(MongLog.builder()
-                .mongId(newMong.getId())
+                .mongId(mong.getId())
                 .mongLogCode(mongLogCode)
                 .message(String.format("%s:%s", mongLogCode.message, mong.getMongCode()))
                 .build());
 
-        return newMong;
+        return mongVo;
     }
 
-    public Mong evolutionReadyMong(Long mongId) throws NotFoundException {
+    public MongVo evolutionReadyMong(Long mongId) throws NotFoundException {
 
-        Mong mong = mongRepository.findByIdAndIsActiveTrue(mongId)
-                .orElseThrow(() -> new NotFoundException(MongErrorCode.NOT_FOUND_MONG));
+        MongVo mongVo = findMongVoByMongId(mongId);
+        Mong mong = mongVo.mong();
 
-        Mong newMong = mongRepository.save(mong.toBuilder()
+        mong = mongRepository.save(mong.toBuilder()
                 .shift(MongShift.EVOLUTION_READY)
                 .build());
 
-        MongLogCode mongLogCode = MongLogCode.EVOLUTION;
+        MongLogCode mongLogCode = MongLogCode.EVOLUTION_READY;
         mongLogRepository.save(MongLog.builder()
-                .mongId(newMong.getId())
+                .mongId(mong.getId())
                 .mongLogCode(mongLogCode)
                 .message(String.format("%s",  mongLogCode.message))
                 .build());
 
-        return newMong;
+        return mongVo;
     }
 
     @MongStatusValidation
     @MongStateValidation
     @MongEvolutionValidation
-    public Mong evolutionMong(Long mongId) throws NotFoundException {
+    public MongVo evolutionMong(Long mongId) throws NotFoundException {
 
-        Mong mong = mongRepository.findByIdAndIsActiveTrue(mongId)
-                .orElseThrow(() -> new NotFoundException(MongErrorCode.NOT_FOUND_MONG));
+        MongVo mongVo = findMongVoByMongId(mongId);
+        Mong mong = mongVo.mong();
 
         if (MongGrade.LAST.equals(mong.getGrade())) {
             throw new InvalidException(MongErrorCode.INVALID_EVOLUTION);
@@ -341,14 +352,12 @@ public class MongService {
             throw new InvalidException(MongErrorCode.NOT_ENOUGH_EXP);
         }
 
-        Mong newMong;
-
         if (MongGrade.ZERO.equals(mong.getGrade())) {
 
             List<MongCode> mongCodeList = codeService.getMongCodeByLevel(MongGrade.ZERO.nextGrade.level);
             int randIdx = random.nextInt(mongCodeList.size());
 
-            newMong = mong.toBuilder()
+            mong = mong.toBuilder()
                     .shift(MongShift.NORMAL)
                     .state(MongState.NORMAL)
                     .mongCode(mongCodeList.get(randIdx).code())
@@ -356,15 +365,14 @@ public class MongService {
 
         } else if (MongGrade.LAST.equals(mong.getGrade().nextGrade)) {
 
-            newMong = mong.toBuilder()
+            mong = mong.toBuilder()
                     .shift(MongShift.GRADUATE_READY)
                     .state(MongState.NORMAL)
-                    .weight(mong.getGrade().nextGrade.maxStatus)
                     .strength(mong.getGrade().nextGrade.maxStatus)
                     .satiety(mong.getGrade().nextGrade.maxStatus)
                     .healthy(mong.getGrade().nextGrade.maxStatus)
                     .sleep(mong.getGrade().nextGrade.maxStatus)
-                    .exp(mong.getGrade().nextGrade.evolutionExp)
+                    .exp(mong.getGrade().nextGrade.maxStatus)
                     .build();
         } else {
             // TODO("진화 포인트 환산")
@@ -374,38 +382,38 @@ public class MongService {
             MongStatusPercentVo mongStatusPercentVo = MongUtil.statusToPercent(mong.getGrade(), mong);
             MongStatusVo mongStatusVo = MongUtil.percentToStatus(mong.getGrade().nextGrade, mongStatusPercentVo);
 
-            newMong = mongRepository.save(mong.toBuilder()
+            mong = mong.toBuilder()
                     .mongCode(mongCodeList.get(mongCodeList.size() - 1).code())
-                    .weight(mongStatusVo.weight())
                     .strength(mongStatusVo.strength())
+                    .shift(MongShift.NORMAL)
                     .satiety(mongStatusVo.satiety())
                     .healthy(mongStatusVo.healthy())
                     .sleep(mongStatusVo.sleep())
-                    .exp(mongStatusVo.exp())
-                    .build());
+                    .exp(0D)
+                    .build();
         }
 
-        newMong = mongRepository.save(newMong.toBuilder()
+        mong = mongRepository.save(mong.toBuilder()
                 .grade(mong.getGrade().nextGrade)
                 .build());
 
         MongLogCode mongLogCode = MongLogCode.EVOLUTION;
         mongLogRepository.save(MongLog.builder()
-                .mongId(newMong.getId())
+                .mongId(mong.getId())
                 .mongLogCode(mongLogCode)
-                .message(String.format("%s:%s",  mongLogCode.message, newMong.getMongCode()))
+                .message(String.format("%s:%s",  mongLogCode.message, mong.getMongCode()))
                 .build());
 
-        return newMong;
+        return mongVo;
     }
 
     @MongStatusValidation
-    public Mong deadMong(Long mongId) throws NotFoundException {
+    public MongVo deadMong(Long mongId) throws NotFoundException {
 
-        Mong mong = mongRepository.findByIdAndIsActiveTrue(mongId)
-                .orElseThrow(() -> new NotFoundException(MongErrorCode.NOT_FOUND_MONG));
+        MongVo mongVo = findMongVoByMongId(mongId);
+        Mong mong = mongVo.mong();
 
-        Mong newMong = mongRepository.save(mong.toBuilder()
+        mong = mongRepository.save(mong.toBuilder()
                 .isActive(false)
                 .grade(MongGrade.EMPTY)
                 .shift(MongShift.DEAD)
@@ -422,21 +430,21 @@ public class MongService {
 
         MongLogCode mongLogCode = MongLogCode.DEAD;
         mongLogRepository.save(MongLog.builder()
-                .mongId(newMong.getId())
+                .mongId(mong.getId())
                 .mongLogCode(mongLogCode)
-                .message(String.format("%s:%s", mongLogCode.message, newMong.getMongCode()))
+                .message(String.format("%s:%s", mongLogCode.message, mong.getMongCode()))
                 .build());
 
-        return newMong;
+        return mongVo;
     }
 
     @MongStatusValidation
     @MongStateValidation
     @MongEvolutionValidation
-    public Mong feedMong(Long mongId, String foodCode) throws NotFoundException {
+    public MongVo feedMong(Long mongId, String foodCode) throws NotFoundException {
 
-        Mong mong = mongRepository.findByIdAndIsActiveTrue(mongId)
-                .orElseThrow(() -> new NotFoundException(MongErrorCode.NOT_FOUND_MONG));
+        MongVo mongVo = findMongVoByMongId(mongId);
+        Mong mong = mongVo.mong();
 
         if (MongGrade.EMPTY.equals(mong.getGrade())) {
             throw new InvalidException(MongErrorCode.INVALID_FEED);
@@ -459,7 +467,7 @@ public class MongService {
         double sleep = mong.getSleep() + food.addSleepValue();
         int payPoint = mong.getPayPoint() - food.price();
 
-        Mong newMong = mongRepository.save(mong.toBuilder()
+        mong = mongRepository.save(mong.toBuilder()
                 .exp(exp)
                 .weight(weight)
                 .strength(strength)
@@ -471,26 +479,25 @@ public class MongService {
 
         MongLogCode mongLogCode = MongLogCode.FEED;
         mongLogRepository.save(MongLog.builder()
-                .mongId(newMong.getId())
+                .mongId(mong.getId())
                 .mongLogCode(mongLogCode)
                 .message(String.format("%s:%s:$%d", mongLogCode.message, food.code(), food.price()))
                 .build());
 
-        MongFeedLog mongFeedLog = mongFeedLogRepository.findByMongIdAndCode(newMong.getId(), food.code())
+        MongFeedLog mongFeedLog = mongFeedLogRepository.findByMongIdAndCode(mong.getId(), food.code())
                         .orElseGet(() -> MongFeedLog.builder()
-                                .mongId(newMong.getId())
+                                .mongId(mongId)
                                 .code(food.code())
-                                .price(food.price())
                                 .build());
 
         mongFeedLogRepository.save(mongFeedLog.toBuilder()
                 .price(food.price())
                 .build());
 
-        return newMong;
+        return mongVo;
     }
 
-    public List<MongFeedLogVo> findMongFeedLog(Long mongId) {
+    public List<MongFeedLogVo> findMongFeedLogByMongId(Long mongId) {
 
         Map<String, MongFeedLog> mongFeedLogMap = mongFeedLogRepository.findByMongId(mongId).stream()
                 .collect(Collectors.toMap(MongFeedLog::getCode, mongFeedLog -> mongFeedLog));

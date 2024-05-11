@@ -3,7 +3,7 @@ package com.mongs.play.app.gateway.internal.filter;
 import com.mongs.play.app.gateway.internal.utils.HttpUtils;
 import com.mongs.play.core.error.app.GatewayExternalErrorCode;
 import com.mongs.play.core.exception.app.GatewayExternalException;
-import com.mongs.play.module.jwt.JwtTokenProvider;
+import com.mongs.play.module.jwt.provider.AuthorizationTokenProvider;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cloud.gateway.filter.GatewayFilter;
 import org.springframework.cloud.gateway.filter.factory.AbstractGatewayFilterFactory;
@@ -14,10 +14,10 @@ import org.springframework.stereotype.Component;
 @Component
 public class AuthorizationFilter extends AbstractGatewayFilterFactory<FilterConfig> {
 
-    private final JwtTokenProvider tokenProvider;
+    private final AuthorizationTokenProvider tokenProvider;
     private final HttpUtils httpUtils;
 
-    public AuthorizationFilter(JwtTokenProvider tokenProvider, HttpUtils httpUtils) {
+    public AuthorizationFilter(AuthorizationTokenProvider tokenProvider, HttpUtils httpUtils) {
         super(FilterConfig.class);
         this.tokenProvider = tokenProvider;
         this.httpUtils = httpUtils;

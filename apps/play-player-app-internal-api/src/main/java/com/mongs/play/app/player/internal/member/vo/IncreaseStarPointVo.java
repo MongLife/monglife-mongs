@@ -5,6 +5,6 @@ import lombok.Builder;
 @Builder
 public record IncreaseStarPointVo(
         Long accountId,
-        Integer starPoint
+        Integer addStarPoint
 ) {
 }

@@ -4,11 +4,17 @@ import com.mongs.play.app.management.external.vo.*;
 import com.mongs.play.core.error.app.ManagementExternalErrorCode;
 import com.mongs.play.core.exception.app.ManagementExternalException;
 import com.mongs.play.domain.mong.entity.Mong;
+import com.mongs.play.domain.mong.enums.MongGrade;
 import com.mongs.play.domain.mong.enums.MongTrainingCode;
 import com.mongs.play.domain.mong.service.MongService;
 import com.mongs.play.domain.mong.utils.MongUtil;
 import com.mongs.play.domain.mong.vo.MongFeedLogVo;
 import com.mongs.play.domain.mong.vo.MongStatusPercentVo;
+import com.mongs.play.domain.mong.vo.MongVo;
+import com.mongs.play.module.kafka.event.managementExternal.DeleteMongEvent;
+import com.mongs.play.module.kafka.event.managementExternal.EvolutionMongEvent;
+import com.mongs.play.module.kafka.event.managementExternal.RegisterMongEvent;
+import com.mongs.play.module.kafka.event.managementExternal.SleepingMongEvent;
 import com.mongs.play.module.kafka.service.KafkaService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -17,7 +23,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.UUID;
 
 @Slf4j
 @Service
@@ -42,7 +47,7 @@ public class ManagementExternalService {
                             .mongId(mong.getId())
                             .name(mong.getName())
                             .mongCode(mong.getMongCode())
-                            .weight(mongStatusPercentVo.weight())
+                            .weight(mong.getWeight())
                             .strength(mongStatusPercentVo.strength())
                             .satiety(mongStatusPercentVo.satiety())
                             .healthy(mongStatusPercentVo.healthy())
@@ -67,11 +72,15 @@ public class ManagementExternalService {
         MongStatusPercentVo mongStatusPercentVo =
                 MongUtil.statusToPercent(mong.getGrade(), mong);
 
+        kafkaService.sendCommit(KafkaService.KafkaTopic.REGISTER_MONG, RegisterMongEvent.builder()
+                .mongId(mong.getId())
+                .build());
+
         return RegisterMongVo.builder()
                 .mongId(mong.getId())
                 .name(mong.getName())
                 .mongCode(mong.getMongCode())
-                .weight(mongStatusPercentVo.weight())
+                .weight(mong.getWeight())
                 .strength(mongStatusPercentVo.strength())
                 .satiety(mongStatusPercentVo.satiety())
                 .healthy(mongStatusPercentVo.healthy())
@@ -95,6 +104,10 @@ public class ManagementExternalService {
             throw new ManagementExternalException(ManagementExternalErrorCode.INVALID_CHANGE_MONG);
         }
 
+        kafkaService.sendCommit(KafkaService.KafkaTopic.DELETE_MONG, DeleteMongEvent.builder()
+                .mongId(mong.getId())
+                .build());
+
         return DeleteMongVo.builder()
                 .mongId(mong.getId())
                 .shift(mong.getShift())
@@ -104,7 +117,7 @@ public class ManagementExternalService {
     @Transactional
     public StrokeMongVo strokeMong(Long accountId, Long mongId) {
 
-        Mong mong = mongService.strokeMong(mongId, 1);
+        Mong mong = mongService.strokeMong(mongId, 1).mong();
 
         if (!accountId.equals(mong.getAccountId())) {
             throw new ManagementExternalException(ManagementExternalErrorCode.INVALID_CHANGE_MONG);
@@ -121,10 +134,20 @@ public class ManagementExternalService {
     @Transactional
     public SleepingMongVo sleepingMong(Long accountId, Long mongId) {
 
-        Mong mong = mongService.sleepingMong(mongId);
+        Mong mong = mongService.sleepingMong(mongId).mong();
 
         if (!accountId.equals(mong.getAccountId())) {
             throw new ManagementExternalException(ManagementExternalErrorCode.INVALID_CHANGE_MONG);
+        }
+
+        if (mong.getIsSleeping()) {
+            kafkaService.sendCommit(KafkaService.KafkaTopic.SLEEP_SLEEPING_MONG, SleepingMongEvent.builder()
+                    .mongId(mong.getId())
+                    .build());
+        } else {
+            kafkaService.sendCommit(KafkaService.KafkaTopic.AWAKE_SLEEPING_MONG, SleepingMongEvent.builder()
+                    .mongId(mong.getId())
+                    .build());
         }
 
         return SleepingMongVo.builder()
@@ -136,7 +159,7 @@ public class ManagementExternalService {
     @Transactional
     public PoopCleanMongVo poopClean(Long accountId, Long mongId) {
 
-        Mong mong = mongService.poopCleanMong(mongId);
+        Mong mong = mongService.poopCleanMong(mongId).mong();
 
         if (!accountId.equals(mong.getAccountId())) {
             throw new ManagementExternalException(ManagementExternalErrorCode.INVALID_CHANGE_MONG);
@@ -161,33 +184,30 @@ public class ManagementExternalService {
         return ValidationTrainingMongVo.builder()
                 .mongId(mongId)
                 .isPossible(isPossible)
-                .trainingId(UUID.randomUUID().toString().replace("-", ""))
                 .build();
     }
 
     @Transactional
-    public TrainingMongVo trainingMong(Long accountId, Long mongId, String trainingId, String trainingCode) {
+    public TrainingMongVo trainingMong(Long accountId, Long mongId, String trainingCode) {
 
         MongTrainingCode mongTrainingCode = MongTrainingCode.findMongTrainingCode(trainingCode);
 
-        // TODO(트레이닝 아이디 유효성 체크: validationTrainingMong() 에서 생성한 trainingId 가 맞는지 확인)
-//        if () {
-//            throw new ManagementExternalException(ManagementExternalErrorCode.INVALID_TRAINING_ID);
-//        }
-
-        Mong mong = mongService.trainingMong(mongId, 1, mongTrainingCode);
+        Mong mong = mongService.trainingMong(mongId, 1, mongTrainingCode).mong();
 
         if (!accountId.equals(mong.getAccountId())) {
             throw new ManagementExternalException(ManagementExternalErrorCode.INVALID_CHANGE_MONG);
         }
 
-        double strength = MongUtil.statusToPercent(mong.getGrade().maxStatus, mong.getStrength());
-        double exp = MongUtil.statusToPercent(mong.getGrade().evolutionExp, mong.getExp());
+        MongStatusPercentVo mongStatusPercentVo = MongUtil.statusToPercent(mong.getGrade(), mong);
 
         return TrainingMongVo.builder()
                 .mongId(mong.getId())
-                .strength(strength)
-                .exp(exp)
+                .weight(mong.getWeight())
+                .strength(mongStatusPercentVo.strength())
+                .satiety(mongStatusPercentVo.satiety())
+                .healthy(mongStatusPercentVo.healthy())
+                .sleep(mongStatusPercentVo.sleep())
+                .exp(mongStatusPercentVo.exp())
                 .payPoint(mong.getPayPoint())
                 .build();
     }
@@ -195,7 +215,7 @@ public class ManagementExternalService {
     @Transactional
     public GraduateMongVo graduateMong(Long accountId, Long mongId) {
 
-        Mong mong = mongService.graduateMong(mongId);
+        Mong mong = mongService.graduateMong(mongId).mong();
 
         if (!accountId.equals(mong.getAccountId())) {
             throw new ManagementExternalException(ManagementExternalErrorCode.INVALID_CHANGE_MONG);
@@ -210,26 +230,33 @@ public class ManagementExternalService {
     @Transactional
     public EvolutionMongVo evolutionMong(Long accountId, Long mongId) {
 
-        Mong pastMong = mongService.findMongByMongId(mongId);
-
-        Mong mong = mongService.evolutionMong(mongId);
+        MongVo mongVo = mongService.evolutionMong(mongId);
+        Mong pastMong = mongVo.pastMong();
+        Mong mong = mongVo.mong();
 
         if (!accountId.equals(mong.getAccountId())) {
             throw new ManagementExternalException(ManagementExternalErrorCode.INVALID_CHANGE_MONG);
         }
 
-        MongStatusPercentVo mongStatusPercentVo =
-                MongUtil.statusToPercent(mong.getGrade(), mong);
+        MongStatusPercentVo mongStatusPercentVo = MongUtil.statusToPercent(mong.getGrade(), mong);
 
-//        kafkaService.sendCommit(KafkaTopic.EVOLUTION_MONG, EvolutionMongEvent.builder()
-//                        .accountId(mong.getAccountId())
-//                        .mongCode(mong.getMongCode())
-//                        .build());
+        EvolutionMongEvent evolutionMongEvent = EvolutionMongEvent.builder()
+                .mongId(mong.getId())
+                .pastMongCode(pastMong.getMongCode())
+                .build();
+
+        if (MongGrade.ZERO.equals(mong.getGrade())) {
+            kafkaService.sendCommit(KafkaService.KafkaTopic.FIRST_EVOLUTION_MONG, evolutionMongEvent);
+        } else if (MongGrade.LAST.equals(mong.getGrade())) {
+            kafkaService.sendCommit(KafkaService.KafkaTopic.LAST_EVOLUTION_MONG, evolutionMongEvent);
+        } else {
+            kafkaService.sendCommit(KafkaService.KafkaTopic.EVOLUTION_MONG, evolutionMongEvent);
+        }
 
         return EvolutionMongVo.builder()
                 .mongId(mong.getId())
                 .mongCode(mong.getMongCode())
-                .weight(mongStatusPercentVo.weight())
+                .weight(mong.getWeight())
                 .strength(mongStatusPercentVo.strength())
                 .satiety(mongStatusPercentVo.satiety())
                 .healthy(mongStatusPercentVo.healthy())
@@ -240,32 +267,10 @@ public class ManagementExternalService {
                 .build();
     }
 
-    @Transactional(readOnly = true)
-    public List<FindFeedLogVo> findFeedLog(Long accountId, Long mongId) {
-
-        Mong mong = mongService.findMongByMongId(mongId);
-
-        if (!accountId.equals(mong.getAccountId())) {
-            throw new ManagementExternalException(ManagementExternalErrorCode.INVALID_CHANGE_MONG);
-        }
-
-        List<MongFeedLogVo> mongFeedLogVoList = mongService.findMongFeedLog(mongId);
-
-        return mongFeedLogVoList.stream()
-                .map(mongFeedLogVo -> FindFeedLogVo.builder()
-                        .mongId(mongId)
-                        .code(mongFeedLogVo.code())
-                        .isCanBuy(mongFeedLogVo.lastBuyAt()
-                                .plusSeconds(mongFeedLogVo.delaySeconds())
-                                .isBefore(LocalDateTime.now()))
-                        .build())
-                .toList();
-    }
-
     @Transactional
     public FeedMongVo feedMong(Long accountId, Long mongId, String foodCode) {
 
-        Mong mong = mongService.feedMong(mongId, foodCode);
+        Mong mong =  mongService.feedMong(mongId, foodCode).mong();
 
         if (!accountId.equals(mong.getAccountId())) {
             throw new ManagementExternalException(ManagementExternalErrorCode.INVALID_CHANGE_MONG);
@@ -276,7 +281,7 @@ public class ManagementExternalService {
 
         return FeedMongVo.builder()
                 .mongId(mong.getId())
-                .weight(mongStatusPercentVo.weight())
+                .weight(mong.getWeight())
                 .strength(mongStatusPercentVo.strength())
                 .satiety(mongStatusPercentVo.satiety())
                 .healthy(mongStatusPercentVo.healthy())
@@ -284,5 +289,27 @@ public class ManagementExternalService {
                 .exp(mongStatusPercentVo.exp())
                 .payPoint(mong.getPayPoint())
                 .build();
+    }
+
+    @Transactional(readOnly = true)
+    public List<FindFeedLogVo> findFeedLog(Long accountId, Long mongId) {
+
+        Mong mong = mongService.findMongVoByMongId(mongId).mong();
+
+        if (!accountId.equals(mong.getAccountId())) {
+            throw new ManagementExternalException(ManagementExternalErrorCode.INVALID_CHANGE_MONG);
+        }
+
+        List<MongFeedLogVo> mongFeedLogVoList = mongService.findMongFeedLogByMongId(mongId);
+
+        return mongFeedLogVoList.stream()
+                .map(mongFeedLogVo -> FindFeedLogVo.builder()
+                        .mongId(mongId)
+                        .code(mongFeedLogVo.code())
+                        .isCanBuy(mongFeedLogVo.lastBuyAt()
+                                .plusSeconds(mongFeedLogVo.delaySeconds())
+                                .isBefore(LocalDateTime.now()))
+                        .build())
+                .toList();
     }
 }

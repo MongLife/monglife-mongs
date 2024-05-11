@@ -4,6 +4,7 @@ import com.mongs.play.domain.mong.annotation.MongEvolutionValidation;
 import com.mongs.play.domain.mong.entity.Mong;
 import com.mongs.play.domain.mong.enums.MongShift;
 import com.mongs.play.domain.mong.service.MongService;
+import com.mongs.play.domain.mong.vo.MongVo;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.ProceedingJoinPoint;
@@ -27,12 +28,23 @@ public class MongEvolutionValidationAspect {
 
     @Around(value = "cut() && @annotation(mongEvolutionValidation)")
     public Object afterReturnEvolutionCheck(ProceedingJoinPoint joinPoint, MongEvolutionValidation mongEvolutionValidation) throws Throwable {
-        Mong returnMong = (Mong) joinPoint.proceed();
 
-        if (returnMong.getGrade().evolutionExp <= returnMong.getExp() && !MongShift.EVOLUTION_READY.equals(returnMong.getShift())) {
-            returnMong = mongService.evolutionReadyMong(returnMong.getId());
+        Object returnValue = joinPoint.proceed();
+
+        if (returnValue instanceof MongVo mongVo) {
+
+            Mong mong = mongVo.mong();
+
+            if (mong.getGrade().evolutionExp <= mong.getExp() &&
+                    !MongShift.GRADUATE_READY.equals(mong.getShift()) &&
+                    !MongShift.EVOLUTION_READY.equals(mong.getShift())
+            ) {
+                returnValue = mongVo.toBuilder()
+                        .mong(mongService.evolutionReadyMong(mong.getId()).mong())
+                        .build();
+            }
         }
 
-        return returnMong;
+        return returnValue;
     }
 }
