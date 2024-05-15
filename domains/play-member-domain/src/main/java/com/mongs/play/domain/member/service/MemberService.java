@@ -8,6 +8,7 @@ import com.mongs.play.domain.member.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
@@ -21,10 +22,12 @@ public class MemberService {
 
     private final MemberRepository memberRepository;
 
+    @Transactional
     public Member addMember(Member member) {
         return memberRepository.save(member);
     }
 
+    @Transactional
     public Member getMember(Long accountId) {
         return memberRepository.findByAccountIdAndIsDeletedIsFalse(accountId)
                 .orElseGet(() -> this.addMember(Member.builder()
@@ -32,7 +35,8 @@ public class MemberService {
                         .build()));
     }
 
-    public Member modifyIncreaseSlotCount(Long accountId, Integer slotCount) throws NotFoundException {
+    @Transactional
+    public Member increaseSlotCount(Long accountId, Integer slotCount) throws NotFoundException {
 
         Member member = memberRepository.findByAccountIdAndIsDeletedIsFalse(accountId)
                 .orElseThrow(() -> new NotFoundException(MemberErrorCode.NOT_FOUND_MEMBER));
@@ -50,7 +54,8 @@ public class MemberService {
                 .build());
     }
 
-    public Member modifyDecreaseSlotCount(Long accountId, Integer slotCount) throws NotFoundException {
+    @Transactional
+    public Member decreaseSlotCount(Long accountId, Integer slotCount) throws NotFoundException {
 
         Member member = memberRepository.findByAccountIdAndIsDeletedIsFalse(accountId)
                 .orElseThrow(() -> new NotFoundException(MemberErrorCode.NOT_FOUND_MEMBER));
@@ -66,7 +71,8 @@ public class MemberService {
 
     }
 
-    public Member modifyIncreaseStarPoint(Long accountId, Integer starPoint) throws NotFoundException {
+    @Transactional
+    public Member increaseStarPoint(Long accountId, Integer starPoint) throws NotFoundException {
 
         Member member = memberRepository.findByAccountIdAndIsDeletedIsFalse(accountId)
                 .orElseThrow(() -> new NotFoundException(MemberErrorCode.NOT_FOUND_MEMBER));
@@ -76,7 +82,8 @@ public class MemberService {
                 .build());
     }
 
-    public Member modifyDecreaseStarPoint(Long accountId, Integer starPoint) throws NotFoundException {
+    @Transactional
+    public Member decreaseStarPoint(Long accountId, Integer starPoint) throws NotFoundException {
 
         Member member = memberRepository.findByAccountIdAndIsDeletedIsFalse(accountId)
                 .orElseThrow(() -> new NotFoundException(MemberErrorCode.NOT_FOUND_MEMBER));

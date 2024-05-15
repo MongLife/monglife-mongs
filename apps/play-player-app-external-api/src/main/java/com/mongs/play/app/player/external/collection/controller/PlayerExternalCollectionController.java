@@ -20,7 +20,6 @@ public class PlayerExternalCollectionController {
 
     private final PlayerExternalCollectionService playerExternalCollectionService;
 
-
     @GetMapping("/map")
     public ResponseEntity<List<FindMapCollectionResDto>> findMapCollection(@AuthenticationPrincipal PassportDetail passportDetail) {
 

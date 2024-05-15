@@ -1,9 +1,10 @@
 dependencies {
+    implementation project(':clients:play-event-publisher-client')
+    implementation project(':domains:play-code-domain')
     implementation project(":domains:play-collection-domain")
     implementation project(":domains:play-feedback-domain")
     implementation project(":domains:play-member-domain")
     implementation project(":domains:play-payment-domain")
-    implementation project(':modules:play-code-module')
     implementation project(":modules:play-security-module")
     implementation project(":modules:play-kafka-module")
 }

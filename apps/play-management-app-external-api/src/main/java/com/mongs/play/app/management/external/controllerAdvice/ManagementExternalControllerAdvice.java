@@ -1,5 +1,6 @@
 package com.mongs.play.app.management.external.controllerAdvice;
 
+import com.mongs.play.app.management.external.controller.ManagementExternalController;
 import com.mongs.play.core.dto.res.ErrorResDto;
 import com.mongs.play.core.error.ErrorCode;
 import com.mongs.play.core.error.GlobalErrorCode;
@@ -11,7 +12,7 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
-@RestControllerAdvice
+@RestControllerAdvice(basePackageClasses = ManagementExternalController.class)
 public class ManagementExternalControllerAdvice {
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
@@ -33,7 +34,8 @@ public class ManagementExternalControllerAdvice {
     }
 
     @ExceptionHandler(RuntimeException.class)
-    public ResponseEntity<Object> runtimeExceptionHandler() {
+    public ResponseEntity<Object> runtimeExceptionHandler(RuntimeException e) {
+        e.printStackTrace();
         ErrorCode errorCode = GlobalErrorCode.INTERNAL_SERVER_ERROR;
         return ResponseEntity.status(errorCode.getHttpStatus()).body(ErrorResDto.of(errorCode));
     }

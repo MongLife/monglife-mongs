@@ -5,6 +5,8 @@ import com.mongs.play.app.player.external.member.dto.req.ExchangePayPointReqDto;
 import com.mongs.play.app.player.external.member.dto.res.*;
 import com.mongs.play.app.player.external.member.service.PlayerExternalMemberService;
 import com.mongs.play.app.player.external.member.vo.*;
+import com.mongs.play.client.publisher.mong.annotation.Notification;
+import com.mongs.play.client.publisher.mong.code.PublishCode;
 import com.mongs.play.module.security.principal.PassportDetail;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -65,8 +67,9 @@ public class PlayerExternalMemberController {
                 .build());
     }
 
+    @Notification(code = PublishCode.INCREASE_STAR_POINT)
     @PostMapping("/charge/starPoint")
-    public ResponseEntity<IncrementStarPointResDto> chargeStarPoint(
+    public ResponseEntity<IncreaseStarPointResDto> chargeStarPoint(
             @AuthenticationPrincipal PassportDetail passportDetail,
             @RequestBody ChargeStarPointReqDto chargeStarPointReqDto
     ) {
@@ -78,7 +81,7 @@ public class PlayerExternalMemberController {
 
         ChargeStarPointVo chargeStarPointVo = playerExternalMemberService.chargeStarPoint(accountId, deviceId, receipt, chargeItemId);
 
-        return ResponseEntity.ok().body(IncrementStarPointResDto.builder()
+        return ResponseEntity.ok().body(IncreaseStarPointResDto.builder()
                 .accountId(chargeStarPointVo.accountId())
                 .starPoint(chargeStarPointVo.starPoint())
                 .build());
@@ -99,9 +102,9 @@ public class PlayerExternalMemberController {
 
         return ResponseEntity.ok().body(ExchangePayPointResDto.builder()
                 .accountId(exchangePayPointVo.accountId())
-                .starPoint(exchangePayPointVo.starPoint())
                 .mongId(exchangePayPointVo.mongId())
-                .payPoint(exchangePayPointVo.payPoint())
+                .subStarPoint(exchangePayPointVo.subStarPoint())
+                .addPayPoint(exchangePayPointVo.addPayPoint())
                 .build());
     }
 }

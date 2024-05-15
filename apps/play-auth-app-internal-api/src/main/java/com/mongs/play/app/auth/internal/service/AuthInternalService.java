@@ -8,7 +8,7 @@ import com.mongs.play.core.vo.PassportVo;
 import com.mongs.play.domain.account.entity.Account;
 import com.mongs.play.domain.account.service.AccountService;
 import com.mongs.play.module.hmac.HmacProvider;
-import com.mongs.play.module.jwt.JwtTokenProvider;
+import com.mongs.play.module.jwt.provider.AuthorizationTokenProvider;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -18,7 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class AuthInternalService {
 
     private final AccountService accountService;
-    private final JwtTokenProvider jwtTokenProvider;
+    private final AuthorizationTokenProvider authorizationTokenProvider;
     private final HmacProvider hmacProvider;
 
     /**
@@ -31,13 +31,13 @@ public class AuthInternalService {
     @Transactional(readOnly = true)
     public PassportVo passport(String accessToken) throws AuthInternalException {
         /* AccessToken 검증 */
-        if (jwtTokenProvider.isTokenExpired(accessToken)) {
+        if (authorizationTokenProvider.isTokenExpired(accessToken)) {
             throw new AuthInternalException(AuthInternalErrorCode.ACCESS_TOKEN_EXPIRED);
         }
 
-        Long accountId = jwtTokenProvider.getMemberId(accessToken)
+        Long accountId = authorizationTokenProvider.getMemberId(accessToken)
                 .orElseThrow(() -> new AuthInternalException(AuthInternalErrorCode.ACCESS_TOKEN_EXPIRED));
-        String deviceId = jwtTokenProvider.getDeviceId(accessToken)
+        String deviceId = authorizationTokenProvider.getDeviceId(accessToken)
                 .orElseThrow(() -> new AuthInternalException(AuthInternalErrorCode.ACCESS_TOKEN_EXPIRED));
 
         /* AccessToken 의 accountId 로 account 조회 */

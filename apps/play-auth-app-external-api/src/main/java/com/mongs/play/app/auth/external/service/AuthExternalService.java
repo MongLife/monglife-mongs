@@ -6,7 +6,7 @@ import com.mongs.play.app.auth.external.vo.ReissueVo;
 import com.mongs.play.domain.account.entity.Account;
 import com.mongs.play.domain.account.service.AccountLogService;
 import com.mongs.play.domain.account.service.AccountService;
-import com.mongs.play.module.jwt.JwtTokenProvider;
+import com.mongs.play.module.jwt.provider.AuthorizationTokenProvider;
 import com.mongs.play.session.entity.Session;
 import com.mongs.play.session.service.SessionService;
 import jakarta.transaction.Transactional;
@@ -20,7 +20,7 @@ public class AuthExternalService {
     private final AccountService accountService;
     private final AccountLogService accountLogService;
     private final SessionService sessionService;
-    private final JwtTokenProvider jwtTokenProvider;
+    private final AuthorizationTokenProvider authorizationTokenProvider;
 
     /**
      * 로그인
@@ -43,9 +43,9 @@ public class AuthExternalService {
         sessionService.removeSessionIfExists(deviceId, account.getId());
 
         /* AccessToken 및 RefreshToken 발급 */
-        Long refreshTokenExpiration = jwtTokenProvider.getRefreshTokenExpiration();
-        String newRefreshToken = jwtTokenProvider.generateRefreshToken();
-        String newAccessToken = jwtTokenProvider.generateAccessToken(account.getId(), deviceId);
+        Long refreshTokenExpiration = authorizationTokenProvider.getRefreshTokenExpiration();
+        String newRefreshToken = authorizationTokenProvider.generateRefreshToken();
+        String newAccessToken = authorizationTokenProvider.generateAccessToken(account.getId(), deviceId);
 
         sessionService.addSession(newRefreshToken, deviceId, account.getId(), refreshTokenExpiration);
 
@@ -94,9 +94,9 @@ public class AuthExternalService {
         sessionService.removeSession(session.getRefreshToken());
 
         /* AccessToken 및 RefreshToken 발급 */
-        Long refreshTokenExpiration = jwtTokenProvider.getRefreshTokenExpiration();
-        String newRefreshToken = jwtTokenProvider.generateRefreshToken();
-        String newAccessToken = jwtTokenProvider.generateAccessToken(session.getAccountId(), session.getDeviceId());
+        Long refreshTokenExpiration = authorizationTokenProvider.getRefreshTokenExpiration();
+        String newRefreshToken = authorizationTokenProvider.generateRefreshToken();
+        String newAccessToken = authorizationTokenProvider.generateAccessToken(session.getAccountId(), session.getDeviceId());
 
         sessionService.addSession(newRefreshToken, session.getDeviceId(), session.getAccountId(), refreshTokenExpiration);
 

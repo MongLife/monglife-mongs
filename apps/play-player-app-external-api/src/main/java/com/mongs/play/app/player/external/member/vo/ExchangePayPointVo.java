@@ -5,8 +5,8 @@ import lombok.Builder;
 @Builder
 public record ExchangePayPointVo(
         Long accountId,
-        Integer starPoint,
         Long mongId,
-        Integer payPoint
+        Integer subStarPoint,
+        Integer addPayPoint
 ) {
 }

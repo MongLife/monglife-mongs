@@ -29,6 +29,15 @@ public class PaymentService {
                 .build());
     }
 
+    public PaymentLog addIncreaseStarPointLog(Long accountId) {
+        return paymentLogRepository.save(PaymentLog.builder()
+                .accountId(accountId)
+                .deviceId(UUID.randomUUID().toString().replace("-", ""))
+                .receipt(UUID.randomUUID().toString().replace("-", ""))
+                .code(PaymentCode.CHARGE_STAR_POINT)
+                .build());
+    }
+
     public PaymentLog addChargeStarPointLog(Long accountId, String deviceId, String receipt) throws InvalidException {
 
         // TODO(" 영수증 확인 로직 ")
@@ -56,6 +65,16 @@ public class PaymentService {
                 .receipt(receipt)
                 .code(PaymentCode.EXCHANGE_PAY_POINT)
                 .build());
+    }
+
+    public PaymentLog removeExchangePayPointLog(Long paymentLogId) {
+
+        PaymentLog paymentLog = paymentLogRepository.findById(paymentLogId)
+                .orElseThrow(() -> new NotFoundException(PaymentErrorCode.NOT_FOUND_PAYMENT_LOG));
+
+        paymentLogRepository.deleteById(paymentLogId);
+
+        return paymentLog;
     }
 
     public PaymentLog itemReward(Long paymentLogId) {

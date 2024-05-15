@@ -4,12 +4,14 @@ import com.mongs.play.app.player.internal.collection.vo.RegisterMapCollectionVo;
 import com.mongs.play.app.player.internal.collection.vo.RegisterMongCollectionVo;
 import com.mongs.play.app.player.internal.collection.vo.RemoveMapCollectionVo;
 import com.mongs.play.app.player.internal.collection.vo.RemoveMongCollectionVo;
-import com.mongs.play.module.code.entity.MapCode;
-import com.mongs.play.module.code.entity.MongCode;
-import com.mongs.play.module.code.service.CodeService;
+import com.mongs.play.domain.code.entity.MapCode;
+import com.mongs.play.domain.code.entity.MongCode;
+import com.mongs.play.domain.code.service.CodeService;
 import com.mongs.play.domain.collection.entity.MapCollection;
 import com.mongs.play.domain.collection.entity.MongCollection;
 import com.mongs.play.domain.collection.service.CollectionService;
+import com.mongs.play.module.kafka.event.playerInternal.RegisterMongCollectionEvent;
+import com.mongs.play.module.kafka.service.KafkaService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -18,6 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 public class PlayerInternalCollectionService {
 
+    private final KafkaService kafkaService;
     private final CodeService codeService;
     private final CollectionService collectionService;
 
@@ -44,6 +47,12 @@ public class PlayerInternalCollectionService {
 
         MongCollection mongCollection = collectionService.addMongCollection(accountId, mongCode.code());
 
+        kafkaService.sendCommit(KafkaService.KafkaTopic.REGISTER_MONG_COLLECTION, RegisterMongCollectionEvent.builder()
+                .accountId(mongCollection.getAccountId())
+                .mongCode(mongCollection.getCode())
+                .createdAt(mongCollection.getCreatedAt())
+                .build());
+
         return RegisterMongCollectionVo.builder()
                 .accountId(mongCollection.getAccountId())
                 .code(mongCollection.getCode())
@@ -61,6 +70,7 @@ public class PlayerInternalCollectionService {
 
         return RemoveMapCollectionVo.builder()
                 .accountId(accountId)
+                .code(mapCode.code())
                 .build();
     }
 
@@ -74,7 +84,7 @@ public class PlayerInternalCollectionService {
 
         return RemoveMongCollectionVo.builder()
                 .accountId(accountId)
+                .code(mongCode.code())
                 .build();
     }
-
 }

@@ -7,9 +7,13 @@ import com.mongs.play.domain.mong.entity.MongLog;
 import com.mongs.play.domain.mong.enums.MongLogCode;
 import com.mongs.play.domain.mong.repository.MongLogRepository;
 import com.mongs.play.domain.mong.repository.MongRepository;
+import com.mongs.play.domain.mong.vo.MongVo;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class MongStatusService {
@@ -17,193 +21,77 @@ public class MongStatusService {
     private final MongRepository mongRepository;
     private final MongLogRepository mongLogRepository;
 
-    public Mong decreaseWeight(Long mongId, Double weight) {
+    @Transactional
+    public MongVo decreaseStatus(Long mongId, Double subWeight, Double subStrength, Double subSatiety, Double subHealthy, Double subSleep) {
 
         Mong mong = mongRepository.findByIdAndIsActiveTrue(mongId)
-                .orElseThrow(() -> new NotFoundException(MongErrorCode.NOT_FOUND_MONG));
+                .orElseThrow(() -> new NotFoundException(MongErrorCode.NOT_FOUND_ACTIVE_MONG));
 
         mong = mongRepository.save(mong.toBuilder()
-                .weight(mong.getWeight() - weight)
-                .build());
+                .weight(mong.getWeight() - subWeight)
+                .strength(mong.getStrength() - subStrength)
+                .satiety(mong.getSatiety() - subSatiety)
+                .healthy(mong.getHealthy() - subHealthy)
+                .sleep(mong.getSleep() - subSleep)
+                .build().validation());
 
-        MongLogCode mongLogCode = MongLogCode.DECREASE_WEIGHT;
+        MongLogCode mongLogCode = MongLogCode.DECREASE_STATUS;
         mongLogRepository.save(MongLog.builder()
                 .mongId(mong.getId())
                 .mongLogCode(mongLogCode)
-                .message(String.format("%s 만큼 %s", weight, mongLogCode.message))
+                .message(String.format("%s:%f:%f:%f:%f:%f", mongLogCode.message, subWeight, subStrength, subSatiety, subHealthy, subSleep))
                 .build());
 
-        return mong;
+        log.info("[decreaseStatus] mongId: {}, subWeight: {}, subStrength: {}, subSatiety: {}, subHealthy: {}, subSleep: {}", mongId, subWeight, subStrength, subSatiety, subHealthy, subSleep);
+
+        return MongVo.of(mong);
     }
 
-    public Mong decreaseStrength(Long mongId, Double strength) {
+    @Transactional
+    public MongVo increasePoopCount(Long mongId, Integer addPoopCount) {
 
         Mong mong = mongRepository.findByIdAndIsActiveTrue(mongId)
-                .orElseThrow(() -> new NotFoundException(MongErrorCode.NOT_FOUND_MONG));
+                .orElseThrow(() -> new NotFoundException(MongErrorCode.NOT_FOUND_ACTIVE_MONG));
 
         mong = mongRepository.save(mong.toBuilder()
-                .strength(mong.getStrength() - strength)
-                .build());
+                .poopCount(mong.getPoopCount() + addPoopCount)
+                .build().validation());
 
-        MongLogCode mongLogCode = MongLogCode.DECREASE_STRENGTH;
+        MongLogCode mongLogCode = MongLogCode.INCREASE_POOP_COUNT;
         mongLogRepository.save(MongLog.builder()
                 .mongId(mong.getId())
                 .mongLogCode(mongLogCode)
-                .message(String.format("%s 만큼 %s", strength, mongLogCode.message))
+                .message(String.format("%s:%s", mongLogCode.message, addPoopCount))
                 .build());
 
-        return mong;
+        log.info("[increasePoopCount] mongId: {}, addPoopCount: {}", mongId, addPoopCount);
+
+        return MongVo.of(mong);
     }
 
-    public Mong decreaseSatiety(Long mongId, Double satiety) {
+    @Transactional
+    public MongVo increaseStatus(Long mongId, Double addWeight, Double addStrength, Double addSatiety, Double addHealthy, Double addSleep) {
 
         Mong mong = mongRepository.findByIdAndIsActiveTrue(mongId)
-                .orElseThrow(() -> new NotFoundException(MongErrorCode.NOT_FOUND_MONG));
+                .orElseThrow(() -> new NotFoundException(MongErrorCode.NOT_FOUND_ACTIVE_MONG));
 
         mong = mongRepository.save(mong.toBuilder()
-                .satiety(mong.getSatiety() - satiety)
-                .build());
+                .weight(mong.getWeight() + addWeight)
+                .strength(mong.getStrength() + addStrength)
+                .satiety(mong.getSatiety() + addSatiety)
+                .healthy(mong.getHealthy() + addHealthy)
+                .sleep(mong.getSleep() + addSleep)
+                .build().validation());
 
-        MongLogCode mongLogCode = MongLogCode.DECREASE_SATIETY;
+        MongLogCode mongLogCode = MongLogCode.DECREASE_STATUS;
         mongLogRepository.save(MongLog.builder()
                 .mongId(mong.getId())
                 .mongLogCode(mongLogCode)
-                .message(String.format("%s 만큼 %s", satiety, mongLogCode.message))
+                .message(String.format("%s:%f:%f:%f:%f:%f", mongLogCode.message, addWeight, addStrength, addSatiety, addHealthy, addSleep))
                 .build());
 
-        return mong;
-    }
+        log.info("[increaseStatus] mongId: {}, addWeight: {}, addStrength:{}, addSatiety: {}, addHealthy: {}, addSleep: {}", mongId, addWeight, addStrength, addSatiety, addHealthy, addSleep);
 
-    public Mong decreaseHealthy(Long mongId, Double healthy) {
-
-        Mong mong = mongRepository.findByIdAndIsActiveTrue(mongId)
-                .orElseThrow(() -> new NotFoundException(MongErrorCode.NOT_FOUND_MONG));
-
-        mong = mongRepository.save(mong.toBuilder()
-                .healthy(mong.getHealthy() - healthy)
-                .build());
-
-        MongLogCode mongLogCode = MongLogCode.DECREASE_HEALTHY;
-        mongLogRepository.save(MongLog.builder()
-                .mongId(mong.getId())
-                .mongLogCode(mongLogCode)
-                .message(String.format("%s 만큼 %s", healthy, mongLogCode.message))
-                .build());
-
-        return mong;
-    }
-
-    public Mong decreaseSleep(Long mongId, Double sleep) {
-
-        Mong mong = mongRepository.findByIdAndIsActiveTrue(mongId)
-                .orElseThrow(() -> new NotFoundException(MongErrorCode.NOT_FOUND_MONG));
-
-        mong = mongRepository.save(mong.toBuilder()
-                .sleep(mong.getSleep() - sleep)
-                .build());
-
-        MongLogCode mongLogCode = MongLogCode.DECREASE_SLEEP;
-        mongLogRepository.save(MongLog.builder()
-                .mongId(mong.getId())
-                .mongLogCode(mongLogCode)
-                .message(String.format("%s 만큼 %s", sleep, mongLogCode.message))
-                .build());
-
-        return mong;
-    }
-
-    public Mong increaseWeight(Long mongId, Double weight) {
-
-        Mong mong = mongRepository.findByIdAndIsActiveTrue(mongId)
-                .orElseThrow(() -> new NotFoundException(MongErrorCode.NOT_FOUND_MONG));
-
-        mong = mongRepository.save(mong.toBuilder()
-                .weight(mong.getWeight() + weight)
-                .build());
-
-        MongLogCode mongLogCode = MongLogCode.INCREASE_WEIGHT;
-        mongLogRepository.save(MongLog.builder()
-                .mongId(mong.getId())
-                .mongLogCode(mongLogCode)
-                .message(String.format("%s 만큼 %s", weight, mongLogCode.message))
-                .build());
-
-        return mong;
-    }
-
-    public Mong increaseStrength(Long mongId, Double strength) {
-
-        Mong mong = mongRepository.findByIdAndIsActiveTrue(mongId)
-                .orElseThrow(() -> new NotFoundException(MongErrorCode.NOT_FOUND_MONG));
-
-        mong = mongRepository.save(mong.toBuilder()
-                .strength(mong.getStrength() + strength)
-                .build());
-
-        MongLogCode mongLogCode = MongLogCode.INCREASE_STRENGTH;
-        mongLogRepository.save(MongLog.builder()
-                .mongId(mong.getId())
-                .mongLogCode(mongLogCode)
-                .message(String.format("%s 만큼 %s", strength, mongLogCode.message))
-                .build());
-
-        return mong;
-    }
-
-    public Mong increaseSatiety(Long mongId, Double satiety) {
-
-        Mong mong = mongRepository.findByIdAndIsActiveTrue(mongId)
-                .orElseThrow(() -> new NotFoundException(MongErrorCode.NOT_FOUND_MONG));
-
-        mong = mongRepository.save(mong.toBuilder()
-                .satiety(mong.getSatiety() + satiety)
-                .build());
-
-        MongLogCode mongLogCode = MongLogCode.INCREASE_SATIETY;
-        mongLogRepository.save(MongLog.builder()
-                .mongId(mong.getId())
-                .mongLogCode(mongLogCode)
-                .message(String.format("%s 만큼 %s", satiety, mongLogCode.message))
-                .build());
-
-        return mong;
-    }
-
-    public Mong increaseHealthy(Long mongId, Double healthy) {
-
-        Mong mong = mongRepository.findByIdAndIsActiveTrue(mongId)
-                .orElseThrow(() -> new NotFoundException(MongErrorCode.NOT_FOUND_MONG));
-
-        mong = mongRepository.save(mong.toBuilder()
-                .healthy(mong.getHealthy() + healthy)
-                .build());
-
-        MongLogCode mongLogCode = MongLogCode.INCREASE_HEALTHY;
-        mongLogRepository.save(MongLog.builder()
-                .mongId(mong.getId())
-                .mongLogCode(mongLogCode)
-                .message(String.format("%s 만큼 %s", healthy, mongLogCode.message))
-                .build());
-
-        return mong;
-    }
-
-    public Mong increaseSleep(Long mongId, Double sleep) {
-
-        Mong mong = mongRepository.findByIdAndIsActiveTrue(mongId)
-                .orElseThrow(() -> new NotFoundException(MongErrorCode.NOT_FOUND_MONG));
-
-        mong = mongRepository.save(mong.toBuilder()
-                .sleep(mong.getSleep() + sleep)
-                .build());
-
-        MongLogCode mongLogCode = MongLogCode.INCREASE_SLEEP;
-        mongLogRepository.save(MongLog.builder()
-                .mongId(mong.getId())
-                .mongLogCode(mongLogCode)
-                .message(String.format("%s 만큼 %s", sleep, mongLogCode.message))
-                .build());
-
-        return mong;
+        return MongVo.of(mong);
     }
 }

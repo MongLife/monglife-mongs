@@ -2,9 +2,8 @@ package com.mongs.play.core.exception.common;
 
 
 import com.mongs.play.core.error.ErrorCode;
-import com.mongs.play.core.exception.ErrorException;
 
-public class AlreadyExistException extends ErrorException {
+public class AlreadyExistException extends CommonErrorException {
     public AlreadyExistException(ErrorCode errorCode) {
         super(errorCode);
     }

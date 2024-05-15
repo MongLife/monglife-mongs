@@ -19,7 +19,6 @@ public class BasicEvent {
     private String id = UUID.randomUUID().toString();
     @Builder.Default
     private LocalDateTime createdAt = LocalDateTime.now();
-    @Builder.Default
-    private Map<String, byte[]> history = new LinkedHashMap<>();
+    private String topic;
 }
 

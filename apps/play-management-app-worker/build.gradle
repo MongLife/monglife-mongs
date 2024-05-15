@@ -1,6 +1,5 @@
 dependencies {
-    implementation project(':domains:play-mong-domain')
-//    implementation project(":modules:play-security-module")
+    implementation project(":domains:play-task-domain")
     implementation project(":modules:play-kafka-module")
 }
 

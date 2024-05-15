@@ -2,9 +2,8 @@ package com.mongs.play.core.exception.app;
 
 
 import com.mongs.play.core.error.ErrorCode;
-import com.mongs.play.core.exception.ErrorException;
 
-public class ManagementInternalException extends ErrorException {
+public class ManagementInternalException extends AppErrorException {
     public ManagementInternalException(ErrorCode errorCode) {
         super(errorCode);
     }

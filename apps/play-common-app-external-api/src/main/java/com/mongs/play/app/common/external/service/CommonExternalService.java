@@ -1,12 +1,12 @@
 package com.mongs.play.app.common.external.service;
 
 import com.mongs.play.app.common.external.vo.*;
-import com.mongs.play.module.code.entity.CodeVersion;
-import com.mongs.play.module.code.entity.FoodCode;
-import com.mongs.play.module.code.entity.MapCode;
-import com.mongs.play.module.code.entity.MongCode;
-import com.mongs.play.module.code.service.CodeService;
-import com.mongs.play.module.code.service.CodeVersionService;
+import com.mongs.play.domain.code.entity.CodeVersion;
+import com.mongs.play.domain.code.entity.FoodCode;
+import com.mongs.play.domain.code.entity.MapCode;
+import com.mongs.play.domain.code.entity.MongCode;
+import com.mongs.play.domain.code.service.CodeService;
+import com.mongs.play.domain.code.service.CodeVersionService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

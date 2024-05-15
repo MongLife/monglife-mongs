@@ -4,6 +4,7 @@ import lombok.Builder;
 
 @Builder
 public record RemoveMongCollectionResDto(
-        Long accountId
+        Long accountId,
+        String code
 ) {
 }

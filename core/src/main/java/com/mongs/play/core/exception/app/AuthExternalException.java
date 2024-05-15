@@ -2,9 +2,8 @@ package com.mongs.play.core.exception.app;
 
 
 import com.mongs.play.core.error.ErrorCode;
-import com.mongs.play.core.exception.ErrorException;
 
-public class AuthExternalException extends ErrorException {
+public class AuthExternalException extends AppErrorException {
     public AuthExternalException(ErrorCode errorCode) {
         super(errorCode);
     }
