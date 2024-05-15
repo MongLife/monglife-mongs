@@ -438,26 +438,4 @@ public class MongService {
     public List<MongFeedLogVo> findMongFeedLogByMongId(Long mongId) {
         return MongFeedLogVo.toList(mongFeedLogRepository.findByMongId(mongId));
     }
-
-    @Transactional
-    public MongVo increasePayPoint(Long mongId, Integer addPayPoint) throws NotFoundException {
-
-        Mong mong = mongRepository.findByIdAndIsActiveTrue(mongId)
-                .orElseThrow(() -> new NotFoundException(MongErrorCode.NOT_FOUND_ACTIVE_MONG));
-
-        int payPoint = mong.getPayPoint() + addPayPoint;
-
-        mong = mongRepository.save(mong.toBuilder()
-                .payPoint(payPoint)
-                .build());
-
-        MongLogCode mongLogCode = MongLogCode.INCREASE_PAY_POINT;
-        mongLogRepository.save(MongLog.builder()
-                .mongId(mong.getId())
-                .mongLogCode(mongLogCode)
-                .message(String.format("%s:%d", mongLogCode.message, addPayPoint))
-                .build());
-
-        return MongVo.of(mong);
-    }
 }

@@ -28,15 +28,17 @@ public class MongPayPointService {
         Mong mong = mongRepository.findByIdAndIsActiveTrue(mongId)
                 .orElseThrow(() -> new NotFoundException(MongErrorCode.NOT_FOUND_ACTIVE_MONG));
 
+        int payPoint = mong.getPayPoint() + addPayPoint;
+
         mong = mongRepository.save(mong.toBuilder()
-                .payPoint(mong.getPayPoint() + addPayPoint)
+                .payPoint(payPoint)
                 .build());
 
         MongLogCode mongLogCode = MongLogCode.INCREASE_PAY_POINT;
         mongLogRepository.save(MongLog.builder()
                 .mongId(mong.getId())
                 .mongLogCode(mongLogCode)
-                .message(String.format("%s:%s", mongLogCode.message, addPayPoint))
+                .message(String.format("%s:%d", mongLogCode.message, addPayPoint))
                 .build());
 
         log.info("[increasePayPoint] mongId: {}, addPayPoint: {}]", mong.getId(), addPayPoint);
@@ -49,6 +51,8 @@ public class MongPayPointService {
 
         Mong mong = mongRepository.findByIdAndIsActiveTrue(mongId)
                 .orElseThrow(() -> new NotFoundException(MongErrorCode.NOT_FOUND_ACTIVE_MONG));
+
+        int payPoint = mong.getPayPoint() - subPayPoint;
 
         mong = mongRepository.save(mong.toBuilder()
                 .payPoint(mong.getPayPoint() - subPayPoint)

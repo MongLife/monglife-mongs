@@ -2,6 +2,7 @@ package com.mongs.play.app.management.internal.service;
 
 import com.mongs.play.app.management.internal.vo.EvolutionReadyVo;
 import com.mongs.play.app.management.internal.vo.*;
+import com.mongs.play.domain.mong.service.MongPayPointService;
 import com.mongs.play.domain.mong.service.MongService;
 import com.mongs.play.domain.mong.service.MongStatusService;
 import com.mongs.play.domain.mong.utils.MongUtil;
@@ -18,6 +19,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class ManagementInternalService {
 
     private final MongService mongService;
+    private final MongPayPointService mongPayPointService;
     private final MongStatusService mongStatusService;
     private final KafkaService kafkaService;
 
@@ -139,7 +141,7 @@ public class ManagementInternalService {
 
     @Transactional
     public IncreasePayPointVo increasePayPoint(Long mongId, Integer addPayPoint) {
-        MongVo mongVo = mongService.increasePayPoint(mongId, addPayPoint);
+        MongVo mongVo = mongPayPointService.increasePayPoint(mongId, addPayPoint);
 
         return IncreasePayPointVo.builder()
                 .accountId(mongVo.accountId())
