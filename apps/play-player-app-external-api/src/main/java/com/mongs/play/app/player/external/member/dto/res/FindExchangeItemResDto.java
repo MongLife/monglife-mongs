@@ -7,14 +7,14 @@ import java.util.List;
 
 @Builder
 public record FindExchangeItemResDto(
-        String chargeItemId,
+        String exchangeItemId,
         String name,
         Integer starPoint,
         Integer payPoint
 ) {
     public static FindExchangeItemResDto of(FindExchangeItemVo findExchangeItemVo) {
         return FindExchangeItemResDto.builder()
-                .chargeItemId(findExchangeItemVo.exchangeItemId())
+                .exchangeItemId(findExchangeItemVo.exchangeItemId())
                 .name(findExchangeItemVo.name())
                 .starPoint(findExchangeItemVo.starPoint())
                 .payPoint(findExchangeItemVo.payPoint())
