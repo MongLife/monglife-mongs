@@ -8,6 +8,7 @@ import com.mongs.play.domain.collection.repository.MapCollectionRepository;
 import com.mongs.play.domain.collection.repository.MongCollectionRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -26,6 +27,7 @@ public class CollectionService {
         return mongCollectionRepository.findByAccountId(accountId);
     }
 
+    @Transactional
     public MapCollection addMapCollection(Long accountId, String mapCode) {
         return mapCollectionRepository.findByAccountIdAndCode(accountId, mapCode)
                 .orElseGet(() -> mapCollectionRepository.save(MapCollection.builder()
@@ -34,6 +36,7 @@ public class CollectionService {
                                 .build()));
     }
 
+    @Transactional
     public MongCollection addMongCollection(Long accountId, String mongCode) {
         return mongCollectionRepository.findByAccountIdAndCode(accountId, mongCode)
                 .orElseGet(() ->
@@ -44,6 +47,7 @@ public class CollectionService {
                                 .build()));
     }
 
+    @Transactional
     public void removeMapCollection(Long accountId, String mapCode) throws NotFoundException {
 
         mapCollectionRepository.findByAccountIdAndCode(accountId, mapCode)
@@ -52,6 +56,7 @@ public class CollectionService {
         mapCollectionRepository.deleteByAccountIdAndCode(accountId, mapCode);
     }
 
+    @Transactional
     public void removeMongCollection(Long accountId, String mongCode) throws NotFoundException {
 
         mongCollectionRepository.findByAccountIdAndCode(accountId, mongCode)

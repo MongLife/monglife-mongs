@@ -2,9 +2,8 @@ package com.mongs.play.core.exception.app;
 
 
 import com.mongs.play.core.error.ErrorCode;
-import com.mongs.play.core.exception.ErrorException;
 
-public class GatewayExternalException extends ErrorException {
+public class GatewayExternalException extends AppErrorException {
     public GatewayExternalException(ErrorCode errorCode) {
         super(errorCode);
     }

@@ -67,6 +67,16 @@ public class PaymentService {
                 .build());
     }
 
+    public PaymentLog removeExchangePayPointLog(Long paymentLogId) {
+
+        PaymentLog paymentLog = paymentLogRepository.findById(paymentLogId)
+                .orElseThrow(() -> new NotFoundException(PaymentErrorCode.NOT_FOUND_PAYMENT_LOG));
+
+        paymentLogRepository.deleteById(paymentLogId);
+
+        return paymentLog;
+    }
+
     public PaymentLog itemReward(Long paymentLogId) {
 
         PaymentLog paymentLog = paymentLogRepository.findById(paymentLogId)

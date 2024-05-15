@@ -8,6 +8,7 @@ import com.mongs.play.domain.feedback.repository.FeedbackLogRepository;
 import com.mongs.play.domain.feedback.repository.FeedbackRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -22,6 +23,7 @@ public class FeedbackService {
         return feedbackRepository.findByAccountId(accountId);
     }
 
+    @Transactional
     public Feedback addFeedback(Feedback feedback, List<FeedbackLog> feedbackLogList) {
 
         List<String> feedbackLogIdList = feedbackLogList.stream()
@@ -41,6 +43,7 @@ public class FeedbackService {
         return feedbackRepository.save(feedback);
     }
 
+    @Transactional
     public Feedback modifyIsSolved(Long feedbackId, Boolean isSolved) throws NotFoundException {
 
         Feedback feedback = feedbackRepository.findById(feedbackId)

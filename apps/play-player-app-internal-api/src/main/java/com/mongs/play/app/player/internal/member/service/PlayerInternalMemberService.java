@@ -3,6 +3,7 @@ package com.mongs.play.app.player.internal.member.service;
 import com.mongs.play.app.player.internal.member.vo.IncreaseStarPointVo;
 import com.mongs.play.domain.member.entity.Member;
 import com.mongs.play.domain.member.service.MemberService;
+import com.mongs.play.domain.payment.entity.PaymentLog;
 import com.mongs.play.domain.payment.service.PaymentService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -16,15 +17,30 @@ public class PlayerInternalMemberService {
     private final MemberService memberService;
 
     @Transactional
-    public IncreaseStarPointVo increaseStarPoint(Long accountId, Integer starPoint) {
+    public IncreaseStarPointVo increaseStarPointMapCollection(Long accountId) {
 
-        paymentService.addIncreaseStarPointLog(accountId);
-
-        Member member = memberService.modifyIncreaseStarPoint(accountId, starPoint);
+        int starPoint = 10;
+        PaymentLog paymentLog = paymentService.addIncreaseStarPointLog(accountId);
+        Member member = memberService.increaseStarPoint(accountId, starPoint);
+        paymentService.itemReward(paymentLog.getId());
 
         return IncreaseStarPointVo.builder()
                 .accountId(member.getAccountId())
-                .addStarPoint(member.getStarPoint())
+                .starPoint(member.getStarPoint())
+                .build();
+    }
+
+    @Transactional
+    public IncreaseStarPointVo increaseStarPointMongCollection(Long accountId) {
+
+        int starPoint = 10;
+        PaymentLog paymentLog = paymentService.addIncreaseStarPointLog(accountId);
+        Member member = memberService.increaseStarPoint(accountId, starPoint);
+        paymentService.itemReward(paymentLog.getId());
+
+        return IncreaseStarPointVo.builder()
+                .accountId(member.getAccountId())
+                .starPoint(member.getStarPoint())
                 .build();
     }
 }

@@ -5,6 +5,7 @@ import lombok.Builder;
 
 @Builder
 public record GraduateMongVo(
+        Long accountId,
         Long mongId,
         MongShift shift
 ) {

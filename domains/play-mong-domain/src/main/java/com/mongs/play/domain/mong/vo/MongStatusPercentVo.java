@@ -1,6 +1,5 @@
 package com.mongs.play.domain.mong.vo;
 
-import com.mongs.play.domain.mong.enums.MongGrade;
 import lombok.Builder;
 
 @Builder

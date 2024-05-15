@@ -2,8 +2,11 @@ package com.mongs.play.domain.mong.utils;
 
 import com.mongs.play.domain.mong.entity.Mong;
 import com.mongs.play.domain.mong.enums.MongGrade;
+import com.mongs.play.domain.mong.enums.MongShift;
+import com.mongs.play.domain.mong.enums.MongState;
 import com.mongs.play.domain.mong.vo.MongStatusPercentVo;
 import com.mongs.play.domain.mong.vo.MongStatusVo;
+import com.mongs.play.domain.mong.vo.MongVo;
 
 public class MongUtil {
 
@@ -19,6 +22,23 @@ public class MongUtil {
             return 0D;
         }
         return percent / 100 * maxValue;
+    }
+
+    public static MongStatusPercentVo statusToPercent(MongGrade mongGrade, MongVo mongVo) {
+
+        double strengthPercent = MongUtil.statusToPercent(mongGrade.maxStatus, mongVo.strength());
+        double satietyPercent = MongUtil.statusToPercent(mongGrade.maxStatus, mongVo.satiety());
+        double healthyPercent = MongUtil.statusToPercent(mongGrade.maxStatus, mongVo.healthy());
+        double sleepPercent = MongUtil.statusToPercent(mongGrade.maxStatus, mongVo.sleep());
+        double expPercent = MongUtil.statusToPercent(mongGrade.evolutionExp, mongVo.exp());
+
+        return MongStatusPercentVo.builder()
+                .strength(strengthPercent)
+                .satiety(satietyPercent)
+                .healthy(healthyPercent)
+                .sleep(sleepPercent)
+                .exp(expPercent)
+                .build();
     }
 
     public static MongStatusPercentVo statusToPercent(MongGrade mongGrade, Mong mong) {
@@ -53,5 +73,16 @@ public class MongUtil {
                 .sleep(sleep)
                 .exp(exp)
                 .build();
+    }
+
+    public static boolean isStateMatch(MongState mongState, MongStatusPercentVo mongStatusPercentVo) {
+        return mongStatusPercentVo.strength() < mongState.strengthPercent ||
+                mongStatusPercentVo.satiety() < mongState.satietyPercent ||
+                mongStatusPercentVo.healthy() < mongState.healthyPercent ||
+                mongStatusPercentVo.sleep() < mongState.sleepPercent;
+    }
+
+    public static boolean isEvolutionReady(MongGrade grade, MongShift shift, Double exp) {
+        return grade.evolutionExp <= exp && !MongShift.GRADUATE_READY.equals(shift) && !MongShift.EVOLUTION_READY.equals(shift);
     }
 }

@@ -1,6 +1,6 @@
 package com.mongs.play.config;
 
-import com.mongs.lifecycle.service.componentService.TaskService;
+import com.mongs.play.module.task.service.TaskService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
@@ -17,7 +17,7 @@ public class StartupEventListener implements ApplicationListener<ApplicationRead
     @Override
     public void onApplicationEvent(ApplicationReadyEvent event) {
         log.info("#######################     시작 준비 (Task 재시작)     #######################");
-        taskService.restartAllTask();
+        taskService.resumeSystemTask();
         log.info("####################### 시작 준비 완료 (Task 재시작 완료) #######################");
     }
 }

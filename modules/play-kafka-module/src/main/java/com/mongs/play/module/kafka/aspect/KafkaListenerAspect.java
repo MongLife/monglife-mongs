@@ -34,7 +34,11 @@ public class KafkaListenerAspect {
                 if (arg instanceof BasicEvent) {
                     for (String topic : kafkaListener.topics()) {
                         BasicEvent event = (BasicEvent) arg;
-                        kafkaService.sendRollback(topic.replace("commit.", ""), event);
+//                        if (e instanceof AppErrorException) {
+//                            kafkaService.send("app.rollback", event);
+//                        } else if(e instanceof CommonErrorException) {
+//                            kafkaService.send("common.rollback." + topic, event);
+//                        }
                     }
                 }
             }

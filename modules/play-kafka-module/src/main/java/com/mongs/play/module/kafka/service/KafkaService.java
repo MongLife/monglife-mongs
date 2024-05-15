@@ -20,8 +20,13 @@ public class KafkaService {
         kafkaTemplate.send("commit." + kafkaTopic.topic, event);
     }
 
-    public <T extends BasicEvent> void sendRollback(String topic, T event) {
-        kafkaTemplate.send("rollback." + topic, event);
+    public <T extends BasicEvent> void sendStop(KafkaTopic kafkaTopic, T event) {
+        event.setTopic(kafkaTopic.topic);
+        kafkaTemplate.send("stop." + kafkaTopic.topic, event);
+    }
+
+    public <T extends BasicEvent> void sendRollback(KafkaTopic kafkaTopic, T event) {
+        kafkaTemplate.send("rollback." + kafkaTopic.topic, event);
     }
 
     @Getter
@@ -32,37 +37,26 @@ public class KafkaService {
         FIRST_EVOLUTION_MONG("evolutionMong.first"),
         EVOLUTION_MONG("evolutionMong"),
         LAST_EVOLUTION_MONG("evolutionMong.last"),
+        TRAINING_MONG("trainingMong"),
+        FEED_MONG("feedMong"),
         SLEEP_SLEEPING_MONG("sleepingMong.sleep"),
         AWAKE_SLEEPING_MONG("sleepingMong.awake"),
         DELETE_MONG("deleteMong"),
+        // management_internal -> management_worker
+        EVOLUTION_READY("evolutionReady"),
+        DECREASE_STATUS("decreaseStatus"),
+        INCREASE_STATUS("increaseStatus"),
+        INCREASE_POOP_COUNT("increasePoopCount"),
         // management_worker -> management_internal
-        EVOLUTION_READY_MONG_SCHEDULE("evolutionReadyMongSchedule"),
-        DECREASE_WEIGHT_SCHEDULE("decreaseWeightSchedule"),
-        DECREASE_STRENGTH_SCHEDULE("decreaseStrengthSchedule"),
-        DECREASE_SATIETY_SCHEDULE("decreaseSatietySchedule"),
-        DECREASE_HEALTHY_SCHEDULE("decreaseHealthySchedule"),
-        DECREASE_SLEEP_SCHEDULE("decreaseSleepSchedule"),
-        INCREASE_POOP_COUNT_SCHEDULE("increasePoolCountSchedule"),
-        INCREASE_SLEEP_SCHEDULE("increaseSleepSchedule"),
-        DEAD_MONG_SCHEDULE("deadMongSchedule"),
-        // management_internal -> ?
-        EVOLUTION_READY_MONG("evolutionReadyMong"),
-        DECREASE_WEIGHT("decreaseWeight"),
-        DECREASE_STRENGTH("decreaseStrength"),
-        DECREASE_SATIETY("decreaseSatiety"),
-        DECREASE_HEALTHY("decreaseHealthy"),
-        DECREASE_SLEEP("decreaseSleep"),
-        DECREASE_POOP_COUNT("decreasePoolCount"),
-        INCREASE_WEIGHT("increaseWeight"),
-        INCREASE_STRENGTH("increaseStrength"),
-        INCREASE_SATIETY("increaseSatiety"),
-        INCREASE_HEALTHY("increaseHealthy"),
-        INCREASE_SLEEP("increaseSleep"),
-        INCREASE_POOP_COUNT("increasePoolCount"),
-        DEAD_MONG("deadMong"),
+        ZERO_EVOLUTION_SCHEDULE("zeroEvolutionSchedule"),
+        DECREASE_STATUS_SCHEDULE("decreaseStatusSchedule"),
+        INCREASE_STATUS_SCHEDULE("increaseStatusSchedule"),
+        INCREASE_POOP_COUNT_SCHEDULE("increasePoopCountSchedule"),
+        DEAD_SCHEDULE("deadSchedule"),
         // player_internal -> ?
+        REGISTER_MAP_COLLECTION("registerMapCollection"),
         REGISTER_MONG_COLLECTION("registerMongCollection"),
-        INCREASE_STAR_POINT("increaseStartPoint"),
+        EXCHANGE_PAY_POINT("exchangePayPoint"),
         ;
 
         public final String topic;

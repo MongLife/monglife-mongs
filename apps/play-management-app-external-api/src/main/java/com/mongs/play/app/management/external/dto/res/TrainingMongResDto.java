@@ -4,6 +4,7 @@ import lombok.Builder;
 
 @Builder
 public record TrainingMongResDto(
+        Long accountId,
         Long mongId,
         Double weight,
         Double strength,

@@ -1,6 +1,6 @@
 package com.mongs.play.domain.mong.vo;
 
-import com.mongs.play.module.code.entity.FoodCode;
+import com.mongs.play.domain.mong.entity.MongFeedLog;
 import lombok.Builder;
 
 import java.time.LocalDateTime;
@@ -8,21 +8,20 @@ import java.util.List;
 
 @Builder(toBuilder = true)
 public record MongFeedLogVo(
+        Long mongId,
         String code,
-        LocalDateTime lastBuyAt,
-        Integer delaySeconds
+        LocalDateTime lastBuyAt
 ) {
-    public static MongFeedLogVo of(FoodCode foodCode) {
-        Integer delaySecond = foodCode.delaySeconds();
+    public static MongFeedLogVo of(MongFeedLog mongFeedLog) {
         return MongFeedLogVo.builder()
-                .code(foodCode.code())
-                .lastBuyAt(LocalDateTime.now().minusSeconds(delaySecond + 1))
-                .delaySeconds(delaySecond)
+                .mongId(mongFeedLog.getMongId())
+                .code(mongFeedLog.getCode())
+                .lastBuyAt(mongFeedLog.getUpdatedAt())
                 .build();
     }
 
-    public static List<MongFeedLogVo> toList(List<FoodCode> foodCodeList) {
-        return foodCodeList.stream()
+    public static List<MongFeedLogVo> toList(List<MongFeedLog> mongFeedLogList) {
+        return mongFeedLogList.stream()
                 .map(MongFeedLogVo::of)
                 .toList();
     }

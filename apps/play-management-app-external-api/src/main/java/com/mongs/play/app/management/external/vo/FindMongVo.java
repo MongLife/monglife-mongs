@@ -12,6 +12,12 @@ public record FindMongVo(
         Long mongId,
         String name,
         String mongCode,
+        Integer payPoint,
+
+        MongState state,
+        MongShift shift,
+
+        Double exp,
         Double weight,
         Double healthy,
         Double satiety,
@@ -19,10 +25,7 @@ public record FindMongVo(
         Double sleep,
         Integer poopCount,
         Boolean isSleeping,
-        Double exp,
-        MongState state,
-        MongShift shift,
-        Integer payPoint,
+
         LocalDateTime born
 ) {
 }

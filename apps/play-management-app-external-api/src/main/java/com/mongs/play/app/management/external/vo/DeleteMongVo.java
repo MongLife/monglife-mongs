@@ -5,6 +5,7 @@ import lombok.Builder;
 
 @Builder
 public record DeleteMongVo(
+        Long accountId,
         Long mongId,
         MongShift shift
 ) {

@@ -1,13 +1,19 @@
 package com.mongs.play.app.management.internal.service;
 
+import com.mongs.play.app.management.internal.dto.res.EvolutionReadyResDto;
+import com.mongs.play.app.management.internal.vo.EvolutionReadyVo;
 import com.mongs.play.app.management.internal.vo.*;
-import com.mongs.play.domain.mong.entity.Mong;
+import com.mongs.play.client.publisher.mong.code.PublishCode;
+import com.mongs.play.client.publisher.mong.service.MqttService;
 import com.mongs.play.domain.mong.service.MongService;
 import com.mongs.play.domain.mong.service.MongStatusService;
+import com.mongs.play.domain.mong.utils.MongUtil;
+import com.mongs.play.domain.mong.vo.MongVo;
 import com.mongs.play.module.kafka.event.managementInternal.*;
 import com.mongs.play.module.kafka.service.KafkaService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
@@ -16,212 +22,129 @@ public class ManagementInternalService {
     private final MongService mongService;
     private final MongStatusService mongStatusService;
     private final KafkaService kafkaService;
+    private final MqttService mqttService;
 
-    public EvolutionReadyMongVo evolutionReadyMong(Long mongId) {
+    @Transactional
+    public EvolutionReadyVo evolutionReady(Long mongId) {
 
-        Mong mong = mongService.evolutionReadyMong(mongId).mong();
+        MongVo mongVo = mongService.findActiveMongById(mongId);
 
-        kafkaService.sendCommit(KafkaService.KafkaTopic.EVOLUTION_READY_MONG, EvolutionReadyMongEvent.builder()
-                .mongId(mong.getId())
-                .build());
+        if (MongUtil.isEvolutionReady(mongVo.grade(), mongVo.shift(), mongVo.exp())) {
+            mongVo = mongService.toggleEvolutionReady(mongId);
 
-        return EvolutionReadyMongVo.builder()
-                .mongId(mong.getId())
-                .shift(mong.getShift())
+            kafkaService.sendCommit(KafkaService.KafkaTopic.EVOLUTION_READY, EvolutionReadyMongEvent.builder()
+                    .mongId(mongVo.mongId())
+                    .build());
+        }
+
+        return EvolutionReadyVo.builder()
+                .accountId(mongVo.accountId())
+                .mongId(mongVo.mongId())
+                .shift(mongVo.shift())
                 .build();
     }
 
-    public DecreaseWeightVo decreaseWeight(Long mongId, Double subWeight) {
+    @Transactional
+    public DecreaseStatusVo decreaseStatus(Long mongId, Double subWeight, Double subStrength, Double subSatiety, Double subHealthy, Double subSleep) {
 
-        Mong mong = mongStatusService.decreaseWeight(mongId, subWeight);
+        MongVo mongVo = mongStatusService.decreaseStatus(mongId, subWeight, subStrength, subSatiety, subHealthy, subSleep);
 
-        kafkaService.sendCommit(KafkaService.KafkaTopic.DECREASE_WEIGHT, DecreaseWeightEvent.builder()
-                .mongId(mong.getId())
-                .subWeight(subWeight)
+        kafkaService.sendCommit(KafkaService.KafkaTopic.DECREASE_STATUS, DecreaseStatusEvent.builder()
+                .mongId(mongVo.mongId())
+                .weight(mongVo.weight())
+                .strength(mongVo.strength())
+                .satiety(mongVo.satiety())
+                .healthy(mongVo.healthy())
+                .sleep(mongVo.sleep())
                 .build());
 
-        return DecreaseWeightVo.builder()
-                .mongId(mong.getId())
-                .weight(mong.getWeight())
+        return DecreaseStatusVo.builder()
+                .accountId(mongVo.accountId())
+                .mongId(mongVo.mongId())
+                .weight(mongVo.weight())
+                .strength(mongVo.strength())
+                .satiety(mongVo.satiety())
+                .healthy(mongVo.healthy())
+                .sleep(mongVo.sleep())
                 .build();
     }
 
-    public DecreaseStrengthVo decreaseStrength(Long mongId, Double subStrength) {
-
-        Mong mong = mongStatusService.decreaseStrength(mongId, subStrength);
-
-        kafkaService.sendCommit(KafkaService.KafkaTopic.DECREASE_STRENGTH, DecreaseStrengthEvent.builder()
-                .mongId(mong.getId())
-                .subStrength(subStrength)
-                .build());
-
-        return DecreaseStrengthVo.builder()
-                .mongId(mong.getId())
-                .strength(mong.getStrength())
-                .build();
-    }
-
-    public DecreaseSatietyVo decreaseSatiety(Long mongId, Double subSatiety) {
-
-        Mong mong = mongStatusService.decreaseSatiety(mongId, subSatiety);
-
-        kafkaService.sendCommit(KafkaService.KafkaTopic.DECREASE_SATIETY, DecreaseSatietyEvent.builder()
-                .mongId(mong.getId())
-                .subSatiety(subSatiety)
-                .build());
-
-        return DecreaseSatietyVo.builder()
-                .mongId(mong.getId())
-                .satiety(mong.getSatiety())
-                .build();
-    }
-
-    public DecreaseHealthyVo decreaseHealthy(Long mongId, Double subHealthy) {
-
-        Mong mong = mongStatusService.decreaseHealthy(mongId, subHealthy);
-
-        kafkaService.sendCommit(KafkaService.KafkaTopic.DECREASE_HEALTHY, DecreaseHealthyEvent.builder()
-                .mongId(mong.getId())
-                .subHealthy(subHealthy)
-                .build());
-
-        return DecreaseHealthyVo.builder()
-                .mongId(mong.getId())
-                .healthy(mong.getHealthy())
-                .build();
-    }
-
-    public DecreaseSleepVo decreaseSleep(Long mongId, Double subSleep) {
-
-        Mong mong = mongStatusService.decreaseSleep(mongId, subSleep);
-
-        kafkaService.sendCommit(KafkaService.KafkaTopic.DECREASE_SLEEP, DecreaseSleepEvent.builder()
-                .mongId(mong.getId())
-                .subSleep(subSleep)
-                .build());
-
-        return DecreaseSleepVo.builder()
-                .mongId(mong.getId())
-                .sleep(mong.getSleep())
-                .build();
-    }
-
-    public DecreasePoopCountVo decreasePoopCount(Long mongId, Integer subPoopCount) {
-
-        Mong mong = mongStatusService.decreasePoopCount(mongId, subPoopCount);
-
-        kafkaService.sendCommit(KafkaService.KafkaTopic.DECREASE_POOP_COUNT, DecreasePoopCountEvent.builder()
-                .mongId(mong.getId())
-                .subPoopCount(subPoopCount)
-                .build());
-
-        return DecreasePoopCountVo.builder()
-                .mongId(mong.getId())
-                .poopCount(mong.getPoopCount())
-                .build();
-    }
-
-    public IncreaseWeightVo increaseWeight(Long mongId, Double addWeight) {
-
-        Mong mong = mongStatusService.increaseWeight(mongId, addWeight);
-
-        kafkaService.sendCommit(KafkaService.KafkaTopic.INCREASE_WEIGHT, IncreaseWeightEvent.builder()
-                .mongId(mong.getId())
-                .addWeight(addWeight)
-                .build());
-
-        return IncreaseWeightVo.builder()
-                .mongId(mong.getId())
-                .weight(mong.getWeight())
-                .build();
-    }
-
-    public IncreaseStrengthVo increaseStrength(Long mongId, Double addStrength) {
-
-        Mong mong = mongStatusService.increaseStrength(mongId, addStrength);
-
-        kafkaService.sendCommit(KafkaService.KafkaTopic.INCREASE_STRENGTH, IncreaseStrengthEvent.builder()
-                .mongId(mong.getId())
-                .addStrength(addStrength)
-                .build());
-
-        return IncreaseStrengthVo.builder()
-                .mongId(mong.getId())
-                .strength(mong.getStrength())
-                .build();
-    }
-
-    public IncreaseSatietyVo increaseSatiety(Long mongId, Double addSatiety) {
-
-        Mong mong = mongStatusService.increaseSatiety(mongId, addSatiety);
-
-        kafkaService.sendCommit(KafkaService.KafkaTopic.INCREASE_SATIETY, IncreaseSatietyEvent.builder()
-                .mongId(mong.getId())
-                .addSatiety(addSatiety)
-                .build());
-
-        return IncreaseSatietyVo.builder()
-                .mongId(mong.getId())
-                .satiety(mong.getSatiety())
-                .build();
-    }
-
-    public IncreaseHealthyVo increaseHealthy(Long mongId, Double addHealthy) {
-
-        Mong mong = mongStatusService.increaseHealthy(mongId, addHealthy);
-
-        kafkaService.sendCommit(KafkaService.KafkaTopic.INCREASE_HEALTHY, IncreaseHealthyEvent.builder()
-                .mongId(mong.getId())
-                .addHealthy(addHealthy)
-                .build());
-
-        return IncreaseHealthyVo.builder()
-                .mongId(mong.getId())
-                .healthy(mong.getHealthy())
-                .build();
-    }
-
-    public IncreaseSleepVo increaseSleep(Long mongId, Double addSleep) {
-
-        Mong mong = mongStatusService.increaseSleep(mongId, addSleep);
-
-        kafkaService.sendCommit(KafkaService.KafkaTopic.INCREASE_SLEEP, IncreaseSleepEvent.builder()
-                .mongId(mong.getId())
-                .addSleep(addSleep)
-                .build());
-
-        return IncreaseSleepVo.builder()
-                .mongId(mong.getId())
-                .sleep(mong.getSleep())
-                .build();
-    }
-
+    @Transactional
     public IncreasePoopCountVo increasePoopCount(Long mongId, Integer addPoopCount) {
 
-        Mong mong = mongStatusService.increasePoopCount(mongId, addPoopCount);
+        MongVo mongVo = mongStatusService.increasePoopCount(mongId, addPoopCount);
 
         kafkaService.sendCommit(KafkaService.KafkaTopic.INCREASE_POOP_COUNT, IncreasePoopCountEvent.builder()
-                .mongId(mong.getId())
+                .mongId(mongVo.mongId())
                 .addPoopCount(addPoopCount)
                 .build());
 
         return IncreasePoopCountVo.builder()
-                .mongId(mong.getId())
-                .poopCount(mong.getPoopCount())
+                .accountId(mongVo.accountId())
+                .mongId(mongVo.mongId())
+                .poopCount(mongVo.poopCount())
                 .build();
     }
 
-    public DeadMongVo deadMong(Long mongId) {
+    @Transactional
+    public IncreaseStatusVo increaseStatus(Long mongId, Double addWeight, Double addStrength, Double addSatiety, Double addHealthy, Double addSleep) {
 
-        Mong mong = mongService.deadMong(mongId).mong();
+        MongVo mongVo = mongStatusService.increaseStatus(mongId, addWeight, addStrength, addSatiety, addHealthy, addSleep);
 
-        kafkaService.sendCommit(KafkaService.KafkaTopic.DEAD_MONG, DeadMongEvent.builder()
-                .mongId(mong.getId())
+        kafkaService.sendCommit(KafkaService.KafkaTopic.INCREASE_STATUS, IncreaseStatusEvent.builder()
+                .mongId(mongVo.mongId())
+                .addWeight(addWeight)
+                .addStrength(addStrength)
+                .addSatiety(addSatiety)
+                .addHealthy(addHealthy)
+                .addSleep(addSleep)
+                .weight(mongVo.weight())
+                .strength(mongVo.strength())
+                .satiety(mongVo.satiety())
+                .healthy(mongVo.healthy())
+                .sleep(mongVo.sleep())
                 .build());
 
+        return IncreaseStatusVo.builder()
+                .accountId(mongVo.accountId())
+                .mongId(mongVo.mongId())
+                .weight(mongVo.weight())
+                .strength(mongVo.strength())
+                .satiety(mongVo.satiety())
+                .healthy(mongVo.healthy())
+                .sleep(mongVo.sleep())
+                .build();
+    }
+
+    @Transactional
+    public DeadMongVo dead(Long mongId) {
+        MongVo mongVo = mongService.deadMong(mongId);
+
         return DeadMongVo.builder()
-                .mongId(mong.getId())
-                .shift(mong.getShift())
+                .accountId(mongVo.accountId())
+                .mongId(mongVo.mongId())
+                .grade(mongVo.grade())
+                .shift(mongVo.shift())
+                .state(mongVo.state())
+                .exp(mongVo.exp())
+                .weight(mongVo.weight())
+                .strength(mongVo.strength())
+                .satiety(mongVo.satiety())
+                .healthy(mongVo.healthy())
+                .sleep(mongVo.sleep())
+                .poopCount(mongVo.poopCount())
+                .isSleeping(mongVo.isSleeping())
+                .build();
+    }
+
+    @Transactional
+    public IncreasePayPointVo increasePayPoint(Long mongId, Integer addPayPoint) {
+        MongVo mongVo = mongService.increasePayPoint(mongId, addPayPoint);
+
+        return IncreasePayPointVo.builder()
+                .accountId(mongVo.accountId())
+                .mongId(mongVo.mongId())
+                .payPoint(mongVo.payPoint())
                 .build();
     }
 }

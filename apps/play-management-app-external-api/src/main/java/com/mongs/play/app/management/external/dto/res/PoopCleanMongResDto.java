@@ -4,6 +4,7 @@ import lombok.Builder;
 
 @Builder
 public record PoopCleanMongResDto(
+        Long accountId,
         Long mongId,
         Integer poopCount,
         Double exp

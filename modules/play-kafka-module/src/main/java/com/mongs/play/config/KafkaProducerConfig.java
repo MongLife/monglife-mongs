@@ -1,5 +1,6 @@
 package com.mongs.play.config;
 
+import com.fasterxml.jackson.databind.JsonSerializable;
 import lombok.RequiredArgsConstructor;
 import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.common.serialization.StringSerializer;
@@ -28,11 +29,14 @@ public class KafkaProducerConfig {
         props.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
         props.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, JsonSerializer.class);
 
-        return new DefaultKafkaProducerFactory<>(props);
+        DefaultKafkaProducerFactory<String, Object> factory = new DefaultKafkaProducerFactory<>(props);
+//        factory.setTransactionIdPrefix("tx-");
+        return factory;
     }
 
     @Bean
     public KafkaTemplate<String, Object> kafkaTemplate() {
+
         return new KafkaTemplate<>(producerFactory());
     }
 }

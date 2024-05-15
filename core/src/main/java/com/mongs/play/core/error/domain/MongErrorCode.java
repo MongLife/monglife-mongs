@@ -8,6 +8,7 @@ import org.springframework.http.HttpStatus;
 @Getter
 @AllArgsConstructor
 public enum MongErrorCode implements ErrorCode {
+    NOT_FOUND_ACTIVE_MONG(HttpStatus.NOT_FOUND, "MONG-100", "not found active mong."),
     NOT_FOUND_MONG(HttpStatus.NOT_FOUND, "MONG-100", "not found mong."),
     NOT_FOUND_TRAINING_CODE(HttpStatus.NOT_FOUND, "MONG-101", "not found training code."),
     INVALID_STROKE(HttpStatus.NOT_ACCEPTABLE, "MONG-102", "invalid stroke."),

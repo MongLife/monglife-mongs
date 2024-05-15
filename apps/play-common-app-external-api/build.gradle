@@ -1,5 +1,5 @@
 dependencies {
-    implementation project(':modules:play-code-module')
+    implementation project(':domains:play-code-domain')
 }
 
 tasks.register('copyPrivate', Copy) {

@@ -1,6 +1,6 @@
 package com.mongs.play.app.common.external.vo;
 
-import com.mongs.play.module.code.entity.FoodCode;
+import com.mongs.play.domain.code.entity.FoodCode;
 import lombok.Builder;
 
 import java.util.List;

@@ -2,9 +2,8 @@ package com.mongs.play.core.exception.common;
 
 
 import com.mongs.play.core.error.ErrorCode;
-import com.mongs.play.core.exception.ErrorException;
 
-public class KafkaTransactionException extends ErrorException {
+public class KafkaTransactionException extends CommonErrorException {
     public KafkaTransactionException(ErrorCode errorCode) {
         super(errorCode);
     }

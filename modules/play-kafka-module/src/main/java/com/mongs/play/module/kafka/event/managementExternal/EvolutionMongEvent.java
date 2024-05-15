@@ -16,5 +16,7 @@ import lombok.experimental.SuperBuilder;
 @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
 public class EvolutionMongEvent extends BasicEvent {
     private Long mongId;
+    private Long accountId;
+    private String mongCode;
     private String pastMongCode;
 }

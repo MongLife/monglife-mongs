@@ -1,11 +1,13 @@
 package com.mongs.play.app.management.external.dto.res;
 
+import com.mongs.play.app.management.external.vo.RegisterMongVo;
 import lombok.Builder;
 
 import java.time.LocalDateTime;
 
 @Builder
 public record RegisterMongResDto(
+        Long accountId,
         Long mongId,
         String name,
         String mongCode,

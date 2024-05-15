@@ -6,6 +6,7 @@ import lombok.Builder;
 
 @Builder
 public record EvolutionMongVo(
+        Long accountId,
         Long mongId,
         String mongCode,
         Double weight,

@@ -4,6 +4,7 @@ import lombok.Builder;
 
 @Builder
 public record EvolutionMongResDto(
+        Long accountId,
         Long mongId,
         String mongCode,
         Double weight,

@@ -1,5 +1,7 @@
 package com.mongs.play.domain.mong.entity;
 
+import com.mongs.play.domain.mong.utils.MongUtil;
+import com.mongs.play.domain.mong.vo.MongStatusPercentVo;
 import com.mongs.play.module.jpa.baseEntity.BaseTimeEntity;
 import com.mongs.play.domain.mong.enums.MongGrade;
 import com.mongs.play.domain.mong.enums.MongShift;
@@ -95,39 +97,28 @@ public class Mong extends BaseTimeEntity {
 
     public Mong validation() {
         this.exp = Math.max(0, Math.min(this.exp, this.grade.evolutionExp));
+        this.weight = Math.max(0, this.weight);
         this.strength = Math.max(0, Math.min(this.strength, this.grade.maxStatus));
         this.satiety = Math.max(0, Math.min(this.satiety, this.grade.maxStatus));
         this.healthy = Math.max(0, Math.min(this.healthy, this.grade.maxStatus));
         this.sleep = Math.max(0, Math.min(this.sleep, this.grade.maxStatus));
         this.poopCount = Math.max(0, Math.min(this.poopCount, 4));
-        return this;
-    }
 
-    public static Mong copy(Mong mong) {
-        return Mong.builder()
-                .isActive(mong.getIsActive())
-                .id(mong.getId())
-                .accountId(mong.getAccountId())
-                .name(mong.getName())
-                .sleepTime(mong.getSleepTime())
-                .wakeUpTime(mong.getWakeUpTime())
-                .mongCode(mong.getMongCode())
-                .payPoint(mong.getPayPoint())
-                .grade(mong.getGrade())
-                .shift(mong.getShift())
-                .state(mong.getState())
-                .exp(mong.getExp())
-                .weight(mong.getWeight())
-                .strength(mong.getStrength())
-                .satiety(mong.getSatiety())
-                .healthy(mong.getHealthy())
-                .sleep(mong.getSleep())
-                .poopCount(mong.getPoopCount())
-                .isSleeping(mong.getIsSleeping())
-                .evolutionPoint(mong.getEvolutionPoint())
-                .penalty(mong.getPenalty())
-                .numberOfTraining(mong.getNumberOfTraining())
-                .numberOfStroke(mong.getNumberOfStroke())
-                .build();
+        MongStatusPercentVo mongStatusPercentVo = MongUtil.statusToPercent(this.grade, this);
+        if (MongUtil.isStateMatch(MongState.SOMNOLENCE, mongStatusPercentVo)) {
+            this.state = MongState.SOMNOLENCE;
+        } else if (MongUtil.isStateMatch(MongState.HUNGRY, mongStatusPercentVo)) {
+            this.state = MongState.HUNGRY;
+        } else if (MongUtil.isStateMatch(MongState.SICK, mongStatusPercentVo)) {
+            this.state = MongState.SICK;
+        } else {
+            this.state = MongState.NORMAL;
+        }
+
+        if(this.poopCount == 4) {
+            this.penalty += 1;
+        }
+
+        return this;
     }
 }

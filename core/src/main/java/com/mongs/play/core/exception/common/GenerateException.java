@@ -2,9 +2,8 @@ package com.mongs.play.core.exception.common;
 
 
 import com.mongs.play.core.error.ErrorCode;
-import com.mongs.play.core.exception.ErrorException;
 
-public class GenerateException extends ErrorException {
+public class GenerateException extends CommonErrorException {
     public GenerateException(ErrorCode errorCode) {
         super(errorCode);
     }
