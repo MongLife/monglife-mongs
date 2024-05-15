@@ -14,7 +14,7 @@ public record FindExchangeItemResDto(
 ) {
     public static FindExchangeItemResDto of(FindExchangeItemVo findExchangeItemVo) {
         return FindExchangeItemResDto.builder()
-                .chargeItemId(findExchangeItemVo.chargeItemId())
+                .chargeItemId(findExchangeItemVo.exchangeItemId())
                 .name(findExchangeItemVo.name())
                 .starPoint(findExchangeItemVo.starPoint())
                 .payPoint(findExchangeItemVo.payPoint())

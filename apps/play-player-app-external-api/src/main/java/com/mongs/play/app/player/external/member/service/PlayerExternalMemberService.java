@@ -108,9 +108,8 @@ public class PlayerExternalMemberService {
 
         return ExchangePayPointVo.builder()
                 .accountId(member.getAccountId())
-                .subStarPoint(member.getStarPoint())
                 .mongId(mongId)
-                .addPayPoint(exchangeItem.getPayPoint())
+                .starPoint(member.getStarPoint())
                 .build();
     }
 

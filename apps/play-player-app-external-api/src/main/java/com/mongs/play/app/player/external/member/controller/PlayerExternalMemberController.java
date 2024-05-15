@@ -103,8 +103,7 @@ public class PlayerExternalMemberController {
         return ResponseEntity.ok().body(ExchangePayPointResDto.builder()
                 .accountId(exchangePayPointVo.accountId())
                 .mongId(exchangePayPointVo.mongId())
-                .subStarPoint(exchangePayPointVo.subStarPoint())
-                .addPayPoint(exchangePayPointVo.addPayPoint())
+                .starPoint(exchangePayPointVo.starPoint())
                 .build());
     }
 }
