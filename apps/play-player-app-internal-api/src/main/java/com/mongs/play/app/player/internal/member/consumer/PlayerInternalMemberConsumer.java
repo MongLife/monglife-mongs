@@ -26,7 +26,7 @@ public class PlayerInternalMemberConsumer {
             var vo = playerInternalMemberService.increaseStarPointMapCollection(accountId);
 
         } catch (CommonErrorException e) {
-            kafkaService.sendRollback(KafkaService.CommitTopic.REGISTER_MAP_COLLECTION, payload);
+            kafkaService.sendCommit(KafkaService.CommitTopic.REGISTER_MAP_COLLECTION, payload);
         }
     }
 
@@ -38,7 +38,7 @@ public class PlayerInternalMemberConsumer {
             var vo = playerInternalMemberService.increaseStarPointMongCollection(accountId);
 
         } catch (CommonErrorException e) {
-            kafkaService.sendRollback(KafkaService.CommitTopic.REGISTER_MONG_COLLECTION, payload);
+            kafkaService.sendCommit(KafkaService.CommitTopic.REGISTER_MONG_COLLECTION, payload);
         }
     }
 }

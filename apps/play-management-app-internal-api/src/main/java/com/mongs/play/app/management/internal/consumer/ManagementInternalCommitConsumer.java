@@ -50,7 +50,7 @@ public class ManagementInternalCommitConsumer {
 //            kafkaService.sendRollback(KafkaService.KafkaTopic.DECREASE_STATUS_SCHEDULE, payload);
         } catch (CommonErrorException e) {
             if (e.errorCode.equals(MongErrorCode.NOT_FOUND_ACTIVE_MONG)) {
-                kafkaService.sendStop(KafkaService.CommitTopic.DECREASE_STATUS_SCHEDULE, payload);
+                kafkaService.sendCommit(KafkaService.CommitTopic.DECREASE_STATUS_SCHEDULE, payload);
             }
         }
     }
@@ -71,7 +71,7 @@ public class ManagementInternalCommitConsumer {
 //            kafkaService.sendRollback(KafkaService.KafkaTopic.INCREASE_STATUS_SCHEDULE, payload);
         } catch (CommonErrorException e) {
             if (e.errorCode.equals(MongErrorCode.NOT_FOUND_ACTIVE_MONG)) {
-                kafkaService.sendStop(KafkaService.CommitTopic.INCREASE_STATUS_SCHEDULE, payload);
+                kafkaService.sendCommit(KafkaService.CommitTopic.INCREASE_STATUS_SCHEDULE, payload);
             }
         }
     }
@@ -87,7 +87,7 @@ public class ManagementInternalCommitConsumer {
 //            kafkaService.sendRollback(KafkaService.KafkaTopic.INCREASE_POOP_COUNT_SCHEDULE, payload);
         } catch (CommonErrorException e) {
             if (e.errorCode.equals(MongErrorCode.NOT_FOUND_ACTIVE_MONG)) {
-                kafkaService.sendStop(KafkaService.CommitTopic.INCREASE_POOP_COUNT_SCHEDULE, payload);
+                kafkaService.sendCommit(KafkaService.CommitTopic.INCREASE_POOP_COUNT_SCHEDULE, payload);
             }
         }
     }
@@ -115,7 +115,7 @@ public class ManagementInternalCommitConsumer {
         } catch (AppErrorException e) {
 //            kafkaService.sendRollback(KafkaService.KafkaTopic.EXCHANGE_PAY_POINT, payload);
         } catch (CommonErrorException e) {
-            kafkaService.sendRollback(KafkaService.CommitTopic.EXCHANGE_PAY_POINT, payload);
+            kafkaService.sendCommit(KafkaService.CommitTopic.EXCHANGE_PAY_POINT, payload);
         }
     }
 }

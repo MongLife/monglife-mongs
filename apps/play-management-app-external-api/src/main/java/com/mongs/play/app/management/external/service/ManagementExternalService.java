@@ -1,8 +1,6 @@
 package com.mongs.play.app.management.external.service;
 
-import com.mongs.play.app.management.external.dto.res.EvolutionReadyResDto;
 import com.mongs.play.app.management.external.vo.*;
-import com.mongs.play.client.publisher.mong.code.PublishCode;
 import com.mongs.play.client.publisher.mong.service.MqttService;
 import com.mongs.play.core.error.app.ManagementExternalErrorCode;
 import com.mongs.play.core.error.domain.MongErrorCode;
@@ -56,12 +54,6 @@ public class ManagementExternalService {
 
             kafkaService.sendCommit(KafkaService.CommitTopic.EVOLUTION_READY, EvolutionReadyMongEvent.builder()
                     .mongId(mongVo.mongId())
-                    .build());
-
-            mqttService.send(PublishCode.EVOLUTION_READY, mongVo.accountId(), EvolutionReadyResDto.builder()
-                    .accountId(mongVo.accountId())
-                    .mongId(mongVo.mongId())
-                    .shiftCode(mongVo.shift().code)
                     .build());
         }
 

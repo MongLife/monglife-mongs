@@ -5,7 +5,7 @@ import com.mongs.play.app.management.external.dto.req.RegisterMongReqDto;
 import com.mongs.play.app.management.external.dto.req.TrainingMongReqDto;
 import com.mongs.play.app.management.external.dto.res.*;
 import com.mongs.play.app.management.external.service.ManagementExternalService;
-import com.mongs.play.client.publisher.mong.code.PublishCode;
+import com.mongs.play.client.publisher.mong.service.MqttService;
 import com.mongs.play.module.security.principal.PassportDetail;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -20,6 +20,7 @@ import java.util.List;
 public class ManagementExternalController {
 
     private final ManagementExternalService managementExternalService;
+    private final MqttService mqttService;
 
     @GetMapping("")
     public ResponseEntity<List<FindMongResDto>> findMong(
@@ -91,6 +92,8 @@ public class ManagementExternalController {
 
         var vo = managementExternalService.deleteMong(accountId, mongId);
 
+        mqttService.sendMongShift(accountId, vo.mongId(), vo.shift().code);
+
         return ResponseEntity.ok().body(DeleteMongResDto.builder()
                 .accountId(vo.accountId())
                 .mongId(vo.mongId())
@@ -120,6 +123,8 @@ public class ManagementExternalController {
         Long accountId = passportDetail.getId();
 
         var vo = managementExternalService.sleepingMong(accountId, mongId);
+
+        mqttService.sendMongShift(accountId, vo.mongId(), vo.shift().code);
 
         return ResponseEntity.ok().body(SleepingMongResDto.builder()
                 .accountId(vo.accountId())

@@ -17,20 +17,9 @@ public class KafkaService {
 
     public <T extends BasicEvent> void sendCommit(String topic, T event) {
         event.setTopic(topic);
-        kafkaTemplate.send("commit." + topic, event);
+        kafkaTemplate.send(topic, event);
     }
 
-    public <T extends BasicEvent> void sendStop(String topic, T event) {
-        event.setTopic(topic);
-        kafkaTemplate.send("stop." + topic, event);
-    }
-
-    public <T extends BasicEvent> void sendRollback(String topic, T event) {
-        kafkaTemplate.send("rollback." + topic, event);
-    }
-
-    @Getter
-    @AllArgsConstructor
     public static class CommitTopic {
         // management_external -> management_worker
         public static final String REGISTER_MONG = "commit.registerMong";
@@ -61,8 +50,6 @@ public class KafkaService {
         public static final String EXCHANGE_PAY_POINT = "commit.exchangePayPoint";
     }
 
-    @Getter
-    @AllArgsConstructor
     public static class RollbackTopic {
         // management_external -> management_worker
         public static final String REGISTER_MONG = "rollback.registerMong";
@@ -93,8 +80,6 @@ public class KafkaService {
         public static final String EXCHANGE_PAY_POINT = "rollback.exchangePayPoint";
     }
 
-    @Getter
-    @AllArgsConstructor
     public static class StopTopic {
         // management_external -> management_worker
         public static final String REGISTER_MONG = "stop.registerMong";
