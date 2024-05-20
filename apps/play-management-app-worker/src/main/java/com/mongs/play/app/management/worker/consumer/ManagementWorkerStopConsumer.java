@@ -1,6 +1,7 @@
 package com.mongs.play.app.management.worker.consumer;
 
 import com.mongs.play.module.kafka.event.managementWorker.*;
+import com.mongs.play.module.kafka.service.KafkaService;
 import com.mongs.play.module.task.enums.TaskCode;
 import com.mongs.play.module.task.service.TaskService;
 import lombok.RequiredArgsConstructor;
@@ -15,27 +16,21 @@ public class ManagementWorkerStopConsumer {
 
     private final TaskService taskService;
 
-    @KafkaListener(topics = { "stop.zeroEvolutionSchedule" })
-    public void zeroEvolutionSchedule(ZeroEvolutionScheduleEvent payload) {}
-
-    @KafkaListener(topics = { "stop.decreaseStatusSchedule" })
+    @KafkaListener(topics = { KafkaService.StopTopic.DECREASE_STATUS_SCHEDULE })
     public void decreaseStatusSchedule(DecreaseStatusScheduleEvent payload) {
         Long mongId = payload.getMongId();
         taskService.stopTask(mongId, TaskCode.DECREASE_STATUS);
     }
 
-    @KafkaListener(topics = { "stop.increaseStatusSchedule" })
+    @KafkaListener(topics = { KafkaService.StopTopic.INCREASE_STATUS_SCHEDULE })
     public void increaseStatusSchedule(IncreaseStatusScheduleEvent payload) {
         Long mongId = payload.getMongId();
         taskService.stopTask(mongId, TaskCode.INCREASE_STATUS);
     }
 
-    @KafkaListener(topics = { "stop.increasePoopCountSchedule" })
+    @KafkaListener(topics = { KafkaService.StopTopic.INCREASE_POOP_COUNT_SCHEDULE })
     public void increasePoopCountSchedule(IncreasePoopCountScheduleEvent payload) {
         Long mongId = payload.getMongId();
         taskService.stopTask(mongId, TaskCode.INCREASE_POOP_COUNT);
     }
-
-    @KafkaListener(topics = { "stop.deadSchedule" })
-    public void deadSchedule(DeadScheduleEvent payload) {}
 }

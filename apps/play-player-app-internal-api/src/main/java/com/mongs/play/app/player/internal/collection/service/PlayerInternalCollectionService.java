@@ -47,7 +47,7 @@ public class PlayerInternalCollectionService {
 
         MongCollection mongCollection = collectionService.addMongCollection(accountId, mongCode.code());
 
-        kafkaService.sendCommit(KafkaService.KafkaTopic.REGISTER_MONG_COLLECTION, RegisterMongCollectionEvent.builder()
+        kafkaService.sendCommit(KafkaService.CommitTopic.REGISTER_MONG_COLLECTION, RegisterMongCollectionEvent.builder()
                 .accountId(mongCollection.getAccountId())
                 .mongCode(mongCollection.getCode())
                 .createdAt(mongCollection.getCreatedAt())

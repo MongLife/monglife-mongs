@@ -5,7 +5,6 @@ import com.mongs.play.app.management.external.dto.req.RegisterMongReqDto;
 import com.mongs.play.app.management.external.dto.req.TrainingMongReqDto;
 import com.mongs.play.app.management.external.dto.res.*;
 import com.mongs.play.app.management.external.service.ManagementExternalService;
-import com.mongs.play.client.publisher.mong.annotation.Notification;
 import com.mongs.play.client.publisher.mong.code.PublishCode;
 import com.mongs.play.module.security.principal.PassportDetail;
 import lombok.RequiredArgsConstructor;
@@ -52,7 +51,6 @@ public class ManagementExternalController {
                 .toList());
     }
 
-    @Notification(code = PublishCode.REGISTER)
     @PostMapping("")
     public ResponseEntity<RegisterMongResDto> registerMong(
             @AuthenticationPrincipal PassportDetail passportDetail,
@@ -85,7 +83,6 @@ public class ManagementExternalController {
                 .build());
     }
 
-    @Notification(code = PublishCode.DELETE)
     @DeleteMapping("/{mongId}")
     public ResponseEntity<DeleteMongResDto> deleteMong(
             @PathVariable("mongId") Long mongId, @AuthenticationPrincipal PassportDetail passportDetail) {
@@ -101,7 +98,6 @@ public class ManagementExternalController {
                 .build());
     }
 
-    @Notification(code = PublishCode.STROKE)
     @PutMapping("/stroke/{mongId}")
     public ResponseEntity<StrokeMongResDto> strokeMong(
             @PathVariable("mongId") Long mongId, @AuthenticationPrincipal PassportDetail passportDetail) {
@@ -117,7 +113,6 @@ public class ManagementExternalController {
                 .build());
     }
 
-    @Notification(code = PublishCode.SLEEPING)
     @PutMapping("/sleep/{mongId}")
     public ResponseEntity<SleepingMongResDto> sleepingMong(
             @PathVariable("mongId") Long mongId, @AuthenticationPrincipal PassportDetail passportDetail) {
@@ -133,7 +128,6 @@ public class ManagementExternalController {
                 .build());
     }
 
-    @Notification(code = PublishCode.POOP_CLEAN)
     @PutMapping("/poopClean/{mongId}")
     public ResponseEntity<PoopCleanMongResDto> poopClean(
             @PathVariable("mongId") Long mongId, @AuthenticationPrincipal PassportDetail passportDetail) {
@@ -163,7 +157,6 @@ public class ManagementExternalController {
                 .build());
     }
 
-    @Notification(code = PublishCode.TRAINING)
     @PutMapping("/training/{mongId}")
     public ResponseEntity<TrainingMongResDto> trainingMong(
             @PathVariable("mongId") Long mongId, @AuthenticationPrincipal PassportDetail passportDetail,
@@ -187,7 +180,6 @@ public class ManagementExternalController {
                 .build());
     }
 
-    @Notification(code = PublishCode.GRADUATION)
     @PutMapping("/graduate/{mongId}")
     public ResponseEntity<GraduateMongResDto> graduateMong(
             @PathVariable("mongId") Long mongId, @AuthenticationPrincipal PassportDetail passportDetail) {
@@ -203,7 +195,6 @@ public class ManagementExternalController {
                 .build());
     }
 
-    @Notification(code = PublishCode.EVOLUTION)
     @PutMapping("/evolution/{mongId}")
     public ResponseEntity<EvolutionMongResDto> evolutionMong(
             @PathVariable("mongId") Long mongId, @AuthenticationPrincipal PassportDetail passportDetail) {
@@ -227,7 +218,6 @@ public class ManagementExternalController {
                 .build());
     }
 
-    @Notification(code = PublishCode.FEED)
     @PostMapping("/feed/{mongId}")
     public ResponseEntity<FeedMongResDto> feedMong(
             @PathVariable("mongId") Long mongId, @AuthenticationPrincipal PassportDetail passportDetail,

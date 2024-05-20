@@ -5,7 +5,6 @@ import com.mongs.play.app.player.external.member.dto.req.ExchangePayPointReqDto;
 import com.mongs.play.app.player.external.member.dto.res.*;
 import com.mongs.play.app.player.external.member.service.PlayerExternalMemberService;
 import com.mongs.play.app.player.external.member.vo.*;
-import com.mongs.play.client.publisher.mong.annotation.Notification;
 import com.mongs.play.client.publisher.mong.code.PublishCode;
 import com.mongs.play.module.security.principal.PassportDetail;
 import lombok.RequiredArgsConstructor;
@@ -67,7 +66,6 @@ public class PlayerExternalMemberController {
                 .build());
     }
 
-    @Notification(code = PublishCode.INCREASE_STAR_POINT)
     @PostMapping("/charge/starPoint")
     public ResponseEntity<IncreaseStarPointResDto> chargeStarPoint(
             @AuthenticationPrincipal PassportDetail passportDetail,

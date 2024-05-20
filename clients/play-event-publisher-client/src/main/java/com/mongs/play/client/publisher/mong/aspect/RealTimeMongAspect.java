@@ -1,6 +1,6 @@
 package com.mongs.play.client.publisher.mong.aspect;
 
-import com.mongs.play.client.publisher.mong.annotation.Notification;
+import com.mongs.play.client.publisher.mong.annotation.RealTimeMong;
 import com.mongs.play.client.publisher.mong.code.PublishCode;
 import com.mongs.play.client.publisher.mong.service.MqttService;
 import lombok.RequiredArgsConstructor;
@@ -21,15 +21,15 @@ import java.lang.reflect.Field;
 @Aspect
 @Component
 @RequiredArgsConstructor
-public class NotificationAspect {
+public class RealTimeMongAspect {
 
     private final MqttService mqttService;
 
     @Pointcut("execution(* com.mongs.play..*.*(..))")
     public void cut() {}
 
-    @Around(value = "cut() && @annotation(notification)")
-    public Object notification(ProceedingJoinPoint joinPoint, Notification notification) throws Throwable {
+    @Around(value = "cut() && @annotation(annotation)")
+    public Object notification(ProceedingJoinPoint joinPoint, RealTimeMong annotation) throws Throwable {
         Object returnValue = joinPoint.proceed();
 
         Object responseBody = returnValue;
@@ -43,6 +43,45 @@ public class NotificationAspect {
         }
 
         return returnValue;
+    }
+
+    private String[] getFieldNames(PublishCode publishCode, Object publishVo, Object resDto) {
+        Field[] publishVoFields = publishVo.getClass().getDeclaredFields();
+        Field[] resDtoFields = resDto.getClass().getDeclaredFields();
+
+        for (Field publishVoField : publishVoFields) {
+            for (Field resDtoField : resDtoFields) {
+                if (publishVoField.getName().equals(resDtoField.getName())) {
+                }
+            }
+        }
+
+        switch (publishCode) {
+            case MONG_CODE -> {
+                return new String[]{"mongCode"};
+            }
+            case MONG_STATUS -> {
+                return new String[]{"weight", "strength", "satiety", "healthy", "sleep"};
+            }
+            case MONG_POOP_COUNT -> {
+                return new String[]{"poopCount"};
+            }
+            case MONG_STATE -> {
+                return new String[]{"stateCode"};
+            }
+            case MONG_SHIFT -> {
+                return new String[]{"shiftCode"};
+            }
+            case MONG_PAY_POINT -> {
+                return new String[]{"payPoint"};
+            }
+            case MONG_IS_SLEEPING -> {
+                return new String[]{"isSleeping"};
+            }
+            default -> {
+                return new String[]{};
+            }
+        }
     }
 
     private void notification(Object body, PublishCode code) {

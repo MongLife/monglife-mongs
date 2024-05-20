@@ -16,5 +16,5 @@ import lombok.experimental.SuperBuilder;
 @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
 public class IncreasePoopCountEvent extends BasicEvent {
     private Long mongId;
-    private Integer addPoopCount;
+    private Integer poopCount;
 }

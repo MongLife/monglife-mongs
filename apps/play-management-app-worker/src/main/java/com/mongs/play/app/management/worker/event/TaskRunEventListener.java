@@ -54,14 +54,14 @@ public class TaskRunEventListener {
 
         switch (taskCode) {
             case ZERO_EVOLUTION -> {
-                kafkaService.sendCommit(KafkaService.KafkaTopic.ZERO_EVOLUTION_SCHEDULE, ZeroEvolutionScheduleEvent.builder()
+                kafkaService.sendCommit(KafkaService.CommitTopic.ZERO_EVOLUTION_SCHEDULE, ZeroEvolutionScheduleEvent.builder()
                         .mongId(mongId)
                         .build());
 
                 taskService.doneTask(taskId);
             }
             case DECREASE_STATUS -> {
-                kafkaService.sendCommit(KafkaService.KafkaTopic.DECREASE_STATUS_SCHEDULE, DecreaseStatusScheduleEvent.builder()
+                kafkaService.sendCommit(KafkaService.CommitTopic.DECREASE_STATUS_SCHEDULE, DecreaseStatusScheduleEvent.builder()
                         .mongId(mongId)
                         .subWeight(subWeight)
                         .subStrength(subStrength)
@@ -74,7 +74,7 @@ public class TaskRunEventListener {
                 taskService.startTask(mongId, taskCode);
             }
             case INCREASE_STATUS -> {
-                kafkaService.sendCommit(KafkaService.KafkaTopic.INCREASE_STATUS_SCHEDULE, IncreaseStatusScheduleEvent.builder()
+                kafkaService.sendCommit(KafkaService.CommitTopic.INCREASE_STATUS_SCHEDULE, IncreaseStatusScheduleEvent.builder()
                         .mongId(mongId)
                         .addWeight(addWeight)
                         .addStrength(addStrength)
@@ -87,23 +87,23 @@ public class TaskRunEventListener {
                 taskService.startTask(mongId, taskCode);
             }
             case INCREASE_POOP_COUNT -> {
-                int addValue = 1;
-                kafkaService.sendCommit(KafkaService.KafkaTopic.INCREASE_POOP_COUNT_SCHEDULE, IncreasePoopCountScheduleEvent.builder()
+                int addPoopCount = 1;
+                kafkaService.sendCommit(KafkaService.CommitTopic.INCREASE_POOP_COUNT_SCHEDULE, IncreasePoopCountScheduleEvent.builder()
                         .mongId(mongId)
-                        .addPoopCount(addValue)
+                        .addPoopCount(addPoopCount)
                         .build());
 
-                taskService.doneTask(taskId);
-                taskService.startTask(mongId, taskCode);
-            }
-            case DEAD_HEALTHY, DEAD_SATIETY -> {
-                kafkaService.sendCommit(KafkaService.KafkaTopic.DEAD_SCHEDULE, DeadScheduleEvent.builder()
-                        .mongId(mongId)
-                        .build());
+                    taskService.doneTask(taskId);
+            taskService.startTask(mongId, taskCode);
+        }
+        case DEAD_HEALTHY, DEAD_SATIETY -> {
+            kafkaService.sendCommit(KafkaService.CommitTopic.DEAD_SCHEDULE, DeadScheduleEvent.builder()
+                    .mongId(mongId)
+                    .build());
 
-                taskService.stopAllTask(mongId);
-            }
-            default -> throw new ManagementWorkerException(ManagementWorkerErrorCode.INVALID_STOP_EVENT);
+            taskService.stopAllTask(mongId);
+        }
+        default -> throw new ManagementWorkerException(ManagementWorkerErrorCode.INVALID_STOP_EVENT);
         }
     }
 }

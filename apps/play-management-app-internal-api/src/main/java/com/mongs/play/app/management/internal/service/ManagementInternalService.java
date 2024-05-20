@@ -31,7 +31,7 @@ public class ManagementInternalService {
         if (MongUtil.isEvolutionReady(mongVo.grade(), mongVo.shift(), mongVo.exp())) {
             mongVo = mongService.toggleEvolutionReady(mongId);
 
-            kafkaService.sendCommit(KafkaService.KafkaTopic.EVOLUTION_READY, EvolutionReadyMongEvent.builder()
+            kafkaService.sendCommit(KafkaService.CommitTopic.EVOLUTION_READY, EvolutionReadyMongEvent.builder()
                     .mongId(mongVo.mongId())
                     .build());
         }
@@ -49,7 +49,7 @@ public class ManagementInternalService {
         MongVo mongVo = mongStatusService.decreaseStatus(mongId, subWeight, subStrength, subSatiety, subHealthy, subSleep);
         MongStatusPercentVo mongStatusPercentVo = MongUtil.statusToPercent(mongVo.grade(), mongVo);
 
-        kafkaService.sendCommit(KafkaService.KafkaTopic.DECREASE_STATUS, DecreaseStatusEvent.builder()
+        kafkaService.sendCommit(KafkaService.CommitTopic.DECREASE_STATUS, DecreaseStatusEvent.builder()
                 .mongId(mongVo.mongId())
                 .weight(mongVo.weight())
                 .strength(mongVo.strength())
@@ -74,9 +74,9 @@ public class ManagementInternalService {
 
         MongVo mongVo = mongStatusService.increasePoopCount(mongId, addPoopCount);
 
-        kafkaService.sendCommit(KafkaService.KafkaTopic.INCREASE_POOP_COUNT, IncreasePoopCountEvent.builder()
+        kafkaService.sendCommit(KafkaService.CommitTopic.INCREASE_POOP_COUNT, IncreasePoopCountEvent.builder()
                 .mongId(mongVo.mongId())
-                .addPoopCount(addPoopCount)
+                .poopCount(mongVo.poopCount())
                 .build());
 
         return IncreasePoopCountVo.builder()
@@ -92,13 +92,8 @@ public class ManagementInternalService {
         MongVo mongVo = mongStatusService.increaseStatus(mongId, addWeight, addStrength, addSatiety, addHealthy, addSleep);
         MongStatusPercentVo mongStatusPercentVo = MongUtil.statusToPercent(mongVo.grade(), mongVo);
 
-        kafkaService.sendCommit(KafkaService.KafkaTopic.INCREASE_STATUS, IncreaseStatusEvent.builder()
+        kafkaService.sendCommit(KafkaService.CommitTopic.INCREASE_STATUS, IncreaseStatusEvent.builder()
                 .mongId(mongVo.mongId())
-                .addWeight(addWeight)
-                .addStrength(addStrength)
-                .addSatiety(addSatiety)
-                .addHealthy(addHealthy)
-                .addSleep(addSleep)
                 .weight(mongVo.weight())
                 .strength(mongVo.strength())
                 .satiety(mongVo.satiety())

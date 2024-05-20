@@ -13,5 +13,6 @@ public interface MongFeedLogRepository extends JpaRepository<MongFeedLog, Long> 
 
     List<MongFeedLog> findByMongId(Long mongId);
 
+    @Lock(LockModeType.WRITE)
     Optional<MongFeedLog> findByMongIdAndCode(Long mongId, String code);
 }

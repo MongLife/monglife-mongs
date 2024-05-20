@@ -22,7 +22,7 @@ public class ManagementWorkerCommitConsumer {
     private final ManagementWorkerService managementWorkerService;
 
     // ##### Management-External #####
-    @KafkaListener(topics = { "commit.registerMong" })
+    @KafkaListener(topics = { KafkaService.CommitTopic.REGISTER_MONG })
     public void zeroEvolution(RegisterMongEvent payload) {
         try {
             Long mongId = payload.getMongId();
@@ -35,7 +35,7 @@ public class ManagementWorkerCommitConsumer {
         }
     }
 
-    @KafkaListener(topics = { "commit.evolutionMong.first" })
+    @KafkaListener(topics = { KafkaService.CommitTopic.FIRST_EVOLUTION_MONG })
     public void firstEvolution(EvolutionMongEvent payload) {
         try {
             Long mongId = payload.getMongId();
@@ -49,7 +49,7 @@ public class ManagementWorkerCommitConsumer {
         }
     }
 
-    @KafkaListener(topics = { "commit.evolutionMong" })
+    @KafkaListener(topics = { KafkaService.CommitTopic.EVOLUTION_MONG })
     public void evolution(EvolutionMongEvent payload) {
         try {
             Long mongId = payload.getMongId();
@@ -63,7 +63,7 @@ public class ManagementWorkerCommitConsumer {
         }
     }
 
-    @KafkaListener(topics = { "commit.evolutionMong.last" })
+    @KafkaListener(topics = { KafkaService.CommitTopic.LAST_EVOLUTION_MONG })
     public void lastEvolution(EvolutionMongEvent payload) {
         try {
             Long mongId = payload.getMongId();
@@ -77,7 +77,7 @@ public class ManagementWorkerCommitConsumer {
         }
     }
 
-    @KafkaListener(topics = { "commit.sleepingMong.sleep" })
+    @KafkaListener(topics = { KafkaService.CommitTopic.SLEEP_SLEEPING_MONG })
     public void sleepSleeping(SleepingMongEvent payload) {
         try {
             Long mongId = payload.getMongId();
@@ -90,7 +90,7 @@ public class ManagementWorkerCommitConsumer {
         }
     }
 
-    @KafkaListener(topics = { "commit.sleepingMong.awake" })
+    @KafkaListener(topics = { KafkaService.CommitTopic.AWAKE_SLEEPING_MONG })
     public void awakeSleeping(SleepingMongEvent payload) {
         try {
             Long mongId = payload.getMongId();
@@ -103,7 +103,7 @@ public class ManagementWorkerCommitConsumer {
         }
     }
 
-    @KafkaListener(topics = { "commit.deleteMong" })
+    @KafkaListener(topics = { KafkaService.CommitTopic.DELETE_MONG })
     public void delete(DeleteMongEvent payload) {
         try {
             Long mongId = payload.getMongId();
@@ -116,7 +116,7 @@ public class ManagementWorkerCommitConsumer {
         }
     }
 
-    @KafkaListener(topics = { "commit.trainingMong" })
+    @KafkaListener(topics = { KafkaService.CommitTopic.TRAINING_MONG })
     public void trainingDead(TrainingMongEvent payload) {
         try {
             Long mongId = payload.getMongId();
@@ -131,7 +131,7 @@ public class ManagementWorkerCommitConsumer {
         }
     }
 
-    @KafkaListener(topics = { "commit.feedMong" })
+    @KafkaListener(topics = { KafkaService.CommitTopic.FEED_MONG })
     public void feedDead(FeedMongEvent payload) {
         try {
             Long mongId = payload.getMongId();
@@ -147,7 +147,7 @@ public class ManagementWorkerCommitConsumer {
     }
 
     // ##### Management-Internal #####
-    @KafkaListener(topics = { "commit.decreaseStatus" })
+    @KafkaListener(topics = { KafkaService.CommitTopic.DECREASE_STATUS })
     public void decreaseStatusDead(DecreaseStatusEvent payload) {
         try {
             Long mongId = payload.getMongId();
@@ -162,7 +162,7 @@ public class ManagementWorkerCommitConsumer {
         }
     }
 
-    @KafkaListener(topics = { "commit.increaseStatus" })
+    @KafkaListener(topics = { KafkaService.CommitTopic.INCREASE_STATUS })
     public void increaseStatusDead(IncreaseStatusEvent payload) {
         try {
             Long mongId = payload.getMongId();

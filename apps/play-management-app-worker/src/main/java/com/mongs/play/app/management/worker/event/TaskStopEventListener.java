@@ -53,41 +53,41 @@ public class TaskStopEventListener {
         switch (taskCode) {
             case ZERO_EVOLUTION -> {}
             case DECREASE_STATUS -> {
-                double weight = subWeight / taskCode.getExpiration() * duringSeconds;
-                double strength = subStrength / taskCode.getExpiration() * duringSeconds;
-                double satiety = subSatiety / taskCode.getExpiration() * duringSeconds;
-                double healthy = subHealthy / taskCode.getExpiration() * duringSeconds;
-                double sleep = subSleep / taskCode.getExpiration() * duringSeconds;
-                kafkaService.sendCommit(KafkaService.KafkaTopic.DECREASE_STATUS_SCHEDULE, DecreaseStatusScheduleEvent.builder()
+                double subWight = subWeight / taskCode.getExpiration() * duringSeconds;
+                double subStrength = this.subStrength / taskCode.getExpiration() * duringSeconds;
+                double subSatiety = this.subSatiety / taskCode.getExpiration() * duringSeconds;
+                double subHealthy = this.subHealthy / taskCode.getExpiration() * duringSeconds;
+                double subSleep = this.subSleep / taskCode.getExpiration() * duringSeconds;
+                kafkaService.sendCommit(KafkaService.CommitTopic.DECREASE_STATUS_SCHEDULE, DecreaseStatusScheduleEvent.builder()
                         .mongId(mongId)
-                        .subWeight(weight)
-                        .subStrength(strength)
-                        .subSatiety(satiety)
-                        .subHealthy(healthy)
-                        .subSleep(sleep)
+                        .subWeight(subWight)
+                        .subStrength(subStrength)
+                        .subSatiety(subSatiety)
+                        .subHealthy(subHealthy)
+                        .subSleep(subSleep)
                         .build());
             }
             case INCREASE_STATUS -> {
-                double weight = addWeight / taskCode.getExpiration() * duringSeconds;
-                double strength = addStrength / taskCode.getExpiration() * duringSeconds;
-                double satiety = addSatiety / taskCode.getExpiration() * duringSeconds;
-                double healthy = addHealthy / taskCode.getExpiration() * duringSeconds;
-                double sleep = addSleep / taskCode.getExpiration() * duringSeconds;
-                kafkaService.sendCommit(KafkaService.KafkaTopic.INCREASE_STATUS_SCHEDULE, IncreaseStatusScheduleEvent.builder()
+                double addWeight = this.addWeight / taskCode.getExpiration() * duringSeconds;
+                double addStrength = this.addStrength / taskCode.getExpiration() * duringSeconds;
+                double addSatiety = this.addSatiety / taskCode.getExpiration() * duringSeconds;
+                double addHealthy = this.addHealthy / taskCode.getExpiration() * duringSeconds;
+                double addSleep = this.addSleep / taskCode.getExpiration() * duringSeconds;
+                kafkaService.sendCommit(KafkaService.CommitTopic.INCREASE_STATUS_SCHEDULE, IncreaseStatusScheduleEvent.builder()
                         .mongId(mongId)
-                        .addWeight(weight)
-                        .addStrength(strength)
-                        .addSatiety(satiety)
-                        .addHealthy(healthy)
-                        .addSleep(sleep)
+                        .addWeight(addWeight)
+                        .addStrength(addStrength)
+                        .addSatiety(addSatiety)
+                        .addHealthy(addHealthy)
+                        .addSleep(addSleep)
                         .build());
             }
             case INCREASE_POOP_COUNT -> {
                 if ((double) (duringSeconds / taskCode.getExpiration()) > 0.5) {
-                    int addValue = 1;
-                    kafkaService.sendCommit(KafkaService.KafkaTopic.INCREASE_POOP_COUNT_SCHEDULE, IncreasePoopCountScheduleEvent.builder()
+                    int addPoopCount = 1;
+                    kafkaService.sendCommit(KafkaService.CommitTopic.INCREASE_POOP_COUNT_SCHEDULE, IncreasePoopCountScheduleEvent.builder()
                             .mongId(mongId)
-                            .addPoopCount(addValue)
+                            .addPoopCount(addPoopCount)
                             .build());
                 }
             }

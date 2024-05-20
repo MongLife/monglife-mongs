@@ -2,6 +2,7 @@ package com.mongs.play.app.player.external.member.consumer;
 
 import com.mongs.play.app.player.external.member.service.PlayerExternalMemberService;
 import com.mongs.play.module.kafka.event.playerExternal.ExchangePayPointEvent;
+import com.mongs.play.module.kafka.service.KafkaService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.kafka.annotation.KafkaListener;
@@ -14,7 +15,7 @@ public class PlayerExternalMemberRollbackConsumer {
 
     private final PlayerExternalMemberService playerExternalMemberService;
 
-    @KafkaListener(topics = {"rollback.exchangePayPoint"})
+    @KafkaListener(topics = { KafkaService.RollbackTopic.EXCHANGE_PAY_POINT })
     public void exchangePayPoint(ExchangePayPointEvent payload) {
 
         Long paymentLogId = payload.getPaymentLogId();

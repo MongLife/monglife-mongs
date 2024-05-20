@@ -97,7 +97,7 @@ public class PlayerExternalMemberService {
 
         Member member = memberService.decreaseStarPoint(accountId, exchangeItem.getStarPoint());
 
-        kafkaService.sendCommit(KafkaService.KafkaTopic.EXCHANGE_PAY_POINT, ExchangePayPointEvent.builder()
+        kafkaService.sendCommit(KafkaService.CommitTopic.EXCHANGE_PAY_POINT, ExchangePayPointEvent.builder()
                 .paymentLogId(paymentLog.getId())
                 .mongId(mongId)
                 .subStarPoint(exchangeItem.getStarPoint())

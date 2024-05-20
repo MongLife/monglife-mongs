@@ -20,7 +20,7 @@ public class PlayerInternalCommitConsumer {
     private final KafkaService kafkaService;
     private final PlayerInternalCollectionService playerInternalCollectionService;
 
-    @KafkaListener(topics = { "commit.registerMong" })
+    @KafkaListener(topics = { KafkaService.CommitTopic.REGISTER_MONG })
     public void registerMongCollection(RegisterMongEvent payload) {
         try {
             Long accountId = payload.getAccountId();
@@ -35,7 +35,7 @@ public class PlayerInternalCommitConsumer {
         }
     }
 
-    @KafkaListener(topics = { "commit.evolutionMong.first", "commit.evolutionMong" } )
+    @KafkaListener(topics = { KafkaService.CommitTopic.FIRST_EVOLUTION_MONG, KafkaService.CommitTopic.EVOLUTION_MONG })
     public void registerMongCollection(EvolutionMongEvent payload) {
         try {
             Long accountId = payload.getAccountId();

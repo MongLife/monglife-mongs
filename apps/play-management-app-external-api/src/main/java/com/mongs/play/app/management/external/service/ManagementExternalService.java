@@ -54,7 +54,7 @@ public class ManagementExternalService {
         if (MongUtil.isEvolutionReady(mongVo.grade(), mongVo.shift(), mongVo.exp())) {
             mongVo = mongService.toggleEvolutionReady(mongVo.mongId());
 
-            kafkaService.sendCommit(KafkaService.KafkaTopic.EVOLUTION_READY, EvolutionReadyMongEvent.builder()
+            kafkaService.sendCommit(KafkaService.CommitTopic.EVOLUTION_READY, EvolutionReadyMongEvent.builder()
                     .mongId(mongVo.mongId())
                     .build());
 
@@ -111,7 +111,7 @@ public class ManagementExternalService {
         MongVo newMongVo = mongService.addMong(accountId, eggMongCode, name, sleepStart, sleepEnd);
         MongStatusPercentVo mongStatusPercentVo = MongUtil.statusToPercent(newMongVo.grade(), newMongVo);
 
-        kafkaService.sendCommit(KafkaService.KafkaTopic.REGISTER_MONG, RegisterMongEvent.builder()
+        kafkaService.sendCommit(KafkaService.CommitTopic.REGISTER_MONG, RegisterMongEvent.builder()
                 .mongId(newMongVo.mongId())
                 .accountId(newMongVo.accountId())
                 .mongCode(newMongVo.mongCode())
@@ -148,7 +148,7 @@ public class ManagementExternalService {
 
         MongVo newMongVo = mongService.removeMong(mongVo.mongId());
 
-        kafkaService.sendCommit(KafkaService.KafkaTopic.DELETE_MONG, DeleteMongEvent.builder()
+        kafkaService.sendCommit(KafkaService.CommitTopic.DELETE_MONG, DeleteMongEvent.builder()
                 .mongId(newMongVo.mongId())
                 .build());
 
@@ -210,11 +210,11 @@ public class ManagementExternalService {
         MongVo newMongVo = mongService.toggleIsSleeping(mongVo.mongId());
 
         if (newMongVo.isSleeping()) {
-            kafkaService.sendCommit(KafkaService.KafkaTopic.SLEEP_SLEEPING_MONG, SleepingMongEvent.builder()
+            kafkaService.sendCommit(KafkaService.CommitTopic.SLEEP_SLEEPING_MONG, SleepingMongEvent.builder()
                     .mongId(newMongVo.mongId())
                     .build());
         } else {
-            kafkaService.sendCommit(KafkaService.KafkaTopic.AWAKE_SLEEPING_MONG, SleepingMongEvent.builder()
+            kafkaService.sendCommit(KafkaService.CommitTopic.AWAKE_SLEEPING_MONG, SleepingMongEvent.builder()
                     .mongId(newMongVo.mongId())
                     .build());
         }
@@ -303,7 +303,7 @@ public class ManagementExternalService {
         MongVo newMongVo = mongService.increaseStatusTraining(mongVo.mongId(), 1, mongTrainingCode);
         newMongVo = this.evolutionReady(newMongVo);
 
-        kafkaService.sendCommit(KafkaService.KafkaTopic.TRAINING_MONG, TrainingMongEvent.builder()
+        kafkaService.sendCommit(KafkaService.CommitTopic.TRAINING_MONG, TrainingMongEvent.builder()
                 .mongId(newMongVo.mongId())
                 .weight(newMongVo.weight())
                 .strength(newMongVo.strength())
@@ -381,7 +381,7 @@ public class ManagementExternalService {
 
             newMongVo = mongService.toggleFirstEvolution(mongVo.mongId(), mongCode);
 
-            kafkaService.sendCommit(KafkaService.KafkaTopic.FIRST_EVOLUTION_MONG, EvolutionMongEvent.builder()
+            kafkaService.sendCommit(KafkaService.CommitTopic.FIRST_EVOLUTION_MONG, EvolutionMongEvent.builder()
                     .accountId(newMongVo.accountId())
                     .mongId(newMongVo.mongId())
                     .pastMongCode(mongVo.mongCode())
@@ -392,7 +392,7 @@ public class ManagementExternalService {
 
             newMongVo = mongService.toggleLastEvolution(mongVo.mongId());
 
-            kafkaService.sendCommit(KafkaService.KafkaTopic.LAST_EVOLUTION_MONG, EvolutionMongEvent.builder()
+            kafkaService.sendCommit(KafkaService.CommitTopic.LAST_EVOLUTION_MONG, EvolutionMongEvent.builder()
                     .accountId(newMongVo.accountId())
                     .mongId(newMongVo.mongId())
                     .pastMongCode(mongVo.mongCode())
@@ -411,7 +411,7 @@ public class ManagementExternalService {
 
             newMongVo = mongService.toggleEvolution(mongVo.mongId(), mongCode);
 
-            kafkaService.sendCommit(KafkaService.KafkaTopic.EVOLUTION_MONG, EvolutionMongEvent.builder()
+            kafkaService.sendCommit(KafkaService.CommitTopic.EVOLUTION_MONG, EvolutionMongEvent.builder()
                     .accountId(newMongVo.accountId())
                     .mongId(newMongVo.mongId())
                     .pastMongCode(mongVo.mongCode())
@@ -459,7 +459,7 @@ public class ManagementExternalService {
         MongVo newMongVo = mongService.feedMong(mongVo.mongId(), food.code(), food.addWeightValue(), food.addStrengthValue(), food.addSatietyValue(), food.addHealthyValue(), food.addSleepValue(), food.price());
         newMongVo = this.evolutionReady(newMongVo);
 
-        kafkaService.sendCommit(KafkaService.KafkaTopic.FEED_MONG, FeedMongEvent.builder()
+        kafkaService.sendCommit(KafkaService.CommitTopic.FEED_MONG, FeedMongEvent.builder()
                 .mongId(newMongVo.mongId())
                 .weight(newMongVo.weight())
                 .strength(newMongVo.strength())

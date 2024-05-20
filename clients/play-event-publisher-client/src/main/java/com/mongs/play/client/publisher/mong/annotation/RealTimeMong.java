@@ -7,6 +7,6 @@ import java.lang.annotation.*;
 @Target(ElementType.METHOD)
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
-public @interface Notification {
-    PublishCode code() default PublishCode.NULL;
+public @interface RealTimeMong {
+    PublishCode[] code() default PublishCode.NULL;
 }

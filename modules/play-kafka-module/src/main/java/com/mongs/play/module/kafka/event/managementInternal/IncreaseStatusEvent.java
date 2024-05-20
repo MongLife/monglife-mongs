@@ -16,12 +16,6 @@ import lombok.experimental.SuperBuilder;
 @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
 public class IncreaseStatusEvent extends BasicEvent {
     private Long mongId;
-    private Double addWeight;
-    private Double addStrength;
-    private Double addSatiety;
-    private Double addHealthy;
-    private Double addSleep;
-
     private Double weight;
     private Double strength;
     private Double satiety;
