@@ -9,8 +9,6 @@ import com.mongs.play.domain.payment.entity.PaymentLog;
 import com.mongs.play.domain.payment.service.ChargeItemService;
 import com.mongs.play.domain.payment.service.ExchangeItemService;
 import com.mongs.play.domain.payment.service.PaymentService;
-import com.mongs.play.module.kafka.event.playerExternal.ExchangePayPointEvent;
-import com.mongs.play.module.kafka.service.KafkaService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -21,7 +19,6 @@ import java.util.List;
 @RequiredArgsConstructor
 public class PlayerExternalMemberService {
 
-    private final KafkaService kafkaService;
     private final MemberService memberService;
     private final PaymentService paymentService;
     private final ChargeItemService chargeItemService;
@@ -97,12 +94,12 @@ public class PlayerExternalMemberService {
 
         Member member = memberService.decreaseStarPoint(accountId, exchangeItem.getStarPoint());
 
-        kafkaService.sendCommit(KafkaService.CommitTopic.EXCHANGE_PAY_POINT, ExchangePayPointEvent.builder()
-                .paymentLogId(paymentLog.getId())
-                .mongId(mongId)
-                .subStarPoint(exchangeItem.getStarPoint())
-                .addPayPoint(exchangeItem.getPayPoint())
-                .build());
+//        kafkaService.sendCommit(KafkaService.CommitTopic.EXCHANGE_PAY_POINT, ExchangePayPointEvent.builder()
+//                .paymentLogId(paymentLog.getId())
+//                .mongId(mongId)
+//                .subStarPoint(exchangeItem.getStarPoint())
+//                .addPayPoint(exchangeItem.getPayPoint())
+//                .build());
 
         paymentService.itemReward(paymentLog.getId());
 

@@ -10,8 +10,6 @@ import com.mongs.play.domain.code.service.CodeService;
 import com.mongs.play.domain.collection.entity.MapCollection;
 import com.mongs.play.domain.collection.entity.MongCollection;
 import com.mongs.play.domain.collection.service.CollectionService;
-import com.mongs.play.module.kafka.event.playerInternal.RegisterMongCollectionEvent;
-import com.mongs.play.module.kafka.service.KafkaService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -20,7 +18,6 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 public class PlayerInternalCollectionService {
 
-    private final KafkaService kafkaService;
     private final CodeService codeService;
     private final CollectionService collectionService;
 
@@ -47,11 +44,11 @@ public class PlayerInternalCollectionService {
 
         MongCollection mongCollection = collectionService.addMongCollection(accountId, mongCode.code());
 
-        kafkaService.sendCommit(KafkaService.CommitTopic.REGISTER_MONG_COLLECTION, RegisterMongCollectionEvent.builder()
-                .accountId(mongCollection.getAccountId())
-                .mongCode(mongCollection.getCode())
-                .createdAt(mongCollection.getCreatedAt())
-                .build());
+//        kafkaService.sendCommit(KafkaService.CommitTopic.REGISTER_MONG_COLLECTION, RegisterMongCollectionEvent.builder()
+//                .accountId(mongCollection.getAccountId())
+//                .mongCode(mongCollection.getCode())
+//                .createdAt(mongCollection.getCreatedAt())
+//                .build());
 
         return RegisterMongCollectionVo.builder()
                 .accountId(mongCollection.getAccountId())

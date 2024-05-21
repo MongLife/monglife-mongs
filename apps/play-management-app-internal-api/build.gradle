@@ -1,9 +1,7 @@
 dependencies {
     implementation project(':clients:play-event-publisher-client')
     implementation project(':domains:play-mong-domain')
-    implementation project(":modules:play-kafka-module")
-
-    implementation 'org.springframework.boot:spring-boot-starter-aop'
+    implementation project(":modules:play-feign-module")
 }
 
 tasks.register('copyPrivate', Copy) {

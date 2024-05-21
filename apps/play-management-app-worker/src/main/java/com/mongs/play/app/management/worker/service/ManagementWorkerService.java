@@ -62,17 +62,22 @@ public class ManagementWorkerService {
     }
 
     @Transactional
-    public void dead(Long mongId, Double satiety, Double healthy) {
+    public void deadHealthy(Long mongId) {
+        taskService.startTask(mongId, TaskCode.DEAD_SATIETY);
+    }
 
-        if (satiety <= 0D) {
-            taskService.startTask(mongId, TaskCode.DEAD_SATIETY);
-        } else {
-            taskService.stopTask(mongId, TaskCode.DEAD_SATIETY);
-        }
-        if (healthy <= 0D) {
-            taskService.startTask(mongId, TaskCode.DEAD_HEALTHY);
-        } else {
-            taskService.stopTask(mongId, TaskCode.DEAD_HEALTHY);
-        }
+    @Transactional
+    public void liveHealthy(Long mongId) {
+        taskService.stopTask(mongId, TaskCode.DEAD_SATIETY);
+    }
+
+    @Transactional
+    public void deadSatiety(Long mongId) {
+        taskService.startTask(mongId, TaskCode.DEAD_HEALTHY);
+    }
+
+    @Transactional
+    public void liveSatiety(Long mongId) {
+        taskService.stopTask(mongId, TaskCode.DEAD_HEALTHY);
     }
 }

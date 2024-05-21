@@ -2,10 +2,10 @@ package com.mongs.play.app.management.worker.event;
 
 import com.mongs.play.core.error.app.ManagementWorkerErrorCode;
 import com.mongs.play.core.exception.app.ManagementWorkerException;
-import com.mongs.play.module.kafka.event.managementWorker.*;
-import com.mongs.play.module.kafka.service.KafkaService;
+import com.mongs.play.module.feign.service.ManagementInternalFeignService;
 import com.mongs.play.module.task.enums.TaskCode;
 import com.mongs.play.module.task.event.TaskStopEvent;
+import com.mongs.play.module.task.service.TaskService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -17,7 +17,8 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class TaskStopEventListener {
 
-    private final KafkaService kafkaService;
+    private final TaskService taskService;
+    private final ManagementInternalFeignService managementInternalFeignService;
 
     @Value("${application.status.sub.weight}")
     private Double subWeight;
@@ -44,11 +45,14 @@ public class TaskStopEventListener {
     @EventListener
     public void taskStopEventListener(TaskStopEvent event) {
 
+        String taskId = event.getTaskId();
         TaskCode taskCode = event.getTaskCode();
         Long mongId = event.getMongId();
         Long duringSeconds = event.getDuringSeconds();
 
         log.info("[Stop] mongId: {}, taskCode: {}, duringSeconds: {}", mongId, taskCode, duringSeconds);
+
+        taskService.doneTask(taskId);
 
         switch (taskCode) {
             case ZERO_EVOLUTION -> {}
@@ -58,14 +62,12 @@ public class TaskStopEventListener {
                 double subSatiety = this.subSatiety / taskCode.getExpiration() * duringSeconds;
                 double subHealthy = this.subHealthy / taskCode.getExpiration() * duringSeconds;
                 double subSleep = this.subSleep / taskCode.getExpiration() * duringSeconds;
-                kafkaService.sendCommit(KafkaService.CommitTopic.DECREASE_STATUS_SCHEDULE, DecreaseStatusScheduleEvent.builder()
-                        .mongId(mongId)
-                        .subWeight(subWight)
-                        .subStrength(subStrength)
-                        .subSatiety(subSatiety)
-                        .subHealthy(subHealthy)
-                        .subSleep(subSleep)
-                        .build());
+
+                var res = managementInternalFeignService.decreaseStatus(mongId, subWeight, subStrength, subSatiety, subHealthy, subSleep);
+
+//                if (ObjectUtils.isEmpty(res)) {
+//                      taskService.startTask(mongId, TaskCode.DECREASE_STATUS);
+//                }
             }
             case INCREASE_STATUS -> {
                 double addWeight = this.addWeight / taskCode.getExpiration() * duringSeconds;
@@ -73,22 +75,22 @@ public class TaskStopEventListener {
                 double addSatiety = this.addSatiety / taskCode.getExpiration() * duringSeconds;
                 double addHealthy = this.addHealthy / taskCode.getExpiration() * duringSeconds;
                 double addSleep = this.addSleep / taskCode.getExpiration() * duringSeconds;
-                kafkaService.sendCommit(KafkaService.CommitTopic.INCREASE_STATUS_SCHEDULE, IncreaseStatusScheduleEvent.builder()
-                        .mongId(mongId)
-                        .addWeight(addWeight)
-                        .addStrength(addStrength)
-                        .addSatiety(addSatiety)
-                        .addHealthy(addHealthy)
-                        .addSleep(addSleep)
-                        .build());
+
+                var res = managementInternalFeignService.increaseStatus(mongId, addWeight, addStrength, addSatiety, addHealthy, addSleep);
+
+//                if (ObjectUtils.isEmpty(res)) {
+//                      taskService.startTask(mongId, TaskCode.INCREASE_STATUS);
+//                }
             }
             case INCREASE_POOP_COUNT -> {
                 if ((double) (duringSeconds / taskCode.getExpiration()) > 0.5) {
                     int addPoopCount = 1;
-                    kafkaService.sendCommit(KafkaService.CommitTopic.INCREASE_POOP_COUNT_SCHEDULE, IncreasePoopCountScheduleEvent.builder()
-                            .mongId(mongId)
-                            .addPoopCount(addPoopCount)
-                            .build());
+
+                    var res = managementInternalFeignService.increasePoopCount(mongId, addPoopCount);
+
+//                    if (ObjectUtils.isEmpty(res)) {
+//                        taskService.startTask(mongId, TaskCode.INCREASE_STATUS);
+//                    }
                 }
             }
             case DEAD_HEALTHY, DEAD_SATIETY -> {}

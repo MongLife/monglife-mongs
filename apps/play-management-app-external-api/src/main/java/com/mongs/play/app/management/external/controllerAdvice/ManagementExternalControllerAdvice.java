@@ -35,7 +35,6 @@ public class ManagementExternalControllerAdvice {
 
     @ExceptionHandler(RuntimeException.class)
     public ResponseEntity<Object> runtimeExceptionHandler(RuntimeException e) {
-        e.printStackTrace();
         ErrorCode errorCode = GlobalErrorCode.INTERNAL_SERVER_ERROR;
         return ResponseEntity.status(errorCode.getHttpStatus()).body(ErrorResDto.of(errorCode));
     }

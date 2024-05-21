@@ -61,6 +61,7 @@ public class Task {
 
         Long duringSeconds = Math.max(0, Math.min(expiration, Duration.between(createdAt, LocalDateTime.now()).getSeconds()));
         publisher.publishEvent(TaskStopEvent.builder()
+                .taskId(taskId)
                 .taskCode(taskCode)
                 .mongId(mongId)
                 .duringSeconds(duringSeconds)

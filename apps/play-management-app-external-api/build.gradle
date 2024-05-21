@@ -3,7 +3,7 @@ dependencies {
     implementation project(':domains:play-code-domain')
     implementation project(':domains:play-mong-domain')
     implementation project(":modules:play-security-module")
-    implementation project(":modules:play-kafka-module")
+    implementation project(":modules:play-feign-module")
 }
 
 tasks.register('copyPrivate', Copy) {

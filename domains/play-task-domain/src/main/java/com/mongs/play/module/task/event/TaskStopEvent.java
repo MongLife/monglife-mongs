@@ -9,6 +9,7 @@ import lombok.*;
 @AllArgsConstructor
 @NoArgsConstructor
 public class TaskStopEvent {
+    private String taskId;
     private TaskCode taskCode;
     private Long mongId;
     private Long duringSeconds;

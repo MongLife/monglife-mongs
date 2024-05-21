@@ -10,8 +10,6 @@ import com.mongs.play.domain.mong.service.MongStatusService;
 import com.mongs.play.domain.mong.utils.MongUtil;
 import com.mongs.play.domain.mong.vo.MongStatusPercentVo;
 import com.mongs.play.domain.mong.vo.MongVo;
-import com.mongs.play.module.kafka.annotation.SendCommit;
-import com.mongs.play.module.kafka.service.KafkaService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -25,7 +23,6 @@ public class ManagementInternalService {
     private final MongStatusService mongStatusService;
 
     @RealTimeMong(codes = { PublishCode.MONG_SHIFT })
-    @SendCommit(topic = KafkaService.CommitTopic.EVOLUTION_READY)
     @Transactional
     public EvolutionReadyVo evolutionReady(Long mongId) {
 
@@ -42,7 +39,6 @@ public class ManagementInternalService {
     }
 
     @RealTimeMong(codes = { PublishCode.MONG_STATUS })
-    @SendCommit(topic = KafkaService.CommitTopic.DECREASE_STATUS)
     @Transactional
     public DecreaseStatusVo decreaseStatus(Long mongId, Double subWeight, Double subStrength, Double subSatiety, Double subHealthy, Double subSleep) {
 
@@ -76,7 +72,6 @@ public class ManagementInternalService {
     }
 
     @RealTimeMong(codes = { PublishCode.MONG_STATUS })
-    @SendCommit(topic = KafkaService.CommitTopic.INCREASE_STATUS)
     @Transactional
     public IncreaseStatusVo increaseStatus(Long mongId, Double addWeight, Double addStrength, Double addSatiety, Double addHealthy, Double addSleep) {
 

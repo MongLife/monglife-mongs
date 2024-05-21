@@ -1,6 +1,5 @@
 package com.mongs.play.app.management.worker.event;
 
-import com.mongs.play.module.kafka.service.KafkaService;
 import com.mongs.play.module.task.enums.TaskCode;
 import com.mongs.play.module.task.event.TaskPauseEvent;
 import lombok.RequiredArgsConstructor;
@@ -12,8 +11,6 @@ import org.springframework.stereotype.Service;
 @Service
 @RequiredArgsConstructor
 public class TaskPauseEventListener {
-
-    private final KafkaService kafkaService;
 
     @EventListener
     public void taskPauseEventListener(TaskPauseEvent event) {

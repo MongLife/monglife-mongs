@@ -13,10 +13,8 @@ import com.mongs.play.app.player.internal.collection.vo.RegisterMapCollectionVo;
 import com.mongs.play.app.player.internal.collection.vo.RegisterMongCollectionVo;
 import com.mongs.play.app.player.internal.collection.vo.RemoveMapCollectionVo;
 import com.mongs.play.app.player.internal.collection.vo.RemoveMongCollectionVo;
-import com.mongs.play.module.security.principal.PassportDetail;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -28,12 +26,9 @@ public class PlayerInternalAdminCollectionController {
     private final PlayerInternalCollectionService playerInternalCollectionService;
 
     @PostMapping("/map")
-    public ResponseEntity<RegisterMapCollectionResDto> registerMapCollection(
-            @AuthenticationPrincipal PassportDetail passportDetail,
-            @RequestBody @Validated RegisterMapCollectionReqDto registerMapCollectionReqDto
-    ) {
+    public ResponseEntity<RegisterMapCollectionResDto> registerMapCollection(@RequestBody @Validated RegisterMapCollectionReqDto registerMapCollectionReqDto) {
         RegisterMapCollectionVo registerMapCollectionVo =
-                playerInternalCollectionService.registerMapCollection(passportDetail.getId(), registerMapCollectionReqDto.mapCode());
+                playerInternalCollectionService.registerMapCollection(registerMapCollectionReqDto.accountId(), registerMapCollectionReqDto.mapCode());
 
         return ResponseEntity.ok().body(RegisterMapCollectionResDto.builder()
                 .accountId(registerMapCollectionVo.accountId())
@@ -43,12 +38,9 @@ public class PlayerInternalAdminCollectionController {
     }
 
     @PostMapping("/mong")
-    public ResponseEntity<RegisterMongCollectionResDto> registerMongCollection(
-            @AuthenticationPrincipal PassportDetail passportDetail,
-            @RequestBody @Validated RegisterMongCollectionReqDto registerMongCollectionReqDto
-    ) {
+    public ResponseEntity<RegisterMongCollectionResDto> registerMongCollection(@RequestBody @Validated RegisterMongCollectionReqDto registerMongCollectionReqDto) {
         RegisterMongCollectionVo registerMongCollectionVo =
-                playerInternalCollectionService.registerMongCollection(passportDetail.getId(), registerMongCollectionReqDto.mongCode());
+                playerInternalCollectionService.registerMongCollection(registerMongCollectionReqDto.accountId(), registerMongCollectionReqDto.mongCode());
 
         return ResponseEntity.ok().body(RegisterMongCollectionResDto.builder()
                 .accountId(registerMongCollectionVo.accountId())
@@ -57,13 +49,10 @@ public class PlayerInternalAdminCollectionController {
                 .build());
     }
 
-    @DeleteMapping("/map/{accountId}")
-    public ResponseEntity<RemoveMapCollectionResDto> removeMapCollection(
-            @PathVariable("accountId") Long accountId,
-            @RequestBody @Validated RemoveMapCollectionReqDto removeMapCollectionReqDto
-    ) {
+    @DeleteMapping("/map")
+    public ResponseEntity<RemoveMapCollectionResDto> removeMapCollection(@RequestBody @Validated RemoveMapCollectionReqDto removeMapCollectionReqDto) {
         RemoveMapCollectionVo removeMapCollectionVo =
-                playerInternalCollectionService.removeMapCollection(accountId, removeMapCollectionReqDto.mapCode());
+                playerInternalCollectionService.removeMapCollection(removeMapCollectionReqDto.accountId(), removeMapCollectionReqDto.mapCode());
 
         return ResponseEntity.ok().body(RemoveMapCollectionResDto.builder()
                 .accountId(removeMapCollectionVo.accountId())
@@ -71,13 +60,11 @@ public class PlayerInternalAdminCollectionController {
                 .build());
     }
 
-    @DeleteMapping("/mong/{accountId}")
-    public ResponseEntity<Object> removeMongCollection(
-            @PathVariable("accountId") Long accountId,
-            @RequestBody @Validated RemoveMongCollectionReqDto removeMongCollectionReqDto
+    @DeleteMapping("/mong")
+    public ResponseEntity<Object> removeMongCollection(@RequestBody @Validated RemoveMongCollectionReqDto removeMongCollectionReqDto
     ) {
         RemoveMongCollectionVo removeMongCollectionVo =
-                playerInternalCollectionService.removeMongCollection(accountId, removeMongCollectionReqDto.mongCode());
+                playerInternalCollectionService.removeMongCollection(removeMongCollectionReqDto.accountId(), removeMongCollectionReqDto.mongCode());
 
         return ResponseEntity.ok().body(RemoveMongCollectionResDto.builder()
                 .accountId(removeMongCollectionVo.accountId())

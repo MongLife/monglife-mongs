@@ -4,6 +4,7 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
 
 public record RegisterMapCollectionReqDto(
+        Long accountId,
         @NotEmpty
         @NotBlank
         String mapCode
