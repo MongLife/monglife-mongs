@@ -4,7 +4,6 @@ import lombok.Builder;
 
 @Builder
 public record IncreasePayPointVo(
-        Long accountId,
         Long mongId,
         Integer payPoint
 ) {

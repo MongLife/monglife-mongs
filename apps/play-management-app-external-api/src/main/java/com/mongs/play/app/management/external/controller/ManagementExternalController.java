@@ -5,7 +5,6 @@ import com.mongs.play.app.management.external.dto.req.RegisterMongReqDto;
 import com.mongs.play.app.management.external.dto.req.TrainingMongReqDto;
 import com.mongs.play.app.management.external.dto.res.*;
 import com.mongs.play.app.management.external.service.ManagementExternalService;
-import com.mongs.play.client.publisher.mong.service.MqttService;
 import com.mongs.play.module.security.principal.PassportDetail;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -20,7 +19,6 @@ import java.util.List;
 public class ManagementExternalController {
 
     private final ManagementExternalService managementExternalService;
-    private final MqttService mqttService;
 
     @GetMapping("")
     public ResponseEntity<List<FindMongResDto>> findMong(
@@ -32,24 +30,51 @@ public class ManagementExternalController {
 
         return ResponseEntity.ok().body(voList.stream()
                 .map(vo -> FindMongResDto.builder()
-                        .accountId(vo.accountId())
                         .mongId(vo.mongId())
                         .name(vo.name())
                         .mongCode(vo.mongCode())
                         .weight(vo.weight())
-                        .strength(vo.strength())
-                        .satiety(vo.satiety())
-                        .healthy(vo.healthy())
-                        .sleep(vo.sleep())
-                        .exp(vo.exp())
+                        .strength(vo.strengthPercent())
+                        .satiety(vo.satietyPercent())
+                        .healthy(vo.healthyPercent())
+                        .sleep(vo.sleepPercent())
+                        .exp(vo.expPercent())
                         .poopCount(vo.poopCount())
                         .isSleeping(vo.isSleeping())
-                        .stateCode(vo.state().code)
-                        .shiftCode(vo.shift().code)
+                        .stateCode(vo.stateCode())
+                        .shiftCode(vo.shiftCode())
                         .payPoint(vo.payPoint())
                         .born(vo.born())
                         .build())
                 .toList());
+    }
+
+    @GetMapping("/{mongId}")
+    public ResponseEntity<FindMongResDto> findMong(
+            @PathVariable("mongId") Long mongId,
+            @AuthenticationPrincipal PassportDetail passportDetail) {
+
+        Long accountId = passportDetail.getId();
+
+        var vo = managementExternalService.findMong(accountId, mongId);
+
+        return ResponseEntity.ok().body(FindMongResDto.builder()
+                .mongId(vo.mongId())
+                .name(vo.name())
+                .mongCode(vo.mongCode())
+                .weight(vo.weight())
+                .strength(vo.strengthPercent())
+                .satiety(vo.satietyPercent())
+                .healthy(vo.healthyPercent())
+                .sleep(vo.sleepPercent())
+                .exp(vo.expPercent())
+                .poopCount(vo.poopCount())
+                .isSleeping(vo.isSleeping())
+                .stateCode(vo.stateCode())
+                .shiftCode(vo.shiftCode())
+                .payPoint(vo.payPoint())
+                .born(vo.born())
+                .build());
     }
 
     @PostMapping("")
@@ -65,20 +90,19 @@ public class ManagementExternalController {
         var vo = managementExternalService.registerMong(accountId, name, sleepStart, sleepEnd);
 
         return ResponseEntity.ok().body(RegisterMongResDto.builder()
-                .accountId(vo.accountId())
                 .mongId(vo.mongId())
                 .name(vo.name())
                 .mongCode(vo.mongCode())
                 .weight(vo.weight())
-                .strength(vo.strength())
-                .satiety(vo.satiety())
-                .healthy(vo.healthy())
-                .sleep(vo.sleep())
-                .exp(vo.exp())
+                .strength(vo.strengthPercent())
+                .satiety(vo.satietyPercent())
+                .healthy(vo.healthyPercent())
+                .sleep(vo.sleepPercent())
+                .exp(vo.expPercent())
                 .poopCount(vo.poopCount())
                 .isSleeping(vo.isSleeping())
-                .stateCode(vo.state().code)
-                .shiftCode(vo.shift().code)
+                .stateCode(vo.stateCode())
+                .shiftCode(vo.shiftCode())
                 .payPoint(vo.payPoint())
                 .born(vo.born())
                 .build());
@@ -92,12 +116,9 @@ public class ManagementExternalController {
 
         var vo = managementExternalService.deleteMong(accountId, mongId);
 
-        mqttService.sendMongShift(accountId, vo.mongId(), vo.shift().code);
-
         return ResponseEntity.ok().body(DeleteMongResDto.builder()
-                .accountId(vo.accountId())
                 .mongId(vo.mongId())
-                .shiftCode(vo.shift().code)
+                .shiftCode(vo.shiftCode())
                 .build());
     }
 
@@ -110,9 +131,8 @@ public class ManagementExternalController {
         var vo = managementExternalService.strokeMong(accountId, mongId);
 
         return ResponseEntity.ok().body(StrokeMongResDto.builder()
-                .accountId(vo.accountId())
                 .mongId(vo.mongId())
-                .exp(vo.exp())
+                .exp(vo.expPercent())
                 .build());
     }
 
@@ -124,10 +144,7 @@ public class ManagementExternalController {
 
         var vo = managementExternalService.sleepingMong(accountId, mongId);
 
-        mqttService.sendMongShift(accountId, vo.mongId(), vo.shift().code);
-
         return ResponseEntity.ok().body(SleepingMongResDto.builder()
-                .accountId(vo.accountId())
                 .mongId(vo.mongId())
                 .isSleeping(vo.isSleeping())
                 .build());
@@ -142,10 +159,9 @@ public class ManagementExternalController {
         var vo = managementExternalService.poopClean(accountId, mongId);
 
         return ResponseEntity.ok().body(PoopCleanMongResDto.builder()
-                .accountId(vo.accountId())
                 .mongId(vo.mongId())
                 .poopCount(vo.poopCount())
-                .exp(vo.exp())
+                .exp(vo.expPercent())
                 .build());
     }
 
@@ -156,7 +172,6 @@ public class ManagementExternalController {
         var vo = managementExternalService.validationTrainingMong(mongId, trainingCode);
 
         return ResponseEntity.ok().body(ValidationTrainingMongResDto.builder()
-                .accountId(vo.accountId())
                 .mongId(vo.mongId())
                 .isPossible(vo.isPossible())
                 .build());
@@ -173,14 +188,13 @@ public class ManagementExternalController {
         var vo = managementExternalService.trainingMong(accountId, mongId, trainingCode);
 
         return ResponseEntity.ok().body(TrainingMongResDto.builder()
-                .accountId(vo.accountId())
                 .mongId(vo.mongId())
                 .weight(vo.weight())
-                .strength(vo.strength())
-                .satiety(vo.satiety())
-                .healthy(vo.healthy())
-                .sleep(vo.sleep())
-                .exp(vo.exp())
+                .strength(vo.strengthPercent())
+                .satiety(vo.satietyPercent())
+                .healthy(vo.healthyPercent())
+                .sleep(vo.sleepPercent())
+                .exp(vo.expPercent())
                 .payPoint(vo.payPoint())
                 .build());
     }
@@ -194,9 +208,8 @@ public class ManagementExternalController {
         var vo = managementExternalService.graduateMong(accountId, mongId);
 
         return ResponseEntity.ok().body(GraduateMongResDto.builder()
-                .accountId(vo.accountId())
                 .mongId(vo.mongId())
-                .shiftCode(vo.shift().code)
+                .shiftCode(vo.shiftCode())
                 .build());
     }
 
@@ -209,17 +222,16 @@ public class ManagementExternalController {
         var vo = managementExternalService.evolutionMong(accountId, mongId);
 
         return ResponseEntity.ok().body(EvolutionMongResDto.builder()
-                .accountId(vo.accountId())
                 .mongId(vo.mongId())
                 .mongCode(vo.mongCode())
                 .weight(vo.weight())
-                .strength(vo.strength())
-                .satiety(vo.satiety())
-                .healthy(vo.healthy())
-                .sleep(vo.sleep())
-                .exp(vo.exp())
-                .stateCode(vo.state().code)
-                .shiftCode(vo.shift().code)
+                .strength(vo.strengthPercent())
+                .satiety(vo.satietyPercent())
+                .healthy(vo.healthyPercent())
+                .sleep(vo.sleepPercent())
+                .exp(vo.expPercent())
+                .stateCode(vo.stateCode())
+                .shiftCode(vo.shiftCode())
                 .build());
     }
 
@@ -235,14 +247,13 @@ public class ManagementExternalController {
         var vo = managementExternalService.feedMong(accountId, mongId, foodCode);
 
         return ResponseEntity.ok().body(FeedMongResDto.builder()
-                .accountId(vo.accountId())
                 .mongId(vo.mongId())
                 .weight(vo.weight())
-                .strength(vo.strength())
-                .satiety(vo.satiety())
-                .healthy(vo.healthy())
-                .sleep(vo.sleep())
-                .exp(vo.exp())
+                .strength(vo.strengthPercent())
+                .satiety(vo.satietyPercent())
+                .healthy(vo.healthyPercent())
+                .sleep(vo.sleepPercent())
+                .exp(vo.expPercent())
                 .payPoint(vo.payPoint())
                 .build());
     }
@@ -258,7 +269,6 @@ public class ManagementExternalController {
 
         return ResponseEntity.ok().body(voList.stream()
                 .map(vo -> FindFeedLogResDto.builder()
-                        .accountId(vo.accountId())
                         .mongId(vo.mongId())
                         .code(vo.code())
                         .isCanBuy(vo.isCanBuy())

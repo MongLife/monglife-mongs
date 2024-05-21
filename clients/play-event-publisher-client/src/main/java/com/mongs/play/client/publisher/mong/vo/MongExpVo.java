@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
-public class MongPayPointVo{
+public class MongExpVo{
     private Long mongId;
-    private Integer payPoint;
+    private Double exp;
 }

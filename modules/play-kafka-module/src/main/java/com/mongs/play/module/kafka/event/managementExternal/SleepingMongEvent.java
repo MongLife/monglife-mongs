@@ -16,4 +16,5 @@ import lombok.experimental.SuperBuilder;
 @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
 public class SleepingMongEvent extends BasicEvent {
     private Long mongId;
+    private Boolean isSleeping;
 }

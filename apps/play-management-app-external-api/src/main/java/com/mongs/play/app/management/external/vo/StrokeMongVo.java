@@ -4,8 +4,8 @@ import lombok.Builder;
 
 @Builder
 public record StrokeMongVo(
-        Long accountId,
         Long mongId,
-        Double exp
+        Double exp,
+        Double expPercent
 ) {
 }

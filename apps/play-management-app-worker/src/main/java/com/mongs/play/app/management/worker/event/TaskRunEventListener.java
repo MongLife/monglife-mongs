@@ -93,17 +93,17 @@ public class TaskRunEventListener {
                         .addPoopCount(addPoopCount)
                         .build());
 
-                    taskService.doneTask(taskId);
-            taskService.startTask(mongId, taskCode);
-        }
-        case DEAD_HEALTHY, DEAD_SATIETY -> {
-            kafkaService.sendCommit(KafkaService.CommitTopic.DEAD_SCHEDULE, DeadScheduleEvent.builder()
-                    .mongId(mongId)
-                    .build());
+                taskService.doneTask(taskId);
+                taskService.startTask(mongId, taskCode);
+            }
+            case DEAD_HEALTHY, DEAD_SATIETY -> {
+                kafkaService.sendCommit(KafkaService.CommitTopic.DEAD_SCHEDULE, DeadScheduleEvent.builder()
+                        .mongId(mongId)
+                        .build());
 
-            taskService.stopAllTask(mongId);
-        }
-        default -> throw new ManagementWorkerException(ManagementWorkerErrorCode.INVALID_STOP_EVENT);
+                taskService.stopAllTask(mongId);
+            }
+            default -> throw new ManagementWorkerException(ManagementWorkerErrorCode.INVALID_STOP_EVENT);
         }
     }
 }

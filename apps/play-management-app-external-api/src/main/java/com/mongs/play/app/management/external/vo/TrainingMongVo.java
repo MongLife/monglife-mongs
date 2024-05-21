@@ -4,14 +4,19 @@ import lombok.Builder;
 
 @Builder
 public record TrainingMongVo(
-        Long accountId,
         Long mongId,
         Double weight,
+        Integer payPoint,
+
+        Double exp,
         Double strength,
         Double satiety,
         Double healthy,
         Double sleep,
-        Double exp,
-        Integer payPoint
+        Double expPercent,
+        Double healthyPercent,
+        Double satietyPercent,
+        Double strengthPercent,
+        Double sleepPercent
 ) {
 }

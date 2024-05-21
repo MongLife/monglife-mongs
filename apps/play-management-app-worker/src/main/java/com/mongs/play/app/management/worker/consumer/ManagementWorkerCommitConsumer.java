@@ -39,9 +39,8 @@ public class ManagementWorkerCommitConsumer {
     public void firstEvolution(EvolutionMongEvent payload) {
         try {
             Long mongId = payload.getMongId();
-            String pastMongCode = payload.getPastMongCode();
 
-            log.info("[firstEvolution] mongId: {}, pastMongCode: {}", mongId, pastMongCode);
+            log.info("[firstEvolution] mongId: {}", mongId);
 
             managementWorkerService.firstEvolution(mongId);
         } catch (ErrorException e) {
@@ -53,9 +52,8 @@ public class ManagementWorkerCommitConsumer {
     public void evolution(EvolutionMongEvent payload) {
         try {
             Long mongId = payload.getMongId();
-            String pastMongCode = payload.getPastMongCode();
 
-            log.info("[evolution] mongId: {}, pastMongCode: {}", mongId, pastMongCode);
+            log.info("[evolution] mongId: {}", mongId);
 
             managementWorkerService.evolution(mongId);
         } catch (ErrorException e) {
@@ -67,9 +65,8 @@ public class ManagementWorkerCommitConsumer {
     public void lastEvolution(EvolutionMongEvent payload) {
         try {
             Long mongId = payload.getMongId();
-            String pastMongCode = payload.getPastMongCode();
 
-            log.info("[lastEvolution] mongId: {}, pastMongCode: {}", mongId, pastMongCode);
+            log.info("[lastEvolution] mongId: {}", mongId);
 
             managementWorkerService.lastEvolution(mongId);
         } catch (ErrorException e) {
@@ -77,29 +74,21 @@ public class ManagementWorkerCommitConsumer {
         }
     }
 
-    @KafkaListener(topics = { KafkaService.CommitTopic.SLEEP_SLEEPING_MONG })
+    @KafkaListener(topics = { KafkaService.CommitTopic.SLEEPING_MONG })
     public void sleepSleeping(SleepingMongEvent payload) {
         try {
             Long mongId = payload.getMongId();
+            Boolean isSleeping = payload.getIsSleeping();
 
-            log.info("[sleepSleeping] mongId: {}", mongId);
+            log.info("[sleepSleeping] mongId: {}, isSleeping: {}", mongId, isSleeping);
 
-            managementWorkerService.sleepSleeping(mongId);
+            if (isSleeping) {
+                managementWorkerService.sleepSleeping(mongId);
+            } else {
+                managementWorkerService.awakeSleeping(mongId);
+            }
         } catch (ErrorException e) {
 //            kafkaService.sendRollback(KafkaService.KafkaTopic.SLEEP_SLEEPING_MONG, payload);
-        }
-    }
-
-    @KafkaListener(topics = { KafkaService.CommitTopic.AWAKE_SLEEPING_MONG })
-    public void awakeSleeping(SleepingMongEvent payload) {
-        try {
-            Long mongId = payload.getMongId();
-
-            log.info("[awakeSleeping] mongId: {}", mongId);
-
-            managementWorkerService.awakeSleeping(mongId);
-        } catch (ErrorException e) {
-//            kafkaService.sendRollback(KafkaService.KafkaTopic.AWAKE_SLEEPING_MONG, payload);
         }
     }
 

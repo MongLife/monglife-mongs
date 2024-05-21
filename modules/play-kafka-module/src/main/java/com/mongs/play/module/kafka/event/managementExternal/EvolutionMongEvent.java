@@ -18,5 +18,4 @@ public class EvolutionMongEvent extends BasicEvent {
     private Long mongId;
     private Long accountId;
     private String mongCode;
-    private String pastMongCode;
 }

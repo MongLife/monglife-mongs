@@ -1,10 +1,15 @@
 package com.mongs.play.client.publisher.mong.vo;
 
+import lombok.AllArgsConstructor;
 import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Builder
-public record MongCodeVo(
-        Long mongId,
-        String mongCode
-) {
+@Getter
+@AllArgsConstructor
+@NoArgsConstructor
+public class MongCodeVo{
+    private Long mongId;
+    private String mongCode;
 }

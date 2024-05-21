@@ -11,43 +11,26 @@ import java.time.LocalDateTime;
 
 @Builder
 public record RegisterMongVo(
-        Long accountId,
         Long mongId,
         String name,
         String mongCode,
         Double weight,
+        Integer poopCount,
+        Boolean isSleeping,
+        String shiftCode,
+        String stateCode,
+        Integer payPoint,
+        LocalDateTime born,
+
+        Double exp,
         Double healthy,
         Double satiety,
         Double strength,
         Double sleep,
-        Integer poopCount,
-        Boolean isSleeping,
-        Double exp,
-        MongState state,
-        MongShift shift,
-        Integer payPoint,
-        LocalDateTime born
+        Double expPercent,
+        Double healthyPercent,
+        Double satietyPercent,
+        Double strengthPercent,
+        Double sleepPercent
 ) {
-    public static RegisterMongVo of(MongVo mongVo) {
-
-        MongStatusPercentVo mongStatusPercentVo = MongUtil.statusToPercent(mongVo.grade(), mongVo);
-        return RegisterMongVo.builder()
-                .accountId(mongVo.accountId())
-                .mongId(mongVo.mongId())
-                .name(mongVo.name())
-                .mongCode(mongVo.mongCode())
-                .weight(mongVo.weight())
-                .strength(mongStatusPercentVo.strength())
-                .satiety(mongStatusPercentVo.satiety())
-                .healthy(mongStatusPercentVo.healthy())
-                .sleep(mongStatusPercentVo.sleep())
-                .exp(mongStatusPercentVo.exp())
-                .poopCount(mongVo.poopCount())
-                .isSleeping(mongVo.isSleeping())
-                .state(mongVo.state())
-                .shift(mongVo.shift())
-                .payPoint(mongVo.payPoint())
-                .born(mongVo.born())
-                .build();
-    }
 }

@@ -28,8 +28,7 @@ public class KafkaService {
         public static final String LAST_EVOLUTION_MONG = "commit.evolutionMong.last";
         public static final String TRAINING_MONG = "commit.trainingMong";
         public static final String FEED_MONG = "commit.feedMong";
-        public static final String SLEEP_SLEEPING_MONG = "commit.sleepingMong.sleep";
-        public static final String AWAKE_SLEEPING_MONG = "commit.sleepingMong.awake";
+        public static final String SLEEPING_MONG = "commit.sleepingMong";
         public static final String DELETE_MONG = "commit.deleteMong";
 
         // management_internal -> management_worker

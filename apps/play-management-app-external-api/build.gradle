@@ -1,10 +1,9 @@
 dependencies {
+    implementation project(':clients:play-event-publisher-client')
     implementation project(':domains:play-code-domain')
     implementation project(':domains:play-mong-domain')
     implementation project(":modules:play-security-module")
     implementation project(":modules:play-kafka-module")
-
-    implementation 'org.springframework.boot:spring-boot-starter-aop'
 }
 
 tasks.register('copyPrivate', Copy) {

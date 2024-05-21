@@ -5,8 +5,7 @@ import lombok.Builder;
 
 @Builder
 public record EvolutionReadyVo(
-        Long accountId,
         Long mongId,
-        MongShift shift
+        String shiftCode
 ) {
 }

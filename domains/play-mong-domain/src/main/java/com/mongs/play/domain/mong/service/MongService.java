@@ -291,7 +291,6 @@ public class MongService {
         log.info("[toggleFirstEvolution] mongId: {}", mong.getId());
 
         return MongVo.of(mong);
-
     }
 
     @Transactional

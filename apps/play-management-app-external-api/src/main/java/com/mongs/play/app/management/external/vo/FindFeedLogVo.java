@@ -4,7 +4,6 @@ import lombok.Builder;
 
 @Builder
 public record FindFeedLogVo(
-        Long accountId,
         Long mongId,
         String code,
         Boolean isCanBuy

@@ -1,6 +1,5 @@
 package com.mongs.play.app.management.internal.consumer;
 
-import com.mongs.play.app.management.internal.dto.res.*;
 import com.mongs.play.app.management.internal.service.ManagementInternalService;
 import com.mongs.play.core.error.domain.MongErrorCode;
 import com.mongs.play.core.exception.app.AppErrorException;
@@ -50,7 +49,7 @@ public class ManagementInternalCommitConsumer {
 //            kafkaService.sendRollback(KafkaService.KafkaTopic.DECREASE_STATUS_SCHEDULE, payload);
         } catch (CommonErrorException e) {
             if (e.errorCode.equals(MongErrorCode.NOT_FOUND_ACTIVE_MONG)) {
-                kafkaService.sendCommit(KafkaService.CommitTopic.DECREASE_STATUS_SCHEDULE, payload);
+                kafkaService.sendCommit(KafkaService.StopTopic.DECREASE_STATUS_SCHEDULE, payload);
             }
         }
     }
@@ -71,7 +70,7 @@ public class ManagementInternalCommitConsumer {
 //            kafkaService.sendRollback(KafkaService.KafkaTopic.INCREASE_STATUS_SCHEDULE, payload);
         } catch (CommonErrorException e) {
             if (e.errorCode.equals(MongErrorCode.NOT_FOUND_ACTIVE_MONG)) {
-                kafkaService.sendCommit(KafkaService.CommitTopic.INCREASE_STATUS_SCHEDULE, payload);
+                kafkaService.sendCommit(KafkaService.StopTopic.INCREASE_STATUS_SCHEDULE, payload);
             }
         }
     }
@@ -87,7 +86,7 @@ public class ManagementInternalCommitConsumer {
 //            kafkaService.sendRollback(KafkaService.KafkaTopic.INCREASE_POOP_COUNT_SCHEDULE, payload);
         } catch (CommonErrorException e) {
             if (e.errorCode.equals(MongErrorCode.NOT_FOUND_ACTIVE_MONG)) {
-                kafkaService.sendCommit(KafkaService.CommitTopic.INCREASE_POOP_COUNT_SCHEDULE, payload);
+                kafkaService.sendCommit(KafkaService.StopTopic.INCREASE_POOP_COUNT_SCHEDULE, payload);
             }
         }
     }
@@ -115,7 +114,7 @@ public class ManagementInternalCommitConsumer {
         } catch (AppErrorException e) {
 //            kafkaService.sendRollback(KafkaService.KafkaTopic.EXCHANGE_PAY_POINT, payload);
         } catch (CommonErrorException e) {
-            kafkaService.sendCommit(KafkaService.CommitTopic.EXCHANGE_PAY_POINT, payload);
+            kafkaService.sendCommit(KafkaService.StopTopic.EXCHANGE_PAY_POINT, payload);
         }
     }
 }

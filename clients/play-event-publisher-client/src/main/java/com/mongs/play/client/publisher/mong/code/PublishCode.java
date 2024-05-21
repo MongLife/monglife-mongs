@@ -1,9 +1,9 @@
 package com.mongs.play.client.publisher.mong.code;
 
 public enum PublishCode {
-    NULL,
     MONG_CODE,
     MONG_STATUS,
+    MONG_EXP,
     MONG_POOP_COUNT,
     MONG_STATE,
     MONG_SHIFT,

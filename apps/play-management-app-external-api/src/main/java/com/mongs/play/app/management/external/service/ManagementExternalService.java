@@ -1,7 +1,8 @@
 package com.mongs.play.app.management.external.service;
 
 import com.mongs.play.app.management.external.vo.*;
-import com.mongs.play.client.publisher.mong.service.MqttService;
+import com.mongs.play.client.publisher.mong.annotation.RealTimeMong;
+import com.mongs.play.client.publisher.mong.code.PublishCode;
 import com.mongs.play.core.error.app.ManagementExternalErrorCode;
 import com.mongs.play.core.error.domain.MongErrorCode;
 import com.mongs.play.core.exception.app.ManagementExternalException;
@@ -17,13 +18,7 @@ import com.mongs.play.domain.mong.utils.MongUtil;
 import com.mongs.play.domain.mong.vo.MongFeedLogVo;
 import com.mongs.play.domain.mong.vo.MongStatusPercentVo;
 import com.mongs.play.domain.mong.vo.MongVo;
-import com.mongs.play.module.kafka.event.managementExternal.DeleteMongEvent;
-import com.mongs.play.module.kafka.event.managementExternal.EvolutionMongEvent;
-import com.mongs.play.module.kafka.event.managementExternal.RegisterMongEvent;
-import com.mongs.play.module.kafka.event.managementExternal.SleepingMongEvent;
-import com.mongs.play.module.kafka.event.managementInternal.EvolutionReadyMongEvent;
-import com.mongs.play.module.kafka.event.managementInternal.FeedMongEvent;
-import com.mongs.play.module.kafka.event.managementInternal.TrainingMongEvent;
+import com.mongs.play.module.kafka.annotation.SendCommit;
 import com.mongs.play.module.kafka.service.KafkaService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -44,54 +39,86 @@ public class ManagementExternalService {
 
     private final CodeService codeService;
     private final MongService mongService;
-    private final KafkaService kafkaService;
-    private final MqttService mqttService;
+    private final ManagementExternalSupportService supportService;
 
-    private MongVo evolutionReady(MongVo mongVo) {
-
+    @Transactional
+    public MongVo validationEvolutionReady(MongVo mongVo) {
         if (MongUtil.isEvolutionReady(mongVo.grade(), mongVo.shift(), mongVo.exp())) {
-            mongVo = mongService.toggleEvolutionReady(mongVo.mongId());
-
-            kafkaService.sendCommit(KafkaService.CommitTopic.EVOLUTION_READY, EvolutionReadyMongEvent.builder()
-                    .mongId(mongVo.mongId())
-                    .build());
+            mongVo = supportService.evolutionReady(mongVo.mongId());
         }
-
         return mongVo;
     }
 
     @Transactional(readOnly = true)
     public List<FindMongVo> findMong(Long accountId) {
 
-        List<MongVo> mongList = mongService.findMongByAccountId(accountId);
+        List<MongVo> mongVoList = mongService.findMongByAccountId(accountId);
 
-        return mongList.stream()
-                .map(mong -> {
-                    MongStatusPercentVo mongStatusPercentVo =
-                            MongUtil.statusToPercent(mong.grade(), mong);
+        return mongVoList.stream()
+                .map(mongVo -> {
+                    MongStatusPercentVo mongStatusPercentVo = MongUtil.statusToPercent(mongVo.grade(), mongVo);
 
                     return FindMongVo.builder()
-                            .accountId(mong.accountId())
-                            .mongId(mong.mongId())
-                            .name(mong.name())
-                            .mongCode(mong.mongCode())
-                            .weight(mong.weight())
-                            .strength(mongStatusPercentVo.strength())
-                            .satiety(mongStatusPercentVo.satiety())
-                            .healthy(mongStatusPercentVo.healthy())
-                            .sleep(mongStatusPercentVo.sleep())
-                            .poopCount(mong.poopCount())
-                            .isSleeping(mong.isSleeping())
+                            .mongId(mongVo.mongId())
+                            .name(mongVo.name())
+                            .mongCode(mongVo.mongCode())
+                            .weight(mongVo.weight())
                             .exp(mongStatusPercentVo.exp())
-                            .state(mong.state())
-                            .shift(mong.shift())
-                            .payPoint(mong.payPoint())
-                            .born(mong.born())
+                            .strength(mongVo.strength())
+                            .satiety(mongVo.satiety())
+                            .healthy(mongVo.healthy())
+                            .sleep(mongVo.sleep())
+                            .expPercent(mongStatusPercentVo.exp())
+                            .strengthPercent(mongStatusPercentVo.strength())
+                            .satietyPercent(mongStatusPercentVo.satiety())
+                            .healthyPercent(mongStatusPercentVo.healthy())
+                            .sleepPercent(mongStatusPercentVo.sleep())
+                            .stateCode(mongVo.state().code)
+                            .shiftCode(mongVo.shift().code)
+                            .poopCount(mongVo.poopCount())
+                            .isSleeping(mongVo.isSleeping())
+                            .payPoint(mongVo.payPoint())
+                            .born(mongVo.born())
                             .build();
                 })
                 .toList();
     }
 
+    @Transactional(readOnly = true)
+    public FindMongVo findMong(Long accountId, Long mongId) {
+        MongVo mongVo = mongService.findActiveMongById(mongId);
+
+        if (!accountId.equals(mongVo.accountId())) {
+            throw new ManagementExternalException(MongErrorCode.NOT_FOUND_ACTIVE_MONG);
+        }
+
+        MongStatusPercentVo mongStatusPercentVo = MongUtil.statusToPercent(mongVo.grade(), mongVo);
+
+        return FindMongVo.builder()
+                .mongId(mongVo.mongId())
+                .name(mongVo.name())
+                .mongCode(mongVo.mongCode())
+                .weight(mongVo.weight())
+                .exp(mongStatusPercentVo.exp())
+                .strength(mongVo.strength())
+                .satiety(mongVo.satiety())
+                .healthy(mongVo.healthy())
+                .sleep(mongVo.sleep())
+                .expPercent(mongStatusPercentVo.exp())
+                .strengthPercent(mongStatusPercentVo.strength())
+                .satietyPercent(mongStatusPercentVo.satiety())
+                .healthyPercent(mongStatusPercentVo.healthy())
+                .sleepPercent(mongStatusPercentVo.sleep())
+                .stateCode(mongVo.state().code)
+                .shiftCode(mongVo.shift().code)
+                .poopCount(mongVo.poopCount())
+                .isSleeping(mongVo.isSleeping())
+                .payPoint(mongVo.payPoint())
+                .born(mongVo.born())
+                .build();
+    }
+
+    @SendCommit(topic = KafkaService.CommitTopic.REGISTER_MONG)
     @Transactional
     public RegisterMongVo registerMong(Long accountId, String name, String sleepStart, String sleepEnd) {
 
@@ -103,32 +130,32 @@ public class ManagementExternalService {
         MongVo newMongVo = mongService.addMong(accountId, eggMongCode, name, sleepStart, sleepEnd);
         MongStatusPercentVo mongStatusPercentVo = MongUtil.statusToPercent(newMongVo.grade(), newMongVo);
 
-        kafkaService.sendCommit(KafkaService.CommitTopic.REGISTER_MONG, RegisterMongEvent.builder()
-                .mongId(newMongVo.mongId())
-                .accountId(newMongVo.accountId())
-                .mongCode(newMongVo.mongCode())
-                .build());
-
         return RegisterMongVo.builder()
-                .accountId(newMongVo.accountId())
                 .mongId(newMongVo.mongId())
                 .name(newMongVo.name())
                 .mongCode(newMongVo.mongCode())
                 .weight(newMongVo.weight())
-                .strength(mongStatusPercentVo.strength())
-                .satiety(mongStatusPercentVo.satiety())
-                .healthy(mongStatusPercentVo.healthy())
-                .sleep(mongStatusPercentVo.sleep())
                 .exp(mongStatusPercentVo.exp())
+                .strength(newMongVo.strength())
+                .satiety(newMongVo.satiety())
+                .healthy(newMongVo.healthy())
+                .sleep(newMongVo.sleep())
+                .expPercent(mongStatusPercentVo.exp())
+                .strengthPercent(mongStatusPercentVo.strength())
+                .satietyPercent(mongStatusPercentVo.satiety())
+                .healthyPercent(mongStatusPercentVo.healthy())
+                .sleepPercent(mongStatusPercentVo.sleep())
+                .stateCode(newMongVo.state().code)
+                .shiftCode(newMongVo.shift().code)
                 .poopCount(newMongVo.poopCount())
                 .isSleeping(newMongVo.isSleeping())
-                .state(newMongVo.state())
-                .shift(newMongVo.shift())
                 .payPoint(newMongVo.payPoint())
                 .born(newMongVo.born())
                 .build();
     }
 
+    @RealTimeMong(codes = { PublishCode.MONG_SHIFT })
+    @SendCommit(topic = KafkaService.CommitTopic.DELETE_MONG)
     @Transactional
     public DeleteMongVo deleteMong(Long accountId, Long mongId) {
 
@@ -140,17 +167,13 @@ public class ManagementExternalService {
 
         MongVo newMongVo = mongService.removeMong(mongVo.mongId());
 
-        kafkaService.sendCommit(KafkaService.CommitTopic.DELETE_MONG, DeleteMongEvent.builder()
-                .mongId(newMongVo.mongId())
-                .build());
-
         return DeleteMongVo.builder()
-                .accountId(newMongVo.accountId())
                 .mongId(newMongVo.mongId())
-                .shift(newMongVo.shift())
+                .shiftCode(newMongVo.shift().code)
                 .build();
     }
 
+    @RealTimeMong(codes = { PublishCode.MONG_EXP })
     @Transactional
     public StrokeMongVo strokeMong(Long accountId, Long mongId) {
 
@@ -170,17 +193,19 @@ public class ManagementExternalService {
         }
 
         MongVo newMongVo = mongService.increaseNumberOfStroke(mongVo.mongId(), 1);
-        newMongVo = this.evolutionReady(newMongVo);
+        newMongVo = this.validationEvolutionReady(newMongVo);
 
-        double exp = MongUtil.statusToPercent(newMongVo.grade().evolutionExp, newMongVo.exp());
+        double expPercent = MongUtil.statusToPercent(newMongVo.grade().evolutionExp, newMongVo.exp());
 
         return StrokeMongVo.builder()
-                .accountId(newMongVo.accountId())
                 .mongId(newMongVo.mongId())
-                .exp(exp)
+                .exp(newMongVo.exp())
+                .expPercent(expPercent)
                 .build();
     }
 
+    @RealTimeMong(codes = { PublishCode.MONG_IS_SLEEPING })
+    @SendCommit(topic = KafkaService.CommitTopic.SLEEPING_MONG)
     @Transactional
     public SleepingMongVo sleepingMong(Long accountId, Long mongId) {
 
@@ -201,23 +226,13 @@ public class ManagementExternalService {
 
         MongVo newMongVo = mongService.toggleIsSleeping(mongVo.mongId());
 
-        if (newMongVo.isSleeping()) {
-            kafkaService.sendCommit(KafkaService.CommitTopic.SLEEP_SLEEPING_MONG, SleepingMongEvent.builder()
-                    .mongId(newMongVo.mongId())
-                    .build());
-        } else {
-            kafkaService.sendCommit(KafkaService.CommitTopic.AWAKE_SLEEPING_MONG, SleepingMongEvent.builder()
-                    .mongId(newMongVo.mongId())
-                    .build());
-        }
-
         return SleepingMongVo.builder()
-                .accountId(newMongVo.accountId())
                 .mongId(newMongVo.mongId())
                 .isSleeping(newMongVo.isSleeping())
                 .build();
     }
 
+    @RealTimeMong(codes = { PublishCode.MONG_POOP_COUNT, PublishCode.MONG_EXP })
     @Transactional
     public PoopCleanMongVo poopClean(Long accountId, Long mongId) {
 
@@ -237,15 +252,15 @@ public class ManagementExternalService {
         }
 
         MongVo newMongVo = mongService.clearPoopCount(mongVo.mongId());
-        newMongVo = this.evolutionReady(newMongVo);
+        newMongVo = this.validationEvolutionReady(newMongVo);
 
-        double exp = MongUtil.statusToPercent(newMongVo.grade().evolutionExp, newMongVo.exp());
+        double expPercent = MongUtil.statusToPercent(newMongVo.grade().evolutionExp, newMongVo.exp());
 
         return PoopCleanMongVo.builder()
-                .accountId(newMongVo.accountId())
                 .mongId(newMongVo.mongId())
                 .poopCount(newMongVo.poopCount())
-                .exp(exp)
+                .exp(newMongVo.exp())
+                .expPercent(expPercent)
                 .build();
     }
 
@@ -266,12 +281,13 @@ public class ManagementExternalService {
         boolean isPossible = mongVo.payPoint() >= mongTrainingCode.point;
 
         return ValidationTrainingMongVo.builder()
-                .accountId(mongVo.accountId())
                 .mongId(mongVo.mongId())
                 .isPossible(isPossible)
                 .build();
     }
 
+    @RealTimeMong(codes = { PublishCode.MONG_EXP, PublishCode.MONG_STATUS, PublishCode.MONG_PAY_POINT })
+    @SendCommit(topic = KafkaService.CommitTopic.TRAINING_MONG)
     @Transactional
     public TrainingMongVo trainingMong(Long accountId, Long mongId, String trainingCode) {
 
@@ -293,32 +309,28 @@ public class ManagementExternalService {
         }
 
         MongVo newMongVo = mongService.increaseStatusTraining(mongVo.mongId(), 1, mongTrainingCode);
-        newMongVo = this.evolutionReady(newMongVo);
-
-        kafkaService.sendCommit(KafkaService.CommitTopic.TRAINING_MONG, TrainingMongEvent.builder()
-                .mongId(newMongVo.mongId())
-                .weight(newMongVo.weight())
-                .strength(newMongVo.strength())
-                .satiety(newMongVo.satiety())
-                .healthy(newMongVo.healthy())
-                .sleep(newMongVo.sleep())
-                .build());
+        newMongVo = this.validationEvolutionReady(newMongVo);
 
         MongStatusPercentVo mongStatusPercentVo = MongUtil.statusToPercent(mongVo.grade(), newMongVo);
 
         return TrainingMongVo.builder()
-                .accountId(newMongVo.accountId())
                 .mongId(newMongVo.mongId())
                 .weight(newMongVo.weight())
-                .strength(mongStatusPercentVo.strength())
-                .satiety(mongStatusPercentVo.satiety())
-                .healthy(mongStatusPercentVo.healthy())
-                .sleep(mongStatusPercentVo.sleep())
                 .exp(mongStatusPercentVo.exp())
+                .strength(newMongVo.strength())
+                .satiety(newMongVo.satiety())
+                .healthy(newMongVo.healthy())
+                .sleep(newMongVo.sleep())
+                .expPercent(mongStatusPercentVo.exp())
+                .strengthPercent(mongStatusPercentVo.strength())
+                .satietyPercent(mongStatusPercentVo.satiety())
+                .healthyPercent(mongStatusPercentVo.healthy())
+                .sleepPercent(mongStatusPercentVo.sleep())
                 .payPoint(newMongVo.payPoint())
                 .build();
     }
 
+    @RealTimeMong(codes = { PublishCode.MONG_SHIFT })
     @Transactional
     public GraduateMongVo graduateMong(Long accountId, Long mongId) {
 
@@ -337,12 +349,12 @@ public class ManagementExternalService {
         MongVo newMongVo = mongService.toggleGraduate(mongVo.mongId());
 
         return GraduateMongVo.builder()
-                .accountId(newMongVo.accountId())
                 .mongId(newMongVo.mongId())
-                .shift(newMongVo.shift())
+                .shiftCode(newMongVo.shift().code)
                 .build();
     }
 
+    @RealTimeMong(codes = { PublishCode.MONG_CODE, PublishCode.MONG_EXP, PublishCode.MONG_STATUS, PublishCode.MONG_STATE, PublishCode.MONG_SHIFT })
     @Transactional
     public EvolutionMongVo evolutionMong(Long accountId, Long mongId) {
 
@@ -366,68 +378,36 @@ public class ManagementExternalService {
 
         MongVo newMongVo;
         if (MongGrade.ZERO.equals(mongVo.grade())) {
-
-            List<MongCode> mongCodeList = codeService.getMongCodeByLevel(MongGrade.ZERO.nextGrade.level);
-            int randIdx = random.nextInt(mongCodeList.size());
-            String mongCode = mongCodeList.get(randIdx).code();
-
-            newMongVo = mongService.toggleFirstEvolution(mongVo.mongId(), mongCode);
-
-            kafkaService.sendCommit(KafkaService.CommitTopic.FIRST_EVOLUTION_MONG, EvolutionMongEvent.builder()
-                    .accountId(newMongVo.accountId())
-                    .mongId(newMongVo.mongId())
-                    .pastMongCode(mongVo.mongCode())
-                    .mongCode(newMongVo.mongCode())
-                    .build());
-
+            newMongVo = supportService.firstEvolution(mongVo);
         } else if (MongGrade.LAST.equals(mongVo.grade().nextGrade)) {
-
-            newMongVo = mongService.toggleLastEvolution(mongVo.mongId());
-
-            kafkaService.sendCommit(KafkaService.CommitTopic.LAST_EVOLUTION_MONG, EvolutionMongEvent.builder()
-                    .accountId(newMongVo.accountId())
-                    .mongId(newMongVo.mongId())
-                    .pastMongCode(mongVo.mongCode())
-                    .mongCode(newMongVo.mongCode())
-                    .build());
-
+            newMongVo = supportService.lastEvolution(mongVo);
         } else {
-            // TODO("진화 포인트 환산")
-            int evolutionPoint = 0;
-
-            List<MongCode> mongCodeList = codeService.getMongCodeByLevelAndEvolutionPoint(mongVo.grade().nextGrade.level, evolutionPoint);
-
-            // TODO("컬렉션 목록을 조회하여 겹치지 않도록 하는 로직 필요")
-
-            String mongCode = mongCodeList.get(mongCodeList.size() - 1).code();
-
-            newMongVo = mongService.toggleEvolution(mongVo.mongId(), mongCode);
-
-            kafkaService.sendCommit(KafkaService.CommitTopic.EVOLUTION_MONG, EvolutionMongEvent.builder()
-                    .accountId(newMongVo.accountId())
-                    .mongId(newMongVo.mongId())
-                    .pastMongCode(mongVo.mongCode())
-                    .mongCode(newMongVo.mongCode())
-                    .build());
+            newMongVo = supportService.evolution(mongVo);
         }
 
         MongStatusPercentVo mongStatusPercentVo = MongUtil.statusToPercent(newMongVo.grade(), newMongVo);
 
         return EvolutionMongVo.builder()
-                .accountId(newMongVo.accountId())
                 .mongId(newMongVo.mongId())
                 .mongCode(newMongVo.mongCode())
                 .weight(newMongVo.weight())
-                .strength(mongStatusPercentVo.strength())
-                .satiety(mongStatusPercentVo.satiety())
-                .healthy(mongStatusPercentVo.healthy())
-                .sleep(mongStatusPercentVo.sleep())
                 .exp(mongStatusPercentVo.exp())
-                .shift(newMongVo.shift())
-                .state(newMongVo.state())
+                .strength(newMongVo.strength())
+                .satiety(newMongVo.satiety())
+                .healthy(newMongVo.healthy())
+                .sleep(newMongVo.sleep())
+                .expPercent(mongStatusPercentVo.exp())
+                .strengthPercent(mongStatusPercentVo.strength())
+                .satietyPercent(mongStatusPercentVo.satiety())
+                .healthyPercent(mongStatusPercentVo.healthy())
+                .sleepPercent(mongStatusPercentVo.sleep())
+                .stateCode(newMongVo.state().code)
+                .shiftCode(newMongVo.shift().code)
                 .build();
     }
 
+    @RealTimeMong(codes = { PublishCode.MONG_EXP, PublishCode.MONG_STATUS, PublishCode.MONG_PAY_POINT })
+    @SendCommit(topic = KafkaService.CommitTopic.FEED_MONG)
     @Transactional
     public FeedMongVo feedMong(Long accountId, Long mongId, String foodCode) {
 
@@ -449,28 +429,23 @@ public class ManagementExternalService {
         }
 
         MongVo newMongVo = mongService.feedMong(mongVo.mongId(), food.code(), food.addWeightValue(), food.addStrengthValue(), food.addSatietyValue(), food.addHealthyValue(), food.addSleepValue(), food.price());
-        newMongVo = this.evolutionReady(newMongVo);
-
-        kafkaService.sendCommit(KafkaService.CommitTopic.FEED_MONG, FeedMongEvent.builder()
-                .mongId(newMongVo.mongId())
-                .weight(newMongVo.weight())
-                .strength(newMongVo.strength())
-                .satiety(newMongVo.satiety())
-                .healthy(newMongVo.healthy())
-                .sleep(newMongVo.sleep())
-                .build());
+        newMongVo = this.validationEvolutionReady(newMongVo);
 
         MongStatusPercentVo mongStatusPercentVo = MongUtil.statusToPercent(newMongVo.grade(), newMongVo);
 
         return FeedMongVo.builder()
-                .accountId(newMongVo.accountId())
                 .mongId(newMongVo.mongId())
                 .weight(newMongVo.weight())
-                .strength(mongStatusPercentVo.strength())
-                .satiety(mongStatusPercentVo.satiety())
-                .healthy(mongStatusPercentVo.healthy())
-                .sleep(mongStatusPercentVo.sleep())
                 .exp(mongStatusPercentVo.exp())
+                .strength(newMongVo.strength())
+                .satiety(newMongVo.satiety())
+                .healthy(newMongVo.healthy())
+                .sleep(newMongVo.sleep())
+                .expPercent(mongStatusPercentVo.exp())
+                .strengthPercent(mongStatusPercentVo.strength())
+                .satietyPercent(mongStatusPercentVo.satiety())
+                .healthyPercent(mongStatusPercentVo.healthy())
+                .sleepPercent(mongStatusPercentVo.sleep())
                 .payPoint(newMongVo.payPoint())
                 .build();
     }
@@ -506,7 +481,6 @@ public class ManagementExternalService {
                     }
 
                     return FindFeedLogVo.builder()
-                            .accountId(mongVo.accountId())
                             .code(code)
                             .mongId(id)
                             .isCanBuy(isCanBuy)

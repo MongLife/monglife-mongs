@@ -7,20 +7,22 @@ import lombok.Builder;
 
 @Builder
 public record DeadMongVo(
-        Long accountId,
         Long mongId,
-
-        MongGrade grade,
-        MongShift shift,
-        MongState state,
+        String shiftCode,
+        String stateCode,
+        Integer poopCount,
+        Boolean isSleeping,
+        Double weight,
 
         Double exp,
-        Double weight,
         Double strength,
         Double satiety,
         Double healthy,
         Double sleep,
-        Integer poopCount,
-        Boolean isSleeping
+        Double expPercent,
+        Double strengthPercent,
+        Double satietyPercent,
+        Double healthyPercent,
+        Double sleepPercent
 ) {
 }

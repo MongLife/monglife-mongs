@@ -1,4 +1,5 @@
 dependencies {
+    implementation project(':clients:play-event-publisher-client')
     implementation project(':domains:play-mong-domain')
     implementation project(":modules:play-kafka-module")
 

@@ -4,7 +4,6 @@ import lombok.Builder;
 
 @Builder
 public record IncreasePoopCountVo(
-        Long accountId,
         Long mongId,
         Integer poopCount
 ) {

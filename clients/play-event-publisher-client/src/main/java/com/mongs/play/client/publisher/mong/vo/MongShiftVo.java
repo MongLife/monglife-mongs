@@ -1,10 +1,16 @@
 package com.mongs.play.client.publisher.mong.vo;
 
+
+import lombok.AllArgsConstructor;
 import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Builder
-public record MongShiftVo(
-        Long mongId,
-        String shiftCode
-) {
+@Getter
+@AllArgsConstructor
+@NoArgsConstructor
+public class MongShiftVo{
+    private Long mongId;
+    private String shiftCode;
 }
