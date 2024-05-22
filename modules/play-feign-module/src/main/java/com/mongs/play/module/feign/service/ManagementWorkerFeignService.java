@@ -15,136 +15,86 @@ public class ManagementWorkerFeignService {
     private final ManagementWorkerClient managementWorkerClient;
 
     public EvolutionScheduleResDto zeroEvolutionSchedule(Long mongId) {
-        try {
-            var res = managementWorkerClient.zeroEvolutionSchedule(EvolutionScheduleReqDto.builder()
-                    .mongId(mongId)
-                    .build());
+        var res = managementWorkerClient.zeroEvolutionSchedule(EvolutionScheduleReqDto.builder()
+                .mongId(mongId)
+                .build());
 
-            return res.getBody();
-
-        } catch (Exception e) {
-            return null;
-        }
+        return res.getBody();
     }
 
     public EvolutionScheduleResDto firstEvolutionSchedule(Long mongId) {
-        try {
-            var res = managementWorkerClient.firstEvolutionSchedule(EvolutionScheduleReqDto.builder()
-                    .mongId(mongId)
-                    .build());
+        var res = managementWorkerClient.firstEvolutionSchedule(EvolutionScheduleReqDto.builder()
+                .mongId(mongId)
+                .build());
 
-            return res.getBody();
-
-        } catch (Exception e) {
-            return null;
-        }
+        return res.getBody();
     }
 
     public EvolutionScheduleResDto evolutionSchedule(Long mongId) {
-        try {
-            var res = managementWorkerClient.evolutionSchedule(EvolutionScheduleReqDto.builder()
-                    .mongId(mongId)
-                    .build());
+        var res = managementWorkerClient.evolutionSchedule(EvolutionScheduleReqDto.builder()
+                .mongId(mongId)
+                .build());
 
-            return res.getBody();
-
-        } catch (Exception e) {
-            return null;
-        }
+        return res.getBody();
     }
 
     public EvolutionScheduleResDto lastEvolutionSchedule(Long mongId) {
-        try {
-            var res = managementWorkerClient.lastEvolutionSchedule(EvolutionScheduleReqDto.builder()
-                    .mongId(mongId)
-                    .build());
+        var res = managementWorkerClient.lastEvolutionSchedule(EvolutionScheduleReqDto.builder()
+                .mongId(mongId)
+                .build());
 
-            return res.getBody();
-
-        } catch (Exception e) {
-            return null;
-        }
+        return res.getBody();
     }
 
     public SleepingScheduleResDto sleepingSchedule(Long mongId, Boolean isSleeping) {
-        try {
-            var res = managementWorkerClient.sleepingSchedule(SleepingScheduleReqDto.builder()
-                    .mongId(mongId)
-                    .isSleeping(isSleeping)
-                    .build());
+        var res = managementWorkerClient.sleepingSchedule(SleepingScheduleReqDto.builder()
+                .mongId(mongId)
+                .isSleeping(isSleeping)
+                .build());
 
-            return res.getBody();
-
-        } catch (Exception e) {
-            return null;
-        }
+        return res.getBody();
     }
 
     public DeleteScheduleResDto deleteSchedule(Long mongId) {
-        try {
-            var res = managementWorkerClient.deleteSchedule(DeleteScheduleReqDto.builder()
-                    .mongId(mongId)
-                    .build());
+        var res = managementWorkerClient.deleteSchedule(DeleteScheduleReqDto.builder()
+                .mongId(mongId)
+                .build());
 
-            return res.getBody();
-
-        } catch (Exception e) {
-            return null;
-        }
+        return res.getBody();
     }
 
     public DeadScheduleResDto deadHealthySchedule(Long mongId) {
-        try {
-            var res = managementWorkerClient.deadHealthySchedule(DeadScheduleReqDto.builder()
-                    .mongId(mongId)
-                    .build());
+        var res = managementWorkerClient.deadHealthySchedule(DeadScheduleReqDto.builder()
+                .mongId(mongId)
+                .build());
 
-            return res.getBody();
-
-        } catch (Exception e) {
-            return null;
-        }
+        return res.getBody();
     }
 
 
     public DeadScheduleResDto deadHealthyScheduleStop(Long mongId) {
-        try {
-            var res = managementWorkerClient.deadHealthyScheduleStop(DeadScheduleReqDto.builder()
-                    .mongId(mongId)
-                    .build());
+        var res = managementWorkerClient.deadHealthyScheduleStop(DeadScheduleReqDto.builder()
+                .mongId(mongId)
+                .build());
 
-            return res.getBody();
-
-        } catch (Exception e) {
-            return null;
-        }
+        return res.getBody();
     }
 
 
     public DeadScheduleResDto deadSatietySchedule(Long mongId) {
-        try {
-            var res = managementWorkerClient.deadSatietySchedule(DeadScheduleReqDto.builder()
-                    .mongId(mongId)
-                    .build());
+        var res = managementWorkerClient.deadSatietySchedule(DeadScheduleReqDto.builder()
+                .mongId(mongId)
+                .build());
 
-            return res.getBody();
-
-        } catch (Exception e) {
-            return null;
-        }
+        return res.getBody();
     }
 
 
     public DeadScheduleResDto deadSatietyScheduleStop(Long mongId) {
-        try {
-            var res = managementWorkerClient.deadSatietyScheduleStop(DeadScheduleReqDto.builder()
-                    .mongId(mongId)
-                    .build());
+        var res = managementWorkerClient.deadSatietyScheduleStop(DeadScheduleReqDto.builder()
+                .mongId(mongId)
+                .build());
 
-            return res.getBody();
-
-        } catch (Exception e) {
-            return null;
-        }
+        return res.getBody();
     }
 }

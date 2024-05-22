@@ -18,7 +18,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-@RequestMapping("/internal/collection/admin")
+@RequestMapping("/internal/player/collection/admin")
 @RequiredArgsConstructor
 @RestController
 public class PlayerInternalAdminCollectionController {

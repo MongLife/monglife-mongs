@@ -1,14 +1,8 @@
 package com.mongs.play.app.management.worker.controller;
 
 import com.mongs.play.app.management.worker.service.ManagementWorkerService;
-import com.mongs.play.module.feign.dto.req.DeadScheduleReqDto;
-import com.mongs.play.module.feign.dto.req.DeleteScheduleReqDto;
-import com.mongs.play.module.feign.dto.req.EvolutionScheduleReqDto;
-import com.mongs.play.module.feign.dto.req.SleepingScheduleReqDto;
-import com.mongs.play.module.feign.dto.res.DeadScheduleResDto;
-import com.mongs.play.module.feign.dto.res.DeleteScheduleResDto;
-import com.mongs.play.module.feign.dto.res.EvolutionScheduleResDto;
-import com.mongs.play.module.feign.dto.res.SleepingScheduleResDto;
+import com.mongs.play.app.management.worker.dto.req.*;
+import com.mongs.play.app.management.worker.dto.res.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;

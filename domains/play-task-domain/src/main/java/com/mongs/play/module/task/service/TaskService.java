@@ -225,8 +225,7 @@ public class TaskService {
         }
     }
 
-    @Transactional
-    public void stopAllTask(Long mongId) {
+    public void forceStopAllTask(Long mongId) {
 
         List<TaskEvent> taskEventList = getTaskEventIsNotDone(mongId);
 
@@ -240,12 +239,12 @@ public class TaskService {
                         .expiredAt(null)
                         .taskStatus(TaskStatus.DONE)
                         .build());
-                // 테스크 중지
-                task.stop();
+                // 테스크 강제 중지
+                task.forceStop();
                 // 테스크 삭제
                 activeTaskMap.remove(taskEvent.getTaskId());
             } catch (NotFoundException e) {
-//                log.info("[stopAllTask] not found task, mongId: {}, taskCode: {}", taskEvent.getMongId(), taskEvent.getTaskCode());
+//                log.info("[forceStopAllTask] not found task, mongId: {}, taskCode: {}", taskEvent.getMongId(), taskEvent.getTaskCode());
             }
         });
     }

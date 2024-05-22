@@ -1,5 +1,6 @@
 package com.mongs.play.app.management.internal.service;
 
+import com.mongs.play.app.management.internal.annotation.ValidationDead;
 import com.mongs.play.app.management.internal.vo.EvolutionReadyVo;
 import com.mongs.play.app.management.internal.vo.*;
 import com.mongs.play.client.publisher.mong.annotation.RealTimeMong;
@@ -10,6 +11,7 @@ import com.mongs.play.domain.mong.service.MongStatusService;
 import com.mongs.play.domain.mong.utils.MongUtil;
 import com.mongs.play.domain.mong.vo.MongStatusPercentVo;
 import com.mongs.play.domain.mong.vo.MongVo;
+import com.mongs.play.module.feign.service.ManagementWorkerFeignService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -26,11 +28,7 @@ public class ManagementInternalService {
     @Transactional
     public EvolutionReadyVo evolutionReady(Long mongId) {
 
-        MongVo mongVo = mongService.findActiveMongById(mongId);
-
-        if (MongUtil.isEvolutionReady(mongVo.grade(), mongVo.shift(), mongVo.exp())) {
-            mongVo = mongService.toggleEvolutionReady(mongId);
-        }
+        MongVo mongVo = mongService.toggleEvolutionReady(mongId);
 
         return EvolutionReadyVo.builder()
                 .mongId(mongVo.mongId())
@@ -38,6 +36,7 @@ public class ManagementInternalService {
                 .build();
     }
 
+    @ValidationDead
     @RealTimeMong(codes = { PublishCode.MONG_STATUS })
     @Transactional
     public DecreaseStatusVo decreaseStatus(Long mongId, Double subWeight, Double subStrength, Double subSatiety, Double subHealthy, Double subSleep) {
@@ -71,6 +70,7 @@ public class ManagementInternalService {
                 .build();
     }
 
+    @ValidationDead
     @RealTimeMong(codes = { PublishCode.MONG_STATUS })
     @Transactional
     public IncreaseStatusVo increaseStatus(Long mongId, Double addWeight, Double addStrength, Double addSatiety, Double addHealthy, Double addSleep) {

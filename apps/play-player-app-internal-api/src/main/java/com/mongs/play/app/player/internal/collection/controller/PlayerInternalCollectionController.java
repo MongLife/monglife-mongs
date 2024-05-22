@@ -8,20 +8,17 @@ import com.mongs.play.module.feign.dto.res.RegisterMongCollectionResDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @Slf4j
-@RequestMapping("/internal/collection")
+@RequestMapping("/internal/player/collection")
 @RequiredArgsConstructor
 @RestController
 public class PlayerInternalCollectionController {
 
     private final PlayerInternalCollectionService playerInternalCollectionService;
 
-    @PutMapping("/mapCollection")
+    @PostMapping("/mapCollection")
     public ResponseEntity<RegisterMapCollectionResDto> registerMapCollection(@RequestBody RegisterMapCollectionReqDto registerMapCollectionReqDto) {
         Long accountId = registerMapCollectionReqDto.accountId();
         String mapCode = registerMapCollectionReqDto.mapCode();
@@ -35,7 +32,7 @@ public class PlayerInternalCollectionController {
                 .build());
     }
 
-    @PutMapping("/mongCollection")
+    @PostMapping("/mongCollection")
     public ResponseEntity<RegisterMongCollectionResDto> registerMongCollection(@RequestBody RegisterMongCollectionReqDto registerMongCollectionReqDto) {
         Long accountId = registerMongCollectionReqDto.accountId();
         String mongCode = registerMongCollectionReqDto.mongCode();

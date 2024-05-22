@@ -6,7 +6,6 @@ import java.time.LocalDateTime;
 
 @Builder
 public record RegisterMongResDto(
-        Long accountId,
         Long mongId,
         String name,
         String mongCode,

@@ -6,6 +6,7 @@ import lombok.Builder;
 public record PoopCleanMongVo(
         Long mongId,
         Integer poopCount,
+        String shiftCode,
 
         Double exp,
         Double expPercent

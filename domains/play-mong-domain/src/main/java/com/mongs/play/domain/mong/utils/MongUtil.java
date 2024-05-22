@@ -8,6 +8,8 @@ import com.mongs.play.domain.mong.vo.MongStatusPercentVo;
 import com.mongs.play.domain.mong.vo.MongStatusVo;
 import com.mongs.play.domain.mong.vo.MongVo;
 
+import java.util.Arrays;
+
 public class MongUtil {
 
     public static Double statusToPercent(Double maxValue, Double status) {
@@ -82,7 +84,8 @@ public class MongUtil {
                 mongStatusPercentVo.sleep() < mongState.sleepPercent;
     }
 
-    public static boolean isEvolutionReady(MongGrade grade, MongShift shift, Double exp) {
-        return grade.evolutionExp <= exp && !MongShift.GRADUATE_READY.equals(shift) && !MongShift.EVOLUTION_READY.equals(shift);
+    public static boolean isEvolutionReady(String shiftCode, Double expPercent) {
+        MongShift shift = Arrays.stream(MongShift.values()).filter(mongShift -> mongShift.code.equals(shiftCode)).findFirst().get();
+        return expPercent >= 100 && !MongShift.GRADUATE_READY.equals(shift) && !MongShift.EVOLUTION_READY.equals(shift);
     }
 }

@@ -1,6 +1,6 @@
 dependencies {
     implementation project(":domains:play-task-domain")
-    implementation project(":modules:play-feign-module")
+    implementation project(":modules:play-kafka-module")
 }
 
 tasks.register('copyPrivate', Copy) {

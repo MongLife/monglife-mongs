@@ -9,7 +9,6 @@ import org.springframework.http.HttpStatus;
 @AllArgsConstructor
 public enum AuthInternalErrorCode implements ErrorCode {
     ACCESS_TOKEN_EXPIRED(HttpStatus.UNAUTHORIZED, "AUTH_INTERNAL-100", "access token expired."),
-    ACCOUNT_NOT_FOUND(HttpStatus.BAD_REQUEST, "AUTH_INTERNAL-101", "not found account."),
     PASSPORT_GENERATE_FAIL(HttpStatus.INTERNAL_SERVER_ERROR, "AUTH_INTERNAL-102", "passport generate fail."),
     ;
 

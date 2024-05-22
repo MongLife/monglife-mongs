@@ -7,9 +7,10 @@ import org.springframework.http.HttpStatus;
 
 @Getter
 @AllArgsConstructor
-public enum KafkaErrorCode implements ErrorCode {
-    TEST(HttpStatus.BAD_REQUEST, "KAFKA-000", "test error."),
-    NOT_FOUND_TOPIC(HttpStatus.BAD_REQUEST, "KAFKA-100", "not found topic."),
+public enum FeignErrorCode implements ErrorCode {
+    SERVICE_UNAVAILABLE(HttpStatus.SERVICE_UNAVAILABLE, "FEIGN-100", "service unavailable."),
+    NOT_ACCEPTABLE_CHANGE(HttpStatus.NOT_ACCEPTABLE, "FEIGN-101", "invalid change."),
+    NOT_FOUND_RESOURCE(HttpStatus.NOT_ACCEPTABLE, "FEIGN-102", "not found resource."),
     ;
 
     private final HttpStatus httpStatus;

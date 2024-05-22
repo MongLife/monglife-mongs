@@ -1,5 +1,7 @@
 package com.mongs.play.module.feign.client;
 
+import com.mongs.play.config.FeignClientConfig;
+import com.mongs.play.config.FeignErrorDecoder;
 import com.mongs.play.module.feign.dto.req.*;
 import com.mongs.play.module.feign.dto.res.*;
 import org.springframework.cloud.openfeign.FeignClient;
@@ -7,7 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
-@FeignClient(name = "MANAGEMENT-INTERNAL")
+@FeignClient(name = "MANAGEMENT-INTERNAL", configuration = FeignClientConfig.class)
 public interface ManagementInternalClient {
     @PutMapping("/internal/management/evolutionReady")
     ResponseEntity<EvolutionReadyResDto> evolutionReady(@RequestBody EvolutionReadyReqDto evolutionReadyReqDto);

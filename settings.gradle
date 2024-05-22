@@ -28,6 +28,7 @@ include 'domains:play-session-domain'
 include 'modules:play-jpa-module'
 include 'modules:play-hmac-module'
 include 'modules:play-jwt-module'
+include 'modules:play-kafka-module'
 include 'modules:play-feign-module'
 include 'modules:play-security-module'
 

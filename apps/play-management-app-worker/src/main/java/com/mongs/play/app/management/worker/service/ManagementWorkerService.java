@@ -31,7 +31,7 @@ public class ManagementWorkerService {
 
     @Transactional
     public void lastEvolution(Long mongId) {
-        taskService.stopAllTask(mongId);
+        taskService.forceStopAllTask(mongId);
     }
 
     @Transactional
@@ -58,26 +58,26 @@ public class ManagementWorkerService {
 
     @Transactional
     public void delete(Long mongId) {
-        taskService.stopAllTask(mongId);
+        taskService.forceStopAllTask(mongId);
     }
 
     @Transactional
     public void deadHealthy(Long mongId) {
-        taskService.startTask(mongId, TaskCode.DEAD_SATIETY);
-    }
-
-    @Transactional
-    public void liveHealthy(Long mongId) {
-        taskService.stopTask(mongId, TaskCode.DEAD_SATIETY);
-    }
-
-    @Transactional
-    public void deadSatiety(Long mongId) {
         taskService.startTask(mongId, TaskCode.DEAD_HEALTHY);
     }
 
     @Transactional
-    public void liveSatiety(Long mongId) {
+    public void liveHealthy(Long mongId) {
         taskService.stopTask(mongId, TaskCode.DEAD_HEALTHY);
+    }
+
+    @Transactional
+    public void deadSatiety(Long mongId) {
+        taskService.startTask(mongId, TaskCode.DEAD_SATIETY);
+    }
+
+    @Transactional
+    public void liveSatiety(Long mongId) {
+        taskService.stopTask(mongId, TaskCode.DEAD_SATIETY);
     }
 }

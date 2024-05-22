@@ -56,6 +56,10 @@ public class Task {
         scheduler.cancel(false);
     }
 
+    public void forceStop() {
+        scheduler.cancel(false);
+    }
+
     public void stop() {
 //        log.info("[stop] taskId: {}, taskCode: {}, mongId: {}, expiration: {}", taskId, taskCode, mongId, expiration);
 

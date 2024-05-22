@@ -1,0 +1,11 @@
+dependencies {
+    api 'org.springframework.kafka:spring-kafka'
+}
+
+tasks.register('copyPrivate', Copy) {
+    copy {
+        from '../../spring_backend_sub/modules/play-kafka-module/'
+        include 'application-*.yml'
+        into 'src/main/resources'
+    }
+}

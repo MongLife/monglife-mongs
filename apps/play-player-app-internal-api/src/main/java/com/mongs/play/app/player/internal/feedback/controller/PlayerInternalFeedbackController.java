@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-@RequestMapping("/internal/feedback")
+@RequestMapping("/internal/player/feedback")
 @RequiredArgsConstructor
 @RestController
 public class PlayerInternalFeedbackController {

@@ -1,10 +1,11 @@
 package com.mongs.play.app.management.external.service;
 
+import com.mongs.play.app.management.external.annotation.ValidationDead;
+import com.mongs.play.app.management.external.annotation.ValidationEvolution;
 import com.mongs.play.app.management.external.vo.*;
 import com.mongs.play.client.publisher.mong.annotation.RealTimeMong;
 import com.mongs.play.client.publisher.mong.code.PublishCode;
 import com.mongs.play.core.error.app.ManagementExternalErrorCode;
-import com.mongs.play.core.error.domain.MongErrorCode;
 import com.mongs.play.core.exception.app.ManagementExternalException;
 import com.mongs.play.core.exception.common.InvalidException;
 import com.mongs.play.domain.code.entity.FoodCode;
@@ -38,33 +39,17 @@ public class ManagementExternalService {
 
     private final CodeService codeService;
     private final MongService mongService;
-    private final ManagementExternalSupportService supportService;
     private final ManagementWorkerFeignService managementWorkerFeignService;
 
+    @RealTimeMong(codes = { PublishCode.MONG_SHIFT })
     @Transactional
-    public MongVo validationEvolutionReady(MongVo mongVo) {
-        if (MongUtil.isEvolutionReady(mongVo.grade(), mongVo.shift(), mongVo.exp())) {
-            mongVo = supportService.evolutionReady(mongVo.mongId());
-        }
-        return mongVo;
-    }
+    public EvolutionReadyVo evolutionReady(Long mongId) {
+        MongVo newMongVo = mongService.toggleEvolutionReady(mongId);
 
-    @Transactional
-    public MongVo validationDead(MongVo mongVo) {
-
-        if (mongVo.healthy() <= 0) {
-            managementWorkerFeignService.deadHealthySchedule(mongVo.mongId());
-        } else {
-            managementWorkerFeignService.deadHealthyScheduleStop(mongVo.mongId());
-        }
-
-        if (mongVo.satiety() <= 0) {
-            managementWorkerFeignService.deadSatietySchedule(mongVo.mongId());
-        } else {
-            managementWorkerFeignService.deadSatietyScheduleStop(mongVo.mongId());
-        }
-
-        return mongVo;
+        return EvolutionReadyVo.builder()
+                .mongId(newMongVo.mongId())
+                .shiftCode(newMongVo.shift().code)
+                .build();
     }
 
     @Transactional(readOnly = true)
@@ -107,7 +92,7 @@ public class ManagementExternalService {
         MongVo mongVo = mongService.findActiveMongById(mongId);
 
         if (!accountId.equals(mongVo.accountId())) {
-            throw new ManagementExternalException(MongErrorCode.NOT_FOUND_ACTIVE_MONG);
+            throw new ManagementExternalException(ManagementExternalErrorCode.NOT_MATCH_MONG);
         }
 
         MongStatusPercentVo mongStatusPercentVo = MongUtil.statusToPercent(mongVo.grade(), mongVo);
@@ -180,7 +165,7 @@ public class ManagementExternalService {
         MongVo mongVo = mongService.findActiveMongById(mongId);
 
         if (!accountId.equals(mongVo.accountId())) {
-            throw new ManagementExternalException(ManagementExternalErrorCode.INVALID_CHANGE_MONG);
+            throw new ManagementExternalException(ManagementExternalErrorCode.NOT_MATCH_MONG);
         }
 
         MongVo newMongVo = mongService.removeMong(mongVo.mongId());
@@ -193,6 +178,7 @@ public class ManagementExternalService {
                 .build();
     }
 
+    @ValidationEvolution
     @RealTimeMong(codes = { PublishCode.MONG_EXP })
     @Transactional
     public StrokeMongVo strokeMong(Long accountId, Long mongId) {
@@ -200,25 +186,25 @@ public class ManagementExternalService {
         MongVo mongVo = mongService.findActiveMongById(mongId);
 
         if (!accountId.equals(mongVo.accountId())) {
-            throw new ManagementExternalException(ManagementExternalErrorCode.INVALID_CHANGE_MONG);
+            throw new ManagementExternalException(ManagementExternalErrorCode.NOT_MATCH_MONG);
         }
         if (MongGrade.EMPTY.equals(mongVo.grade())) {
-            throw new ManagementExternalException(MongErrorCode.INVALID_STROKE);
+            throw new ManagementExternalException(ManagementExternalErrorCode.INVALID_STROKE);
         }
         if (MongGrade.ZERO.equals(mongVo.grade())) {
-            throw new ManagementExternalException(MongErrorCode.INVALID_STROKE);
+            throw new ManagementExternalException(ManagementExternalErrorCode.INVALID_STROKE);
         }
         if (MongGrade.LAST.equals(mongVo.grade())) {
-            throw new ManagementExternalException(MongErrorCode.INVALID_STROKE);
+            throw new ManagementExternalException(ManagementExternalErrorCode.INVALID_STROKE);
         }
 
         MongVo newMongVo = mongService.increaseNumberOfStroke(mongVo.mongId(), 1);
-        newMongVo = this.validationEvolutionReady(newMongVo);
 
         double expPercent = MongUtil.statusToPercent(newMongVo.grade().evolutionExp, newMongVo.exp());
 
         return StrokeMongVo.builder()
                 .mongId(newMongVo.mongId())
+                .shiftCode(newMongVo.shift().code)
                 .exp(newMongVo.exp())
                 .expPercent(expPercent)
                 .build();
@@ -231,16 +217,16 @@ public class ManagementExternalService {
         MongVo mongVo = mongService.findActiveMongById(mongId);
 
         if (!accountId.equals(mongVo.accountId())) {
-            throw new ManagementExternalException(ManagementExternalErrorCode.INVALID_CHANGE_MONG);
+            throw new ManagementExternalException(ManagementExternalErrorCode.NOT_MATCH_MONG);
         }
         if (MongGrade.EMPTY.equals(mongVo.grade())) {
-            throw new ManagementExternalException(mongVo.isSleeping() ? MongErrorCode.INVALID_AWAKE : MongErrorCode.INVALID_SLEEPING);
+            throw new ManagementExternalException(mongVo.isSleeping() ? ManagementExternalErrorCode.INVALID_AWAKE : ManagementExternalErrorCode.INVALID_SLEEPING);
         }
         if (MongGrade.ZERO.equals(mongVo.grade())) {
-            throw new ManagementExternalException(mongVo.isSleeping() ? MongErrorCode.INVALID_AWAKE : MongErrorCode.INVALID_SLEEPING);
+            throw new ManagementExternalException(mongVo.isSleeping() ? ManagementExternalErrorCode.INVALID_AWAKE : ManagementExternalErrorCode.INVALID_SLEEPING);
         }
         if (MongGrade.LAST.equals(mongVo.grade())) {
-            throw new ManagementExternalException(mongVo.isSleeping() ? MongErrorCode.INVALID_AWAKE : MongErrorCode.INVALID_SLEEPING);
+            throw new ManagementExternalException(mongVo.isSleeping() ? ManagementExternalErrorCode.INVALID_AWAKE : ManagementExternalErrorCode.INVALID_SLEEPING);
         }
 
         MongVo newMongVo = mongService.toggleIsSleeping(mongVo.mongId());
@@ -253,6 +239,7 @@ public class ManagementExternalService {
                 .build();
     }
 
+    @ValidationEvolution
     @RealTimeMong(codes = { PublishCode.MONG_POOP_COUNT, PublishCode.MONG_EXP })
     @Transactional
     public PoopCleanMongVo poopClean(Long accountId, Long mongId) {
@@ -260,27 +247,26 @@ public class ManagementExternalService {
         MongVo mongVo = mongService.findActiveMongById(mongId);
 
         if (!accountId.equals(mongVo.accountId())) {
-            throw new ManagementExternalException(ManagementExternalErrorCode.INVALID_CHANGE_MONG);
+            throw new ManagementExternalException(ManagementExternalErrorCode.NOT_MATCH_MONG);
         }
         if (MongGrade.EMPTY.equals(mongVo.grade())) {
-            throw new ManagementExternalException(MongErrorCode.INVALID_POOP_CLEAN);
+            throw new ManagementExternalException(ManagementExternalErrorCode.INVALID_POOP_CLEAN);
         }
         if (MongGrade.ZERO.equals(mongVo.grade())) {
-            throw new ManagementExternalException(MongErrorCode.INVALID_POOP_CLEAN);
+            throw new ManagementExternalException(ManagementExternalErrorCode.INVALID_POOP_CLEAN);
         }
         if (MongGrade.LAST.equals(mongVo.grade())) {
-            throw new ManagementExternalException(MongErrorCode.INVALID_POOP_CLEAN);
+            throw new ManagementExternalException(ManagementExternalErrorCode.INVALID_POOP_CLEAN);
         }
 
         MongVo newMongVo = mongService.clearPoopCount(mongVo.mongId());
-        newMongVo = this.validationEvolutionReady(newMongVo);
-        newMongVo = this.validationDead(newMongVo);
 
         double expPercent = MongUtil.statusToPercent(newMongVo.grade().evolutionExp, newMongVo.exp());
 
         return PoopCleanMongVo.builder()
                 .mongId(newMongVo.mongId())
                 .poopCount(newMongVo.poopCount())
+                .shiftCode(newMongVo.shift().code)
                 .exp(newMongVo.exp())
                 .expPercent(expPercent)
                 .build();
@@ -292,10 +278,10 @@ public class ManagementExternalService {
         MongVo mongVo = mongService.findActiveMongById(mongId);
 
         if (MongGrade.EMPTY.equals(mongVo.grade())) {
-            throw new ManagementExternalException(MongErrorCode.INVALID_TRAINING);
+            throw new ManagementExternalException(ManagementExternalErrorCode.INVALID_TRAINING);
         }
         if (MongGrade.ZERO.equals(mongVo.grade())) {
-            throw new ManagementExternalException(MongErrorCode.INVALID_TRAINING);
+            throw new ManagementExternalException(ManagementExternalErrorCode.INVALID_TRAINING);
         }
 
         MongTrainingCode mongTrainingCode = MongTrainingCode.findMongTrainingCode(trainingCode);
@@ -308,6 +294,8 @@ public class ManagementExternalService {
                 .build();
     }
 
+    @ValidationEvolution
+    @ValidationDead
     @RealTimeMong(codes = { PublishCode.MONG_EXP, PublishCode.MONG_STATUS, PublishCode.MONG_PAY_POINT })
     @Transactional
     public TrainingMongVo trainingMong(Long accountId, Long mongId, String trainingCode) {
@@ -317,27 +305,26 @@ public class ManagementExternalService {
         MongTrainingCode mongTrainingCode = MongTrainingCode.findMongTrainingCode(trainingCode);
 
         if (!accountId.equals(mongVo.accountId())) {
-            throw new ManagementExternalException(ManagementExternalErrorCode.INVALID_CHANGE_MONG);
+            throw new ManagementExternalException(ManagementExternalErrorCode.NOT_MATCH_MONG);
         }
         if (mongVo.payPoint() < mongTrainingCode.point) {
-            throw new ManagementExternalException(MongErrorCode.NOT_ENOUGH_PAY_POINT);
+            throw new ManagementExternalException(ManagementExternalErrorCode.NOT_ENOUGH_PAY_POINT);
         }
         if (MongGrade.EMPTY.equals(mongVo.grade())) {
-            throw new ManagementExternalException(MongErrorCode.INVALID_TRAINING);
+            throw new ManagementExternalException(ManagementExternalErrorCode.INVALID_TRAINING);
         }
         if (MongGrade.ZERO.equals(mongVo.grade())) {
-            throw new ManagementExternalException(MongErrorCode.INVALID_TRAINING);
+            throw new ManagementExternalException(ManagementExternalErrorCode.INVALID_TRAINING);
         }
 
         MongVo newMongVo = mongService.increaseStatusTraining(mongVo.mongId(), 1, mongTrainingCode);
-        newMongVo = this.validationEvolutionReady(newMongVo);
-        newMongVo = this.validationDead(newMongVo);
 
         MongStatusPercentVo mongStatusPercentVo = MongUtil.statusToPercent(mongVo.grade(), newMongVo);
 
         return TrainingMongVo.builder()
                 .mongId(newMongVo.mongId())
                 .weight(newMongVo.weight())
+                .shiftCode(newMongVo.shift().code)
                 .exp(mongStatusPercentVo.exp())
                 .strength(newMongVo.strength())
                 .satiety(newMongVo.satiety())
@@ -359,13 +346,13 @@ public class ManagementExternalService {
         MongVo mongVo = mongService.findActiveMongById(mongId);
 
         if (!accountId.equals(mongVo.accountId())) {
-            throw new ManagementExternalException(ManagementExternalErrorCode.INVALID_CHANGE_MONG);
+            throw new ManagementExternalException(ManagementExternalErrorCode.NOT_MATCH_MONG);
         }
         if (!MongGrade.LAST.equals(mongVo.grade())) {
-            throw new ManagementExternalException(MongErrorCode.INVALID_GRADUATION);
+            throw new ManagementExternalException(ManagementExternalErrorCode.INVALID_GRADUATION);
         }
         if (!MongShift.GRADUATE_READY.equals(mongVo.shift())) {
-            throw new ManagementExternalException(MongErrorCode.INVALID_GRADUATION);
+            throw new ManagementExternalException(ManagementExternalErrorCode.INVALID_GRADUATION);
         }
 
         MongVo newMongVo = mongService.toggleGraduate(mongVo.mongId());
@@ -383,28 +370,39 @@ public class ManagementExternalService {
         MongVo mongVo = mongService.findActiveMongById(mongId);
 
         if (!accountId.equals(mongVo.accountId())) {
-            throw new ManagementExternalException(ManagementExternalErrorCode.INVALID_CHANGE_MONG);
+            throw new ManagementExternalException(ManagementExternalErrorCode.NOT_MATCH_MONG);
         }
         if (MongGrade.LAST.equals(mongVo.grade())) {
-            throw new ManagementExternalException(MongErrorCode.INVALID_EVOLUTION);
+            throw new ManagementExternalException(ManagementExternalErrorCode.INVALID_EVOLUTION);
         }
         if (!MongShift.EVOLUTION_READY.equals(mongVo.shift())) {
-            throw new ManagementExternalException(MongErrorCode.INVALID_EVOLUTION);
+            throw new ManagementExternalException(ManagementExternalErrorCode.INVALID_EVOLUTION);
         }
         if (mongVo.isSleeping()) {
-            throw new ManagementExternalException(MongErrorCode.INVALID_EVOLUTION);
+            throw new ManagementExternalException(ManagementExternalErrorCode.INVALID_EVOLUTION);
         }
         if (mongVo.exp() < mongVo.grade().evolutionExp) {
-            throw new ManagementExternalException(MongErrorCode.NOT_ENOUGH_EXP);
+            throw new ManagementExternalException(ManagementExternalErrorCode.NOT_ENOUGH_EXP);
         }
 
         MongVo newMongVo;
         if (MongGrade.ZERO.equals(mongVo.grade())) {
-            newMongVo = supportService.firstEvolution(mongVo);
+            List<MongCode> mongCodeList = codeService.getMongCodeByLevel(MongGrade.ZERO.nextGrade.level);
+            int randIdx = random.nextInt(mongCodeList.size());
+            String mongCode = mongCodeList.get(randIdx).code();
+            newMongVo = mongService.toggleFirstEvolution(mongVo.mongId(), mongCode);
+            managementWorkerFeignService.firstEvolutionSchedule(mongVo.mongId());
         } else if (MongGrade.LAST.equals(mongVo.grade().nextGrade)) {
-            newMongVo = supportService.lastEvolution(mongVo);
+            newMongVo = mongService.toggleLastEvolution(mongVo.mongId());
+            managementWorkerFeignService.lastEvolutionSchedule(mongVo.mongId());
         } else {
-            newMongVo = supportService.evolution(mongVo);
+            // TODO("진화 포인트 환산")
+            int evolutionPoint = 0;
+            List<MongCode> mongCodeList = codeService.getMongCodeByLevelAndEvolutionPoint(mongVo.grade().nextGrade.level, evolutionPoint);
+            // TODO("컬렉션 목록을 조회하여 겹치지 않도록 하는 로직 필요")
+            String mongCode = mongCodeList.get(mongCodeList.size() - 1).code();
+            newMongVo = mongService.toggleEvolution(mongVo.mongId(), mongCode);
+            managementWorkerFeignService.evolutionSchedule(mongVo.mongId());
         }
 
         MongStatusPercentVo mongStatusPercentVo = MongUtil.statusToPercent(newMongVo.grade(), newMongVo);
@@ -428,6 +426,8 @@ public class ManagementExternalService {
                 .build();
     }
 
+    @ValidationEvolution
+    @ValidationDead
     @RealTimeMong(codes = { PublishCode.MONG_EXP, PublishCode.MONG_STATUS, PublishCode.MONG_PAY_POINT })
     @Transactional
     public FeedMongVo feedMong(Long accountId, Long mongId, String foodCode) {
@@ -437,27 +437,26 @@ public class ManagementExternalService {
         FoodCode food = codeService.getFoodCode(foodCode);
 
         if (!accountId.equals(mongVo.accountId())) {
-            throw new ManagementExternalException(ManagementExternalErrorCode.INVALID_CHANGE_MONG);
+            throw new ManagementExternalException(ManagementExternalErrorCode.NOT_MATCH_MONG);
         }
         if (mongVo.payPoint() < food.price()) {
-            throw new InvalidException(MongErrorCode.NOT_ENOUGH_PAY_POINT);
+            throw new InvalidException(ManagementExternalErrorCode.NOT_ENOUGH_PAY_POINT);
         }
         if (MongGrade.EMPTY.equals(mongVo.grade())) {
-            throw new ManagementExternalException(MongErrorCode.INVALID_FEED);
+            throw new ManagementExternalException(ManagementExternalErrorCode.INVALID_FEED);
         }
         if (MongGrade.ZERO.equals(mongVo.grade())) {
-            throw new ManagementExternalException(MongErrorCode.INVALID_FEED);
+            throw new ManagementExternalException(ManagementExternalErrorCode.INVALID_FEED);
         }
 
         MongVo newMongVo = mongService.feedMong(mongVo.mongId(), food.code(), food.addWeightValue(), food.addStrengthValue(), food.addSatietyValue(), food.addHealthyValue(), food.addSleepValue(), food.price());
-        newMongVo = this.validationEvolutionReady(newMongVo);
-        newMongVo = this.validationDead(newMongVo);
 
         MongStatusPercentVo mongStatusPercentVo = MongUtil.statusToPercent(newMongVo.grade(), newMongVo);
 
         return FeedMongVo.builder()
                 .mongId(newMongVo.mongId())
                 .weight(newMongVo.weight())
+                .shiftCode(newMongVo.shift().code)
                 .exp(mongStatusPercentVo.exp())
                 .strength(newMongVo.strength())
                 .satiety(newMongVo.satiety())
@@ -478,7 +477,7 @@ public class ManagementExternalService {
         MongVo mongVo = mongService.findActiveMongById(mongId);
 
         if (!accountId.equals(mongVo.accountId())) {
-            throw new ManagementExternalException(ManagementExternalErrorCode.INVALID_CHANGE_MONG);
+            throw new ManagementExternalException(ManagementExternalErrorCode.NOT_MATCH_MONG);
         }
 
         List<MongFeedLogVo> mongFeedLogVoList = mongService.findMongFeedLogByMongId(mongVo.mongId());

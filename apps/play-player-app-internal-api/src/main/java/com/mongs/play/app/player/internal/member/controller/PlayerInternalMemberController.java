@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @Slf4j
-@RequestMapping("/internal/member")
+@RequestMapping("/internal/player/member")
 @RequiredArgsConstructor
 @RestController
 public class PlayerInternalMemberController {

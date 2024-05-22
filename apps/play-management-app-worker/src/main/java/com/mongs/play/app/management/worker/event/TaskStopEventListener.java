@@ -2,7 +2,7 @@ package com.mongs.play.app.management.worker.event;
 
 import com.mongs.play.core.error.app.ManagementWorkerErrorCode;
 import com.mongs.play.core.exception.app.ManagementWorkerException;
-import com.mongs.play.module.feign.service.ManagementInternalFeignService;
+import com.mongs.play.module.kafka.service.ManagementInternalKafkaService;
 import com.mongs.play.module.task.enums.TaskCode;
 import com.mongs.play.module.task.event.TaskStopEvent;
 import com.mongs.play.module.task.service.TaskService;
@@ -18,7 +18,7 @@ import org.springframework.stereotype.Service;
 public class TaskStopEventListener {
 
     private final TaskService taskService;
-    private final ManagementInternalFeignService managementInternalFeignService;
+    private final ManagementInternalKafkaService managementInternalKafkaService;
 
     @Value("${application.status.sub.weight}")
     private Double subWeight;
@@ -57,16 +57,22 @@ public class TaskStopEventListener {
         switch (taskCode) {
             case ZERO_EVOLUTION -> {}
             case DECREASE_STATUS -> {
-                double subWight = subWeight / taskCode.getExpiration() * duringSeconds;
+                double subWeight = this.subWeight / taskCode.getExpiration() * duringSeconds;
                 double subStrength = this.subStrength / taskCode.getExpiration() * duringSeconds;
                 double subSatiety = this.subSatiety / taskCode.getExpiration() * duringSeconds;
                 double subHealthy = this.subHealthy / taskCode.getExpiration() * duringSeconds;
                 double subSleep = this.subSleep / taskCode.getExpiration() * duringSeconds;
 
-                var res = managementInternalFeignService.decreaseStatus(mongId, subWeight, subStrength, subSatiety, subHealthy, subSleep);
+                managementInternalKafkaService.decreaseStatus(mongId, subWeight, subStrength, subSatiety, subHealthy, subSleep);
 
-//                if (ObjectUtils.isEmpty(res)) {
-//                      taskService.startTask(mongId, TaskCode.DECREASE_STATUS);
+//                try {
+//                    var res = managementInternalFeignService.decreaseStatus(mongId, subWeight, subStrength, subSatiety, subHealthy, subSleep);
+//                } catch (NotAcceptableException | NotFoundException e) {
+//                    // 조작할 수 없는 상태 (비활성화 상태)
+////                    taskService.stopTask(mongId, taskCode);
+//                } catch (ModuleErrorException e) {
+//                    // 서버 오류 (재기동중 이거나, 서버가 다운된 상태)
+//                    taskService.startTask(mongId, taskCode);
 //                }
             }
             case INCREASE_STATUS -> {
@@ -76,20 +82,32 @@ public class TaskStopEventListener {
                 double addHealthy = this.addHealthy / taskCode.getExpiration() * duringSeconds;
                 double addSleep = this.addSleep / taskCode.getExpiration() * duringSeconds;
 
-                var res = managementInternalFeignService.increaseStatus(mongId, addWeight, addStrength, addSatiety, addHealthy, addSleep);
+                managementInternalKafkaService.increaseStatus(mongId, addWeight, addStrength, addSatiety, addHealthy, addSleep);
 
-//                if (ObjectUtils.isEmpty(res)) {
-//                      taskService.startTask(mongId, TaskCode.INCREASE_STATUS);
+//                try {
+//                    var res = managementInternalFeignService.increaseStatus(mongId, addWeight, addStrength, addSatiety, addHealthy, addSleep);
+//                } catch (NotAcceptableException | NotFoundException e) {
+//                    // 조작할 수 없는 상태 (비활성화 상태)
+////                    taskService.stopTask(mongId, taskCode);
+//                } catch (ModuleErrorException e) {
+//                    // 서버 오류 (재기동중 이거나, 서버가 다운된 상태)
+//                    taskService.startTask(mongId, taskCode);
 //                }
             }
             case INCREASE_POOP_COUNT -> {
                 if ((double) (duringSeconds / taskCode.getExpiration()) > 0.5) {
                     int addPoopCount = 1;
 
-                    var res = managementInternalFeignService.increasePoopCount(mongId, addPoopCount);
+                    managementInternalKafkaService.increasePoopCount(mongId, addPoopCount);
 
-//                    if (ObjectUtils.isEmpty(res)) {
-//                        taskService.startTask(mongId, TaskCode.INCREASE_STATUS);
+//                    try {
+//                        var res = managementInternalFeignService.increasePoopCount(mongId, addPoopCount);
+//                    } catch (NotAcceptableException | NotFoundException e) {
+//                        // 조작할 수 없는 상태 (비활성화 상태)
+////                    taskService.stopTask(mongId, TaskCode.INCREASE_POOP_COUNT);
+//                    } catch (ModuleErrorException e) {
+//                        // 서버 오류 (재기동중 이거나, 서버가 다운된 상태)
+//                        taskService.startTask(mongId, taskCode);
 //                    }
                 }
             }

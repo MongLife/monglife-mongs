@@ -1,5 +1,7 @@
 package com.mongs.play.module.feign.client;
 
+import com.mongs.play.config.FeignClientConfig;
+import com.mongs.play.config.FeignErrorDecoder;
 import com.mongs.play.module.feign.dto.req.*;
 import com.mongs.play.module.feign.dto.res.*;
 import org.springframework.cloud.openfeign.FeignClient;
@@ -8,7 +10,7 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
-@FeignClient(name = "MANAGEMENT-WORKER")
+@FeignClient(name = "MANAGEMENT-WORKER", configuration = FeignClientConfig.class)
 public interface ManagementWorkerClient {
     @PostMapping("/worker/management/zeroEvolution")
     ResponseEntity<EvolutionScheduleResDto> zeroEvolutionSchedule(@RequestBody EvolutionScheduleReqDto evolutionScheduleReqDto);

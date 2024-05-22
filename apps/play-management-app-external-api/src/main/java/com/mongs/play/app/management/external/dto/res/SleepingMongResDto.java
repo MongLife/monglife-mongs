@@ -4,7 +4,6 @@ import lombok.Builder;
 
 @Builder
 public record SleepingMongResDto(
-        Long accountId,
         Long mongId,
         Boolean isSleeping
 ) {
