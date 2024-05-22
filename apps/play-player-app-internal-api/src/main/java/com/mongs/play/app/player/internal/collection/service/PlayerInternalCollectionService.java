@@ -10,6 +10,7 @@ import com.mongs.play.domain.code.service.CodeService;
 import com.mongs.play.domain.collection.entity.MapCollection;
 import com.mongs.play.domain.collection.entity.MongCollection;
 import com.mongs.play.domain.collection.service.CollectionService;
+import com.mongs.play.module.feign.service.PlayerInternalMemberFeignService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -20,6 +21,7 @@ public class PlayerInternalCollectionService {
 
     private final CodeService codeService;
     private final CollectionService collectionService;
+    private final PlayerInternalMemberFeignService playerInternalMemberFeignService;
 
     @Transactional
     public RegisterMapCollectionVo registerMapCollection(Long accountId, String code) {
@@ -28,6 +30,8 @@ public class PlayerInternalCollectionService {
         MapCode mapCode = codeService.getMapCode(code);
 
         MapCollection mapCollection = collectionService.addMapCollection(accountId, mapCode.code());
+
+        playerInternalMemberFeignService.increaseStarPointByRegisterMapCollection(accountId);
 
         return RegisterMapCollectionVo.builder()
                 .accountId(mapCollection.getAccountId())
@@ -44,11 +48,7 @@ public class PlayerInternalCollectionService {
 
         MongCollection mongCollection = collectionService.addMongCollection(accountId, mongCode.code());
 
-//        kafkaService.sendCommit(KafkaService.CommitTopic.REGISTER_MONG_COLLECTION, RegisterMongCollectionEvent.builder()
-//                .accountId(mongCollection.getAccountId())
-//                .mongCode(mongCollection.getCode())
-//                .createdAt(mongCollection.getCreatedAt())
-//                .build());
+        playerInternalMemberFeignService.increaseStarPointByRegisterMongCollection(accountId);
 
         return RegisterMongCollectionVo.builder()
                 .accountId(mongCollection.getAccountId())

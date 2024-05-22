@@ -14,31 +14,19 @@ public class PlayerInternalMemberFeignService {
 
     private final PlayerInternalClient playerInternalClient;
 
-    public IncreaseStarPointResDto increaseStarPointByRegisterMapCollection(Long accountId, Integer addStarPoint) {
-        try {
-            var res = playerInternalClient.increaseStarPointByRegisterMapCollection(IncreaseStarPointReqDto.builder()
-                    .accountId(accountId)
-                    .addStarPoint(addStarPoint)
-                    .build());
+    public IncreaseStarPointResDto increaseStarPointByRegisterMapCollection(Long accountId) {
+        var res = playerInternalClient.increaseStarPointByRegisterMapCollection(IncreaseStarPointReqDto.builder()
+                .accountId(accountId)
+                .build());
 
-            return res.getBody();
-
-        } catch (Exception e) {
-            return null;
-        }
+        return res.getBody();
     }
 
-    public IncreaseStarPointResDto increaseStarPointByRegisterMongCollection(Long accountId, Integer addStarPoint) {
-        try {
-            var res = playerInternalClient.increaseStarPointByRegisterMongCollection(IncreaseStarPointReqDto.builder()
-                    .accountId(accountId)
-                    .addStarPoint(addStarPoint)
-                    .build());
+    public IncreaseStarPointResDto increaseStarPointByRegisterMongCollection(Long accountId) {
+        var res = playerInternalClient.increaseStarPointByRegisterMongCollection(IncreaseStarPointReqDto.builder()
+                .accountId(accountId)
+                .build());
 
-            return res.getBody();
-
-        } catch (Exception e) {
-            return null;
-        }
+        return res.getBody();
     }
 }

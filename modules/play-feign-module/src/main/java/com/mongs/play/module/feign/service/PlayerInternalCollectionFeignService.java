@@ -17,30 +17,20 @@ public class PlayerInternalCollectionFeignService {
     private final PlayerInternalClient playerInternalClient;
 
     public RegisterMapCollectionResDto registerMapCollection(Long accountId, String mapCode) {
-        try {
-            var res = playerInternalClient.registerMapCollection(RegisterMapCollectionReqDto.builder()
-                    .accountId(accountId)
-                    .mapCode(mapCode)
-                    .build());
+        var res = playerInternalClient.registerMapCollection(RegisterMapCollectionReqDto.builder()
+                .accountId(accountId)
+                .mapCode(mapCode)
+                .build());
 
-            return res.getBody();
-
-        } catch (Exception e) {
-            return null;
-        }
+        return res.getBody();
     }
 
     public RegisterMongCollectionResDto registerMongCollection(Long accountId, String mongCode) {
-        try {
-            var res = playerInternalClient.registerMongCollection(RegisterMongCollectionReqDto.builder()
-                    .accountId(accountId)
-                    .mongCode(mongCode)
-                    .build());
+        var res = playerInternalClient.registerMongCollection(RegisterMongCollectionReqDto.builder()
+                .accountId(accountId)
+                .mongCode(mongCode)
+                .build());
 
-            return res.getBody();
-
-        } catch (Exception e) {
-            return null;
-        }
+        return res.getBody();
     }
 }

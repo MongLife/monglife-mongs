@@ -9,6 +9,9 @@ import com.mongs.play.domain.payment.entity.PaymentLog;
 import com.mongs.play.domain.payment.service.ChargeItemService;
 import com.mongs.play.domain.payment.service.ExchangeItemService;
 import com.mongs.play.domain.payment.service.PaymentService;
+import com.mongs.play.module.feign.service.ManagementInternalFeignService;
+import com.mongs.play.module.feign.service.PlayerInternalCollectionFeignService;
+import com.mongs.play.module.feign.service.PlayerInternalMemberFeignService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -23,6 +26,7 @@ public class PlayerExternalMemberService {
     private final PaymentService paymentService;
     private final ChargeItemService chargeItemService;
     private final ExchangeItemService exchangeItemService;
+    private final ManagementInternalFeignService managementInternalFeignService;
 
     @Transactional
     public FindMemberVo findMember(Long accountId) {
@@ -94,12 +98,7 @@ public class PlayerExternalMemberService {
 
         Member member = memberService.decreaseStarPoint(accountId, exchangeItem.getStarPoint());
 
-//        kafkaService.sendCommit(KafkaService.CommitTopic.EXCHANGE_PAY_POINT, ExchangePayPointEvent.builder()
-//                .paymentLogId(paymentLog.getId())
-//                .mongId(mongId)
-//                .subStarPoint(exchangeItem.getStarPoint())
-//                .addPayPoint(exchangeItem.getPayPoint())
-//                .build());
+        managementInternalFeignService.increasePayPoint(mongId, exchangeItem.getPayPoint());
 
         paymentService.itemReward(paymentLog.getId());
 
