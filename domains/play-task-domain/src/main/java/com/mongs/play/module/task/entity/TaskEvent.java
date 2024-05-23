@@ -29,7 +29,7 @@ public class TaskEvent {
     private LocalDateTime createdAt;
 
     public static TaskEvent of(Long mongId, TaskCode taskCode) {
-        long expiration = 1000 * (taskCode.getExpiration() != 0L ? taskCode.getExpiration() : random.nextLong(60 * 60 * 4, 60 * 60 * 6));
+        long expiration = (taskCode.getExpiration() != 0L ? taskCode.getExpiration() : random.nextLong(60 * 60 * 4, 60 * 60 * 6));
         LocalDateTime createdAt = LocalDateTime.now();
         LocalDateTime expiredAt = createdAt.plusSeconds(expiration);
         return TaskEvent.builder()

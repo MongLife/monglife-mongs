@@ -37,7 +37,7 @@ public class Task {
     }
 
     public void start() {
-        scheduler = this.executor.schedule(this::run, expiration, TimeUnit.MILLISECONDS);
+        scheduler = this.executor.schedule(this::run, 1000 * expiration, TimeUnit.MILLISECONDS);
     }
 
     public void pause() {
