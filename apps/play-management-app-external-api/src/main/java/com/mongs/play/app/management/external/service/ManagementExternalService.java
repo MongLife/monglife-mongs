@@ -66,7 +66,7 @@ public class ManagementExternalService {
                             .name(mongVo.name())
                             .mongCode(mongVo.mongCode())
                             .weight(mongVo.weight())
-                            .exp(mongStatusPercentVo.exp())
+                            .exp(mongVo.exp())
                             .strength(mongVo.strength())
                             .satiety(mongVo.satiety())
                             .healthy(mongVo.healthy())
@@ -102,7 +102,7 @@ public class ManagementExternalService {
                 .name(mongVo.name())
                 .mongCode(mongVo.mongCode())
                 .weight(mongVo.weight())
-                .exp(mongStatusPercentVo.exp())
+                .exp(mongVo.exp())
                 .strength(mongVo.strength())
                 .satiety(mongVo.satiety())
                 .healthy(mongVo.healthy())
@@ -139,7 +139,7 @@ public class ManagementExternalService {
                 .name(newMongVo.name())
                 .mongCode(newMongVo.mongCode())
                 .weight(newMongVo.weight())
-                .exp(mongStatusPercentVo.exp())
+                .exp(newMongVo.exp())
                 .strength(newMongVo.strength())
                 .satiety(newMongVo.satiety())
                 .healthy(newMongVo.healthy())
@@ -318,14 +318,13 @@ public class ManagementExternalService {
         }
 
         MongVo newMongVo = mongService.increaseStatusTraining(mongVo.mongId(), 1, mongTrainingCode);
-
         MongStatusPercentVo mongStatusPercentVo = MongUtil.statusToPercent(mongVo.grade(), newMongVo);
 
         return TrainingMongVo.builder()
                 .mongId(newMongVo.mongId())
                 .weight(newMongVo.weight())
                 .shiftCode(newMongVo.shift().code)
-                .exp(mongStatusPercentVo.exp())
+                .exp(newMongVo.exp())
                 .strength(newMongVo.strength())
                 .satiety(newMongVo.satiety())
                 .healthy(newMongVo.healthy())
@@ -411,7 +410,7 @@ public class ManagementExternalService {
                 .mongId(newMongVo.mongId())
                 .mongCode(newMongVo.mongCode())
                 .weight(newMongVo.weight())
-                .exp(mongStatusPercentVo.exp())
+                .exp(newMongVo.exp())
                 .strength(newMongVo.strength())
                 .satiety(newMongVo.satiety())
                 .healthy(newMongVo.healthy())
@@ -457,7 +456,7 @@ public class ManagementExternalService {
                 .mongId(newMongVo.mongId())
                 .weight(newMongVo.weight())
                 .shiftCode(newMongVo.shift().code)
-                .exp(mongStatusPercentVo.exp())
+                .exp(newMongVo.exp())
                 .strength(newMongVo.strength())
                 .satiety(newMongVo.satiety())
                 .healthy(newMongVo.healthy())

@@ -11,5 +11,5 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class MongExpVo{
     private Long mongId;
-    private Double exp;
+    private Double expPercent;
 }

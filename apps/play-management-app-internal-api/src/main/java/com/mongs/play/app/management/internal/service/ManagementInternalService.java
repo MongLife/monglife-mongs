@@ -81,6 +81,7 @@ public class ManagementInternalService {
 
         return IncreaseStatusVo.builder()
                 .mongId(mongVo.mongId())
+                .weight(mongVo.weight())
                 .strength(mongVo.strength())
                 .satiety(mongVo.satiety())
                 .healthy(mongVo.healthy())

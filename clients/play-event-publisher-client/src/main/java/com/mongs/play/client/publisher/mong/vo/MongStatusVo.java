@@ -12,8 +12,8 @@ import lombok.NoArgsConstructor;
 public class MongStatusVo{
     private Long mongId;
     private Double weight;
-    private Double strength;
-    private Double satiety;
-    private Double healthy;
-    private Double sleep;
+    private Double strengthPercent;
+    private Double satietyPercent;
+    private Double healthyPercent;
+    private Double sleepPercent;
 }
