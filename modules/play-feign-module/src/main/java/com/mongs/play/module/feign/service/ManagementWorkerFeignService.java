@@ -71,7 +71,6 @@ public class ManagementWorkerFeignService {
         return res.getBody();
     }
 
-
     public DeadScheduleResDto deadHealthyScheduleStop(Long mongId) {
         var res = managementWorkerClient.deadHealthyScheduleStop(DeadScheduleReqDto.builder()
                 .mongId(mongId)
@@ -80,7 +79,6 @@ public class ManagementWorkerFeignService {
         return res.getBody();
     }
 
-
     public DeadScheduleResDto deadSatietySchedule(Long mongId) {
         var res = managementWorkerClient.deadSatietySchedule(DeadScheduleReqDto.builder()
                 .mongId(mongId)
@@ -88,7 +86,6 @@ public class ManagementWorkerFeignService {
 
         return res.getBody();
     }
-
 
     public DeadScheduleResDto deadSatietyScheduleStop(Long mongId) {
         var res = managementWorkerClient.deadSatietyScheduleStop(DeadScheduleReqDto.builder()

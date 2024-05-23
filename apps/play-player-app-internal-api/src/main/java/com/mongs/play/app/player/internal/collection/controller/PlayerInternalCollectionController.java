@@ -5,6 +5,7 @@ import com.mongs.play.module.feign.dto.req.RegisterMapCollectionReqDto;
 import com.mongs.play.module.feign.dto.req.RegisterMongCollectionReqDto;
 import com.mongs.play.module.feign.dto.res.RegisterMapCollectionResDto;
 import com.mongs.play.module.feign.dto.res.RegisterMongCollectionResDto;
+import com.mongs.play.module.feign.service.PlayerInternalMemberFeignService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -17,6 +18,7 @@ import org.springframework.web.bind.annotation.*;
 public class PlayerInternalCollectionController {
 
     private final PlayerInternalCollectionService playerInternalCollectionService;
+    private final PlayerInternalMemberFeignService playerInternalMemberFeignService;
 
     @PostMapping("/mapCollection")
     public ResponseEntity<RegisterMapCollectionResDto> registerMapCollection(@RequestBody RegisterMapCollectionReqDto registerMapCollectionReqDto) {
@@ -27,8 +29,11 @@ public class PlayerInternalCollectionController {
 
         var vo = playerInternalCollectionService.registerMapCollection(accountId, mapCode);
 
+        var res = playerInternalMemberFeignService.increaseStarPointByRegisterMapCollection(accountId);
+
         return ResponseEntity.ok(RegisterMapCollectionResDto.builder()
                 .accountId(vo.accountId())
+                .starPoint(res.starPoint())
                 .build());
     }
 
@@ -41,8 +46,11 @@ public class PlayerInternalCollectionController {
 
         var vo = playerInternalCollectionService.registerMongCollection(accountId, mongCode);
 
+        var res = playerInternalMemberFeignService.increaseStarPointByRegisterMongCollection(accountId);
+
         return ResponseEntity.ok(RegisterMongCollectionResDto.builder()
                 .accountId(vo.accountId())
+                .starPoint(res.starPoint())
                 .build());
     }
 

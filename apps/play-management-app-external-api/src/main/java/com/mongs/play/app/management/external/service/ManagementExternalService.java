@@ -20,7 +20,6 @@ import com.mongs.play.domain.mong.vo.MongFeedLogVo;
 import com.mongs.play.domain.mong.vo.MongStatusPercentVo;
 import com.mongs.play.domain.mong.vo.MongVo;
 import com.mongs.play.module.feign.service.ManagementWorkerFeignService;
-import com.mongs.play.module.feign.service.PlayerInternalCollectionFeignService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -41,7 +40,6 @@ public class ManagementExternalService {
     private final CodeService codeService;
     private final MongService mongService;
     private final ManagementWorkerFeignService managementWorkerFeignService;
-    private final PlayerInternalCollectionFeignService playerInternalCollectionFeignService;
 
     @RealTimeMong(codes = { PublishCode.MONG_SHIFT })
     @Transactional
@@ -135,8 +133,6 @@ public class ManagementExternalService {
         MongStatusPercentVo mongStatusPercentVo = MongUtil.statusToPercent(newMongVo.grade(), newMongVo);
 
         managementWorkerFeignService.zeroEvolutionSchedule(newMongVo.mongId());
-
-        playerInternalCollectionFeignService.registerMongCollection(accountId, newMongVo.mongCode());
 
         return RegisterMongVo.builder()
                 .mongId(newMongVo.mongId())
@@ -396,11 +392,9 @@ public class ManagementExternalService {
             String mongCode = mongCodeList.get(randIdx).code();
             newMongVo = mongService.toggleFirstEvolution(mongVo.mongId(), mongCode);
             managementWorkerFeignService.firstEvolutionSchedule(mongVo.mongId());
-            playerInternalCollectionFeignService.registerMongCollection(accountId, newMongVo.mongCode());
         } else if (MongGrade.LAST.equals(mongVo.grade().nextGrade)) {
             newMongVo = mongService.toggleLastEvolution(mongVo.mongId());
             managementWorkerFeignService.lastEvolutionSchedule(mongVo.mongId());
-            playerInternalCollectionFeignService.registerMongCollection(accountId, newMongVo.mongCode());
         } else {
             // TODO("진화 포인트 환산")
             int evolutionPoint = 0;

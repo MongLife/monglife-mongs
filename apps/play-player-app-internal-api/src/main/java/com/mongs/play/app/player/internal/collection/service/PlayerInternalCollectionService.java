@@ -21,7 +21,6 @@ public class PlayerInternalCollectionService {
 
     private final CodeService codeService;
     private final CollectionService collectionService;
-    private final PlayerInternalMemberFeignService playerInternalMemberFeignService;
 
     @Transactional
     public RegisterMapCollectionVo registerMapCollection(Long accountId, String code) {
@@ -30,8 +29,6 @@ public class PlayerInternalCollectionService {
         MapCode mapCode = codeService.getMapCode(code);
 
         MapCollection mapCollection = collectionService.addMapCollection(accountId, mapCode.code());
-
-        playerInternalMemberFeignService.increaseStarPointByRegisterMapCollection(accountId);
 
         return RegisterMapCollectionVo.builder()
                 .accountId(mapCollection.getAccountId())
@@ -47,8 +44,6 @@ public class PlayerInternalCollectionService {
         MongCode mongCode = codeService.getMongCode(code);
 
         MongCollection mongCollection = collectionService.addMongCollection(accountId, mongCode.code());
-
-        playerInternalMemberFeignService.increaseStarPointByRegisterMongCollection(accountId);
 
         return RegisterMongCollectionVo.builder()
                 .accountId(mongCollection.getAccountId())

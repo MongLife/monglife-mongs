@@ -28,7 +28,6 @@ public class PlayerExternalMemberService {
     private final PaymentService paymentService;
     private final ChargeItemService chargeItemService;
     private final ExchangeItemService exchangeItemService;
-    private final ManagementInternalFeignService managementInternalFeignService;
 
     @Transactional
     public FindMemberVo findMember(Long accountId) {
@@ -102,13 +101,12 @@ public class PlayerExternalMemberService {
 
         Member member = memberService.decreaseStarPoint(accountId, exchangeItem.getStarPoint());
 
-        managementInternalFeignService.increasePayPoint(mongId, exchangeItem.getPayPoint());
-
         paymentService.itemReward(paymentLog.getId());
 
         return ExchangePayPointVo.builder()
                 .accountId(member.getAccountId())
                 .mongId(mongId)
+                .addPayPoint(exchangeItem.getPayPoint())
                 .starPoint(member.getStarPoint())
                 .build();
     }

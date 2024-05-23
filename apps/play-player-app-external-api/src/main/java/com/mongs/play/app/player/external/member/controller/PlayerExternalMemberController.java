@@ -5,6 +5,7 @@ import com.mongs.play.app.player.external.member.dto.req.ExchangePayPointReqDto;
 import com.mongs.play.app.player.external.member.dto.res.*;
 import com.mongs.play.app.player.external.member.service.PlayerExternalMemberService;
 import com.mongs.play.app.player.external.member.vo.*;
+import com.mongs.play.module.feign.service.ManagementInternalFeignService;
 import com.mongs.play.module.security.principal.PassportDetail;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -19,6 +20,7 @@ import java.util.List;
 public class PlayerExternalMemberController {
 
     private final PlayerExternalMemberService playerExternalMemberService;
+    private final ManagementInternalFeignService managementInternalFeignService;
 
     @GetMapping("")
     public ResponseEntity<FindMemberResDto> findMember(@AuthenticationPrincipal PassportDetail passportDetail) {
@@ -96,6 +98,8 @@ public class PlayerExternalMemberController {
         String exchangeItemId = exchangePayPointReqDto.exchangeItemId();
 
         ExchangePayPointVo exchangePayPointVo = playerExternalMemberService.exchangePayPoint(accountId, deviceId, mongId, exchangeItemId);
+
+        managementInternalFeignService.increasePayPoint(mongId, exchangePayPointVo.addPayPoint());
 
         return ResponseEntity.ok().body(ExchangePayPointResDto.builder()
                 .accountId(exchangePayPointVo.accountId())

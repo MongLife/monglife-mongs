@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 public interface PlayerInternalClient {
     @PostMapping("/internal/player/collection/mapCollection")
     ResponseEntity<RegisterMapCollectionResDto> registerMapCollection(RegisterMapCollectionReqDto registerMapCollectionReqDto);
-    @PostMapping("/internal/player/collection/mapCollection")
+    @PostMapping("/internal/player/collection/mongCollection")
     ResponseEntity<RegisterMongCollectionResDto> registerMongCollection(RegisterMongCollectionReqDto registerMongCollectionReqDto);
     @PutMapping("/internal/player/member/increaseStarPoint/registerMapCollection")
     ResponseEntity<IncreaseStarPointResDto> increaseStarPointByRegisterMapCollection(IncreaseStarPointReqDto increaseStarPointReqDto);
