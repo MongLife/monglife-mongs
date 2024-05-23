@@ -11,11 +11,10 @@ import java.util.Optional;
 
 @Repository
 public interface MapCollectionRepository extends JpaRepository<MapCollection, Long> {
+    @Lock(LockModeType.PESSIMISTIC_READ)
     List<MapCollection> findByAccountId(Long accountId);
-
-    @Lock(LockModeType.PESSIMISTIC_WRITE)
+    @Lock(LockModeType.PESSIMISTIC_READ)
     Optional<MapCollection> findByAccountIdAndCode(Long accountId, String code);
-
     @Lock(LockModeType.PESSIMISTIC_WRITE)
     void deleteByAccountIdAndCode(Long accountId, String code);
 }

@@ -10,9 +10,8 @@ import java.util.List;
 import java.util.Optional;
 
 public interface MongFeedLogRepository extends JpaRepository<MongFeedLog, Long> {
-
+    @Lock(LockModeType.PESSIMISTIC_READ)
     List<MongFeedLog> findByMongId(Long mongId);
-
-    @Lock(LockModeType.WRITE)
+    @Lock(LockModeType.PESSIMISTIC_WRITE)
     Optional<MongFeedLog> findByMongIdAndCode(Long mongId, String code);
 }

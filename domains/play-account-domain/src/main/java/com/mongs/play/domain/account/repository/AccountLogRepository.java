@@ -8,5 +8,4 @@ import java.util.Optional;
 
 public interface AccountLogRepository extends JpaRepository<AccountLog, Long> {
     Optional<AccountLog> findByAccountIdAndDeviceIdAndLoginAt(Long accountId, String deviceId, LocalDate createdAt);
-    Optional<AccountLog> findTopByAccountIdAndDeviceIdOrderByLoginAt(Long accountId, String deviceId);
 }

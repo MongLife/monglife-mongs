@@ -8,6 +8,6 @@ import org.springframework.data.jpa.repository.Lock;
 import java.util.List;
 
 public interface FeedbackLogRepository extends JpaRepository<FeedbackLog, Long> {
-    @Lock(LockModeType.PESSIMISTIC_WRITE)
+    @Lock(LockModeType.PESSIMISTIC_READ)
     List<FeedbackLog> findByIdIn(List<String> feedbackLogIdList);
 }

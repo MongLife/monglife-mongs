@@ -11,11 +11,10 @@ import java.util.Optional;
 
 @Repository
 public interface MongCollectionRepository extends JpaRepository<MongCollection, Long> {
+    @Lock(LockModeType.PESSIMISTIC_READ)
     List<MongCollection> findByAccountId(Long accountId);
-
-    @Lock(LockModeType.PESSIMISTIC_WRITE)
+    @Lock(LockModeType.PESSIMISTIC_READ)
     Optional<MongCollection> findByAccountIdAndCode(Long accountId, String code);
-
     @Lock(LockModeType.PESSIMISTIC_WRITE)
     void deleteByAccountIdAndCode(Long accountId, String code);
 }
