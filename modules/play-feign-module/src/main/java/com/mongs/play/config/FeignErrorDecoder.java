@@ -10,12 +10,19 @@ import feign.codec.ErrorDecoder;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+
 @Slf4j
 public class FeignErrorDecoder implements ErrorDecoder {
     @Override
     public Exception decode(String methodKey, Response response) {
 
-        log.info("httpStatus: {}, body: {}", response.status(), response.body());
+        try {
+            log.info("httpStatus: {}, body: {}", response.status(), response.body().asReader(StandardCharsets.UTF_8));
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
 
         switch (HttpStatus.valueOf(response.status())) {
             case NOT_FOUND -> {
