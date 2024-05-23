@@ -8,12 +8,15 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.time.LocalDateTime;
+import java.util.Random;
 import java.util.UUID;
 
 @Data
 @Builder(toBuilder = true)
 @Document(collection = "task_event")
 public class TaskEvent {
+    private static final Random random = new Random();
+
     @Id
     @Builder.Default
     private String taskId = UUID.randomUUID().toString();
@@ -26,7 +29,7 @@ public class TaskEvent {
     private LocalDateTime createdAt;
 
     public static TaskEvent of(Long mongId, TaskCode taskCode) {
-        Long expiration = taskCode.getExpiration();
+        long expiration = 1000 * (taskCode.getExpiration() != 0L ? taskCode.getExpiration() : random.nextLong(60 * 60 * 4, 60 * 60 * 6));
         LocalDateTime createdAt = LocalDateTime.now();
         LocalDateTime expiredAt = createdAt.plusSeconds(expiration);
         return TaskEvent.builder()

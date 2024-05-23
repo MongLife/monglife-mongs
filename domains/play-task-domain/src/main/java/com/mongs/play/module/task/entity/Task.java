@@ -9,7 +9,6 @@ import org.springframework.context.ApplicationEventPublisher;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
-import java.util.Random;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
@@ -18,9 +17,6 @@ import java.util.concurrent.TimeUnit;
 @Getter
 @Builder
 public class Task {
-
-    private static final Random random = new Random();
-
     private String taskId;
     private TaskCode taskCode;
     private Long mongId;
@@ -41,8 +37,7 @@ public class Task {
     }
 
     public void start() {
-        long expirationSeconds = 1000 * (expiration != 0L ? expiration : random.nextLong(60 * 60 * 4, 60 * 60 * 6));
-        scheduler = this.executor.schedule(this::run, expirationSeconds, TimeUnit.MILLISECONDS);
+        scheduler = this.executor.schedule(this::run, expiration, TimeUnit.MILLISECONDS);
     }
 
     public void pause() {
