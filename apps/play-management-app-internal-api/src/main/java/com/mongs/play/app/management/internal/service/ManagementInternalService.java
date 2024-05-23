@@ -3,6 +3,7 @@ package com.mongs.play.app.management.internal.service;
 import com.mongs.play.app.management.internal.annotation.ValidationDead;
 import com.mongs.play.app.management.internal.vo.EvolutionReadyVo;
 import com.mongs.play.app.management.internal.vo.*;
+import com.mongs.play.client.publisher.mong.annotation.RealTimeMember;
 import com.mongs.play.client.publisher.mong.annotation.RealTimeMong;
 import com.mongs.play.client.publisher.mong.code.PublishCode;
 import com.mongs.play.domain.mong.service.MongPayPointService;
@@ -117,6 +118,8 @@ public class ManagementInternalService {
                 .build();
     }
 
+
+    @RealTimeMong(codes = { PublishCode.MONG_PAY_POINT })
     @Transactional
     public IncreasePayPointVo increasePayPoint(Long mongId, Integer addPayPoint) {
         MongVo mongVo = mongPayPointService.increasePayPoint(mongId, addPayPoint);

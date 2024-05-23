@@ -1,6 +1,8 @@
 package com.mongs.play.app.player.external.member.service;
 
 import com.mongs.play.app.player.external.member.vo.*;
+import com.mongs.play.client.publisher.mong.annotation.RealTimeMember;
+import com.mongs.play.client.publisher.mong.code.PublishCode;
 import com.mongs.play.domain.member.entity.Member;
 import com.mongs.play.domain.member.service.MemberService;
 import com.mongs.play.domain.payment.entity.ChargeItem;
@@ -72,6 +74,7 @@ public class PlayerExternalMemberService {
                 .build();
     }
 
+    @RealTimeMember(codes = { PublishCode.MEMBER_STAR_POINT })
     @Transactional
     public ChargeStarPointVo chargeStarPoint(Long accountId, String deviceId, String receipt, String chargeItemId) {
 
@@ -89,6 +92,7 @@ public class PlayerExternalMemberService {
                 .build();
     }
 
+    @RealTimeMember(codes = { PublishCode.MEMBER_STAR_POINT })
     @Transactional
     public ExchangePayPointVo exchangePayPoint(Long accountId, String deviceId, Long mongId, String exchangeItemId) {
 
@@ -107,13 +111,5 @@ public class PlayerExternalMemberService {
                 .mongId(mongId)
                 .starPoint(member.getStarPoint())
                 .build();
-    }
-
-    @Transactional
-    public void exchangePayPoint(Long paymentLogId, Integer subStarPoint) {
-
-        PaymentLog paymentLog = paymentService.removeExchangePayPointLog(paymentLogId);
-
-        memberService.increaseStarPoint(paymentLog.getAccountId(), subStarPoint);
     }
 }

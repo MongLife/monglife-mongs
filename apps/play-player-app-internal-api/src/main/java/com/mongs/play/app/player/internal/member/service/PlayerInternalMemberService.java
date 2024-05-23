@@ -1,6 +1,8 @@
 package com.mongs.play.app.player.internal.member.service;
 
 import com.mongs.play.app.player.internal.member.vo.IncreaseStarPointVo;
+import com.mongs.play.client.publisher.mong.annotation.RealTimeMember;
+import com.mongs.play.client.publisher.mong.code.PublishCode;
 import com.mongs.play.domain.member.entity.Member;
 import com.mongs.play.domain.member.service.MemberService;
 import com.mongs.play.domain.payment.entity.PaymentLog;
@@ -16,6 +18,7 @@ public class PlayerInternalMemberService {
     private final PaymentService paymentService;
     private final MemberService memberService;
 
+    @RealTimeMember(codes = { PublishCode.MEMBER_STAR_POINT })
     @Transactional
     public IncreaseStarPointVo increaseStarPointMapCollection(Long accountId) {
 
@@ -30,6 +33,7 @@ public class PlayerInternalMemberService {
                 .build();
     }
 
+    @RealTimeMember(codes = { PublishCode.MEMBER_STAR_POINT })
     @Transactional
     public IncreaseStarPointVo increaseStarPointMongCollection(Long accountId) {
 
