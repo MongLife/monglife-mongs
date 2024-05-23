@@ -15,8 +15,6 @@ import java.util.UUID;
 @Builder(toBuilder = true)
 @Document(collection = "task_event")
 public class TaskEvent {
-    private static final Random random = new Random();
-
     @Id
     @Builder.Default
     private String taskId = UUID.randomUUID().toString();
@@ -28,8 +26,7 @@ public class TaskEvent {
     private LocalDateTime expiredAt;
     private LocalDateTime createdAt;
 
-    public static TaskEvent of(Long mongId, TaskCode taskCode) {
-        long expiration = (taskCode.getExpiration() != 0L ? taskCode.getExpiration() : random.nextLong(60 * 60 * 4, 60 * 60 * 6));
+    public static TaskEvent of(Long mongId, TaskCode taskCode, Long expiration) {
         LocalDateTime createdAt = LocalDateTime.now();
         LocalDateTime expiredAt = createdAt.plusSeconds(expiration);
         return TaskEvent.builder()

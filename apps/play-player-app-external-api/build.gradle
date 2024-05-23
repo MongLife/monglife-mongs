@@ -17,7 +17,7 @@ tasks.register('copyPrivate', Copy) {
     }
     copy {
         from '../../spring_backend_sub/core/'
-        include 'application-player.yml'
+        include 'application-player*.yml'
         into 'src/main/resources'
     }
 }

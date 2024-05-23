@@ -12,5 +12,6 @@ public class TaskStopEvent {
     private String taskId;
     private TaskCode taskCode;
     private Long mongId;
+    private Long expiration;
     private Long duringSeconds;
 }

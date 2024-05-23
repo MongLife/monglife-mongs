@@ -9,9 +9,4 @@ tasks.register('copyPrivate', Copy) {
         include 'application*.yml'
         into 'src/main/resources'
     }
-    copy {
-        from '../../spring_backend_sub/core/'
-        include 'application-management.yml'
-        into 'src/main/resources'
-    }
 }

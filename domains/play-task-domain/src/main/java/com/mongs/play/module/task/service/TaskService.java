@@ -6,10 +6,12 @@ import com.mongs.play.core.exception.common.NotFoundException;
 import com.mongs.play.module.task.entity.TaskEvent;
 import com.mongs.play.module.task.enums.TaskCode;
 import com.mongs.play.module.task.enums.TaskStatus;
+import com.mongs.play.module.task.enums.TaskUtil;
 import com.mongs.play.module.task.repository.TaskEventRepository;
 import com.mongs.play.module.task.entity.Task;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -73,8 +75,10 @@ public class TaskService {
                 throw new AlreadyExistException(TaskErrorCode.ALREADY_EXIST_TASK);
             }
 
+            Long expiration = TaskUtil.getExpiration(taskCode);
+
             // 테스크 이벤트 정보 저장 (WAIT)
-            TaskEvent taskEvent = taskEventRepository.save(TaskEvent.of(mongId, taskCode));
+            TaskEvent taskEvent = taskEventRepository.save(TaskEvent.of(mongId, taskCode, expiration));
             // 테스크 시작
             Task task = Task.builder()
                     .taskId(taskEvent.getTaskId())

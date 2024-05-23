@@ -59,6 +59,7 @@ public class Task {
                 .taskId(taskId)
                 .taskCode(taskCode)
                 .mongId(mongId)
+                .expiration(expiration)
                 .duringSeconds(duringSeconds)
                 .build());
 

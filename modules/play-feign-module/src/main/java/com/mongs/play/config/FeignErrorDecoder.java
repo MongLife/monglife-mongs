@@ -1,5 +1,9 @@
 package com.mongs.play.config;
 
+import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.mongs.play.core.dto.res.ErrorResDto;
 import com.mongs.play.core.error.module.FeignErrorCode;
 import com.mongs.play.core.exception.client.ClientErrorException;
 import com.mongs.play.core.exception.module.ModuleErrorException;
@@ -15,13 +19,21 @@ import java.nio.charset.StandardCharsets;
 
 @Slf4j
 public class FeignErrorDecoder implements ErrorDecoder {
+
+    private final ObjectMapper objectMapper;
+
+    public FeignErrorDecoder(ObjectMapper objectMapper) {
+        this.objectMapper = objectMapper;
+    }
+
     @Override
     public Exception decode(String methodKey, Response response) {
 
         try {
-            log.info("httpStatus: {}, body: {}", response.status(), response.body().asReader(StandardCharsets.UTF_8));
+            ErrorResDto errorResDto = objectMapper.readValue(response.body().asInputStream(), ErrorResDto.class);
+            log.info("httpStatus: {}, body: {}", response.status(), errorResDto);
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            e.printStackTrace();
         }
 
         switch (HttpStatus.valueOf(response.status())) {

@@ -5,7 +5,7 @@ dependencies {
 tasks.register('copyPrivate', Copy) {
     copy {
         from '../../spring_backend_sub/modules/play-kafka-module/'
-        include 'application-*.yml'
+        include 'application-kafka*.yml'
         into 'src/main/resources'
     }
 }
