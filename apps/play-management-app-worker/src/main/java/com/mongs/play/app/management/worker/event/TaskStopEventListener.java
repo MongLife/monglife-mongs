@@ -64,16 +64,6 @@ public class TaskStopEventListener {
                 double subSleep = this.subSleep / taskCode.getExpiration() * duringSeconds;
 
                 managementInternalKafkaService.decreaseStatus(mongId, subWeight, subStrength, subSatiety, subHealthy, subSleep);
-
-//                try {
-//                    var res = managementInternalFeignService.decreaseStatus(mongId, subWeight, subStrength, subSatiety, subHealthy, subSleep);
-//                } catch (NotAcceptableException | NotFoundException e) {
-//                    // 조작할 수 없는 상태 (비활성화 상태)
-////                    taskService.stopTask(mongId, taskCode);
-//                } catch (ModuleErrorException e) {
-//                    // 서버 오류 (재기동중 이거나, 서버가 다운된 상태)
-//                    taskService.startTask(mongId, taskCode);
-//                }
             }
             case INCREASE_STATUS -> {
                 double addWeight = this.addWeight / taskCode.getExpiration() * duringSeconds;
@@ -83,32 +73,11 @@ public class TaskStopEventListener {
                 double addSleep = this.addSleep / taskCode.getExpiration() * duringSeconds;
 
                 managementInternalKafkaService.increaseStatus(mongId, addWeight, addStrength, addSatiety, addHealthy, addSleep);
-
-//                try {
-//                    var res = managementInternalFeignService.increaseStatus(mongId, addWeight, addStrength, addSatiety, addHealthy, addSleep);
-//                } catch (NotAcceptableException | NotFoundException e) {
-//                    // 조작할 수 없는 상태 (비활성화 상태)
-////                    taskService.stopTask(mongId, taskCode);
-//                } catch (ModuleErrorException e) {
-//                    // 서버 오류 (재기동중 이거나, 서버가 다운된 상태)
-//                    taskService.startTask(mongId, taskCode);
-//                }
             }
             case INCREASE_POOP_COUNT -> {
                 if ((double) (duringSeconds / taskCode.getExpiration()) > 0.5) {
                     int addPoopCount = 1;
-
                     managementInternalKafkaService.increasePoopCount(mongId, addPoopCount);
-
-//                    try {
-//                        var res = managementInternalFeignService.increasePoopCount(mongId, addPoopCount);
-//                    } catch (NotAcceptableException | NotFoundException e) {
-//                        // 조작할 수 없는 상태 (비활성화 상태)
-////                    taskService.stopTask(mongId, TaskCode.INCREASE_POOP_COUNT);
-//                    } catch (ModuleErrorException e) {
-//                        // 서버 오류 (재기동중 이거나, 서버가 다운된 상태)
-//                        taskService.startTask(mongId, taskCode);
-//                    }
                 }
             }
             case DEAD_HEALTHY, DEAD_SATIETY -> {}

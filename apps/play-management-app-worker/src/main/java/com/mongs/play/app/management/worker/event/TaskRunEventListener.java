@@ -56,72 +56,23 @@ public class TaskRunEventListener {
         switch (taskCode) {
             case ZERO_EVOLUTION -> {
                 managementInternalKafkaService.evolutionReady(mongId);
-
-//                try {
-//                    var res = managementInternalFeignService.evolutionReady(mongId);
-//                } catch (ModuleErrorException e) {
-//                    // 서버 오류 (재기동중 이거나, 서버가 다운된 상태)
-//                    taskService.startTask(mongId, TaskCode.ZERO_EVOLUTION);
-//                }
             }
             case DECREASE_STATUS -> {
                 managementInternalKafkaService.decreaseStatus(mongId, subWeight, subStrength, subSatiety, subHealthy, subSleep);
                 taskService.startTask(mongId, taskCode);
-
-//                try {
-//                    var res = managementInternalFeignService.decreaseStatus(mongId, subWeight, subStrength, subSatiety, subHealthy, subSleep);
-//                    taskService.startTask(mongId, taskCode);
-//                } catch (NotAcceptableException | NotFoundException e) {
-//                    // 조작할 수 없는 상태 (비활성화 상태)
-////                    taskService.stopTask(mongId, TaskCode.DECREASE_STATUS);
-//                } catch (ModuleErrorException e) {
-//                    // 서버 오류 (재기동중 이거나, 서버가 다운된 상태)
-//                    taskService.startTask(mongId, taskCode);
-//                }
             }
             case INCREASE_STATUS -> {
                 managementInternalKafkaService.increaseStatus(mongId, addWeight, addStrength, addSatiety, addHealthy, addSleep);
                 taskService.startTask(mongId, taskCode);
-
-//                try {
-//                    var res = managementInternalFeignService.increaseStatus(mongId, addWeight, addStrength, addSatiety, addHealthy, addSleep);
-//                    taskService.startTask(mongId, taskCode);
-//                } catch (NotAcceptableException | NotFoundException e) {
-//                    // 조작할 수 없는 상태 (비활성화 상태)
-////                    taskService.stopTask(mongId, TaskCode.INCREASE_STATUS);
-//                } catch (ModuleErrorException e) {
-//                    // 서버 오류 (재기동중 이거나, 서버가 다운된 상태)
-//                    taskService.startTask(mongId, taskCode);
-//                }
             }
             case INCREASE_POOP_COUNT -> {
                 int addPoopCount = 1;
                 managementInternalKafkaService.increasePoopCount(mongId, addPoopCount);
                 taskService.startTask(mongId, taskCode);
-
-//                try {
-//                    var res = managementInternalFeignService.increasePoopCount(mongId, addPoopCount);
-//                    taskService.startTask(mongId, taskCode);
-//                } catch (NotAcceptableException | NotFoundException e) {
-//                    // 조작할 수 없는 상태 (비활성화 상태)
-////                    taskService.stopTask(mongId, TaskCode.INCREASE_POOP_COUNT);
-//                } catch (ModuleErrorException e) {
-//                    // 서버 오류 (재기동중 이거나, 서버가 다운된 상태)
-//                    taskService.startTask(mongId, taskCode);
-//                }
             }
             case DEAD_HEALTHY, DEAD_SATIETY -> {
                 managementInternalKafkaService.dead(mongId);
                 taskService.forceStopAllTask(mongId);
-
-//                try {
-//                    var res = managementInternalFeignService.dead(mongId);
-//                    taskService.forceStopAllTask(mongId);
-//                } catch (NotAcceptableException | NotFoundException e) {
-////                    taskService.stopTask(mongId, TaskCode.DEAD_HEALTHY);
-//                } catch (ModuleErrorException e) {
-//                    taskService.startTask(mongId, taskCode);
-//                }
             }
             default -> throw new ManagementWorkerException(ManagementWorkerErrorCode.INVALID_STOP_EVENT);
         }

@@ -9,6 +9,7 @@ import org.springframework.context.ApplicationEventPublisher;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
+import java.util.Random;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
@@ -17,6 +18,8 @@ import java.util.concurrent.TimeUnit;
 @Getter
 @Builder
 public class Task {
+
+    private static final Random random = new Random();
 
     private String taskId;
     private TaskCode taskCode;
@@ -30,8 +33,6 @@ public class Task {
     private ScheduledFuture<?> scheduler;
 
     public void run() {
-//        log.info("[run] taskId: {}, taskCode: {}, mongId: {}, expiration: {}", taskId, taskCode, mongId, expiration);
-
         publisher.publishEvent(TaskRunEvent.builder()
                 .taskId(taskId)
                 .taskCode(taskCode)
@@ -40,14 +41,11 @@ public class Task {
     }
 
     public void start() {
-//        log.info("[start] taskId: {}, taskCode: {}, mongId: {}, expiration: {}", taskId, taskCode, mongId, expiration);
-
-        scheduler = this.executor.schedule(this::run, 1000 * expiration, TimeUnit.MILLISECONDS);
+        long expirationSeconds = 1000 * (expiration != 0L ? expiration : random.nextLong(60 * 60 * 4, 60 * 60 * 6));
+        scheduler = this.executor.schedule(this::run, expirationSeconds, TimeUnit.MILLISECONDS);
     }
 
     public void pause() {
-//        log.info("[pause] taskId: {}, taskCode: {}, mongId: {}, expiration: {}", taskId, taskCode, mongId, expiration);
-
         publisher.publishEvent(TaskPauseEvent.builder()
                 .taskCode(taskCode)
                 .mongId(mongId)
@@ -61,8 +59,6 @@ public class Task {
     }
 
     public void stop() {
-//        log.info("[stop] taskId: {}, taskCode: {}, mongId: {}, expiration: {}", taskId, taskCode, mongId, expiration);
-
         Long duringSeconds = Math.max(0, Math.min(expiration, Duration.between(createdAt, LocalDateTime.now()).getSeconds()));
         publisher.publishEvent(TaskStopEvent.builder()
                 .taskId(taskId)

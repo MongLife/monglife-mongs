@@ -116,7 +116,7 @@ public class TaskService {
             activeTaskMap.remove(taskEvent.getTaskId());
 
         } catch (NotFoundException e) {
-            log.info("[pauseTask] not found task, mongId: {}, taskCode: {}", mongId, taskCode);
+//            log.info("[pauseTask] not found task, mongId: {}, taskCode: {}", mongId, taskCode);
         }
     }
 
@@ -138,7 +138,7 @@ public class TaskService {
                 task.pause();
                 activeTaskMap.remove(taskEvent.getTaskId());
             } catch (NotFoundException e) {
-                log.info("[pauseSystemTask] not found task, mongId: {}, taskCode: {}", taskEvent.getMongId(), taskEvent.getTaskCode());
+//                log.info("[pauseSystemTask] not found task, mongId: {}, taskCode: {}", taskEvent.getMongId(), taskEvent.getTaskCode());
             }
         });
     }
