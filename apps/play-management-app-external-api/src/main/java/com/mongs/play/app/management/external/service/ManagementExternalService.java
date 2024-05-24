@@ -127,7 +127,7 @@ public class ManagementExternalService {
         List<MongCode> mongCodeList = codeService.getMongCodeByLevel(MongGrade.ZERO.level);
         int randIdx = random.nextInt(mongCodeList.size());
 
-        String eggMongCode = mongCodeList.get(randIdx).code();
+        String eggMongCode = mongCodeList.get(randIdx).getCode();
 
         MongVo newMongVo = mongService.addMong(accountId, eggMongCode, name, sleepStart, sleepEnd);
         MongStatusPercentVo mongStatusPercentVo = MongUtil.statusToPercent(newMongVo.grade(), newMongVo);
@@ -388,7 +388,7 @@ public class ManagementExternalService {
         if (MongGrade.ZERO.equals(mongVo.grade())) {
             List<MongCode> mongCodeList = codeService.getMongCodeByLevel(MongGrade.ZERO.nextGrade.level);
             int randIdx = random.nextInt(mongCodeList.size());
-            String mongCode = mongCodeList.get(randIdx).code();
+            String mongCode = mongCodeList.get(randIdx).getCode();
             newMongVo = mongService.toggleFirstEvolution(mongVo.mongId(), mongCode);
             managementWorkerFeignService.firstEvolutionSchedule(mongVo.mongId());
         } else if (MongGrade.LAST.equals(mongVo.grade().nextGrade)) {
@@ -399,7 +399,7 @@ public class ManagementExternalService {
             int evolutionPoint = 0;
             List<MongCode> mongCodeList = codeService.getMongCodeByLevelAndEvolutionPoint(mongVo.grade().nextGrade.level, evolutionPoint);
             // TODO("컬렉션 목록을 조회하여 겹치지 않도록 하는 로직 필요")
-            String mongCode = mongCodeList.get(mongCodeList.size() - 1).code();
+            String mongCode = mongCodeList.get(mongCodeList.size() - 1).getCode();
             newMongVo = mongService.toggleEvolution(mongVo.mongId(), mongCode);
             managementWorkerFeignService.evolutionSchedule(mongVo.mongId());
         }
@@ -438,7 +438,7 @@ public class ManagementExternalService {
         if (!accountId.equals(mongVo.accountId())) {
             throw new ManagementExternalException(ManagementExternalErrorCode.NOT_MATCH_MONG);
         }
-        if (mongVo.payPoint() < food.price()) {
+        if (mongVo.payPoint() < food.getPrice()) {
             throw new InvalidException(ManagementExternalErrorCode.NOT_ENOUGH_PAY_POINT);
         }
         if (MongGrade.EMPTY.equals(mongVo.grade())) {
@@ -448,7 +448,7 @@ public class ManagementExternalService {
             throw new ManagementExternalException(ManagementExternalErrorCode.INVALID_FEED);
         }
 
-        MongVo newMongVo = mongService.feedMong(mongVo.mongId(), food.code(), food.addWeightValue(), food.addStrengthValue(), food.addSatietyValue(), food.addHealthyValue(), food.addSleepValue(), food.price());
+        MongVo newMongVo = mongService.feedMong(mongVo.mongId(), food.getCode(), food.getAddWeightValue(), food.getAddStrengthValue(), food.getAddSatietyValue(), food.getAddHealthyValue(), food.getAddSleepValue(), food.getPrice());
 
         MongStatusPercentVo mongStatusPercentVo = MongUtil.statusToPercent(newMongVo.grade(), newMongVo);
 
@@ -488,15 +488,15 @@ public class ManagementExternalService {
 
         return foodCodeList.stream()
                 .map(foodCode -> {
-                    String code = foodCode.code();
+                    String code = foodCode.getCode();
                     long id = mongVo.mongId();
                     boolean isCanBuy = true;
 
                     // 음식 섭취 기록이 있으면
-                    if (mongFeedLogVoMap.containsKey(foodCode.code())) {
-                        MongFeedLogVo mongFeedLogVo = mongFeedLogVoMap.get(foodCode.code());
+                    if (mongFeedLogVoMap.containsKey(foodCode.getCode())) {
+                        MongFeedLogVo mongFeedLogVo = mongFeedLogVoMap.get(foodCode.getCode());
                         isCanBuy = mongFeedLogVo.lastBuyAt()
-                                .plusSeconds(foodCode.delaySeconds())
+                                .plusSeconds(foodCode.getDelaySeconds())
                                 .isBefore(LocalDateTime.now());
                     }
 

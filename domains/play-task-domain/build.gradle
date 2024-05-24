@@ -1,6 +1,5 @@
 dependencies {
-    api 'com.google.code.gson:gson:2.10.1'
-    api 'org.springframework.boot:spring-boot-starter-data-mongodb'
+    api 'org.springframework.boot:spring-boot-starter-data-redis'
 }
 
 tasks.register('copyPrivate', Copy) {

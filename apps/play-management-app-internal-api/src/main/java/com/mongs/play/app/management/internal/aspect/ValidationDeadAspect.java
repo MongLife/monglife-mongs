@@ -1,8 +1,8 @@
 package com.mongs.play.app.management.internal.aspect;
 
 import com.mongs.play.app.management.internal.annotation.ValidationDead;
+import com.mongs.play.app.management.internal.service.ManagementWorkerService;
 import com.mongs.play.core.utils.ReflectionUtil;
-import com.mongs.play.module.feign.service.ManagementWorkerFeignService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.ProceedingJoinPoint;
@@ -20,7 +20,7 @@ import org.springframework.util.ObjectUtils;
 @RequiredArgsConstructor
 public class ValidationDeadAspect {
 
-    private final ManagementWorkerFeignService managementWorkerFeignService;
+    private final ManagementWorkerService managementWorkerService;
 
     @Pointcut("execution(* com.mongs.play..*.*(..))")
     public void cut() {}
@@ -36,15 +36,15 @@ public class ValidationDeadAspect {
 
             if (!ObjectUtils.isEmpty(mongId) && !ObjectUtils.isEmpty(healthy) && !ObjectUtils.isEmpty(satiety)) {
                 if (healthy <= 0) {
-                    managementWorkerFeignService.deadHealthySchedule(mongId);
+                    managementWorkerService.deadHealthy(mongId);
                 } else {
-                    managementWorkerFeignService.deadHealthyScheduleStop(mongId);
+                    managementWorkerService.liveHealthy(mongId);
                 }
 
                 if (satiety <= 0) {
-                    managementWorkerFeignService.deadSatietySchedule(mongId);
+                    managementWorkerService.deadSatiety(mongId);
                 } else {
-                    managementWorkerFeignService.deadSatietyScheduleStop(mongId);
+                    managementWorkerService.liveSatiety(mongId);
                 }
             }
         }

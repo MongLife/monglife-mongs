@@ -20,16 +20,16 @@ public record FindFoodCodeVo(
 ) {
     public static FindFoodCodeVo of(FoodCode foodCode) {
         return FindFoodCodeVo.builder()
-                .code(foodCode.code())
-                .name(foodCode.name())
-                .groupCode(foodCode.groupCode())
-                .price(foodCode.price())
-                .addWeight(foodCode.addWeightValue())
-                .addStrength(foodCode.addStrengthValue())
-                .addSatiety(foodCode.addSatietyValue())
-                .addHealthy(foodCode.addHealthyValue())
-                .addSleep(foodCode.addSleepValue())
-                .buildVersion(foodCode.buildVersion())
+                .code(foodCode.getCode())
+                .name(foodCode.getName())
+                .groupCode(foodCode.getGroupCode())
+                .price(foodCode.getPrice())
+                .addWeight(foodCode.getAddWeightValue())
+                .addStrength(foodCode.getAddStrengthValue())
+                .addSatiety(foodCode.getAddSatietyValue())
+                .addHealthy(foodCode.getAddHealthyValue())
+                .addSleep(foodCode.getAddSleepValue())
+                .buildVersion(foodCode.getBuildVersion())
                 .build();
     }
 

@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
-@FeignClient(name = "MANAGEMENT-WORKER", configuration = FeignClientConfig.class)
+@FeignClient(name = "MANAGEMENT-INTERNAL", configuration = FeignClientConfig.class)
 public interface ManagementWorkerClient {
     @PostMapping("/worker/management/zeroEvolution")
     ResponseEntity<EvolutionScheduleResDto> zeroEvolutionSchedule(@RequestBody EvolutionScheduleReqDto evolutionScheduleReqDto);

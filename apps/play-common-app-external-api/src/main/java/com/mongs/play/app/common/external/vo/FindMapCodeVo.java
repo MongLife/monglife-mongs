@@ -13,9 +13,9 @@ public record FindMapCodeVo(
 ) {
     public static FindMapCodeVo of(MapCode mapCode) {
         return FindMapCodeVo.builder()
-                .code(mapCode.code())
-                .name(mapCode.name())
-                .buildVersion(mapCode.buildVersion())
+                .code(mapCode.getCode())
+                .name(mapCode.getName())
+                .buildVersion(mapCode.getBuildVersion())
                 .build();
     }
 

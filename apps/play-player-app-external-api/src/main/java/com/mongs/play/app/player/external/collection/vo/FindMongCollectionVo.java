@@ -15,7 +15,7 @@ public record FindMongCollectionVo(
 ) {
     public static FindMongCollectionVo of(MongCode mongCode, Boolean isDisable) {
         return FindMongCollectionVo.builder()
-                .code(mongCode.code())
+                .code(mongCode.getCode())
                 .disable(isDisable)
                 .build();
     }

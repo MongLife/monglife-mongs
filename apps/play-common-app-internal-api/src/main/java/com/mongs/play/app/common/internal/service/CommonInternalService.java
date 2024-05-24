@@ -29,7 +29,7 @@ public class CommonInternalService {
         CodeVersion codeVersion = codeVersionService.addCodeVersion(buildVersion);
 
         return RegisterCodeVersionVo.builder()
-                .buildVersion(codeVersion.buildVersion())
+                .buildVersion(codeVersion.getBuildVersion())
                 .build();
     }
 
@@ -41,15 +41,15 @@ public class CommonInternalService {
         MapCode mapCode = codeService.addMapCode(MapCode.builder()
                 .code(registerMapCodeVo.code())
                 .name(registerMapCodeVo.name())
-                .buildVersion(codeVersion.buildVersion())
+                .buildVersion(codeVersion.getBuildVersion())
                 .build());
 
         codeVersionService.updateCode(buildVersion);
 
         return RegisterMapCodeVo.builder()
-                .code(mapCode.code())
-                .name(mapCode.name())
-                .buildVersion(codeVersion.buildVersion())
+                .code(mapCode.getCode())
+                .name(mapCode.getName())
+                .buildVersion(codeVersion.getBuildVersion())
                 .build();
     }
 
@@ -63,17 +63,17 @@ public class CommonInternalService {
                 .name(registerMongCodeVo.name())
                 .level(registerMongCodeVo.level())
                 .evolutionPoint(registerMongCodeVo.evolutionPoint())
-                .buildVersion(codeVersion.buildVersion())
+                .buildVersion(codeVersion.getBuildVersion())
                 .build());
 
         codeVersionService.updateCode(buildVersion);
 
         return RegisterMongCodeVo.builder()
-                .code(mongCode.code())
-                .name(mongCode.name())
-                .level(mongCode.level())
-                .evolutionPoint(mongCode.evolutionPoint())
-                .buildVersion(codeVersion.buildVersion())
+                .code(mongCode.getCode())
+                .name(mongCode.getName())
+                .level(mongCode.getLevel())
+                .evolutionPoint(mongCode.getEvolutionPoint())
+                .buildVersion(codeVersion.getBuildVersion())
                 .build();
     }
 
@@ -93,23 +93,23 @@ public class CommonInternalService {
                 .addHealthyValue(registerFoodCodeVo.addHealthyValue())
                 .addSleepValue(registerFoodCodeVo.addSleepValue())
                 .delaySeconds(registerFoodCodeVo.delaySeconds())
-                .buildVersion(codeVersion.buildVersion())
+                .buildVersion(codeVersion.getBuildVersion())
                 .build());
 
         codeVersionService.updateCode(buildVersion);
 
         return RegisterFoodCodeVo.builder()
-                .code(foodCode.code())
-                .name(foodCode.name())
-                .groupCode(foodCode.groupCode())
-                .price(foodCode.price())
-                .addWeightValue(foodCode.addWeightValue())
-                .addStrengthValue(foodCode.addStrengthValue())
-                .addSatietyValue(foodCode.addSatietyValue())
-                .addHealthyValue(foodCode.addHealthyValue())
-                .addSleepValue(foodCode.addSleepValue())
-                .delaySeconds(foodCode.delaySeconds())
-                .buildVersion(codeVersion.buildVersion())
+                .code(foodCode.getCode())
+                .name(foodCode.getName())
+                .groupCode(foodCode.getGroupCode())
+                .price(foodCode.getPrice())
+                .addWeightValue(foodCode.getAddWeightValue())
+                .addStrengthValue(foodCode.getAddStrengthValue())
+                .addSatietyValue(foodCode.getAddSatietyValue())
+                .addHealthyValue(foodCode.getAddHealthyValue())
+                .addSleepValue(foodCode.getAddSleepValue())
+                .delaySeconds(foodCode.getDelaySeconds())
+                .buildVersion(codeVersion.getBuildVersion())
                 .build();
     }
 

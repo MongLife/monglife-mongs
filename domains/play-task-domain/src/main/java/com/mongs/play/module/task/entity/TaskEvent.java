@@ -5,7 +5,7 @@ import com.mongs.play.module.task.enums.TaskStatus;
 import lombok.Builder;
 import lombok.Data;
 import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.mapping.Document;
+import org.springframework.data.redis.core.RedisHash;
 
 import java.time.LocalDateTime;
 import java.util.Random;
@@ -13,7 +13,7 @@ import java.util.UUID;
 
 @Data
 @Builder(toBuilder = true)
-@Document(collection = "task_event")
+@RedisHash("session")
 public class TaskEvent {
     @Id
     @Builder.Default

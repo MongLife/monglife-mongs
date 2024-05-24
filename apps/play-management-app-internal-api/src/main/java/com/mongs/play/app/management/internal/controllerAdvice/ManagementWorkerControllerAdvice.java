@@ -1,19 +1,18 @@
 package com.mongs.play.app.management.internal.controllerAdvice;
 
-import com.mongs.play.app.management.internal.controller.ManagementInternalController;
+import com.mongs.play.app.management.internal.controller.ManagementWorkerController;
 import com.mongs.play.core.dto.res.ErrorResDto;
 import com.mongs.play.core.error.ErrorCode;
 import com.mongs.play.core.error.GlobalErrorCode;
 import com.mongs.play.core.exception.ErrorException;
-import com.mongs.play.core.exception.app.ManagementInternalException;
 import com.mongs.play.core.exception.app.ManagementWorkerException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
-@RestControllerAdvice(basePackageClasses = ManagementInternalController.class)
-public class ManagementInternalControllerAdvice {
+@RestControllerAdvice(basePackageClasses = ManagementWorkerController.class)
+public class ManagementWorkerControllerAdvice {
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<Object> validatedExceptionHandler() {
@@ -21,8 +20,8 @@ public class ManagementInternalControllerAdvice {
         return ResponseEntity.status(errorCode.getHttpStatus()).body(ErrorResDto.of(errorCode));
     }
 
-    @ExceptionHandler(ManagementInternalException.class)
-    public ResponseEntity<Object> authExternalExceptionHandler(ManagementInternalException e) {
+    @ExceptionHandler(ManagementWorkerException.class)
+    public ResponseEntity<Object> authExternalExceptionHandler(ManagementWorkerException e) {
         ErrorCode errorCode = e.errorCode;
         return ResponseEntity.status(errorCode.getHttpStatus()).body(ErrorResDto.of(errorCode));
     }

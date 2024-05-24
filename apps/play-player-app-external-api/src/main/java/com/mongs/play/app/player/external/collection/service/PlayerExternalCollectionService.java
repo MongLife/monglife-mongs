@@ -30,11 +30,11 @@ public class PlayerExternalCollectionService {
                 .toList();
 
         List<MapCode> enableList = mapCodeList.stream()
-                .filter(mapCode -> mapCollectionList.contains(mapCode.code()))
+                .filter(mapCode -> mapCollectionList.contains(mapCode.getCode()))
                 .toList();
 
         List<MapCode> disableList = mapCodeList.stream()
-                .filter(mapCode -> !mapCollectionList.contains(mapCode.code()))
+                .filter(mapCode -> !mapCollectionList.contains(mapCode.getCode()))
                 .toList();
 
         return FindMapCollectionVo.toList(enableList, disableList);
@@ -49,11 +49,11 @@ public class PlayerExternalCollectionService {
                 .toList();
 
         List<MongCode> enableList = mongCodeList.stream()
-                .filter(mongCode -> mongCollectionList.contains(mongCode.code()))
+                .filter(mongCode -> mongCollectionList.contains(mongCode.getCode()))
                 .toList();
 
         List<MongCode> disableList = mongCodeList.stream()
-                .filter(mongCode -> !mongCollectionList.contains(mongCode.code()))
+                .filter(mongCode -> !mongCollectionList.contains(mongCode.getCode()))
                 .toList();
 
         return FindMongCollectionVo.toList(enableList, disableList);

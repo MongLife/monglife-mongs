@@ -71,7 +71,7 @@ public class CodeService {
 
     public MapCode addMapCode(MapCode mapCode) throws AlreadyExistException {
 
-        if (mapCodeRepository.findById(mapCode.code()).isPresent()) {
+        if (mapCodeRepository.findById(mapCode.getCode()).isPresent()) {
             throw new AlreadyExistException(CodeErrorCode.ALREADY_EXIST_MAP_CODE);
         }
 
@@ -80,7 +80,7 @@ public class CodeService {
 
     public MongCode addMongCode(MongCode mongCode) throws AlreadyExistException {
 
-        if (mongCodeRepository.findById(mongCode.code()).isPresent()) {
+        if (mongCodeRepository.findById(mongCode.getCode()).isPresent()) {
             throw new AlreadyExistException(CodeErrorCode.ALREADY_EXIST_MONG_CODE);
         }
 
@@ -89,7 +89,7 @@ public class CodeService {
 
     public FoodCode addFoodCode(FoodCode foodCode) throws AlreadyExistException {
 
-        if (foodCodeRepository.findById(foodCode.code()).isPresent()) {
+        if (foodCodeRepository.findById(foodCode.getCode()).isPresent()) {
             throw new AlreadyExistException(CodeErrorCode.ALREADY_EXIST_FOOD_CODE);
         }
 

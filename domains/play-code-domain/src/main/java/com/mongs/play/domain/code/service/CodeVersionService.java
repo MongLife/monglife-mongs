@@ -57,7 +57,7 @@ public class CodeVersionService {
                 .build());
 
         /* 이전 버전들에 대해 업데이트 여부 true 로 변경 */
-        List<CodeVersion> pastCodeVersionList = codeVersionRepository.findByBuildVersionIsBefore(codeVersion.buildVersion());
+        List<CodeVersion> pastCodeVersionList = codeVersionRepository.findByBuildVersionIsBefore(codeVersion.getBuildVersion());
 
         pastCodeVersionList.forEach(pastCodeVersion -> {
             codeVersionRepository.save(pastCodeVersion.toBuilder()

@@ -13,9 +13,9 @@ public record FindMongCodeVo(
 ) {
     public static FindMongCodeVo of(MongCode mongCode) {
         return FindMongCodeVo.builder()
-                .code(mongCode.code())
-                .name(mongCode.name())
-                .buildVersion(mongCode.buildVersion())
+                .code(mongCode.getCode())
+                .name(mongCode.getName())
+                .buildVersion(mongCode.getBuildVersion())
                 .build();
     }
 

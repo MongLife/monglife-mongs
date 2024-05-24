@@ -1,18 +1,28 @@
 package com.mongs.play.domain.code.entity;
 
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
-import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.mapping.Document;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 
+@Entity
+@Getter
+@NoArgsConstructor
+@AllArgsConstructor
 @Builder(toBuilder = true)
-@Document(collection = "code_version")
-public record CodeVersion(
-        @Id
-        String buildVersion,
-        String codeIntegrity,
-        Boolean mustUpdateApp,
-        LocalDateTime createdAt
-) {
+public class CodeVersion {
+    @Id
+    @Column(name = "build_version")
+    private String buildVersion;
+    @Column(nullable = false)
+    private String codeIntegrity;
+    @Column(nullable = false)
+    private Boolean mustUpdateApp;
+    @Column(nullable = false)
+    private LocalDateTime createdAt;
 }
