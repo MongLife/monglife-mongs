@@ -1,0 +1,5 @@
+dependencies {
+    api project(':modules:play-jpa-module')
+
+    runtimeOnly 'com.mysql:mysql-connector-j'
+}

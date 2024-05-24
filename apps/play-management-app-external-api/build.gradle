@@ -1,0 +1,20 @@
+dependencies {
+    implementation project(':clients:play-event-publisher-client')
+    implementation project(':domains:play-code-domain')
+    implementation project(':domains:play-mong-domain')
+    implementation project(":modules:play-security-module")
+    implementation project(":modules:play-feign-module")
+}
+
+tasks.register('copyPrivate', Copy) {
+    copy {
+        from '../../spring_backend_sub/apps/play-management-app-external-api/'
+        include 'application*.yml'
+        into 'src/main/resources'
+    }
+    copy {
+        from '../../spring_backend_sub/core/'
+        include 'application-management*.yml'
+        into 'src/main/resources'
+    }
+}

@@ -1,11 +1,35 @@
 rootProject.name = 'backend'
-include('core')
-include('eureka')
-include('gateway')
-include('auth')
-include('member')
-//include('battle')
-//include('training')
-include('management')
-include('lifecycle')
-include('common')
+
+include 'core'
+
+include 'discoveries:play-eureka-discovery'
+include 'discoveries:play-gateway-discovery'
+
+include 'apps:play-auth-app-external-api'
+include 'apps:play-auth-app-internal-api'
+include 'apps:play-common-app-external-api'
+include 'apps:play-common-app-internal-api'
+include 'apps:play-management-app-external-api'
+include 'apps:play-management-app-internal-api'
+include 'apps:play-management-app-worker'
+include 'apps:play-player-app-external-api'
+include 'apps:play-player-app-internal-api'
+
+include 'domains:play-code-domain'
+include 'domains:play-task-domain'
+include 'domains:play-account-domain'
+include 'domains:play-collection-domain'
+include 'domains:play-feedback-domain'
+include 'domains:play-member-domain'
+include 'domains:play-mong-domain'
+include 'domains:play-payment-domain'
+include 'domains:play-session-domain'
+
+include 'modules:play-jpa-module'
+include 'modules:play-hmac-module'
+include 'modules:play-jwt-module'
+include 'modules:play-kafka-module'
+include 'modules:play-feign-module'
+include 'modules:play-security-module'
+
+include 'clients:play-event-publisher-client'

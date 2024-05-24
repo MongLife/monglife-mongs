@@ -1,0 +1,13 @@
+dependencies {
+    // mqtt
+    implementation 'org.springframework.boot:spring-boot-starter-integration'
+    implementation 'org.springframework.integration:spring-integration-mqtt'
+}
+
+tasks.register('copyPrivate', Copy) {
+    copy {
+        from '../../spring_backend_sub/clients/play-event-publisher-client/'
+        include 'application*.yml'
+        into 'src/main/resources'
+    }
+}

@@ -1,0 +1,13 @@
+dependencies {
+    implementation project(':domains:play-account-domain')
+    implementation project(':modules:play-jwt-module')
+    implementation project(':modules:play-hmac-module')
+}
+
+tasks.register('copyPrivate', Copy) {
+    copy {
+        from '../../spring_backend_sub/apps/play-auth-app-internal-api/'
+        include 'application*.yml'
+        into 'src/main/resources'
+    }
+}
