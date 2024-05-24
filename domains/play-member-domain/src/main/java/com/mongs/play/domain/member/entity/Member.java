@@ -1,10 +1,7 @@
 package com.mongs.play.domain.member.entity;
 
 import com.mongs.play.module.jpa.baseEntity.BaseTimeEntity;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.EntityListeners;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -17,6 +14,7 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 @AllArgsConstructor
 @EntityListeners(AuditingEntityListener.class)
 @Builder(toBuilder = true)
+@Table(name = "member", catalog = "player")
 public class Member extends BaseTimeEntity {
     @Id
     private Long accountId;

@@ -3,6 +3,7 @@ package com.mongs.play.domain.payment.entity;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -15,6 +16,7 @@ import java.util.UUID;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder(toBuilder = true)
+@Table(name = "charge_item", catalog = "player")
 public class ChargeItem {
     @Id
     @Column(name = "charge_item_id")

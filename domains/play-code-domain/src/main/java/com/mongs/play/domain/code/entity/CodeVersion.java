@@ -3,6 +3,7 @@ package com.mongs.play.domain.code.entity;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -15,6 +16,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder(toBuilder = true)
+@Table(name = "code_version", catalog = "common")
 public class CodeVersion {
     @Id
     @Column(name = "build_version")

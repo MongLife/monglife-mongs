@@ -14,6 +14,7 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 @AllArgsConstructor
 @EntityListeners(AuditingEntityListener.class)
 @Builder(toBuilder = true)
+@Table(name = "mong_feed_log", catalog = "management")
 public class MongFeedLog extends BaseTimeEntity {
 
     @Id

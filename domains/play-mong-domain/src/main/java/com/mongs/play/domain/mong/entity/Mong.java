@@ -21,6 +21,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @EntityListeners(AuditingEntityListener.class)
 @Builder(toBuilder = true)
+@Table(name = "mong", catalog = "management")
 public class Mong extends BaseTimeEntity {
 
     @Builder.Default
