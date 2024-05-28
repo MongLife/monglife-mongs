@@ -16,7 +16,7 @@ import java.time.LocalDate;
 @AllArgsConstructor
 @EntityListeners(AuditingEntityListener.class)
 @Builder(toBuilder = true)
-@Table(name = "account_log", catalog = "auth")
+@Table(name = "account_log")
 public class AccountLog extends BaseTimeEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

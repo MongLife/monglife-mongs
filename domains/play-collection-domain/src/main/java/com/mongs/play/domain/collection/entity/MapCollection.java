@@ -14,7 +14,7 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 @AllArgsConstructor
 @EntityListeners(AuditingEntityListener.class)
 @Builder(toBuilder = true)
-@Table(name = "map_collection", catalog = "player")
+@Table(name = "map_collection")
 public class MapCollection extends BaseTimeEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

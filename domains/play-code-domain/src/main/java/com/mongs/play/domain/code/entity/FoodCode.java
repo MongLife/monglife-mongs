@@ -14,7 +14,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder(toBuilder = true)
-@Table(name = "food_code", catalog = "common")
+@Table(name = "food_code")
 public class FoodCode {
     @Id
     @Column(name = "code", nullable = false)

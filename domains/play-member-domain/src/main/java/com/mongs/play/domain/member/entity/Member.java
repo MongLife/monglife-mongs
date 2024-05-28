@@ -14,7 +14,7 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 @AllArgsConstructor
 @EntityListeners(AuditingEntityListener.class)
 @Builder(toBuilder = true)
-@Table(name = "member", catalog = "player")
+@Table(name = "member")
 public class Member extends BaseTimeEntity {
     @Id
     private Long accountId;

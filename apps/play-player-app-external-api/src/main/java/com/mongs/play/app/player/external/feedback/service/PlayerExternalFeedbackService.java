@@ -18,7 +18,7 @@ public class PlayerExternalFeedbackService {
 
     private final FeedbackService feedbackService;
 
-    @Transactional
+    @Transactional(value = "chainedTransactionManager")
     public RegisterFeedbackVo registerFeedback(Long accountId, String deviceId, FeedbackVo feedbackVo, List<FeedbackLogVo> feedbackLogVoList) {
 
         Feedback feedback = Feedback.builder()

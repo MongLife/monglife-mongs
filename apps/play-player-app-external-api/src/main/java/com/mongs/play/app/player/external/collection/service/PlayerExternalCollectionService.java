@@ -21,7 +21,7 @@ public class PlayerExternalCollectionService {
     private final CodeService codeService;
     private final CollectionService collectionService;
 
-    @Transactional(readOnly = true)
+    @Transactional(value = "chainedTransactionManager", readOnly = true)
     public List<FindMapCollectionVo> findMapCollection(Long accountId) {
         List<MapCode> mapCodeList = codeService.getMapCode();
         List<String> mapCollectionList = collectionService.getMapCollections(accountId)
@@ -40,7 +40,7 @@ public class PlayerExternalCollectionService {
         return FindMapCollectionVo.toList(enableList, disableList);
     }
 
-    @Transactional(readOnly = true)
+    @Transactional(value = "chainedTransactionManager", readOnly = true)
     public List<FindMongCollectionVo> findMongCollection(Long accountId) {
         List<MongCode> mongCodeList = codeService.getMongCode();
         List<String> mongCollectionList = collectionService.getMongCollections(accountId)

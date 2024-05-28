@@ -37,6 +37,7 @@ public class Task {
     }
 
     public void start() {
+        log.info("[Task start] mongId: {}, taskCode: {}", mongId, taskCode);
         scheduler = this.executor.schedule(this::run, 1000 * expiration, TimeUnit.MILLISECONDS);
     }
 
@@ -54,6 +55,9 @@ public class Task {
     }
 
     public void stop() {
+
+        log.info("[Task stop] mongId: {}, taskCode: {}", mongId, taskCode);
+
         Long duringSeconds = Math.max(0, Math.min(expiration, Duration.between(createdAt, LocalDateTime.now()).getSeconds()));
         publisher.publishEvent(TaskStopEvent.builder()
                 .taskId(taskId)

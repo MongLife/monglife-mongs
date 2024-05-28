@@ -8,6 +8,7 @@ import com.mongs.play.domain.payment.enums.PaymentCode;
 import com.mongs.play.domain.payment.repository.PaymentLogRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.UUID;
 
@@ -17,6 +18,7 @@ public class PaymentService {
 
     private final PaymentLogRepository paymentLogRepository;
 
+    @Transactional(transactionManager = "paymentTransactionManager")
     public PaymentLog addBuySlotLog(Long accountId, String deviceId) {
 
         String receipt = UUID.randomUUID().toString().replace("-", "");
@@ -29,6 +31,7 @@ public class PaymentService {
                 .build());
     }
 
+    @Transactional(transactionManager = "paymentTransactionManager")
     public PaymentLog addIncreaseStarPointLog(Long accountId) {
         return paymentLogRepository.save(PaymentLog.builder()
                 .accountId(accountId)
@@ -38,6 +41,7 @@ public class PaymentService {
                 .build());
     }
 
+    @Transactional(transactionManager = "paymentTransactionManager")
     public PaymentLog addChargeStarPointLog(Long accountId, String deviceId, String receipt) throws InvalidException {
 
         // TODO(" 영수증 확인 로직 ")
@@ -55,6 +59,7 @@ public class PaymentService {
                 .build());
     }
 
+    @Transactional(transactionManager = "paymentTransactionManager")
     public PaymentLog addExchangePayPointLog(Long accountId, String deviceId) {
 
         String receipt = UUID.randomUUID().toString().replace("-", "");
@@ -67,6 +72,7 @@ public class PaymentService {
                 .build());
     }
 
+    @Transactional(transactionManager = "paymentTransactionManager")
     public PaymentLog removeExchangePayPointLog(Long paymentLogId) {
 
         PaymentLog paymentLog = paymentLogRepository.findPaymentLogById(paymentLogId)
@@ -77,6 +83,7 @@ public class PaymentService {
         return paymentLog;
     }
 
+    @Transactional(transactionManager = "paymentTransactionManager")
     public PaymentLog itemReward(Long paymentLogId) {
 
         PaymentLog paymentLog = paymentLogRepository.findPaymentLogById(paymentLogId)

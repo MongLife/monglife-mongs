@@ -24,7 +24,7 @@ public class ManagementInternalService {
     private final MongStatusService mongStatusService;
 
     @RealTimeMong(codes = { PublishCode.MONG_SHIFT })
-    @Transactional
+    @Transactional(value = "mongTransactionManager")
     public EvolutionReadyVo evolutionReady(Long mongId) {
 
         MongVo mongVo = mongService.toggleEvolutionReady(mongId);
@@ -37,7 +37,7 @@ public class ManagementInternalService {
 
     @ValidationDead
     @RealTimeMong(codes = { PublishCode.MONG_STATUS })
-    @Transactional
+    @Transactional(value = "mongTransactionManager")
     public DecreaseStatusVo decreaseStatus(Long mongId, Double subWeight, Double subStrength, Double subSatiety, Double subHealthy, Double subSleep) {
 
         MongVo mongVo = mongStatusService.decreaseStatus(mongId, subWeight, subStrength, subSatiety, subHealthy, subSleep);
@@ -58,7 +58,7 @@ public class ManagementInternalService {
     }
 
     @RealTimeMong(codes = { PublishCode.MONG_POOP_COUNT })
-    @Transactional
+    @Transactional(value = "mongTransactionManager")
     public IncreasePoopCountVo increasePoopCount(Long mongId, Integer addPoopCount) {
 
         MongVo mongVo = mongStatusService.increasePoopCount(mongId, addPoopCount);
@@ -71,7 +71,7 @@ public class ManagementInternalService {
 
     @ValidationDead
     @RealTimeMong(codes = { PublishCode.MONG_STATUS })
-    @Transactional
+    @Transactional(value = "mongTransactionManager")
     public IncreaseStatusVo increaseStatus(Long mongId, Double addWeight, Double addStrength, Double addSatiety, Double addHealthy, Double addSleep) {
 
         MongVo mongVo = mongStatusService.increaseStatus(mongId, addWeight, addStrength, addSatiety, addHealthy, addSleep);
@@ -92,7 +92,7 @@ public class ManagementInternalService {
     }
 
     @RealTimeMong(codes = { PublishCode.MONG_IS_SLEEPING, PublishCode.MONG_POOP_COUNT, PublishCode.MONG_EXP, PublishCode.MONG_STATUS, PublishCode.MONG_STATE, PublishCode.MONG_SHIFT })
-    @Transactional
+    @Transactional(value = "mongTransactionManager")
     public DeadMongVo dead(Long mongId) {
         MongVo mongVo = mongService.deadMong(mongId);
         MongStatusPercentVo mongStatusPercentVo = MongUtil.statusToPercent(mongVo.grade(), mongVo);
@@ -119,7 +119,7 @@ public class ManagementInternalService {
 
 
     @RealTimeMong(codes = { PublishCode.MONG_PAY_POINT })
-    @Transactional
+    @Transactional(value = "mongTransactionManager")
     public IncreasePayPointVo increasePayPoint(Long mongId, Integer addPayPoint) {
         MongVo mongVo = mongPayPointService.increasePayPoint(mongId, addPayPoint);
 

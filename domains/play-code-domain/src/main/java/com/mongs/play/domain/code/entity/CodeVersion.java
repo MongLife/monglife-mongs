@@ -16,7 +16,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder(toBuilder = true)
-@Table(name = "code_version", catalog = "common")
+@Table(name = "code_version")
 public class CodeVersion {
     @Id
     @Column(name = "build_version")

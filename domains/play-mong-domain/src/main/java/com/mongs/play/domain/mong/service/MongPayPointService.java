@@ -22,7 +22,7 @@ public class MongPayPointService {
     private final MongRepository mongRepository;
     private final MongLogRepository mongLogRepository;
 
-    @Transactional
+    @Transactional(transactionManager = "mongTransactionManager")
     public MongVo increasePayPoint(Long mongId, Integer addPayPoint) throws NotFoundException {
 
         Mong mong = mongRepository.findByIdAndIsActiveTrue(mongId)
@@ -46,7 +46,7 @@ public class MongPayPointService {
         return MongVo.of(mong);
     }
 
-    @Transactional
+    @Transactional(transactionManager = "mongTransactionManager")
     public MongVo decreasePayPoint(Long mongId, Integer subPayPoint) throws NotFoundException {
 
         Mong mong = mongRepository.findByIdAndIsActiveTrue(mongId)

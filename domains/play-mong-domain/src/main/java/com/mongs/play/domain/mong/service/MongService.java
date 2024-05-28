@@ -29,12 +29,12 @@ public class MongService {
     private final MongLogRepository mongLogRepository;
     private final MongFeedLogRepository mongFeedLogRepository;
 
-    @Transactional(readOnly = true)
+    @Transactional(transactionManager = "mongTransactionManager", readOnly = true)
     public List<MongVo> findMongByAccountId(Long accountId) {
         return MongVo.toList(mongRepository.findByAccountIdAndIsActiveTrue(accountId));
     }
 
-    @Transactional(readOnly = true)
+    @Transactional(transactionManager = "mongTransactionManager", readOnly = true)
     public MongVo findActiveMongById(Long mongId) throws NotFoundException {
         Mong mong = mongRepository.findByIdAndIsActiveTrue(mongId)
                 .orElseThrow(() -> new NotFoundException(MongErrorCode.NOT_FOUND_ACTIVE_MONG));
@@ -42,7 +42,7 @@ public class MongService {
         return MongVo.of(mong);
     }
 
-    @Transactional
+    @Transactional(transactionManager = "mongTransactionManager")
     public MongVo addMong(Long accountId, String mongCode, String name, String sleepStart, String sleepEnd) {
 
         Mong mong = mongRepository.save(Mong.builder()
@@ -66,7 +66,7 @@ public class MongService {
         return MongVo.of(mong);
     }
 
-    @Transactional
+    @Transactional(transactionManager = "mongTransactionManager")
     public MongVo removeMong(Long mongId) throws NotFoundException {
 
         Mong mong = mongRepository.findByIdAndIsActiveTrue(mongId)
@@ -99,7 +99,7 @@ public class MongService {
         return MongVo.of(mong);
     }
 
-    @Transactional
+    @Transactional(transactionManager = "mongTransactionManager")
     public MongVo increaseNumberOfStroke(Long mongId, Integer strokeCount) throws NotFoundException {
 
         Mong mong = mongRepository.findByIdAndIsActiveTrue(mongId)
@@ -125,7 +125,7 @@ public class MongService {
         return MongVo.of(mong);
     }
 
-    @Transactional
+    @Transactional(transactionManager = "mongTransactionManager")
     public MongVo toggleIsSleeping(Long mongId) throws NotFoundException {
 
         Mong mong = mongRepository.findByIdAndIsActiveTrue(mongId)
@@ -149,7 +149,7 @@ public class MongService {
         return MongVo.of(mong);
     }
 
-    @Transactional
+    @Transactional(transactionManager = "mongTransactionManager")
     public MongVo clearPoopCount(Long mongId) throws NotFoundException {
 
         Mong mong = mongRepository.findByIdAndIsActiveTrue(mongId)
@@ -175,7 +175,7 @@ public class MongService {
         return MongVo.of(mong);
     }
 
-    @Transactional
+    @Transactional(transactionManager = "mongTransactionManager")
     public MongVo increaseStatusTraining(Long mongId, Integer trainingCount, MongTrainingCode mongTrainingCode) throws NotFoundException {
 
         Mong mong = mongRepository.findByIdAndIsActiveTrue(mongId)
@@ -213,7 +213,7 @@ public class MongService {
         return MongVo.of(mong);
     }
 
-    @Transactional
+    @Transactional(transactionManager = "mongTransactionManager")
     public MongVo toggleGraduate(Long mongId) throws NotFoundException {
 
         Mong mong = mongRepository.findByIdAndIsActiveTrue(mongId)
@@ -246,7 +246,7 @@ public class MongService {
         return MongVo.of(mong);
     }
 
-    @Transactional
+    @Transactional(transactionManager = "mongTransactionManager")
     public MongVo toggleEvolutionReady(Long mongId) throws NotFoundException {
 
         Mong mong = mongRepository.findByIdAndIsActiveTrue(mongId)
@@ -268,7 +268,7 @@ public class MongService {
         return MongVo.of(mong);
     }
 
-    @Transactional
+    @Transactional(transactionManager = "mongTransactionManager")
     public MongVo toggleFirstEvolution(Long mongId, String mongCode) throws NotFoundException {
 
         Mong mong = mongRepository.findByIdAndIsActiveTrue(mongId)
@@ -293,7 +293,7 @@ public class MongService {
         return MongVo.of(mong);
     }
 
-    @Transactional
+    @Transactional(transactionManager = "mongTransactionManager")
     public MongVo toggleEvolution(Long mongId, String mongCode) throws NotFoundException {
 
         Mong mong = mongRepository.findByIdAndIsActiveTrue(mongId)
@@ -325,7 +325,7 @@ public class MongService {
         return MongVo.of(mong);
     }
 
-    @Transactional
+    @Transactional(transactionManager = "mongTransactionManager")
     public MongVo toggleLastEvolution(Long mongId) throws NotFoundException {
 
         Mong mong = mongRepository.findByIdAndIsActiveTrue(mongId)
@@ -354,7 +354,7 @@ public class MongService {
         return MongVo.of(mong);
     }
 
-    @Transactional
+    @Transactional(transactionManager = "mongTransactionManager")
     public MongVo deadMong(Long mongId) throws NotFoundException {
 
         Mong mong = mongRepository.findByIdAndIsActiveTrue(mongId)
@@ -387,7 +387,7 @@ public class MongService {
         return MongVo.of(mong);
     }
 
-    @Transactional
+    @Transactional(transactionManager = "mongTransactionManager")
     public MongVo feedMong(Long mongId, String foodCode, Double addWeight, Double addStrength, Double addSatiety, Double addHealthy, Double addSleep, Integer price) throws NotFoundException {
 
         Mong mong = mongRepository.findByIdAndIsActiveTrue(mongId)
@@ -433,7 +433,7 @@ public class MongService {
         return MongVo.of(mong);
     }
 
-    @Transactional(readOnly = true)
+    @Transactional(transactionManager = "mongTransactionManager", readOnly = true)
     public List<MongFeedLogVo> findMongFeedLogByMongId(Long mongId) {
         return MongFeedLogVo.toList(mongFeedLogRepository.findByMongId(mongId));
     }

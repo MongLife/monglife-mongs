@@ -22,12 +22,12 @@ public class MemberService {
 
     private final MemberRepository memberRepository;
 
-    @Transactional
+    @Transactional(transactionManager = "memberTransactionManager")
     public Member addMember(Member member) {
         return memberRepository.save(member);
     }
 
-    @Transactional
+    @Transactional(transactionManager = "memberTransactionManager")
     public Member getMember(Long accountId) {
         return memberRepository.findByAccountIdAndIsDeletedIsFalse(accountId)
                 .orElseGet(() -> this.addMember(Member.builder()
@@ -35,11 +35,13 @@ public class MemberService {
                         .build()));
     }
 
-    @Transactional
+    @Transactional(transactionManager = "memberTransactionManager")
     public Member increaseSlotCount(Long accountId, Integer slotCount) throws NotFoundException {
 
         Member member = memberRepository.findByAccountIdAndIsDeletedIsFalse(accountId)
-                .orElseThrow(() -> new NotFoundException(MemberErrorCode.NOT_FOUND_MEMBER));
+                .orElseGet(() -> this.addMember(Member.builder()
+                        .accountId(accountId)
+                        .build()));
 
         if (member.getStarPoint() < buySlotPrice) {
             throw new InvalidException(MemberErrorCode.NOT_ENOUGH_STAR_POINT);
@@ -54,11 +56,13 @@ public class MemberService {
                 .build());
     }
 
-    @Transactional
+    @Transactional(transactionManager = "memberTransactionManager")
     public Member decreaseSlotCount(Long accountId, Integer slotCount) throws NotFoundException {
 
         Member member = memberRepository.findByAccountIdAndIsDeletedIsFalse(accountId)
-                .orElseThrow(() -> new NotFoundException(MemberErrorCode.NOT_FOUND_MEMBER));
+                .orElseGet(() -> this.addMember(Member.builder()
+                        .accountId(accountId)
+                        .build()));
 
         if (member.getSlotCount() == 1) {
             throw new InvalidException(MemberErrorCode.ALREADY_MIN_SLOT_COUNT);
@@ -71,22 +75,26 @@ public class MemberService {
 
     }
 
-    @Transactional
+    @Transactional(transactionManager = "memberTransactionManager")
     public Member increaseStarPoint(Long accountId, Integer starPoint) throws NotFoundException {
 
         Member member = memberRepository.findByAccountIdAndIsDeletedIsFalse(accountId)
-                .orElseThrow(() -> new NotFoundException(MemberErrorCode.NOT_FOUND_MEMBER));
+                .orElseGet(() -> this.addMember(Member.builder()
+                        .accountId(accountId)
+                        .build()));
 
         return memberRepository.save(member.toBuilder()
                 .starPoint(member.getStarPoint() + starPoint)
                 .build());
     }
 
-    @Transactional
+    @Transactional(transactionManager = "memberTransactionManager")
     public Member decreaseStarPoint(Long accountId, Integer starPoint) throws NotFoundException {
 
         Member member = memberRepository.findByAccountIdAndIsDeletedIsFalse(accountId)
-                .orElseThrow(() -> new NotFoundException(MemberErrorCode.NOT_FOUND_MEMBER));
+                .orElseGet(() -> this.addMember(Member.builder()
+                        .accountId(accountId)
+                        .build()));
 
         if (member.getStarPoint() <= 0) {
             throw new InvalidException(MemberErrorCode.NOT_ENOUGH_STAR_POINT);

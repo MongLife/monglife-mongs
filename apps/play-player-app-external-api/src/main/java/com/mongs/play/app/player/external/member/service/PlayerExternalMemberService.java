@@ -29,7 +29,7 @@ public class PlayerExternalMemberService {
     private final ChargeItemService chargeItemService;
     private final ExchangeItemService exchangeItemService;
 
-    @Transactional
+    @Transactional(value = "chainedTransactionManager")
     public FindMemberVo findMember(Long accountId) {
 
         Member member = memberService.getMember(accountId);
@@ -41,7 +41,8 @@ public class PlayerExternalMemberService {
                 .build();
     }
 
-    @Transactional(readOnly = true)
+
+    @Transactional(value = "chainedTransactionManager", readOnly = true)
     public List<FindChargeItemVo> findChargeItem() {
 
         List<ChargeItem> chargeItemList = chargeItemService.getChargeItem();
@@ -49,7 +50,7 @@ public class PlayerExternalMemberService {
         return FindChargeItemVo.toList(chargeItemList);
     }
 
-    @Transactional(readOnly = true)
+    @Transactional(value = "chainedTransactionManager", readOnly = true)
     public List<FindExchangeItemVo> findExchangeItem() {
 
         List<ExchangeItem> exchangeItemList = exchangeItemService.getExchangeItem();
@@ -57,7 +58,7 @@ public class PlayerExternalMemberService {
         return FindExchangeItemVo.toList(exchangeItemList);
     }
 
-    @Transactional
+    @Transactional(value = "chainedTransactionManager")
     public BuySlotVo buySlot(Long accountId, String deviceId) {
 
         PaymentLog paymentLog = paymentService.addBuySlotLog(accountId, deviceId);
@@ -74,7 +75,7 @@ public class PlayerExternalMemberService {
     }
 
     @RealTimeMember(codes = { PublishCode.MEMBER_STAR_POINT })
-    @Transactional
+    @Transactional(value = "chainedTransactionManager")
     public ChargeStarPointVo chargeStarPoint(Long accountId, String deviceId, String receipt, String chargeItemId) {
 
         PaymentLog paymentLog = paymentService.addChargeStarPointLog(accountId, deviceId, receipt);
@@ -92,7 +93,7 @@ public class PlayerExternalMemberService {
     }
 
     @RealTimeMember(codes = { PublishCode.MEMBER_STAR_POINT })
-    @Transactional
+    @Transactional(value = "chainedTransactionManager")
     public ExchangePayPointVo exchangePayPoint(Long accountId, String deviceId, Long mongId, String exchangeItemId) {
 
         PaymentLog paymentLog = paymentService.addExchangePayPointLog(accountId, deviceId);

@@ -21,7 +21,7 @@ public class MongStatusService {
     private final MongRepository mongRepository;
     private final MongLogRepository mongLogRepository;
 
-    @Transactional
+    @Transactional(transactionManager = "mongTransactionManager")
     public MongVo decreaseStatus(Long mongId, Double subWeight, Double subStrength, Double subSatiety, Double subHealthy, Double subSleep) {
 
         Mong mong = mongRepository.findByIdAndIsActiveTrue(mongId)
@@ -47,7 +47,7 @@ public class MongStatusService {
         return MongVo.of(mong);
     }
 
-    @Transactional
+    @Transactional(transactionManager = "mongTransactionManager")
     public MongVo increasePoopCount(Long mongId, Integer addPoopCount) {
 
         Mong mong = mongRepository.findByIdAndIsActiveTrue(mongId)
@@ -69,7 +69,7 @@ public class MongStatusService {
         return MongVo.of(mong);
     }
 
-    @Transactional
+    @Transactional(transactionManager = "mongTransactionManager")
     public MongVo increaseStatus(Long mongId, Double addWeight, Double addStrength, Double addSatiety, Double addHealthy, Double addSleep) {
 
         Mong mong = mongRepository.findByIdAndIsActiveTrue(mongId)

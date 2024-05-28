@@ -14,7 +14,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder(toBuilder = true)
-@Table(name = "map_code", catalog = "common")
+@Table(name = "map_code")
 public class MapCode {
     @Id
     @Column(name = "code", nullable = false)

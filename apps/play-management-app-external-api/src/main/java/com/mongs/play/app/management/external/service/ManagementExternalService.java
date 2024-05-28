@@ -42,7 +42,7 @@ public class ManagementExternalService {
     private final ManagementWorkerFeignService managementWorkerFeignService;
 
     @RealTimeMong(codes = { PublishCode.MONG_SHIFT })
-    @Transactional
+    @Transactional(value = "chainedTransactionManager")
     public EvolutionReadyVo evolutionReady(Long mongId) {
         MongVo newMongVo = mongService.toggleEvolutionReady(mongId);
 
@@ -52,7 +52,7 @@ public class ManagementExternalService {
                 .build();
     }
 
-    @Transactional(readOnly = true)
+    @Transactional(value = "chainedTransactionManager", readOnly = true)
     public List<FindMongVo> findMong(Long accountId) {
 
         List<MongVo> mongVoList = mongService.findMongByAccountId(accountId);
@@ -87,7 +87,7 @@ public class ManagementExternalService {
                 .toList();
     }
 
-    @Transactional(readOnly = true)
+    @Transactional(value = "chainedTransactionManager", readOnly = true)
     public FindMongVo findMong(Long accountId, Long mongId) {
         MongVo mongVo = mongService.findActiveMongById(mongId);
 
@@ -121,7 +121,7 @@ public class ManagementExternalService {
                 .build();
     }
 
-    @Transactional
+    @Transactional(value = "chainedTransactionManager")
     public RegisterMongVo registerMong(Long accountId, String name, String sleepStart, String sleepEnd) {
 
         List<MongCode> mongCodeList = codeService.getMongCodeByLevel(MongGrade.ZERO.level);
@@ -159,7 +159,7 @@ public class ManagementExternalService {
     }
 
     @RealTimeMong(codes = { PublishCode.MONG_SHIFT })
-    @Transactional
+    @Transactional(value = "chainedTransactionManager")
     public DeleteMongVo deleteMong(Long accountId, Long mongId) {
 
         MongVo mongVo = mongService.findActiveMongById(mongId);
@@ -180,7 +180,7 @@ public class ManagementExternalService {
 
     @ValidationEvolution
     @RealTimeMong(codes = { PublishCode.MONG_EXP })
-    @Transactional
+    @Transactional(value = "chainedTransactionManager")
     public StrokeMongVo strokeMong(Long accountId, Long mongId) {
 
         MongVo mongVo = mongService.findActiveMongById(mongId);
@@ -211,7 +211,7 @@ public class ManagementExternalService {
     }
 
     @RealTimeMong(codes = { PublishCode.MONG_IS_SLEEPING })
-    @Transactional
+    @Transactional(value = "chainedTransactionManager")
     public SleepingMongVo sleepingMong(Long accountId, Long mongId) {
 
         MongVo mongVo = mongService.findActiveMongById(mongId);
@@ -241,7 +241,7 @@ public class ManagementExternalService {
 
     @ValidationEvolution
     @RealTimeMong(codes = { PublishCode.MONG_POOP_COUNT, PublishCode.MONG_EXP })
-    @Transactional
+    @Transactional(value = "chainedTransactionManager")
     public PoopCleanMongVo poopClean(Long accountId, Long mongId) {
 
         MongVo mongVo = mongService.findActiveMongById(mongId);
@@ -272,7 +272,7 @@ public class ManagementExternalService {
                 .build();
     }
 
-    @Transactional
+    @Transactional(value = "chainedTransactionManager")
     public ValidationTrainingMongVo validationTrainingMong(Long mongId, String trainingCode) {
 
         MongVo mongVo = mongService.findActiveMongById(mongId);
@@ -297,7 +297,7 @@ public class ManagementExternalService {
     @ValidationEvolution
     @ValidationDead
     @RealTimeMong(codes = { PublishCode.MONG_EXP, PublishCode.MONG_STATUS, PublishCode.MONG_PAY_POINT })
-    @Transactional
+    @Transactional(value = "chainedTransactionManager")
     public TrainingMongVo trainingMong(Long accountId, Long mongId, String trainingCode) {
 
         MongVo mongVo = mongService.findActiveMongById(mongId);
@@ -339,7 +339,7 @@ public class ManagementExternalService {
     }
 
     @RealTimeMong(codes = { PublishCode.MONG_SHIFT })
-    @Transactional
+    @Transactional(value = "chainedTransactionManager")
     public GraduateMongVo graduateMong(Long accountId, Long mongId) {
 
         MongVo mongVo = mongService.findActiveMongById(mongId);
@@ -363,7 +363,7 @@ public class ManagementExternalService {
     }
 
     @RealTimeMong(codes = { PublishCode.MONG_CODE, PublishCode.MONG_EXP, PublishCode.MONG_STATUS, PublishCode.MONG_STATE, PublishCode.MONG_SHIFT })
-    @Transactional
+    @Transactional(value = "chainedTransactionManager")
     public EvolutionMongVo evolutionMong(Long accountId, Long mongId) {
 
         MongVo mongVo = mongService.findActiveMongById(mongId);
@@ -428,7 +428,7 @@ public class ManagementExternalService {
     @ValidationEvolution
     @ValidationDead
     @RealTimeMong(codes = { PublishCode.MONG_EXP, PublishCode.MONG_STATUS, PublishCode.MONG_PAY_POINT })
-    @Transactional
+    @Transactional(value = "chainedTransactionManager")
     public FeedMongVo feedMong(Long accountId, Long mongId, String foodCode) {
 
         MongVo mongVo = mongService.findActiveMongById(mongId);
@@ -470,7 +470,7 @@ public class ManagementExternalService {
                 .build();
     }
 
-    @Transactional
+    @Transactional(value = "chainedTransactionManager")
     public List<FindFeedLogVo> findFeedLog(Long accountId, Long mongId) {
 
         MongVo mongVo = mongService.findActiveMongById(mongId);

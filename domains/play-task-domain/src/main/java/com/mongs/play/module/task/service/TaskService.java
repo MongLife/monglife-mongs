@@ -11,18 +11,16 @@ import com.mongs.play.module.task.repository.TaskEventRepository;
 import com.mongs.play.module.task.entity.Task;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 @Slf4j
 @Service
@@ -45,7 +43,11 @@ public class TaskService {
     }
 
     private List<TaskEvent> getTaskEventIsNotDone(Long mongId) {
-        return taskEventRepository.findByMongIdAndTaskStatusIsNot(mongId, TaskStatus.DONE);
+        List<TaskEvent> taskEventList = new ArrayList<>();
+        Arrays.stream(TaskStatus.values())
+                .filter(taskStatus -> taskStatus != TaskStatus.DONE)
+                .forEach(taskStatus -> taskEventList.addAll(taskEventRepository.findByMongIdAndTaskStatus(mongId, taskStatus)));
+        return taskEventList;
     }
 
     private TaskEvent getTaskEvent(Long mongId, TaskCode taskCode, TaskStatus taskStatus) throws NotFoundException {
@@ -54,9 +56,19 @@ public class TaskService {
     }
 
     private Boolean validationAddTask(Long mongId, TaskCode taskCode) {
-        Optional<TaskEvent> taskEvent = taskEventRepository.findByMongIdAndTaskCodeAndTaskStatusIn(
-                mongId, taskCode, List.of(TaskStatus.WAIT, TaskStatus.PAUSE, TaskStatus.PAUSE_SYSTEM));
-        return taskEvent.map(event -> activeTaskMap.get(event.getTaskId()) == null).orElse(true);
+
+        AtomicBoolean isAddPossible = new AtomicBoolean(true);
+
+        Arrays.stream(TaskStatus.values())
+                .filter(taskStatus -> taskStatus != TaskStatus.DONE)
+                .forEach(taskStatus -> {
+                    Optional<TaskEvent> taskEvent =
+                            taskEventRepository.findByMongIdAndTaskCodeAndTaskStatus(mongId, taskCode, taskStatus);
+                    boolean isExist = taskEvent.map(event -> activeTaskMap.get(event.getTaskId()) == null).orElse(true);
+                    isAddPossible.set(isAddPossible.get() && isExist);
+                });
+
+        return isAddPossible.get();
     }
 
     private Task getTask(String taskId) throws NotFoundException {
@@ -67,7 +79,6 @@ public class TaskService {
         return task;
     }
 
-    @Transactional
     public void startTask(Long mongId, TaskCode taskCode) {
         try {
             // 동일한 테스크가 존재하면 만들 수 없음
@@ -95,11 +106,10 @@ public class TaskService {
             activeTaskMap.put(taskEvent.getTaskId(), task);
 
         } catch (AlreadyExistException e) {
-//            log.info("[startTask] already exist task, mongId: {}, taskCode: {}", mongId, taskCode);
+            log.info("[startTask] already exist task, mongId: {}, taskCode: {}", mongId, taskCode);
         }
     }
 
-    @Transactional
     public void pauseTask(Long mongId, TaskCode taskCode) {
 
         try {
@@ -120,11 +130,10 @@ public class TaskService {
             activeTaskMap.remove(taskEvent.getTaskId());
 
         } catch (NotFoundException e) {
-//            log.info("[pauseTask] not found task, mongId: {}, taskCode: {}", mongId, taskCode);
+            log.info("[pauseTask] not found task, mongId: {}, taskCode: {}", mongId, taskCode);
         }
     }
 
-    @Transactional
     public void pauseSystemTask() {
 
         List<TaskEvent> taskEventList = getTaskEventByTaskStatus(TaskStatus.WAIT);
@@ -138,16 +147,16 @@ public class TaskService {
                         .taskStatus(TaskStatus.PAUSE_SYSTEM)
                         .expiration(newExpiration)
                         .expiredAt(null)
+                        .ttl(0L)
                         .build());
                 task.pause();
                 activeTaskMap.remove(taskEvent.getTaskId());
             } catch (NotFoundException e) {
-//                log.info("[pauseSystemTask] not found task, mongId: {}, taskCode: {}", taskEvent.getMongId(), taskEvent.getTaskCode());
+                log.info("[pauseSystemTask] not found task, mongId: {}, taskCode: {}", taskEvent.getMongId(), taskEvent.getTaskCode());
             }
         });
     }
 
-    @Transactional
     public void resumeTask(Long mongId, TaskCode taskCode) {
 
         try {
@@ -174,11 +183,10 @@ public class TaskService {
             activeTaskMap.put(taskEvent.getTaskId(), task);
 
         } catch (NotFoundException e) {
-//            log.info("[resumeTask] not found task, mongId: {}, taskCode: {}", mongId, taskCode);
+            log.info("[resumeTask] not found task, mongId: {}, taskCode: {}", mongId, taskCode);
         }
     }
 
-    @Transactional
     public void resumeSystemTask() {
 
         List<TaskEvent> taskEventList = getTaskEventByTaskStatus(TaskStatus.PAUSE_SYSTEM);
@@ -186,6 +194,7 @@ public class TaskService {
         taskEventList.forEach(taskEvent -> {
             taskEvent = taskEventRepository.save(taskEvent.toBuilder()
                     .taskStatus(TaskStatus.WAIT)
+                    .ttl(taskEvent.getExpiration() + 10)
                     .build());
 
             Task task = Task.builder()
@@ -204,7 +213,6 @@ public class TaskService {
         });
     }
 
-    @Transactional
     public void stopTask(Long mongId, TaskCode taskCode) {
 
         try {
@@ -225,7 +233,7 @@ public class TaskService {
             activeTaskMap.remove(taskEvent.getTaskId());
 
         } catch (NotFoundException e) {
-//            log.info("[stopTask] not found task, mongId: {}, taskCode: {}", mongId, taskCode);
+            log.info("[stopTask] not found task, mongId: {}, taskCode: {}", mongId, taskCode);
         }
     }
 
@@ -248,12 +256,11 @@ public class TaskService {
                 // 테스크 삭제
                 activeTaskMap.remove(taskEvent.getTaskId());
             } catch (NotFoundException e) {
-//                log.info("[forceStopAllTask] not found task, mongId: {}, taskCode: {}", taskEvent.getMongId(), taskEvent.getTaskCode());
+                log.info("[forceStopAllTask] not found task, mongId: {}, taskCode: {}", taskEvent.getMongId(), taskEvent.getTaskCode());
             }
         });
     }
 
-    @Transactional
     public void doneTask(String taskId) throws NotFoundException {
 
         try {
@@ -270,7 +277,7 @@ public class TaskService {
             activeTaskMap.remove(taskEvent.getTaskId());
 
         } catch (NotFoundException e) {
-//            log.info("[doneTask] not found task, taskId: {}", taskId);
+            log.info("[doneTask] not found task, taskId: {}", taskId);
         }
     }
 }

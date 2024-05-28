@@ -16,7 +16,7 @@ import java.util.UUID;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder(toBuilder = true)
-@Table(name = "exchange_item", catalog = "player")
+@Table(name = "exchange_item")
 public class ExchangeItem {
     @Id
     @Column(name = "exchange_item_id")

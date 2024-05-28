@@ -16,6 +16,7 @@ import com.mongs.play.domain.code.repository.MongCodeRepository;
 import com.mongs.play.module.hmac.HmacProvider;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -30,6 +31,7 @@ public class CodeVersionService {
     private final MongCodeRepository mongCodeRepository;
     private final FoodCodeRepository foodCodeRepository;
 
+    @Transactional(transactionManager = "codeTransactionManager")
     public CodeVersion addCodeVersion(String buildVersion) {
 
         codeVersionRepository.findByBuildVersion(buildVersion)
@@ -43,11 +45,13 @@ public class CodeVersionService {
                 .build());
     }
 
+    @Transactional(transactionManager = "codeTransactionManager")
     public CodeVersion getCodeVersion(String buildVersion) throws NotFoundException {
         return codeVersionRepository.findByBuildVersion(buildVersion)
                 .orElseThrow(() -> new NotFoundException(CodeErrorCode.NOT_FOUND_CODE_VERSION));
     }
 
+    @Transactional(transactionManager = "codeTransactionManager")
     public CodeVersion updateCode(String buildVersion) throws NotFoundException, GenerateException {
         CodeVersion codeVersion = codeVersionRepository.findByBuildVersion(buildVersion)
                 .orElseThrow(() -> new NotFoundException(CodeErrorCode.NOT_FOUND_CODE_VERSION));
@@ -68,6 +72,7 @@ public class CodeVersionService {
         return codeVersion;
     }
 
+    @Transactional(transactionManager = "codeTransactionManager")
     private String getIntegrity(String buildVersion) throws GenerateException {
 
         List<MapCode> mapCodeList = mapCodeRepository.findByBuildVersionIsLessThanEqual(buildVersion);
@@ -82,6 +87,7 @@ public class CodeVersionService {
                 .orElseThrow(() -> new GenerateException(HmacErrorCode.GENERATE_HMAC));
     }
 
+    @Transactional(transactionManager = "codeTransactionManager")
     public void removeCodeVersion() {
         codeVersionRepository.deleteAll();
     }

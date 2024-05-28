@@ -27,7 +27,7 @@ public class CollectionService {
         return mongCollectionRepository.findByAccountId(accountId);
     }
 
-    @Transactional
+    @Transactional(transactionManager = "collectionTransactionManager")
     public MapCollection addMapCollection(Long accountId, String mapCode) {
         return mapCollectionRepository.findByAccountIdAndCode(accountId, mapCode)
                 .orElseGet(() -> mapCollectionRepository.save(MapCollection.builder()
@@ -36,7 +36,7 @@ public class CollectionService {
                                 .build()));
     }
 
-    @Transactional
+    @Transactional(transactionManager = "collectionTransactionManager")
     public MongCollection addMongCollection(Long accountId, String mongCode) {
         return mongCollectionRepository.findByAccountIdAndCode(accountId, mongCode)
                 .orElseGet(() ->
@@ -47,7 +47,7 @@ public class CollectionService {
                                 .build()));
     }
 
-    @Transactional
+    @Transactional(transactionManager = "collectionTransactionManager")
     public void removeMapCollection(Long accountId, String mapCode) throws NotFoundException {
 
         mapCollectionRepository.findByAccountIdAndCode(accountId, mapCode)
@@ -56,7 +56,7 @@ public class CollectionService {
         mapCollectionRepository.deleteByAccountIdAndCode(accountId, mapCode);
     }
 
-    @Transactional
+    @Transactional(transactionManager = "collectionTransactionManager")
     public void removeMongCollection(Long accountId, String mongCode) throws NotFoundException {
 
         mongCollectionRepository.findByAccountIdAndCode(accountId, mongCode)

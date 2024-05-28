@@ -16,7 +16,7 @@ import java.util.UUID;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder(toBuilder = true)
-@Table(name = "charge_item", catalog = "player")
+@Table(name = "charge_item")
 public class ChargeItem {
     @Id
     @Column(name = "charge_item_id")

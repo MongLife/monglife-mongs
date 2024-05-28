@@ -19,7 +19,7 @@ public class PlayerInternalMemberService {
     private final MemberService memberService;
 
     @RealTimeMember(codes = { PublishCode.MEMBER_STAR_POINT })
-    @Transactional
+    @Transactional(value = "chainedTransactionManager")
     public IncreaseStarPointVo increaseStarPointMapCollection(Long accountId) {
 
         int starPoint = 10;
@@ -34,7 +34,7 @@ public class PlayerInternalMemberService {
     }
 
     @RealTimeMember(codes = { PublishCode.MEMBER_STAR_POINT })
-    @Transactional
+    @Transactional(value = "chainedTransactionManager")
     public IncreaseStarPointVo increaseStarPointMongCollection(Long accountId) {
 
         int starPoint = 10;

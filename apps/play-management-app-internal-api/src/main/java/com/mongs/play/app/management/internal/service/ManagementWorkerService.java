@@ -14,27 +14,22 @@ public class ManagementWorkerService {
 
     private final TaskService taskService;
 
-    @Transactional
     public void zeroEvolution(Long mongId) {
         taskService.startTask(mongId, TaskCode.ZERO_EVOLUTION);
     }
 
-    @Transactional
     public void firstEvolution(Long mongId) {
         taskService.startTask(mongId, TaskCode.DECREASE_STATUS);
         taskService.startTask(mongId, TaskCode.INCREASE_POOP_COUNT);
     }
 
-    @Transactional
     public void evolution(Long mongId) {
     }
 
-    @Transactional
     public void lastEvolution(Long mongId) {
         taskService.forceStopAllTask(mongId);
     }
 
-    @Transactional
     public void sleepSleeping(Long mongId) {
         taskService.stopTask(mongId, TaskCode.DECREASE_STATUS);
         taskService.stopTask(mongId, TaskCode.INCREASE_POOP_COUNT);
@@ -45,7 +40,6 @@ public class ManagementWorkerService {
         taskService.startTask(mongId, TaskCode.INCREASE_STATUS);
     }
 
-    @Transactional
     public void awakeSleeping(Long mongId) {
         taskService.stopTask(mongId, TaskCode.INCREASE_STATUS);
 
@@ -56,27 +50,22 @@ public class ManagementWorkerService {
         taskService.resumeTask(mongId, TaskCode.DEAD_SATIETY);
     }
 
-    @Transactional
     public void delete(Long mongId) {
         taskService.forceStopAllTask(mongId);
     }
 
-    @Transactional
     public void deadHealthy(Long mongId) {
         taskService.startTask(mongId, TaskCode.DEAD_HEALTHY);
     }
 
-    @Transactional
     public void liveHealthy(Long mongId) {
         taskService.stopTask(mongId, TaskCode.DEAD_HEALTHY);
     }
 
-    @Transactional
     public void deadSatiety(Long mongId) {
         taskService.startTask(mongId, TaskCode.DEAD_SATIETY);
     }
 
-    @Transactional
     public void liveSatiety(Long mongId) {
         taskService.stopTask(mongId, TaskCode.DEAD_SATIETY);
     }

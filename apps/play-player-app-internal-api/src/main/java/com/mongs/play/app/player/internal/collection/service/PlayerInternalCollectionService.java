@@ -21,7 +21,7 @@ public class PlayerInternalCollectionService {
     private final CodeService codeService;
     private final CollectionService collectionService;
 
-    @Transactional
+    @Transactional(value = "chainedTransactionManager")
     public RegisterMapCollectionVo registerMapCollection(Long accountId, String code) {
 
         /* mapCode 값 유효성 체크 */
@@ -36,7 +36,7 @@ public class PlayerInternalCollectionService {
                 .build();
     }
 
-    @Transactional
+    @Transactional(value = "chainedTransactionManager")
     public RegisterMongCollectionVo registerMongCollection(Long accountId, String code) {
 
         /* mongCode 값 유효성 체크 */
@@ -51,7 +51,7 @@ public class PlayerInternalCollectionService {
                 .build();
     }
 
-    @Transactional
+    @Transactional(value = "chainedTransactionManager")
     public RemoveMapCollectionVo removeMapCollection(Long accountId, String code) {
 
         /* mapCode 값 유효성 체크 */
@@ -65,7 +65,7 @@ public class PlayerInternalCollectionService {
                 .build();
     }
 
-    @Transactional
+    @Transactional(value = "chainedTransactionManager")
     public RemoveMongCollectionVo removeMongCollection(Long accountId, String code) {
 
         /* mongCode 값 유효성 체크 */
