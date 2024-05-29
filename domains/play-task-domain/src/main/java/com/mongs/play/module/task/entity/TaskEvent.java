@@ -6,7 +6,6 @@ import lombok.Builder;
 import lombok.Data;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.redis.core.RedisHash;
-import org.springframework.data.redis.core.TimeToLive;
 import org.springframework.data.redis.core.index.Indexed;
 
 import java.time.LocalDateTime;
@@ -29,8 +28,6 @@ public class TaskEvent {
     private Long expiration;
     private LocalDateTime expiredAt;
     private LocalDateTime createdAt;
-    @TimeToLive
-    private Long ttl;
 
     public static TaskEvent of(Long mongId, TaskCode taskCode, Long expiration) {
         LocalDateTime createdAt = LocalDateTime.now();
@@ -41,7 +38,6 @@ public class TaskEvent {
                 .expiration(expiration)
                 .expiredAt(expiredAt)
                 .createdAt(createdAt)
-                .ttl(expiration)
                 .build();
     }
 }

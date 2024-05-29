@@ -7,10 +7,11 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.connection.RedisStandaloneConfiguration;
 import org.springframework.data.redis.connection.lettuce.LettuceConnectionFactory;
+import org.springframework.data.redis.core.RedisKeyValueAdapter;
 import org.springframework.data.redis.repository.configuration.EnableRedisRepositories;
 
-@EnableRedisRepositories
 @Configuration
+@EnableRedisRepositories(enableKeyspaceEvents = RedisKeyValueAdapter.EnableKeyspaceEvents.ON_STARTUP)
 public class RedisConfig {
 
     @Value("${spring.data.redis.host}")
@@ -19,6 +20,8 @@ public class RedisConfig {
     private int port;
     @Value("${spring.data.redis.password}")
     private String password;
+    @Value("${spring.data.redis.database}")
+    private Integer database;
 
     @Bean
     @ConditionalOnMissingBean(RedisConnectionFactory.class)
@@ -27,6 +30,7 @@ public class RedisConfig {
         redisStandaloneConfiguration.setHostName(host);
         redisStandaloneConfiguration.setPort(port);
         redisStandaloneConfiguration.setPassword(password);
+        redisStandaloneConfiguration.setDatabase(database);
         return new LettuceConnectionFactory(redisStandaloneConfiguration);
     }
 }

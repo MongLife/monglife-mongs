@@ -12,6 +12,8 @@ import java.util.Optional;
 @Repository
 public interface TaskEventRepository extends CrudRepository<TaskEvent, String> {
     List<TaskEvent> findByTaskStatus(TaskStatus taskStatus);
-    List<TaskEvent> findByMongIdAndTaskStatus(Long mongId, TaskStatus taskStatus);
+
+    List<TaskEvent> findByMongId(Long mongId);
+
     Optional<TaskEvent> findByMongIdAndTaskCodeAndTaskStatus(Long mongId, TaskCode taskCode, TaskStatus taskStatus);
 }

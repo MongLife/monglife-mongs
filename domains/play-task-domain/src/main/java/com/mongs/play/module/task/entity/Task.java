@@ -37,16 +37,11 @@ public class Task {
     }
 
     public void start() {
-        log.info("[Task start] mongId: {}, taskCode: {}", mongId, taskCode);
         scheduler = this.executor.schedule(this::run, 1000 * expiration, TimeUnit.MILLISECONDS);
     }
 
     public void pause() {
         scheduler.cancel(false);
-        publisher.publishEvent(TaskPauseEvent.builder()
-                .taskCode(taskCode)
-                .mongId(mongId)
-                .build());
     }
 
     public void forceStop() {
@@ -55,12 +50,8 @@ public class Task {
 
     public void stop() {
         scheduler.cancel(false);
-
-        log.info("[Task.stop] mongId: {}, taskCode: {}", mongId, taskCode);
-
         Long duringSeconds = Math.max(0, Math.min(expiration, Duration.between(createdAt, LocalDateTime.now()).getSeconds()));
         publisher.publishEvent(TaskStopEvent.builder()
-                .taskId(taskId)
                 .taskCode(taskCode)
                 .mongId(mongId)
                 .expiration(expiration)

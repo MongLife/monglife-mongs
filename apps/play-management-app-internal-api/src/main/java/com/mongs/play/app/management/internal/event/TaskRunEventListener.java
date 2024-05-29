@@ -32,9 +32,7 @@ public class TaskRunEventListener {
         TaskCode taskCode = event.getTaskCode();
         Long mongId = event.getMongId();
 
-        log.info("[Run] mongId: {}, taskCode: {}", mongId, taskCode);
-
-//        taskService.doneTask(taskId);
+        taskService.doneTask(taskId);
 
         switch (taskCode) {
             case ZERO_EVOLUTION -> {
@@ -42,52 +40,44 @@ public class TaskRunEventListener {
                     managementInternalService.evolutionReady(mongId);
                 } catch (NotFoundException e) {
                     taskService.forceStopAllTask(mongId);
-                } catch (RuntimeException e) {
-                    log.error("[Run Error] mongId: {}, taskCode: {}, message: {}", mongId, taskCode, e.getMessage());
                 }
             }
             case DECREASE_STATUS -> {
                 try {
-                    managementInternalService.decreaseStatus(mongId, TaskUtil.subWeight, TaskUtil.subStrength, TaskUtil.subSatiety, TaskUtil.subHealthy, TaskUtil.subSleep);
                     taskService.startTask(mongId, taskCode);
+                    managementInternalService.decreaseStatus(mongId, TaskUtil.subWeight, TaskUtil.subStrength, TaskUtil.subSatiety, TaskUtil.subHealthy, TaskUtil.subSleep);
                 } catch (NotFoundException e) {
                     taskService.forceStopAllTask(mongId);
-                } catch (RuntimeException e) {
-                    log.error("[Run Error] mongId: {}, taskCode: {}, message: {}", mongId, taskCode, e.getMessage());
                 }
             }
             case INCREASE_STATUS -> {
                 try {
-                    managementInternalService.increaseStatus(mongId, TaskUtil.addWeight, TaskUtil.addStrength, TaskUtil.addSatiety, TaskUtil.addHealthy, TaskUtil.addSleep);
                     taskService.startTask(mongId, taskCode);
+                    managementInternalService.increaseStatus(mongId, TaskUtil.addWeight, TaskUtil.addStrength, TaskUtil.addSatiety, TaskUtil.addHealthy, TaskUtil.addSleep);
                 } catch (NotFoundException e) {
                     taskService.forceStopAllTask(mongId);
-                } catch (RuntimeException e) {
-                    log.error("[Run Error] mongId: {}, taskCode: {}, message: {}", mongId, taskCode, e.getMessage());
                 }
             }
             case INCREASE_POOP_COUNT -> {
                 try {
                     int addPoopCount = 1;
-                    managementInternalService.increasePoopCount(mongId, addPoopCount);
                     taskService.startTask(mongId, taskCode);
+                    managementInternalService.increasePoopCount(mongId, addPoopCount);
                 } catch (NotFoundException e) {
                     taskService.forceStopAllTask(mongId);
-                } catch (RuntimeException e) {
-                    log.error("[Run Error] mongId: {}, taskCode: {}, message: {}", mongId, taskCode, e.getMessage());
                 }
             }
             case DEAD_HEALTHY, DEAD_SATIETY -> {
                 try {
-                    managementInternalService.dead(mongId);
                     taskService.forceStopAllTask(mongId);
+                    managementInternalService.dead(mongId);
                 } catch (NotFoundException e) {
                     taskService.forceStopAllTask(mongId);
-                } catch (RuntimeException e) {
-                    log.error("[Run Error] mongId: {}, taskCode: {}, message: {}", mongId, taskCode, e.getMessage());
                 }
             }
             default -> throw new ManagementWorkerException(ManagementWorkerErrorCode.INVALID_STOP_EVENT);
         }
+
+        taskService.removeTask(taskId);
     }
 }

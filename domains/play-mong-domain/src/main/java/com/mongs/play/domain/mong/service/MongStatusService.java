@@ -83,7 +83,7 @@ public class MongStatusService {
                 .sleep(mong.getSleep() + addSleep)
                 .build().validation());
 
-        MongLogCode mongLogCode = MongLogCode.DECREASE_STATUS;
+        MongLogCode mongLogCode = MongLogCode.INCREASE_STATUS;
         mongLogRepository.save(MongLog.builder()
                 .mongId(mong.getId())
                 .mongLogCode(mongLogCode)

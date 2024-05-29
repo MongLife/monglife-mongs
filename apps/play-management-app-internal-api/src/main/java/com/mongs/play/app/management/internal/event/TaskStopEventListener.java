@@ -19,22 +19,16 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 public class TaskStopEventListener {
 
-    private final TaskService taskService;
     private final ManagementInternalService managementInternalService;
 
     @Async
     @EventListener
     public void taskStopEventListener(TaskStopEvent event) {
 
-        String taskId = event.getTaskId();
         TaskCode taskCode = event.getTaskCode();
         Long mongId = event.getMongId();
         Long expiration = event.getExpiration();
         Long duringSeconds = event.getDuringSeconds();
-
-        log.info("[TaskStopEventListener.taskStopEventListener] mongId: {}, taskCode: {}, duringSeconds: {}", mongId, taskCode, duringSeconds);
-
-        taskService.doneTask(taskId);
 
         switch (taskCode) {
             case ZERO_EVOLUTION -> {}

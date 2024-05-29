@@ -14,6 +14,10 @@ import java.util.Optional;
 
 @Repository
 public interface MongRepository extends JpaRepository<Mong, Long> {
+
+    @Query("SELECT m FROM Mong m WHERE m.isActive = true")
+    List<Mong> findAllActive();
+
     @Query("SELECT m FROM Mong m WHERE m.accountId = :accountId AND m.isActive = true")
     List<Mong> findByAccountIdAndIsActiveTrue(@Param("accountId") Long accountId);
 

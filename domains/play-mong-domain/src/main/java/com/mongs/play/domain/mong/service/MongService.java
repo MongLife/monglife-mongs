@@ -30,6 +30,11 @@ public class MongService {
     private final MongFeedLogRepository mongFeedLogRepository;
 
     @Transactional(transactionManager = "mongTransactionManager", readOnly = true)
+    public List<MongVo> findAllMong() {
+        return MongVo.toList(mongRepository.findAllActive());
+    }
+
+    @Transactional(transactionManager = "mongTransactionManager", readOnly = true)
     public List<MongVo> findMongByAccountId(Long accountId) {
         return MongVo.toList(mongRepository.findByAccountIdAndIsActiveTrue(accountId));
     }
