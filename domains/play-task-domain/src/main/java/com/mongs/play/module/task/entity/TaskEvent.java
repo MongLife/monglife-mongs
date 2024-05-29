@@ -41,7 +41,7 @@ public class TaskEvent {
                 .expiration(expiration)
                 .expiredAt(expiredAt)
                 .createdAt(createdAt)
-                .ttl(expiration + 10)
+                .ttl(expiration)
                 .build();
     }
 }

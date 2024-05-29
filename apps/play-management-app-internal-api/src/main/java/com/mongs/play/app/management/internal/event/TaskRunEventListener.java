@@ -11,8 +11,10 @@ import com.mongs.play.module.task.service.TaskService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.event.EventListener;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.ExceptionHandler;
 
 @Slf4j
 @Service
@@ -22,8 +24,8 @@ public class TaskRunEventListener {
     private final TaskService taskService;
     private final ManagementInternalService managementInternalService;
 
+    @Async
     @EventListener
-    @Transactional(value = "mongTransactionManager")
     public void taskRunEventListener(TaskRunEvent event) {
 
         String taskId = event.getTaskId();
@@ -32,7 +34,7 @@ public class TaskRunEventListener {
 
         log.info("[Run] mongId: {}, taskCode: {}", mongId, taskCode);
 
-        taskService.doneTask(taskId);
+//        taskService.doneTask(taskId);
 
         switch (taskCode) {
             case ZERO_EVOLUTION -> {
@@ -40,6 +42,8 @@ public class TaskRunEventListener {
                     managementInternalService.evolutionReady(mongId);
                 } catch (NotFoundException e) {
                     taskService.forceStopAllTask(mongId);
+                } catch (RuntimeException e) {
+                    log.error("[Run Error] mongId: {}, taskCode: {}, message: {}", mongId, taskCode, e.getMessage());
                 }
             }
             case DECREASE_STATUS -> {
@@ -48,6 +52,8 @@ public class TaskRunEventListener {
                     taskService.startTask(mongId, taskCode);
                 } catch (NotFoundException e) {
                     taskService.forceStopAllTask(mongId);
+                } catch (RuntimeException e) {
+                    log.error("[Run Error] mongId: {}, taskCode: {}, message: {}", mongId, taskCode, e.getMessage());
                 }
             }
             case INCREASE_STATUS -> {
@@ -56,6 +62,8 @@ public class TaskRunEventListener {
                     taskService.startTask(mongId, taskCode);
                 } catch (NotFoundException e) {
                     taskService.forceStopAllTask(mongId);
+                } catch (RuntimeException e) {
+                    log.error("[Run Error] mongId: {}, taskCode: {}, message: {}", mongId, taskCode, e.getMessage());
                 }
             }
             case INCREASE_POOP_COUNT -> {
@@ -65,6 +73,8 @@ public class TaskRunEventListener {
                     taskService.startTask(mongId, taskCode);
                 } catch (NotFoundException e) {
                     taskService.forceStopAllTask(mongId);
+                } catch (RuntimeException e) {
+                    log.error("[Run Error] mongId: {}, taskCode: {}, message: {}", mongId, taskCode, e.getMessage());
                 }
             }
             case DEAD_HEALTHY, DEAD_SATIETY -> {
@@ -73,6 +83,8 @@ public class TaskRunEventListener {
                     taskService.forceStopAllTask(mongId);
                 } catch (NotFoundException e) {
                     taskService.forceStopAllTask(mongId);
+                } catch (RuntimeException e) {
+                    log.error("[Run Error] mongId: {}, taskCode: {}, message: {}", mongId, taskCode, e.getMessage());
                 }
             }
             default -> throw new ManagementWorkerException(ManagementWorkerErrorCode.INVALID_STOP_EVENT);

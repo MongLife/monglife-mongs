@@ -20,7 +20,7 @@ public class ManagementWorkerService {
 
     public void firstEvolution(Long mongId) {
         taskService.startTask(mongId, TaskCode.DECREASE_STATUS);
-        taskService.startTask(mongId, TaskCode.INCREASE_POOP_COUNT);
+//        taskService.startTask(mongId, TaskCode.INCREASE_POOP_COUNT);
     }
 
     public void evolution(Long mongId) {
@@ -32,10 +32,10 @@ public class ManagementWorkerService {
 
     public void sleepSleeping(Long mongId) {
         taskService.stopTask(mongId, TaskCode.DECREASE_STATUS);
-        taskService.stopTask(mongId, TaskCode.INCREASE_POOP_COUNT);
+//        taskService.stopTask(mongId, TaskCode.INCREASE_POOP_COUNT);
 
-        taskService.pauseTask(mongId, TaskCode.DEAD_HEALTHY);
-        taskService.pauseTask(mongId, TaskCode.DEAD_SATIETY);
+//        taskService.pauseTask(mongId, TaskCode.DEAD_HEALTHY);
+//        taskService.pauseTask(mongId, TaskCode.DEAD_SATIETY);
 
         taskService.startTask(mongId, TaskCode.INCREASE_STATUS);
     }
@@ -44,10 +44,10 @@ public class ManagementWorkerService {
         taskService.stopTask(mongId, TaskCode.INCREASE_STATUS);
 
         taskService.startTask(mongId, TaskCode.DECREASE_STATUS);
-        taskService.startTask(mongId, TaskCode.INCREASE_POOP_COUNT);
+//        taskService.startTask(mongId, TaskCode.INCREASE_POOP_COUNT);
 
-        taskService.resumeTask(mongId, TaskCode.DEAD_HEALTHY);
-        taskService.resumeTask(mongId, TaskCode.DEAD_SATIETY);
+//        taskService.resumeTask(mongId, TaskCode.DEAD_HEALTHY);
+//        taskService.resumeTask(mongId, TaskCode.DEAD_SATIETY);
     }
 
     public void delete(Long mongId) {

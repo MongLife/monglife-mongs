@@ -11,8 +11,8 @@ import org.springframework.transaction.PlatformTransactionManager;
 public class MultiTransactionConfig {
 
     @Primary
-    @Bean(name = "chainedTransactionManager")
-    public ChainedTransactionManager chainedTransactionManager(
+    @Bean(name = "transactionManager")
+    public ChainedTransactionManager transactionManager(
             @Qualifier("codeTransactionManager") PlatformTransactionManager codeTransactionManager,
             @Qualifier("collectionTransactionManager") PlatformTransactionManager collectionTransactionManager,
             @Qualifier("feedbackTransactionManager") PlatformTransactionManager feedbackTransactionManager,

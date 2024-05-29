@@ -34,18 +34,22 @@ public class CodeVersionService {
     @Transactional(transactionManager = "codeTransactionManager")
     public CodeVersion addCodeVersion(String buildVersion) {
 
-        codeVersionRepository.findByBuildVersion(buildVersion)
+        codeVersionRepository.findByBuildVersionWithLock(buildVersion)
                 .ifPresent(codeVersion -> codeVersionRepository.deleteById(buildVersion));
+
+        List<MapCode> mapCodeList = mapCodeRepository.findByBuildVersionIsLessThanEqual(buildVersion);
+        List<MongCode> mongCodeList = mongCodeRepository.findByBuildVersionIsLessThanEqual(buildVersion);
+        List<FoodCode> foodCodeList = foodCodeRepository.findByBuildVersionIsLessThanEqual(buildVersion);
 
         return codeVersionRepository.save(CodeVersion.builder()
                 .buildVersion(buildVersion)
-                .codeIntegrity(this.getIntegrity(buildVersion))
+                .codeIntegrity(this.getIntegrity(mapCodeList, mongCodeList, foodCodeList))
                 .mustUpdateApp(false)
                 .createdAt(LocalDateTime.now())
                 .build());
     }
 
-    @Transactional(transactionManager = "codeTransactionManager")
+    @Transactional(transactionManager = "codeTransactionManager", readOnly = true)
     public CodeVersion getCodeVersion(String buildVersion) throws NotFoundException {
         return codeVersionRepository.findByBuildVersion(buildVersion)
                 .orElseThrow(() -> new NotFoundException(CodeErrorCode.NOT_FOUND_CODE_VERSION));
@@ -53,11 +57,15 @@ public class CodeVersionService {
 
     @Transactional(transactionManager = "codeTransactionManager")
     public CodeVersion updateCode(String buildVersion) throws NotFoundException, GenerateException {
-        CodeVersion codeVersion = codeVersionRepository.findByBuildVersion(buildVersion)
+        CodeVersion codeVersion = codeVersionRepository.findByBuildVersionWithLock(buildVersion)
                 .orElseThrow(() -> new NotFoundException(CodeErrorCode.NOT_FOUND_CODE_VERSION));
 
+        List<MapCode> mapCodeList = mapCodeRepository.findByBuildVersionIsLessThanEqual(buildVersion);
+        List<MongCode> mongCodeList = mongCodeRepository.findByBuildVersionIsLessThanEqual(buildVersion);
+        List<FoodCode> foodCodeList = foodCodeRepository.findByBuildVersionIsLessThanEqual(buildVersion);
+
         codeVersionRepository.save(codeVersion.toBuilder()
-                .codeIntegrity(this.getIntegrity(buildVersion))
+                .codeIntegrity(this.getIntegrity(mapCodeList, mongCodeList, foodCodeList))
                 .build());
 
         /* 이전 버전들에 대해 업데이트 여부 true 로 변경 */
@@ -73,22 +81,16 @@ public class CodeVersionService {
     }
 
     @Transactional(transactionManager = "codeTransactionManager")
-    private String getIntegrity(String buildVersion) throws GenerateException {
+    public void removeCodeVersion() {
+        codeVersionRepository.deleteAll();
+    }
 
-        List<MapCode> mapCodeList = mapCodeRepository.findByBuildVersionIsLessThanEqual(buildVersion);
-        List<MongCode> mongCodeList = mongCodeRepository.findByBuildVersionIsLessThanEqual(buildVersion);
-        List<FoodCode> foodCodeList = foodCodeRepository.findByBuildVersionIsLessThanEqual(buildVersion);
-
+    private String getIntegrity(List<MapCode> mapCodeList, List<MongCode> mongCodeList, List<FoodCode> foodCodeList) throws GenerateException {
         return hmacProvider.generateHmac(CodeVo.builder()
                         .mapCodeList(mapCodeList)
                         .mongCodeList(mongCodeList)
                         .foodCodeList(foodCodeList)
                         .build())
                 .orElseThrow(() -> new GenerateException(HmacErrorCode.GENERATE_HMAC));
-    }
-
-    @Transactional(transactionManager = "codeTransactionManager")
-    public void removeCodeVersion() {
-        codeVersionRepository.deleteAll();
     }
 }

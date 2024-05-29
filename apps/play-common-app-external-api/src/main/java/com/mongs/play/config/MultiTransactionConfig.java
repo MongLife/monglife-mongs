@@ -13,9 +13,8 @@ public class MultiTransactionConfig {
     @Primary
     @Bean(name = "transactionManager")
     public ChainedTransactionManager transactionManager(
-            @Qualifier("codeTransactionManager") PlatformTransactionManager codeTransactionManager,
-            @Qualifier("mongTransactionManager") PlatformTransactionManager mongTransactionManager
+            @Qualifier("codeTransactionManager") PlatformTransactionManager codeTransactionManager
     ) {
-        return new ChainedTransactionManager(codeTransactionManager, mongTransactionManager);
+        return new ChainedTransactionManager(codeTransactionManager);
     }
 }

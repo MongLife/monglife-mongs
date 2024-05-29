@@ -23,7 +23,7 @@ public class AccountService {
                         .build()));
     }
 
-    @Transactional(transactionManager = "accountTransactionManager")
+    @Transactional(transactionManager = "accountTransactionManager", readOnly = true)
     public Account getAccountById(Long accountId) throws NotFoundException {
         return accountRepository.findByIdAndIsDeletedFalse(accountId)
                 .orElseThrow(() -> new NotFoundException(AccountErrorCode.NOT_FOUND_ACCOUNT));

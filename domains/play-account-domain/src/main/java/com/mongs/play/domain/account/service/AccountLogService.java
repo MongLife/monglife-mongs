@@ -26,7 +26,7 @@ public class AccountLogService {
 
         LocalDate today = LocalDate.now();
 
-        AccountLog accountLog = accountLogRepository.findByAccountIdAndDeviceIdAndLoginAt(accountId, deviceId, today)
+        AccountLog accountLog = accountLogRepository.findByAccountIdAndDeviceIdAndLoginAtWithLock(accountId, deviceId, today)
                 .orElseGet(() -> accountLogRepository.save(AccountLog.builder()
                                 .accountId(accountId)
                                 .deviceId(deviceId)

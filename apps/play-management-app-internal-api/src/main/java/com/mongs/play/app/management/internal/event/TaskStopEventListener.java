@@ -10,6 +10,7 @@ import com.mongs.play.module.task.service.TaskService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.event.EventListener;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -21,8 +22,8 @@ public class TaskStopEventListener {
     private final TaskService taskService;
     private final ManagementInternalService managementInternalService;
 
+    @Async
     @EventListener
-    @Transactional(value = "mongTransactionManager")
     public void taskStopEventListener(TaskStopEvent event) {
 
         String taskId = event.getTaskId();
@@ -31,7 +32,7 @@ public class TaskStopEventListener {
         Long expiration = event.getExpiration();
         Long duringSeconds = event.getDuringSeconds();
 
-        log.info("[Stop] mongId: {}, taskCode: {}, duringSeconds: {}", mongId, taskCode, duringSeconds);
+        log.info("[TaskStopEventListener.taskStopEventListener] mongId: {}, taskCode: {}, duringSeconds: {}", mongId, taskCode, duringSeconds);
 
         taskService.doneTask(taskId);
 

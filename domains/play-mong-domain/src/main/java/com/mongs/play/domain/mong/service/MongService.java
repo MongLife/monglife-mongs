@@ -69,7 +69,7 @@ public class MongService {
     @Transactional(transactionManager = "mongTransactionManager")
     public MongVo removeMong(Long mongId) throws NotFoundException {
 
-        Mong mong = mongRepository.findByIdAndIsActiveTrue(mongId)
+        Mong mong = mongRepository.findByIdAndIsActiveTrueWithLock(mongId)
                 .orElseThrow(() -> new NotFoundException(MongErrorCode.NOT_FOUND_ACTIVE_MONG));
 
         mong = mongRepository.save(mong.toBuilder()
@@ -102,7 +102,7 @@ public class MongService {
     @Transactional(transactionManager = "mongTransactionManager")
     public MongVo increaseNumberOfStroke(Long mongId, Integer strokeCount) throws NotFoundException {
 
-        Mong mong = mongRepository.findByIdAndIsActiveTrue(mongId)
+        Mong mong = mongRepository.findByIdAndIsActiveTrueWithLock(mongId)
                 .orElseThrow(() -> new NotFoundException(MongErrorCode.NOT_FOUND_ACTIVE_MONG));
 
         int numberOfStroke = mong.getNumberOfStroke() + strokeCount;
@@ -128,7 +128,7 @@ public class MongService {
     @Transactional(transactionManager = "mongTransactionManager")
     public MongVo toggleIsSleeping(Long mongId) throws NotFoundException {
 
-        Mong mong = mongRepository.findByIdAndIsActiveTrue(mongId)
+        Mong mong = mongRepository.findByIdAndIsActiveTrueWithLock(mongId)
                 .orElseThrow(() -> new NotFoundException(MongErrorCode.NOT_FOUND_ACTIVE_MONG));
 
         boolean isSleeping = !mong.getIsSleeping();
@@ -152,7 +152,7 @@ public class MongService {
     @Transactional(transactionManager = "mongTransactionManager")
     public MongVo clearPoopCount(Long mongId) throws NotFoundException {
 
-        Mong mong = mongRepository.findByIdAndIsActiveTrue(mongId)
+        Mong mong = mongRepository.findByIdAndIsActiveTrueWithLock(mongId)
                 .orElseThrow(() -> new NotFoundException(MongErrorCode.NOT_FOUND_ACTIVE_MONG));
 
         int pastPoopCount = mong.getPoopCount();
@@ -178,7 +178,7 @@ public class MongService {
     @Transactional(transactionManager = "mongTransactionManager")
     public MongVo increaseStatusTraining(Long mongId, Integer trainingCount, MongTrainingCode mongTrainingCode) throws NotFoundException {
 
-        Mong mong = mongRepository.findByIdAndIsActiveTrue(mongId)
+        Mong mong = mongRepository.findByIdAndIsActiveTrueWithLock(mongId)
                 .orElseThrow(() -> new NotFoundException(MongErrorCode.NOT_FOUND_ACTIVE_MONG));
 
         double exp = mong.getExp() + mongTrainingCode.exp;
@@ -216,7 +216,7 @@ public class MongService {
     @Transactional(transactionManager = "mongTransactionManager")
     public MongVo toggleGraduate(Long mongId) throws NotFoundException {
 
-        Mong mong = mongRepository.findByIdAndIsActiveTrue(mongId)
+        Mong mong = mongRepository.findByIdAndIsActiveTrueWithLock(mongId)
                 .orElseThrow(() -> new NotFoundException(MongErrorCode.NOT_FOUND_ACTIVE_MONG));
 
         mong = mongRepository.save(mong.toBuilder()
@@ -249,7 +249,7 @@ public class MongService {
     @Transactional(transactionManager = "mongTransactionManager")
     public MongVo toggleEvolutionReady(Long mongId) throws NotFoundException {
 
-        Mong mong = mongRepository.findByIdAndIsActiveTrue(mongId)
+        Mong mong = mongRepository.findByIdAndIsActiveTrueWithLock(mongId)
                 .orElseThrow(() -> new NotFoundException(MongErrorCode.NOT_FOUND_ACTIVE_MONG));
 
         mong = mongRepository.save(mong.toBuilder()
@@ -271,7 +271,7 @@ public class MongService {
     @Transactional(transactionManager = "mongTransactionManager")
     public MongVo toggleFirstEvolution(Long mongId, String mongCode) throws NotFoundException {
 
-        Mong mong = mongRepository.findByIdAndIsActiveTrue(mongId)
+        Mong mong = mongRepository.findByIdAndIsActiveTrueWithLock(mongId)
                 .orElseThrow(() -> new NotFoundException(MongErrorCode.NOT_FOUND_ACTIVE_MONG));
 
         mong = mongRepository.save(mong.toBuilder()
@@ -296,7 +296,7 @@ public class MongService {
     @Transactional(transactionManager = "mongTransactionManager")
     public MongVo toggleEvolution(Long mongId, String mongCode) throws NotFoundException {
 
-        Mong mong = mongRepository.findByIdAndIsActiveTrue(mongId)
+        Mong mong = mongRepository.findByIdAndIsActiveTrueWithLock(mongId)
                 .orElseThrow(() -> new NotFoundException(MongErrorCode.NOT_FOUND_ACTIVE_MONG));
 
         MongStatusPercentVo mongStatusPercentVo = MongUtil.statusToPercent(mong.getGrade(), mong);
@@ -328,7 +328,7 @@ public class MongService {
     @Transactional(transactionManager = "mongTransactionManager")
     public MongVo toggleLastEvolution(Long mongId) throws NotFoundException {
 
-        Mong mong = mongRepository.findByIdAndIsActiveTrue(mongId)
+        Mong mong = mongRepository.findByIdAndIsActiveTrueWithLock(mongId)
                 .orElseThrow(() -> new NotFoundException(MongErrorCode.NOT_FOUND_ACTIVE_MONG));
 
         mong = mongRepository.save(mong.toBuilder()
@@ -357,7 +357,7 @@ public class MongService {
     @Transactional(transactionManager = "mongTransactionManager")
     public MongVo deadMong(Long mongId) throws NotFoundException {
 
-        Mong mong = mongRepository.findByIdAndIsActiveTrue(mongId)
+        Mong mong = mongRepository.findByIdAndIsActiveTrueWithLock(mongId)
                 .orElseThrow(() -> new NotFoundException(MongErrorCode.NOT_FOUND_ACTIVE_MONG));
 
         mong = mongRepository.save(mong.toBuilder()
@@ -390,7 +390,7 @@ public class MongService {
     @Transactional(transactionManager = "mongTransactionManager")
     public MongVo feedMong(Long mongId, String foodCode, Double addWeight, Double addStrength, Double addSatiety, Double addHealthy, Double addSleep, Integer price) throws NotFoundException {
 
-        Mong mong = mongRepository.findByIdAndIsActiveTrue(mongId)
+        Mong mong = mongRepository.findByIdAndIsActiveTrueWithLock(mongId)
                 .orElseThrow(() -> new NotFoundException(MongErrorCode.NOT_FOUND_ACTIVE_MONG));
 
         double exp = mong.getExp() + MongExp.EAT_THE_FOOD.exp;
@@ -418,7 +418,7 @@ public class MongService {
                 .message(String.format("%s:%s:$%d", mongLogCode.message, foodCode, price))
                 .build());
 
-        MongFeedLog mongFeedLog = mongFeedLogRepository.findByMongIdAndCode(mong.getId(), foodCode)
+        MongFeedLog mongFeedLog = mongFeedLogRepository.findByMongIdAndCodeWithLock(mong.getId(), foodCode)
                         .orElseGet(() -> MongFeedLog.builder()
                                 .mongId(mongId)
                                 .code(foodCode)

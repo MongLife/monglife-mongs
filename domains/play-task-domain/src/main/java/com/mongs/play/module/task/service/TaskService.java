@@ -13,7 +13,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
@@ -222,15 +221,17 @@ public class TaskService {
 
             // 테스크 이벤트 정보 (DONE) 로 변경
             taskEvent = taskEventRepository.save(taskEvent.toBuilder()
+                    .taskStatus(TaskStatus.DONE)
                     .expiration(0L)
                     .expiredAt(null)
-                    .taskStatus(TaskStatus.DONE)
+//                    .ttl(10L)
                     .build());
 
             // 테스크 중지
             task.stop();
             // 테스크 삭제
             activeTaskMap.remove(taskEvent.getTaskId());
+            log.info("[TaskService.stopTask] mongId: {}, taskCode: {}", mongId, taskCode);
 
         } catch (NotFoundException e) {
             log.info("[stopTask] not found task, mongId: {}, taskCode: {}", mongId, taskCode);
@@ -247,9 +248,10 @@ public class TaskService {
 
                 // 테스크 이벤트 정보 (DONE) 로 변경
                 taskEvent = taskEventRepository.save(taskEvent.toBuilder()
+                        .taskStatus(TaskStatus.DONE)
                         .expiration(0L)
                         .expiredAt(null)
-                        .taskStatus(TaskStatus.DONE)
+//                        .ttl(10L)
                         .build());
                 // 테스크 강제 중지
                 task.forceStop();
@@ -268,9 +270,10 @@ public class TaskService {
 
             // 테스크 이벤트 정보 (DONE) 로 변경
             taskEvent = taskEventRepository.save(taskEvent.toBuilder()
+                    .taskStatus(TaskStatus.DONE)
                     .expiration(0L)
                     .expiredAt(null)
-                    .taskStatus(TaskStatus.DONE)
+                    .ttl(-1L)
                     .build());
 
             // 테스크 삭제

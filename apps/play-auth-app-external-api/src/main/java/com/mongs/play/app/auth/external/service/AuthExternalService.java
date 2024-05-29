@@ -9,9 +9,9 @@ import com.mongs.play.domain.account.service.AccountService;
 import com.mongs.play.module.jwt.provider.AuthorizationTokenProvider;
 import com.mongs.play.session.entity.Session;
 import com.mongs.play.session.service.SessionService;
-import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor

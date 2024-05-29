@@ -42,12 +42,11 @@ public class Task {
     }
 
     public void pause() {
+        scheduler.cancel(false);
         publisher.publishEvent(TaskPauseEvent.builder()
                 .taskCode(taskCode)
                 .mongId(mongId)
                 .build());
-
-        scheduler.cancel(false);
     }
 
     public void forceStop() {
@@ -55,8 +54,9 @@ public class Task {
     }
 
     public void stop() {
+        scheduler.cancel(false);
 
-        log.info("[Task stop] mongId: {}, taskCode: {}", mongId, taskCode);
+        log.info("[Task.stop] mongId: {}, taskCode: {}", mongId, taskCode);
 
         Long duringSeconds = Math.max(0, Math.min(expiration, Duration.between(createdAt, LocalDateTime.now()).getSeconds()));
         publisher.publishEvent(TaskStopEvent.builder()
@@ -66,7 +66,5 @@ public class Task {
                 .expiration(expiration)
                 .duringSeconds(duringSeconds)
                 .build());
-
-        scheduler.cancel(false);
     }
 }
