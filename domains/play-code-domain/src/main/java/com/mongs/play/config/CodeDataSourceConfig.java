@@ -17,6 +17,7 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 import javax.sql.DataSource;
 import java.util.Map;
+import java.util.Properties;
 
 @Slf4j
 @Configuration
@@ -39,14 +40,14 @@ public class CodeDataSourceConfig {
     @Bean(name = "codeEntityManager")
     public LocalContainerEntityManagerFactoryBean codeEntityManager(
             @Qualifier("codeDataSource") DataSource dataSource,
-            @Qualifier("entityManagerProperties") Map<String, Object> properties,
+            @Qualifier("entityManagerProperties") Properties properties,
             @Qualifier("hibernateJpaVendorAdapter") HibernateJpaVendorAdapter jpaVendorAdapter
     ) {
         LocalContainerEntityManagerFactoryBean em = new LocalContainerEntityManagerFactoryBean();
         em.setDataSource(dataSource);
         em.setPackagesToScan("com.mongs.play.domain.code.entity");
         em.setJpaVendorAdapter(jpaVendorAdapter);
-        em.setJpaPropertyMap(properties);
+        em.setJpaProperties(properties);
         return em;
     }
 
