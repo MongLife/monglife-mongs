@@ -4,8 +4,8 @@ import com.zaxxer.hikari.HikariDataSource;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.boot.autoconfigure.jdbc.DataSourceProperties;
 import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.boot.jdbc.DataSourceBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
@@ -29,11 +29,18 @@ import java.util.Properties;
 )
 public class CodeDataSourceConfig {
 
-    @Bean(name = "commonDataSource")
+    @Bean(name = "commonDataSourceProperties")
     @ConfigurationProperties(prefix = "spring.common-datasource")
+    @ConditionalOnMissingBean(name = "commonDataSourceProperties")
+    public DataSourceProperties commonDataSourceProperties() {
+        return new DataSourceProperties();
+    }
+
+    @Bean(name = "commonDataSource")
+    @ConfigurationProperties(prefix = "spring.common-datasource.hikari")
     @ConditionalOnMissingBean(name = "commonDataSource")
-    public DataSource commonDataSource() {
-        return DataSourceBuilder.create()
+    public DataSource commonDataSource(@Qualifier("commonDataSourceProperties") DataSourceProperties dataSourceProperties) {
+        return dataSourceProperties.initializeDataSourceBuilder()
                 .type(HikariDataSource.class)
                 .build();
     }

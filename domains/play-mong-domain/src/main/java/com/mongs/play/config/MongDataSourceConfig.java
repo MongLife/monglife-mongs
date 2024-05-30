@@ -4,6 +4,7 @@ import com.zaxxer.hikari.HikariDataSource;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.boot.autoconfigure.jdbc.DataSourceProperties;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.jdbc.DataSourceBuilder;
 import org.springframework.context.annotation.Bean;
@@ -29,11 +30,18 @@ import java.util.Properties;
 )
 public class MongDataSourceConfig {
 
-    @Bean(name = "managementDataSource")
+    @Bean(name = "managementDataSourceProperties")
     @ConfigurationProperties(prefix = "spring.management-datasource")
+    @ConditionalOnMissingBean(name = "managementDataSourceProperties")
+    public DataSourceProperties managementDataSourceProperties() {
+        return new DataSourceProperties();
+    }
+
+    @Bean(name = "managementDataSource")
+    @ConfigurationProperties(prefix = "spring.management-datasource.hikari")
     @ConditionalOnMissingBean(name = "managementDataSource")
-    public DataSource managementDataSource() {
-        return DataSourceBuilder.create()
+    public DataSource managementDataSource(@Qualifier("managementDataSourceProperties") DataSourceProperties dataSourceProperties) {
+        return dataSourceProperties.initializeDataSourceBuilder()
                 .type(HikariDataSource.class)
                 .build();
     }
