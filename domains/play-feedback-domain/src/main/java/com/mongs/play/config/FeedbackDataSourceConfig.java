@@ -29,9 +29,10 @@ import java.util.Properties;
 )
 public class FeedbackDataSourceConfig {
 
-    @Bean(name = "feedbackDataSource")
+    @Bean(name = "playerDataSource")
     @ConfigurationProperties(prefix = "spring.player-datasource")
-    public DataSource feedbackDataSource() {
+    @ConditionalOnMissingBean(name = "playerDataSource")
+    public DataSource playerDataSource() {
         return DataSourceBuilder.create()
                 .type(HikariDataSource.class)
                 .build();
@@ -39,7 +40,7 @@ public class FeedbackDataSourceConfig {
 
     @Bean(name = "feedbackEntityManager")
     public LocalContainerEntityManagerFactoryBean feedbackEntityManager(
-            @Qualifier("feedbackDataSource") DataSource dataSource,
+            @Qualifier("playerDataSource") DataSource dataSource,
             @Qualifier("entityManagerProperties") Properties properties,
             @Qualifier("hibernateJpaVendorAdapter") HibernateJpaVendorAdapter jpaVendorAdapter
     ) {

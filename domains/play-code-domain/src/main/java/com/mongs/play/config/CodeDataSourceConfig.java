@@ -29,8 +29,9 @@ import java.util.Properties;
 )
 public class CodeDataSourceConfig {
 
-    @Bean(name = "codeDataSource")
+    @Bean(name = "commonDataSource")
     @ConfigurationProperties(prefix = "spring.common-datasource")
+    @ConditionalOnMissingBean(name = "commonDataSource")
     public DataSource commonDataSource() {
         return DataSourceBuilder.create()
                 .type(HikariDataSource.class)
@@ -39,7 +40,7 @@ public class CodeDataSourceConfig {
 
     @Bean(name = "codeEntityManager")
     public LocalContainerEntityManagerFactoryBean codeEntityManager(
-            @Qualifier("codeDataSource") DataSource dataSource,
+            @Qualifier("commonDataSource") DataSource dataSource,
             @Qualifier("entityManagerProperties") Properties properties,
             @Qualifier("hibernateJpaVendorAdapter") HibernateJpaVendorAdapter jpaVendorAdapter
     ) {

@@ -29,7 +29,7 @@ import java.util.Properties;
 )
 public class AccountDataSourceConfig {
 
-    @Bean(name = "accountDataSource")
+    @Bean(name = "authDataSource")
     @ConfigurationProperties(prefix = "spring.auth-datasource")
     public DataSource authDataSource() {
         return DataSourceBuilder.create()
@@ -39,7 +39,7 @@ public class AccountDataSourceConfig {
 
     @Bean(name = "accountEntityManager")
     public LocalContainerEntityManagerFactoryBean accountEntityManager(
-            @Qualifier("accountDataSource") DataSource dataSource,
+            @Qualifier("authDataSource") DataSource dataSource,
             @Qualifier("entityManagerProperties") Properties properties,
             @Qualifier("hibernateJpaVendorAdapter") HibernateJpaVendorAdapter jpaVendorAdapter
     ) {

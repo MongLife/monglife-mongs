@@ -29,9 +29,10 @@ import java.util.Properties;
 )
 public class MemberDataSourceConfig {
 
-    @Bean(name = "memberDataSource")
+    @Bean(name = "playerDataSource")
     @ConfigurationProperties(prefix = "spring.player-datasource")
-    public DataSource memberDataSource() {
+    @ConditionalOnMissingBean(name = "playerDataSource")
+    public DataSource playerDataSource() {
         return DataSourceBuilder.create()
                 .type(HikariDataSource.class)
                 .build();
@@ -39,7 +40,7 @@ public class MemberDataSourceConfig {
 
     @Bean(name = "memberEntityManager")
     public LocalContainerEntityManagerFactoryBean memberEntityManager(
-            @Qualifier("memberDataSource") DataSource dataSource,
+            @Qualifier("playerDataSource") DataSource dataSource,
             @Qualifier("entityManagerProperties") Properties properties,
             @Qualifier("hibernateJpaVendorAdapter") HibernateJpaVendorAdapter jpaVendorAdapter
     ) {

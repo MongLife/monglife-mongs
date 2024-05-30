@@ -29,9 +29,10 @@ import java.util.Properties;
 )
 public class CollectionDataSourceConfig {
 
-    @Bean(name = "collectionDataSource")
+    @Bean(name = "playerDataSource")
     @ConfigurationProperties(prefix = "spring.player-datasource")
-    public DataSource collectionDataSource() {
+    @ConditionalOnMissingBean(name = "playerDataSource")
+    public DataSource playerDataSource() {
         return DataSourceBuilder.create()
                 .type(HikariDataSource.class)
                 .build();
@@ -39,13 +40,13 @@ public class CollectionDataSourceConfig {
 
     @Bean(name = "collectionEntityManager")
     public LocalContainerEntityManagerFactoryBean collectionEntityManager(
-            @Qualifier("collectionDataSource") DataSource dataSource,
+            @Qualifier("playerDataSource") DataSource dataSource,
             @Qualifier("entityManagerProperties") Properties properties,
             @Qualifier("hibernateJpaVendorAdapter") HibernateJpaVendorAdapter jpaVendorAdapter
     ) {
         LocalContainerEntityManagerFactoryBean em = new LocalContainerEntityManagerFactoryBean();
         em.setDataSource(dataSource);
-        em.setPackagesToScan(new String[]{"com.mongs.play.domain.collection.entity"});
+        em.setPackagesToScan("com.mongs.play.domain.collection.entity");
         em.setJpaVendorAdapter(jpaVendorAdapter);
         em.setJpaProperties(properties);
         return em;

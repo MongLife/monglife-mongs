@@ -30,8 +30,8 @@ import java.util.Properties;
 public class MongDataSourceConfig {
 
     @Bean(name = "managementDataSource")
-    @ConditionalOnMissingBean(name = "managementDataSource")
     @ConfigurationProperties(prefix = "spring.management-datasource")
+    @ConditionalOnMissingBean(name = "managementDataSource")
     public DataSource managementDataSource() {
         return DataSourceBuilder.create()
                 .type(HikariDataSource.class)

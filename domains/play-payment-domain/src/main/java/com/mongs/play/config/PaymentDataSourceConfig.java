@@ -29,9 +29,10 @@ import java.util.Properties;
 )
 public class PaymentDataSourceConfig {
 
-    @Bean(name = "paymentDataSource")
+    @Bean(name = "playerDataSource")
     @ConfigurationProperties(prefix = "spring.player-datasource")
-    public DataSource paymentDataSource() {
+    @ConditionalOnMissingBean(name = "playerDataSource")
+    public DataSource playerDataSource() {
         return DataSourceBuilder.create()
                 .type(HikariDataSource.class)
                 .build();
@@ -39,7 +40,7 @@ public class PaymentDataSourceConfig {
 
     @Bean(name = "paymentEntityManager")
     public LocalContainerEntityManagerFactoryBean paymentEntityManager(
-            @Qualifier("paymentDataSource") DataSource dataSource,
+            @Qualifier("playerDataSource") DataSource dataSource,
             @Qualifier("entityManagerProperties") Properties properties,
             @Qualifier("hibernateJpaVendorAdapter") HibernateJpaVendorAdapter jpaVendorAdapter
     ) {
