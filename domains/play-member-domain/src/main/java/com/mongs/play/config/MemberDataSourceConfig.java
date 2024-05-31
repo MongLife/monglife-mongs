@@ -28,17 +28,17 @@ import java.util.Properties;
 )
 public class MemberDataSourceConfig {
 
-    @Bean(name = "playerDataSourceProperties")
+    @Bean(name = "playerMemberDataSourceProperties")
     @ConfigurationProperties(prefix = "spring.player-datasource")
-    @ConditionalOnMissingBean(name = "playerDataSourceProperties")
+    @ConditionalOnMissingBean(name = "playerMemberDataSourceProperties")
     public DataSourceProperties playerDataSourceProperties() {
         return new DataSourceProperties();
     }
 
-    @Bean(name = "playerDataSource")
+    @Bean(name = "playerMemberDataSource")
     @ConfigurationProperties(prefix = "spring.player-datasource.hikari")
-    @ConditionalOnMissingBean(name = "playerDataSource")
-    public DataSource playerDataSource(@Qualifier("playerDataSourceProperties") DataSourceProperties dataSourceProperties) {
+    @ConditionalOnMissingBean(name = "playerMemberDataSource")
+    public DataSource playerDataSource(@Qualifier("playerMemberDataSourceProperties") DataSourceProperties dataSourceProperties) {
         return dataSourceProperties.initializeDataSourceBuilder()
                 .type(HikariDataSource.class)
                 .build();
@@ -46,7 +46,7 @@ public class MemberDataSourceConfig {
 
     @Bean(name = "memberEntityManager")
     public LocalContainerEntityManagerFactoryBean memberEntityManager(
-            @Qualifier("playerDataSource") DataSource dataSource,
+            @Qualifier("playerMemberDataSource") DataSource dataSource,
             @Qualifier("entityManagerProperties") Properties properties,
             @Qualifier("hibernateJpaVendorAdapter") HibernateJpaVendorAdapter jpaVendorAdapter
     ) {

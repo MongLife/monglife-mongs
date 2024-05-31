@@ -28,17 +28,17 @@ import java.util.Properties;
 )
 public class PaymentDataSourceConfig {
 
-    @Bean(name = "playerDataSourceProperties")
+    @Bean(name = "playerPaymentDataSourceProperties")
     @ConfigurationProperties(prefix = "spring.player-datasource")
-    @ConditionalOnMissingBean(name = "playerDataSourceProperties")
-    public DataSourceProperties playerSourceProperties() {
+    @ConditionalOnMissingBean(name = "playerPaymentDataSourceProperties")
+    public DataSourceProperties playerDataSourceProperties() {
         return new DataSourceProperties();
     }
 
-    @Bean(name = "playerDataSource")
+    @Bean(name = "playerPaymentDataSource")
     @ConfigurationProperties(prefix = "spring.player-datasource.hikari")
-    @ConditionalOnMissingBean(name = "playerDataSource")
-    public DataSource playerDataSource(@Qualifier("playerDataSourceProperties") DataSourceProperties dataSourceProperties) {
+    @ConditionalOnMissingBean(name = "playerPaymentDataSource")
+    public DataSource playerDataSource(@Qualifier("playerPaymentDataSourceProperties") DataSourceProperties dataSourceProperties) {
         return dataSourceProperties.initializeDataSourceBuilder()
                 .type(HikariDataSource.class)
                 .build();
@@ -46,7 +46,7 @@ public class PaymentDataSourceConfig {
 
     @Bean(name = "paymentEntityManager")
     public LocalContainerEntityManagerFactoryBean paymentEntityManager(
-            @Qualifier("playerDataSource") DataSource dataSource,
+            @Qualifier("playerPaymentDataSource") DataSource dataSource,
             @Qualifier("entityManagerProperties") Properties properties,
             @Qualifier("hibernateJpaVendorAdapter") HibernateJpaVendorAdapter jpaVendorAdapter
     ) {
