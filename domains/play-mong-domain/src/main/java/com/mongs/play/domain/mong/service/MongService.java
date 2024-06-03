@@ -56,6 +56,8 @@ public class MongService {
                 .sleepTime(sleepStart)
                 .wakeUpTime(sleepEnd)
                 .mongCode(mongCode)
+                .shift(MongShift.NORMAL)
+                .state(MongState.NORMAL)
                 .grade(MongGrade.ZERO)
                 .build().validation());
 

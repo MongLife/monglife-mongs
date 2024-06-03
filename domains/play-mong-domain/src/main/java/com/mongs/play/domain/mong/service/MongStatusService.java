@@ -35,12 +35,12 @@ public class MongStatusService {
                 .sleep(mong.getSleep() - subSleep)
                 .build().validation());
 
-        MongLogCode mongLogCode = MongLogCode.DECREASE_STATUS;
-        mongLogRepository.save(MongLog.builder()
-                .mongId(mong.getId())
-                .mongLogCode(mongLogCode)
-                .message(String.format("%s:%f:%f:%f:%f:%f", mongLogCode.message, subWeight, subStrength, subSatiety, subHealthy, subSleep))
-                .build());
+//        MongLogCode mongLogCode = MongLogCode.DECREASE_STATUS;
+//        mongLogRepository.save(MongLog.builder()
+//                .mongId(mong.getId())
+//                .mongLogCode(mongLogCode)
+//                .message(String.format("%s:%f:%f:%f:%f:%f", mongLogCode.message, subWeight, subStrength, subSatiety, subHealthy, subSleep))
+//                .build());
 
         log.info("[decreaseStatus] mongId: {}, subWeight: {}, subStrength: {}, subSatiety: {}, subHealthy: {}, subSleep: {}", mongId, subWeight, subStrength, subSatiety, subHealthy, subSleep);
 
@@ -57,12 +57,12 @@ public class MongStatusService {
                 .poopCount(mong.getPoopCount() + addPoopCount)
                 .build().validation());
 
-        MongLogCode mongLogCode = MongLogCode.INCREASE_POOP_COUNT;
-        mongLogRepository.save(MongLog.builder()
-                .mongId(mong.getId())
-                .mongLogCode(mongLogCode)
-                .message(String.format("%s:%s", mongLogCode.message, addPoopCount))
-                .build());
+//        MongLogCode mongLogCode = MongLogCode.INCREASE_POOP_COUNT;
+//        mongLogRepository.save(MongLog.builder()
+//                .mongId(mong.getId())
+//                .mongLogCode(mongLogCode)
+//                .message(String.format("%s:%s", mongLogCode.message, addPoopCount))
+//                .build());
 
         log.info("[increasePoopCount] mongId: {}, addPoopCount: {}", mongId, addPoopCount);
 
@@ -83,12 +83,12 @@ public class MongStatusService {
                 .sleep(mong.getSleep() + addSleep)
                 .build().validation());
 
-        MongLogCode mongLogCode = MongLogCode.INCREASE_STATUS;
-        mongLogRepository.save(MongLog.builder()
-                .mongId(mong.getId())
-                .mongLogCode(mongLogCode)
-                .message(String.format("%s:%f:%f:%f:%f:%f", mongLogCode.message, addWeight, addStrength, addSatiety, addHealthy, addSleep))
-                .build());
+//        MongLogCode mongLogCode = MongLogCode.INCREASE_STATUS;
+//        mongLogRepository.save(MongLog.builder()
+//                .mongId(mong.getId())
+//                .mongLogCode(mongLogCode)
+//                .message(String.format("%s:%f:%f:%f:%f:%f", mongLogCode.message, addWeight, addStrength, addSatiety, addHealthy, addSleep))
+//                .build());
 
         log.info("[increaseStatus] mongId: {}, addWeight: {}, addStrength:{}, addSatiety: {}, addHealthy: {}, addSleep: {}", mongId, addWeight, addStrength, addSatiety, addHealthy, addSleep);
 
