@@ -1,7 +1,6 @@
 package com.mongs.play.module.feign.client;
 
 import com.mongs.play.config.FeignClientConfig;
-import com.mongs.play.config.FeignErrorDecoder;
 import com.mongs.play.module.feign.dto.req.*;
 import com.mongs.play.module.feign.dto.res.*;
 import org.springframework.cloud.openfeign.FeignClient;
@@ -38,12 +37,8 @@ public interface ManagementInternalClient {
     ResponseEntity<SleepingScheduleResDto> sleepingSchedule(SleepingScheduleReqDto sleepingScheduleReqDto);
     @PostMapping("/worker/management/delete")
     ResponseEntity<DeleteScheduleResDto> deleteSchedule(DeleteScheduleReqDto deleteScheduleReqDto);
-    @PostMapping("/worker/management/dead/healthy")
-    ResponseEntity<DeadScheduleResDto> deadHealthySchedule(DeadScheduleReqDto deadScheduleReqDto);
-    @DeleteMapping("/worker/management/dead/healthy")
-    ResponseEntity<DeadScheduleResDto> deadHealthyScheduleStop(DeadScheduleReqDto deadScheduleReqDto);
-    @PostMapping("/worker/management/dead/satiety")
-    ResponseEntity<DeadScheduleResDto> deadSatietySchedule(DeadScheduleReqDto deadScheduleReqDto);
-    @DeleteMapping("/worker/management/dead/satiety")
-    ResponseEntity<DeadScheduleResDto> deadSatietyScheduleStop(DeadScheduleReqDto deadScheduleReqDto);
+    @PostMapping("/worker/management/dead")
+    ResponseEntity<DeadScheduleResDto> deadSchedule(DeadScheduleReqDto deadScheduleReqDto);
+    @DeleteMapping("/worker/management/dead")
+    ResponseEntity<DeadScheduleResDto> deadScheduleStop(DeadScheduleReqDto deadScheduleReqDto);
 }

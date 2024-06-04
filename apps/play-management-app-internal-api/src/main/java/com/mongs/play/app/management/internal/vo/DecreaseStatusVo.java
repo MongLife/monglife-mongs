@@ -13,6 +13,7 @@ public record DecreaseStatusVo(
         Double strengthPercent,
         Double satietyPercent,
         Double healthyPercent,
-        Double sleepPercent
+        Double sleepPercent,
+        Boolean isDeadSchedule
 ) {
 }

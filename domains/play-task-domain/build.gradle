@@ -1,5 +1,7 @@
 dependencies {
-    api 'org.springframework.boot:spring-boot-starter-data-redis'
+    api project(':modules:play-jpa-module')
+
+    runtimeOnly 'com.mysql:mysql-connector-j'
 
 }
 

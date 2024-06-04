@@ -18,6 +18,7 @@ public record TrainingMongVo(
         Double healthyPercent,
         Double satietyPercent,
         Double strengthPercent,
-        Double sleepPercent
+        Double sleepPercent,
+        Boolean isDeadSchedule
 ) {
 }

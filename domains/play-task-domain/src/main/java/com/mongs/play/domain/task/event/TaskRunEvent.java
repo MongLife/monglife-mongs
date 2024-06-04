@@ -1,6 +1,6 @@
-package com.mongs.play.module.task.event;
+package com.mongs.play.domain.task.event;
 
-import com.mongs.play.module.task.enums.TaskCode;
+import com.mongs.play.domain.task.enums.TaskCode;
 import lombok.*;
 
 @Getter

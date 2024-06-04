@@ -63,32 +63,16 @@ public class ManagementWorkerFeignService {
         return res.getBody();
     }
 
-    public DeadScheduleResDto deadHealthySchedule(Long mongId) {
-        var res = managementInternalClient.deadHealthySchedule(DeadScheduleReqDto.builder()
+    public DeadScheduleResDto deadSchedule(Long mongId) {
+        var res = managementInternalClient.deadSchedule(DeadScheduleReqDto.builder()
                 .mongId(mongId)
                 .build());
 
         return res.getBody();
     }
 
-    public DeadScheduleResDto deadHealthyScheduleStop(Long mongId) {
-        var res = managementInternalClient.deadHealthyScheduleStop(DeadScheduleReqDto.builder()
-                .mongId(mongId)
-                .build());
-
-        return res.getBody();
-    }
-
-    public DeadScheduleResDto deadSatietySchedule(Long mongId) {
-        var res = managementInternalClient.deadSatietySchedule(DeadScheduleReqDto.builder()
-                .mongId(mongId)
-                .build());
-
-        return res.getBody();
-    }
-
-    public DeadScheduleResDto deadSatietyScheduleStop(Long mongId) {
-        var res = managementInternalClient.deadSatietyScheduleStop(DeadScheduleReqDto.builder()
+    public DeadScheduleResDto deadScheduleStop(Long mongId) {
+        var res = managementInternalClient.deadScheduleStop(DeadScheduleReqDto.builder()
                 .mongId(mongId)
                 .build());
 

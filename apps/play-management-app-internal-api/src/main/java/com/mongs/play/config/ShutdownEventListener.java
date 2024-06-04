@@ -1,6 +1,6 @@
 package com.mongs.play.config;
 
-import com.mongs.play.module.task.service.TaskService;
+import com.mongs.play.domain.task.service.TaskService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.ApplicationListener;

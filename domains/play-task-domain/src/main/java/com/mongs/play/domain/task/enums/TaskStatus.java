@@ -1,4 +1,4 @@
-package com.mongs.play.module.task.enums;
+package com.mongs.play.domain.task.enums;
 
 public enum TaskStatus {
     WAIT,

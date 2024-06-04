@@ -18,6 +18,7 @@ public record FeedMongVo(
         Double healthyPercent,
         Double satietyPercent,
         Double strengthPercent,
-        Double sleepPercent
+        Double sleepPercent,
+        Boolean isDeadSchedule
 ) {
 }

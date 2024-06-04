@@ -35,6 +35,11 @@ public class ManagementInternalService {
                 .build();
     }
 
+    @Transactional
+    public void toggleIsDeadSchedule(Long mongId, Boolean isDeadSchedule) {
+        MongVo mongVo = mongService.toggleIsDeadSchedule(mongId, isDeadSchedule);
+    }
+
     @ValidationDead
     @RealTimeMong(codes = { PublishCode.MONG_STATUS })
     @Transactional
@@ -54,6 +59,7 @@ public class ManagementInternalService {
                 .satietyPercent(mongStatusPercentVo.satiety())
                 .healthyPercent(mongStatusPercentVo.healthy())
                 .sleepPercent(mongStatusPercentVo.sleep())
+                .isDeadSchedule(mongVo.isDeadSchedule())
                 .build();
     }
 
@@ -88,6 +94,7 @@ public class ManagementInternalService {
                 .satietyPercent(mongStatusPercentVo.satiety())
                 .healthyPercent(mongStatusPercentVo.healthy())
                 .sleepPercent(mongStatusPercentVo.sleep())
+                .isDeadSchedule(mongVo.isDeadSchedule())
                 .build();
     }
 

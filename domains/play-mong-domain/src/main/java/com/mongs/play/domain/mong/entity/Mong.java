@@ -11,6 +11,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.DynamicUpdate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.LocalDateTime;
@@ -19,6 +20,7 @@ import java.time.LocalDateTime;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
+@DynamicUpdate
 @EntityListeners(AuditingEntityListener.class)
 @Builder(toBuilder = true)
 @Table(name = "mong")
@@ -87,16 +89,19 @@ public class Mong extends BaseTimeEntity {
 
     @Builder.Default
     @Column(nullable = false)
+    private Integer numberOfTraining = 0;
+    @Builder.Default
+    @Column(nullable = false)
+    private Integer numberOfStroke = 0;
+    @Builder.Default
+    @Column(nullable = false)
     private Integer evolutionPoint = 0;
     @Builder.Default
     @Column(nullable = false)
     private Integer penalty = 0;
     @Builder.Default
     @Column(nullable = false)
-    private Integer numberOfTraining = 0;
-    @Builder.Default
-    @Column(nullable = false)
-    private Integer numberOfStroke = 0;
+    private Boolean isDeadSchedule = false;
 
     public Mong validation() {
         this.exp = Math.max(0, Math.min(this.exp, this.grade.evolutionExp));

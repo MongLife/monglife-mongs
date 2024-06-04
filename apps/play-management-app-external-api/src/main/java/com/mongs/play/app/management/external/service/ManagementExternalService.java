@@ -8,6 +8,8 @@ import com.mongs.play.client.publisher.mong.code.PublishCode;
 import com.mongs.play.core.error.app.ManagementExternalErrorCode;
 import com.mongs.play.core.exception.app.ManagementExternalException;
 import com.mongs.play.core.exception.common.InvalidException;
+import com.mongs.play.core.exception.module.ModuleErrorException;
+import com.mongs.play.core.exception.module.NotAcceptableException;
 import com.mongs.play.domain.code.entity.FoodCode;
 import com.mongs.play.domain.code.entity.MongCode;
 import com.mongs.play.domain.code.service.CodeService;
@@ -21,6 +23,7 @@ import com.mongs.play.domain.mong.vo.MongStatusPercentVo;
 import com.mongs.play.domain.mong.vo.MongVo;
 import com.mongs.play.module.feign.service.ManagementWorkerFeignService;
 import com.mongs.play.module.feign.service.PlayerInternalCollectionFeignService;
+import feign.RetryableException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -135,7 +138,6 @@ public class ManagementExternalService {
         MongStatusPercentVo mongStatusPercentVo = MongUtil.statusToPercent(newMongVo.grade(), newMongVo);
 
         playerInternalCollectionFeignService.registerMongCollection(accountId, newMongVo.mongCode());
-
         managementWorkerFeignService.zeroEvolutionSchedule(newMongVo.mongId());
 
         return RegisterMongVo.builder()
@@ -234,7 +236,6 @@ public class ManagementExternalService {
         }
 
         MongVo newMongVo = mongService.toggleIsSleeping(mongVo.mongId());
-
         managementWorkerFeignService.sleepingSchedule(newMongVo.mongId(), newMongVo.isSleeping());
 
         return SleepingMongVo.builder()
@@ -339,6 +340,7 @@ public class ManagementExternalService {
                 .healthyPercent(mongStatusPercentVo.healthy())
                 .sleepPercent(mongStatusPercentVo.sleep())
                 .payPoint(newMongVo.payPoint())
+                .isDeadSchedule(newMongVo.isDeadSchedule())
                 .build();
     }
 
@@ -400,10 +402,8 @@ public class ManagementExternalService {
             newMongVo = mongService.toggleLastEvolution(mongVo.mongId());
             managementWorkerFeignService.lastEvolutionSchedule(mongVo.mongId());
         } else {
-            // TODO("진화 포인트 환산")
-            int evolutionPoint = 0;
+            int evolutionPoint = ((mongVo.numberOfStroke() * 10) + (mongVo.numberOfTraining() * 100) - (mongVo.penalty() * 10) / 100 * 100);
             List<MongCode> mongCodeList = codeService.getMongCodeByLevelAndEvolutionPoint(mongVo.grade().nextGrade.level, evolutionPoint);
-            // TODO("컬렉션 목록을 조회하여 겹치지 않도록 하는 로직 필요")
             String mongCode = mongCodeList.get(mongCodeList.size() - 1).getCode();
             newMongVo = mongService.toggleEvolution(mongVo.mongId(), mongCode);
             playerInternalCollectionFeignService.registerMongCollection(accountId, newMongVo.mongCode());
@@ -473,6 +473,7 @@ public class ManagementExternalService {
                 .healthyPercent(mongStatusPercentVo.healthy())
                 .sleepPercent(mongStatusPercentVo.sleep())
                 .payPoint(newMongVo.payPoint())
+                .isDeadSchedule(newMongVo.isDeadSchedule())
                 .build();
     }
 

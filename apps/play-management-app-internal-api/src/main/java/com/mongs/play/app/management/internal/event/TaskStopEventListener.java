@@ -3,16 +3,14 @@ package com.mongs.play.app.management.internal.event;
 import com.mongs.play.app.management.internal.service.ManagementInternalService;
 import com.mongs.play.core.error.app.ManagementWorkerErrorCode;
 import com.mongs.play.core.exception.app.ManagementWorkerException;
-import com.mongs.play.module.task.enums.TaskCode;
-import com.mongs.play.module.task.enums.TaskUtil;
-import com.mongs.play.module.task.event.TaskStopEvent;
-import com.mongs.play.module.task.service.TaskService;
+import com.mongs.play.domain.task.enums.TaskCode;
+import com.mongs.play.domain.task.enums.TaskUtil;
+import com.mongs.play.domain.task.event.TaskStopEvent;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.event.EventListener;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 @Slf4j
 @Service
@@ -56,7 +54,7 @@ public class TaskStopEventListener {
                     managementInternalService.increasePoopCount(mongId, addPoopCount);
                 }
             }
-            case DEAD_HEALTHY, DEAD_SATIETY -> {}
+            case DEAD -> {}
             default -> throw new ManagementWorkerException(ManagementWorkerErrorCode.INVALID_PAUSE_EVENT);
         }
     }

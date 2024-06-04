@@ -4,17 +4,15 @@ import com.mongs.play.app.management.internal.service.ManagementInternalService;
 import com.mongs.play.core.error.app.ManagementWorkerErrorCode;
 import com.mongs.play.core.exception.app.ManagementWorkerException;
 import com.mongs.play.core.exception.common.NotFoundException;
-import com.mongs.play.module.task.enums.TaskCode;
-import com.mongs.play.module.task.enums.TaskUtil;
-import com.mongs.play.module.task.event.TaskRunEvent;
-import com.mongs.play.module.task.service.TaskService;
+import com.mongs.play.domain.task.enums.TaskCode;
+import com.mongs.play.domain.task.enums.TaskUtil;
+import com.mongs.play.domain.task.event.TaskRunEvent;
+import com.mongs.play.domain.task.service.TaskService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.event.EventListener;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.ExceptionHandler;
 
 @Slf4j
 @Service
@@ -67,7 +65,7 @@ public class TaskRunEventListener {
                     taskService.forceStopAllTask(mongId);
                 }
             }
-            case DEAD_HEALTHY, DEAD_SATIETY -> {
+            case DEAD -> {
                 try {
                     taskService.forceStopAllTask(mongId);
                     managementInternalService.dead(mongId);
@@ -77,7 +75,5 @@ public class TaskRunEventListener {
             }
             default -> throw new ManagementWorkerException(ManagementWorkerErrorCode.INVALID_STOP_EVENT);
         }
-
-        taskService.removeTask(taskId);
     }
 }

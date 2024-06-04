@@ -1,7 +1,8 @@
-package com.mongs.play.module.task.entity;
+package com.mongs.play.domain.task.entity;
 
-import com.mongs.play.module.task.enums.TaskCode;
-import com.mongs.play.module.task.event.*;
+import com.mongs.play.domain.task.enums.TaskCode;
+import com.mongs.play.domain.task.event.TaskRunEvent;
+import com.mongs.play.domain.task.event.TaskStopEvent;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;

@@ -444,4 +444,17 @@ public class MongService {
     public List<MongFeedLogVo> findMongFeedLogByMongId(Long mongId) {
         return MongFeedLogVo.toList(mongFeedLogRepository.findByMongId(mongId));
     }
+
+    @Transactional(transactionManager = "mongTransactionManager")
+    public MongVo toggleIsDeadSchedule(Long mongId, Boolean isDeadSchedule) {
+
+        Mong mong = mongRepository.findByIdAndIsActiveTrueWithLock(mongId)
+                .orElseThrow(() -> new NotFoundException(MongErrorCode.NOT_FOUND_ACTIVE_MONG));
+
+        mong = mongRepository.save(mong.toBuilder()
+                .isDeadSchedule(isDeadSchedule)
+                .build().validation());
+
+        return MongVo.of(mong);
+    }
 }

@@ -19,7 +19,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class MongStatusService {
 
     private final MongRepository mongRepository;
-    private final MongLogRepository mongLogRepository;
+//    private final MongLogRepository mongLogRepository;
 
     @Transactional(transactionManager = "mongTransactionManager")
     public MongVo decreaseStatus(Long mongId, Double subWeight, Double subStrength, Double subSatiety, Double subHealthy, Double subSleep) {

@@ -13,8 +13,6 @@ import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 import org.springframework.util.ObjectUtils;
 
-import java.lang.reflect.Field;
-
 @Slf4j
 @Order(0)
 @Aspect
@@ -35,18 +33,15 @@ public class ValidationDeadAspect {
             Long mongId = (Long) ReflectionUtil.getField(returnValue, "mongId");
             Double healthy = (Double) ReflectionUtil.getField(returnValue, "healthy");
             Double satiety = (Double) ReflectionUtil.getField(returnValue, "satiety");
+            Boolean isDeadSchedule = (Boolean) ReflectionUtil.getField(returnValue, "isDeadSchedule");
 
             if (!ObjectUtils.isEmpty(mongId) && !ObjectUtils.isEmpty(healthy) && !ObjectUtils.isEmpty(satiety)) {
-                if (healthy <= 0) {
-                    managementWorkerFeignService.deadHealthySchedule(mongId);
-                } else {
-                    managementWorkerFeignService.deadHealthyScheduleStop(mongId);
-                }
-
-                if (satiety <= 0) {
-                    managementWorkerFeignService.deadSatietySchedule(mongId);
-                } else {
-                    managementWorkerFeignService.deadSatietyScheduleStop(mongId);
+                if (Boolean.FALSE.equals(isDeadSchedule) && (satiety <= 0 || healthy <= 0)) {
+                    log.info("############# dead satiety start call #################");
+                    managementWorkerFeignService.deadSchedule(mongId);
+                } else if(Boolean.TRUE.equals(isDeadSchedule) && (satiety > 0 && healthy > 0)) {
+                    log.info("############# dead satiety stop call #################");
+                    managementWorkerFeignService.deadScheduleStop(mongId);
                 }
             }
         }

@@ -99,52 +99,26 @@ public class ManagementWorkerController {
                 .build());
     }
 
-    @PostMapping("/dead/healthy")
-    public ResponseEntity<DeadScheduleResDto> deadHealthySchedule(@RequestBody DeadScheduleReqDto deadScheduleReqDto) {
+    @PostMapping("/dead")
+    public ResponseEntity<DeadScheduleResDto> deadSchedule(@RequestBody DeadScheduleReqDto deadScheduleReqDto) {
         Long mongId = deadScheduleReqDto.mongId();
 
-        log.info("[deadHealthy] mongId: {}", mongId);
+        log.info("[dead] mongId: {}", mongId);
 
-        managementWorkerService.deadHealthy(mongId);
+        managementWorkerService.dead(mongId);
 
         return ResponseEntity.ok().body(DeadScheduleResDto.builder()
                 .mongId(mongId)
                 .build());
     }
 
-    @DeleteMapping("/dead/healthy")
-    public ResponseEntity<DeadScheduleResDto> deadHealthyScheduleStop(@RequestBody DeadScheduleReqDto deadScheduleReqDto) {
+    @DeleteMapping("/dead")
+    public ResponseEntity<DeadScheduleResDto> deadScheduleStop(@RequestBody DeadScheduleReqDto deadScheduleReqDto) {
         Long mongId = deadScheduleReqDto.mongId();
 
-        log.info("[deadHealthyStop] mongId: {}", mongId);
+        log.info("[deadStop] mongId: {}", mongId);
 
-        managementWorkerService.liveHealthy(mongId);
-
-        return ResponseEntity.ok().body(DeadScheduleResDto.builder()
-                .mongId(mongId)
-                .build());
-    }
-
-    @PostMapping("/dead/satiety")
-    public ResponseEntity<DeadScheduleResDto> deadSatietySchedule(@RequestBody DeadScheduleReqDto deadScheduleReqDto) {
-        Long mongId = deadScheduleReqDto.mongId();
-
-        log.info("[deadSatiety] mongId: {}", mongId);
-
-        managementWorkerService.deadSatiety(mongId);
-
-        return ResponseEntity.ok().body(DeadScheduleResDto.builder()
-                .mongId(mongId)
-                .build());
-    }
-
-    @DeleteMapping("/dead/satiety")
-    public ResponseEntity<DeadScheduleResDto> deadSatietyScheduleStop(@RequestBody DeadScheduleReqDto deadScheduleReqDto) {
-        Long mongId = deadScheduleReqDto.mongId();
-
-        log.info("[deadSatietyStop] mongId: {}", mongId);
-
-        managementWorkerService.liveSatiety(mongId);
+        managementWorkerService.live(mongId);
 
         return ResponseEntity.ok().body(DeadScheduleResDto.builder()
                 .mongId(mongId)

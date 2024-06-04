@@ -61,7 +61,7 @@ public class PlayerInternalAdminCollectionController {
     }
 
     @DeleteMapping("/mong")
-    public ResponseEntity<Object> removeMongCollection(@RequestBody @Validated RemoveMongCollectionReqDto removeMongCollectionReqDto
+    public ResponseEntity<RemoveMongCollectionResDto> removeMongCollection(@RequestBody @Validated RemoveMongCollectionReqDto removeMongCollectionReqDto
     ) {
         RemoveMongCollectionVo removeMongCollectionVo =
                 playerInternalCollectionService.removeMongCollection(removeMongCollectionReqDto.accountId(), removeMongCollectionReqDto.mongCode());

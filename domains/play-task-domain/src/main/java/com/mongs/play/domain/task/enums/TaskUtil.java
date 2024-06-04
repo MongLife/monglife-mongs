@@ -1,4 +1,4 @@
-package com.mongs.play.module.task.enums;
+package com.mongs.play.domain.task.enums;
 
 import lombok.Getter;
 import org.springframework.beans.factory.annotation.Value;
@@ -45,11 +45,8 @@ public class TaskUtil {
             case INCREASE_POOP_COUNT -> {
                 return random.nextLong(increasePoopCountMin, increasePoopCountMax + 1);
             }
-            case DEAD_SATIETY -> {
+            case DEAD -> {
                 return deadSatiety;
-            }
-            case DEAD_HEALTHY -> {
-                return deadHealthy;
             }
             default -> {
                 return Long.MAX_VALUE;

@@ -33,8 +33,11 @@ public record MongVo(
 
         Integer numberOfTraining,
         Integer numberOfStroke,
+        Boolean isDeadSchedule,
 
-        LocalDateTime born
+        LocalDateTime born,
+
+        Integer penalty
 ) {
     public static MongVo of(Mong mong) {
         return MongVo.builder()
@@ -57,7 +60,9 @@ public record MongVo(
                 .isSleeping(mong.getIsSleeping())
                 .numberOfTraining(mong.getNumberOfTraining())
                 .numberOfStroke(mong.getNumberOfStroke())
+                .isDeadSchedule(mong.getIsDeadSchedule())
                 .born(mong.getCreatedAt())
+                .penalty(mong.getPenalty())
                 .build();
     }
 
