@@ -22,6 +22,8 @@ public class MongCode {
     @Column(nullable = false)
     private String name;
     @Column(nullable = false)
+    private String baseCode;
+    @Column(nullable = false)
     private Integer level;
     @Column(nullable = false)
     private Integer evolutionPoint;

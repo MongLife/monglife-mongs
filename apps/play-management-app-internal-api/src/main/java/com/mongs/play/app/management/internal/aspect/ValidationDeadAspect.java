@@ -37,10 +37,8 @@ public class ValidationDeadAspect {
 
             if (!ObjectUtils.isEmpty(mongId) && !ObjectUtils.isEmpty(healthy) && !ObjectUtils.isEmpty(satiety)) {
                 if (Boolean.FALSE.equals(isDeadSchedule) && (satiety <= 0 || healthy <= 0)) {
-                    log.info("############# dead satiety start call #################");
                     managementWorkerService.dead(mongId);
                 } else if(Boolean.TRUE.equals(isDeadSchedule) && (satiety > 0 && healthy > 0)) {
-                    log.info("############# dead satiety stop call #################");
                     managementWorkerService.live(mongId);
                 }
             }

@@ -163,11 +163,13 @@ public class MongService {
                 .orElseThrow(() -> new NotFoundException(MongErrorCode.NOT_FOUND_ACTIVE_MONG));
 
         int pastPoopCount = mong.getPoopCount();
+        int newPenalty = Math.max(mong.getPenalty() - pastPoopCount * 2, 0);
         double exp = mong.getExp() + MongExp.CLEANING_POOP.exp * pastPoopCount;
 
         mong = mongRepository.save(mong.toBuilder()
                 .exp(exp)
                 .poopCount(0)
+                .penalty(newPenalty)
                 .build().validation());
 
         MongLogCode mongLogCode = MongLogCode.DECREASE_POOP_COUNT;
@@ -286,6 +288,7 @@ public class MongService {
                 .state(MongState.NORMAL)
                 .grade(mong.getGrade().nextGrade)
                 .mongCode(mongCode)
+                .evolutionPoint(150)
                 .build());
 
         MongLogCode mongLogCode = MongLogCode.EVOLUTION;
@@ -301,7 +304,7 @@ public class MongService {
     }
 
     @Transactional(transactionManager = "mongTransactionManager")
-    public MongVo toggleEvolution(Long mongId, String mongCode) throws NotFoundException {
+    public MongVo toggleEvolution(Long mongId, String mongCode, Integer evolutionPoint) throws NotFoundException {
 
         Mong mong = mongRepository.findByIdAndIsActiveTrueWithLock(mongId)
                 .orElseThrow(() -> new NotFoundException(MongErrorCode.NOT_FOUND_ACTIVE_MONG));
@@ -318,6 +321,10 @@ public class MongService {
                 .healthy(mongStatusVo.healthy())
                 .sleep(mongStatusVo.sleep())
                 .exp(0D)
+                .evolutionPoint(evolutionPoint)
+                .numberOfStroke(0)
+                .numberOfTraining(0)
+                .penalty(0)
                 .build());
 
         MongLogCode mongLogCode = MongLogCode.EVOLUTION;

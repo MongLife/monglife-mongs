@@ -129,6 +129,7 @@ public class CommonInternalService {
                     .buildVersion(buildVersion)
                     .code(mongCode.getCode())
                     .name(mongCode.getName())
+                    .baseCode(mongCode.getBaseCode())
                     .level(mongCode.getLevel())
                     .evolutionPoint(mongCode.getEvolutionPoint())
                     .build()));

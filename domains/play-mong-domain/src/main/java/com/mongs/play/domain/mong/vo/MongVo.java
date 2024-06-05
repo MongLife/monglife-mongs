@@ -37,6 +37,7 @@ public record MongVo(
 
         LocalDateTime born,
 
+        Integer evolutionPoint,
         Integer penalty
 ) {
     public static MongVo of(Mong mong) {
@@ -62,6 +63,7 @@ public record MongVo(
                 .numberOfStroke(mong.getNumberOfStroke())
                 .isDeadSchedule(mong.getIsDeadSchedule())
                 .born(mong.getCreatedAt())
+                .evolutionPoint(mong.getEvolutionPoint())
                 .penalty(mong.getPenalty())
                 .build();
     }

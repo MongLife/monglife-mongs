@@ -402,10 +402,22 @@ public class ManagementExternalService {
             newMongVo = mongService.toggleLastEvolution(mongVo.mongId());
             managementWorkerFeignService.lastEvolutionSchedule(mongVo.mongId());
         } else {
-            int evolutionPoint = ((mongVo.numberOfStroke() * 10) + (mongVo.numberOfTraining() * 100) - (mongVo.penalty() * 10) / 100 * 100);
+            int strokePoint = mongVo.numberOfStroke() * 2;
+            int trainingPoint = mongVo.numberOfTraining() * 3;
+            int penaltyPoint = mongVo.penalty();
+
+            int evolutionPoint = Math.max(mongVo.evolutionPoint() + strokePoint + trainingPoint - penaltyPoint, 0);
             List<MongCode> mongCodeList = codeService.getMongCodeByLevelAndEvolutionPoint(mongVo.grade().nextGrade.level, evolutionPoint);
-            String mongCode = mongCodeList.get(mongCodeList.size() - 1).getCode();
-            newMongVo = mongService.toggleEvolution(mongVo.mongId(), mongCode);
+
+            MongCode mongCode = codeService.getMongCode(mongVo.mongCode());
+            String newMongCode = mongCodeList.stream()
+                    .filter(code -> code.getBaseCode().equals(mongCode.getBaseCode()))
+                    .min((o1, o2) -> o2.getEvolutionPoint() - o1.getEvolutionPoint())
+                    .orElseGet(() -> mongCodeList.get(0))
+                    .getCode();
+            int newEvolutionPoint = evolutionPoint - 300 + 150;
+
+            newMongVo = mongService.toggleEvolution(mongVo.mongId(), newMongCode, newEvolutionPoint);
             playerInternalCollectionFeignService.registerMongCollection(accountId, newMongVo.mongCode());
             managementWorkerFeignService.evolutionSchedule(mongVo.mongId());
         }
