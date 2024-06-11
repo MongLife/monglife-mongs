@@ -1,8 +1,8 @@
 package com.mongs.play.app.player.external.member.service;
 
 import com.mongs.play.app.player.external.member.vo.*;
-import com.mongs.play.client.publisher.mong.annotation.RealTimeMember;
-import com.mongs.play.client.publisher.mong.code.PublishCode;
+import com.mongs.play.client.publisher.annotation.RealTimeMember;
+import com.mongs.play.client.publisher.code.PublishCode;
 import com.mongs.play.domain.member.entity.Member;
 import com.mongs.play.domain.member.service.MemberService;
 import com.mongs.play.domain.payment.entity.ChargeItem;
@@ -12,8 +12,6 @@ import com.mongs.play.domain.payment.service.ChargeItemService;
 import com.mongs.play.domain.payment.service.ExchangeItemService;
 import com.mongs.play.domain.payment.service.PaymentService;
 import com.mongs.play.module.feign.service.ManagementInternalFeignService;
-import com.mongs.play.module.feign.service.PlayerInternalCollectionFeignService;
-import com.mongs.play.module.feign.service.PlayerInternalMemberFeignService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -28,6 +26,7 @@ public class PlayerExternalMemberService {
     private final PaymentService paymentService;
     private final ChargeItemService chargeItemService;
     private final ExchangeItemService exchangeItemService;
+    private final ManagementInternalFeignService managementInternalFeignService;
 
     @Transactional
     public FindMemberVo findMember(Long accountId) {
@@ -82,7 +81,7 @@ public class PlayerExternalMemberService {
 
         ChargeItem chargeItem = chargeItemService.getChargeItem(chargeItemId);
 
-        Member member = memberService.increaseStarPoint(accountId,  chargeItem.getStarPoint());
+        Member member = memberService.increaseStarPoint(accountId, chargeItem.getStarPoint());
 
         paymentService.itemReward(paymentLog.getId());
 
@@ -102,13 +101,32 @@ public class PlayerExternalMemberService {
 
         Member member = memberService.decreaseStarPoint(accountId, exchangeItem.getStarPoint());
 
+        managementInternalFeignService.increasePayPoint(mongId, exchangeItem.getPayPoint());
+
         paymentService.itemReward(paymentLog.getId());
 
         return ExchangePayPointVo.builder()
                 .accountId(member.getAccountId())
                 .mongId(mongId)
-                .addPayPoint(exchangeItem.getPayPoint())
                 .starPoint(member.getStarPoint())
+                .build();
+    }
+
+    @Transactional
+    public ExchangePayPointWalkingVo exchangePayPointWalking(Long accountId, String deviceId, Long mongId, Integer walkingCount) {
+
+        PaymentLog paymentLog = paymentService.addExchangePayPointWalkingLog(accountId, deviceId);
+
+        int subWalkingCount = walkingCount / 100;
+        int addPayPoint = 10 * subWalkingCount;
+        managementInternalFeignService.increasePayPoint(mongId, addPayPoint);
+
+        paymentService.itemReward(paymentLog.getId());
+
+        return ExchangePayPointWalkingVo.builder()
+                .accountId(accountId)
+                .mongId(mongId)
+                .subWalkingCount(subWalkingCount)
                 .build();
     }
 }

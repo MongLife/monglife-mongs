@@ -73,6 +73,19 @@ public class PaymentService {
     }
 
     @Transactional(transactionManager = "paymentTransactionManager")
+    public PaymentLog addExchangePayPointWalkingLog(Long accountId, String deviceId) {
+
+        String receipt = UUID.randomUUID().toString().replace("-", "");
+
+        return paymentLogRepository.save(PaymentLog.builder()
+                .accountId(accountId)
+                .deviceId(deviceId)
+                .receipt(receipt)
+                .code(PaymentCode.EXCHANGE_PAY_POINT_WALKING)
+                .build());
+    }
+
+    @Transactional(transactionManager = "paymentTransactionManager")
     public PaymentLog removeExchangePayPointLog(Long paymentLogId) {
 
         PaymentLog paymentLog = paymentLogRepository.findPaymentLogById(paymentLogId)
