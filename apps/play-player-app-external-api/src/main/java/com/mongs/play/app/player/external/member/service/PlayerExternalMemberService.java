@@ -118,8 +118,9 @@ public class PlayerExternalMemberService {
 
         PaymentLog paymentLog = paymentService.addExchangePayPointWalkingLog(accountId, deviceId);
 
-        int subWalkingCount = walkingCount / 100;
-        int addPayPoint = 10 * subWalkingCount;
+        int mul = walkingCount / 100;
+        int addPayPoint = 10 * mul;
+        int subWalkingCount = 100 * mul;
 
         IncreasePayPointResDto increasePayPointResDto = managementInternalFeignService.increasePayPoint(mongId, addPayPoint);
 
