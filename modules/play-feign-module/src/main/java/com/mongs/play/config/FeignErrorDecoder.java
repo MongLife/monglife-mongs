@@ -32,9 +32,7 @@ public class FeignErrorDecoder implements ErrorDecoder {
         try {
             ErrorResDto errorResDto = objectMapper.readValue(response.body().asInputStream(), ErrorResDto.class);
             log.info("httpStatus: {}, body: {}", response.status(), errorResDto);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        } catch (IOException ignored) {}
 
         switch (HttpStatus.valueOf(response.status())) {
             case NOT_FOUND -> {

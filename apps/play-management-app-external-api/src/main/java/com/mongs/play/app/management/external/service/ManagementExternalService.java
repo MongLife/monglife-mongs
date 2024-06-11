@@ -8,6 +8,7 @@ import com.mongs.play.client.publisher.code.PublishCode;
 import com.mongs.play.core.error.app.ManagementExternalErrorCode;
 import com.mongs.play.core.exception.app.ManagementExternalException;
 import com.mongs.play.core.exception.common.InvalidException;
+import com.mongs.play.core.exception.module.ModuleErrorException;
 import com.mongs.play.domain.code.entity.FoodCode;
 import com.mongs.play.domain.code.entity.MongCode;
 import com.mongs.play.domain.code.service.CodeService;
@@ -135,7 +136,12 @@ public class ManagementExternalService {
         MongStatusPercentVo mongStatusPercentVo = MongUtil.statusToPercent(newMongVo.grade(), newMongVo);
 
         playerInternalCollectionFeignService.registerMongCollection(accountId, newMongVo.mongCode());
-        managementWorkerFeignService.zeroEvolutionSchedule(newMongVo.mongId());
+
+        try {
+            managementWorkerFeignService.zeroEvolutionSchedule(newMongVo.mongId());
+        } catch (ModuleErrorException e) {
+            playerInternalCollectionFeignService.removeMongCollection(accountId, newMongVo.mongCode());
+        }
 
         return RegisterMongVo.builder()
                 .mongId(newMongVo.mongId())
@@ -394,7 +400,11 @@ public class ManagementExternalService {
             String mongCode = mongCodeList.get(randIdx).getCode();
             newMongVo = mongService.toggleFirstEvolution(mongVo.mongId(), mongCode);
             playerInternalCollectionFeignService.registerMongCollection(accountId, newMongVo.mongCode());
-            managementWorkerFeignService.firstEvolutionSchedule(mongVo.mongId());
+            try {
+                managementWorkerFeignService.firstEvolutionSchedule(mongVo.mongId());
+            } catch (ModuleErrorException e) {
+                playerInternalCollectionFeignService.removeMongCollection(accountId, newMongVo.mongCode());
+            }
         } else if (MongGrade.LAST.equals(mongVo.grade().nextGrade)) {
             newMongVo = mongService.toggleLastEvolution(mongVo.mongId());
             managementWorkerFeignService.lastEvolutionSchedule(mongVo.mongId());
@@ -416,7 +426,11 @@ public class ManagementExternalService {
 
             newMongVo = mongService.toggleEvolution(mongVo.mongId(), newMongCode, newEvolutionPoint);
             playerInternalCollectionFeignService.registerMongCollection(accountId, newMongVo.mongCode());
-            managementWorkerFeignService.evolutionSchedule(mongVo.mongId());
+            try {
+                managementWorkerFeignService.evolutionSchedule(mongVo.mongId());
+            } catch (ModuleErrorException e) {
+                playerInternalCollectionFeignService.removeMongCollection(accountId, newMongVo.mongCode());
+            }
         }
 
         MongStatusPercentVo mongStatusPercentVo = MongUtil.statusToPercent(newMongVo.grade(), newMongVo);

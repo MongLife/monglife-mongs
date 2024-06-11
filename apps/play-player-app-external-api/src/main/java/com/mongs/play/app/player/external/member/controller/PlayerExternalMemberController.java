@@ -6,7 +6,6 @@ import com.mongs.play.app.player.external.member.dto.req.ExchangePayPointWalking
 import com.mongs.play.app.player.external.member.dto.res.*;
 import com.mongs.play.app.player.external.member.service.PlayerExternalMemberService;
 import com.mongs.play.app.player.external.member.vo.*;
-import com.mongs.play.module.feign.service.ManagementInternalFeignService;
 import com.mongs.play.module.security.principal.PassportDetail;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -107,7 +106,7 @@ public class PlayerExternalMemberController {
     }
 
     @PutMapping("/exchange/payPoint/walking")
-    public ResponseEntity<ExchangePayPointWalkingResDto> exchangePayPoint(
+    public ResponseEntity<ExchangePayPointWalkingResDto> exchangePayPointWalking(
             @AuthenticationPrincipal PassportDetail passportDetail,
             @RequestBody ExchangePayPointWalkingReqDto exchangePayPointWalkingReqDto
     ) {

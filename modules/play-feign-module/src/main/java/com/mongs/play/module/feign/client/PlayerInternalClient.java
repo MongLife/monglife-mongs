@@ -21,8 +21,4 @@ public interface PlayerInternalClient {
     ResponseEntity<RemoveMapCollectionResDto> removeMapCollection(@RequestBody @Validated RemoveMapCollectionReqDto removeMapCollectionReqDto);
     @DeleteMapping("/internal/player/member/increaseStarPoint/removeMongCollection")
     ResponseEntity<RemoveMongCollectionResDto> removeMongCollection(@RequestBody @Validated RemoveMongCollectionReqDto removeMongCollectionReqDto);
-    @PutMapping("/internal/player/member/increaseStarPoint/registerMapCollection")
-    ResponseEntity<IncreaseStarPointResDto> increaseStarPointByRegisterMapCollection(IncreaseStarPointReqDto increaseStarPointReqDto);
-    @PutMapping("/internal/player/member/increaseStarPoint/registerMongCollection")
-    ResponseEntity<IncreaseStarPointResDto> increaseStarPointByRegisterMongCollection(IncreaseStarPointReqDto increaseStarPointReqDto);
 }

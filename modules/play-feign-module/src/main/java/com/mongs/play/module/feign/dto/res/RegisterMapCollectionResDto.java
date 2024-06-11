@@ -5,6 +5,6 @@ import lombok.Builder;
 @Builder
 public record RegisterMapCollectionResDto(
         Long accountId,
-        Integer starPoint
+        String mapCode
 ) {
 }

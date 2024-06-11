@@ -5,6 +5,6 @@ import lombok.Builder;
 @Builder
 public record RegisterMongCollectionResDto(
         Long accountId,
-        Integer starPoint
+        String mongCode
 ) {
 }
