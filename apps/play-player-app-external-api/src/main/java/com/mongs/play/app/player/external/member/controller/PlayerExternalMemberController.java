@@ -122,6 +122,7 @@ public class PlayerExternalMemberController {
                 .accountId(exchangePayPointWalkingVo.accountId())
                 .mongId(exchangePayPointWalkingVo.mongId())
                 .subWalkingCount(exchangePayPointWalkingVo.subWalkingCount())
+                .payPoint(exchangePayPointWalkingVo.payPoint())
                 .build());
     }
 }

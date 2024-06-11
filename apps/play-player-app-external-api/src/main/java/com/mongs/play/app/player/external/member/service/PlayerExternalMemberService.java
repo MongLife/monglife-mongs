@@ -11,6 +11,7 @@ import com.mongs.play.domain.payment.entity.PaymentLog;
 import com.mongs.play.domain.payment.service.ChargeItemService;
 import com.mongs.play.domain.payment.service.ExchangeItemService;
 import com.mongs.play.domain.payment.service.PaymentService;
+import com.mongs.play.module.feign.dto.res.IncreasePayPointResDto;
 import com.mongs.play.module.feign.service.ManagementInternalFeignService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -119,7 +120,8 @@ public class PlayerExternalMemberService {
 
         int subWalkingCount = walkingCount / 100;
         int addPayPoint = 10 * subWalkingCount;
-        managementInternalFeignService.increasePayPoint(mongId, addPayPoint);
+
+        IncreasePayPointResDto increasePayPointResDto = managementInternalFeignService.increasePayPoint(mongId, addPayPoint);
 
         paymentService.itemReward(paymentLog.getId());
 
@@ -127,6 +129,7 @@ public class PlayerExternalMemberService {
                 .accountId(accountId)
                 .mongId(mongId)
                 .subWalkingCount(subWalkingCount)
+                .payPoint(increasePayPointResDto.payPoint())
                 .build();
     }
 }

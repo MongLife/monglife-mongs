@@ -6,6 +6,7 @@ import lombok.Builder;
 public record ExchangePayPointWalkingResDto(
         Long accountId,
         Long mongId,
-        Integer subWalkingCount
+        Integer subWalkingCount,
+        Integer payPoint
 ) {
 }
