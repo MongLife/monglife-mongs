@@ -9,8 +9,8 @@ import lombok.NoArgsConstructor;
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
-public class MatchOverVo {
-    private String roomId;
-    private Long winMongId;
-    private Long loseMongId;
+public class PlayerVo {
+    private Long mongId;
+    private Double hp;
+    private Boolean isMyTurn;
 }

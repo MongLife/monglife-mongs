@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
-public class FindMatchVo {
+public class MatchFindVo {
     private Long mongId;
     private String roomId;
 }

@@ -5,12 +5,14 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
+import java.util.Map;
+
 @Builder
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
 public class RoundOverVo {
     private String roomId;
-    private Long winMongId;
-    private Long loseMongId;
+    private Map<Long, PlayerVo> playerVoMap;
 }

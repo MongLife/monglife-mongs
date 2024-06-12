@@ -9,8 +9,10 @@ import lombok.NoArgsConstructor;
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
-public class MatchOverVo {
+public class MatchStartVo {
     private String roomId;
-    private Long winMongId;
-    private Long loseMongId;
+    private Long nameA;
+    private String mongCodeA;
+    private Long nameB;
+    private String mongCodeB;
 }

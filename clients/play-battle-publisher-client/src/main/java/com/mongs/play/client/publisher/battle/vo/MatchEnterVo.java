@@ -5,14 +5,13 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.util.Map;
+
 @Builder
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
-public class StartMatchVo {
+public class MatchEnterVo {
     private String roomId;
-    private Long nameA;
-    private String mongCodeA;
-    private Long nameB;
-    private String mongCodeB;
+    private Map<Long, PlayerVo> playerVoMap;
 }
