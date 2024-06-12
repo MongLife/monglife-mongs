@@ -20,28 +20,24 @@ public class MemberService {
     @Value("${env.member.max-slot-count}")
     private Integer maxSlotCount;
 
+
     private final MemberRepository memberRepository;
 
-    @Transactional
-    public Member addMember(Member member) {
-        return memberRepository.save(member);
-    }
-
-    @Transactional
+    @Transactional(transactionManager = "memberTransactionManager")
     public Member getMember(Long accountId) {
         return memberRepository.findByAccountIdAndIsDeletedIsFalse(accountId)
-                .orElseGet(() -> this.addMember(Member.builder()
-                        .accountId(accountId)
-                        .build()));
+                .orElseGet(() -> memberRepository.save(Member.builder().accountId(accountId).build()));
     }
 
-    @Transactional
+    @Transactional(transactionManager = "memberTransactionManager")
     public Member increaseSlotCount(Long accountId, Integer slotCount) throws NotFoundException {
 
         Member member = memberRepository.findByAccountIdAndIsDeletedIsFalse(accountId)
-                .orElseThrow(() -> new NotFoundException(MemberErrorCode.NOT_FOUND_MEMBER));
+                .orElseGet(() -> Member.builder().accountId(accountId).build());
 
-        if (member.getStarPoint() < buySlotPrice) {
+        int starPoint = member.getStarPoint() - (buySlotPrice * slotCount);
+
+        if (starPoint < 0) {
             throw new InvalidException(MemberErrorCode.NOT_ENOUGH_STAR_POINT);
         }
         if (member.getSlotCount() >= maxSlotCount) {
@@ -49,16 +45,16 @@ public class MemberService {
         }
 
         return memberRepository.save(member.toBuilder()
-                .starPoint(member.getStarPoint() - buySlotPrice)
+                .starPoint(starPoint)
                 .slotCount(member.getSlotCount() + slotCount)
                 .build());
     }
 
-    @Transactional
+    @Transactional(transactionManager = "memberTransactionManager")
     public Member decreaseSlotCount(Long accountId, Integer slotCount) throws NotFoundException {
 
         Member member = memberRepository.findByAccountIdAndIsDeletedIsFalse(accountId)
-                .orElseThrow(() -> new NotFoundException(MemberErrorCode.NOT_FOUND_MEMBER));
+                .orElseGet(() -> Member.builder().accountId(accountId).build());
 
         if (member.getSlotCount() == 1) {
             throw new InvalidException(MemberErrorCode.ALREADY_MIN_SLOT_COUNT);
@@ -71,29 +67,33 @@ public class MemberService {
 
     }
 
-    @Transactional
-    public Member increaseStarPoint(Long accountId, Integer starPoint) throws NotFoundException {
+    @Transactional(transactionManager = "memberTransactionManager")
+    public Member increaseStarPoint(Long accountId, Integer addStarPoint) throws NotFoundException {
 
         Member member = memberRepository.findByAccountIdAndIsDeletedIsFalse(accountId)
-                .orElseThrow(() -> new NotFoundException(MemberErrorCode.NOT_FOUND_MEMBER));
+                .orElseGet(() -> Member.builder().accountId(accountId).build());
+
+        int starPoint = member.getStarPoint() + addStarPoint;
 
         return memberRepository.save(member.toBuilder()
-                .starPoint(member.getStarPoint() + starPoint)
+                .starPoint(starPoint)
                 .build());
     }
 
-    @Transactional
-    public Member decreaseStarPoint(Long accountId, Integer starPoint) throws NotFoundException {
+    @Transactional(transactionManager = "memberTransactionManager")
+    public Member decreaseStarPoint(Long accountId, Integer subStarPoint) throws NotFoundException {
 
         Member member = memberRepository.findByAccountIdAndIsDeletedIsFalse(accountId)
-                .orElseThrow(() -> new NotFoundException(MemberErrorCode.NOT_FOUND_MEMBER));
+                .orElseGet(() -> Member.builder().accountId(accountId).build());
 
-        if (member.getStarPoint() <= 0) {
+        int starPoint = member.getStarPoint() - subStarPoint;
+
+        if (starPoint < 0) {
             throw new InvalidException(MemberErrorCode.NOT_ENOUGH_STAR_POINT);
         }
 
         return memberRepository.save(member.toBuilder()
-                .starPoint(member.getStarPoint() - starPoint)
+                .starPoint(starPoint)
                 .build());
     }
 }

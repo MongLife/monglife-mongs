@@ -19,12 +19,12 @@ import org.springframework.transaction.annotation.Transactional;
 public class MongStatusService {
 
     private final MongRepository mongRepository;
-    private final MongLogRepository mongLogRepository;
+//    private final MongLogRepository mongLogRepository;
 
-    @Transactional
+    @Transactional(transactionManager = "mongTransactionManager")
     public MongVo decreaseStatus(Long mongId, Double subWeight, Double subStrength, Double subSatiety, Double subHealthy, Double subSleep) {
 
-        Mong mong = mongRepository.findByIdAndIsActiveTrue(mongId)
+        Mong mong = mongRepository.findByIdAndIsActiveTrueWithLock(mongId)
                 .orElseThrow(() -> new NotFoundException(MongErrorCode.NOT_FOUND_ACTIVE_MONG));
 
         mong = mongRepository.save(mong.toBuilder()
@@ -35,44 +35,44 @@ public class MongStatusService {
                 .sleep(mong.getSleep() - subSleep)
                 .build().validation());
 
-        MongLogCode mongLogCode = MongLogCode.DECREASE_STATUS;
-        mongLogRepository.save(MongLog.builder()
-                .mongId(mong.getId())
-                .mongLogCode(mongLogCode)
-                .message(String.format("%s:%f:%f:%f:%f:%f", mongLogCode.message, subWeight, subStrength, subSatiety, subHealthy, subSleep))
-                .build());
+//        MongLogCode mongLogCode = MongLogCode.DECREASE_STATUS;
+//        mongLogRepository.save(MongLog.builder()
+//                .mongId(mong.getId())
+//                .mongLogCode(mongLogCode)
+//                .message(String.format("%s:%f:%f:%f:%f:%f", mongLogCode.message, subWeight, subStrength, subSatiety, subHealthy, subSleep))
+//                .build());
 
         log.info("[decreaseStatus] mongId: {}, subWeight: {}, subStrength: {}, subSatiety: {}, subHealthy: {}, subSleep: {}", mongId, subWeight, subStrength, subSatiety, subHealthy, subSleep);
 
         return MongVo.of(mong);
     }
 
-    @Transactional
+    @Transactional(transactionManager = "mongTransactionManager")
     public MongVo increasePoopCount(Long mongId, Integer addPoopCount) {
 
-        Mong mong = mongRepository.findByIdAndIsActiveTrue(mongId)
+        Mong mong = mongRepository.findByIdAndIsActiveTrueWithLock(mongId)
                 .orElseThrow(() -> new NotFoundException(MongErrorCode.NOT_FOUND_ACTIVE_MONG));
 
         mong = mongRepository.save(mong.toBuilder()
                 .poopCount(mong.getPoopCount() + addPoopCount)
                 .build().validation());
 
-        MongLogCode mongLogCode = MongLogCode.INCREASE_POOP_COUNT;
-        mongLogRepository.save(MongLog.builder()
-                .mongId(mong.getId())
-                .mongLogCode(mongLogCode)
-                .message(String.format("%s:%s", mongLogCode.message, addPoopCount))
-                .build());
+//        MongLogCode mongLogCode = MongLogCode.INCREASE_POOP_COUNT;
+//        mongLogRepository.save(MongLog.builder()
+//                .mongId(mong.getId())
+//                .mongLogCode(mongLogCode)
+//                .message(String.format("%s:%s", mongLogCode.message, addPoopCount))
+//                .build());
 
         log.info("[increasePoopCount] mongId: {}, addPoopCount: {}", mongId, addPoopCount);
 
         return MongVo.of(mong);
     }
 
-    @Transactional
+    @Transactional(transactionManager = "mongTransactionManager")
     public MongVo increaseStatus(Long mongId, Double addWeight, Double addStrength, Double addSatiety, Double addHealthy, Double addSleep) {
 
-        Mong mong = mongRepository.findByIdAndIsActiveTrue(mongId)
+        Mong mong = mongRepository.findByIdAndIsActiveTrueWithLock(mongId)
                 .orElseThrow(() -> new NotFoundException(MongErrorCode.NOT_FOUND_ACTIVE_MONG));
 
         mong = mongRepository.save(mong.toBuilder()
@@ -83,12 +83,12 @@ public class MongStatusService {
                 .sleep(mong.getSleep() + addSleep)
                 .build().validation());
 
-        MongLogCode mongLogCode = MongLogCode.DECREASE_STATUS;
-        mongLogRepository.save(MongLog.builder()
-                .mongId(mong.getId())
-                .mongLogCode(mongLogCode)
-                .message(String.format("%s:%f:%f:%f:%f:%f", mongLogCode.message, addWeight, addStrength, addSatiety, addHealthy, addSleep))
-                .build());
+//        MongLogCode mongLogCode = MongLogCode.INCREASE_STATUS;
+//        mongLogRepository.save(MongLog.builder()
+//                .mongId(mong.getId())
+//                .mongLogCode(mongLogCode)
+//                .message(String.format("%s:%f:%f:%f:%f:%f", mongLogCode.message, addWeight, addStrength, addSatiety, addHealthy, addSleep))
+//                .build());
 
         log.info("[increaseStatus] mongId: {}, addWeight: {}, addStrength:{}, addSatiety: {}, addHealthy: {}, addSleep: {}", mongId, addWeight, addStrength, addSatiety, addHealthy, addSleep);
 

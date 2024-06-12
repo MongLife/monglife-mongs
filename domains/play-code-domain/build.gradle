@@ -1,8 +1,11 @@
 dependencies {
     api project(':modules:play-hmac-module')
+    api project(':modules:play-jpa-module')
 
-    api 'com.google.code.gson:gson:2.10.1'
-    api 'org.springframework.boot:spring-boot-starter-data-mongodb'
+    runtimeOnly 'com.mysql:mysql-connector-j'
+
+//    api 'com.google.code.gson:gson:2.10.1'
+//    api 'org.springframework.boot:spring-boot-starter-data-mongodb'
 }
 
 tasks.register('copyPrivate', Copy) {

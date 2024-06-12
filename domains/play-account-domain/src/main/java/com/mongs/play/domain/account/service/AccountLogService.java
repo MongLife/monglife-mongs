@@ -7,6 +7,7 @@ import com.mongs.play.domain.account.repository.AccountLogRepository;
 import com.mongs.play.domain.account.repository.AccountRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 
@@ -17,6 +18,7 @@ public class AccountLogService {
     private final AccountRepository accountRepository;
     private final AccountLogRepository accountLogRepository;
 
+    @Transactional(transactionManager = "accountTransactionManager")
     public AccountLog modifyLoginCountAddAccountLogIfNotExist(Long accountId, String deviceId) throws NotFoundException {
 
         accountRepository.findByIdAndIsDeletedFalse(accountId)
@@ -24,7 +26,7 @@ public class AccountLogService {
 
         LocalDate today = LocalDate.now();
 
-        AccountLog accountLog = accountLogRepository.findByAccountIdAndDeviceIdAndLoginAt(accountId, deviceId, today)
+        AccountLog accountLog = accountLogRepository.findByAccountIdAndDeviceIdAndLoginAtWithLock(accountId, deviceId, today)
                 .orElseGet(() -> accountLogRepository.save(AccountLog.builder()
                                 .accountId(accountId)
                                 .deviceId(deviceId)

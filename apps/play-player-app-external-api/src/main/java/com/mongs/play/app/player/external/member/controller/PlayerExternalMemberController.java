@@ -2,10 +2,10 @@ package com.mongs.play.app.player.external.member.controller;
 
 import com.mongs.play.app.player.external.member.dto.req.ChargeStarPointReqDto;
 import com.mongs.play.app.player.external.member.dto.req.ExchangePayPointReqDto;
+import com.mongs.play.app.player.external.member.dto.req.ExchangePayPointWalkingReqDto;
 import com.mongs.play.app.player.external.member.dto.res.*;
 import com.mongs.play.app.player.external.member.service.PlayerExternalMemberService;
 import com.mongs.play.app.player.external.member.vo.*;
-import com.mongs.play.module.feign.service.ManagementInternalFeignService;
 import com.mongs.play.module.security.principal.PassportDetail;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -20,7 +20,6 @@ import java.util.List;
 public class PlayerExternalMemberController {
 
     private final PlayerExternalMemberService playerExternalMemberService;
-    private final ManagementInternalFeignService managementInternalFeignService;
 
     @GetMapping("")
     public ResponseEntity<FindMemberResDto> findMember(@AuthenticationPrincipal PassportDetail passportDetail) {
@@ -99,12 +98,31 @@ public class PlayerExternalMemberController {
 
         ExchangePayPointVo exchangePayPointVo = playerExternalMemberService.exchangePayPoint(accountId, deviceId, mongId, exchangeItemId);
 
-        managementInternalFeignService.increasePayPoint(mongId, exchangePayPointVo.addPayPoint());
-
         return ResponseEntity.ok().body(ExchangePayPointResDto.builder()
                 .accountId(exchangePayPointVo.accountId())
                 .mongId(exchangePayPointVo.mongId())
                 .starPoint(exchangePayPointVo.starPoint())
+                .build());
+    }
+
+    @PutMapping("/exchange/payPoint/walking")
+    public ResponseEntity<ExchangePayPointWalkingResDto> exchangePayPointWalking(
+            @AuthenticationPrincipal PassportDetail passportDetail,
+            @RequestBody ExchangePayPointWalkingReqDto exchangePayPointWalkingReqDto
+    ) {
+
+        Long accountId = passportDetail.getId();
+        String deviceId = passportDetail.getDeviceId();
+        Long mongId = exchangePayPointWalkingReqDto.mongId();
+        Integer walkingCount = exchangePayPointWalkingReqDto.walkingCount();
+
+        ExchangePayPointWalkingVo exchangePayPointWalkingVo = playerExternalMemberService.exchangePayPointWalking(accountId, deviceId, mongId, walkingCount);
+
+        return ResponseEntity.ok().body(ExchangePayPointWalkingResDto.builder()
+                .accountId(exchangePayPointWalkingVo.accountId())
+                .mongId(exchangePayPointWalkingVo.mongId())
+                .subWalkingCount(exchangePayPointWalkingVo.subWalkingCount())
+                .payPoint(exchangePayPointWalkingVo.payPoint())
                 .build());
     }
 }

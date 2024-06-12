@@ -1,6 +1,5 @@
 package com.mongs.play.app.management.internal.vo;
 
-import com.mongs.play.domain.mong.enums.MongShift;
 import lombok.Builder;
 
 @Builder
@@ -14,6 +13,7 @@ public record DecreaseStatusVo(
         Double strengthPercent,
         Double satietyPercent,
         Double healthyPercent,
-        Double sleepPercent
+        Double sleepPercent,
+        Boolean isDeadSchedule
 ) {
 }

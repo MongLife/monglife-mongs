@@ -6,6 +6,7 @@ import com.mongs.play.core.error.ErrorCode;
 import com.mongs.play.core.error.GlobalErrorCode;
 import com.mongs.play.core.exception.ErrorException;
 import com.mongs.play.core.exception.app.ManagementInternalException;
+import com.mongs.play.core.exception.app.ManagementWorkerException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;

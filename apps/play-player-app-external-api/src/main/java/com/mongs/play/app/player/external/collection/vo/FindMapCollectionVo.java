@@ -15,7 +15,7 @@ public record FindMapCollectionVo(
 ) {
     public static FindMapCollectionVo of(MapCode mapCode, Boolean isDisable) {
         return FindMapCollectionVo.builder()
-                .code(mapCode.code())
+                .code(mapCode.getCode())
                 .disable(isDisable)
                 .build();
     }

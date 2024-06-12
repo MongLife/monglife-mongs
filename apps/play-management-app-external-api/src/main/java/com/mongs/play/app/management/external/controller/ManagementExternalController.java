@@ -20,7 +20,6 @@ import java.util.List;
 public class ManagementExternalController {
 
     private final ManagementExternalService managementExternalService;
-    private final PlayerInternalCollectionFeignService playerInternalCollectionFeignService;
 
     @GetMapping("")
     public ResponseEntity<List<FindMongResDto>> findMong(
@@ -90,8 +89,6 @@ public class ManagementExternalController {
         String sleepEnd = registerMongReqDto.sleepEnd();
 
         var vo = managementExternalService.registerMong(accountId, name, sleepStart, sleepEnd);
-
-        playerInternalCollectionFeignService.registerMongCollection(accountId, vo.mongCode());
 
         return ResponseEntity.ok().body(RegisterMongResDto.builder()
                 .mongId(vo.mongId())
@@ -224,8 +221,6 @@ public class ManagementExternalController {
         Long accountId = passportDetail.getId();
 
         var vo = managementExternalService.evolutionMong(accountId, mongId);
-
-        playerInternalCollectionFeignService.registerMongCollection(accountId, vo.mongCode());
 
         return ResponseEntity.ok().body(EvolutionMongResDto.builder()
                 .mongId(vo.mongId())

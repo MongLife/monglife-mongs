@@ -23,7 +23,7 @@ public class FeedbackService {
         return feedbackRepository.findByAccountId(accountId);
     }
 
-    @Transactional
+    @Transactional(transactionManager = "feedbackTransactionManager")
     public Feedback addFeedback(Feedback feedback, List<FeedbackLog> feedbackLogList) {
 
         List<String> feedbackLogIdList = feedbackLogList.stream()
@@ -43,7 +43,7 @@ public class FeedbackService {
         return feedbackRepository.save(feedback);
     }
 
-    @Transactional
+    @Transactional(transactionManager = "feedbackTransactionManager")
     public Feedback modifyIsSolved(Long feedbackId, Boolean isSolved) throws NotFoundException {
 
         Feedback feedback = feedbackRepository.findById(feedbackId)

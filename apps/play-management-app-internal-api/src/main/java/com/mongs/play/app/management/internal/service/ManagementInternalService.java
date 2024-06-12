@@ -3,16 +3,14 @@ package com.mongs.play.app.management.internal.service;
 import com.mongs.play.app.management.internal.annotation.ValidationDead;
 import com.mongs.play.app.management.internal.vo.EvolutionReadyVo;
 import com.mongs.play.app.management.internal.vo.*;
-import com.mongs.play.client.publisher.mong.annotation.RealTimeMember;
-import com.mongs.play.client.publisher.mong.annotation.RealTimeMong;
-import com.mongs.play.client.publisher.mong.code.PublishCode;
+import com.mongs.play.client.publisher.event.annotation.RealTimeMong;
+import com.mongs.play.client.publisher.event.code.PublishCode;
 import com.mongs.play.domain.mong.service.MongPayPointService;
 import com.mongs.play.domain.mong.service.MongService;
 import com.mongs.play.domain.mong.service.MongStatusService;
 import com.mongs.play.domain.mong.utils.MongUtil;
 import com.mongs.play.domain.mong.vo.MongStatusPercentVo;
 import com.mongs.play.domain.mong.vo.MongVo;
-import com.mongs.play.module.feign.service.ManagementWorkerFeignService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -37,6 +35,11 @@ public class ManagementInternalService {
                 .build();
     }
 
+    @Transactional
+    public void toggleIsDeadSchedule(Long mongId, Boolean isDeadSchedule) {
+        MongVo mongVo = mongService.toggleIsDeadSchedule(mongId, isDeadSchedule);
+    }
+
     @ValidationDead
     @RealTimeMong(codes = { PublishCode.MONG_STATUS })
     @Transactional
@@ -56,6 +59,7 @@ public class ManagementInternalService {
                 .satietyPercent(mongStatusPercentVo.satiety())
                 .healthyPercent(mongStatusPercentVo.healthy())
                 .sleepPercent(mongStatusPercentVo.sleep())
+                .isDeadSchedule(mongVo.isDeadSchedule())
                 .build();
     }
 
@@ -90,6 +94,7 @@ public class ManagementInternalService {
                 .satietyPercent(mongStatusPercentVo.satiety())
                 .healthyPercent(mongStatusPercentVo.healthy())
                 .sleepPercent(mongStatusPercentVo.sleep())
+                .isDeadSchedule(mongVo.isDeadSchedule())
                 .build();
     }
 

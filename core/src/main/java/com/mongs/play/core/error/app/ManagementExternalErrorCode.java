@@ -9,6 +9,7 @@ import org.springframework.http.HttpStatus;
 @AllArgsConstructor
 public enum ManagementExternalErrorCode implements ErrorCode {
     NOT_MATCH_MONG(HttpStatus.FORBIDDEN, "MANAGEMENT_EXTERNAL-101", "mong forbidden error."),
+    INVALID_REGISTER(HttpStatus.NOT_ACCEPTABLE, "MANAGEMENT_EXTERNAL-107", "invalid register."),
     INVALID_STROKE(HttpStatus.NOT_ACCEPTABLE, "MANAGEMENT_EXTERNAL-102", "invalid stroke."),
     INVALID_SLEEPING(HttpStatus.NOT_ACCEPTABLE, "MANAGEMENT_EXTERNAL-103", "invalid sleeping."),
     INVALID_AWAKE(HttpStatus.NOT_ACCEPTABLE, "MANAGEMENT_EXTERNAL-104", "invalid wake up."),

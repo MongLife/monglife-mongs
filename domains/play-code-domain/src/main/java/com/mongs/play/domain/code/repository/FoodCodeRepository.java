@@ -1,10 +1,15 @@
 package com.mongs.play.domain.code.repository;
 
 import com.mongs.play.domain.code.entity.FoodCode;
-import org.springframework.data.mongodb.repository.MongoRepository;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
+import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
-public interface FoodCodeRepository extends MongoRepository<FoodCode, String> {
-    List<FoodCode> findByBuildVersionIsLessThanEqual(String buildVersion);
+@Repository
+public interface FoodCodeRepository extends JpaRepository<FoodCode, String> {
+    @Query("SELECT fc FROM FoodCode fc WHERE fc.buildVersion <= :buildVersion")
+    List<FoodCode> findByBuildVersionIsLessThanEqual(@Param("buildVersion") String buildVersion);
 }

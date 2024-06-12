@@ -3,11 +3,12 @@ package com.mongs.play.app.management.external.service;
 import com.mongs.play.app.management.external.annotation.ValidationDead;
 import com.mongs.play.app.management.external.annotation.ValidationEvolution;
 import com.mongs.play.app.management.external.vo.*;
-import com.mongs.play.client.publisher.mong.annotation.RealTimeMong;
-import com.mongs.play.client.publisher.mong.code.PublishCode;
+import com.mongs.play.client.publisher.event.annotation.RealTimeMong;
+import com.mongs.play.client.publisher.event.code.PublishCode;
 import com.mongs.play.core.error.app.ManagementExternalErrorCode;
 import com.mongs.play.core.exception.app.ManagementExternalException;
 import com.mongs.play.core.exception.common.InvalidException;
+import com.mongs.play.core.exception.module.ModuleErrorException;
 import com.mongs.play.domain.code.entity.FoodCode;
 import com.mongs.play.domain.code.entity.MongCode;
 import com.mongs.play.domain.code.service.CodeService;
@@ -20,6 +21,7 @@ import com.mongs.play.domain.mong.vo.MongFeedLogVo;
 import com.mongs.play.domain.mong.vo.MongStatusPercentVo;
 import com.mongs.play.domain.mong.vo.MongVo;
 import com.mongs.play.module.feign.service.ManagementWorkerFeignService;
+import com.mongs.play.module.feign.service.PlayerInternalCollectionFeignService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -40,6 +42,7 @@ public class ManagementExternalService {
     private final CodeService codeService;
     private final MongService mongService;
     private final ManagementWorkerFeignService managementWorkerFeignService;
+    private final PlayerInternalCollectionFeignService playerInternalCollectionFeignService;
 
     @RealTimeMong(codes = { PublishCode.MONG_SHIFT })
     @Transactional
@@ -127,12 +130,18 @@ public class ManagementExternalService {
         List<MongCode> mongCodeList = codeService.getMongCodeByLevel(MongGrade.ZERO.level);
         int randIdx = random.nextInt(mongCodeList.size());
 
-        String eggMongCode = mongCodeList.get(randIdx).code();
+        String eggMongCode = mongCodeList.get(randIdx).getCode();
 
         MongVo newMongVo = mongService.addMong(accountId, eggMongCode, name, sleepStart, sleepEnd);
         MongStatusPercentVo mongStatusPercentVo = MongUtil.statusToPercent(newMongVo.grade(), newMongVo);
 
-        managementWorkerFeignService.zeroEvolutionSchedule(newMongVo.mongId());
+        playerInternalCollectionFeignService.registerMongCollection(accountId, newMongVo.mongCode());
+
+        try {
+            managementWorkerFeignService.zeroEvolutionSchedule(newMongVo.mongId());
+        } catch (ModuleErrorException e) {
+            playerInternalCollectionFeignService.removeMongCollection(accountId, newMongVo.mongCode());
+        }
 
         return RegisterMongVo.builder()
                 .mongId(newMongVo.mongId())
@@ -230,7 +239,6 @@ public class ManagementExternalService {
         }
 
         MongVo newMongVo = mongService.toggleIsSleeping(mongVo.mongId());
-
         managementWorkerFeignService.sleepingSchedule(newMongVo.mongId(), newMongVo.isSleeping());
 
         return SleepingMongVo.builder()
@@ -335,6 +343,7 @@ public class ManagementExternalService {
                 .healthyPercent(mongStatusPercentVo.healthy())
                 .sleepPercent(mongStatusPercentVo.sleep())
                 .payPoint(newMongVo.payPoint())
+                .isDeadSchedule(newMongVo.isDeadSchedule())
                 .build();
     }
 
@@ -388,20 +397,40 @@ public class ManagementExternalService {
         if (MongGrade.ZERO.equals(mongVo.grade())) {
             List<MongCode> mongCodeList = codeService.getMongCodeByLevel(MongGrade.ZERO.nextGrade.level);
             int randIdx = random.nextInt(mongCodeList.size());
-            String mongCode = mongCodeList.get(randIdx).code();
+            String mongCode = mongCodeList.get(randIdx).getCode();
             newMongVo = mongService.toggleFirstEvolution(mongVo.mongId(), mongCode);
-            managementWorkerFeignService.firstEvolutionSchedule(mongVo.mongId());
+            playerInternalCollectionFeignService.registerMongCollection(accountId, newMongVo.mongCode());
+            try {
+                managementWorkerFeignService.firstEvolutionSchedule(mongVo.mongId());
+            } catch (ModuleErrorException e) {
+                playerInternalCollectionFeignService.removeMongCollection(accountId, newMongVo.mongCode());
+            }
         } else if (MongGrade.LAST.equals(mongVo.grade().nextGrade)) {
             newMongVo = mongService.toggleLastEvolution(mongVo.mongId());
             managementWorkerFeignService.lastEvolutionSchedule(mongVo.mongId());
         } else {
-            // TODO("진화 포인트 환산")
-            int evolutionPoint = 0;
+            int strokePoint = mongVo.numberOfStroke() * 2;
+            int trainingPoint = mongVo.numberOfTraining() * 3;
+            int penaltyPoint = mongVo.penalty();
+
+            int evolutionPoint = Math.max(mongVo.evolutionPoint() + strokePoint + trainingPoint - penaltyPoint, 0);
             List<MongCode> mongCodeList = codeService.getMongCodeByLevelAndEvolutionPoint(mongVo.grade().nextGrade.level, evolutionPoint);
-            // TODO("컬렉션 목록을 조회하여 겹치지 않도록 하는 로직 필요")
-            String mongCode = mongCodeList.get(mongCodeList.size() - 1).code();
-            newMongVo = mongService.toggleEvolution(mongVo.mongId(), mongCode);
-            managementWorkerFeignService.evolutionSchedule(mongVo.mongId());
+
+            MongCode mongCode = codeService.getMongCode(mongVo.mongCode());
+            String newMongCode = mongCodeList.stream()
+                    .filter(code -> code.getBaseCode().equals(mongCode.getBaseCode()))
+                    .min((o1, o2) -> o2.getEvolutionPoint() - o1.getEvolutionPoint())
+                    .orElseGet(() -> mongCodeList.get(0))
+                    .getCode();
+            int newEvolutionPoint = evolutionPoint - 300 + 150;
+
+            newMongVo = mongService.toggleEvolution(mongVo.mongId(), newMongCode, newEvolutionPoint);
+            playerInternalCollectionFeignService.registerMongCollection(accountId, newMongVo.mongCode());
+            try {
+                managementWorkerFeignService.evolutionSchedule(mongVo.mongId());
+            } catch (ModuleErrorException e) {
+                playerInternalCollectionFeignService.removeMongCollection(accountId, newMongVo.mongCode());
+            }
         }
 
         MongStatusPercentVo mongStatusPercentVo = MongUtil.statusToPercent(newMongVo.grade(), newMongVo);
@@ -438,7 +467,7 @@ public class ManagementExternalService {
         if (!accountId.equals(mongVo.accountId())) {
             throw new ManagementExternalException(ManagementExternalErrorCode.NOT_MATCH_MONG);
         }
-        if (mongVo.payPoint() < food.price()) {
+        if (mongVo.payPoint() < food.getPrice()) {
             throw new InvalidException(ManagementExternalErrorCode.NOT_ENOUGH_PAY_POINT);
         }
         if (MongGrade.EMPTY.equals(mongVo.grade())) {
@@ -448,7 +477,7 @@ public class ManagementExternalService {
             throw new ManagementExternalException(ManagementExternalErrorCode.INVALID_FEED);
         }
 
-        MongVo newMongVo = mongService.feedMong(mongVo.mongId(), food.code(), food.addWeightValue(), food.addStrengthValue(), food.addSatietyValue(), food.addHealthyValue(), food.addSleepValue(), food.price());
+        MongVo newMongVo = mongService.feedMong(mongVo.mongId(), food.getCode(), food.getAddWeightValue(), food.getAddStrengthValue(), food.getAddSatietyValue(), food.getAddHealthyValue(), food.getAddSleepValue(), food.getPrice());
 
         MongStatusPercentVo mongStatusPercentVo = MongUtil.statusToPercent(newMongVo.grade(), newMongVo);
 
@@ -467,6 +496,7 @@ public class ManagementExternalService {
                 .healthyPercent(mongStatusPercentVo.healthy())
                 .sleepPercent(mongStatusPercentVo.sleep())
                 .payPoint(newMongVo.payPoint())
+                .isDeadSchedule(newMongVo.isDeadSchedule())
                 .build();
     }
 
@@ -488,15 +518,15 @@ public class ManagementExternalService {
 
         return foodCodeList.stream()
                 .map(foodCode -> {
-                    String code = foodCode.code();
+                    String code = foodCode.getCode();
                     long id = mongVo.mongId();
                     boolean isCanBuy = true;
 
                     // 음식 섭취 기록이 있으면
-                    if (mongFeedLogVoMap.containsKey(foodCode.code())) {
-                        MongFeedLogVo mongFeedLogVo = mongFeedLogVoMap.get(foodCode.code());
+                    if (mongFeedLogVoMap.containsKey(foodCode.getCode())) {
+                        MongFeedLogVo mongFeedLogVo = mongFeedLogVoMap.get(foodCode.getCode());
                         isCanBuy = mongFeedLogVo.lastBuyAt()
-                                .plusSeconds(foodCode.delaySeconds())
+                                .plusSeconds(foodCode.getDelaySeconds())
                                 .isBefore(LocalDateTime.now());
                     }
 

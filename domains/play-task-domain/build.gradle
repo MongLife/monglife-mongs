@@ -1,6 +1,8 @@
 dependencies {
-    api 'com.google.code.gson:gson:2.10.1'
-    api 'org.springframework.boot:spring-boot-starter-data-mongodb'
+    api project(':modules:play-jpa-module')
+
+    runtimeOnly 'com.mysql:mysql-connector-j'
+
 }
 
 tasks.register('copyPrivate', Copy) {

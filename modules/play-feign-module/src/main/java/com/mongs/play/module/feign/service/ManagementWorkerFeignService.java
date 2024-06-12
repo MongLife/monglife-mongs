@@ -1,6 +1,6 @@
 package com.mongs.play.module.feign.service;
 
-import com.mongs.play.module.feign.client.ManagementWorkerClient;
+import com.mongs.play.module.feign.client.ManagementInternalClient;
 import com.mongs.play.module.feign.dto.req.*;
 import com.mongs.play.module.feign.dto.res.*;
 import lombok.RequiredArgsConstructor;
@@ -12,10 +12,10 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class ManagementWorkerFeignService {
 
-    private final ManagementWorkerClient managementWorkerClient;
+    private final ManagementInternalClient managementInternalClient;
 
     public EvolutionScheduleResDto zeroEvolutionSchedule(Long mongId) {
-        var res = managementWorkerClient.zeroEvolutionSchedule(EvolutionScheduleReqDto.builder()
+        var res = managementInternalClient.zeroEvolutionSchedule(EvolutionScheduleReqDto.builder()
                 .mongId(mongId)
                 .build());
 
@@ -23,7 +23,7 @@ public class ManagementWorkerFeignService {
     }
 
     public EvolutionScheduleResDto firstEvolutionSchedule(Long mongId) {
-        var res = managementWorkerClient.firstEvolutionSchedule(EvolutionScheduleReqDto.builder()
+        var res = managementInternalClient.firstEvolutionSchedule(EvolutionScheduleReqDto.builder()
                 .mongId(mongId)
                 .build());
 
@@ -31,7 +31,7 @@ public class ManagementWorkerFeignService {
     }
 
     public EvolutionScheduleResDto evolutionSchedule(Long mongId) {
-        var res = managementWorkerClient.evolutionSchedule(EvolutionScheduleReqDto.builder()
+        var res = managementInternalClient.evolutionSchedule(EvolutionScheduleReqDto.builder()
                 .mongId(mongId)
                 .build());
 
@@ -39,7 +39,7 @@ public class ManagementWorkerFeignService {
     }
 
     public EvolutionScheduleResDto lastEvolutionSchedule(Long mongId) {
-        var res = managementWorkerClient.lastEvolutionSchedule(EvolutionScheduleReqDto.builder()
+        var res = managementInternalClient.lastEvolutionSchedule(EvolutionScheduleReqDto.builder()
                 .mongId(mongId)
                 .build());
 
@@ -47,7 +47,7 @@ public class ManagementWorkerFeignService {
     }
 
     public SleepingScheduleResDto sleepingSchedule(Long mongId, Boolean isSleeping) {
-        var res = managementWorkerClient.sleepingSchedule(SleepingScheduleReqDto.builder()
+        var res = managementInternalClient.sleepingSchedule(SleepingScheduleReqDto.builder()
                 .mongId(mongId)
                 .isSleeping(isSleeping)
                 .build());
@@ -56,39 +56,23 @@ public class ManagementWorkerFeignService {
     }
 
     public DeleteScheduleResDto deleteSchedule(Long mongId) {
-        var res = managementWorkerClient.deleteSchedule(DeleteScheduleReqDto.builder()
+        var res = managementInternalClient.deleteSchedule(DeleteScheduleReqDto.builder()
                 .mongId(mongId)
                 .build());
 
         return res.getBody();
     }
 
-    public DeadScheduleResDto deadHealthySchedule(Long mongId) {
-        var res = managementWorkerClient.deadHealthySchedule(DeadScheduleReqDto.builder()
+    public DeadScheduleResDto deadSchedule(Long mongId) {
+        var res = managementInternalClient.deadSchedule(DeadScheduleReqDto.builder()
                 .mongId(mongId)
                 .build());
 
         return res.getBody();
     }
 
-    public DeadScheduleResDto deadHealthyScheduleStop(Long mongId) {
-        var res = managementWorkerClient.deadHealthyScheduleStop(DeadScheduleReqDto.builder()
-                .mongId(mongId)
-                .build());
-
-        return res.getBody();
-    }
-
-    public DeadScheduleResDto deadSatietySchedule(Long mongId) {
-        var res = managementWorkerClient.deadSatietySchedule(DeadScheduleReqDto.builder()
-                .mongId(mongId)
-                .build());
-
-        return res.getBody();
-    }
-
-    public DeadScheduleResDto deadSatietyScheduleStop(Long mongId) {
-        var res = managementWorkerClient.deadSatietyScheduleStop(DeadScheduleReqDto.builder()
+    public DeadScheduleResDto deadScheduleStop(Long mongId) {
+        var res = managementInternalClient.deadScheduleStop(DeadScheduleReqDto.builder()
                 .mongId(mongId)
                 .build());
 

@@ -11,7 +11,6 @@ import com.mongs.play.domain.mong.vo.MongVo;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 @Slf4j
@@ -22,10 +21,10 @@ public class MongPayPointService {
     private final MongRepository mongRepository;
     private final MongLogRepository mongLogRepository;
 
-    @Transactional
+    @Transactional(transactionManager = "mongTransactionManager")
     public MongVo increasePayPoint(Long mongId, Integer addPayPoint) throws NotFoundException {
 
-        Mong mong = mongRepository.findByIdAndIsActiveTrue(mongId)
+        Mong mong = mongRepository.findByIdAndIsActiveTrueWithLock(mongId)
                 .orElseThrow(() -> new NotFoundException(MongErrorCode.NOT_FOUND_ACTIVE_MONG));
 
         int payPoint = mong.getPayPoint() + addPayPoint;
@@ -46,10 +45,10 @@ public class MongPayPointService {
         return MongVo.of(mong);
     }
 
-    @Transactional
+    @Transactional(transactionManager = "mongTransactionManager")
     public MongVo decreasePayPoint(Long mongId, Integer subPayPoint) throws NotFoundException {
 
-        Mong mong = mongRepository.findByIdAndIsActiveTrue(mongId)
+        Mong mong = mongRepository.findByIdAndIsActiveTrueWithLock(mongId)
                 .orElseThrow(() -> new NotFoundException(MongErrorCode.NOT_FOUND_ACTIVE_MONG));
 
         int payPoint = mong.getPayPoint() - subPayPoint;
