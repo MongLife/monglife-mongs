@@ -11,6 +11,7 @@ include 'apps:play-management-app-external-api'
 include 'apps:play-management-app-internal-api'
 include 'apps:play-player-app-external-api'
 include 'apps:play-player-app-internal-api'
+include 'apps:play-battle-app-worker'
 
 include 'domains:play-code-domain'
 include 'domains:play-task-domain'
@@ -30,3 +31,4 @@ include 'modules:play-feign-module'
 include 'modules:play-security-module'
 
 include 'clients:play-event-publisher-client'
+include 'clients:play-battle-publisher-client'

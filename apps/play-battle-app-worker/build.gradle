@@ -1,0 +1,12 @@
+dependencies {
+    implementation project(':clients:play-battle-publisher-client')
+    implementation project(':domains:play-mong-domain')
+}
+
+tasks.register('copyPrivate', Copy) {
+    copy {
+        from '../../spring_backend_sub/apps/play-battle-app-worker/'
+        include 'application*.yml'
+        into 'src/main/resources'
+    }
+}
