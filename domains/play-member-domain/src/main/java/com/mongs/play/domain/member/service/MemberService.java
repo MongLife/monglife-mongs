@@ -20,6 +20,7 @@ public class MemberService {
     @Value("${env.member.max-slot-count}")
     private Integer maxSlotCount;
 
+
     private final MemberRepository memberRepository;
 
     @Transactional(transactionManager = "memberTransactionManager")
@@ -34,7 +35,9 @@ public class MemberService {
         Member member = memberRepository.findByAccountIdAndIsDeletedIsFalse(accountId)
                 .orElseGet(() -> Member.builder().accountId(accountId).build());
 
-        if (member.getStarPoint() < buySlotPrice) {
+        int starPoint = member.getStarPoint() - (buySlotPrice * slotCount);
+
+        if (starPoint < 0) {
             throw new InvalidException(MemberErrorCode.NOT_ENOUGH_STAR_POINT);
         }
         if (member.getSlotCount() >= maxSlotCount) {
@@ -42,7 +45,7 @@ public class MemberService {
         }
 
         return memberRepository.save(member.toBuilder()
-                .starPoint(member.getStarPoint() - buySlotPrice)
+                .starPoint(starPoint)
                 .slotCount(member.getSlotCount() + slotCount)
                 .build());
     }
@@ -65,28 +68,32 @@ public class MemberService {
     }
 
     @Transactional(transactionManager = "memberTransactionManager")
-    public Member increaseStarPoint(Long accountId, Integer starPoint) throws NotFoundException {
+    public Member increaseStarPoint(Long accountId, Integer addStarPoint) throws NotFoundException {
 
         Member member = memberRepository.findByAccountIdAndIsDeletedIsFalse(accountId)
                 .orElseGet(() -> Member.builder().accountId(accountId).build());
 
+        int starPoint = member.getStarPoint() + addStarPoint;
+
         return memberRepository.save(member.toBuilder()
-                .starPoint(member.getStarPoint() + starPoint)
+                .starPoint(starPoint)
                 .build());
     }
 
     @Transactional(transactionManager = "memberTransactionManager")
-    public Member decreaseStarPoint(Long accountId, Integer starPoint) throws NotFoundException {
+    public Member decreaseStarPoint(Long accountId, Integer subStarPoint) throws NotFoundException {
 
         Member member = memberRepository.findByAccountIdAndIsDeletedIsFalse(accountId)
                 .orElseGet(() -> Member.builder().accountId(accountId).build());
 
-        if (member.getStarPoint() <= 0) {
+        int starPoint = member.getStarPoint() - subStarPoint;
+
+        if (starPoint < 0) {
             throw new InvalidException(MemberErrorCode.NOT_ENOUGH_STAR_POINT);
         }
 
         return memberRepository.save(member.toBuilder()
-                .starPoint(member.getStarPoint() - starPoint)
+                .starPoint(starPoint)
                 .build());
     }
 }

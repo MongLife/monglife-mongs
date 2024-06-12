@@ -1,8 +1,8 @@
 package com.mongs.play.app.player.external.member.service;
 
 import com.mongs.play.app.player.external.member.vo.*;
-import com.mongs.play.client.publisher.annotation.RealTimeMember;
-import com.mongs.play.client.publisher.code.PublishCode;
+import com.mongs.play.client.publisher.event.annotation.RealTimeMember;
+import com.mongs.play.client.publisher.event.code.PublishCode;
 import com.mongs.play.domain.member.entity.Member;
 import com.mongs.play.domain.member.service.MemberService;
 import com.mongs.play.domain.payment.entity.ChargeItem;
@@ -62,9 +62,7 @@ public class PlayerExternalMemberService {
     public BuySlotVo buySlot(Long accountId, String deviceId) {
 
         PaymentLog paymentLog = paymentService.addBuySlotLog(accountId, deviceId);
-
         Member member = memberService.increaseSlotCount(accountId, 1);
-
         paymentService.itemReward(paymentLog.getId());
 
         return BuySlotVo.builder()
@@ -79,11 +77,8 @@ public class PlayerExternalMemberService {
     public ChargeStarPointVo chargeStarPoint(Long accountId, String deviceId, String receipt, String chargeItemId) {
 
         PaymentLog paymentLog = paymentService.addChargeStarPointLog(accountId, deviceId, receipt);
-
         ChargeItem chargeItem = chargeItemService.getChargeItem(chargeItemId);
-
         Member member = memberService.increaseStarPoint(accountId, chargeItem.getStarPoint());
-
         paymentService.itemReward(paymentLog.getId());
 
         return ChargeStarPointVo.builder()
@@ -97,13 +92,9 @@ public class PlayerExternalMemberService {
     public ExchangePayPointVo exchangePayPoint(Long accountId, String deviceId, Long mongId, String exchangeItemId) {
 
         PaymentLog paymentLog = paymentService.addExchangePayPointLog(accountId, deviceId);
-
         ExchangeItem exchangeItem = exchangeItemService.getExchangeItem(exchangeItemId);
-
         Member member = memberService.decreaseStarPoint(accountId, exchangeItem.getStarPoint());
-
         managementInternalFeignService.increasePayPoint(mongId, exchangeItem.getPayPoint());
-
         paymentService.itemReward(paymentLog.getId());
 
         return ExchangePayPointVo.builder()

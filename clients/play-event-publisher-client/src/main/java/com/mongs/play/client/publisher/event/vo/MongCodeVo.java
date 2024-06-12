@@ -1,4 +1,4 @@
-package com.mongs.play.client.publisher.vo;
+package com.mongs.play.client.publisher.event.vo;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
-public class MongExpVo{
+public class MongCodeVo{
     private Long mongId;
-    private Double expPercent;
+    private String mongCode;
 }

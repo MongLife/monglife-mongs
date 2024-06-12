@@ -1,5 +1,4 @@
-package com.mongs.play.client.publisher.vo;
-
+package com.mongs.play.client.publisher.event.vo;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -10,7 +9,7 @@ import lombok.NoArgsConstructor;
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
-public class MongShiftVo{
+public class MongPayPointVo{
     private Long mongId;
-    private String shiftCode;
+    private Integer payPoint;
 }

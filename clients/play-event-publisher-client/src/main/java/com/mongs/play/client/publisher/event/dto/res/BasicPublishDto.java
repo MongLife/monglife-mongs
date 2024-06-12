@@ -1,6 +1,6 @@
-package com.mongs.play.client.publisher.dto.res;
+package com.mongs.play.client.publisher.event.dto.res;
 
-import com.mongs.play.client.publisher.code.PublishCode;
+import com.mongs.play.client.publisher.event.code.PublishCode;
 import lombok.Builder;
 import lombok.Data;
 

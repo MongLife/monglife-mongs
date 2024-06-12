@@ -1,4 +1,4 @@
-package com.mongs.play.client.publisher.client;
+package com.mongs.play.client.publisher.event.client;
 
 import org.springframework.integration.annotation.MessagingGateway;
 import org.springframework.integration.mqtt.support.MqttHeaders;

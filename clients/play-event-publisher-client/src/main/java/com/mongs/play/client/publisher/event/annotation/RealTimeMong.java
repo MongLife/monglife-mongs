@@ -1,6 +1,6 @@
-package com.mongs.play.client.publisher.annotation;
+package com.mongs.play.client.publisher.event.annotation;
 
-import com.mongs.play.client.publisher.code.PublishCode;
+import com.mongs.play.client.publisher.event.code.PublishCode;
 
 import java.lang.annotation.*;
 

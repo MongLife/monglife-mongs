@@ -1,8 +1,8 @@
-package com.mongs.play.client.publisher.service;
+package com.mongs.play.client.publisher.event.service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.mongs.play.client.publisher.client.MqttClient;
+import com.mongs.play.client.publisher.event.client.MqttClient;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;

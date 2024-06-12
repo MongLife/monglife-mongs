@@ -32,19 +32,10 @@ public class PaymentService {
     }
 
     @Transactional(transactionManager = "paymentTransactionManager")
-    public PaymentLog addIncreaseStarPointLog(Long accountId) {
-        return paymentLogRepository.save(PaymentLog.builder()
-                .accountId(accountId)
-                .deviceId(UUID.randomUUID().toString().replace("-", ""))
-                .receipt(UUID.randomUUID().toString().replace("-", ""))
-                .code(PaymentCode.CHARGE_STAR_POINT)
-                .build());
-    }
-
-    @Transactional(transactionManager = "paymentTransactionManager")
     public PaymentLog addChargeStarPointLog(Long accountId, String deviceId, String receipt) throws InvalidException {
 
         // TODO(" 영수증 확인 로직 ")
+
         boolean isInvalid = true;
 
         if (!isInvalid) {

@@ -1,4 +1,4 @@
-package com.mongs.play.client.publisher.vo;
+package com.mongs.play.client.publisher.event.vo;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

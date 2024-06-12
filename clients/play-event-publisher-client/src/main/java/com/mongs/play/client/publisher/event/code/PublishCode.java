@@ -1,4 +1,4 @@
-package com.mongs.play.client.publisher.code;
+package com.mongs.play.client.publisher.event.code;
 
 public enum PublishCode {
     MONG_CODE,

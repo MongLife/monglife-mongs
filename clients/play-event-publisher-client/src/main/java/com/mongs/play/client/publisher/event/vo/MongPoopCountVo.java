@@ -1,4 +1,4 @@
-package com.mongs.play.client.publisher.vo;
+package com.mongs.play.client.publisher.event.vo;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
-public class MemberStarPointVo{
-    private Long accountId;
-    private Integer starPoint;
+public class MongPoopCountVo{
+    private Long mongId;
+    private Integer poopCount;
 }
