@@ -1,9 +1,9 @@
-package com.mongs.play.session.service;
+package com.mongs.play.domain.session.service;
 
 import com.mongs.play.core.error.domain.SessionErrorCode;
 import com.mongs.play.core.exception.common.NotFoundException;
-import com.mongs.play.session.entity.Session;
-import com.mongs.play.session.repository.SessionRepository;
+import com.mongs.play.domain.session.entity.Session;
+import com.mongs.play.domain.session.repository.SessionRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 

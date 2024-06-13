@@ -1,4 +1,4 @@
-package com.mongs.play.session.entity;
+package com.mongs.play.domain.session.entity;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

@@ -1,5 +1,4 @@
 dependencies {
-    api project(':modules:play-hmac-module')
     api project(':modules:play-jpa-module')
 
     runtimeOnly 'com.mysql:mysql-connector-j'
@@ -7,7 +6,7 @@ dependencies {
 
 tasks.register('copyPrivate', Copy) {
     copy {
-        from '../../spring_backend_sub/domains/play-code-domain/'
+        from '../../spring_backend_sub/domains/play-battle-domain/'
         include 'application-*.yml'
         into 'src/main/resources'
     }

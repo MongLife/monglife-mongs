@@ -1,6 +1,8 @@
 dependencies {
     implementation project(':clients:play-battle-publisher-client')
     implementation project(':domains:play-mong-domain')
+    implementation project(':domains:play-battle-domain')
+    implementation project(':domains:play-match-domain')
 }
 
 tasks.register('copyPrivate', Copy) {

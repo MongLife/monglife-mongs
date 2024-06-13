@@ -1,6 +1,6 @@
-package com.mongs.play.session.repository;
+package com.mongs.play.domain.session.repository;
 
-import com.mongs.play.session.entity.Session;
+import com.mongs.play.domain.session.entity.Session;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 
