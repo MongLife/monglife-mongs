@@ -36,7 +36,7 @@ public class MatchSearchService {
 
     @Async
     @Transactional
-    public void matchFind(List<Long> mongIdList) throws InterruptedException {
+    public void matchFind(List<Long> mongIdList) {
         log.info("[match] {}", mongIdList);
 
         List<BattlePlayerVo> battlePlayerVoList = mongIdList.stream()

@@ -22,8 +22,6 @@ public class MatchSearchScheduler {
                 matchSearchService.matchFind(matchVoSet.stream().map(MatchVo::mongId).toList());
             } catch (NotFoundException e) {
                 break;
-            } catch (InterruptedException e) {
-                throw new RuntimeException(e);
             }
         }
     }

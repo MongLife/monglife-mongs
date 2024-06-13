@@ -1,21 +1,25 @@
 package com.mongs.play.app.battle.worker.consumer;
 
 import com.mongs.play.app.battle.worker.service.MatchSearchService;
+import com.mongs.play.client.publisher.battle.vo.MatchWaitVo;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.event.EventListener;
+import org.springframework.scheduling.annotation.Async;
+import org.springframework.stereotype.Component;
 
-@RestController
+@Slf4j
+@Component
 @RequiredArgsConstructor
-@RequestMapping("/battle")
 public class BattleWorkerConsumer {
 
     private final MatchSearchService matchSearchService;
 
-    @GetMapping("/queue/{mongId}")
-    public void matchSearch(@PathVariable Long mongId) {
+    @Async
+    @EventListener
+    public void matchWait(MatchWaitVo event) {
+        log.info("{}", event);
+        Long mongId = event.mongId();
         matchSearchService.matchWait(mongId);
     }
 }

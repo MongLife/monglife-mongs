@@ -5,12 +5,10 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.util.Map;
+
 @Builder
-@Getter
-@AllArgsConstructor
-@NoArgsConstructor
-public class MatchOverVo {
-    private String roomId;
-    private Long winMongId;
-    private Long loseMongId;
+public record MatchWaitVo(
+        Long mongId
+) {
 }
