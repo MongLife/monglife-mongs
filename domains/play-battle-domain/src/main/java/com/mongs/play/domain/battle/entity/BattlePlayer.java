@@ -2,11 +2,7 @@ package com.mongs.play.domain.battle.entity;
 
 import com.mongs.play.domain.battle.code.PickCode;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+import lombok.*;
 
 import java.util.UUID;
 
@@ -14,7 +10,7 @@ import java.util.UUID;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder(toBuilder = true)
+@Builder
 @Table(name = "battle_player")
 public class BattlePlayer {
     @Id
@@ -33,4 +29,12 @@ public class BattlePlayer {
 
     @Builder.Default
     private Boolean isBot = false;
+
+    public void heal() {
+        this.hp += healValue;
+    }
+
+    public void attacked(Double damage) {
+        this.hp -= damage;
+    }
 }

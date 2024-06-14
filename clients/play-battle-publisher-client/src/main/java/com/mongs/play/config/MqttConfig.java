@@ -1,7 +1,7 @@
 package com.mongs.play.config;
 
-import com.mongs.play.client.publisher.battle.client.MqttInboundRoundMatchClient;
-import com.mongs.play.client.publisher.battle.client.MqttInboundSearchMatchClient;
+import com.mongs.play.client.publisher.battle.client.MqttInboundMatchClient;
+import com.mongs.play.client.publisher.battle.client.MqttInboundSearchClient;
 import lombok.extern.slf4j.Slf4j;
 import org.eclipse.paho.client.mqttv3.MqttAsyncClient;
 import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
@@ -67,52 +67,52 @@ public class MqttConfig {
     }
 
     /**
-     * Inbound Search Match Configuration
+     * Inbound Search Configuration
      */
     @Bean
-    public MessageProducer mqttInboundSearchMatchMessageDrivenAdapter(@Autowired MqttPahoClientFactory mqttPahoClientFactory, @Autowired MessageChannel mqttInboundSearchMatchChannel) {
+    public MessageChannel mqttInboundSearchChannel() {
+        return new DirectChannel();
+    }
+    @Bean
+    public MessageProducer mqttInboundSearchMessageDrivenAdapter(@Autowired MqttPahoClientFactory mqttPahoClientFactory, @Autowired MessageChannel mqttInboundSearchChannel) {
         final String BROKER_URL = "tcp://" + HOST + ":" + PORT;
-        final String subscribeTopic = TOPIC_FILTER + "battle/match/search";
+        final String subscribeTopic = TOPIC_FILTER + "battle/search";
 
         MqttPahoMessageDrivenChannelAdapter adapter = new MqttPahoMessageDrivenChannelAdapter(BROKER_URL, MqttAsyncClient.generateClientId(), mqttPahoClientFactory, subscribeTopic);
         adapter.setCompletionTimeout(5000);
         adapter.setConverter(new DefaultPahoMessageConverter());
         adapter.setQos(2);
-        adapter.setOutputChannel(mqttInboundSearchMatchChannel);
+        adapter.setOutputChannel(mqttInboundSearchChannel);
         return adapter;
     }
     @Bean
-    public MessageChannel mqttInboundSearchMatchChannel() {
-        return new DirectChannel();
-    }
-    @Bean
-    @ServiceActivator(inputChannel = "mqttInboundSearchMatchChannel")
-    public MessageHandler mqttInboundSearchMatch(@Autowired MqttInboundSearchMatchClient mqttInboundSearchMatchClient) {
-        return mqttInboundSearchMatchClient;
+    @ServiceActivator(inputChannel = "mqttInboundSearchChannel")
+    public MessageHandler mqttInboundSearch(@Autowired MqttInboundSearchClient mqttInboundSearchClient) {
+        return mqttInboundSearchClient;
     }
 
     /**
-     * Inbound Round Match Configuration
+     * Inbound Match Configuration
      */
     @Bean
-    public MessageProducer mqttInboundRoundMatchMessageDrivenAdapter(@Autowired MqttPahoClientFactory mqttPahoClientFactory, @Autowired MessageChannel mqttInboundRoundMatchChannel) {
+    public MessageChannel mqttInboundMatchChannel() {
+        return new DirectChannel();
+    }
+    @Bean
+    public MessageProducer mqttInboundMatchMessageDrivenAdapter(@Autowired MqttPahoClientFactory mqttPahoClientFactory, @Autowired MessageChannel mqttInboundMatchChannel) {
         final String BROKER_URL = "tcp://" + HOST + ":" + PORT;
-        final String subscribeTopic = TOPIC_FILTER + "battle/match/round/#";
+        final String subscribeTopic = TOPIC_FILTER + "battle/match";
 
         MqttPahoMessageDrivenChannelAdapter adapter = new MqttPahoMessageDrivenChannelAdapter(BROKER_URL, MqttAsyncClient.generateClientId(), mqttPahoClientFactory, subscribeTopic);
         adapter.setCompletionTimeout(5000);
         adapter.setConverter(new DefaultPahoMessageConverter());
         adapter.setQos(2);
-        adapter.setOutputChannel(mqttInboundRoundMatchChannel);
+        adapter.setOutputChannel(mqttInboundMatchChannel);
         return adapter;
     }
     @Bean
-    public MessageChannel mqttInboundRoundMatchChannel() {
-        return new DirectChannel();
-    }
-    @Bean
-    @ServiceActivator(inputChannel = "mqttInboundRoundMatchChannel")
-    public MessageHandler mqttInboundRoundMatch(@Autowired MqttInboundRoundMatchClient mqttInboundRoundMatchClient) {
-        return mqttInboundRoundMatchClient;
+    @ServiceActivator(inputChannel = "mqttInboundMatchChannel")
+    public MessageHandler mqttInboundMatch(@Autowired MqttInboundMatchClient mqttInboundMatchClient) {
+        return mqttInboundMatchClient;
     }
 }

@@ -4,10 +4,9 @@ package com.mongs.play.client.publisher.battle.client;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.mongs.play.client.publisher.battle.dto.res.BasicPublishDto;
+import com.mongs.play.client.publisher.battle.dto.BasicPublishDto;
 import com.mongs.play.client.publisher.battle.event.MatchWaitEvent;
-import com.mongs.play.client.publisher.battle.service.EventService;
-import com.mongs.play.client.publisher.battle.vo.MatchWaitVo;
+import com.mongs.play.client.publisher.battle.vo.req.MatchWaitVo;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.ApplicationEventPublisher;
@@ -16,16 +15,13 @@ import org.springframework.integration.mqtt.support.MqttHeaders;
 import org.springframework.messaging.Message;
 import org.springframework.messaging.MessageHandler;
 import org.springframework.messaging.MessagingException;
-import org.springframework.stereotype.Component;
-
-import java.lang.reflect.Type;
 
 @Slf4j
 @RequiredArgsConstructor
-@MessagingGateway(defaultRequestChannel = "mqttInboundSearchMatchChannel")
-public class MqttInboundSearchMatchClient implements MessageHandler {
+@MessagingGateway(defaultRequestChannel = "mqttInboundSearchChannel")
+public class MqttInboundSearchClient implements MessageHandler {
 
-    private final EventService eventService;
+    private final ApplicationEventPublisher publisher;
     private final ObjectMapper objectMapper;
 
     @Override
@@ -37,12 +33,18 @@ public class MqttInboundSearchMatchClient implements MessageHandler {
         try {
             BasicPublishDto<Object> basicPublishDto = objectMapper.readValue(payload, javaType);
 
+            log.info("{} : {} : {}", topic, payload, basicPublishDto);
+
             switch (basicPublishDto.getCode()) {
                 case MATCH_WAIT -> {
-                    log.info("{} : {} : {}", topic, payload, basicPublishDto);
                     MatchWaitVo matchWaitVo = (MatchWaitVo) basicPublishDto.getData();
-                    eventService.matchWaitEventPublish(matchWaitVo);
+                    publisher.publishEvent(MatchWaitEvent.builder()
+                            .deviceId(matchWaitVo.deviceId())
+                            .mongId(matchWaitVo.mongId())
+                            .build());
                 }
+
+                default -> {}
             }
         } catch (JsonProcessingException e) {
             e.printStackTrace();

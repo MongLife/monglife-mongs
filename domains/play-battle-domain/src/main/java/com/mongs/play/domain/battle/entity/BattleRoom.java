@@ -23,8 +23,6 @@ public class BattleRoom extends BaseTimeEntity {
     private String roomId = UUID.randomUUID().toString().replaceAll("-", "");
     @Builder.Default
     private Integer round = 0;
-    @Builder.Default
-    private LocalDateTime createdAt = LocalDateTime.now();
 
     @OneToMany(cascade = CascadeType.ALL)
     @JoinColumn(name = "room_id")
@@ -33,5 +31,8 @@ public class BattleRoom extends BaseTimeEntity {
 
     public void addBattlePlayer(BattlePlayer battlePlayer) {
         this.battlePlayerList.add(battlePlayer);
+    }
+    public void removeBattlePlayer(BattlePlayer battlePlayer) {
+        this.battlePlayerList.remove(battlePlayer);
     }
 }

@@ -1,9 +1,9 @@
-package com.mongs.play.client.publisher.battle.event;
+package com.mongs.play.client.publisher.battle.vo.req;
 
 import lombok.Builder;
 
 @Builder
-public record MatchWaitEvent(
+public record MatchWaitVo(
         Long mongId,
         String deviceId
 ) {

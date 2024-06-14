@@ -1,8 +1,11 @@
 package com.mongs.play.domain.match.service;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mongs.play.core.error.domain.MatchErrorCode;
+import com.mongs.play.core.exception.common.InvalidException;
 import com.mongs.play.core.exception.common.NotFoundException;
-import com.mongs.play.domain.match.vo.MatchVo;
+import com.mongs.play.domain.match.vo.MatchWaitVo;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
@@ -10,6 +13,7 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Set;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Service
@@ -17,39 +21,31 @@ import java.util.stream.Collectors;
 public class MatchService {
 
     private final String KEY = "match";
-    private final RedisTemplate<String, String> redisTemplate;
+    private final RedisTemplate<String, MatchWaitVo> redisTemplate;
 
-    public MatchVo addMatch(Long mongId) {
+    public MatchWaitVo addMatch(String deviceId, Long mongId) {
+        MatchWaitVo matchWaitVo = MatchWaitVo.builder()
+                .playerId(UUID.randomUUID().toString().replace("-", ""))
+                .mongId(mongId)
+                .deviceId(deviceId)
+                .build();
 
         LocalDateTime now = LocalDateTime.now();
-        redisTemplate.opsForZSet().add(KEY, mongId.toString(), Long.parseLong(now.format(DateTimeFormatter.ofPattern("yyyyMMddHHmmssSSS"))));
+        redisTemplate.opsForZSet().add(KEY, matchWaitVo, Long.parseLong(now.format(DateTimeFormatter.ofPattern("yyyyMMddHHmmssSSS"))));
 
-        return MatchVo.builder()
-                .mongId(mongId)
-                .build();
+        return matchWaitVo;
     }
 
-    public Set<MatchVo> getMatch() {
+    public Set<MatchWaitVo> findMatch() {
 
-        Set<String> zSet = redisTemplate.opsForZSet().range(KEY, 0, 1);
+        Set<MatchWaitVo> matchWaitVoSet = redisTemplate.opsForZSet().range(KEY, 0, 1);
 
-        if (zSet == null) {
+        if (matchWaitVoSet == null || matchWaitVoSet.size() < 2) {
             throw new NotFoundException(MatchErrorCode.NOT_FOUND_MATCH);
         }
 
-        Set<Long> matchSet = zSet.stream()
-                .map(Long::parseLong)
-                .collect(Collectors.toSet());
-
-        if (matchSet.size() < 2) {
-            throw new NotFoundException(MatchErrorCode.NOT_FOUND_MATCH);
-        }
-
-        return matchSet.stream()
-                .map(mongId -> {
-                    redisTemplate.opsForZSet().remove(KEY, mongId.toString());
-                    return MatchVo.builder().mongId(mongId).build();
-                })
+        return matchWaitVoSet.stream()
+                .peek(matchWaitVo -> redisTemplate.opsForZSet().remove(KEY, matchWaitVo))
                 .collect(Collectors.toSet());
     }
 }

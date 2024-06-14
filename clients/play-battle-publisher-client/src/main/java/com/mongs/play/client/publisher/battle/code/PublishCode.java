@@ -2,15 +2,11 @@ package com.mongs.play.client.publisher.battle.code;
 
 public enum PublishCode {
     MATCH_WAIT,
+    MATCH_ENTER,
+    MATCH_PICK,
+    MATCH_EXIT,
 
-
-
-//    MATCH_ENTER,
-//    ROUND_PICK,
-//
-//    MATCH_SEARCH_FAIL,
-//    MATCH_FIND,
-//    MATCH_START,
-//    ROUND_OVER,
-//    MATCH_OVER
+    MATCH_FIND,
+    MATCH,
+    MATCH_OVER,
 }

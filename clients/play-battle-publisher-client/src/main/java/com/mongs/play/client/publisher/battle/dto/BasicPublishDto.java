@@ -1,4 +1,4 @@
-package com.mongs.play.client.publisher.battle.dto.res;
+package com.mongs.play.client.publisher.battle.dto;
 
 import com.mongs.play.client.publisher.battle.code.PublishCode;
 import lombok.Builder;

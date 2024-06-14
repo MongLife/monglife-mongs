@@ -3,6 +3,8 @@ package com.mongs.play.client.publisher.battle.service;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mongs.play.client.publisher.battle.client.MqttOutboundClient;
+import com.mongs.play.client.publisher.battle.code.PublishCode;
+import com.mongs.play.client.publisher.battle.dto.BasicPublishDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -19,34 +21,24 @@ public class MqttService {
     @Value("${application.mqtt.topic.mong_data}")
     private String TOPIC_FILTER;
 
-    public void sendSearchMatchFail(Long mongId, Object data) {
+    public void sendMatchFind(String deviceId, Object data) {
         try {
-            mqttOutboundClient.sendToMqtt(TOPIC_FILTER + "battle/match/search/" + mongId, objectMapper.writeValueAsString(data));
+            String dataJson = objectMapper.writeValueAsString(BasicPublishDto.builder().code(PublishCode.MATCH_FIND).data(data).build());
+            mqttOutboundClient.sendToMqtt(TOPIC_FILTER + "battle/search/" + deviceId, dataJson);
         } catch (JsonProcessingException ignored) {}
     }
 
-    public void sendFindMatch(Long mongIdA, Long mongIdB, Object data) {
+    public void sendRound(String roomId, Object data) {
         try {
-            mqttOutboundClient.sendToMqtt(TOPIC_FILTER + "battle/match/search/" + mongIdA, objectMapper.writeValueAsString(data));
-            mqttOutboundClient.sendToMqtt(TOPIC_FILTER + "battle/match/search/" + mongIdB, objectMapper.writeValueAsString(data));
-        } catch (JsonProcessingException ignored) {}
-    }
-
-    public void sendStartMatch(String roomId, Object data) {
-        try {
-            mqttOutboundClient.sendToMqtt(TOPIC_FILTER + "battle/match/round/" + roomId, objectMapper.writeValueAsString(data));
-        } catch (JsonProcessingException ignored) {}
-    }
-
-    public void sendRoundOver(String roomId, Object data) {
-        try {
-            mqttOutboundClient.sendToMqtt(TOPIC_FILTER + "battle/match/round/" + roomId, objectMapper.writeValueAsString(data));
+            String dataJson = objectMapper.writeValueAsString(BasicPublishDto.builder().code(PublishCode.MATCH).data(data).build());
+            mqttOutboundClient.sendToMqtt(TOPIC_FILTER + "battle/match/" + roomId, dataJson);
         } catch (JsonProcessingException ignored) {}
     }
 
     public void sendMatchOver(String roomId, Object data) {
         try {
-            mqttOutboundClient.sendToMqtt(TOPIC_FILTER + "battle/match/round/" + roomId, objectMapper.writeValueAsString(data));
+            String dataJson = objectMapper.writeValueAsString(BasicPublishDto.builder().code(PublishCode.MATCH_OVER).data(data).build());
+            mqttOutboundClient.sendToMqtt(TOPIC_FILTER + "battle/match/" + roomId, dataJson);
         } catch (JsonProcessingException ignored) {}
     }
 }

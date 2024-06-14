@@ -1,5 +1,6 @@
 package com.mongs.play.config;
 
+import com.mongs.play.domain.match.vo.MatchWaitVo;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.cache.annotation.EnableCaching;
@@ -45,7 +46,7 @@ public class MatchRedisConfig {
         RedisTemplate<String, Object> redisTemplate = new RedisTemplate<>();
         redisTemplate.setConnectionFactory(redisConnectionFactory);
         redisTemplate.setKeySerializer(new StringRedisSerializer());
-        redisTemplate.setValueSerializer(new Jackson2JsonRedisSerializer<>(String.class));
+        redisTemplate.setValueSerializer(new Jackson2JsonRedisSerializer<>(MatchWaitVo.class));
         return redisTemplate;
     }
 
