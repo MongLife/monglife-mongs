@@ -5,7 +5,6 @@ import lombok.Builder;
 @Builder
 public record MatchOverVo(
         String roomId,
-        MatchPlayerVo winPlayer,
-        MatchPlayerVo losePlayer
+        MatchPlayerVo winPlayer
 ) {
 }

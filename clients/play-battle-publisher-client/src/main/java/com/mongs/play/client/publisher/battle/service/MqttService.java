@@ -9,8 +9,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-
 @Service
 @RequiredArgsConstructor
 public class MqttService {
@@ -28,7 +26,7 @@ public class MqttService {
         } catch (JsonProcessingException ignored) {}
     }
 
-    public void sendRound(String roomId, Object data) {
+    public void sendMatch(String roomId, Object data) {
         try {
             String dataJson = objectMapper.writeValueAsString(BasicPublishDto.builder().code(PublishCode.MATCH).data(data).build());
             mqttOutboundClient.sendToMqtt(TOPIC_FILTER + "battle/match/" + roomId, dataJson);

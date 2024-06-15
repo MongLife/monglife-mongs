@@ -1,5 +1,6 @@
 package com.mongs.play.domain.battle.vo;
 
+import com.mongs.play.domain.battle.code.PickCode;
 import com.mongs.play.domain.battle.entity.BattlePlayer;
 import lombok.Builder;
 
@@ -10,8 +11,7 @@ public record BattlePlayerVo(
         String mongCode,
         Double hp,
         Double attackValue,
-        Double healValue,
-        String pick
+        Boolean isBot
 ) {
     public static BattlePlayerVo of(BattlePlayer battlePlayer) {
         return BattlePlayerVo.builder()
@@ -20,8 +20,7 @@ public record BattlePlayerVo(
                 .mongCode(battlePlayer.getMongCode())
                 .hp(battlePlayer.getHp())
                 .attackValue(battlePlayer.getAttackValue())
-                .healValue(battlePlayer.getHealValue())
-                .pick(battlePlayer.getPick().name())
+                .isBot(battlePlayer.getIsBot())
                 .build();
     }
 }

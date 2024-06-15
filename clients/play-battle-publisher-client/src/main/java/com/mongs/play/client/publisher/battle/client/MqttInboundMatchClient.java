@@ -2,6 +2,7 @@ package com.mongs.play.client.publisher.battle.client;
 
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mongs.play.client.publisher.battle.dto.BasicPublishDto;
@@ -32,17 +33,17 @@ public class MqttInboundMatchClient implements MessageHandler {
 
     @Override
     public void handleMessage(Message<?> message) throws MessagingException {
-        JavaType javaType = objectMapper.getTypeFactory().constructParametricType(BasicPublishDto.class, MatchEnterVo.class);
         String topic = (String) message.getHeaders().get(MqttHeaders.RECEIVED_TOPIC);
         String payload = (String) message.getPayload();
 
         try {
+            JavaType javaType = objectMapper.getTypeFactory().constructParametricType(BasicPublishDto.class, Object.class);
             BasicPublishDto<Object> basicPublishDto = objectMapper.readValue(payload, javaType);
             log.info("{} : {} : {}", topic, payload, basicPublishDto);
 
             switch (basicPublishDto.getCode()) {
                 case MATCH_ENTER -> {
-                    MatchEnterVo matchEnterVo = (MatchEnterVo) basicPublishDto.getData();
+                    MatchEnterVo matchEnterVo = objectMapper.convertValue(basicPublishDto.getData(), new TypeReference<MatchEnterVo>() { });
                     publisher.publishEvent(MatchEnterEvent.builder()
                             .roomId(matchEnterVo.roomId())
                             .playerId(matchEnterVo.playerId())
@@ -50,16 +51,17 @@ public class MqttInboundMatchClient implements MessageHandler {
                 }
 
                 case MATCH_PICK -> {
-                    MatchPickVo matchPickVo = (MatchPickVo) basicPublishDto.getData();
+                    MatchPickVo matchPickVo = objectMapper.convertValue(basicPublishDto.getData(), new TypeReference<MatchPickVo>() { });
                     publisher.publishEvent(MatchPickEvent.builder()
                             .roomId(matchPickVo.roomId())
                             .playerId(matchPickVo.playerId())
                             .pick(matchPickVo.pick())
+                            .targetPlayerId(matchPickVo.targetPlayerId())
                             .build());
                 }
 
                 case MATCH_EXIT -> {
-                    MatchExitVo matchExitVo = (MatchExitVo) basicPublishDto.getData();
+                    MatchExitVo matchExitVo = objectMapper.convertValue(basicPublishDto.getData(), new TypeReference<MatchExitVo>() { });
                     publisher.publishEvent(MatchExitEvent.builder()
                             .roomId(matchExitVo.roomId())
                             .playerId(matchExitVo.playerId())

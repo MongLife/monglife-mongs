@@ -16,4 +16,7 @@ public interface BattlePlayerRepository extends JpaRepository<BattlePlayer, Stri
     @Lock(LockModeType.PESSIMISTIC_WRITE)
     @Query("SELECT bp FROM BattlePlayer bp WHERE bp.playerId = :playerId")
     Optional<BattlePlayer> findByPlayerIdWithLock(@Param("playerId") String playerId);
+
+    @Query("SELECT bp FROM BattlePlayer bp WHERE bp.playerId = :playerId")
+    Optional<BattlePlayer> findByPlayerId(@Param("playerId") String playerId);
 }

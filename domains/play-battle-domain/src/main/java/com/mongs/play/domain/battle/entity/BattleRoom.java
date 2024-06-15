@@ -1,14 +1,14 @@
 package com.mongs.play.domain.battle.entity;
 
+import com.mongs.play.domain.battle.code.PickCode;
 import com.mongs.play.module.jpa.baseEntity.BaseTimeEntity;
 import jakarta.persistence.*;
 import lombok.*;
+import org.antlr.v4.runtime.misc.Pair;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 @Entity
 @Getter
@@ -22,17 +22,26 @@ public class BattleRoom extends BaseTimeEntity {
     @Builder.Default
     private String roomId = UUID.randomUUID().toString().replaceAll("-", "");
     @Builder.Default
-    private Integer round = 0;
+    private Integer round = 1;
+    private Boolean isActive = false;
 
     @OneToMany(cascade = CascadeType.ALL)
     @JoinColumn(name = "room_id")
     @Builder.Default
-    private List<BattlePlayer> battlePlayerList = new ArrayList<>();
+    private Set<BattlePlayer> battlePlayerList = new HashSet<>();
+
+    @OneToMany(cascade = CascadeType.ALL)
+    @JoinColumn(name = "room_id")
+    @Builder.Default
+    private Set<BattleRound> battleRoundList = new HashSet<>();
 
     public void addBattlePlayer(BattlePlayer battlePlayer) {
         this.battlePlayerList.add(battlePlayer);
     }
     public void removeBattlePlayer(BattlePlayer battlePlayer) {
         this.battlePlayerList.remove(battlePlayer);
+    }
+    public void addBattleRound(BattleRound battleRound) {
+        this.battleRoundList.add(battleRound);
     }
 }

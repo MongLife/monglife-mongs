@@ -13,6 +13,9 @@ import java.util.Optional;
 @Repository
 public interface BattleRoomRepository extends JpaRepository<BattleRoom, String> {
     @Lock(LockModeType.PESSIMISTIC_WRITE)
-    @Query("SELECT br FROM BattleRoom br WHERE br.roomId = :roomId")
+    @Query("SELECT br FROM BattleRoom br WHERE br.roomId = :roomId AND br.isActive = true")
     Optional<BattleRoom> findByRoomIdWithLock(@Param("roomId") String roomId);
+
+    @Query("SELECT br FROM BattleRoom br WHERE br.roomId = :roomId AND br.isActive = true")
+    Optional<BattleRoom> findByRoomId(@Param("roomId") String roomId);
 }

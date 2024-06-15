@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Objects;
 import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -24,14 +25,15 @@ public class MatchService {
     private final RedisTemplate<String, MatchWaitVo> redisTemplate;
 
     public MatchWaitVo addMatch(String deviceId, Long mongId) {
+        LocalDateTime now = LocalDateTime.now();
+        long score = Long.parseLong(now.format(DateTimeFormatter.ofPattern("yyyyMMddHHmmssSSS")));
+
         MatchWaitVo matchWaitVo = MatchWaitVo.builder()
-                .playerId(UUID.randomUUID().toString().replace("-", ""))
                 .mongId(mongId)
                 .deviceId(deviceId)
                 .build();
 
-        LocalDateTime now = LocalDateTime.now();
-        redisTemplate.opsForZSet().add(KEY, matchWaitVo, Long.parseLong(now.format(DateTimeFormatter.ofPattern("yyyyMMddHHmmssSSS"))));
+        redisTemplate.opsForZSet().add(KEY, matchWaitVo, score);
 
         return matchWaitVo;
     }
@@ -40,12 +42,15 @@ public class MatchService {
 
         Set<MatchWaitVo> matchWaitVoSet = redisTemplate.opsForZSet().range(KEY, 0, 1);
 
-        if (matchWaitVoSet == null || matchWaitVoSet.size() < 2) {
-            throw new NotFoundException(MatchErrorCode.NOT_FOUND_MATCH);
+        if (matchWaitVoSet == null || matchWaitVoSet.isEmpty() || matchWaitVoSet.size() == 1) {
+             throw new NotFoundException(MatchErrorCode.NOT_FOUND_MATCH);
         }
 
         return matchWaitVoSet.stream()
                 .peek(matchWaitVo -> redisTemplate.opsForZSet().remove(KEY, matchWaitVo))
+                .map(matchWaitVo -> matchWaitVo.toBuilder()
+                        .playerId(UUID.randomUUID().toString().replace("-", ""))
+                        .build())
                 .collect(Collectors.toSet());
     }
 }

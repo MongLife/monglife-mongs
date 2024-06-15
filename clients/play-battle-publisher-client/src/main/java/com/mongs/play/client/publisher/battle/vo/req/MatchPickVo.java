@@ -6,6 +6,7 @@ import lombok.Builder;
 public record MatchPickVo(
         String roomId,
         String playerId,
+        String targetPlayerId,
         String pick
 ) {
 }
