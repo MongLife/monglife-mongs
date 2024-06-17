@@ -1,12 +1,13 @@
 package com.mongs.play.app.battle.worker.controller;
 
-import com.mongs.play.app.battle.worker.dto.req.MatchWaitReqDto;
 import com.mongs.play.app.battle.worker.dto.res.MatchWaitResDto;
 import com.mongs.play.app.battle.worker.service.BattleSearchService;
 import com.mongs.play.app.battle.worker.vo.RegisterMatchWaitVo;
 import com.mongs.play.app.battle.worker.vo.RemoveMatchWaitVo;
+import com.mongs.play.module.security.principal.PassportDetail;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 @RequestMapping("/battle")
@@ -16,10 +17,12 @@ public class BattleWorkerController {
 
     private final BattleSearchService matchWaitService;
 
-    @PostMapping("/match/wait")
-    public ResponseEntity<MatchWaitResDto> registerMatchWait(@RequestBody MatchWaitReqDto matchWaitReqDto) {
-        Long mongId = matchWaitReqDto.mongId();
-        String deviceId = matchWaitReqDto.deviceId();
+    @PostMapping("/match/wait/{mongId}")
+    public ResponseEntity<MatchWaitResDto> registerMatchWait(
+            @AuthenticationPrincipal PassportDetail passportDetail,
+            @PathVariable("mongId") Long mongId
+    ) {
+        String deviceId = passportDetail.getDeviceId();
 
         RegisterMatchWaitVo registerMatchWaitVo = matchWaitService.registerMatchWait(deviceId, mongId);
 
@@ -29,10 +32,12 @@ public class BattleWorkerController {
                 .build());
     }
 
-    @DeleteMapping("/match/wait")
-    public ResponseEntity<MatchWaitResDto> removeMatchWait(@RequestBody MatchWaitReqDto matchWaitReqDto) {
-        Long mongId = matchWaitReqDto.mongId();
-        String deviceId = matchWaitReqDto.deviceId();
+    @DeleteMapping("/match/wait/{mongId}")
+    public ResponseEntity<MatchWaitResDto> removeMatchWait(
+            @AuthenticationPrincipal PassportDetail passportDetail,
+            @PathVariable("mongId") Long mongId
+    ) {
+        String deviceId = passportDetail.getDeviceId();
 
         RemoveMatchWaitVo removeMatchWait = matchWaitService.removeMatchWait(deviceId, mongId);
 

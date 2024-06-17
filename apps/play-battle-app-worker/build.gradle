@@ -3,6 +3,7 @@ dependencies {
     implementation project(':domains:play-mong-domain')
     implementation project(':domains:play-battle-domain')
     implementation project(':domains:play-match-domain')
+    implementation project(":modules:play-security-module")
 }
 
 tasks.register('copyPrivate', Copy) {
