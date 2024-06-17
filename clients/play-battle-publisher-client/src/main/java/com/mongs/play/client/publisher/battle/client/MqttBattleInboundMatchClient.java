@@ -5,7 +5,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.mongs.play.client.publisher.battle.dto.BasicPublishDto;
+import com.mongs.play.client.publisher.battle.dto.BasicPublishBattleDto;
 import com.mongs.play.client.publisher.battle.event.MatchEnterEvent;
 import com.mongs.play.client.publisher.battle.event.MatchExitEvent;
 import com.mongs.play.client.publisher.battle.event.MatchPickEvent;
@@ -25,8 +25,8 @@ import org.springframework.stereotype.Component;
 @Slf4j
 @Component
 @RequiredArgsConstructor
-@MessagingGateway(defaultRequestChannel = "mqttInboundMatchChannel")
-public class MqttInboundMatchClient implements MessageHandler {
+@MessagingGateway(defaultRequestChannel = "mqttBattleInboundMatchChannel")
+public class MqttBattleInboundMatchClient implements MessageHandler {
 
     private final ApplicationEventPublisher publisher;
     private final ObjectMapper objectMapper;
@@ -37,13 +37,13 @@ public class MqttInboundMatchClient implements MessageHandler {
         String payload = (String) message.getPayload();
 
         try {
-            JavaType javaType = objectMapper.getTypeFactory().constructParametricType(BasicPublishDto.class, Object.class);
-            BasicPublishDto<Object> basicPublishDto = objectMapper.readValue(payload, javaType);
-            log.info("{} : {} : {}", topic, payload, basicPublishDto);
+            JavaType javaType = objectMapper.getTypeFactory().constructParametricType(BasicPublishBattleDto.class, Object.class);
+            BasicPublishBattleDto<Object> basicPublishBattleDto = objectMapper.readValue(payload, javaType);
+            log.info("{} : {} : {}", topic, payload, basicPublishBattleDto);
 
-            switch (basicPublishDto.getCode()) {
+            switch (basicPublishBattleDto.getCode()) {
                 case MATCH_ENTER -> {
-                    MatchEnterVo matchEnterVo = objectMapper.convertValue(basicPublishDto.getData(), new TypeReference<MatchEnterVo>() { });
+                    MatchEnterVo matchEnterVo = objectMapper.convertValue(basicPublishBattleDto.getData(), new TypeReference<MatchEnterVo>() { });
                     publisher.publishEvent(MatchEnterEvent.builder()
                             .roomId(matchEnterVo.roomId())
                             .playerId(matchEnterVo.playerId())
@@ -51,7 +51,7 @@ public class MqttInboundMatchClient implements MessageHandler {
                 }
 
                 case MATCH_PICK -> {
-                    MatchPickVo matchPickVo = objectMapper.convertValue(basicPublishDto.getData(), new TypeReference<MatchPickVo>() { });
+                    MatchPickVo matchPickVo = objectMapper.convertValue(basicPublishBattleDto.getData(), new TypeReference<MatchPickVo>() { });
                     publisher.publishEvent(MatchPickEvent.builder()
                             .roomId(matchPickVo.roomId())
                             .playerId(matchPickVo.playerId())
@@ -61,7 +61,7 @@ public class MqttInboundMatchClient implements MessageHandler {
                 }
 
                 case MATCH_EXIT -> {
-                    MatchExitVo matchExitVo = objectMapper.convertValue(basicPublishDto.getData(), new TypeReference<MatchExitVo>() { });
+                    MatchExitVo matchExitVo = objectMapper.convertValue(basicPublishBattleDto.getData(), new TypeReference<MatchExitVo>() { });
                     publisher.publishEvent(MatchExitEvent.builder()
                             .roomId(matchExitVo.roomId())
                             .playerId(matchExitVo.playerId())

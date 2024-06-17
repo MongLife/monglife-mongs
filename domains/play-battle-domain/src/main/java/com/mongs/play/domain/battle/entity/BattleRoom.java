@@ -1,13 +1,10 @@
 package com.mongs.play.domain.battle.entity;
 
-import com.mongs.play.domain.battle.code.PickCode;
 import com.mongs.play.module.jpa.baseEntity.BaseTimeEntity;
 import jakarta.persistence.*;
 import lombok.*;
-import org.antlr.v4.runtime.misc.Pair;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
-import java.time.LocalDateTime;
 import java.util.*;
 
 @Entity
@@ -22,8 +19,8 @@ public class BattleRoom extends BaseTimeEntity {
     @Builder.Default
     private String roomId = UUID.randomUUID().toString().replaceAll("-", "");
     @Builder.Default
-    private Integer round = 1;
-    private Boolean isActive = false;
+    private Integer round = 0;
+    private Boolean isActive = Boolean.FALSE;
 
     @OneToMany(cascade = CascadeType.ALL)
     @JoinColumn(name = "room_id")

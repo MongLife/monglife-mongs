@@ -14,10 +14,12 @@ import com.mongs.play.domain.battle.vo.BattleRoomVo;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Set;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -77,6 +79,25 @@ public class BattleService {
 
         BattleRound battleRound = BattleRound.builder()
                 .round(battleRoom.getRound())
+                .playerId(playerId)
+                .targetPlayerId(targetPlayerId)
+                .pick(pick)
+                .build();
+
+        battleRoom.addBattleRound(battleRound);
+        battleRoomRepository.save(battleRoom);
+
+        return BattleRoomVo.of(battleRoom);
+    }
+
+    @Transactional(transactionManager = "battleTransactionManager")
+    public BattleRoomVo addBattleRound(String roomId, String playerId, String targetPlayerId, PickCode pick, Integer round) {
+
+        BattleRoom battleRoom = battleRoomRepository.findByRoomIdWithLock(roomId)
+                .orElseThrow(() -> new NotFoundException(BattleErrorCode.NOT_FOUND_BATTLE));
+
+        BattleRound battleRound = BattleRound.builder()
+                .round(round)
                 .playerId(playerId)
                 .targetPlayerId(targetPlayerId)
                 .pick(pick)

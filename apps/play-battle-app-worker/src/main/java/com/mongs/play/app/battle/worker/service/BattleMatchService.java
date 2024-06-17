@@ -2,110 +2,36 @@ package com.mongs.play.app.battle.worker.service;
 
 import com.mongs.play.app.battle.worker.code.BattleState;
 import com.mongs.play.app.battle.worker.utils.MatchUtil;
-import com.mongs.play.app.battle.worker.vo.RoundResultVo;
-import com.mongs.play.client.publisher.battle.service.MqttService;
-import com.mongs.play.client.publisher.battle.vo.res.MatchFindVo;
+import com.mongs.play.client.publisher.battle.service.MqttBattleService;
 import com.mongs.play.client.publisher.battle.vo.res.MatchOverVo;
 import com.mongs.play.client.publisher.battle.vo.res.MatchPlayerVo;
 import com.mongs.play.client.publisher.battle.vo.res.MatchVo;
-import com.mongs.play.core.exception.common.NotFoundException;
 import com.mongs.play.domain.battle.code.PickCode;
 import com.mongs.play.domain.battle.service.BattleService;
 import com.mongs.play.domain.battle.vo.BattlePlayerVo;
 import com.mongs.play.domain.battle.vo.BattleRoomVo;
 import com.mongs.play.domain.battle.vo.BattleRoundVo;
-import com.mongs.play.domain.match.service.MatchService;
-import com.mongs.play.domain.match.vo.MatchWaitVo;
 import com.mongs.play.domain.mong.service.MongPayPointService;
-import com.mongs.play.domain.mong.service.MongService;
-import com.mongs.play.domain.mong.service.MongStatusService;
-import com.mongs.play.domain.mong.utils.MongUtil;
-import com.mongs.play.domain.mong.vo.MongVo;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class BattleWorkerService {
+public class BattleMatchService {
 
-    private final Random random = new Random();
-    private final MongService mongService;
     private final MongPayPointService mongPayPointService;
-    private final MatchService matchService;
     private final BattleService battleService;
-    private final MqttService mqttService;
+    private final MqttBattleService mqttBattleService;
 
-    private final Integer MAX_PLAYER = 2;
-    private final Integer MAX_ROUND = 10;
-    private final Integer BATTLE_REWARD_PAY_POINT = 100;
+    private final static Integer MAX_PLAYER = 2;
+    private final static Integer MAX_ROUND = 10;
+    private final static Integer BATTLE_REWARD_PAY_POINT = 100;
 
-    public Set<MatchWaitVo> matchSearch() {
-        return matchService.findMatch();
-    }
-
-    public void matchWait(String deviceId, Long mongId) {
-        matchService.addMatch(deviceId, mongId);
-    }
-
-    @Transactional
-    public void botMatchFind(MatchWaitVo matchWaitVo) {
-        BattleRoomVo battleRoomVo = battleService.addBattleRoom();
-
-        MongVo mongVo = mongService.findActiveMongById(matchWaitVo.mongId());
-
-        double attackValue = mongVo.strength();
-        double healValue = mongVo.sleep();
-
-        BattlePlayerVo battlePlayerVo = battleService.addBattlePlayer(matchWaitVo.playerId(), mongVo.mongId(), mongVo.mongCode(), attackValue, healValue, false);
-
-        // 봇 생성
-        String botPlayerId = UUID.randomUUID().toString().replace("-", "");
-        BattlePlayerVo botBattlePlayerVo = battleService.addBattlePlayer(botPlayerId, -1L, "CH100", 100D, 50D, true);
-        battleRoomVo = battleService.enterBattleRoom(battleRoomVo.roomId(), botBattlePlayerVo.playerId());
-
-        for (int nowRound = 0; nowRound < MAX_ROUND; nowRound++) {
-            PickCode pick = PickCode.values()[random.nextInt(PickCode.values().length)];
-            if (pick.equals(PickCode.ATTACK)) {
-                battleService.addBattleRound(battleRoomVo.roomId(), botBattlePlayerVo.playerId(), battlePlayerVo.playerId(), pick);
-            } else {
-                battleService.addBattleRound(battleRoomVo.roomId(), botBattlePlayerVo.playerId(), botBattlePlayerVo.playerId(), pick);
-            }
-        }
-
-        mqttService.sendMatchFind(matchWaitVo.deviceId(), MatchFindVo.builder()
-                .roomId(battleRoomVo.roomId())
-                .playerId(battlePlayerVo.playerId())
-                .build());
-
-        log.info("[match] [{}, {}]", battlePlayerVo.playerId(), botBattlePlayerVo.playerId());
-    }
-
-    @Transactional
-    public void matchFind(Set<MatchWaitVo> matchWaitVoSet) {
-        BattleRoomVo battleRoomVo = battleService.addBattleRoom();
-
-        matchWaitVoSet.forEach(matchWaitVo -> {
-            MongVo mongVo = mongService.findActiveMongById(matchWaitVo.mongId());
-
-            double attackValue = mongVo.strength();
-            double healValue = mongVo.sleep();
-
-            BattlePlayerVo battlePlayerVo = battleService.addBattlePlayer(matchWaitVo.playerId(), mongVo.mongId(), mongVo.mongCode(), attackValue, healValue, false);
-
-            mqttService.sendMatchFind(matchWaitVo.deviceId(), MatchFindVo.builder()
-                    .roomId(battleRoomVo.roomId())
-                    .playerId(battlePlayerVo.playerId())
-                    .build());
-        });
-
-        log.info("[match] {}", matchWaitVoSet);
-    }
 
     @Transactional
     public void matchEnter(String roomId, String playerId) {
@@ -114,7 +40,7 @@ public class BattleWorkerService {
         log.info("[match] {} room enter player : {}", roomId, playerId);
 
         if (battleRoomVo.battlePlayerVoList().size() >= MAX_PLAYER) {
-            mqttService.sendMatch(battleRoomVo.roomId(), MatchVo.builder()
+            mqttBattleService.sendMatch(battleRoomVo.roomId(), MatchVo.builder()
                     .roomId(battleRoomVo.roomId())
                     .round(battleRoomVo.round())
                     .matchPlayerVoList(battleRoomVo.battlePlayerVoList().stream()
@@ -127,7 +53,7 @@ public class BattleWorkerService {
                             .toList())
                     .build());
 
-            battleService.increaseRound(battleRoomVo.roomId());
+            battleService.increaseRound(roomId);
 
             log.info("[match] {} room battle start", roomId);
         }
@@ -152,7 +78,7 @@ public class BattleWorkerService {
 
             BattlePlayerVo winPlayerVo = battleRoomVo.battlePlayerVoList().get(0);
 
-            mqttService.sendMatchOver(battleRoomVo.roomId(), MatchOverVo.builder()
+            mqttBattleService.sendMatchOver(battleRoomVo.roomId(), MatchOverVo.builder()
                     .roomId(battleRoomVo.roomId())
                     .winPlayer(MatchPlayerVo.builder()
                                 .playerId(winPlayerVo.playerId())
@@ -256,7 +182,7 @@ public class BattleWorkerService {
                         }
                     }).toList();
 
-            mqttService.sendMatch(battleRoomVo.roomId(), MatchVo.builder()
+            mqttBattleService.sendMatch(battleRoomVo.roomId(), MatchVo.builder()
                     .roomId(battleRoomVo.roomId())
                     .round(battleRoomVo.round())
                     .matchPlayerVoList(matchPlayerVoList)
@@ -273,7 +199,7 @@ public class BattleWorkerService {
                     }
                 }
 
-                mqttService.sendMatchOver(battleRoomVo.roomId(), MatchOverVo.builder()
+                mqttBattleService.sendMatchOver(battleRoomVo.roomId(), MatchOverVo.builder()
                         .roomId(battleRoomVo.roomId())
                         .winPlayer(MatchPlayerVo.builder()
                                 .playerId(winPlayerVo.playerId())
@@ -283,7 +209,9 @@ public class BattleWorkerService {
 
                 battleService.removeBattle(battleRoomVo.roomId());
 
-                mongPayPointService.increasePayPoint(winPlayerVo.mongId(), BATTLE_REWARD_PAY_POINT);
+                if (!winPlayerVo.isBot()) {
+                    mongPayPointService.increasePayPoint(winPlayerVo.mongId(), BATTLE_REWARD_PAY_POINT);
+                }
 
             } else {
                 battleService.increaseRound(battleRoomVo.roomId());

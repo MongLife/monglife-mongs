@@ -4,7 +4,7 @@ import com.mongs.play.app.management.internal.annotation.ValidationDead;
 import com.mongs.play.app.management.internal.vo.EvolutionReadyVo;
 import com.mongs.play.app.management.internal.vo.*;
 import com.mongs.play.client.publisher.event.annotation.RealTimeMong;
-import com.mongs.play.client.publisher.event.code.PublishCode;
+import com.mongs.play.client.publisher.event.code.PublishEventCode;
 import com.mongs.play.domain.mong.service.MongPayPointService;
 import com.mongs.play.domain.mong.service.MongService;
 import com.mongs.play.domain.mong.service.MongStatusService;
@@ -23,7 +23,7 @@ public class ManagementInternalService {
     private final MongPayPointService mongPayPointService;
     private final MongStatusService mongStatusService;
 
-    @RealTimeMong(codes = { PublishCode.MONG_SHIFT })
+    @RealTimeMong(codes = { PublishEventCode.MONG_SHIFT })
     @Transactional
     public EvolutionReadyVo evolutionReady(Long mongId) {
 
@@ -41,7 +41,7 @@ public class ManagementInternalService {
     }
 
     @ValidationDead
-    @RealTimeMong(codes = { PublishCode.MONG_STATUS })
+    @RealTimeMong(codes = { PublishEventCode.MONG_STATUS })
     @Transactional
     public DecreaseStatusVo decreaseStatus(Long mongId, Double subWeight, Double subStrength, Double subSatiety, Double subHealthy, Double subSleep) {
 
@@ -63,7 +63,7 @@ public class ManagementInternalService {
                 .build();
     }
 
-    @RealTimeMong(codes = { PublishCode.MONG_POOP_COUNT })
+    @RealTimeMong(codes = { PublishEventCode.MONG_POOP_COUNT })
     @Transactional
     public IncreasePoopCountVo increasePoopCount(Long mongId, Integer addPoopCount) {
 
@@ -76,7 +76,7 @@ public class ManagementInternalService {
     }
 
     @ValidationDead
-    @RealTimeMong(codes = { PublishCode.MONG_STATUS })
+    @RealTimeMong(codes = { PublishEventCode.MONG_STATUS })
     @Transactional
     public IncreaseStatusVo increaseStatus(Long mongId, Double addWeight, Double addStrength, Double addSatiety, Double addHealthy, Double addSleep) {
 
@@ -98,7 +98,7 @@ public class ManagementInternalService {
                 .build();
     }
 
-    @RealTimeMong(codes = { PublishCode.MONG_IS_SLEEPING, PublishCode.MONG_POOP_COUNT, PublishCode.MONG_EXP, PublishCode.MONG_STATUS, PublishCode.MONG_STATE, PublishCode.MONG_SHIFT })
+    @RealTimeMong(codes = { PublishEventCode.MONG_IS_SLEEPING, PublishEventCode.MONG_POOP_COUNT, PublishEventCode.MONG_EXP, PublishEventCode.MONG_STATUS, PublishEventCode.MONG_STATE, PublishEventCode.MONG_SHIFT })
     @Transactional
     public DeadMongVo dead(Long mongId) {
         MongVo mongVo = mongService.deadMong(mongId);
@@ -125,7 +125,7 @@ public class ManagementInternalService {
     }
 
 
-    @RealTimeMong(codes = { PublishCode.MONG_PAY_POINT })
+    @RealTimeMong(codes = { PublishEventCode.MONG_PAY_POINT })
     @Transactional
     public IncreasePayPointVo increasePayPoint(Long mongId, Integer addPayPoint) {
         MongVo mongVo = mongPayPointService.increasePayPoint(mongId, addPayPoint);

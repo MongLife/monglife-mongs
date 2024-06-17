@@ -1,9 +1,9 @@
-package com.mongs.play.client.publisher.battle.vo.req;
+package com.mongs.play.app.battle.worker.dto.res;
 
 import lombok.Builder;
 
 @Builder
-public record MatchWaitVo(
+public record MatchWaitResDto(
         Long mongId,
         String deviceId
 ) {

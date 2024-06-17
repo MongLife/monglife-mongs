@@ -1,6 +1,6 @@
 package com.mongs.play.client.publisher.event.code;
 
-public enum PublishCode {
+public enum PublishEventCode {
     MONG_CODE,
     MONG_STATUS,
     MONG_EXP,

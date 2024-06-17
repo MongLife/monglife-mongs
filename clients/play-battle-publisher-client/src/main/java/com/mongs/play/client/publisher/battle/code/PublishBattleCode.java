@@ -1,6 +1,6 @@
 package com.mongs.play.client.publisher.battle.code;
 
-public enum PublishCode {
+public enum PublishBattleCode {
     MATCH_WAIT,
     MATCH_ENTER,
     MATCH_PICK,

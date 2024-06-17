@@ -1,9 +1,9 @@
 package com.mongs.play.client.publisher.event.aspect;
 
 import com.mongs.play.client.publisher.event.annotation.RealTimeMong;
-import com.mongs.play.client.publisher.event.code.PublishCode;
-import com.mongs.play.client.publisher.event.dto.res.BasicPublishDto;
-import com.mongs.play.client.publisher.event.service.MqttService;
+import com.mongs.play.client.publisher.event.code.PublishEventCode;
+import com.mongs.play.client.publisher.event.dto.BasicPublishEventDto;
+import com.mongs.play.client.publisher.event.service.MqttEventService;
 import com.mongs.play.client.publisher.event.vo.*;
 import com.mongs.play.core.utils.ReflectionUtil;
 import lombok.RequiredArgsConstructor;
@@ -27,7 +27,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class RealTimeMongAspect {
 
-    private final MqttService mqttService;
+    private final MqttEventService mqttEventService;
 
     @Pointcut("execution(* com.mongs.play..*.*(..))")
     public void cut() {}
@@ -46,45 +46,45 @@ public class RealTimeMongAspect {
             Long mongId = (Long) ReflectionUtil.getField(body, "mongId");
             List<Object> publishVoList = new ArrayList<>();
 
-            for (PublishCode publishCode : annotation.codes()) {
-                switch (publishCode) {
+            for (PublishEventCode publishEventCode : annotation.codes()) {
+                switch (publishEventCode) {
                     case MONG_CODE -> {
                         Object data = ReflectionUtil.setFields(body, new MongCodeVo());
-                        publishVoList.add(BasicPublishDto.builder().code(publishCode).data(data).build());
+                        publishVoList.add(BasicPublishEventDto.builder().code(publishEventCode).data(data).build());
                     }
                     case MONG_STATUS -> {
                         Object data = ReflectionUtil.setFields(body, new MongStatusVo());
-                        publishVoList.add(BasicPublishDto.builder().code(publishCode).data(data).build());
+                        publishVoList.add(BasicPublishEventDto.builder().code(publishEventCode).data(data).build());
                     }
                     case MONG_EXP -> {
                         Object data = ReflectionUtil.setFields(body, new MongExpVo());
-                        publishVoList.add(BasicPublishDto.builder().code(publishCode).data(data).build());
+                        publishVoList.add(BasicPublishEventDto.builder().code(publishEventCode).data(data).build());
                     }
                     case MONG_POOP_COUNT -> {
                         Object data = ReflectionUtil.setFields(body, new MongPoopCountVo());
-                        publishVoList.add(BasicPublishDto.builder().code(publishCode).data(data).build());
+                        publishVoList.add(BasicPublishEventDto.builder().code(publishEventCode).data(data).build());
                     }
                     case MONG_STATE -> {
                         Object data = ReflectionUtil.setFields(body, new MongStateVo());
-                        publishVoList.add(BasicPublishDto.builder().code(publishCode).data(data).build());
+                        publishVoList.add(BasicPublishEventDto.builder().code(publishEventCode).data(data).build());
                     }
                     case MONG_SHIFT -> {
                         Object data = ReflectionUtil.setFields(body, new MongShiftVo());
-                        publishVoList.add(BasicPublishDto.builder().code(publishCode).data(data).build());
+                        publishVoList.add(BasicPublishEventDto.builder().code(publishEventCode).data(data).build());
                     }
                     case MONG_PAY_POINT -> {
                         Object data = ReflectionUtil.setFields(body, new MongPayPointVo());
-                        publishVoList.add(BasicPublishDto.builder().code(publishCode).data(data).build());
+                        publishVoList.add(BasicPublishEventDto.builder().code(publishEventCode).data(data).build());
                     }
                     case MONG_IS_SLEEPING -> {
                         Object data = ReflectionUtil.setFields(body, new MongIsSleepingVo());
-                        publishVoList.add(BasicPublishDto.builder().code(publishCode).data(data).build());
+                        publishVoList.add(BasicPublishEventDto.builder().code(publishEventCode).data(data).build());
                     }
                     default -> {}
                 }
             }
 
-            mqttService.sendMong(mongId, publishVoList);
+            mqttEventService.sendMong(mongId, publishVoList);
         }
 
         return returnValue;

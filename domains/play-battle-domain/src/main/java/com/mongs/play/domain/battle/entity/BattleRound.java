@@ -23,9 +23,8 @@ public class BattleRound {
     private String playerId;
     private String targetPlayerId;
     private Integer round;
-    @Builder.Default
     @Enumerated(EnumType.STRING)
-    private PickCode pick = PickCode.NONE;
+    private PickCode pick;
 
     @Override
     public boolean equals(Object o) {

@@ -15,7 +15,7 @@ import org.springframework.messaging.MessageChannel;
 import org.springframework.messaging.MessageHandler;
 
 @Configuration
-public class MqttConfig {
+public class MqttEventConfig {
 
     @Value("${application.mqtt.host}")
     private String HOST;
@@ -23,7 +23,7 @@ public class MqttConfig {
     private Integer PORT;
     private final String MQTT_CLIENT_ID = MqttAsyncClient.generateClientId();
     @Bean
-    public MqttPahoClientFactory mqttClientFactory() {
+    public MqttPahoClientFactory mqttEventClientFactory() {
         String url = "tcp://" + HOST + ":" + PORT;
 
         DefaultMqttPahoClientFactory factory = new DefaultMqttPahoClientFactory();
@@ -38,12 +38,12 @@ public class MqttConfig {
         return factory;
     }
     @Bean
-    public MessageChannel mqttOutboundChannel() {
+    public MessageChannel mqttEventOutboundChannel() {
         return new DirectChannel();
     }
     @Bean
-    @ServiceActivator(inputChannel = "mqttOutboundChannel")
-    public MessageHandler mqttOutbound(@Autowired MqttPahoClientFactory mqttPahoClientFactory) {
+    @ServiceActivator(inputChannel = "mqttEventOutboundChannel")
+    public MessageHandler mqttEventOutbound(@Autowired MqttPahoClientFactory mqttPahoClientFactory) {
         MqttPahoMessageHandler messageHandler =
                 new MqttPahoMessageHandler(MQTT_CLIENT_ID, mqttPahoClientFactory);
         messageHandler.setAsync(true);

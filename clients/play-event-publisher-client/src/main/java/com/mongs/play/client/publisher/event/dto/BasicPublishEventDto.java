@@ -1,6 +1,6 @@
-package com.mongs.play.client.publisher.battle.dto;
+package com.mongs.play.client.publisher.event.dto;
 
-import com.mongs.play.client.publisher.battle.code.PublishCode;
+import com.mongs.play.client.publisher.event.code.PublishEventCode;
 import lombok.Builder;
 import lombok.Data;
 
@@ -8,8 +8,8 @@ import java.time.LocalDateTime;
 
 @Data
 @Builder
-public class BasicPublishDto<T> {
-    private PublishCode code;
+public class BasicPublishEventDto<T> {
+    private PublishEventCode code;
     private T data;
     @Builder.Default
     private LocalDateTime createdAt = LocalDateTime.now();

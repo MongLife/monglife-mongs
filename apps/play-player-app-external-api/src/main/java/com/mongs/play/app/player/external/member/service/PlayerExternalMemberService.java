@@ -2,7 +2,7 @@ package com.mongs.play.app.player.external.member.service;
 
 import com.mongs.play.app.player.external.member.vo.*;
 import com.mongs.play.client.publisher.event.annotation.RealTimeMember;
-import com.mongs.play.client.publisher.event.code.PublishCode;
+import com.mongs.play.client.publisher.event.code.PublishEventCode;
 import com.mongs.play.domain.member.entity.Member;
 import com.mongs.play.domain.member.service.MemberService;
 import com.mongs.play.domain.payment.entity.ChargeItem;
@@ -72,7 +72,7 @@ public class PlayerExternalMemberService {
                 .build();
     }
 
-    @RealTimeMember(codes = { PublishCode.MEMBER_STAR_POINT })
+    @RealTimeMember(codes = { PublishEventCode.MEMBER_STAR_POINT })
     @Transactional
     public ChargeStarPointVo chargeStarPoint(Long accountId, String deviceId, String receipt, String chargeItemId) {
 
@@ -87,7 +87,7 @@ public class PlayerExternalMemberService {
                 .build();
     }
 
-    @RealTimeMember(codes = { PublishCode.MEMBER_STAR_POINT })
+    @RealTimeMember(codes = { PublishEventCode.MEMBER_STAR_POINT })
     @Transactional
     public ExchangePayPointVo exchangePayPoint(Long accountId, String deviceId, Long mongId, String exchangeItemId) {
 

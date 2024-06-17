@@ -2,12 +2,13 @@ package com.mongs.play.domain.match.vo;
 
 import lombok.Builder;
 
-import java.time.LocalDateTime;
+import java.util.Objects;
 
 @Builder(toBuilder = true)
 public record MatchWaitVo(
         String playerId,
-        Long mongId,
-        String deviceId
+        long mongId,
+        String deviceId,
+        boolean isBot
 ) {
 }
