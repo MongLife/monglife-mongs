@@ -41,7 +41,7 @@ public class ManagementInternalService {
     }
 
     @ValidationDead
-    @RealTimeMong(codes = { PublishEventCode.MONG_STATUS })
+    @RealTimeMong(codes = { PublishEventCode.MONG_STATUS, PublishEventCode.MONG_STATE })
     @Transactional
     public DecreaseStatusVo decreaseStatus(Long mongId, Double subWeight, Double subStrength, Double subSatiety, Double subHealthy, Double subSleep) {
 
@@ -60,6 +60,7 @@ public class ManagementInternalService {
                 .healthyPercent(mongStatusPercentVo.healthy())
                 .sleepPercent(mongStatusPercentVo.sleep())
                 .isDeadSchedule(mongVo.isDeadSchedule())
+                .stateCode(mongVo.state().code)
                 .build();
     }
 
@@ -76,7 +77,7 @@ public class ManagementInternalService {
     }
 
     @ValidationDead
-    @RealTimeMong(codes = { PublishEventCode.MONG_STATUS })
+    @RealTimeMong(codes = { PublishEventCode.MONG_STATUS, PublishEventCode.MONG_STATE })
     @Transactional
     public IncreaseStatusVo increaseStatus(Long mongId, Double addWeight, Double addStrength, Double addSatiety, Double addHealthy, Double addSleep) {
 
@@ -95,6 +96,7 @@ public class ManagementInternalService {
                 .healthyPercent(mongStatusPercentVo.healthy())
                 .sleepPercent(mongStatusPercentVo.sleep())
                 .isDeadSchedule(mongVo.isDeadSchedule())
+                .stateCode(mongVo.state().code)
                 .build();
     }
 

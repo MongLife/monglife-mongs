@@ -304,7 +304,7 @@ public class ManagementExternalService {
 
     @ValidationEvolution
     @ValidationDead
-    @RealTimeMong(codes = { PublishEventCode.MONG_EXP, PublishEventCode.MONG_STATUS, PublishEventCode.MONG_PAY_POINT })
+    @RealTimeMong(codes = { PublishEventCode.MONG_EXP, PublishEventCode.MONG_STATUS, PublishEventCode.MONG_STATE, PublishEventCode.MONG_PAY_POINT })
     @Transactional
     public TrainingMongVo trainingMong(Long accountId, Long mongId, String trainingCode) {
 
@@ -331,6 +331,7 @@ public class ManagementExternalService {
         return TrainingMongVo.builder()
                 .mongId(newMongVo.mongId())
                 .weight(newMongVo.weight())
+                .shiftCode(newMongVo.state().code)
                 .shiftCode(newMongVo.shift().code)
                 .exp(newMongVo.exp())
                 .strength(newMongVo.strength())
@@ -456,7 +457,7 @@ public class ManagementExternalService {
 
     @ValidationEvolution
     @ValidationDead
-    @RealTimeMong(codes = { PublishEventCode.MONG_EXP, PublishEventCode.MONG_STATUS, PublishEventCode.MONG_PAY_POINT })
+    @RealTimeMong(codes = { PublishEventCode.MONG_EXP, PublishEventCode.MONG_STATUS, PublishEventCode.MONG_STATE, PublishEventCode.MONG_PAY_POINT })
     @Transactional
     public FeedMongVo feedMong(Long accountId, Long mongId, String foodCode) {
 
@@ -484,6 +485,7 @@ public class ManagementExternalService {
         return FeedMongVo.builder()
                 .mongId(newMongVo.mongId())
                 .weight(newMongVo.weight())
+                .stateCode(newMongVo.state().code)
                 .shiftCode(newMongVo.shift().code)
                 .exp(newMongVo.exp())
                 .strength(newMongVo.strength())
