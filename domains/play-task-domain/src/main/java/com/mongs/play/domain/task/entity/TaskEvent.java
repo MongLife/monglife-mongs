@@ -18,7 +18,7 @@ import java.util.UUID;
 @EntityListeners(AuditingEntityListener.class)
 @Builder(toBuilder = true)
 @Table(name = "task_event")
-public class TaskEvent extends BaseTimeEntity implements Persistable<String> {
+public class TaskEvent extends BaseTimeEntity { // implements Persistable<String> {
     @Id
     @Builder.Default
     private String taskId = UUID.randomUUID().toString();
@@ -46,13 +46,13 @@ public class TaskEvent extends BaseTimeEntity implements Persistable<String> {
                 .build();
     }
 
-    @Override
-    public String getId() {
-        return this.taskId;
-    }
-
-    @Override
-    public boolean isNew() {
-        return this.getCreatedAt() == null;
-    }
+//    @Override
+//    public String getId() {
+//        return this.taskId;
+//    }
+//
+//    @Override
+//    public boolean isNew() {
+//        return this.getCreatedAt() == null;
+//    }
 }
