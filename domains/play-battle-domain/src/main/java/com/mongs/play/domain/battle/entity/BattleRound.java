@@ -25,17 +25,4 @@ public class BattleRound {
     private Integer round;
     @Enumerated(EnumType.STRING)
     private PickCode pick;
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        BattleRound that = (BattleRound) o;
-        return Objects.equals(playerId, that.playerId) && Objects.equals(targetPlayerId, that.targetPlayerId) && Objects.equals(round, that.round) && pick == that.pick;
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(playerId, targetPlayerId, round, pick);
-    }
 }

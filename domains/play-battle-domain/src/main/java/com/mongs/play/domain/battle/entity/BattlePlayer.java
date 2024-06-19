@@ -37,17 +37,4 @@ public class BattlePlayer {
     public void attackedWithHeal(Double damage) {
         this.hp = Math.max(0, this.hp + this.healValue - damage);
     }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        BattlePlayer that = (BattlePlayer) o;
-        return Objects.equals(mongId, that.mongId) && Objects.equals(mongCode, that.mongCode) && Objects.equals(hp, that.hp) && Objects.equals(attackValue, that.attackValue) && Objects.equals(healValue, that.healValue) && Objects.equals(isBot, that.isBot);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(mongId, mongCode, hp, attackValue, healValue, isBot);
-    }
 }

@@ -39,31 +39,27 @@ public class BattleMatchService {
 
     @Transactional
     public void matchEnter(String roomId, String playerId) {
-        try {
-            BattleRoomVo battleRoomVo = battleService.enterBattleRoom(roomId, playerId);
+        BattleRoomVo battleRoomVo = battleService.enterBattleRoom(roomId, playerId);
 
-            log.info("[match] {} room enter player : {}", roomId, playerId);
+        log.info("[match] {} room enter player : {}", roomId, playerId);
 
-            if (battleRoomVo.battlePlayerVoList().size() >= MAX_PLAYER) {
-                mqttBattleService.sendMatch(battleRoomVo.roomId(), MatchVo.builder()
-                        .roomId(battleRoomVo.roomId())
-                        .round(battleRoomVo.round())
-                        .matchPlayerVoList(battleRoomVo.battlePlayerVoList().stream()
-                                .map(battlePlayerVo -> MatchPlayerVo.builder()
-                                        .playerId(battlePlayerVo.playerId())
-                                        .mongCode(battlePlayerVo.mongCode())
-                                        .hp(battlePlayerVo.hp())
-                                        .state(BattleState.NONE.name())
-                                        .build())
-                                .toList())
-                        .build());
+        if (battleRoomVo.battlePlayerVoList().size() >= MAX_PLAYER) {
+            mqttBattleService.sendMatch(battleRoomVo.roomId(), MatchVo.builder()
+                    .roomId(battleRoomVo.roomId())
+                    .round(battleRoomVo.round())
+                    .matchPlayerVoList(battleRoomVo.battlePlayerVoList().stream()
+                            .map(battlePlayerVo -> MatchPlayerVo.builder()
+                                    .playerId(battlePlayerVo.playerId())
+                                    .mongCode(battlePlayerVo.mongCode())
+                                    .hp(battlePlayerVo.hp())
+                                    .state(BattleState.NONE.name())
+                                    .build())
+                            .toList())
+                    .build());
 
-                battleService.increaseRound(roomId);
+            battleService.increaseRound(roomId);
 
-                log.info("[match] {} room battle start", roomId);
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
+            log.info("[match] {} room battle start", roomId);
         }
     }
 
