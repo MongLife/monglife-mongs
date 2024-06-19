@@ -1,19 +1,18 @@
-package com.mongs.play.app.management.external.controllerAdvice;
+package com.mongs.play.app.battle.worker.controllerAdvice;
 
-import com.mongs.play.app.management.external.controller.ManagementExternalController;
+import com.mongs.play.app.battle.worker.controller.BattleWorkerController;
 import com.mongs.play.core.dto.res.ErrorResDto;
 import com.mongs.play.core.error.ErrorCode;
 import com.mongs.play.core.error.GlobalErrorCode;
 import com.mongs.play.core.exception.ErrorException;
-import com.mongs.play.core.exception.app.CommonInternalException;
-import com.mongs.play.core.exception.app.ManagementExternalException;
+import com.mongs.play.core.exception.app.BattleWorkerException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
-@RestControllerAdvice(basePackageClasses = ManagementExternalController.class)
-public class ManagementExternalControllerAdvice {
+@RestControllerAdvice(basePackageClasses = BattleWorkerController.class)
+public class BattleWorkerControllerAdvice {
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<Object> validatedExceptionHandler() {
@@ -21,8 +20,8 @@ public class ManagementExternalControllerAdvice {
         return ResponseEntity.status(errorCode.getHttpStatus()).body(ErrorResDto.of(errorCode));
     }
 
-    @ExceptionHandler(ManagementExternalException.class)
-    public ResponseEntity<Object> managementExternalExceptionHandler(ManagementExternalException e) {
+    @ExceptionHandler(BattleWorkerException.class)
+    public ResponseEntity<Object> battleWorkerExceptionHandler(BattleWorkerException e) {
         ErrorCode errorCode = e.errorCode;
         return ResponseEntity.status(errorCode.getHttpStatus()).body(ErrorResDto.of(errorCode));
     }

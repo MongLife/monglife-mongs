@@ -17,7 +17,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.*;
+import java.util.List;
 
 @Slf4j
 @Service
@@ -32,6 +32,10 @@ public class BattleMatchService {
     private final static Integer MAX_ROUND = 10;
     private final static Integer BATTLE_REWARD_PAY_POINT = 100;
 
+    @Transactional
+    public BattleRoomVo findMatch(String roomId) {
+        return battleService.getBattleRoom(roomId);
+    }
 
     @Transactional
     public void matchEnter(String roomId, String playerId) {
@@ -79,16 +83,18 @@ public class BattleMatchService {
             BattlePlayerVo winPlayerVo = battleRoomVo.battlePlayerVoList().get(0);
 
             mqttBattleService.sendMatchOver(battleRoomVo.roomId(), MatchOverVo.builder()
-                    .roomId(battleRoomVo.roomId())
-                    .winPlayer(MatchPlayerVo.builder()
-                                .playerId(winPlayerVo.playerId())
-                                .mongCode(winPlayerVo.mongCode())
-                                .build())
-                    .build());
+                        .roomId(battleRoomVo.roomId())
+                        .winPlayer(MatchPlayerVo.builder()
+                                    .playerId(winPlayerVo.playerId())
+                                    .mongCode(winPlayerVo.mongCode())
+                                    .build())
+                        .build());
 
             battleService.removeBattle(roomId);
 
-            mongPayPointService.increasePayPoint(winPlayerVo.mongId(), BATTLE_REWARD_PAY_POINT);
+            if (!winPlayerVo.isBot()) {
+                mongPayPointService.increasePayPoint(winPlayerVo.mongId(), BATTLE_REWARD_PAY_POINT);
+            }
 
             log.info("[match] {} room battle stop, {} player win", roomId, battleRoomVo.battlePlayerVoList().get(0).playerId());
         }

@@ -20,7 +20,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 import java.util.Random;
 import java.util.Set;
-import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -35,7 +34,7 @@ public class BattleSearchService {
     private final MqttBattleService mqttBattleService;
 
     private final static Integer MAX_ROUND = 10;
-    private final static String BOT_MONG_CODE = "CH100";
+    private final static List<String> BOT_MONG_CODE_LIST = List.of("CH100", "CH101", "CH102");
     private final static Double BOT_ATTACK_VALUE = 100D;
     private final static Double BOT_HEAL_VALUE = 50D;
 
@@ -95,7 +94,8 @@ public class BattleSearchService {
                 double attackValue = BOT_ATTACK_VALUE;
                 double healValue = BOT_HEAL_VALUE;
 
-                BattlePlayerVo battlePlayerVo = battleService.addBattlePlayer(matchWaitVo.playerId(), matchWaitVo.mongId(), BOT_MONG_CODE, attackValue, healValue, true);
+                int mongCodeIndex = random.nextInt(BOT_MONG_CODE_LIST.size());
+                BattlePlayerVo battlePlayerVo = battleService.addBattlePlayer(matchWaitVo.playerId(), matchWaitVo.mongId(), BOT_MONG_CODE_LIST.get(mongCodeIndex), attackValue, healValue, true);
                 battleService.enterBattleRoom(battleRoomVo.roomId(), battlePlayerVo.playerId());
 
                 // 랜덤 라운드 생성

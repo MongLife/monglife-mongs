@@ -1,13 +1,9 @@
 package com.mongs.play.domain.match.service;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mongs.play.core.error.domain.MatchErrorCode;
-import com.mongs.play.core.exception.common.InvalidException;
 import com.mongs.play.core.exception.common.NotFoundException;
 import com.mongs.play.domain.match.vo.MatchWaitVo;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
@@ -18,7 +14,6 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-@Slf4j
 @Service
 @RequiredArgsConstructor
 public class MatchService {
@@ -54,8 +49,6 @@ public class MatchService {
     public Set<MatchWaitVo> findMatch() {
 
         Set<MatchWaitVo> matchWaitVoSet = redisTemplate.opsForZSet().range(KEY, 0, 1);
-
-        log.info("[findMatch] {}", matchWaitVoSet);
 
         if (matchWaitVoSet == null || matchWaitVoSet.isEmpty()) {
              throw new NotFoundException(MatchErrorCode.NOT_FOUND_MATCH);
