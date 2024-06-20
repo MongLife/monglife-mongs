@@ -1,7 +1,6 @@
 package com.mongs.play.domain.battle.service;
 
 import com.mongs.play.core.error.domain.BattleErrorCode;
-import com.mongs.play.core.exception.common.InvalidException;
 import com.mongs.play.core.exception.common.NotFoundException;
 import com.mongs.play.domain.battle.code.PickCode;
 import com.mongs.play.domain.battle.entity.BattlePlayer;
@@ -14,12 +13,9 @@ import com.mongs.play.domain.battle.vo.BattleRoomVo;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
 import java.util.Set;
-import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Slf4j

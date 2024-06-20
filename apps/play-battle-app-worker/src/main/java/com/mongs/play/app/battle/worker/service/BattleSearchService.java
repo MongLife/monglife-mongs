@@ -35,8 +35,8 @@ public class BattleSearchService {
 
     private final static Integer MAX_ROUND = 10;
     private final static List<String> BOT_MONG_CODE_LIST = List.of("CH100", "CH101", "CH102");
-    private final static Double BOT_ATTACK_VALUE = 100D;
-    private final static Double BOT_HEAL_VALUE = 50D;
+    private final static Double BOT_ATTACK_VALUE = 70D;
+    private final static Double BOT_HEAL_VALUE = 30D;
 
 
     @Transactional

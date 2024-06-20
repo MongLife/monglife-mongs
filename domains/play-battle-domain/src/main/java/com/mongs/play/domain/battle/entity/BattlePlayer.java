@@ -37,4 +37,12 @@ public class BattlePlayer {
     public void attackedWithHeal(Double damage) {
         this.hp = Math.max(0, this.hp + this.healValue - damage);
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o instanceof BattlePlayer battlePlayer) {
+            return Objects.equals(this.playerId, battlePlayer.getPlayerId());
+        }
+        return false;
+    }
 }
