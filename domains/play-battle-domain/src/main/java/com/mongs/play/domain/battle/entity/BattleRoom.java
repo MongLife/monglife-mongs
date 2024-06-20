@@ -20,7 +20,8 @@ public class BattleRoom extends BaseTimeEntity {
     private String roomId = UUID.randomUUID().toString().replaceAll("-", "");
     @Builder.Default
     private Integer round = 0;
-    private boolean isActive = false;
+    @Builder.Default
+    private Boolean isActive = false;
 
     @OneToMany(cascade = CascadeType.ALL)
     @JoinColumn(name = "room_id")
