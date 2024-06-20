@@ -25,4 +25,12 @@ public class BattleRound {
     private Integer round;
     @Enumerated(EnumType.STRING)
     private PickCode pick;
+
+    @Override
+    public boolean equals(Object o) {
+        if (o instanceof BattleRound battleRound) {
+            return Objects.equals(this.playerId, battleRound.getPlayerId()) && Objects.equals(this.round, battleRound.getRound());
+        }
+        return false;
+    }
 }
