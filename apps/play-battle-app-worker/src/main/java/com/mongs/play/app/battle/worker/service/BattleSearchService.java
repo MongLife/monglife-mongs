@@ -34,7 +34,7 @@ public class BattleSearchService {
     private final MqttBattleService mqttBattleService;
 
     private final static Integer MAX_ROUND = 10;
-    private final static List<String> BOT_MONG_CODE_LIST = List.of("CH100", "CH101", "CH102", "CH210", "CH211", "Ch212");
+    private final static List<String> BOT_MONG_CODE_LIST = List.of("CH100", "CH101", "CH102", "CH210", "CH211", "CH212");
     private final static Double BOT_ATTACK_VALUE = 50D;
     private final static Double BOT_HEAL_VALUE = 30D;
     private final static Double BOT_DEFENCE_VALUE = 10D;
