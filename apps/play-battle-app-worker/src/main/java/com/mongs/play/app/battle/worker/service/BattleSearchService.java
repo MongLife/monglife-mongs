@@ -81,9 +81,13 @@ public class BattleSearchService {
                 // 유저인 경우
                 MongVo mongVo = mongService.findActiveMongById(matchWaitVo.mongId());
 
-                double attackValue = mongVo.strength();
-                double healValue = mongVo.sleep();
-                double defenceValue = mongVo.weight();
+                double attackValue = mongVo.strength() / mongVo.grade().maxStatus * 100D + random.nextDouble(-15, 15);
+                double healValue = mongVo.sleep() / mongVo.grade().maxStatus * 100D + random.nextDouble(-15, 15);
+                double defenceValue = mongVo.weight() / mongVo.grade().maxStatus * 100D + random.nextDouble(-15, 15);
+
+                attackValue = Math.max(0, attackValue);
+                healValue = Math.max(0, healValue);
+                defenceValue = Math.max(0, defenceValue);
 
                 BattlePlayerVo battlePlayerVo = battleService.addBattlePlayer(matchWaitVo.playerId(), mongVo.mongId(), mongVo.mongCode(), attackValue, healValue, defenceValue, false);
 
@@ -93,9 +97,13 @@ public class BattleSearchService {
                         .build());
             } else {
                 // 봇인 경우
-                double attackValue = BOT_ATTACK_VALUE + random.nextDouble(-10, 10);
-                double healValue = BOT_HEAL_VALUE + random.nextDouble(-10, 10);
-                double defenceValue = BOT_DEFENCE_VALUE + random.nextDouble(-10, 10);
+                double attackValue = BOT_ATTACK_VALUE + random.nextDouble(-15, 15);
+                double healValue = BOT_HEAL_VALUE + random.nextDouble(-15, 15);
+                double defenceValue = BOT_DEFENCE_VALUE + random.nextDouble(-15, 15);
+
+                attackValue = Math.max(0, attackValue);
+                healValue = Math.max(0, healValue);
+                defenceValue = Math.max(0, defenceValue);
 
                 int mongCodeIndex = random.nextInt(BOT_MONG_CODE_LIST.size());
                 BattlePlayerVo battlePlayerVo = battleService.addBattlePlayer(matchWaitVo.playerId(), matchWaitVo.mongId(), BOT_MONG_CODE_LIST.get(mongCodeIndex), attackValue, healValue, defenceValue, true);
