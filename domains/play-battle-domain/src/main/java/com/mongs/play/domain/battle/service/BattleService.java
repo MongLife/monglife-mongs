@@ -52,7 +52,7 @@ public class BattleService {
     }
 
     @Transactional(transactionManager = "battleTransactionManager")
-    public BattlePlayerVo addBattlePlayer(String playerId, Long mongId, String mongCode, Double attackValue, Double healValue, Boolean isBot) {
+    public BattlePlayerVo addBattlePlayer(String playerId, Long mongId, String mongCode, Double attackValue, Double healValue, Double defenceValue, Boolean isBot) {
         BattlePlayer battlePlayer = BattlePlayer.builder()
                 .playerId(playerId)
                 .mongId(mongId)
@@ -60,6 +60,7 @@ public class BattleService {
                 .hp(500D)
                 .attackValue(attackValue)
                 .healValue(healValue)
+                .defenceValue(defenceValue)
                 .isBot(isBot)
                 .build();
 

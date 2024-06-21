@@ -11,6 +11,7 @@ public record BattlePlayerVo(
         String mongCode,
         Double hp,
         Double attackValue,
+        Double defenceValue,
         Boolean isBot
 ) {
     public static BattlePlayerVo of(BattlePlayer battlePlayer) {
@@ -20,6 +21,7 @@ public record BattlePlayerVo(
                 .mongCode(battlePlayer.getMongCode())
                 .hp(battlePlayer.getHp())
                 .attackValue(battlePlayer.getAttackValue())
+                .defenceValue(battlePlayer.getDefenceValue())
                 .isBot(battlePlayer.getIsBot())
                 .build();
     }

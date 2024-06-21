@@ -22,6 +22,7 @@ public class BattlePlayer {
     private Double hp;
     private Double attackValue;
     private Double healValue;
+    private Double defenceValue;
 
     @Builder.Default
     private Boolean isBot = false;
@@ -34,8 +35,14 @@ public class BattlePlayer {
         this.hp = Math.max(0, this.hp - damage);
     }
 
+    public void attackWithDefence(Double damage) {
+        Double maxDefenceValue = Math.min(damage, this.defenceValue);
+        Double totalDamage = damage - maxDefenceValue;
+        this.hp = Math.min(0, this.hp - totalDamage);
+    }
+
     public void attackedWithHeal(Double damage) {
-        this.hp = Math.max(0, this.hp + this.healValue - damage);
+        this.hp = Math.min(Math.max(0, this.hp + this.healValue - damage), 500L);
     }
 
     @Override

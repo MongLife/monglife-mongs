@@ -34,9 +34,10 @@ public class BattleSearchService {
     private final MqttBattleService mqttBattleService;
 
     private final static Integer MAX_ROUND = 10;
-    private final static List<String> BOT_MONG_CODE_LIST = List.of("CH100", "CH101", "CH102");
-    private final static Double BOT_ATTACK_VALUE = 70D;
+    private final static List<String> BOT_MONG_CODE_LIST = List.of("CH100", "CH101", "CH102", "CH210", "CH211", "Ch212");
+    private final static Double BOT_ATTACK_VALUE = 50D;
     private final static Double BOT_HEAL_VALUE = 30D;
+    private final static Double BOT_DEFENCE_VALUE = 10D;
 
 
     @Transactional
@@ -82,8 +83,9 @@ public class BattleSearchService {
 
                 double attackValue = mongVo.strength();
                 double healValue = mongVo.sleep();
+                double defenceValue = mongVo.weight();
 
-                BattlePlayerVo battlePlayerVo = battleService.addBattlePlayer(matchWaitVo.playerId(), mongVo.mongId(), mongVo.mongCode(), attackValue, healValue, false);
+                BattlePlayerVo battlePlayerVo = battleService.addBattlePlayer(matchWaitVo.playerId(), mongVo.mongId(), mongVo.mongCode(), attackValue, healValue, defenceValue, false);
 
                 mqttBattleService.sendMatchFind(matchWaitVo.deviceId(), MatchFindVo.builder()
                         .roomId(battleRoomVo.roomId())
@@ -91,11 +93,12 @@ public class BattleSearchService {
                         .build());
             } else {
                 // 봇인 경우
-                double attackValue = BOT_ATTACK_VALUE;
-                double healValue = BOT_HEAL_VALUE;
+                double attackValue = BOT_ATTACK_VALUE + random.nextDouble(-10, 10);
+                double healValue = BOT_HEAL_VALUE + random.nextDouble(-10, 10);
+                double defenceValue = BOT_DEFENCE_VALUE + random.nextDouble(-10, 10);
 
                 int mongCodeIndex = random.nextInt(BOT_MONG_CODE_LIST.size());
-                BattlePlayerVo battlePlayerVo = battleService.addBattlePlayer(matchWaitVo.playerId(), matchWaitVo.mongId(), BOT_MONG_CODE_LIST.get(mongCodeIndex), attackValue, healValue, true);
+                BattlePlayerVo battlePlayerVo = battleService.addBattlePlayer(matchWaitVo.playerId(), matchWaitVo.mongId(), BOT_MONG_CODE_LIST.get(mongCodeIndex), attackValue, healValue, defenceValue, true);
                 battleService.enterBattleRoom(battleRoomVo.roomId(), battlePlayerVo.playerId());
 
                 // 랜덤 라운드 생성
