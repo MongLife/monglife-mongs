@@ -3,8 +3,6 @@ package com.mongs.play.app.management.external.service;
 import com.mongs.play.app.management.external.annotation.ValidationDead;
 import com.mongs.play.app.management.external.annotation.ValidationEvolution;
 import com.mongs.play.app.management.external.vo.*;
-import com.mongs.play.client.publisher.event.annotation.RealTimeMong;
-import com.mongs.play.client.publisher.event.code.PublishEventCode;
 import com.mongs.play.core.error.app.ManagementExternalErrorCode;
 import com.mongs.play.core.exception.app.ManagementExternalException;
 import com.mongs.play.core.exception.common.InvalidException;
@@ -44,7 +42,6 @@ public class ManagementExternalService {
     private final ManagementWorkerFeignService managementWorkerFeignService;
     private final PlayerInternalCollectionFeignService playerInternalCollectionFeignService;
 
-    @RealTimeMong(codes = { PublishEventCode.MONG_SHIFT })
     @Transactional
     public EvolutionReadyVo evolutionReady(Long mongId) {
         MongVo newMongVo = mongService.toggleEvolutionReady(mongId);
@@ -141,6 +138,7 @@ public class ManagementExternalService {
             managementWorkerFeignService.zeroEvolutionSchedule(newMongVo.mongId());
         } catch (ModuleErrorException e) {
             playerInternalCollectionFeignService.removeMongCollection(accountId, newMongVo.mongCode());
+            throw new ManagementExternalException(e.errorCode);
         }
 
         return RegisterMongVo.builder()
@@ -167,7 +165,6 @@ public class ManagementExternalService {
                 .build();
     }
 
-    @RealTimeMong(codes = { PublishEventCode.MONG_SHIFT })
     @Transactional
     public DeleteMongVo deleteMong(Long accountId, Long mongId) {
 
@@ -188,7 +185,6 @@ public class ManagementExternalService {
     }
 
     @ValidationEvolution
-    @RealTimeMong(codes = { PublishEventCode.MONG_EXP })
     @Transactional
     public StrokeMongVo strokeMong(Long accountId, Long mongId) {
 
@@ -219,7 +215,6 @@ public class ManagementExternalService {
                 .build();
     }
 
-    @RealTimeMong(codes = { PublishEventCode.MONG_IS_SLEEPING })
     @Transactional
     public SleepingMongVo sleepingMong(Long accountId, Long mongId) {
 
@@ -248,7 +243,6 @@ public class ManagementExternalService {
     }
 
     @ValidationEvolution
-    @RealTimeMong(codes = { PublishEventCode.MONG_POOP_COUNT, PublishEventCode.MONG_EXP })
     @Transactional
     public PoopCleanMongVo poopClean(Long accountId, Long mongId) {
 
@@ -304,7 +298,6 @@ public class ManagementExternalService {
 
     @ValidationEvolution
     @ValidationDead
-    @RealTimeMong(codes = { PublishEventCode.MONG_EXP, PublishEventCode.MONG_STATUS, PublishEventCode.MONG_STATE, PublishEventCode.MONG_PAY_POINT })
     @Transactional
     public TrainingMongVo trainingMong(Long accountId, Long mongId, String trainingCode) {
 
@@ -348,7 +341,6 @@ public class ManagementExternalService {
                 .build();
     }
 
-    @RealTimeMong(codes = { PublishEventCode.MONG_SHIFT })
     @Transactional
     public GraduateMongVo graduateMong(Long accountId, Long mongId) {
 
@@ -372,7 +364,6 @@ public class ManagementExternalService {
                 .build();
     }
 
-    @RealTimeMong(codes = { PublishEventCode.MONG_CODE, PublishEventCode.MONG_EXP, PublishEventCode.MONG_STATUS, PublishEventCode.MONG_STATE, PublishEventCode.MONG_SHIFT })
     @Transactional
     public EvolutionMongVo evolutionMong(Long accountId, Long mongId) {
 
@@ -405,6 +396,7 @@ public class ManagementExternalService {
                 managementWorkerFeignService.firstEvolutionSchedule(mongVo.mongId());
             } catch (ModuleErrorException e) {
                 playerInternalCollectionFeignService.removeMongCollection(accountId, newMongVo.mongCode());
+                throw new ManagementExternalException(e.errorCode);
             }
         } else if (MongGrade.LAST.equals(mongVo.grade().nextGrade)) {
             newMongVo = mongService.toggleLastEvolution(mongVo.mongId());
@@ -435,6 +427,7 @@ public class ManagementExternalService {
                 managementWorkerFeignService.evolutionSchedule(mongVo.mongId());
             } catch (ModuleErrorException e) {
                 playerInternalCollectionFeignService.removeMongCollection(accountId, newMongVo.mongCode());
+                throw new ManagementExternalException(e.errorCode);
             }
         }
 
@@ -461,7 +454,6 @@ public class ManagementExternalService {
 
     @ValidationEvolution
     @ValidationDead
-    @RealTimeMong(codes = { PublishEventCode.MONG_EXP, PublishEventCode.MONG_STATUS, PublishEventCode.MONG_STATE, PublishEventCode.MONG_PAY_POINT })
     @Transactional
     public FeedMongVo feedMong(Long accountId, Long mongId, String foodCode) {
 

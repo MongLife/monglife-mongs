@@ -3,6 +3,7 @@ package com.mongs.play.client.publisher.event.aspect;
 import com.mongs.play.client.publisher.event.annotation.RealTimeMong;
 import com.mongs.play.client.publisher.event.code.PublishEventCode;
 import com.mongs.play.client.publisher.event.dto.BasicPublishEventDto;
+import com.mongs.play.client.publisher.event.event.RealTimeMongEvent;
 import com.mongs.play.client.publisher.event.service.MqttEventService;
 import com.mongs.play.client.publisher.event.vo.*;
 import com.mongs.play.core.utils.ReflectionUtil;
@@ -12,6 +13,7 @@ import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Pointcut;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.core.annotation.Order;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
@@ -27,7 +29,9 @@ import java.util.List;
 @RequiredArgsConstructor
 public class RealTimeMongAspect {
 
-    private final MqttEventService mqttEventService;
+    private final ApplicationEventPublisher publisher;
+
+//    private final MqttEventService mqttEventService;
 
     @Pointcut("execution(* com.mongs.play..*.*(..))")
     public void cut() {}
@@ -84,7 +88,12 @@ public class RealTimeMongAspect {
                 }
             }
 
-            mqttEventService.sendMong(mongId, publishVoList);
+//            mqttEventService.sendMong(mongId, publishVoList);
+            publisher.publishEvent(RealTimeMongEvent.builder()
+                    .mongId(mongId)
+                    .publishVoList(publishVoList)
+                    .build());
+
         }
 
         return returnValue;

@@ -1,5 +1,4 @@
 dependencies {
-    implementation project(':clients:play-event-publisher-client')
     implementation project(':domains:play-code-domain')
     implementation project(":domains:play-collection-domain")
     implementation project(":domains:play-feedback-domain")

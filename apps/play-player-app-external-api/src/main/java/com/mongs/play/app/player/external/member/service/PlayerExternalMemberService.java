@@ -1,10 +1,8 @@
 package com.mongs.play.app.player.external.member.service;
 
 import com.mongs.play.app.player.external.member.vo.*;
-import com.mongs.play.client.publisher.event.annotation.RealTimeMember;
-import com.mongs.play.client.publisher.event.code.PublishEventCode;
-import com.mongs.play.domain.member.entity.Member;
 import com.mongs.play.domain.member.service.MemberService;
+import com.mongs.play.domain.member.vo.MemberVo;
 import com.mongs.play.domain.payment.entity.ChargeItem;
 import com.mongs.play.domain.payment.entity.ExchangeItem;
 import com.mongs.play.domain.payment.entity.PaymentLog;
@@ -32,12 +30,12 @@ public class PlayerExternalMemberService {
     @Transactional
     public FindMemberVo findMember(Long accountId) {
 
-        Member member = memberService.getMember(accountId);
+        MemberVo memberVo = memberService.getMember(accountId);
 
         return FindMemberVo.builder()
-                .accountId(member.getAccountId())
-                .maxSlot(member.getSlotCount())
-                .starPoint(member.getStarPoint())
+                .accountId(memberVo.accountId())
+                .maxSlot(memberVo.slotCount())
+                .starPoint(memberVo.starPoint())
                 .build();
     }
 
@@ -62,45 +60,43 @@ public class PlayerExternalMemberService {
     public BuySlotVo buySlot(Long accountId, String deviceId) {
 
         PaymentLog paymentLog = paymentService.addBuySlotLog(accountId, deviceId);
-        Member member = memberService.increaseSlotCount(accountId, 1);
+        MemberVo memberVo = memberService.increaseSlotCount(accountId, 1);
         paymentService.itemReward(paymentLog.getId());
 
         return BuySlotVo.builder()
-                .accountId(member.getAccountId())
-                .maxSlot(member.getSlotCount())
-                .starPoint(member.getStarPoint())
+                .accountId(memberVo.accountId())
+                .maxSlot(memberVo.slotCount())
+                .starPoint(memberVo.starPoint())
                 .build();
     }
 
-    @RealTimeMember(codes = { PublishEventCode.MEMBER_STAR_POINT })
     @Transactional
     public ChargeStarPointVo chargeStarPoint(Long accountId, String deviceId, String receipt, String chargeItemId) {
 
         PaymentLog paymentLog = paymentService.addChargeStarPointLog(accountId, deviceId, receipt);
         ChargeItem chargeItem = chargeItemService.getChargeItem(chargeItemId);
-        Member member = memberService.increaseStarPoint(accountId, chargeItem.getStarPoint());
+        MemberVo memberVo = memberService.increaseStarPoint(accountId, chargeItem.getStarPoint());
         paymentService.itemReward(paymentLog.getId());
 
         return ChargeStarPointVo.builder()
-                .accountId(member.getAccountId())
-                .starPoint(member.getStarPoint())
+                .accountId(memberVo.accountId())
+                .starPoint(memberVo.starPoint())
                 .build();
     }
 
-    @RealTimeMember(codes = { PublishEventCode.MEMBER_STAR_POINT })
     @Transactional
     public ExchangePayPointVo exchangePayPoint(Long accountId, String deviceId, Long mongId, String exchangeItemId) {
 
         PaymentLog paymentLog = paymentService.addExchangePayPointLog(accountId, deviceId);
         ExchangeItem exchangeItem = exchangeItemService.getExchangeItem(exchangeItemId);
-        Member member = memberService.decreaseStarPoint(accountId, exchangeItem.getStarPoint());
+        MemberVo memberVo = memberService.decreaseStarPoint(accountId, exchangeItem.getStarPoint());
         managementInternalFeignService.increasePayPoint(mongId, exchangeItem.getPayPoint());
         paymentService.itemReward(paymentLog.getId());
 
         return ExchangePayPointVo.builder()
-                .accountId(member.getAccountId())
+                .accountId(memberVo.accountId())
                 .mongId(mongId)
-                .starPoint(member.getStarPoint())
+                .starPoint(memberVo.starPoint())
                 .build();
     }
 

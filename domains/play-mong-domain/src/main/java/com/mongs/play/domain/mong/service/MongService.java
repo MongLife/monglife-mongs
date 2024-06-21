@@ -1,5 +1,7 @@
 package com.mongs.play.domain.mong.service;
 
+import com.mongs.play.client.publisher.event.annotation.RealTimeMong;
+import com.mongs.play.client.publisher.event.code.PublishEventCode;
 import com.mongs.play.core.error.domain.MongErrorCode;
 import com.mongs.play.core.exception.common.NotFoundException;
 import com.mongs.play.domain.mong.entity.MongFeedLog;
@@ -73,6 +75,7 @@ public class MongService {
         return MongVo.of(mong);
     }
 
+    @RealTimeMong(codes = { PublishEventCode.MONG_SHIFT })
     @Transactional(transactionManager = "mongTransactionManager")
     public MongVo removeMong(Long mongId) throws NotFoundException {
 
@@ -106,6 +109,7 @@ public class MongService {
         return MongVo.of(mong);
     }
 
+    @RealTimeMong(codes = { PublishEventCode.MONG_EXP })
     @Transactional(transactionManager = "mongTransactionManager")
     public MongVo increaseNumberOfStroke(Long mongId, Integer strokeCount) throws NotFoundException {
 
@@ -132,6 +136,7 @@ public class MongService {
         return MongVo.of(mong);
     }
 
+    @RealTimeMong(codes = { PublishEventCode.MONG_IS_SLEEPING })
     @Transactional(transactionManager = "mongTransactionManager")
     public MongVo toggleIsSleeping(Long mongId) throws NotFoundException {
 
@@ -156,6 +161,7 @@ public class MongService {
         return MongVo.of(mong);
     }
 
+    @RealTimeMong(codes = { PublishEventCode.MONG_POOP_COUNT, PublishEventCode.MONG_EXP })
     @Transactional(transactionManager = "mongTransactionManager")
     public MongVo clearPoopCount(Long mongId) throws NotFoundException {
 
@@ -184,6 +190,7 @@ public class MongService {
         return MongVo.of(mong);
     }
 
+    @RealTimeMong(codes = { PublishEventCode.MONG_EXP, PublishEventCode.MONG_STATUS, PublishEventCode.MONG_STATE, PublishEventCode.MONG_PAY_POINT })
     @Transactional(transactionManager = "mongTransactionManager")
     public MongVo increaseStatusTraining(Long mongId, Integer trainingCount, MongTrainingCode mongTrainingCode) throws NotFoundException {
 
@@ -222,6 +229,7 @@ public class MongService {
         return MongVo.of(mong);
     }
 
+    @RealTimeMong(codes = { PublishEventCode.MONG_SHIFT })
     @Transactional(transactionManager = "mongTransactionManager")
     public MongVo toggleGraduate(Long mongId) throws NotFoundException {
 
@@ -255,6 +263,7 @@ public class MongService {
         return MongVo.of(mong);
     }
 
+    @RealTimeMong(codes = { PublishEventCode.MONG_SHIFT })
     @Transactional(transactionManager = "mongTransactionManager")
     public MongVo toggleEvolutionReady(Long mongId) throws NotFoundException {
 
@@ -277,6 +286,7 @@ public class MongService {
         return MongVo.of(mong);
     }
 
+    @RealTimeMong(codes = { PublishEventCode.MONG_CODE, PublishEventCode.MONG_EXP, PublishEventCode.MONG_STATUS, PublishEventCode.MONG_STATE, PublishEventCode.MONG_SHIFT })
     @Transactional(transactionManager = "mongTransactionManager")
     public MongVo toggleFirstEvolution(Long mongId, String mongCode) throws NotFoundException {
 
@@ -303,6 +313,7 @@ public class MongService {
         return MongVo.of(mong);
     }
 
+    @RealTimeMong(codes = { PublishEventCode.MONG_CODE, PublishEventCode.MONG_EXP, PublishEventCode.MONG_STATUS, PublishEventCode.MONG_STATE, PublishEventCode.MONG_SHIFT })
     @Transactional(transactionManager = "mongTransactionManager")
     public MongVo toggleEvolution(Long mongId, String mongCode, Integer evolutionPoint) throws NotFoundException {
 
@@ -339,6 +350,7 @@ public class MongService {
         return MongVo.of(mong);
     }
 
+    @RealTimeMong(codes = { PublishEventCode.MONG_CODE, PublishEventCode.MONG_EXP, PublishEventCode.MONG_STATUS, PublishEventCode.MONG_STATE, PublishEventCode.MONG_SHIFT })
     @Transactional(transactionManager = "mongTransactionManager")
     public MongVo toggleLastEvolution(Long mongId) throws NotFoundException {
 
@@ -368,6 +380,7 @@ public class MongService {
         return MongVo.of(mong);
     }
 
+    @RealTimeMong(codes = { PublishEventCode.MONG_IS_SLEEPING, PublishEventCode.MONG_POOP_COUNT, PublishEventCode.MONG_EXP, PublishEventCode.MONG_STATUS, PublishEventCode.MONG_STATE, PublishEventCode.MONG_SHIFT })
     @Transactional(transactionManager = "mongTransactionManager")
     public MongVo deadMong(Long mongId) throws NotFoundException {
 
@@ -401,6 +414,7 @@ public class MongService {
         return MongVo.of(mong);
     }
 
+    @RealTimeMong(codes = { PublishEventCode.MONG_EXP, PublishEventCode.MONG_STATUS, PublishEventCode.MONG_STATE, PublishEventCode.MONG_PAY_POINT })
     @Transactional(transactionManager = "mongTransactionManager")
     public MongVo feedMong(Long mongId, String foodCode, Double addWeight, Double addStrength, Double addSatiety, Double addHealthy, Double addSleep, Integer price) throws NotFoundException {
 
