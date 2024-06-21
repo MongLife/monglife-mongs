@@ -129,6 +129,7 @@ public class ManagementExternalService {
 
         String eggMongCode = mongCodeList.get(randIdx).getCode();
 
+        name = "";      // 이름 빈칸으로 초기화
         MongVo newMongVo = mongService.addMong(accountId, eggMongCode, name, sleepStart, sleepEnd);
         MongStatusPercentVo mongStatusPercentVo = MongUtil.statusToPercent(newMongVo.grade(), newMongVo);
 
