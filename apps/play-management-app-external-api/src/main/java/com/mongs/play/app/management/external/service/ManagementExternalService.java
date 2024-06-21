@@ -410,11 +410,13 @@ public class ManagementExternalService {
             newMongVo = mongService.toggleLastEvolution(mongVo.mongId());
             managementWorkerFeignService.lastEvolutionSchedule(mongVo.mongId());
         } else {
-            int strokePoint = mongVo.numberOfStroke() * 2;
-            int trainingPoint = mongVo.numberOfTraining() * 3;
-            int penaltyPoint = mongVo.penalty();
+            int strokePoint = mongVo.numberOfStroke() * 2;      // 20 회 = 40점
+            int trainingPoint = mongVo.numberOfTraining() * 2;  // 20 회 = 40점
+            int penaltyPoint = Math.max(mongVo.penalty(), 75);
+            int deadPoint = mongVo.isDeadSchedule() ? -10 : 10;
 
-            int evolutionPoint = Math.max(mongVo.evolutionPoint() + strokePoint + trainingPoint - penaltyPoint, 0);
+            // 부가 포인트 + 기본값 + 쓰다듬기 + 훈련 +- 죽음준비여부 - 패널티
+            int evolutionPoint = Math.max(0, mongVo.evolutionPoint() + 225 + strokePoint + trainingPoint + deadPoint - penaltyPoint);
             List<MongCode> mongCodeList = codeService.getMongCodeByLevelAndEvolutionPoint(mongVo.grade().nextGrade.level, evolutionPoint);
 
             MongCode mongCode = codeService.getMongCode(mongVo.mongCode());
@@ -423,7 +425,9 @@ public class ManagementExternalService {
                     .min((o1, o2) -> o2.getEvolutionPoint() - o1.getEvolutionPoint())
                     .orElseGet(() -> mongCodeList.get(0))
                     .getCode();
-            int newEvolutionPoint = evolutionPoint - 300 + 150;
+
+            // 부가 포인트 책정 (다음 진화 때 부가 포인트로 적용)
+            int newEvolutionPoint = evolutionPoint - 300;
 
             newMongVo = mongService.toggleEvolution(mongVo.mongId(), newMongCode, newEvolutionPoint);
             playerInternalCollectionFeignService.registerMongCollection(accountId, newMongVo.mongCode());
