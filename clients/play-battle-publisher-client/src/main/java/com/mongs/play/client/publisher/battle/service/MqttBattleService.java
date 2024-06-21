@@ -16,7 +16,7 @@ public class MqttBattleService {
     private final MqttBattleOutboundClient mqttBattleOutboundClient;
     private final ObjectMapper objectMapper;
 
-    @Value("${application.mqtt.topic.data}")
+    @Value("${application.mqtt.topic}")
     private String TOPIC_FILTER;
 
     public void sendMatchFind(String deviceId, Object data) {

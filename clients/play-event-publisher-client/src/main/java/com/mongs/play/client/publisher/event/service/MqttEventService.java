@@ -14,7 +14,7 @@ public class MqttEventService {
     private final MqttEventClient mqttEventClient;
     private final ObjectMapper objectMapper;
 
-    @Value("${application.mqtt.topic.data}")
+    @Value("${application.mqtt.topic}")
     private String TOPIC_FILTER;
 
     public void sendMong(Long mongId, Object data) {
