@@ -28,7 +28,11 @@ public class MqttBattleConfig {
     private String HOST;
     @Value("${application.mqtt.port}")
     private Integer PORT;
-    @Value("${application.mqtt.topic.mong_data}")
+    @Value("${application.mqtt.username}")
+    private String USERNAME;
+    @Value("${application.mqtt.password}")
+    private String PASSWORD;
+    @Value("${application.mqtt.topic}")
     private String TOPIC_FILTER;
 
     /**
@@ -36,16 +40,14 @@ public class MqttBattleConfig {
      */
     @Bean
     public MqttPahoClientFactory mqttBattleClientFactory() {
-        final String BROKER_URL = "tcp://" + HOST + ":" + PORT;
-
         DefaultMqttPahoClientFactory factory = new DefaultMqttPahoClientFactory();
         MqttConnectOptions options = new MqttConnectOptions();
-        options.setServerURIs(new String[]{BROKER_URL});
+        options.setServerURIs(new String[]{ "tcp://" + HOST + ":" + PORT});
         options.setAutomaticReconnect(true);
         options.setConnectionTimeout(30);
         options.setKeepAliveInterval(60);
-//        options.setUserName("username");
-//        options.setPassword("password".toCharArray());
+        options.setUserName(USERNAME);
+        options.setPassword(PASSWORD.toCharArray());
         factory.setConnectionOptions(options);
         return factory;
     }
@@ -79,10 +81,10 @@ public class MqttBattleConfig {
             @Qualifier("mqttBattleClientFactory") MqttPahoClientFactory mqttPahoClientFactory,
             @Qualifier("mqttBattleInboundMatchChannel") MessageChannel mqttBattleInboundMatchChannel
     ) {
-        final String BROKER_URL = "tcp://" + HOST + ":" + PORT;
         final String subscribeTopic = TOPIC_FILTER + "battle/match";
 
-        MqttPahoMessageDrivenChannelAdapter adapter = new MqttPahoMessageDrivenChannelAdapter(BROKER_URL, MqttAsyncClient.generateClientId(), mqttPahoClientFactory, subscribeTopic);
+        MqttPahoMessageDrivenChannelAdapter adapter =
+                new MqttPahoMessageDrivenChannelAdapter("tcp://" + HOST + ":" + PORT, MqttAsyncClient.generateClientId(), mqttPahoClientFactory, subscribeTopic);
         adapter.setCompletionTimeout(5000);
         adapter.setConverter(new DefaultPahoMessageConverter());
         adapter.setQos(1);

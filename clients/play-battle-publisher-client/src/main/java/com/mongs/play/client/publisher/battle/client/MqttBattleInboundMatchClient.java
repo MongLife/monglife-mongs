@@ -70,8 +70,7 @@ public class MqttBattleInboundMatchClient implements MessageHandler {
 
                 default -> {}
             }
-        } catch (JsonProcessingException e) {
-            e.printStackTrace();
+        } catch (JsonProcessingException ignored) {
         }
     }
 }

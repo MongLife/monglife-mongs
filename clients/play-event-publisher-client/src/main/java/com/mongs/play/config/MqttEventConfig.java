@@ -22,19 +22,21 @@ public class MqttEventConfig {
     private String HOST;
     @Value("${application.mqtt.port}")
     private Integer PORT;
-    private final String MQTT_CLIENT_ID = MqttAsyncClient.generateClientId();
+    @Value("${application.mqtt.username}")
+    private String USERNAME;
+    @Value("${application.mqtt.password}")
+    private String PASSWORD;
+
     @Bean
     public MqttPahoClientFactory mqttEventClientFactory() {
-        String url = "tcp://" + HOST + ":" + PORT;
-
         DefaultMqttPahoClientFactory factory = new DefaultMqttPahoClientFactory();
         MqttConnectOptions options = new MqttConnectOptions();
-        options.setServerURIs(new String[]{url});
+        options.setServerURIs(new String[]{"tcp://" + HOST + ":" + PORT});
         options.setAutomaticReconnect(true);
         options.setConnectionTimeout(30);
         options.setKeepAliveInterval(60);
-//        options.setUserName("username");
-//        options.setPassword("password".toCharArray());
+        options.setUserName(USERNAME);
+        options.setPassword(PASSWORD.toCharArray());
         factory.setConnectionOptions(options);
         return factory;
     }
@@ -46,7 +48,7 @@ public class MqttEventConfig {
     @ServiceActivator(inputChannel = "mqttEventOutboundChannel")
     public MessageHandler mqttEventOutbound(@Qualifier("mqttEventClientFactory") MqttPahoClientFactory mqttPahoClientFactory) {
         MqttPahoMessageHandler messageHandler =
-                new MqttPahoMessageHandler(MQTT_CLIENT_ID, mqttPahoClientFactory);
+                new MqttPahoMessageHandler(MqttAsyncClient.generateClientId(), mqttPahoClientFactory);
         messageHandler.setAsync(true);
         messageHandler.setDefaultTopic("mongs/fail");
         return messageHandler;
