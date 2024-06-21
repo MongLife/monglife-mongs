@@ -188,12 +188,6 @@ public class BattleMatchService {
                         }
                     }).toList();
 
-            mqttBattleService.sendMatch(battleRoomVo.roomId(), MatchVo.builder()
-                    .roomId(battleRoomVo.roomId())
-                    .round(battleRoomVo.round())
-                    .matchPlayerVoList(matchPlayerVoList)
-                    .build());
-
             battleRoomVo = battleService.getBattleRoom(battleRoomVo.roomId());
 
             // 마지막 라운드 또는 꼴등이 가려졌을 때 매치 종료
@@ -207,6 +201,8 @@ public class BattleMatchService {
 
                 mqttBattleService.sendMatchOver(battleRoomVo.roomId(), MatchOverVo.builder()
                         .roomId(battleRoomVo.roomId())
+                        .round(battleRoomVo.round())
+                        .matchPlayerVoList(matchPlayerVoList)
                         .winPlayer(MatchPlayerVo.builder()
                                 .playerId(winPlayerVo.playerId())
                                 .mongCode(winPlayerVo.mongCode())
@@ -220,6 +216,12 @@ public class BattleMatchService {
                 }
 
             } else {
+                mqttBattleService.sendMatch(battleRoomVo.roomId(), MatchVo.builder()
+                        .roomId(battleRoomVo.roomId())
+                        .round(battleRoomVo.round())
+                        .matchPlayerVoList(matchPlayerVoList)
+                        .build());
+
                 battleService.increaseRound(battleRoomVo.roomId());
             }
 

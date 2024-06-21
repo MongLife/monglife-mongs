@@ -2,9 +2,13 @@ package com.mongs.play.client.publisher.battle.vo.res;
 
 import lombok.Builder;
 
+import java.util.List;
+
 @Builder
 public record MatchOverVo(
         String roomId,
-        MatchPlayerVo winPlayer
+        Integer round,
+        MatchPlayerVo winPlayer,
+        List<MatchPlayerVo> matchPlayerVoList
 ) {
 }
