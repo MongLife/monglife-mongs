@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.eclipse.paho.client.mqttv3.MqttAsyncClient;
 import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -58,7 +59,7 @@ public class MqttBattleConfig {
     }
     @Bean
     @ServiceActivator(inputChannel = "mqttBattleOutboundChannel")
-    public MessageHandler mqttOutbound(@Autowired MqttPahoClientFactory mqttPahoClientFactory) {
+    public MessageHandler mqttBattleOutbound(@Qualifier("mqttBattleClientFactory") MqttPahoClientFactory mqttPahoClientFactory) {
         MqttPahoMessageHandler messageHandler = new MqttPahoMessageHandler(MqttAsyncClient.generateClientId(), mqttPahoClientFactory);
         messageHandler.setAsync(true);
         messageHandler.setDefaultQos(1);
@@ -74,7 +75,10 @@ public class MqttBattleConfig {
         return new DirectChannel();
     }
     @Bean
-    public MessageProducer mqttBattleInboundMatchMessageDrivenAdapter(@Autowired MqttPahoClientFactory mqttPahoClientFactory, @Autowired MessageChannel mqttBattleInboundMatchChannel) {
+    public MessageProducer mqttBattleInboundMatchMessageDrivenAdapter(
+            @Qualifier("mqttBattleClientFactory") MqttPahoClientFactory mqttPahoClientFactory,
+            @Qualifier("mqttBattleInboundMatchChannel") MessageChannel mqttBattleInboundMatchChannel
+    ) {
         final String BROKER_URL = "tcp://" + HOST + ":" + PORT;
         final String subscribeTopic = TOPIC_FILTER + "battle/match";
 

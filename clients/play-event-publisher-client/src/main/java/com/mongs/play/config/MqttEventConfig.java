@@ -3,6 +3,7 @@ package com.mongs.play.config;
 import org.eclipse.paho.client.mqttv3.MqttAsyncClient;
 import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -43,7 +44,7 @@ public class MqttEventConfig {
     }
     @Bean
     @ServiceActivator(inputChannel = "mqttEventOutboundChannel")
-    public MessageHandler mqttEventOutbound(@Autowired MqttPahoClientFactory mqttPahoClientFactory) {
+    public MessageHandler mqttEventOutbound(@Qualifier("mqttEventClientFactory") MqttPahoClientFactory mqttPahoClientFactory) {
         MqttPahoMessageHandler messageHandler =
                 new MqttPahoMessageHandler(MQTT_CLIENT_ID, mqttPahoClientFactory);
         messageHandler.setAsync(true);
