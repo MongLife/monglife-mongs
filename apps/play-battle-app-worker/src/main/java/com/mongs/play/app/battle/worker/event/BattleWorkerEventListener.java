@@ -4,6 +4,7 @@ import com.mongs.play.app.battle.worker.service.BattleMatchService;
 import com.mongs.play.client.publisher.battle.event.MatchExitEvent;
 import com.mongs.play.client.publisher.battle.event.MatchPickEvent;
 import com.mongs.play.client.publisher.battle.event.MatchEnterEvent;
+import com.mongs.play.core.exception.ErrorException;
 import com.mongs.play.core.exception.app.BattleWorkerException;
 import com.mongs.play.domain.battle.code.PickCode;
 import com.mongs.play.domain.battle.vo.BattleRoomVo;
@@ -27,7 +28,7 @@ public class BattleWorkerEventListener {
             String roomId = event.roomId();
             String playerId = event.playerId();
             battleMatchService.matchEnter(roomId, playerId);
-        } catch (BattleWorkerException e) {
+        } catch (ErrorException e) {
             log.error("[BattleWorkerEventListener] match enter error : {}", e.getMessage());
         }
     }
@@ -42,7 +43,7 @@ public class BattleWorkerEventListener {
             PickCode pick = PickCode.valueOf(event.pick());
             BattleRoomVo battleRoomVo = battleMatchService.matchPick(roomId, playerId, targetPlayerId, pick);
             battleMatchService.matchOver(battleRoomVo);
-        } catch (BattleWorkerException e) {
+        } catch (ErrorException e) {
             log.error("[BattleWorkerEventListener] match pick error : {}", e.getMessage());
         }
     }
@@ -54,7 +55,7 @@ public class BattleWorkerEventListener {
             String roomId = event.roomId();
             String playerId = event.playerId();
             battleMatchService.matchExit(roomId, playerId);
-        } catch (BattleWorkerException e) {
+        } catch (ErrorException e) {
             log.error("[BattleWorkerEventListener] match exit error : {}", e.getMessage());
         }
     }
