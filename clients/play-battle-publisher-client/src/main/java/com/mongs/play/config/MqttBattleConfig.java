@@ -61,6 +61,7 @@ public class MqttBattleConfig {
     public MessageHandler mqttOutbound(@Autowired MqttPahoClientFactory mqttPahoClientFactory) {
         MqttPahoMessageHandler messageHandler = new MqttPahoMessageHandler(MqttAsyncClient.generateClientId(), mqttPahoClientFactory);
         messageHandler.setAsync(true);
+        messageHandler.setDefaultQos(1);
         messageHandler.setDefaultTopic("mongs/fail");
         return messageHandler;
     }
@@ -80,7 +81,7 @@ public class MqttBattleConfig {
         MqttPahoMessageDrivenChannelAdapter adapter = new MqttPahoMessageDrivenChannelAdapter(BROKER_URL, MqttAsyncClient.generateClientId(), mqttPahoClientFactory, subscribeTopic);
         adapter.setCompletionTimeout(5000);
         adapter.setConverter(new DefaultPahoMessageConverter());
-        adapter.setQos(2);
+        adapter.setQos(1);
         adapter.setOutputChannel(mqttBattleInboundMatchChannel);
         return adapter;
     }
