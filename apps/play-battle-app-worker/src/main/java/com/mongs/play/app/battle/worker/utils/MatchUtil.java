@@ -5,13 +5,11 @@ import com.mongs.play.domain.battle.code.PickCode;
 import com.mongs.play.domain.battle.vo.BattlePlayerVo;
 import com.mongs.play.domain.battle.vo.BattleRoomVo;
 import com.mongs.play.domain.battle.vo.BattleRoundVo;
-import lombok.extern.slf4j.Slf4j;
 
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-@Slf4j
 public class MatchUtil {
 
     public static Map<String, RoundResultVo> setRoundResult(BattleRoomVo battleRoomVo) {
@@ -26,15 +24,12 @@ public class MatchUtil {
                         .build())
                 .collect(Collectors.toMap(RoundResultVo::getPlayerId, roundResultVo -> roundResultVo));
 
-        /* 라운드 결과 정리
-         * 방어, 회복인 경우에는 targetPlayerId 를 자기 자신으로 맞춰야함
-         */
+        // 라운드 결과 정리 (방어, 회복인 경우에는 targetPlayerId 를 자기 자신으로 맞춰야함)
         int nowRound = battleRoomVo.round();
         List<BattleRoundVo> battleRoundVoList = battleRoomVo.battleRoundVoList().stream()
                 .filter(battleRoundVo -> battleRoundVo.round() == nowRound)
                 .toList();
         for (BattleRoundVo battleRoundVo : battleRoundVoList) {
-            log.info("[round] {} : {} -> {}", battleRoundVo.pick(), battleRoundVo.playerId(), battleRoundVo.targetPlayerId());
             RoundResultVo roundResultVo = roundResultVoMap.get(battleRoundVo.targetPlayerId());
             if (battleRoundVo.pick().equals(PickCode.ATTACK)) {
                 Double damage = battlePlayerVoMap.get(battleRoundVo.playerId()).attackValue();

@@ -31,6 +31,8 @@ public class MongService {
     private final MongLogRepository mongLogRepository;
     private final MongFeedLogRepository mongFeedLogRepository;
 
+    private final Double battleExp = 15D;
+
     @Transactional(transactionManager = "mongTransactionManager", readOnly = true)
     public List<MongVo> findAllMong() {
         return MongVo.toList(mongRepository.findAllActive());
@@ -186,6 +188,24 @@ public class MongService {
                 .build());
 
         log.info("[poopCleanMong] mongId: {}", mong.getId());
+
+        return MongVo.of(mong);
+    }
+
+    @RealTimeMong(codes = { PublishEventCode.MONG_EXP, PublishEventCode.MONG_STATUS, PublishEventCode.MONG_STATE, PublishEventCode.MONG_PAY_POINT })
+    @Transactional(transactionManager = "mongTransactionManager")
+    public MongVo increaseStatusBattle(Long mongId) throws NotFoundException {
+
+        Mong mong = mongRepository.findByIdAndIsActiveTrueWithLock(mongId)
+                .orElseThrow(() -> new NotFoundException(MongErrorCode.NOT_FOUND_ACTIVE_MONG));
+
+        double exp = mong.getExp() + battleExp;
+
+        mong = mongRepository.save(mong.toBuilder()
+                .exp(exp)
+                .build().validation());
+
+        log.info("[battleMong] mongId: {}", mong.getId());
 
         return MongVo.of(mong);
     }

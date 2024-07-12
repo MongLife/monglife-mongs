@@ -12,19 +12,19 @@ import com.mongs.play.domain.battle.vo.BattlePlayerVo;
 import com.mongs.play.domain.battle.vo.BattleRoomVo;
 import com.mongs.play.domain.battle.vo.BattleRoundVo;
 import com.mongs.play.domain.mong.service.MongPayPointService;
+import com.mongs.play.domain.mong.service.MongService;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
-@Slf4j
 @Service
 @RequiredArgsConstructor
 public class BattleMatchService {
 
     private final MongPayPointService mongPayPointService;
+    private final MongService mongService;
     private final BattleService battleService;
     private final MqttBattleService mqttBattleService;
 
@@ -41,8 +41,6 @@ public class BattleMatchService {
     public void matchEnter(String roomId, String playerId) {
         BattleRoomVo battleRoomVo = battleService.enterBattleRoom(roomId, playerId);
 
-        log.info("[match] {} room enter player : {}", roomId, playerId);
-
         if (battleRoomVo.battlePlayerVoList().size() >= MAX_PLAYER) {
             mqttBattleService.sendMatch(battleRoomVo.roomId(), MatchVo.builder()
                     .roomId(battleRoomVo.roomId())
@@ -58,28 +56,19 @@ public class BattleMatchService {
                     .build());
 
             battleService.increaseRound(roomId);
-
-            log.info("[match] {} room battle start", roomId);
         }
     }
 
     @Transactional
     public BattleRoomVo matchPick(String roomId, String playerId, String targetPlayerId, PickCode pick) {
-        BattleRoomVo battleRoomVo = battleService.addBattleRound(roomId, playerId, targetPlayerId, pick);
-
-        log.info("[match] {} room player pick : {} to {}", roomId, pick, playerId);
-
-        return battleRoomVo;
+        return battleService.addBattleRound(roomId, playerId, targetPlayerId, pick);
     }
 
     @Transactional
     public void matchExit(String roomId, String playerId) {
         BattleRoomVo battleRoomVo = battleService.exitBattleRoom(roomId, playerId);
 
-        log.info("[match] {} room exit player : {}", roomId, playerId);
-
         if (battleRoomVo.battlePlayerVoList().size() == 1) {
-
             BattlePlayerVo winPlayerVo = battleRoomVo.battlePlayerVoList().get(0);
 
             mqttBattleService.sendMatchOver(battleRoomVo.roomId(), MatchOverVo.builder()
@@ -94,9 +83,8 @@ public class BattleMatchService {
 
             if (!winPlayerVo.isBot()) {
                 mongPayPointService.increasePayPoint(winPlayerVo.mongId(), BATTLE_REWARD_PAY_POINT);
+                mongService.increaseStatusBattle(winPlayerVo.mongId());
             }
-
-            log.info("[match] {} room battle stop, {} player win", roomId, battleRoomVo.battlePlayerVoList().get(0).playerId());
         }
     }
 
@@ -197,6 +185,9 @@ public class BattleMatchService {
                     if (battlePlayerVo.hp() > winPlayerVo.hp()) {
                         winPlayerVo = battlePlayerVo;
                     }
+                    if (!battlePlayerVo.isBot()) {
+                        mongService.increaseStatusBattle(battlePlayerVo.mongId());
+                    }
                 }
 
                 mqttBattleService.sendMatchOver(battleRoomVo.roomId(), MatchOverVo.builder()
@@ -224,8 +215,6 @@ public class BattleMatchService {
 
                 battleService.increaseRound(battleRoomVo.roomId());
             }
-
-            log.info("[match] {} room battle round over", battleRoomVo.roomId());
         }
     }
 }

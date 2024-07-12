@@ -35,9 +35,9 @@ public class BattleSearchService {
 
     private final static Integer MAX_ROUND = 10;
     private final static List<String> BOT_MONG_CODE_LIST = List.of("CH100", "CH101", "CH102", "CH210", "CH211", "CH212");
-    private final static Double BOT_ATTACK_VALUE = 50D;
-    private final static Double BOT_HEAL_VALUE = 30D;
-    private final static Double BOT_DEFENCE_VALUE = 10D;
+    private final static Double DEFAULT_ATTACK_VALUE = 50D;
+    private final static Double DEFAULT_HEAL_VALUE = 30D;
+    private final static Double DEFAULT_DEFENCE_VALUE = 10D;
 
 
     @Transactional
@@ -74,16 +74,14 @@ public class BattleSearchService {
                         .map(MatchWaitVo::playerId)
                         .collect(Collectors.toSet());
 
-        log.info("[matchFind] {}", battleRoomVo);
-
         matchWaitVoSet.forEach(matchWaitVo -> {
             if (!matchWaitVo.isBot()) {
                 // 유저인 경우
                 MongVo mongVo = mongService.findActiveMongById(matchWaitVo.mongId());
 
-                double attackValue = mongVo.strength() / mongVo.grade().maxStatus * 100D + random.nextDouble(-15, 15);
-                double healValue = mongVo.sleep() / mongVo.grade().maxStatus * 100D + random.nextDouble(-15, 15);
-                double defenceValue = mongVo.weight() / mongVo.grade().maxStatus * 100D + random.nextDouble(-15, 15);
+                double attackValue = DEFAULT_ATTACK_VALUE + (mongVo.strength() / mongVo.grade().maxStatus * 100D);
+                double healValue = DEFAULT_HEAL_VALUE + (mongVo.sleep() / mongVo.grade().maxStatus * 100D);
+                double defenceValue = DEFAULT_DEFENCE_VALUE + (mongVo.weight() / mongVo.grade().maxStatus * 100D);
 
                 attackValue = Math.max(0, attackValue);
                 healValue = Math.max(0, healValue);
@@ -97,9 +95,9 @@ public class BattleSearchService {
                         .build());
             } else {
                 // 봇인 경우
-                double attackValue = BOT_ATTACK_VALUE + random.nextDouble(-15, 15);
-                double healValue = BOT_HEAL_VALUE + random.nextDouble(-15, 15);
-                double defenceValue = BOT_DEFENCE_VALUE + random.nextDouble(-15, 15);
+                double attackValue = DEFAULT_ATTACK_VALUE + random.nextDouble(-10, 10);
+                double healValue = DEFAULT_HEAL_VALUE + random.nextDouble(-10, 10);
+                double defenceValue = DEFAULT_DEFENCE_VALUE + random.nextDouble(-10, 10);
 
                 attackValue = Math.max(0, attackValue);
                 healValue = Math.max(0, healValue);
@@ -121,7 +119,5 @@ public class BattleSearchService {
                 }
             }
         });
-
-        log.info("[match] {}", matchWaitVoSet);
     }
 }
