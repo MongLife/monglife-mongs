@@ -42,4 +42,5 @@ public class BattleRoom extends BaseTimeEntity {
     public void addBattleRound(BattleRound battleRound) {
         this.battleRoundList.add(battleRound);
     }
+    public void removeAllBattleRound() { this.battleRoundList.clear(); }
 }

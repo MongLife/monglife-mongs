@@ -145,6 +145,8 @@ public class BattleService {
         BattleRoom battleRoom = battleRoomRepository.findByRoomIdWithLock(roomId)
                 .orElseThrow(() -> new NotFoundException(BattleErrorCode.NOT_FOUND_BATTLE));
 
+        battleRoom.removeAllBattleRound();
+
         battleRoomRepository.save(battleRoom.toBuilder()
                 .isActive(false)
                 .build());
