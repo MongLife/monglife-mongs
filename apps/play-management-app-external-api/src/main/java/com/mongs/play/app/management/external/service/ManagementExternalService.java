@@ -129,7 +129,6 @@ public class ManagementExternalService {
 
         String eggMongCode = mongCodeList.get(randIdx).getCode();
 
-        name = "";      // 이름 빈칸으로 초기화
         MongVo newMongVo = mongService.addMong(accountId, eggMongCode, name, sleepStart, sleepEnd);
         MongStatusPercentVo mongStatusPercentVo = MongUtil.statusToPercent(newMongVo.grade(), newMongVo);
 
@@ -272,28 +271,6 @@ public class ManagementExternalService {
                 .shiftCode(newMongVo.shift().code)
                 .exp(newMongVo.exp())
                 .expPercent(expPercent)
-                .build();
-    }
-
-    @Transactional
-    public ValidationTrainingMongVo validationTrainingMong(Long mongId, String trainingCode) {
-
-        MongVo mongVo = mongService.findActiveMongById(mongId);
-
-        if (MongGrade.EMPTY.equals(mongVo.grade())) {
-            throw new ManagementExternalException(ManagementExternalErrorCode.INVALID_TRAINING);
-        }
-        if (MongGrade.ZERO.equals(mongVo.grade())) {
-            throw new ManagementExternalException(ManagementExternalErrorCode.INVALID_TRAINING);
-        }
-
-        MongTrainingCode mongTrainingCode = MongTrainingCode.findMongTrainingCode(trainingCode);
-
-        boolean isPossible = mongVo.payPoint() >= mongTrainingCode.point;
-
-        return ValidationTrainingMongVo.builder()
-                .mongId(mongVo.mongId())
-                .isPossible(isPossible)
                 .build();
     }
 

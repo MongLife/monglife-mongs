@@ -41,7 +41,6 @@ public class GeneratePassportFilter extends AbstractGatewayFilterFactory<FilterC
 
             return passportMono
                     .onErrorMap(throwable -> {
-                        throwable.printStackTrace();
                         throw new GatewayExternalException(GatewayExternalErrorCode.PASSPORT_GENERATE_FAIL);
                     })
                     .flatMap(passportVO -> {
