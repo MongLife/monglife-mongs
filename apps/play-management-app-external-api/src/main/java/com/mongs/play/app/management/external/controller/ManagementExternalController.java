@@ -172,8 +172,9 @@ public class ManagementExternalController {
 
         Long accountId = passportDetail.getId();
         String trainingCode = trainingMongReqDto.trainingCode();
+        Integer score = trainingMongReqDto.score();
 
-        var vo = managementExternalService.trainingMong(accountId, mongId, trainingCode);
+        var vo = managementExternalService.trainingMong(accountId, mongId, trainingCode, score);
 
         return ResponseEntity.ok().body(TrainingMongResDto.builder()
                 .mongId(vo.mongId())

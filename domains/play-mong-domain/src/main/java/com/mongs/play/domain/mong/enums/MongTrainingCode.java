@@ -8,7 +8,7 @@ import lombok.Getter;
 @AllArgsConstructor
 public enum MongTrainingCode {
 
-    JUMPING("TR100", "Jumping Training", 0, 5, 10, 0D, 5D, 0D, 0D, 0D)
+    JUMPING("TR100", "Jumping Training", 0, 2, 10, 0D, 5D, 0D, 0D, 0D)
     ;
 
     public final String code;

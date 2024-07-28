@@ -277,7 +277,7 @@ public class ManagementExternalService {
     @ValidationEvolution
     @ValidationDead
     @Transactional
-    public TrainingMongVo trainingMong(Long accountId, Long mongId, String trainingCode) {
+    public TrainingMongVo trainingMong(Long accountId, Long mongId, String trainingCode, Integer score) {
 
         MongVo mongVo = mongService.findActiveMongById(mongId);
 
@@ -296,7 +296,9 @@ public class ManagementExternalService {
             throw new ManagementExternalException(ManagementExternalErrorCode.INVALID_TRAINING);
         }
 
-        MongVo newMongVo = mongService.increaseStatusTraining(mongVo.mongId(), 1, mongTrainingCode);
+        int rewardPayPoint = score * mongTrainingCode.rewardPoint;
+
+        MongVo newMongVo = mongService.increaseStatusTraining(mongVo.mongId(), 1, mongTrainingCode, rewardPayPoint);
         MongStatusPercentVo mongStatusPercentVo = MongUtil.statusToPercent(mongVo.grade(), newMongVo);
 
         return TrainingMongVo.builder()

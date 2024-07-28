@@ -212,7 +212,7 @@ public class MongService {
 
     @RealTimeMong(codes = { PublishEventCode.MONG_EXP, PublishEventCode.MONG_STATUS, PublishEventCode.MONG_STATE, PublishEventCode.MONG_PAY_POINT })
     @Transactional(transactionManager = "mongTransactionManager")
-    public MongVo increaseStatusTraining(Long mongId, Integer trainingCount, MongTrainingCode mongTrainingCode) throws NotFoundException {
+    public MongVo increaseStatusTraining(Long mongId, Integer trainingCount, MongTrainingCode mongTrainingCode, Integer rewardPayPoint) throws NotFoundException {
 
         Mong mong = mongRepository.findByIdAndIsActiveTrueWithLock(mongId)
                 .orElseThrow(() -> new NotFoundException(MongErrorCode.NOT_FOUND_ACTIVE_MONG));
@@ -223,7 +223,7 @@ public class MongService {
         double satiety = mong.getSatiety() + mongTrainingCode.addSatietyValue;
         double healthy = mong.getHealthy() + mongTrainingCode.addHealthyValue;
         double sleep = mong.getSleep() + mongTrainingCode.addSleepValue;
-        int payPoint = mong.getPayPoint() - mongTrainingCode.point;
+        int payPoint = mong.getPayPoint() - mongTrainingCode.point + rewardPayPoint;
         int numberOfTraining = mong.getNumberOfTraining() + trainingCount;
 
         mong = mongRepository.save(mong.toBuilder()
