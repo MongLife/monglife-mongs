@@ -212,18 +212,18 @@ public class MongService {
 
     @RealTimeMong(codes = { PublishEventCode.MONG_EXP, PublishEventCode.MONG_STATUS, PublishEventCode.MONG_STATE, PublishEventCode.MONG_PAY_POINT })
     @Transactional(transactionManager = "mongTransactionManager")
-    public MongVo increaseStatusTraining(Long mongId, Integer trainingCount, MongTrainingCode mongTrainingCode, Integer rewardPayPoint) throws NotFoundException {
+    public MongVo increaseStatusTraining(Long mongId, Integer trainingCount, MongTrainingCode mongTrainingCode, Integer ratio) throws NotFoundException {
 
         Mong mong = mongRepository.findByIdAndIsActiveTrueWithLock(mongId)
                 .orElseThrow(() -> new NotFoundException(MongErrorCode.NOT_FOUND_ACTIVE_MONG));
 
-        double exp = mong.getExp() + mongTrainingCode.exp;
-        double weight = mong.getWeight() + mongTrainingCode.addWeightValue;
-        double strength = mong.getStrength() + mongTrainingCode.addStrengthValue;
-        double satiety = mong.getSatiety() + mongTrainingCode.addSatietyValue;
-        double healthy = mong.getHealthy() + mongTrainingCode.addHealthyValue;
-        double sleep = mong.getSleep() + mongTrainingCode.addSleepValue;
-        int payPoint = mong.getPayPoint() - mongTrainingCode.point + rewardPayPoint;
+        double exp = mong.getExp() + mongTrainingCode.exp * (double) ratio;
+        double weight = mong.getWeight() + mongTrainingCode.addWeightValue * (double) ratio;
+        double strength = mong.getStrength() + mongTrainingCode.addStrengthValue * (double) ratio;
+        double satiety = mong.getSatiety() + mongTrainingCode.addSatietyValue * (double) ratio;
+        double healthy = mong.getHealthy() + mongTrainingCode.addHealthyValue * (double) ratio;
+        double sleep = mong.getSleep() + mongTrainingCode.addSleepValue * (double) ratio;
+        int payPoint = mong.getPayPoint() - mongTrainingCode.point + mongTrainingCode.rewardPoint * ratio;
         int numberOfTraining = mong.getNumberOfTraining() + trainingCount;
 
         mong = mongRepository.save(mong.toBuilder()
@@ -386,6 +386,7 @@ public class MongService {
                 .healthy(mong.getGrade().nextGrade.maxStatus)
                 .sleep(mong.getGrade().nextGrade.maxStatus)
                 .exp(mong.getGrade().nextGrade.maxStatus)
+                .evolutionPoint(0)
                 .build());
 
         MongLogCode mongLogCode = MongLogCode.EVOLUTION;

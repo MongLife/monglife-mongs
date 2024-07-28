@@ -6,10 +6,10 @@ import lombok.Getter;
 @AllArgsConstructor
 public enum MongExp {
 
-    STROKE(1D),
+    STROKE(2D),
     ATTENDANCE(5D),
-    CLEANING_POOP(2D),
-    EAT_THE_FOOD(3D)
+    CLEANING_POOP(2.5D),
+    EAT_THE_FOOD(5D)
     ;
 
     public final Double exp;

@@ -296,9 +296,7 @@ public class ManagementExternalService {
             throw new ManagementExternalException(ManagementExternalErrorCode.INVALID_TRAINING);
         }
 
-        int rewardPayPoint = score * mongTrainingCode.rewardPoint;
-
-        MongVo newMongVo = mongService.increaseStatusTraining(mongVo.mongId(), 1, mongTrainingCode, rewardPayPoint);
+        MongVo newMongVo = mongService.increaseStatusTraining(mongVo.mongId(), 1, mongTrainingCode, score);
         MongStatusPercentVo mongStatusPercentVo = MongUtil.statusToPercent(mongVo.grade(), newMongVo);
 
         return TrainingMongVo.builder()
