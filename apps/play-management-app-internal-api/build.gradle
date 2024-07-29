@@ -1,0 +1,17 @@
+dependencies {
+    implementation project(':domains:play-mong-domain')
+    implementation project(":domains:play-task-domain")
+}
+
+tasks.register('copyPrivate', Copy) {
+    copy {
+        from '../../spring_backend_sub/apps/play-management-app-internal-api/'
+        include 'application*.yml'
+        into 'src/main/resources'
+    }
+    copy {
+        from '../../spring_backend_sub/core/'
+        include 'application-management*.yml'
+        into 'src/main/resources'
+    }
+}

@@ -1,1 +1,35 @@
 rootProject.name = 'backend'
+
+include 'core'
+
+include 'discoveries:play-eureka-discovery'
+include 'discoveries:play-gateway-discovery'
+
+include 'apps:play-auth-app-api'
+include 'apps:play-battle-app-worker'
+include 'apps:play-common-app-api'
+include 'apps:play-management-app-external-api'
+include 'apps:play-management-app-internal-api'
+include 'apps:play-player-app-external-api'
+include 'apps:play-player-app-internal-api'
+
+include 'domains:play-account-domain'
+include 'domains:play-battle-domain'
+include 'domains:play-code-domain'
+include 'domains:play-collection-domain'
+include 'domains:play-feedback-domain'
+include 'domains:play-match-domain'
+include 'domains:play-member-domain'
+include 'domains:play-mong-domain'
+include 'domains:play-payment-domain'
+include 'domains:play-session-domain'
+include 'domains:play-task-domain'
+
+include 'modules:play-feign-module'
+include 'modules:play-hmac-module'
+include 'modules:play-jpa-module'
+include 'modules:play-jwt-module'
+include 'modules:play-security-module'
+
+include 'clients:play-battle-publisher-client'
+include 'clients:play-event-publisher-client'

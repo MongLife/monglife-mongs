@@ -1,51 +1,44 @@
-buildscript {
-    ext {
-        springBootVersion = '3.2.1'
-    }
+
+plugins {
+    id 'java-library'
+    id 'org.springframework.boot' version '3.1.1'
+    id 'io.spring.dependency-management' version '1.1.4'
+}
+
+allprojects {
+    group = 'com.mongs.play'
+    version = '0.0.1-SNAPSHOT'
+    sourceCompatibility = '17'
+
     repositories {
         mavenCentral()
     }
-    dependencies {
-        classpath "org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}"
-        classpath "io.spring.gradle:dependency-management-plugin:1.1.4"
+}
+
+configurations {
+    compileOnly {
+        extendsFrom annotationProcessor
     }
 }
 
 subprojects {
-    ext {
-        set('springCloudVersion', "2021.0.6")
-    }
-
-	apply plugin: 'java'
-	apply plugin: 'org.springframework.boot'
-	apply plugin: 'io.spring.dependency-management'
-
-	group = 'com.mongs'
-	version = '0.0.1-SNAPSHOT'
-	sourceCompatibility = '17'
-
-    repositories {
-        mavenCentral()
-    }
-
-    configurations {
-        compileOnly {
-            extendsFrom annotationProcessor
-        }
-    }
+    apply plugin: 'java-library'
+    apply plugin: 'org.springframework.boot'
+    apply plugin: 'io.spring.dependency-management'
 
     dependencies {
+        // lombok
         compileOnly 'org.projectlombok:lombok'
         annotationProcessor 'org.projectlombok:lombok'
     }
 
-    dependencyManagement {
-        imports {
-            mavenBom "org.springframework.cloud:spring-cloud-dependencies:${springCloudVersion}"
-        }
+    tasks.named('test') {
+        useJUnitPlatform()
     }
 
-    test {
-        useJUnitPlatform()
+    dependencyManagement {
+        imports {
+            mavenBom "org.springframework.cloud:spring-cloud-dependencies:2022.0.3"
+        }
     }
 }
