@@ -1,5 +1,7 @@
 package com.mongs.play.domain.mong.service;
 
+import com.mongs.play.client.publisher.event.annotation.RealTimeMong;
+import com.mongs.play.client.publisher.event.code.PublishEventCode;
 import com.mongs.play.core.error.domain.MongErrorCode;
 import com.mongs.play.core.exception.common.NotFoundException;
 import com.mongs.play.domain.mong.entity.Mong;
@@ -21,6 +23,7 @@ public class MongStatusService {
     private final MongRepository mongRepository;
 //    private final MongLogRepository mongLogRepository;
 
+    @RealTimeMong(codes = { PublishEventCode.MONG_STATUS, PublishEventCode.MONG_STATE })
     @Transactional(transactionManager = "mongTransactionManager")
     public MongVo decreaseStatus(Long mongId, Double subWeight, Double subStrength, Double subSatiety, Double subHealthy, Double subSleep) {
 
@@ -47,6 +50,7 @@ public class MongStatusService {
         return MongVo.of(mong);
     }
 
+    @RealTimeMong(codes = { PublishEventCode.MONG_POOP_COUNT })
     @Transactional(transactionManager = "mongTransactionManager")
     public MongVo increasePoopCount(Long mongId, Integer addPoopCount) {
 
@@ -69,6 +73,7 @@ public class MongStatusService {
         return MongVo.of(mong);
     }
 
+    @RealTimeMong(codes = { PublishEventCode.MONG_STATUS, PublishEventCode.MONG_STATE })
     @Transactional(transactionManager = "mongTransactionManager")
     public MongVo increaseStatus(Long mongId, Double addWeight, Double addStrength, Double addSatiety, Double addHealthy, Double addSleep) {
 

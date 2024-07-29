@@ -1,9 +1,11 @@
 package com.mongs.play.client.publisher.event.aspect;
 
 import com.mongs.play.client.publisher.event.annotation.RealTimeMember;
-import com.mongs.play.client.publisher.event.code.PublishCode;
-import com.mongs.play.client.publisher.event.dto.res.BasicPublishDto;
-import com.mongs.play.client.publisher.event.service.MqttService;
+import com.mongs.play.client.publisher.event.code.PublishEventCode;
+import com.mongs.play.client.publisher.event.dto.BasicPublishEventDto;
+import com.mongs.play.client.publisher.event.event.RealTimeMemberEvent;
+import com.mongs.play.client.publisher.event.event.RealTimeMongEvent;
+import com.mongs.play.client.publisher.event.service.MqttEventService;
 import com.mongs.play.client.publisher.event.vo.MemberStarPointVo;
 import com.mongs.play.core.utils.ReflectionUtil;
 import lombok.RequiredArgsConstructor;
@@ -12,6 +14,7 @@ import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Pointcut;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.core.annotation.Order;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
@@ -27,7 +30,8 @@ import java.util.List;
 @RequiredArgsConstructor
 public class RealTimeMemberAspect {
 
-    private final MqttService mqttService;
+//    private final MqttEventService mqttEventService;
+    private final ApplicationEventPublisher publisher;
 
     @Pointcut("execution(* com.mongs.play..*.*(..))")
     public void cut() {}
@@ -47,17 +51,21 @@ public class RealTimeMemberAspect {
             Long accountId = (Long) ReflectionUtil.getField(body, "accountId");
             List<Object> publishVoList = new ArrayList<>();
 
-            for (PublishCode publishCode : annotation.codes()) {
-                switch (publishCode) {
+            for (PublishEventCode publishEventCode : annotation.codes()) {
+                switch (publishEventCode) {
                     case MEMBER_STAR_POINT -> {
                         Object data = ReflectionUtil.setFields(body, new MemberStarPointVo());
-                        publishVoList.add(BasicPublishDto.builder().code(publishCode).data(data).build());
+                        publishVoList.add(BasicPublishEventDto.builder().code(publishEventCode).data(data).build());
                     }
                     default -> {}
                 }
             }
 
-            mqttService.sendMember(accountId, publishVoList);
+//            mqttEventService.sendMember(accountId, publishVoList);
+            publisher.publishEvent(RealTimeMemberEvent.builder()
+                    .accountId(accountId)
+                    .publishVoList(publishVoList)
+                    .build());
         }
 
         return returnValue;

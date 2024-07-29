@@ -4,6 +4,7 @@ import com.mongs.play.domain.mong.entity.Mong;
 import com.mongs.play.domain.mong.enums.MongGrade;
 import com.mongs.play.domain.mong.enums.MongShift;
 import com.mongs.play.domain.mong.enums.MongState;
+import com.mongs.play.domain.mong.utils.MongUtil;
 import lombok.Builder;
 
 import java.time.LocalDateTime;
@@ -22,12 +23,22 @@ public record MongVo(
         MongShift shift,
         MongState state,
 
-        Double exp,
+        String shiftCode,
+        String stateCode,
+
         Double weight,
+        Double exp,
         Double strength,
         Double satiety,
         Double healthy,
         Double sleep,
+
+        Double expPercent,
+        Double healthyPercent,
+        Double satietyPercent,
+        Double strengthPercent,
+        Double sleepPercent,
+
         Integer poopCount,
         Boolean isSleeping,
 
@@ -41,6 +52,8 @@ public record MongVo(
         Integer penalty
 ) {
     public static MongVo of(Mong mong) {
+        MongStatusPercentVo mongStatusPercentVo = MongUtil.statusToPercent(mong.getGrade(), mong);
+
         return MongVo.builder()
                 .isActive(mong.getIsActive())
                 .mongId(mong.getId())
@@ -51,12 +64,19 @@ public record MongVo(
                 .grade(mong.getGrade())
                 .shift(mong.getShift())
                 .state(mong.getState())
-                .exp(mong.getExp())
+                .shiftCode(mong.getShift().code)
+                .stateCode(mong.getState().code)
                 .weight(mong.getWeight())
+                .exp(mong.getExp())
                 .strength(mong.getStrength())
                 .satiety(mong.getSatiety())
                 .healthy(mong.getHealthy())
                 .sleep(mong.getSleep())
+                .expPercent(mongStatusPercentVo.exp())
+                .strengthPercent(mongStatusPercentVo.strength())
+                .satietyPercent(mongStatusPercentVo.satiety())
+                .healthyPercent(mongStatusPercentVo.healthy())
+                .sleepPercent(mongStatusPercentVo.sleep())
                 .poopCount(mong.getPoopCount())
                 .isSleeping(mong.getIsSleeping())
                 .numberOfTraining(mong.getNumberOfTraining())

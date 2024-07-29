@@ -1,6 +1,6 @@
 package com.mongs.play.client.publisher.event.annotation;
 
-import com.mongs.play.client.publisher.event.code.PublishCode;
+import com.mongs.play.client.publisher.event.code.PublishEventCode;
 
 import java.lang.annotation.*;
 
@@ -8,5 +8,5 @@ import java.lang.annotation.*;
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
 public @interface RealTimeMong {
-    PublishCode[] codes();
+    PublishEventCode[] codes();
 }

@@ -14,6 +14,7 @@ public record IncreaseStatusVo(
         Double satietyPercent,
         Double healthyPercent,
         Double sleepPercent,
-        Boolean isDeadSchedule
+        Boolean isDeadSchedule,
+        String stateCode
 ) {
 }

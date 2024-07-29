@@ -22,7 +22,7 @@ public class ManagementExternalControllerAdvice {
     }
 
     @ExceptionHandler(ManagementExternalException.class)
-    public ResponseEntity<Object> authExternalExceptionHandler(ManagementExternalException e) {
+    public ResponseEntity<Object> managementExternalExceptionHandler(ManagementExternalException e) {
         ErrorCode errorCode = e.errorCode;
         return ResponseEntity.status(errorCode.getHttpStatus()).body(ErrorResDto.of(errorCode));
     }

@@ -42,12 +42,10 @@ public class SecurityConfig {
             .addFilterBefore(passportFilter, UsernamePasswordAuthenticationFilter.class)
             .addFilterBefore(securityExceptionHandler, PassportFilter.class)
             .authorizeHttpRequests(authorize -> authorize
-//                    .requestMatchers("/*/prometheus").permitAll()
-//                    .requestMatchers("/internal/**").hasAnyAuthority("SYSTEM")
-//                    .requestMatchers("/internal/*/admin/**").hasAnyAuthority("ADMIN")
-//                    .requestMatchers("/*/**").hasAnyAuthority("ADMIN", "NORMAL")
-//                    .anyRequest().authenticated()
-                    .anyRequest().permitAll()
+                    .requestMatchers("/*/prometheus").permitAll()
+                    .requestMatchers("/*/**").hasAnyAuthority("ADMIN", "NORMAL")
+                    .requestMatchers("/internal/**/admin/**").hasAnyAuthority("ADMIN")
+                    .anyRequest().authenticated()
             )
             .exceptionHandling(configurer -> {
                 configurer.authenticationEntryPoint(unAuthorizationHandler);

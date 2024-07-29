@@ -1,5 +1,7 @@
 package com.mongs.play.domain.mong.service;
 
+import com.mongs.play.client.publisher.event.annotation.RealTimeMong;
+import com.mongs.play.client.publisher.event.code.PublishEventCode;
 import com.mongs.play.core.error.domain.MongErrorCode;
 import com.mongs.play.core.exception.common.NotFoundException;
 import com.mongs.play.domain.mong.entity.Mong;
@@ -21,6 +23,7 @@ public class MongPayPointService {
     private final MongRepository mongRepository;
     private final MongLogRepository mongLogRepository;
 
+    @RealTimeMong(codes = { PublishEventCode.MONG_PAY_POINT })
     @Transactional(transactionManager = "mongTransactionManager")
     public MongVo increasePayPoint(Long mongId, Integer addPayPoint) throws NotFoundException {
 
@@ -45,6 +48,7 @@ public class MongPayPointService {
         return MongVo.of(mong);
     }
 
+    @RealTimeMong(codes = { PublishEventCode.MONG_PAY_POINT })
     @Transactional(transactionManager = "mongTransactionManager")
     public MongVo decreasePayPoint(Long mongId, Integer subPayPoint) throws NotFoundException {
 

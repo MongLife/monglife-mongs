@@ -3,8 +3,6 @@ package com.mongs.play.app.management.external.service;
 import com.mongs.play.app.management.external.annotation.ValidationDead;
 import com.mongs.play.app.management.external.annotation.ValidationEvolution;
 import com.mongs.play.app.management.external.vo.*;
-import com.mongs.play.client.publisher.event.annotation.RealTimeMong;
-import com.mongs.play.client.publisher.event.code.PublishCode;
 import com.mongs.play.core.error.app.ManagementExternalErrorCode;
 import com.mongs.play.core.exception.app.ManagementExternalException;
 import com.mongs.play.core.exception.common.InvalidException;
@@ -44,7 +42,6 @@ public class ManagementExternalService {
     private final ManagementWorkerFeignService managementWorkerFeignService;
     private final PlayerInternalCollectionFeignService playerInternalCollectionFeignService;
 
-    @RealTimeMong(codes = { PublishCode.MONG_SHIFT })
     @Transactional
     public EvolutionReadyVo evolutionReady(Long mongId) {
         MongVo newMongVo = mongService.toggleEvolutionReady(mongId);
@@ -141,6 +138,7 @@ public class ManagementExternalService {
             managementWorkerFeignService.zeroEvolutionSchedule(newMongVo.mongId());
         } catch (ModuleErrorException e) {
             playerInternalCollectionFeignService.removeMongCollection(accountId, newMongVo.mongCode());
+            throw new ManagementExternalException(e.errorCode);
         }
 
         return RegisterMongVo.builder()
@@ -167,7 +165,6 @@ public class ManagementExternalService {
                 .build();
     }
 
-    @RealTimeMong(codes = { PublishCode.MONG_SHIFT })
     @Transactional
     public DeleteMongVo deleteMong(Long accountId, Long mongId) {
 
@@ -188,7 +185,6 @@ public class ManagementExternalService {
     }
 
     @ValidationEvolution
-    @RealTimeMong(codes = { PublishCode.MONG_EXP })
     @Transactional
     public StrokeMongVo strokeMong(Long accountId, Long mongId) {
 
@@ -219,7 +215,6 @@ public class ManagementExternalService {
                 .build();
     }
 
-    @RealTimeMong(codes = { PublishCode.MONG_IS_SLEEPING })
     @Transactional
     public SleepingMongVo sleepingMong(Long accountId, Long mongId) {
 
@@ -248,7 +243,6 @@ public class ManagementExternalService {
     }
 
     @ValidationEvolution
-    @RealTimeMong(codes = { PublishCode.MONG_POOP_COUNT, PublishCode.MONG_EXP })
     @Transactional
     public PoopCleanMongVo poopClean(Long accountId, Long mongId) {
 
@@ -280,33 +274,10 @@ public class ManagementExternalService {
                 .build();
     }
 
-    @Transactional
-    public ValidationTrainingMongVo validationTrainingMong(Long mongId, String trainingCode) {
-
-        MongVo mongVo = mongService.findActiveMongById(mongId);
-
-        if (MongGrade.EMPTY.equals(mongVo.grade())) {
-            throw new ManagementExternalException(ManagementExternalErrorCode.INVALID_TRAINING);
-        }
-        if (MongGrade.ZERO.equals(mongVo.grade())) {
-            throw new ManagementExternalException(ManagementExternalErrorCode.INVALID_TRAINING);
-        }
-
-        MongTrainingCode mongTrainingCode = MongTrainingCode.findMongTrainingCode(trainingCode);
-
-        boolean isPossible = mongVo.payPoint() >= mongTrainingCode.point;
-
-        return ValidationTrainingMongVo.builder()
-                .mongId(mongVo.mongId())
-                .isPossible(isPossible)
-                .build();
-    }
-
     @ValidationEvolution
     @ValidationDead
-    @RealTimeMong(codes = { PublishCode.MONG_EXP, PublishCode.MONG_STATUS, PublishCode.MONG_PAY_POINT })
     @Transactional
-    public TrainingMongVo trainingMong(Long accountId, Long mongId, String trainingCode) {
+    public TrainingMongVo trainingMong(Long accountId, Long mongId, String trainingCode, Integer score) {
 
         MongVo mongVo = mongService.findActiveMongById(mongId);
 
@@ -325,12 +296,13 @@ public class ManagementExternalService {
             throw new ManagementExternalException(ManagementExternalErrorCode.INVALID_TRAINING);
         }
 
-        MongVo newMongVo = mongService.increaseStatusTraining(mongVo.mongId(), 1, mongTrainingCode);
+        MongVo newMongVo = mongService.increaseStatusTraining(mongVo.mongId(), 1, mongTrainingCode, score);
         MongStatusPercentVo mongStatusPercentVo = MongUtil.statusToPercent(mongVo.grade(), newMongVo);
 
         return TrainingMongVo.builder()
                 .mongId(newMongVo.mongId())
                 .weight(newMongVo.weight())
+                .shiftCode(newMongVo.state().code)
                 .shiftCode(newMongVo.shift().code)
                 .exp(newMongVo.exp())
                 .strength(newMongVo.strength())
@@ -347,7 +319,6 @@ public class ManagementExternalService {
                 .build();
     }
 
-    @RealTimeMong(codes = { PublishCode.MONG_SHIFT })
     @Transactional
     public GraduateMongVo graduateMong(Long accountId, Long mongId) {
 
@@ -371,7 +342,6 @@ public class ManagementExternalService {
                 .build();
     }
 
-    @RealTimeMong(codes = { PublishCode.MONG_CODE, PublishCode.MONG_EXP, PublishCode.MONG_STATUS, PublishCode.MONG_STATE, PublishCode.MONG_SHIFT })
     @Transactional
     public EvolutionMongVo evolutionMong(Long accountId, Long mongId) {
 
@@ -404,16 +374,19 @@ public class ManagementExternalService {
                 managementWorkerFeignService.firstEvolutionSchedule(mongVo.mongId());
             } catch (ModuleErrorException e) {
                 playerInternalCollectionFeignService.removeMongCollection(accountId, newMongVo.mongCode());
+                throw new ManagementExternalException(e.errorCode);
             }
         } else if (MongGrade.LAST.equals(mongVo.grade().nextGrade)) {
             newMongVo = mongService.toggleLastEvolution(mongVo.mongId());
             managementWorkerFeignService.lastEvolutionSchedule(mongVo.mongId());
         } else {
-            int strokePoint = mongVo.numberOfStroke() * 2;
-            int trainingPoint = mongVo.numberOfTraining() * 3;
-            int penaltyPoint = mongVo.penalty();
+            int strokePoint = mongVo.numberOfStroke() * 2;      // 20 회 = 40점
+            int trainingPoint = mongVo.numberOfTraining() * 2;  // 20 회 = 40점
+            int penaltyPoint = Math.max(mongVo.penalty(), 75);
+            int deadPoint = mongVo.isDeadSchedule() ? -10 : 10;
 
-            int evolutionPoint = Math.max(mongVo.evolutionPoint() + strokePoint + trainingPoint - penaltyPoint, 0);
+            // 부가 포인트 + 기본값 + 쓰다듬기 + 훈련 +- 죽음준비여부 - 패널티
+            int evolutionPoint = Math.max(0, mongVo.evolutionPoint() + 225 + strokePoint + trainingPoint + deadPoint - penaltyPoint);
             List<MongCode> mongCodeList = codeService.getMongCodeByLevelAndEvolutionPoint(mongVo.grade().nextGrade.level, evolutionPoint);
 
             MongCode mongCode = codeService.getMongCode(mongVo.mongCode());
@@ -422,7 +395,9 @@ public class ManagementExternalService {
                     .min((o1, o2) -> o2.getEvolutionPoint() - o1.getEvolutionPoint())
                     .orElseGet(() -> mongCodeList.get(0))
                     .getCode();
-            int newEvolutionPoint = evolutionPoint - 300 + 150;
+
+            // 부가 포인트 책정 (다음 진화 때 부가 포인트로 적용)
+            int newEvolutionPoint = evolutionPoint - 300;
 
             newMongVo = mongService.toggleEvolution(mongVo.mongId(), newMongCode, newEvolutionPoint);
             playerInternalCollectionFeignService.registerMongCollection(accountId, newMongVo.mongCode());
@@ -430,6 +405,7 @@ public class ManagementExternalService {
                 managementWorkerFeignService.evolutionSchedule(mongVo.mongId());
             } catch (ModuleErrorException e) {
                 playerInternalCollectionFeignService.removeMongCollection(accountId, newMongVo.mongCode());
+                throw new ManagementExternalException(e.errorCode);
             }
         }
 
@@ -456,7 +432,6 @@ public class ManagementExternalService {
 
     @ValidationEvolution
     @ValidationDead
-    @RealTimeMong(codes = { PublishCode.MONG_EXP, PublishCode.MONG_STATUS, PublishCode.MONG_PAY_POINT })
     @Transactional
     public FeedMongVo feedMong(Long accountId, Long mongId, String foodCode) {
 
@@ -484,6 +459,7 @@ public class ManagementExternalService {
         return FeedMongVo.builder()
                 .mongId(newMongVo.mongId())
                 .weight(newMongVo.weight())
+                .stateCode(newMongVo.state().code)
                 .shiftCode(newMongVo.shift().code)
                 .exp(newMongVo.exp())
                 .strength(newMongVo.strength())

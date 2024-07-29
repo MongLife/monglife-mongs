@@ -1,10 +1,13 @@
 package com.mongs.play.domain.member.service;
 
+import com.mongs.play.client.publisher.event.annotation.RealTimeMember;
+import com.mongs.play.client.publisher.event.code.PublishEventCode;
 import com.mongs.play.core.error.domain.MemberErrorCode;
 import com.mongs.play.core.exception.common.InvalidException;
 import com.mongs.play.core.exception.common.NotFoundException;
 import com.mongs.play.domain.member.entity.Member;
 import com.mongs.play.domain.member.repository.MemberRepository;
+import com.mongs.play.domain.member.vo.MemberVo;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -24,13 +27,14 @@ public class MemberService {
     private final MemberRepository memberRepository;
 
     @Transactional(transactionManager = "memberTransactionManager")
-    public Member getMember(Long accountId) {
-        return memberRepository.findByAccountIdAndIsDeletedIsFalse(accountId)
+    public MemberVo getMember(Long accountId) {
+        Member member = memberRepository.findByAccountIdAndIsDeletedIsFalse(accountId)
                 .orElseGet(() -> memberRepository.save(Member.builder().accountId(accountId).build()));
+        return MemberVo.of(member);
     }
 
     @Transactional(transactionManager = "memberTransactionManager")
-    public Member increaseSlotCount(Long accountId, Integer slotCount) throws NotFoundException {
+    public MemberVo increaseSlotCount(Long accountId, Integer slotCount) throws NotFoundException {
 
         Member member = memberRepository.findByAccountIdAndIsDeletedIsFalse(accountId)
                 .orElseGet(() -> Member.builder().accountId(accountId).build());
@@ -44,14 +48,16 @@ public class MemberService {
             throw new InvalidException(MemberErrorCode.ALREADY_MAX_SLOT_COUNT);
         }
 
-        return memberRepository.save(member.toBuilder()
+        member = memberRepository.save(member.toBuilder()
                 .starPoint(starPoint)
                 .slotCount(member.getSlotCount() + slotCount)
                 .build());
+
+        return MemberVo.of(member);
     }
 
     @Transactional(transactionManager = "memberTransactionManager")
-    public Member decreaseSlotCount(Long accountId, Integer slotCount) throws NotFoundException {
+    public MemberVo decreaseSlotCount(Long accountId, Integer slotCount) throws NotFoundException {
 
         Member member = memberRepository.findByAccountIdAndIsDeletedIsFalse(accountId)
                 .orElseGet(() -> Member.builder().accountId(accountId).build());
@@ -60,28 +66,33 @@ public class MemberService {
             throw new InvalidException(MemberErrorCode.ALREADY_MIN_SLOT_COUNT);
         }
 
-        return memberRepository.save(member.toBuilder()
+        member = memberRepository.save(member.toBuilder()
                 .starPoint(member.getStarPoint() + buySlotPrice)
                 .slotCount(member.getSlotCount() - slotCount)
                 .build());
 
+        return MemberVo.of(member);
     }
 
+    @RealTimeMember(codes = { PublishEventCode.MEMBER_STAR_POINT })
     @Transactional(transactionManager = "memberTransactionManager")
-    public Member increaseStarPoint(Long accountId, Integer addStarPoint) throws NotFoundException {
+    public MemberVo increaseStarPoint(Long accountId, Integer addStarPoint) throws NotFoundException {
 
         Member member = memberRepository.findByAccountIdAndIsDeletedIsFalse(accountId)
                 .orElseGet(() -> Member.builder().accountId(accountId).build());
 
         int starPoint = member.getStarPoint() + addStarPoint;
 
-        return memberRepository.save(member.toBuilder()
+        member = memberRepository.save(member.toBuilder()
                 .starPoint(starPoint)
                 .build());
+
+        return MemberVo.of(member);
     }
 
+    @RealTimeMember(codes = { PublishEventCode.MEMBER_STAR_POINT })
     @Transactional(transactionManager = "memberTransactionManager")
-    public Member decreaseStarPoint(Long accountId, Integer subStarPoint) throws NotFoundException {
+    public MemberVo decreaseStarPoint(Long accountId, Integer subStarPoint) throws NotFoundException {
 
         Member member = memberRepository.findByAccountIdAndIsDeletedIsFalse(accountId)
                 .orElseGet(() -> Member.builder().accountId(accountId).build());
@@ -92,8 +103,10 @@ public class MemberService {
             throw new InvalidException(MemberErrorCode.NOT_ENOUGH_STAR_POINT);
         }
 
-        return memberRepository.save(member.toBuilder()
+        member = memberRepository.save(member.toBuilder()
                 .starPoint(starPoint)
                 .build());
+
+        return MemberVo.of(member);
     }
 }

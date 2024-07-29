@@ -26,17 +26,17 @@ public class StartupEventListener implements ApplicationListener<ApplicationRead
     public void onApplicationEvent(ApplicationReadyEvent event) {
         log.info("#######################     시작 준비 (Task 재시작)     #######################");
         taskService.resumeSystemTask();
-        mongService.findAllMong().forEach(mongVo -> {
-            if (MongGrade.ZERO.equals(mongVo.grade()) && !MongShift.EVOLUTION_READY.equals(mongVo.shift())) {
-                managementWorkerService.zeroEvolution(mongVo.mongId());
-            } else if (MongGrade.LAST.equals(mongVo.grade())) {
-                managementWorkerService.lastEvolution(mongVo.mongId());
-            } else if (mongVo.isSleeping()) {
-                managementWorkerService.sleepSleeping(mongVo.mongId());
-            } else {
-                managementWorkerService.awakeSleeping(mongVo.mongId());
-            }
-        });
+//        mongService.findAllMong().forEach(mongVo -> {
+//            if (MongGrade.ZERO.equals(mongVo.grade()) && !MongShift.EVOLUTION_READY.equals(mongVo.shift())) {
+//                managementWorkerService.zeroEvolution(mongVo.mongId());
+//            } else if (MongGrade.LAST.equals(mongVo.grade())) {
+//                managementWorkerService.lastEvolution(mongVo.mongId());
+//            } else if (mongVo.isSleeping()) {
+//                managementWorkerService.sleepSleeping(mongVo.mongId());
+//            } else {
+//                managementWorkerService.awakeSleeping(mongVo.mongId());
+//            }
+//        });
         log.info("####################### 시작 준비 완료 (Task 재시작 완료) #######################");
     }
 }

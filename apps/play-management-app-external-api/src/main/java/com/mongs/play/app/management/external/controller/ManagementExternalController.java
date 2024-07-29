@@ -5,7 +5,6 @@ import com.mongs.play.app.management.external.dto.req.RegisterMongReqDto;
 import com.mongs.play.app.management.external.dto.req.TrainingMongReqDto;
 import com.mongs.play.app.management.external.dto.res.*;
 import com.mongs.play.app.management.external.service.ManagementExternalService;
-import com.mongs.play.module.feign.service.PlayerInternalCollectionFeignService;
 import com.mongs.play.module.security.principal.PassportDetail;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -166,18 +165,6 @@ public class ManagementExternalController {
                 .build());
     }
 
-    @GetMapping("/validationTraining/{mongId}")
-    public ResponseEntity<ValidationTrainingMongResDto> validationTrainingMong(
-            @PathVariable("mongId") Long mongId, @RequestParam("trainingCode") String trainingCode) {
-
-        var vo = managementExternalService.validationTrainingMong(mongId, trainingCode);
-
-        return ResponseEntity.ok().body(ValidationTrainingMongResDto.builder()
-                .mongId(vo.mongId())
-                .isPossible(vo.isPossible())
-                .build());
-    }
-
     @PutMapping("/training/{mongId}")
     public ResponseEntity<TrainingMongResDto> trainingMong(
             @PathVariable("mongId") Long mongId, @AuthenticationPrincipal PassportDetail passportDetail,
@@ -185,8 +172,9 @@ public class ManagementExternalController {
 
         Long accountId = passportDetail.getId();
         String trainingCode = trainingMongReqDto.trainingCode();
+        Integer score = trainingMongReqDto.score();
 
-        var vo = managementExternalService.trainingMong(accountId, mongId, trainingCode);
+        var vo = managementExternalService.trainingMong(accountId, mongId, trainingCode, score);
 
         return ResponseEntity.ok().body(TrainingMongResDto.builder()
                 .mongId(vo.mongId())

@@ -7,6 +7,7 @@ public record TrainingMongVo(
         Long mongId,
         Double weight,
         Integer payPoint,
+        String stateCode,
         String shiftCode,
 
         Double exp,
