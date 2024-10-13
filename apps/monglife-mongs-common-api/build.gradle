@@ -1,0 +1,11 @@
+dependencies {
+    implementation project(':modules:monglife-mongs-jpa-module')
+}
+
+tasks.register('copyPrivate', Copy) {
+    copy {
+        from '../../configs/apps/monglife-mongs-common-api/'
+        include 'application*.yml'
+        into 'src/main/resources'
+    }
+}

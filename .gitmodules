@@ -1,3 +1,6 @@
-[submodule "spring_backend_sub"]
-	path = spring_backend_sub
-	url = https://github.com/MongLife/spring_backend_sub.git
+[submodule "configs"]
+	path = configs
+	url = https://github.com/MongLife/monglife-mongs-sub.git
+[submodule "core"]
+	path = core
+	url = https://github.com/MongLife/monglife-core.git

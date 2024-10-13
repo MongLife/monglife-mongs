@@ -1,0 +1,11 @@
+dependencies {
+    implementation project(':modules:monglife-mongs-mqtt-module')
+}
+
+tasks.register('copyPrivate', Copy) {
+    copy {
+        from '../../configs/clients/monglife-mongs-management-client/'
+        include 'application*.yml'
+        into 'src/main/resources'
+    }
+}
