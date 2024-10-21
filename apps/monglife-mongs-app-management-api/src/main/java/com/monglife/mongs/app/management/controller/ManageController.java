@@ -15,7 +15,6 @@ import java.util.List;
 @RestController
 public class ManageController {
 
-
     @GetMapping("/feed/{mongId}")
     public ResponseEntity<List<FindFeedItemResDto>> findFeedItem(@AuthenticationPrincipal Passport passport, @PathVariable("mongId") Long mongId) {
         return null;

@@ -13,7 +13,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class FoodCode {
+public class FoodCodeEntity {
 
     @Id
     @Column(name = "code", nullable = false)

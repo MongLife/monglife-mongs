@@ -1,4 +1,4 @@
-package com.monglife.mongs.app.management.service;
+package com.monglife.mongs.app.management.service.business;
 
 import com.monglife.mongs.app.management.business.vo.*;
 import lombok.RequiredArgsConstructor;
@@ -12,21 +12,21 @@ import java.util.Random;
 
 @Service
 @RequiredArgsConstructor
-public class MongManagerService {
+public class ManagerService {
     private final Random random = new Random();
 
     @Transactional(readOnly = true)
-    public List<FindMongVo> findMong(Long accountId) {
+    public List<FindMongVo> getMong(Long accountId) {
         return new ArrayList<>();
     }
 
     @Transactional(readOnly = true)
-    public FindMongVo findMong(Long accountId, Long mongId) {
+    public FindMongVo getMongs(Long accountId, Long mongId) {
         return FindMongVo.builder().build();
     }
 
     @Transactional
-    public RegisterMongVo registerMong(Long accountId, String name, String sleepStart, String sleepEnd) {
+    public RegisterMongVo createMong(Long accountId, String name, String sleepStart, String sleepEnd) {
         return RegisterMongVo.builder().build();
     }
 

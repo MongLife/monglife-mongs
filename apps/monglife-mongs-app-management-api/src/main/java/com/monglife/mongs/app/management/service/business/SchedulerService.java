@@ -1,4 +1,4 @@
-package com.monglife.mongs.app.management.service;
+package com.monglife.mongs.app.management.service.business;
 
 import com.mongs.play.domain.task.enums.TaskCode;
 import com.mongs.play.domain.task.service.TaskService;
@@ -10,7 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class MongSchedulerService {
+public class SchedulerService {
 
     private final TaskService taskService;
     private final ManagementInternalService managementInternalService;
