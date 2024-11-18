@@ -1,8 +1,7 @@
 package com.monglife.mongs.module.security.global.exception;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.monglife.core.dto.res.ErrorResDto;
-import com.monglife.mongs.module.security.global.code.error.SecurityErrorCode;
+import com.monglife.mongs.module.security.global.response.SecurityResponse;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.AllArgsConstructor;
@@ -27,7 +26,7 @@ public class UnAuthorizationHandler implements AuthenticationEntryPoint {
     @Override
     public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException authException) throws IOException {
         response.setContentType("application/json; charset=UTF-8");
-        response.setStatus(SecurityErrorCode.UNAUTHORIZED.getHttpStatus());
-        response.getWriter().write(objectMapper.writeValueAsString(ErrorResDto.of(SecurityErrorCode.UNAUTHORIZED)));
+        response.setStatus(SecurityResponse.SECURITY_UNAUTHORIZED.getHttpStatus());
+        response.getWriter().write(objectMapper.writeValueAsString(SecurityResponse.SECURITY_UNAUTHORIZED.toResponseDto()));
     }
 }

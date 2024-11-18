@@ -3,6 +3,7 @@ package com.monglife.mongs.app.management.domain;
 import com.monglife.mongs.app.management.global.enums.MongGrade;
 import com.monglife.mongs.app.management.global.enums.MongShift;
 import com.monglife.mongs.app.management.global.enums.MongState;
+import com.monglife.mongs.module.jpa.domain.BaseTimeEntity;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;

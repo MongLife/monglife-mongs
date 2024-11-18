@@ -15,10 +15,15 @@ import java.util.stream.Collectors;
 @Getter
 @ToString
 public class Passport extends User {
+
     private final long id;
+
     private final String deviceId;
+
     private final String email;
+
     private final String name;
+
     private final String passportJson;
 
     public Passport(PassportVo passportVo, String passportJson) {

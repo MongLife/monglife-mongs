@@ -1,6 +1,7 @@
 package com.monglife.mongs.module.security.global.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.monglife.core.enums.role.RoleCode;
 import com.monglife.mongs.module.security.filter.PassportFilter;
 import com.monglife.mongs.module.security.global.exception.ForbiddenHandler;
@@ -22,9 +23,12 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @EnableWebSecurity
 @EnableMethodSecurity
 public class SecurityConfig {
+
     @Bean
     public ObjectMapper objectMapper() {
-        return new ObjectMapper();
+        ObjectMapper objectMapper = new ObjectMapper();
+        objectMapper.registerModule(new JavaTimeModule());
+        return objectMapper;
     }
 
     @Bean

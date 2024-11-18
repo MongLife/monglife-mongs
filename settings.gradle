@@ -8,8 +8,8 @@ include 'apps:monglife-mongs-app-management-api'
 include 'apps:monglife-mongs-app-player-api'
 
 include 'clients'
-include 'clients:monglife-mongs-client-battle'
-include 'clients:monglife-mongs-client-management'
+include 'clients:monglife-mongs-client-battle-mqtt'
+include 'clients:monglife-mongs-client-management-mqtt'
 
 include 'modules'
 include 'modules:monglife-mongs-module-jpa'

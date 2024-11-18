@@ -1,5 +1,5 @@
 dependencies {
-    implementation project(':modules:monglife-mongs-mqtt-module')
+    implementation project(':modules:monglife-mongs-module-mqtt')
 }
 
 tasks.register('copyPrivate', Copy) {

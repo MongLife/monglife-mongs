@@ -1,9 +1,8 @@
 package com.monglife.mongs.module.security.global.exception;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.monglife.core.enums.error.ErrorCode;
-import com.monglife.core.enums.error.GlobalErrorCode;
-import com.monglife.core.dto.res.ErrorResDto;
+import com.monglife.core.dto.response.ResponseDto;
+import com.monglife.core.enums.response.GlobalResponse;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletRequest;
 import jakarta.servlet.ServletResponse;
@@ -13,6 +12,8 @@ import lombok.AllArgsConstructor;
 import org.springframework.web.filter.GenericFilterBean;
 
 import java.io.IOException;
+import java.util.Collections;
+import java.util.Map;
 
 @AllArgsConstructor
 public class SecurityExceptionHandler extends GenericFilterBean {
@@ -35,16 +36,11 @@ public class SecurityExceptionHandler extends GenericFilterBean {
 
         try {
             chain.doFilter(request, response);
-        } catch (PassportIntegrityException e) {
-            ErrorCode errorCode = e.errorCode;
-            response.setContentType("application/json; charset=UTF-8");
-            response.setStatus(errorCode.getHttpStatus());
-            response.getWriter().write(objectMapper.writeValueAsString(ErrorResDto.of(errorCode)));
         } catch (Exception e) {
-            ErrorCode errorCode = GlobalErrorCode.INTERNAL_SERVER_ERROR;
+            ResponseDto<Map<String, Object>> responseDto = GlobalResponse.INTERNAL_SERVER_ERROR.toResponseDto(Collections.singletonMap("error", e.getMessage()));
             response.setContentType("application/json; charset=UTF-8");
-            response.setStatus(errorCode.getHttpStatus());
-            response.getWriter().write(objectMapper.writeValueAsString(ErrorResDto.of(errorCode)));
+            response.setStatus(GlobalResponse.INTERNAL_SERVER_ERROR.getHttpStatus());
+            response.getWriter().write(objectMapper.writeValueAsString(responseDto));
         }
     }
 }
