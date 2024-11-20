@@ -5,18 +5,23 @@ import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
-import java.util.UUID;
+import java.time.LocalDateTime;
 
 @Entity
 @Getter
 @NoArgsConstructor
+@EntityListeners(AuditingEntityListener.class)
 @Table(name = "battle_player")
 public class BattlePlayerEntity extends BaseTimeEntity {
 
     @Id
     @Column(name = "player_id")
     private String playerId;
+
+    @Column(name = "device_id")
+    private String deviceId;
 
     @Column(name = "room_id")
     private Long roomId;
@@ -43,11 +48,21 @@ public class BattlePlayerEntity extends BaseTimeEntity {
     private Double defenceValue;
 
     @Column(name = "is_bot")
-    private Boolean isBot;
+    private Boolean isBot = Boolean.TRUE;
+
+    @Column(name = "is_enter")
+    private Boolean isEnter = Boolean.FALSE;
+
+    @Column(name = "enter_dt")
+    private LocalDateTime enterDt;
+
+    @Column(name = "exit_dt")
+    private LocalDateTime exitDt;
 
     @Builder
-    public BattlePlayerEntity(Long roomId, Long accountId, Long mongId, String mongCode, Double hp, Double attackValue, Double healValue, Double defenceValue, Boolean isBot) {
-        this.playerId = UUID.randomUUID().toString().replace("-", "");
+    public BattlePlayerEntity(String playerId, String deviceId, Long roomId, Long accountId, Long mongId, String mongCode, Double hp, Double attackValue, Double healValue, Double defenceValue, Boolean isBot, Boolean isEnter) {
+        this.playerId = playerId;
+        this.deviceId = deviceId;
         this.roomId = roomId;
         this.accountId = accountId;
         this.mongId = mongId;
@@ -57,6 +72,17 @@ public class BattlePlayerEntity extends BaseTimeEntity {
         this.healValue = healValue;
         this.defenceValue = defenceValue;
         this.isBot = isBot;
+        this.isEnter = isEnter;
+    }
+
+    public void enter() {
+        this.isEnter = true;
+        this.enterDt = LocalDateTime.now();
+    }
+
+    public void exit() {
+        this.isEnter = false;
+        this.exitDt = LocalDateTime.now();
     }
 
     public void heal() {

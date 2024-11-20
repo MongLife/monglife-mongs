@@ -2,19 +2,17 @@ package com.monglife.mongs.app.battle.service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.monglife.core.dto.response.ResponseDto;
 import com.monglife.mongs.app.battle.client.MqttOutBoundClient;
-import com.monglife.mongs.app.battle.dto.etc.CreateBattleDto;
-import com.monglife.mongs.app.battle.dto.etc.OverBattleDto;
-import com.monglife.mongs.app.battle.dto.response.BattleResponseDto;
-import com.monglife.mongs.app.battle.dto.response.CreateBattleResponseDto;
-import com.monglife.mongs.app.battle.global.enums.BattleResponse;
-import com.monglife.mongs.app.battle.global.enums.BattleStateCode;
+import com.monglife.mongs.app.battle.global.dto.BattleResponseDto;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
-import java.util.Set;
+import java.util.List;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class MqttSendService {
@@ -27,35 +25,24 @@ public class MqttSendService {
     private final ObjectMapper objectMapper;
 
 
-    public void createBattleSend(Set<CreateBattleDto> createBattleDtoSet) {
+    public <T> void sendMessage(ResponseDto<BattleResponseDto<T>> responseDto) {
         try {
+            String topic = TOPIC_FILTER;
+            String subTopic = responseDto.getResult().getCode().getSubTopic();
+            List<String> thirdTopics = responseDto.getResult().getTopics();
 
-            createBattleDtoSet.forEach(createBattleDto -> {
+            for (String thirdTopic : thirdTopics) {
 
-                CreateBattleResponseDto createBattleResponseDto  = CreateBattleResponseDto.builder()
-                        .roomId(createBattleDto.get)
-                        .build();
+                String sendTopic = String.format("%s/%s/%s", topic, subTopic, thirdTopic);
 
-                BattleResponseDto<CreateBattleResponseDto> createBattleResponseDto =
-                        BattleResponseDto.<CreateBattleResponseDto>builder()
-                                .code(BattleStateCode.BATTLE_CREATE)
-                                .data()
-                                .build();
+                String dataJson = objectMapper.writeValueAsString(responseDto);
 
-                String topic = TOPIC_FILTER + "battle/search/" + deviceId;
+                mqttOutBoundClient.send(sendTopic, dataJson);
 
-                String dataJson = objectMapper.writeValueAsString(createBattleResponseDto);
-
-                mqttOutBoundClient.send(, dataJson);
-
-            });
-        } catch (JsonProcessingException ignored) {}
-    }
-
-    public void overBattleSend(OverBattleDto overBattleDto) {
-        try {
-            String dataJson = objectMapper.writeValueAsString(BasicPublishBattleDto.builder().code(PublishBattleCode.MATCH_FIND).data(data).build());
-            mqttOutBoundClient.send(TOPIC_FILTER + "battle/match/" + deviceId, dataJson);
-        } catch (JsonProcessingException ignored) {}
+                log.info("[MqttSendService] [sendMessage] {} : {}", sendTopic, dataJson);
+            }
+        } catch (JsonProcessingException e) {
+            log.error("[MqttSendService] [sendMessage] {} : {}", e.getClass().getSimpleName(), e.getMessage());
+        }
     }
 }

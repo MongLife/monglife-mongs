@@ -10,6 +10,8 @@ import lombok.Setter;
 @NoArgsConstructor
 public class CreateBattleDto {
 
+    private String playerId;
+
     private Long mongId;
 
     private String deviceId;
@@ -19,7 +21,8 @@ public class CreateBattleDto {
     private Boolean isBot;
 
     @Builder
-    public CreateBattleDto(Long mongId, String deviceId, Long accountId, Boolean isBot) {
+    public CreateBattleDto(String playerId, Long mongId, String deviceId, Long accountId, Boolean isBot) {
+        this.playerId = playerId;
         this.mongId = mongId;
         this.deviceId = deviceId;
         this.accountId = accountId;

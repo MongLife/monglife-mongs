@@ -1,5 +1,6 @@
 package com.monglife.mongs.app.battle.global.config;
 
+import com.monglife.mongs.app.battle.client.MqttInBoundClient;
 import lombok.extern.slf4j.Slf4j;
 import org.eclipse.paho.client.mqttv3.MqttAsyncClient;
 import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
@@ -38,10 +39,6 @@ public class MqttConfig {
     @Value("${application.mqtt.topic}")
     private String TOPIC_FILTER;
 
-    private final String URL = "tcp://" + HOST + ":" + PORT;
-
-    private final String SUBSCRIBE_TOPIC = TOPIC_FILTER + "match/battle";
-
     /**
      * Mqtt Connect Configuration
      */
@@ -51,7 +48,7 @@ public class MqttConfig {
         DefaultMqttPahoClientFactory factory = new DefaultMqttPahoClientFactory();
 
         MqttConnectOptions options = new MqttConnectOptions();
-        options.setServerURIs(new String[]{ URL });
+        options.setServerURIs(new String[]{ "tcp://" + HOST + ":" + PORT });
         options.setAutomaticReconnect(true);
         options.setConnectionTimeout(30);
         options.setKeepAliveInterval(60);
@@ -99,7 +96,7 @@ public class MqttConfig {
     ) {
 
         MqttPahoMessageDrivenChannelAdapter adapter =
-                new MqttPahoMessageDrivenChannelAdapter(URL, MqttAsyncClient.generateClientId(), mqttPahoClientFactory, SUBSCRIBE_TOPIC);
+                new MqttPahoMessageDrivenChannelAdapter("tcp://" + HOST + ":" + PORT, MqttAsyncClient.generateClientId(), mqttPahoClientFactory, TOPIC_FILTER + "/match");
         adapter.setCompletionTimeout(5000);
         adapter.setConverter(new DefaultPahoMessageConverter());
         adapter.setQos(1);
@@ -110,7 +107,7 @@ public class MqttConfig {
 
     @Bean
     @ServiceActivator(inputChannel = "mqttInboundChannel")
-    public MessageHandler mqttInbound(@Autowired BattleInboundController battleInboundController) {
-        return battleInboundController;
+    public MessageHandler mqttInbound(@Autowired MqttInBoundClient mqttInBoundClient) {
+        return mqttInBoundClient;
     }
 }

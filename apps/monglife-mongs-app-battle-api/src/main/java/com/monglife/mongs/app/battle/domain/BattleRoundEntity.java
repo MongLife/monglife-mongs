@@ -15,7 +15,7 @@ public class BattleRoundEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "round_id")
-    private String roundId;
+    private Long roundId;
 
     @Column(name = "room_id")
     private Long roomId;
@@ -24,7 +24,7 @@ public class BattleRoundEntity {
     private String playerId;
 
     @Column(name = "target_player_id")
-    private Long targetPlayerId;
+    private String targetPlayerId;
 
     @Column(name = "round")
     private Integer round;
@@ -33,12 +33,16 @@ public class BattleRoundEntity {
     @Column(name = "round_code")
     private BattleRoundCode roundCode;
 
+    @Column(name = "round_value")
+    private Double roundValue;
+
     @Builder
-    public BattleRoundEntity(Long roomId, String playerId, Long targetPlayerId, Integer round, BattleRoundCode roundCode) {
+    public BattleRoundEntity(Long roomId, String playerId, String targetPlayerId, Integer round, BattleRoundCode roundCode, Double roundValue) {
         this.roomId = roomId;
         this.playerId = playerId;
         this.targetPlayerId = targetPlayerId;
         this.round = round;
         this.roundCode = roundCode;
+        this.roundValue = roundValue;
     }
 }

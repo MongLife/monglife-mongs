@@ -11,15 +11,18 @@ import java.util.Set;
 @Getter
 @Setter
 @NoArgsConstructor
-public class CreateBattleResponseDto {
+public class FightBattleResponseDto {
 
     private Long roomId;
+
+    private Integer round;
 
     private Set<BattlePlayerVo> battlePlayers;
 
     @Builder
-    public CreateBattleResponseDto(Long roomId, Set<BattlePlayerVo> battlePlayers) {
+    public FightBattleResponseDto(Long roomId, Integer round, Set<BattlePlayerVo> battlePlayers) {
         this.roomId = roomId;
+        this.round = round;
         this.battlePlayers = battlePlayers;
     }
 }

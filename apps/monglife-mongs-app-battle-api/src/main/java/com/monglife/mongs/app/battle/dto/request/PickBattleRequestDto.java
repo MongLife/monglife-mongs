@@ -1,4 +1,4 @@
-package com.monglife.mongs.app.battle.dto.etc;
+package com.monglife.mongs.app.battle.dto.request;
 
 import com.monglife.mongs.app.battle.global.enums.BattleRoundCode;
 import lombok.Builder;
@@ -9,9 +9,9 @@ import lombok.Setter;
 @Getter
 @Setter
 @NoArgsConstructor
-public class PickBattleDto {
+public class PickBattleRequestDto {
 
-    private String roomId;
+    private Long roomId;
 
     private String playerId;
 
@@ -20,7 +20,7 @@ public class PickBattleDto {
     private BattleRoundCode pickCode;
 
     @Builder
-    public PickBattleDto(String roomId, String playerId, String targetPlayerId, BattleRoundCode pickCode) {
+    public PickBattleRequestDto(Long roomId, String playerId, String targetPlayerId, BattleRoundCode pickCode) {
         this.roomId = roomId;
         this.playerId = playerId;
         this.targetPlayerId = targetPlayerId;

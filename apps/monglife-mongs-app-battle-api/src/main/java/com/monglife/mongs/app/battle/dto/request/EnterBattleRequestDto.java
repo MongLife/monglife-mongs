@@ -1,4 +1,4 @@
-package com.monglife.mongs.app.battle.dto.etc;
+package com.monglife.mongs.app.battle.dto.request;
 
 import lombok.Builder;
 import lombok.Getter;
@@ -8,14 +8,14 @@ import lombok.Setter;
 @Getter
 @Setter
 @NoArgsConstructor
-public class EnterBattleDto {
+public class EnterBattleRequestDto {
 
-    private String roomId;
+    private Long roomId;
 
     private String playerId;
 
     @Builder
-    public EnterBattleDto(String roomId, String playerId) {
+    public EnterBattleRequestDto(Long roomId, String playerId) {
         this.roomId = roomId;
         this.playerId = playerId;
     }

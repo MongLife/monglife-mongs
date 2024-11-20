@@ -1,21 +1,25 @@
 package com.monglife.mongs.app.battle.dto.etc;
 
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-
-import java.util.Set;
 
 @Getter
 @Setter
 @NoArgsConstructor
 public class OverBattleDto {
 
-    private String roomId;
+    private String playerId;
 
-    private Integer round;
+    private Long mongId;
 
-    private String winPlayerId;
+    private String mongCode;
 
-    private String losePlayerId;
+    @Builder
+    public OverBattleDto(String playerId, Long mongId, String mongCode) {
+        this.playerId = playerId;
+        this.mongId = mongId;
+        this.mongCode = mongCode;
+    }
 }

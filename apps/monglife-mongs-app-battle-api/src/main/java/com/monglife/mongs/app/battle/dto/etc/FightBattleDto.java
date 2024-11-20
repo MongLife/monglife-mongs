@@ -1,4 +1,4 @@
-package com.monglife.mongs.app.battle.dto.response;
+package com.monglife.mongs.app.battle.dto.etc;
 
 import com.monglife.mongs.app.battle.vo.BattlePlayerVo;
 import lombok.Builder;
@@ -11,15 +11,18 @@ import java.util.Set;
 @Getter
 @Setter
 @NoArgsConstructor
-public class CreateBattleResponseDto {
+public class FightBattleDto {
 
-    private Long roomId;
+    private Integer round;
 
     private Set<BattlePlayerVo> battlePlayers;
 
+    private Boolean isLastRound;
+
     @Builder
-    public CreateBattleResponseDto(Long roomId, Set<BattlePlayerVo> battlePlayers) {
-        this.roomId = roomId;
+    public FightBattleDto(Integer round, Set<BattlePlayerVo> battlePlayers, Boolean isLastRound) {
+        this.round = round;
         this.battlePlayers = battlePlayers;
+        this.isLastRound = isLastRound;
     }
 }

@@ -1,107 +1,167 @@
 package com.monglife.mongs.app.battle.controller;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.JavaType;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.monglife.mongs.app.battle.dto.etc.*;
-import com.monglife.mongs.app.battle.dto.request.BattleRequestDto;
-import com.monglife.mongs.app.battle.global.exception.NotExistsWaitMatchingException;
+import com.monglife.core.dto.response.ResponseDto;
+import com.monglife.mongs.app.battle.dto.etc.FightBattleDto;
+import com.monglife.mongs.app.battle.dto.etc.OverBattleDto;
+import com.monglife.mongs.app.battle.dto.request.EnterBattleRequestDto;
+import com.monglife.mongs.app.battle.dto.request.ExitBattleRequestDto;
+import com.monglife.mongs.app.battle.dto.request.PickBattleRequestDto;
+import com.monglife.mongs.app.battle.dto.response.FightBattleResponseDto;
+import com.monglife.mongs.app.battle.dto.response.OverBattleResponseDto;
+import com.monglife.mongs.app.battle.global.dto.BattleResponseDto;
+import com.monglife.mongs.app.battle.global.enums.BattleResponse;
+import com.monglife.mongs.app.battle.global.enums.BattleRoundCode;
+import com.monglife.mongs.app.battle.global.enums.BattleStateCode;
 import com.monglife.mongs.app.battle.service.BattleService;
-import com.monglife.mongs.app.battle.service.MatchingService;
-import com.monglife.mongs.app.battle.service.MqttSendService;
+import com.monglife.mongs.app.battle.vo.BattlePlayerVo;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.integration.annotation.MessagingGateway;
-import org.springframework.integration.mqtt.support.MqttHeaders;
-import org.springframework.messaging.Message;
-import org.springframework.messaging.MessageHandler;
-import org.springframework.messaging.MessagingException;
-import org.springframework.scheduling.annotation.Scheduled;
-import org.springframework.stereotype.Component;
+import org.antlr.v4.runtime.misc.Pair;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
-import java.util.Set;
-import java.util.stream.Collectors;
+import java.util.List;
 
-@Slf4j
-@Component
+//@Component
+@RestController
 @RequiredArgsConstructor
-@MessagingGateway(defaultRequestChannel = "mqttInboundChannel")
-public class BattleController implements MessageHandler {
-
-    private final MatchingService matchingService;
+@RequestMapping("/battle")
+public class BattleController {
 
     private final BattleService battleService;
 
-    private final MqttSendService mqttSendService;
 
-    private final ObjectMapper objectMapper;
+    public ResponseDto<BattleResponseDto<FightBattleResponseDto>> enterBattle(EnterBattleRequestDto enterBattleRequestDto) {
 
+        Long roomId = enterBattleRequestDto.getRoomId();
+        String playerId = enterBattleRequestDto.getPlayerId();
 
-    @Scheduled(fixedDelay = 1000)
-    public void findMatching() {
-        while (true) {
-            try {
-                Set<FindMatchingDto> findMatchingDtoSet = matchingService.findWaitMatching();
+        Pair<Boolean, FightBattleDto> enterBattlePair = battleService.enterBattle(roomId, playerId);
 
-                Set<CreateBattleDto> createBattleDtoSet = findMatchingDtoSet.stream()
-                                .map(findMatchingDto -> CreateBattleDto.builder()
-                                        .mongId(findMatchingDto.getMongId())
-                                        .deviceId(findMatchingDto.getDeviceId())
-                                        .accountId(findMatchingDto.getAccountId())
-                                        .isBot(findMatchingDto.getIsBot())
-                                        .build())
-                                .collect(Collectors.toSet());
+        List<String> topics = List.of(String.valueOf(roomId));
 
-                // 배틀 룸 생성
-                battleService.createBattle(createBattleDtoSet);
+        Boolean isEnterAll = enterBattlePair.a;
 
-                // 배틀 생성 전송
-                mqttSendService.createBattleSend(createBattleDtoSet);
+        if (isEnterAll) {
+            FightBattleDto fightBattleDto = enterBattlePair.b;
 
-            } catch (NotExistsWaitMatchingException e) {
-                break;
-            }
+            FightBattleResponseDto fightBattleResponseDto = FightBattleResponseDto.builder()
+                    .roomId(roomId)
+                    .round(fightBattleDto.getRound())
+                    .battlePlayers(fightBattleDto.getBattlePlayers())
+                    .build();
+
+            // 게임 시작 시그널 반환
+            BattleResponseDto<FightBattleResponseDto> battleResponseDto = BattleResponseDto.<FightBattleResponseDto>builder()
+                    .code(BattleStateCode.BATTLE_FIGHT)
+                    .topics(topics)
+                    .data(fightBattleResponseDto)
+                    .isLastRound(fightBattleDto.getIsLastRound())
+                    .build();
+
+            return BattleResponse.BATTLE_ENTER_ALL_BATTLE_PLAYER.toResponseDto(battleResponseDto);
         }
+
+        return BattleResponse.BATTLE_NOT_EXISTS_BATTLE_RESPONSE.toResponseDto(null);
     }
 
-    @Override
-    public void handleMessage(Message<?> message) throws MessagingException {
+    public ResponseDto<BattleResponseDto<OverBattleResponseDto>> exitBattle(ExitBattleRequestDto exitBattleRequestDto) {
 
-        String topic = (String) message.getHeaders().get(MqttHeaders.RECEIVED_TOPIC);
-        String payload = (String) message.getPayload();
+        Long roomId = exitBattleRequestDto.getRoomId();
+        String playerId = exitBattleRequestDto.getPlayerId();
 
-        try {
-            JavaType type = objectMapper.getTypeFactory().constructParametricType(BattleRequestDto.class, Object.class);
+        Boolean isExitAll = battleService.exitBattle(roomId, playerId);
 
-            BattleRequestDto<Object> battleRequestDto = objectMapper.readValue(payload, type);
+        if (isExitAll) {
+            // 남은 플레이어 1명 승리로 처리
+            List<OverBattleDto> overBattleDtos = battleService.overBattle(roomId);
 
-            switch (battleRequestDto.getCode()) {
+            List<String> topics = List.of(String.valueOf(roomId));
 
-                case BATTLE_ENTER -> {
-                    EnterBattleDto enterBattleDto
-                            = objectMapper.convertValue(battleRequestDto.getData(), new TypeReference<EnterBattleDto>() {});
+            String winPlayerId = overBattleDtos.isEmpty() ? "" : overBattleDtos.get(0).getPlayerId();
+            String winMongCode = overBattleDtos.isEmpty() ? "" : overBattleDtos.get(0).getMongCode();
 
-                    battleService.enterBattle(enterBattleDto);
-                }
+            OverBattleResponseDto overBattleResponseDto = OverBattleResponseDto.builder()
+                    .roomId(roomId)
+                    .winPlayerId(winPlayerId)
+                    .winMongCode(winMongCode)
+                    .build();
 
-                case BATTLE_EXIT -> {
-                    ExitBattleDto exitBattleDto
-                            = objectMapper.convertValue(battleRequestDto.getData(), new TypeReference<ExitBattleDto>() {});
+            // 게임 끝 시그널 반환
+            BattleResponseDto<OverBattleResponseDto> battleResponseDto = BattleResponseDto.<OverBattleResponseDto>builder()
+                    .code(BattleStateCode.BATTLE_OVER)
+                    .topics(topics)
+                    .data(overBattleResponseDto)
+                    .isLastRound(Boolean.TRUE)
+                    .build();
 
-                    battleService.exitBattle(exitBattleDto);
-                }
+            return BattleResponse.BATTLE_OVER_BATTLE.toResponseDto(battleResponseDto);
 
-                case BATTLE_PICK -> {
-                    PickBattleDto pickBattleDto
-                            = objectMapper.convertValue(battleRequestDto.getData(), new TypeReference<PickBattleDto>() {});
+        }
 
-                    battleService.pickBattle(pickBattleDto);
-                }
+        return BattleResponse.BATTLE_NOT_EXISTS_BATTLE_RESPONSE.toResponseDto(null);
+    }
 
-                default -> {}
+    public ResponseDto<BattleResponseDto<FightBattleResponseDto>> pickBattle(PickBattleRequestDto pickBattleRequestDto) {
+
+        Long roomId = pickBattleRequestDto.getRoomId();
+        String playerId = pickBattleRequestDto.getPlayerId();
+        String targetPlayerId = pickBattleRequestDto.getTargetPlayerId();
+        BattleRoundCode battleRoundCode = pickBattleRequestDto.getPickCode();
+
+        Boolean isPickAll = battleService.pickBattle(roomId, playerId, targetPlayerId, battleRoundCode);
+
+        // TODO: 여기부터 디버깅 부터
+        if (isPickAll) {
+            // 배틀 라운드 진행
+            FightBattleDto fightBattleDto = battleService.fightBattle(roomId);
+
+            List<String> topics = fightBattleDto.getBattlePlayers().stream()
+                    .map(BattlePlayerVo::getPlayerId)
+                    .toList();
+
+            // 결과 값 반환
+            FightBattleResponseDto fightBattleResponseDto = FightBattleResponseDto.builder()
+                    .roomId(roomId)
+                    .round(fightBattleDto.getRound())
+                    .battlePlayers(fightBattleDto.getBattlePlayers())
+                    .build();
+
+            // 라운드 결과 정보 반환
+            BattleResponseDto<FightBattleResponseDto> battleResponseDto = BattleResponseDto.<FightBattleResponseDto>builder()
+                    .code(BattleStateCode.BATTLE_FIGHT)
+                    .topics(topics)
+                    .data(fightBattleResponseDto)
+                    .isLastRound(fightBattleDto.getIsLastRound())
+                    .build();
+
+            // 마지막 라운드 인 경우 배틀 종료 처리
+            if (fightBattleDto.getIsLastRound()) {
+                battleService.overBattle(roomId);
             }
 
-        } catch (JsonProcessingException ignore) {}
+            return BattleResponse.BATTLE_FIGHT_BATTLE.toResponseDto(battleResponseDto);
+        }
+
+        return BattleResponse.BATTLE_NOT_EXISTS_BATTLE_RESPONSE.toResponseDto(null);
+    }
+
+    @GetMapping("/{roomId}")
+    public ResponseEntity<ResponseDto<OverBattleResponseDto>> overBattle(@PathVariable("roomId") Long roomId) {
+        // 남은 플레이어 1명 승리로 처리
+        List<OverBattleDto> overBattleDtos = battleService.findOverBattle(roomId);
+
+        String winPlayerId = overBattleDtos.isEmpty() ? "" : overBattleDtos.get(0).getPlayerId();
+        String winMongCode = overBattleDtos.isEmpty() ? "" : overBattleDtos.get(0).getMongCode();
+
+        OverBattleResponseDto overBattleResponseDto = OverBattleResponseDto.builder()
+                .roomId(roomId)
+                .winPlayerId(winPlayerId)
+                .winMongCode(winMongCode)
+                .build();
+
+        return ResponseEntity.ok(BattleResponse.BATTLE_OVER_BATTLE.toResponseDto(overBattleResponseDto));
     }
 }

@@ -19,6 +19,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class MatchingService {
 
+    private static final Integer MAX_PLAYER = 2;
     private static final Integer MATCHING_MAX_SECONDS = 15;
     private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("yyyyMMddHHmmssSSS");
     private static final String MATCHING_ENTITY_KEY = "matching";
@@ -71,8 +72,8 @@ public class MatchingService {
      */
     public Set<FindMatchingDto> findWaitMatching() {
 
-        // 대기열에서 일자를 기준으로 최근 순 2명까지 조회
-        Set<MatchingEntity> matchingEntitySet = redisTemplate.opsForZSet().range(MATCHING_ENTITY_KEY, 0, 1);
+        // 대기열에서 일자를 기준으로 최근 순 MAX_PLAYER 명까지 조회
+        Set<MatchingEntity> matchingEntitySet = redisTemplate.opsForZSet().range(MATCHING_ENTITY_KEY, 0, MAX_PLAYER - 1);
 
         // 대기열이 비었으면 throw
         if (matchingEntitySet == null || matchingEntitySet.isEmpty()) {
