@@ -2,14 +2,9 @@ rootProject.name = 'monglife-mongs'
 
 include 'core'
 include 'apps'
-include 'apps:monglife-mongs-app-battle-api'
-include 'apps:monglife-mongs-app-common-api'
+include 'apps:monglife-mongs-app-activity-api'
 include 'apps:monglife-mongs-app-management-api'
 include 'apps:monglife-mongs-app-player-api'
-
-include 'clients'
-include 'clients:monglife-mongs-client-battle-mqtt'
-include 'clients:monglife-mongs-client-management-mqtt'
 
 include 'modules'
 include 'modules:monglife-mongs-module-jpa'
