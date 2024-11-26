@@ -1,13 +1,10 @@
 package com.monglife.mongs.app.manager.management.service;
 
-import com.monglife.mongs.app.manager.management.domain.FoodTypeEntity;
-import com.monglife.mongs.app.manager.management.domain.MongEntity;
-import com.monglife.mongs.app.manager.management.domain.MongFeedHistoryEntity;
-import com.monglife.mongs.app.manager.management.domain.MongTypeEntity;
+import com.monglife.mongs.app.manager.management.domain.*;
 import com.monglife.mongs.app.manager.management.dto.etc.GetFeedItemDto;
 import com.monglife.mongs.app.manager.management.dto.etc.GetMongDto;
 import com.monglife.mongs.app.manager.management.dto.etc.UpdateMongStatusDto;
-import com.monglife.mongs.app.manager.management.enums.MongShiftCode;
+import com.monglife.mongs.app.manager.management.enums.MongStateCode;
 import com.monglife.mongs.app.manager.management.exception.*;
 import com.monglife.mongs.app.manager.management.repository.FoodTypeRepository;
 import com.monglife.mongs.app.manager.management.repository.MongFeedHistoryRepository;
@@ -56,7 +53,7 @@ public class ManagementService {
     @Transactional(readOnly = true)
     public List<GetMongDto> getMongs(Long accountId) {
 
-        List<MongEntity> mongEntities = mongRepository.findByAccountIdAndIsActiveIsTrue(accountId);
+        List<MongEntity> mongEntities = mongRepository.findByAccountIdAndStateIsActiveIsTrue(accountId);
 
         return mongEntities.stream()
                 .map(GetMongDto::of)
@@ -72,22 +69,25 @@ public class ManagementService {
     @Transactional(readOnly = true)
     public GetMongDto getMong(Long accountId, Long mongId) {
 
-        MongEntity mongEntity = mongRepository.findByAccountIdAndMongIdAndIsActiveIsTrue(accountId, mongId)
+        MongEntity mongEntity = mongRepository.findByAccountIdAndMongIdAndStateIsActiveIsTrue(accountId, mongId)
                 .orElseThrow(() -> new NotExistsMongException(accountId, mongId));
+
+        log.info("{}", mongEntity);
 
         return GetMongDto.of(mongEntity);
     }
 
     /**
-     * 음식/간식 목록 조회
+     * 먹이 목록 조회
      * @param accountId 계정 ID
      * @param mongId 몽 ID
+     * @param foodTypeGroupCode 음식 or 간식 그룹 코드
      * @return 구매 가능 여부를 포함한 음식/간식 목록
      */
     @Transactional(readOnly = true)
     public List<GetFeedItemDto> getFeedItems(Long accountId, Long mongId, String foodTypeGroupCode) {
 
-        mongRepository.findByAccountIdAndMongIdAndIsActiveIsTrue(accountId, mongId)
+        mongRepository.findByAccountIdAndMongIdAndStateIsActiveIsTrue(accountId, mongId)
                 .orElseThrow(() -> new NotExistsMongException(accountId, mongId));
 
         return foodTypeRepository.findByFoodCodeGroupCode(foodTypeGroupCode).stream()
@@ -154,7 +154,7 @@ public class ManagementService {
     @Transactional
     public void deleteMong(Long accountId, Long mongId) {
 
-        MongEntity mongEntity = mongRepository.findByAccountIdAndMongIdAndIsActiveIsTrue(accountId, mongId)
+        MongEntity mongEntity = mongRepository.findByAccountIdAndMongIdAndStateIsActiveIsTrue(accountId, mongId)
                 .orElseThrow(() -> new NotExistsMongException(accountId, mongId));
 
         // TODO: 모든 스케줄러 중단
@@ -179,7 +179,7 @@ public class ManagementService {
         FoodTypeEntity foodTypeEntity = foodTypeRepository.findByFoodCodeComnCode(foodTypeCode)
                 .orElseThrow(() -> new NotExistsFoodTypeCodeException(foodTypeCode));
 
-        MongEntity mongEntity = mongRepository.findByAccountIdAndMongIdAndIsActiveIsTrue(accountId, mongId)
+        MongEntity mongEntity = mongRepository.findByAccountIdAndMongIdAndStateIsActiveIsTrue(accountId, mongId)
                 .orElseThrow(() -> new NotExistsMongException(accountId, mongId));
 
         UpdateMongStatusDto updateMongStatusDto = UpdateMongStatusDto.builder()
@@ -196,7 +196,7 @@ public class ManagementService {
                 .mongFeedHistoryId(UUID.randomUUID().toString())
                 .mongId(mongId)
                 .foodTypeCode(foodTypeCode)
-                .expiration(foodTypeEntity.getDelaySeconds() * 1000L)
+                .expiration(foodTypeEntity.getDelaySeconds().longValue())
                 .build();
 
         mongFeedHistoryRepository.save(mongFeedHistoryEntity);
@@ -210,7 +210,7 @@ public class ManagementService {
     @Transactional
     public void strokeMong(Long accountId, Long mongId) {
 
-        MongEntity mongEntity = mongRepository.findByAccountIdAndMongIdAndIsActiveIsTrue(accountId, mongId)
+        MongEntity mongEntity = mongRepository.findByAccountIdAndMongIdAndStateIsActiveIsTrue(accountId, mongId)
                 .orElseThrow(() -> new NotExistsMongException(accountId, mongId));
 
         mongEntity.stroke(DEFAULT_STROKE_EXP);
@@ -224,10 +224,10 @@ public class ManagementService {
     @Transactional
     public void sleepMong(Long accountId, Long mongId) {
 
-        MongEntity mongEntity = mongRepository.findByAccountIdAndMongIdAndIsActiveIsTrue(accountId, mongId)
+        MongEntity mongEntity = mongRepository.findByAccountIdAndMongIdAndStateIsActiveIsTrue(accountId, mongId)
                 .orElseThrow(() -> new NotExistsMongException(accountId, mongId));
 
-        if (mongEntity.getIsSleep()) {
+        if (mongEntity.getState().getIsSleep()) {
             mongEntity.wakeup();
         } else {
             mongEntity.sleep();
@@ -244,7 +244,7 @@ public class ManagementService {
     @Transactional
     public void poopCleanMong(Long accountId, Long mongId) {
 
-        MongEntity mongEntity = mongRepository.findByAccountIdAndMongIdAndIsActiveIsTrue(accountId, mongId)
+        MongEntity mongEntity = mongRepository.findByAccountIdAndMongIdAndStateIsActiveIsTrue(accountId, mongId)
                 .orElseThrow(() -> new NotExistsMongException(accountId, mongId));
 
         mongEntity.poopClean(DEFAULT_POOP_CLEAN_EXP);
@@ -260,10 +260,10 @@ public class ManagementService {
     @Transactional
     public void evolutionMong(Long accountId, Long mongId) {
 
-        MongEntity mongEntity = mongRepository.findByAccountIdAndMongIdAndIsActiveIsTrue(accountId, mongId)
+        MongEntity mongEntity = mongRepository.findByAccountIdAndMongIdAndStateIsActiveIsTrue(accountId, mongId)
                 .orElseThrow(() -> new NotExistsMongException(accountId, mongId));
 
-        if (!MongShiftCode.EVOLUTION_READY.equals(mongEntity.getMongShiftCode())) {
+        if (!MongStateCode.EVOLUTION_READY.equals(mongEntity.getState().getCode())) {
             throw new InvalidEvolutionException(accountId, mongId);
         }
 
@@ -284,7 +284,7 @@ public class ManagementService {
             MongTypeEntity nextMongTypeEntity = mongTypeEntities.get(mongTypeEntities.size() - 1);
 
             // 진화 점수 계산
-            double evolutionScore = DEFAULT_EVOLUTION_SCORE + mongEntity.getReward() - mongEntity.getPenalty();
+            double evolutionScore = DEFAULT_EVOLUTION_SCORE + mongEntity.getState().getReward() - mongEntity.getState().getPenalty();
 
             // 점수에 맞는 다음 몽 타입 코드 선정
             for (MongTypeEntity mongTypeEntity : mongTypeEntities) {
@@ -308,10 +308,10 @@ public class ManagementService {
     @Transactional
     public void graduateMong(Long accountId, Long mongId) {
 
-        MongEntity mongEntity = mongRepository.findByAccountIdAndMongIdAndIsActiveIsTrue(accountId, mongId)
+        MongEntity mongEntity = mongRepository.findByAccountIdAndMongIdAndStateIsActiveIsTrue(accountId, mongId)
                 .orElseThrow(() -> new NotExistsMongException(accountId, mongId));
 
-        if (!MongShiftCode.GRADUATE_READY.equals(mongEntity.getMongShiftCode())) {
+        if (!MongStateCode.GRADUATE_READY.equals(mongEntity.getState().getCode())) {
             throw new InvalidGraduateException(accountId, mongId);
         }
 

@@ -1,5 +1,6 @@
 package com.monglife.mongs.app.manager.management.dto.request;
 
+import jakarta.validation.constraints.NotBlank;
 import lombok.*;
 
 @Getter
@@ -7,6 +8,7 @@ import lombok.*;
 @NoArgsConstructor
 public class FeedMongRequestDto {
 
+    @NotBlank
     private String foodTypeCode;
 
 

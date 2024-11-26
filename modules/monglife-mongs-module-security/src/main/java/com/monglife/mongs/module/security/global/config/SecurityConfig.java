@@ -5,7 +5,7 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.monglife.core.enums.role.RoleCode;
 import com.monglife.mongs.module.security.filter.PassportFilter;
 import com.monglife.mongs.module.security.global.exception.ForbiddenHandler;
-import com.monglife.mongs.module.security.global.exception.SecurityExceptionHandler;
+import com.monglife.mongs.module.security.filter.GlobalExceptionFilter;
 import com.monglife.mongs.module.security.global.exception.UnAuthorizationHandler;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -36,14 +36,14 @@ public class SecurityConfig {
             @Autowired UnAuthorizationHandler unAuthorizationHandler,
             @Autowired ForbiddenHandler forbiddenHandler,
             @Autowired PassportFilter passportFilter,
-            @Autowired SecurityExceptionHandler securityExceptionHandler,
+            @Autowired GlobalExceptionFilter globalExceptionFilter,
             HttpSecurity http) throws Exception {
 
         return http
             .csrf(AbstractHttpConfigurer::disable)
             .formLogin(AbstractHttpConfigurer::disable)
             .addFilterBefore(passportFilter, UsernamePasswordAuthenticationFilter.class)
-            .addFilterBefore(securityExceptionHandler, PassportFilter.class)
+            .addFilterBefore(globalExceptionFilter, PassportFilter.class)
             .authorizeHttpRequests(authorize -> authorize
                     .requestMatchers("/*/prometheus").permitAll()
                     .requestMatchers("/*/**").hasAnyAuthority(RoleCode.ADMIN.getRole(), RoleCode.NORMAL.getRole())
@@ -68,8 +68,8 @@ public class SecurityConfig {
     }
 
     @Bean
-    public SecurityExceptionHandler securityExceptionHandler(ObjectMapper objectMapper) {
-        return new SecurityExceptionHandler(objectMapper);
+    public GlobalExceptionFilter securityExceptionHandler(ObjectMapper objectMapper) {
+        return new GlobalExceptionFilter(objectMapper);
     }
 
     @Bean

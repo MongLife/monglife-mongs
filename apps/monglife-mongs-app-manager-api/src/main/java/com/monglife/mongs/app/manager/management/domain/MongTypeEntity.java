@@ -17,7 +17,7 @@ public class MongTypeEntity {
     @Column(name = "mong_type_id")
     private Long mongTypeId;
 
-    @OneToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "mong_type_code")
     private ComnCodeEntity mongCode;
 

@@ -1,5 +1,6 @@
 package com.monglife.mongs.app.manager.management.dto.request;
 
+import jakarta.validation.constraints.NotBlank;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -13,11 +14,14 @@ import java.time.LocalTime;
 @NoArgsConstructor
 public class CreateMongRequestDto {
 
+    @NotBlank
     private String name;
 
+    @NotBlank
     @DateTimeFormat(pattern = "hh:MM:ss")
     private LocalTime sleepAt;
 
+    @NotBlank
     @DateTimeFormat(pattern = "hh:MM:ss")
     private LocalTime wakeupAt;
 

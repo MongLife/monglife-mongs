@@ -9,7 +9,6 @@ import jakarta.servlet.ServletRequest;
 import jakarta.servlet.ServletResponse;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.AllArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.User;
@@ -19,7 +18,6 @@ import java.io.IOException;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
 
-@Slf4j
 @AllArgsConstructor
 public class PassportFilter extends GenericFilterBean {
 
@@ -42,7 +40,7 @@ public class PassportFilter extends GenericFilterBean {
         if (passportJson != null) {
             PassportVo passportVo = objectMapper.readValue(URLDecoder.decode(passportJson, StandardCharsets.UTF_8), PassportVo.class);
 
-            User passport = new Passport(passportVo, passportJson);
+            User passport = new Passport(passportVo);
 
             UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken
                     = new UsernamePasswordAuthenticationToken(passport, null, passport.getAuthorities());

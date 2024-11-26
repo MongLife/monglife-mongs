@@ -1,7 +1,6 @@
 package com.monglife.mongs.app.activity.battle.controller;
 
 import com.monglife.core.dto.response.ResponseDto;
-import com.monglife.core.exception.ErrorException;
 import com.monglife.mongs.app.activity.global.enums.ActivityResponse;
 import com.monglife.mongs.app.activity.battle.service.BattleService;
 import com.monglife.mongs.app.activity.battle.service.MatchingService;
@@ -32,7 +31,7 @@ public class MatchingController {
     @PostMapping("/wait/{mongId}")
     public ResponseEntity<ResponseDto<Map<String, Object>>> createWaitMatching(@AuthenticationPrincipal Passport passport, @PathVariable("mongId") Long mongId) {
 
-        Long accountId = passport.getId();
+        Long accountId = passport.getAccountId();
         String deviceId = passport.getDeviceId();
 
         matchingService.createWaitMatching(accountId, deviceId, mongId);
@@ -49,7 +48,7 @@ public class MatchingController {
     @DeleteMapping("/wait/{mongId}")
     public ResponseEntity<ResponseDto<Map<String, Object>>> deleteWaitMatching(@AuthenticationPrincipal Passport passport, @PathVariable("mongId") Long mongId) {
 
-        Long accountId = passport.getId();
+        Long accountId = passport.getAccountId();
         String deviceId = passport.getDeviceId();
 
         matchingService.deleteWaitMatching(accountId, deviceId, mongId);

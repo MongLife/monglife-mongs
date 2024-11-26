@@ -19,7 +19,7 @@ public enum ManagerResponse implements Response {
     // MANAGER - MANAGEMENT
     MANAGER_MANAGEMENT_GET_MONG(HttpStatus.OK.value(), "MANAGER-MANAGEMENT-000", "몽 정보 조회를 성공했습니다."),
     MANAGER_MANAGEMENT_CREATE_MONG(HttpStatus.OK.value(), "MANAGER-MANAGEMENT-000", "몽 생성을 성공했습니다."),
-    MANAGER_MANAGEMENT_GET_FEED_ITEM(HttpStatus.OK.value(), "MANAGER-MANAGEMENT-000", "음식/간식 목록 조회를 성공했습니다."),
+    MANAGER_MANAGEMENT_GET_FEED_ITEM(HttpStatus.OK.value(), "MANAGER-MANAGEMENT-000", "먹이 목록 조회를 성공했습니다."),
     MANAGER_MANAGEMENT_DELETE_MONG(HttpStatus.OK.value(), "MANAGER-MANAGEMENT-000", "몽 삭제를 성공했습니다."),
     MANAGER_MANAGEMENT_FEED_MONG(HttpStatus.OK.value(), "MANAGER-MANAGEMENT-000", "몽 먹이 주기를 성공했습니다."),
     MANAGER_MANAGEMENT_STROKE_MONG(HttpStatus.OK.value(), "MANAGER-MANAGEMENT-000", "몽 쓰다 듬기를 성공했습니다."),

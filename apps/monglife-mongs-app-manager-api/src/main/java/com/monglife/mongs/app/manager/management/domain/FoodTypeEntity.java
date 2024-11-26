@@ -17,7 +17,7 @@ public class FoodTypeEntity {
     @Column(name = "food_type_id")
     private Long foodTypeId;
 
-    @OneToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "food_type_code")
     private ComnCodeEntity foodCode;
 

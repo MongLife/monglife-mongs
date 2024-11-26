@@ -23,11 +23,11 @@ public class MapTypeEntity {
     @Column(name = "map_type_id")
     private Long mapTypeId;
 
-    @OneToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "map_type_code")
     private ComnCodeEntity mapCode;
 
-    @OneToMany(cascade = CascadeType.ALL)
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "map_type_id")
     private List<MapPositionEntity> mapPositions;
 

@@ -10,16 +10,19 @@ import com.monglife.mongs.app.manager.management.dto.response.GetFeedItemsRespon
 import com.monglife.mongs.app.manager.management.dto.response.GetMongResponseDto;
 import com.monglife.mongs.app.manager.management.service.ManagementService;
 import com.monglife.mongs.module.security.global.principal.Passport;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalTime;
 import java.util.List;
 
-@Slf4j
+@Validated
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/manager/management")
@@ -36,7 +39,7 @@ public class ManagementController {
     @GetMapping("")
     public ResponseEntity<ResponseDto<List<GetMongResponseDto>>> getMongs(@AuthenticationPrincipal Passport passport) {
 
-        Long accountId = passport.getId();
+        Long accountId = passport.getAccountId();
 
         List<GetMongDto> getMongDtos = managementService.getMongs(accountId);
 
@@ -52,9 +55,9 @@ public class ManagementController {
      * @return 몽 조회 응답 DTO
      */
     @GetMapping("/{mongId}")
-    public ResponseEntity<ResponseDto<GetMongResponseDto>> getMong(@AuthenticationPrincipal Passport passport, @PathVariable("mongId") Long mongId) {
+    public ResponseEntity<ResponseDto<GetMongResponseDto>> getMong(@AuthenticationPrincipal Passport passport, @PathVariable("mongId") @NotNull @Min(1) Long mongId) {
 
-        Long accountId = passport.getId();
+        Long accountId = passport.getAccountId();
 
         GetMongDto getMongDto = managementService.getMong(accountId, mongId);
 
@@ -64,17 +67,20 @@ public class ManagementController {
     }
 
     /**
-     * 음식/간식 목록 조회
+     * 먹이 목록 조회
      * @param passport 패스 포트
      * @param mongId 몽 ID
-     * @param foodTypeGroupCode 음식/간식 그룹 코드
-     * @return 음식/간식 목록 조회 응답 DTO
+     * @param foodTypeGroupCode 음식 or 간식 그룹 코드
+     * @return 먹이 목록 조회 응답 DTO
      */
-    // TODO: 음식 로그 조회
-    @GetMapping("/feed/{foodTypeGroupCode}/{mongId}")
-    public ResponseEntity<ResponseDto<GetFeedItemsResponseDto>> getFeedItems(@AuthenticationPrincipal Passport passport, @PathVariable("mongId") Long mongId, @PathVariable("foodTypeGroupCode") String foodTypeGroupCode) {
+    @GetMapping("/feed/{mongId}")
+    public ResponseEntity<ResponseDto<GetFeedItemsResponseDto>> getFeedItems(
+            @AuthenticationPrincipal Passport passport,
+            @PathVariable("mongId") @NotNull @Min(1) Long mongId,
+            @RequestParam("foodTypeGroupCode") @NotBlank String foodTypeGroupCode
+    ) {
 
-        Long accountId = passport.getId();
+        Long accountId = passport.getAccountId();
 
         List<GetFeedItemDto> getFeedItemDtos = managementService.getFeedItems(accountId, mongId, foodTypeGroupCode);
 
@@ -95,7 +101,7 @@ public class ManagementController {
     @PostMapping("")
     public ResponseEntity<ResponseDto<?>> createMong(@AuthenticationPrincipal Passport passport, @RequestBody CreateMongRequestDto createMongRequestDto) {
 
-        Long accountId = passport.getId();
+        Long accountId = passport.getAccountId();
         String name = createMongRequestDto.getName();
         LocalTime sleepAt = createMongRequestDto.getSleepAt();
         LocalTime wakeupAt = createMongRequestDto.getWakeupAt();
@@ -112,9 +118,9 @@ public class ManagementController {
      * @return 몽 삭제 응답 코드
      */
     @DeleteMapping("/{mongId}")
-    public ResponseEntity<ResponseDto<?>> deleteMong(@AuthenticationPrincipal Passport passport, @PathVariable("mongId") Long mongId) {
+    public ResponseEntity<ResponseDto<?>> deleteMong(@AuthenticationPrincipal Passport passport, @PathVariable("mongId") @NotNull @Min(1) Long mongId) {
 
-        Long accountId = passport.getId();
+        Long accountId = passport.getAccountId();
 
         managementService.deleteMong(accountId, mongId);
 
@@ -129,9 +135,9 @@ public class ManagementController {
      * @return 몽 먹이 주기 응답 코드
      */
     @PostMapping("/feed/{mongId}")
-    public ResponseEntity<ResponseDto<?>> feedMong(@AuthenticationPrincipal Passport passport, @PathVariable("mongId") Long mongId, @RequestBody FeedMongRequestDto feedMongRequestDto) {
+    public ResponseEntity<ResponseDto<?>> feedMong(@AuthenticationPrincipal Passport passport, @PathVariable("mongId") @NotNull @Min(1) Long mongId, @RequestBody FeedMongRequestDto feedMongRequestDto) {
 
-        Long accountId = passport.getId();
+        Long accountId = passport.getAccountId();
         String foodTypeCode = feedMongRequestDto.getFoodTypeCode();
 
         managementService.feedMong(accountId, mongId, foodTypeCode);
@@ -146,9 +152,9 @@ public class ManagementController {
      * @return 몽 쓰다 듬기 응답 코드
      */
     @PostMapping("/stroke/{mongId}")
-    public ResponseEntity<ResponseDto<?>> strokeMong(@AuthenticationPrincipal Passport passport, @PathVariable("mongId") Long mongId) {
+    public ResponseEntity<ResponseDto<?>> strokeMong(@AuthenticationPrincipal Passport passport, @PathVariable("mongId") @NotNull @Min(1) Long mongId) {
 
-        Long accountId = passport.getId();
+        Long accountId = passport.getAccountId();
 
         managementService.strokeMong(accountId, mongId);
 
@@ -162,9 +168,9 @@ public class ManagementController {
      * @return 몽 수면/기상 응답 코드
      */
     @PutMapping("/sleep/{mongId}")
-    public ResponseEntity<ResponseDto<?>> sleepMong(@AuthenticationPrincipal Passport passport, @PathVariable("mongId") Long mongId) {
+    public ResponseEntity<ResponseDto<?>> sleepMong(@AuthenticationPrincipal Passport passport, @PathVariable("mongId") @NotNull @Min(1) Long mongId) {
 
-        Long accountId = passport.getId();
+        Long accountId = passport.getAccountId();
 
         managementService.sleepMong(accountId, mongId);
 
@@ -178,9 +184,9 @@ public class ManagementController {
      * @return 몽 배변 처리 응답 코드
      */
     @PostMapping("/poopClean/{mongId}")
-    public ResponseEntity<ResponseDto<?>> poopCleanMong(@AuthenticationPrincipal Passport passport, @PathVariable("mongId") Long mongId) {
+    public ResponseEntity<ResponseDto<?>> poopCleanMong(@AuthenticationPrincipal Passport passport, @PathVariable("mongId") @NotNull @Min(1) Long mongId) {
 
-        Long accountId = passport.getId();
+        Long accountId = passport.getAccountId();
 
         managementService.poopCleanMong(accountId, mongId);
 
@@ -194,9 +200,9 @@ public class ManagementController {
      * @return 몽 진화 응답 코드
      */
     @PutMapping("/evolution/{mongId}")
-    public ResponseEntity<ResponseDto<?>> evolutionMong(@AuthenticationPrincipal Passport passport, @PathVariable("mongId") Long mongId) {
+    public ResponseEntity<ResponseDto<?>> evolutionMong(@AuthenticationPrincipal Passport passport, @PathVariable("mongId") @NotNull @Min(1) Long mongId) {
 
-        Long accountId = passport.getId();
+        Long accountId = passport.getAccountId();
 
         managementService.evolutionMong(accountId, mongId);
 
@@ -210,9 +216,9 @@ public class ManagementController {
      * @return 몽 졸업 응답 코드
      */
     @PutMapping("/graduate/{mongId}")
-    public ResponseEntity<ResponseDto<?>> graduateMong(@AuthenticationPrincipal Passport passport, @PathVariable("mongId") Long mongId) {
+    public ResponseEntity<ResponseDto<?>> graduateMong(@AuthenticationPrincipal Passport passport, @PathVariable("mongId") @NotNull @Min(1) Long mongId) {
 
-        Long accountId = passport.getId();
+        Long accountId = passport.getAccountId();
 
         managementService.graduateMong(accountId, mongId);
 

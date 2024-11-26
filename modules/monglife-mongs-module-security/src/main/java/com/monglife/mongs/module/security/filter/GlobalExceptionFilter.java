@@ -1,4 +1,4 @@
-package com.monglife.mongs.module.security.global.exception;
+package com.monglife.mongs.module.security.filter;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.monglife.core.dto.response.ResponseDto;
@@ -16,7 +16,7 @@ import java.util.Collections;
 import java.util.Map;
 
 @AllArgsConstructor
-public class SecurityExceptionHandler extends GenericFilterBean {
+public class GlobalExceptionFilter extends GenericFilterBean {
 
     private final ObjectMapper objectMapper;
 

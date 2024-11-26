@@ -7,17 +7,11 @@ import lombok.Getter;
 @AllArgsConstructor
 public enum MongStateCode {
 
-    SOMNOLENCE("졸림", 0D, 0D, 0D, 0D, 10D, 0),
-    HUNGRY("배고픔", 0D, 0D, 10D, 0D, 0D, 0),
-    SICK("아픔", 0D, 0D, 0D, 10D, 0D, 0),
-    NORMAL("정상", 0D, 0D, 0D, 0D, 0D, 0),
+    NORMAL("정상"),
+    GRADUATE_READY("졸업 대기"),
+    EVOLUTION_READY("진화 대기"),
+    DEAD("죽음"),
     ;
 
-    private final String name;
-    private final Double weightPercent;
-    private final Double strengthPercent;
-    private final Double satietyPercent;
-    private final Double healthyPercent;
-    private final Double fatiguePercent;
-    private final Integer poopCount;
+    public final String name;
 }

@@ -1,14 +1,11 @@
 package com.monglife.mongs.app.manager.management.domain;
 
 import com.monglife.mongs.app.manager.management.dto.etc.UpdateMongStatusDto;
-import com.monglife.mongs.app.manager.management.enums.MongShiftCode;
 import com.monglife.mongs.app.manager.management.enums.MongStateCode;
+import com.monglife.mongs.app.manager.management.enums.MongStatusCode;
 import com.monglife.mongs.module.jpa.domain.BaseTimeEntity;
 import jakarta.persistence.*;
-import lombok.AccessLevel;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
@@ -20,6 +17,7 @@ import java.time.LocalTime;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @EntityListeners(AuditingEntityListener.class)
 @Table(name = "mongs_manager_mong")
+@ToString(exclude = { "type", "state", "status" })
 public class MongEntity extends BaseTimeEntity {
 
     @Id
@@ -40,44 +38,27 @@ public class MongEntity extends BaseTimeEntity {
     private LocalTime wakeupAt;
 
     @Column(name = "pay_point")
-    private Integer payPoint;
-
-    @Column(name = "is_active")
-    private Boolean isActive = Boolean.TRUE;
-
-    @Column(name = "isSleep")
-    private Boolean isSleep = Boolean.FALSE;
-
-    @Column(name = "isTimeLimit")
-    private Boolean isTimeLimit = Boolean.FALSE;
+    protected Integer payPoint;
 
     @Column(name = "training_count")
-    private Integer trainingCount = 0;
+    private Integer trainingCount;
 
     @Column(name = "stroke_count")
-    private Integer strokeCount = 0;
-
-    @Column(name = "reward")
-    private Double reward = 0D;
-
-    @Column(name = "penalty")
-    private Double penalty = 0D;
+    private Integer strokeCount;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "mong_type_code", referencedColumnName = "mong_type_code")
+    @JoinColumn(name = "mong_type_id")
     private MongTypeEntity type;
 
-    @Enumerated(EnumType.STRING)
-    @Column(name = "mong_state_code")
-    private MongStateCode mongStateCode = MongStateCode.NORMAL;
+//    @OneToOne(mappedBy = "mong", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JoinColumn(name = "mong_state_id")
+    private MongStateEntity state;
 
-    @Enumerated(EnumType.STRING)
-    @Column(name = "mong_shift_code")
-    private MongShiftCode mongShiftCode = MongShiftCode.NORMAL;
-
-    @OneToOne(cascade = CascadeType.ALL)
+//    @OneToOne(mappedBy = "mong",fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "mong_status_id")
-    private MongStatusEntity mongStatus;
+    private MongStatusEntity status;
 
 
     @Builder
@@ -86,18 +67,12 @@ public class MongEntity extends BaseTimeEntity {
         this.mongName = mongName;
         this.sleepAt = sleepAt;
         this.wakeupAt = wakeupAt;
-        this.type = type;
         this.payPoint = payPoint;
-        this.mongStatus = MongStatusEntity.builder()
-                .strength(this.type.getMaxStatus())
-                .satiety(this.type.getMaxStatus())
-                .healthy(this.type.getMaxStatus())
-                .fatigue(this.type.getMaxStatus())
-                .strengthRatio(100D)
-                .satietyRatio(100D)
-                .healthyRatio(100D)
-                .fatigueRatio(100D)
-                .build();
+        this.trainingCount = 0;
+        this.strokeCount = 0;
+        this.type = type;
+        this.state = new MongStateEntity(this);
+        this.status = new MongStatusEntity(this, type.getMaxStatus());
     }
 
     /**
@@ -105,11 +80,14 @@ public class MongEntity extends BaseTimeEntity {
      */
     public void delete() {
 
-        this.isActive = Boolean.FALSE;
-        this.isSleep = Boolean.FALSE;
-        this.isTimeLimit = Boolean.FALSE;
-        this.mongShiftCode = MongShiftCode.NORMAL;
-        this.mongStateCode = MongStateCode.NORMAL;
+        MongStateEntity.UpdateDto updateDto = MongStateEntity.UpdateDto.builder()
+                .code(MongStateCode.NORMAL)
+                .isActive(Boolean.FALSE)
+                .isSleep(Boolean.FALSE)
+                .isTimeLimit(Boolean.FALSE)
+                .build();
+
+        this.state.update(updateDto);
     }
 
     /**
@@ -118,9 +96,10 @@ public class MongEntity extends BaseTimeEntity {
      */
     public void stroke(Double addExp) {
 
-        final Double maxStatus = this.type.getMaxStatus();
+        this.status.update(MongStatusEntity.UpdateDto.builder()
+                .exp(this.status.getExp() + addExp)
+                .build());
 
-        this.mongStatus.exp = Math.min(maxStatus, this.mongStatus.getExp() + addExp);
         this.strokeCount = this.strokeCount + 1;
     }
 
@@ -128,22 +107,31 @@ public class MongEntity extends BaseTimeEntity {
      * 수면
      */
     public void sleep() {
-        this.isSleep = Boolean.TRUE;
+
+        this.state.update(MongStateEntity.UpdateDto.builder()
+                .isSleep(Boolean.TRUE)
+                .build());
     }
 
     /**
      * 기상
      */
     public void wakeup() {
-        this.isSleep = Boolean.FALSE;
+
+        this.state.update(MongStateEntity.UpdateDto.builder()
+                .isSleep(Boolean.FALSE)
+                .build());
     }
 
     /**
      * 몽 배변 처리
      */
     public void poopClean(Double poopCleanExp) {
-        this.mongStatus.poopCount = 0;
-        this.mongStatus.exp = this.mongStatus.exp + poopCleanExp;
+
+        this.status.update(MongStatusEntity.UpdateDto.builder()
+                .poopCount(0)
+                .exp(this.status.getExp() + poopCleanExp)
+                .build());
     }
 
     /**
@@ -152,25 +140,15 @@ public class MongEntity extends BaseTimeEntity {
      */
     public void feed(UpdateMongStatusDto updateMongStatusDto) {
 
-        final Double maxStatus = this.type.getMaxStatus();
+        MongStatusEntity.UpdateDto updateDto = MongStatusEntity.UpdateDto.builder()
+                .weight(this.status.getWeight() + updateMongStatusDto.getAddWeightValue())
+                .strength(updateMongStatusDto.getAddStrengthValue())
+                .satiety(updateMongStatusDto.getAddSatietyValue())
+                .healthy(updateMongStatusDto.getAddHealthyValue())
+                .fatigue(updateMongStatusDto.getAddFatigueValue())
+                .build();
 
-        double weight = Math.min(maxStatus, this.mongStatus.weight + updateMongStatusDto.getAddWeightValue());
-        double strength = Math.min(maxStatus, this.mongStatus.strength + updateMongStatusDto.getAddStrengthValue());
-        double satiety = Math.min(maxStatus, this.mongStatus.satiety + updateMongStatusDto.getAddSatietyValue());
-        double healthy = Math.min(maxStatus, this.mongStatus.healthy + updateMongStatusDto.getAddHealthyValue());
-        double fatigue = Math.min(maxStatus, this.mongStatus.fatigue + updateMongStatusDto.getAddFatigueValue());
-
-        this.mongStatus.weight = weight;
-        this.mongStatus.strength = strength;
-        this.mongStatus.satiety = satiety;
-        this.mongStatus.healthy = healthy;
-        this.mongStatus.fatigue = fatigue;
-
-        this.mongStatus.weightRatio = weight / maxStatus * 100;
-        this.mongStatus.strengthRatio = strength / maxStatus * 100;
-        this.mongStatus.satietyRatio = satiety / maxStatus * 100;
-        this.mongStatus.healthyRatio = healthy / maxStatus * 100;
-        this.mongStatus.fatigueRatio = fatigue / maxStatus * 100;
+        this.status.update(updateDto);
     }
 
     /**
@@ -178,32 +156,23 @@ public class MongEntity extends BaseTimeEntity {
      */
     public void evolutionReady() {
 
-        this.mongShiftCode = MongShiftCode.EVOLUTION_READY;
-        this.mongStateCode = MongStateCode.NORMAL;
+        this.state.update(MongStateEntity.UpdateDto.builder()
+                .code(MongStateCode.EVOLUTION_READY)
+                .build());
+
+        this.status.update(MongStatusEntity.UpdateDto.builder()
+                .code(MongStatusCode.NORMAL)
+                .build());
     }
 
     /**
      * 몽 진화
-     * @param nextMongTypeEntity 다음 몽 타입
+     * @param nextType 다음 몽 타입
      */
-    public void evolution(MongTypeEntity nextMongTypeEntity) {
+    public void evolution(MongTypeEntity nextType) {
 
-        final Double maxStatus = this.type.getMaxStatus();
-        final Double nextMaxStatus = nextMongTypeEntity.getMaxStatus();
-
-        double weight = this.mongStatus.weight / maxStatus * nextMaxStatus;
-        double strength = this.mongStatus.strength / maxStatus * nextMaxStatus;
-        double satiety = this.mongStatus.satiety / maxStatus * nextMaxStatus;
-        double healthy = this.mongStatus.healthy / maxStatus * nextMaxStatus;
-        double fatigue = this.mongStatus.fatigue / maxStatus * nextMaxStatus;
-
-        this.mongStatus.weight = weight;
-        this.mongStatus.strength = strength;
-        this.mongStatus.satiety = satiety;
-        this.mongStatus.healthy = healthy;
-        this.mongStatus.fatigue = fatigue;
-
-        this.type = nextMongTypeEntity;
+        this.status.updateMaxStatus(nextType.getMaxStatus());
+        this.type = nextType;
     }
 
     /**
@@ -211,18 +180,20 @@ public class MongEntity extends BaseTimeEntity {
      */
     public void graduateReady() {
 
-        final Double maxStatus = this.type.getMaxStatus();
+        this.status.update(MongStatusEntity.UpdateDto.builder()
+                .code(MongStatusCode.NORMAL)
+                .weight(this.type.getMaxStatus())
+                .strength(this.type.getMaxStatus())
+                .satiety(this.type.getMaxStatus())
+                .healthy(this.type.getMaxStatus())
+                .fatigue(this.type.getMaxStatus())
+                .build());
 
-        this.mongStatus.weight = maxStatus;
-        this.mongStatus.strength = maxStatus;
-        this.mongStatus.satiety = maxStatus;
-        this.mongStatus.healthy = maxStatus;
-        this.mongStatus.fatigue = maxStatus;
-
-        this.isSleep = Boolean.FALSE;
-        this.isTimeLimit = Boolean.FALSE;
-        this.mongShiftCode = MongShiftCode.GRADUATE_READY;
-        this.mongStateCode = MongStateCode.NORMAL;
+        this.state.update(MongStateEntity.UpdateDto.builder()
+                .code(MongStateCode.GRADUATE_READY)
+                .isSleep(Boolean.FALSE)
+                .isTimeLimit(Boolean.FALSE)
+                .build());
     }
 
     /**
@@ -230,10 +201,15 @@ public class MongEntity extends BaseTimeEntity {
      */
     public void graduate() {
 
-        this.isSleep = Boolean.FALSE;
-        this.isTimeLimit = Boolean.FALSE;
-        this.mongShiftCode = MongShiftCode.NORMAL;
-        this.mongStateCode = MongStateCode.NORMAL;
+        this.status.update(MongStatusEntity.UpdateDto.builder()
+                .code(MongStatusCode.NORMAL)
+                .build());
+
+        this.state.update(MongStateEntity.UpdateDto.builder()
+                .code(MongStateCode.NORMAL)
+                .isSleep(Boolean.FALSE)
+                .isTimeLimit(Boolean.FALSE)
+                .build());
     }
 
     /**
@@ -241,9 +217,14 @@ public class MongEntity extends BaseTimeEntity {
      */
     public void dead() {
 
-        this.isSleep = Boolean.FALSE;
-        this.isTimeLimit = Boolean.FALSE;
-        this.mongShiftCode = MongShiftCode.DEAD;
-        this.mongStateCode = MongStateCode.NORMAL;
+        this.status.update(MongStatusEntity.UpdateDto.builder()
+                .code(MongStatusCode.NORMAL)
+                .build());
+
+        this.state.update(MongStateEntity.UpdateDto.builder()
+                .code(MongStateCode.DEAD)
+                .isSleep(Boolean.FALSE)
+                .isTimeLimit(Boolean.FALSE)
+                .build());
     }
 }

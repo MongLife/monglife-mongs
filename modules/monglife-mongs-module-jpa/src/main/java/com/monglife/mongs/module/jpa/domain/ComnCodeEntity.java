@@ -22,7 +22,6 @@ public class ComnCodeEntity {
     @JoinColumn(name = "group_code")
     private String groupCode;
 
-
     @Builder
     public ComnCodeEntity(String comnCode, String comnName, String groupCode) {
         this.comnCode = comnCode;
