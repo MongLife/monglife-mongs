@@ -12,10 +12,13 @@ public class HibernateConfig {
 
     @Value("${spring.jpa.properties.hibernate.dialect}")
     private String dialect;
+
     @Value("${spring.jpa.properties.hibernate.hbm2ddl.auto}")
     private String ddlAuto;
+
     @Value("${spring.jpa.properties.hibernate.show_sql}")
     private String showSql;
+
 
     @Bean(name = "hibernateJpaVendorAdapter")
     public HibernateJpaVendorAdapter hibernateJpaVendorAdapter() {

@@ -1,19 +1,18 @@
 package com.monglife.mongs.app.activity.battle.service;
 
-import com.monglife.core.enums.common.MongCode;
+import com.monglife.mongs.app.activity.battle.domain.BattlePlayerEntity;
+import com.monglife.mongs.app.activity.battle.domain.BattleRoomEntity;
 import com.monglife.mongs.app.activity.battle.domain.BattleRoundEntity;
+import com.monglife.mongs.app.activity.battle.domain.MongEntity;
 import com.monglife.mongs.app.activity.battle.dto.etc.CreateBattleDto;
 import com.monglife.mongs.app.activity.battle.dto.etc.FightBattleDto;
 import com.monglife.mongs.app.activity.battle.dto.etc.OverBattleDto;
 import com.monglife.mongs.app.activity.battle.enums.BattleRoundCode;
-import com.monglife.mongs.app.activity.battle.exception.AlreadyExistsRoundException;
-import com.monglife.mongs.app.activity.battle.exception.NotExistsPlayerIdException;
-import com.monglife.mongs.app.activity.battle.exception.NotExistsRoomIdException;
-import com.monglife.mongs.app.activity.battle.exception.OnlyBotMatchingException;
-import com.monglife.mongs.app.activity.battle.vo.BattlePlayerVo;
-import com.monglife.mongs.app.activity.battle.domain.BattlePlayerEntity;
-import com.monglife.mongs.app.activity.battle.domain.BattleRoomEntity;
+import com.monglife.mongs.app.activity.battle.exception.*;
 import com.monglife.mongs.app.activity.battle.repository.BattleRoomRepository;
+import com.monglife.mongs.app.activity.battle.repository.MongRepository;
+import com.monglife.mongs.app.activity.battle.vo.BattlePlayerVo;
+import com.monglife.mongs.module.jpa.repository.ComnCodeRepository;
 import lombok.RequiredArgsConstructor;
 import org.antlr.v4.runtime.misc.Pair;
 import org.springframework.beans.factory.annotation.Value;
@@ -32,6 +31,8 @@ public class BattleService {
 
     private static final Random random = new Random();
 
+    private static final String MONG_TYPE_EGG_GROUP_CODE = "GCH100";
+
     @Value("${application.service.battle.max-round}")
     public Integer MAX_ROUND;
 
@@ -41,7 +42,11 @@ public class BattleService {
     @Value("${application.service.battle.max-random-bound}")
     private Double MAX_RANDOM_BOUND;
 
+    private final ComnCodeRepository comnCodeRepository;
+
     private final BattleRoomRepository battleRoomRepository;
+
+    private final MongRepository mongRepository;
 
 
     /**
@@ -57,21 +62,30 @@ public class BattleService {
         // 배틀 플레이어 엔티티 생성
         List<BattlePlayerEntity> battlePlayerEntities = createBattleDtoSet.stream()
                 .map(createBattleDto -> {
-//                    double attackValue = DEFAULT_ATTACK_VALUE + (mongVo.strength() / mongVo.grade().maxStatus * 100D);
-//                    double healValue = DEFAULT_HEAL_VALUE + (mongVo.sleep() / mongVo.grade().maxStatus * 100D);
-//                    double defenceValue = DEFAULT_DEFENCE_VALUE + (mongVo.weight() / mongVo.grade().maxStatus * 100D);
-
-                    String mongCode = MongCode.CH100.getCode();
-                    Double attackValue = BattlePlayerEntity.MAX_ATTACK_VALUE;
-                    Double healValue = BattlePlayerEntity.MAX_HEAL_VALUE;
-                    Double defenceValue = BattlePlayerEntity.MAX_DEFENCE_VALUE;
+                    String mongTypeCode;
+                    double attackValue = BattlePlayerEntity.MAX_ATTACK_VALUE;
+                    double healValue = BattlePlayerEntity.MAX_HEAL_VALUE;
+                    double defenceValue = BattlePlayerEntity.MAX_DEFENCE_VALUE;
 
                     // 봇이 아닌 경우
                     if (!createBattleDto.getIsBot()) {
-                        mongCode = MongCode.CH200.getCode();                    // TODO: Feign Client 등록 후, Management 정보 받아 와야 함
-                        attackValue = BattlePlayerEntity.MAX_ATTACK_VALUE;        // TODO: Feign Client 등록 후, Management 정보 받아 와야 함
-                        healValue = BattlePlayerEntity.MAX_HEAL_VALUE;            // TODO: Feign Client 등록 후, Management 정보 받아 와야 함
-                        defenceValue = BattlePlayerEntity.MAX_DEFENCE_VALUE;      // TODO: Feign Client 등록 후, Management 정보 받아 와야 함
+
+                        Long mongId = createBattleDto.getMongId();
+
+                        MongEntity mongEntity = mongRepository.findById(mongId)
+                                .orElseThrow(() -> new NotExistsMongIdException(mongId));
+
+                        mongTypeCode = mongEntity.getMongTypeCode();
+                        attackValue = BattlePlayerEntity.MAX_ATTACK_VALUE + (BattlePlayerEntity.MAX_ATTACK_VALUE * mongEntity.getStrengthRatio());
+                        healValue = BattlePlayerEntity.MAX_HEAL_VALUE + (BattlePlayerEntity.MAX_HEAL_VALUE * mongEntity.getFatigue());
+                        defenceValue = BattlePlayerEntity.MAX_DEFENCE_VALUE + (BattlePlayerEntity.MAX_DEFENCE_VALUE * mongEntity.getWeightRatio());
+
+                    } else {
+
+                        mongTypeCode = comnCodeRepository.findByGroupCode(MONG_TYPE_EGG_GROUP_CODE).stream()
+                                .findAny()
+                                .orElseThrow(NotExistsMongTypeCodeException::new)
+                                .getComnCode();
                     }
 
                     return BattlePlayerEntity.builder()
@@ -79,8 +93,8 @@ public class BattleService {
                             .deviceId(createBattleDto.getDeviceId())
                             .accountId(createBattleDto.getAccountId())
                             .mongId(createBattleDto.getMongId())
-                            .mongCode(mongCode)
-                            .attackValue(attackValue/ random.nextDouble(MAX_RANDOM_ORIGIN, MAX_RANDOM_BOUND))
+                            .mongTypeCode(mongTypeCode)
+                            .attackValue(attackValue / random.nextDouble(MAX_RANDOM_ORIGIN, MAX_RANDOM_BOUND))
                             .healValue(healValue / random.nextDouble(MAX_RANDOM_ORIGIN, MAX_RANDOM_BOUND))
                             .defenceValue(defenceValue / random.nextDouble(MAX_RANDOM_ORIGIN, MAX_RANDOM_BOUND))
                             .isBot(createBattleDto.getIsBot())
@@ -231,7 +245,7 @@ public class BattleService {
                     .map(battlePlayerEntity -> OverBattleDto.builder()
                                 .playerId(battlePlayerEntity.getPlayerId())
                                 .mongId(battlePlayerEntity.getMongId())
-                                .mongCode(battlePlayerEntity.getMongCode())
+                                .mongTypeCode(battlePlayerEntity.getMongTypeCode())
                                 .build())
                     .toList();
         } else {
@@ -370,7 +384,7 @@ public class BattleService {
                 .map(battlePlayerEntity -> OverBattleDto.builder()
                             .playerId(battlePlayerEntity.getPlayerId())
                             .mongId(battlePlayerEntity.getMongId())
-                            .mongCode(battlePlayerEntity.getMongCode())
+                            .mongTypeCode(battlePlayerEntity.getMongTypeCode())
                             .build())
                 .toList();
     }

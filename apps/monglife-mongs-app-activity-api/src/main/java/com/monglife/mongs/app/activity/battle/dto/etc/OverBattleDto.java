@@ -14,12 +14,12 @@ public class OverBattleDto {
 
     private Long mongId;
 
-    private String mongCode;
+    private String mongTypeCode;
 
     @Builder
-    public OverBattleDto(String playerId, Long mongId, String mongCode) {
+    public OverBattleDto(String playerId, Long mongId, String mongTypeCode) {
         this.playerId = playerId;
         this.mongId = mongId;
-        this.mongCode = mongCode;
+        this.mongTypeCode = mongTypeCode;
     }
 }

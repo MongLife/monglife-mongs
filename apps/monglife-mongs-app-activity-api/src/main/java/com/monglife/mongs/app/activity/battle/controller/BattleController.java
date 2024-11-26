@@ -24,7 +24,7 @@ import java.util.List;
 @Slf4j
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/battle")
+@RequestMapping("/activity/battle")
 public class BattleController {
 
     private final BattleService battleService;
@@ -82,12 +82,12 @@ public class BattleController {
             List<String> topics = List.of(String.valueOf(roomId));
 
             String winPlayerId = overBattleDtos.isEmpty() ? "" : overBattleDtos.get(0).getPlayerId();
-            String winMongCode = overBattleDtos.isEmpty() ? "" : overBattleDtos.get(0).getMongCode();
+            String winMongTypeCode = overBattleDtos.isEmpty() ? "" : overBattleDtos.get(0).getMongTypeCode();
 
             OverBattleResponseDto overBattleResponseDto = OverBattleResponseDto.builder()
                     .roomId(roomId)
                     .winPlayerId(winPlayerId)
-                    .winMongCode(winMongCode)
+                    .winMongTypeCode(winMongTypeCode)
                     .build();
 
             // 게임 끝 시그널 반환
@@ -152,12 +152,12 @@ public class BattleController {
         List<OverBattleDto> overBattleDtos = battleService.findOverBattle(roomId);
 
         String winPlayerId = overBattleDtos.isEmpty() ? "" : overBattleDtos.get(0).getPlayerId();
-        String winMongCode = overBattleDtos.isEmpty() ? "" : overBattleDtos.get(0).getMongCode();
+        String winMongTypeCode = overBattleDtos.isEmpty() ? "" : overBattleDtos.get(0).getMongTypeCode();
 
         OverBattleResponseDto overBattleResponseDto = OverBattleResponseDto.builder()
                 .roomId(roomId)
                 .winPlayerId(winPlayerId)
-                .winMongCode(winMongCode)
+                .winMongTypeCode(winMongTypeCode)
                 .build();
 
         return ResponseEntity.ok(ActivityResponse.ACTIVITY_BATTLE_OVER_BATTLE.toResponseDto(overBattleResponseDto));

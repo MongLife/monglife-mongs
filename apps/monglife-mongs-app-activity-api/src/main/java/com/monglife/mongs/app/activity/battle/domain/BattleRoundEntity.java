@@ -2,14 +2,15 @@ package com.monglife.mongs.app.activity.battle.domain;
 
 import com.monglife.mongs.app.activity.battle.enums.BattleRoundCode;
 import jakarta.persistence.*;
+import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Entity
 @Getter
-@NoArgsConstructor
-@Table(name = "mongs_battle_round")
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@Table(name = "mongs_activity_battle_round")
 public class BattleRoundEntity {
 
     @Id

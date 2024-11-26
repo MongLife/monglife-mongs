@@ -4,6 +4,7 @@ import com.monglife.core.dto.response.ResponseDto;
 import com.monglife.mongs.app.activity.battle.dto.etc.CreateBattleDto;
 import com.monglife.mongs.app.activity.battle.dto.etc.FindMatchingDto;
 import com.monglife.mongs.app.activity.battle.dto.response.CreateBattleResponseDto;
+import com.monglife.mongs.app.activity.battle.exception.NotExistsMongIdException;
 import com.monglife.mongs.app.activity.battle.exception.NotExistsWaitMatchingException;
 import com.monglife.mongs.app.activity.battle.vo.BattlePlayerVo;
 import com.monglife.mongs.app.activity.battle.dto.response.BattleResponseDto;
@@ -18,9 +19,7 @@ import org.antlr.v4.runtime.misc.Pair;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
-import java.util.List;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -38,10 +37,13 @@ public class MatchingScheduler {
     @Scheduled(fixedDelay = 1000)
     public void findMatching() {
         while (true) {
+
+            Set<CreateBattleDto> createBattleDtoSet;
+
             try {
                 Set<FindMatchingDto> findMatchingDtoSet = matchingService.findWaitMatching();
 
-                Set<CreateBattleDto> createBattleDtoSet = findMatchingDtoSet.stream()
+                createBattleDtoSet = findMatchingDtoSet.stream()
                         .map(findMatchingDto -> CreateBattleDto.builder()
                                 .playerId(UUID.randomUUID().toString().replace("-", ""))
                                 .deviceId(findMatchingDto.getDeviceId())
@@ -51,6 +53,16 @@ public class MatchingScheduler {
                                 .build())
                         .collect(Collectors.toSet());
 
+            } catch (NotExistsWaitMatchingException e) {
+                break;
+            }
+
+            List<String> topics = createBattleDtoSet.stream()
+                    .filter(createBattleDto -> !createBattleDto.getIsBot())
+                    .map(CreateBattleDto::getDeviceId)
+                    .toList();
+
+            try {
                 // 배틀 룸 생성
                 Pair<Long, Set<BattlePlayerVo>> createBattlePair = battleService.createBattle(createBattleDtoSet);
 
@@ -61,11 +73,6 @@ public class MatchingScheduler {
                         .roomId(roomId)
                         .battlePlayers(battlePlayers)
                         .build();
-
-                List<String> topics = createBattleDtoSet.stream()
-                        .filter(createBattleDto -> !createBattleDto.getIsBot())
-                        .map(CreateBattleDto::getDeviceId)
-                        .toList();
 
                 BattleResponseDto<CreateBattleResponseDto> battleResponseDto = BattleResponseDto.<CreateBattleResponseDto>builder()
                         .code(BattleStateCode.BATTLE_CREATE)
@@ -79,8 +86,21 @@ public class MatchingScheduler {
                 // 배틀 생성 전송
                 mqttSendService.sendMessage(responseDto);
 
-            } catch (NotExistsWaitMatchingException e) {
-                break;
+            } catch (NotExistsMongIdException e) {
+                log.error("[MatchingScheduler] [findMatching] {} : {}", e.getClass().getSimpleName(), e.getMessage());
+
+                BattleResponseDto<Map<String, Object>> battleResponseDto = BattleResponseDto.<Map<String, Object>>builder()
+                        .code(BattleStateCode.BATTLE_CREATE_FAIL)
+                        .topics(topics)
+                        .data(e.getResult())
+                        .build();
+
+                ResponseDto<BattleResponseDto<Map<String, Object>>> responseDto
+                        = ActivityResponse.ACTIVITY_BATTLE_NOT_EXISTS_MONG_ID.toResponseDto(battleResponseDto);
+
+                // 배틀 생성 실패 전송
+                mqttSendService.sendMessage(responseDto);
+
             } catch (RuntimeException e) {
                 log.error("[MatchingScheduler] [findMatching] {} : {}", e.getClass().getSimpleName(), e.getMessage());
                 break;

@@ -17,6 +17,7 @@ public enum BattleStateCode {
     /**
      * 응답
      */
+    BATTLE_CREATE_FAIL("배틀 매칭에 실패했습니다.", "search"),
     BATTLE_CREATE("배틀 매칭이 성사되었습니다.", "search"),
     BATTLE_FIGHT("배틀 라운드 선택이 완료되었습니다.", "match"),
     BATTLE_OVER("배틀이 종료되었습니다.", "match"),

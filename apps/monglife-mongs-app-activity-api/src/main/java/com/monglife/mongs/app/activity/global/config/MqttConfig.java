@@ -1,6 +1,6 @@
 package com.monglife.mongs.app.activity.global.config;
 
-import com.monglife.mongs.app.activity.battle.client.MqttInBoundClient;
+import com.monglife.mongs.app.activity.battle.consumer.BattleConsumer;
 import lombok.extern.slf4j.Slf4j;
 import org.eclipse.paho.client.mqttv3.MqttAsyncClient;
 import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
@@ -76,7 +76,7 @@ public class MqttConfig {
 
         messageHandler.setAsync(true);
         messageHandler.setDefaultQos(1);
-        messageHandler.setDefaultTopic("mongs/fail");
+        messageHandler.setDefaultTopic(BASE_TOPIC + "/error");
 
         return messageHandler;
     }
@@ -108,7 +108,7 @@ public class MqttConfig {
 
     @Bean
     @ServiceActivator(inputChannel = "mqttInboundChannel")
-    public MessageHandler mqttInbound(@Autowired MqttInBoundClient mqttInBoundClient) {
-        return mqttInBoundClient;
+    public MessageHandler mqttInbound(@Autowired BattleConsumer battleConsumer) {
+        return battleConsumer;
     }
 }

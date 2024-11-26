@@ -1,12 +1,11 @@
 package com.monglife.mongs.app.activity.battle.domain;
 
 import com.monglife.mongs.app.activity.battle.enums.BattleRoundCode;
-import com.monglife.mongs.module.jpa.domain.BaseTimeEntity;
 import jakarta.persistence.*;
+import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.LocalDateTime;
 import java.util.HashSet;
@@ -14,10 +13,9 @@ import java.util.Set;
 
 @Entity
 @Getter
-@NoArgsConstructor
-@EntityListeners(AuditingEntityListener.class)
-@Table(name = "mongs_battle_player")
-public class BattlePlayerEntity extends BaseTimeEntity {
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@Table(name = "mongs_activity_battle_player")
+public class BattlePlayerEntity {
 
     private static final Double MAX_HP = 500D;
     public static final Double MAX_ATTACK_VALUE = 50D;
@@ -40,8 +38,8 @@ public class BattlePlayerEntity extends BaseTimeEntity {
     @Column(name = "mong_id")
     private Long mongId;
 
-    @Column(name = "mong_code")
-    private String mongCode;
+    @Column(name = "mong_type_code")
+    private String mongTypeCode;
 
     @Column(name = "hp")
     private Double hp = MAX_HP;
@@ -82,12 +80,12 @@ public class BattlePlayerEntity extends BaseTimeEntity {
 
 
     @Builder
-    public BattlePlayerEntity(String playerId, String deviceId, Long accountId, Long mongId, String mongCode, Double attackValue, Double healValue, Double defenceValue, Boolean isBot) {
+    public BattlePlayerEntity(String playerId, String deviceId, Long accountId, Long mongId, String mongTypeCode, Double attackValue, Double healValue, Double defenceValue, Boolean isBot) {
         this.playerId = playerId;
         this.deviceId = deviceId;
         this.accountId = accountId;
         this.mongId = mongId;
-        this.mongCode = mongCode;
+        this.mongTypeCode = mongTypeCode;
         this.attackValue = attackValue;
         this.healValue = healValue;
         this.defenceValue = defenceValue;

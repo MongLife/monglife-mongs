@@ -14,12 +14,12 @@ public class OverBattleResponseDto {
 
     private String winPlayerId;
 
-    private String winMongCode;
+    private String winMongTypeCode;
 
     @Builder
-    public OverBattleResponseDto(Long roomId, String winPlayerId, String winMongCode) {
+    public OverBattleResponseDto(Long roomId, String winPlayerId, String winMongTypeCode) {
         this.roomId = roomId;
         this.winPlayerId = winPlayerId;
-        this.winMongCode = winMongCode;
+        this.winMongTypeCode = winMongTypeCode;
     }
 }

@@ -56,22 +56,27 @@ public class SecurityConfig {
             })
             .build();
     }
+
     @Bean
     public UnAuthorizationHandler unAuthorizationHandler(ObjectMapper objectMapper) {
         return new UnAuthorizationHandler(objectMapper);
     }
+
     @Bean
     public ForbiddenHandler forbiddenHandler(ObjectMapper objectMapper) {
         return new ForbiddenHandler(objectMapper);
     }
+
     @Bean
     public SecurityExceptionHandler securityExceptionHandler(ObjectMapper objectMapper) {
         return new SecurityExceptionHandler(objectMapper);
     }
+
     @Bean
     public PassportFilter passportFilter(ObjectMapper objectMapper) {
         return new PassportFilter(objectMapper);
     }
+
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();

@@ -4,6 +4,7 @@ import com.monglife.mongs.app.activity.battle.enums.BattleRoundCode;
 import com.monglife.mongs.app.activity.battle.vo.BattlePlayerVo;
 import com.monglife.mongs.module.jpa.domain.BaseTimeEntity;
 import jakarta.persistence.*;
+import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -14,9 +15,9 @@ import java.util.stream.Collectors;
 
 @Entity
 @Getter
-@NoArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @EntityListeners(AuditingEntityListener.class)
-@Table(name = "mongs_battle_room")
+@Table(name = "mongs_activity_battle_room")
 public class BattleRoomEntity extends BaseTimeEntity {
 
     @Id

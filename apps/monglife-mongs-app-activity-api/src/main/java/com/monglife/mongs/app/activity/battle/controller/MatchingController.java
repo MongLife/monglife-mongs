@@ -15,7 +15,7 @@ import java.util.Map;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/battle/match")
+@RequestMapping("/activity/battle/match")
 public class MatchingController {
 
     public final BattleService battleService;

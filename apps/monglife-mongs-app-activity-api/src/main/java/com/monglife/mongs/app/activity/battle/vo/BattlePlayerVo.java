@@ -15,7 +15,7 @@ public class BattlePlayerVo {
 
     private final String deviceId;
 
-    private final String mongCode;
+    private final String mongTypeCode;
 
     private final Double hp;
 
@@ -25,7 +25,7 @@ public class BattlePlayerVo {
         return BattlePlayerVo.builder()
                 .playerId(battlePlayerEntity.getPlayerId())
                 .deviceId(battlePlayerEntity.getDeviceId())
-                .mongCode(battlePlayerEntity.getMongCode())
+                .mongTypeCode(battlePlayerEntity.getMongTypeCode())
                 .hp(battlePlayerEntity.getHp())
                 .roundCode(roundCode)
                 .build();
