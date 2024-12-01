@@ -1,6 +1,6 @@
 package com.monglife.mongs.app.manager.management.dto.response;
 
-import com.monglife.mongs.app.manager.management.dto.etc.GetFeedItemDto;
+import com.monglife.mongs.domain.mong.dto.etc.GetFeedItemDto;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

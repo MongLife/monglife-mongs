@@ -1,9 +1,9 @@
 package com.monglife.mongs.app.activity.battle.controller;
 
 import com.monglife.core.dto.response.ResponseDto;
-import com.monglife.mongs.app.activity.global.enums.ActivityResponse;
-import com.monglife.mongs.app.activity.battle.service.BattleService;
-import com.monglife.mongs.app.activity.battle.service.MatchingService;
+import com.monglife.mongs.app.activity.battle.enums.BattleResponse;
+import com.monglife.mongs.domain.battle.service.BattleService;
+import com.monglife.mongs.domain.battle.service.MatchingService;
 import com.monglife.mongs.module.security.global.principal.Passport;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -36,7 +36,7 @@ public class MatchingController {
 
         matchingService.createWaitMatching(accountId, deviceId, mongId);
 
-        return ResponseEntity.ok().body(ActivityResponse.ACTIVITY_BATTLE_CREATE_WAIT_MATCHING.toResponseDto());
+        return ResponseEntity.ok().body(BattleResponse.ACTIVITY_BATTLE_CREATE_WAIT_MATCHING.toResponseDto());
     }
 
     /**
@@ -53,6 +53,6 @@ public class MatchingController {
 
         matchingService.deleteWaitMatching(accountId, deviceId, mongId);
 
-        return ResponseEntity.ok().body(ActivityResponse.ACTIVITY_BATTLE_DELETE_WAIT_MATCHING.toResponseDto());
+        return ResponseEntity.ok().body(BattleResponse.ACTIVITY_BATTLE_DELETE_WAIT_MATCHING.toResponseDto());
     }
 }

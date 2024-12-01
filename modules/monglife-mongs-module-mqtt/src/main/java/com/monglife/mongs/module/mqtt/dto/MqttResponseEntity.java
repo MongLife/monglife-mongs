@@ -1,0 +1,53 @@
+package com.monglife.mongs.module.mqtt.dto;
+
+import lombok.Builder;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
+
+import java.util.ArrayList;
+import java.util.List;
+
+@Getter
+@Setter
+@ToString
+public class MqttResponseEntity<T> {
+
+    private T body;
+
+    private List<String> topics;
+
+    @Builder
+    public MqttResponseEntity(T body, List<String> topics) {
+        this.body = body;
+        this.topics = topics;
+    }
+
+    public static <T> MqttResponseEntity<T> body() {
+        return new MqttResponseEntity<T>(null, new ArrayList<>());
+    }
+
+    public static <T> MqttResponseEntityBuilder<T> body(T body) {
+        return new MqttResponseEntityBuilder<T>().body(body);
+    }
+
+    public static class MqttResponseEntityBuilder<T> {
+
+        private T body;
+
+        private List<String> topics;
+
+        MqttResponseEntityBuilder() {
+        }
+
+        public MqttResponseEntityBuilder<T> body(final T body) {
+            this.body = body;
+            return this;
+        }
+
+        public MqttResponseEntity<T> topics(final List<String> topics) {
+            this.topics = topics;
+            return new MqttResponseEntity<T>(this.body, this.topics);
+        }
+    }
+}

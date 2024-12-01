@@ -22,6 +22,18 @@ import java.util.Set;
 @RestControllerAdvice
 public class ManagerExceptionHandler {
 
+    /**
+     * exception handler
+     * @param e 예외 객체
+     * @return 에러 응답 객체
+     */
+    @ExceptionHandler(ErrorException.class)
+    private ResponseEntity<ResponseDto<Map<String, Object>>> handleErrorException(ErrorException e) {
+        return ResponseEntity
+                .status(e.getResponse().getHttpStatus())
+                .body(e.getResponse().toResponseDto(e.getResult()));
+    }
+
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<ResponseDto<Map<String, Object>>> handleMethodArgumentNotValidException(MethodArgumentNotValidException e) {
 
@@ -104,17 +116,5 @@ public class ManagerExceptionHandler {
         return ResponseEntity
                 .status(GlobalResponse.INVALID_PARAMETER.getHttpStatus())
                 .body(GlobalResponse.INVALID_PARAMETER.toResponseDto(Map.of("message", message)));
-    }
-
-    /**
-     * exception handler
-     * @param e 예외 객체
-     * @return 에러 응답 객체
-     */
-    @ExceptionHandler(ErrorException.class)
-    private ResponseEntity<ResponseDto<Map<String, Object>>> handleErrorException(ErrorException e) {
-        return ResponseEntity
-                .status(e.getResponse().getHttpStatus())
-                .body(e.getResponse().toResponseDto(e.getResult()));
     }
 }

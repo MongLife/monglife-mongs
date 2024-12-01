@@ -1,6 +1,10 @@
 dependencies {
-    implementation project(':modules:monglife-mongs-module-jpa')
+    // domains
+    implementation project(':domains:monglife-mongs-domain-member')
+
+    // modules
     implementation project(':modules:monglife-mongs-module-security')
+    implementation project(':modules:monglife-mongs-module-mqtt')
 }
 
 tasks.register('copyPrivate', Copy) {

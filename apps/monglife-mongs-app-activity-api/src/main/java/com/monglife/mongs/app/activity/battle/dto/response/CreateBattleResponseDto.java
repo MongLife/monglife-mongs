@@ -1,6 +1,6 @@
 package com.monglife.mongs.app.activity.battle.dto.response;
 
-import com.monglife.mongs.app.activity.battle.vo.BattlePlayerVo;
+import com.monglife.mongs.domain.battle.vo.BattlePlayerVo;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

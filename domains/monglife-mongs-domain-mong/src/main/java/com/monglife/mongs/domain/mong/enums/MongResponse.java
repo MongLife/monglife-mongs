@@ -1,0 +1,45 @@
+package com.monglife.mongs.domain.mong.enums;
+
+import com.monglife.core.dto.response.ResponseDto;
+import com.monglife.core.enums.response.Response;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import org.springframework.http.HttpStatus;
+
+import java.util.Collections;
+import java.util.Map;
+
+@Getter
+@AllArgsConstructor
+public enum MongResponse implements Response {
+
+    /**
+     * 실패 응답
+     */
+    DOMAIN_MONG_NOT_EXISTS_MONG_TYPE(HttpStatus.BAD_REQUEST.value(), "MANAGER-MANAGEMENT-100", "몽 타입이 존재하지 않습니다."),
+    DOMAIN_MONG_NOT_EXISTS_FOOD_TYPE(HttpStatus.BAD_REQUEST.value(), "MANAGER-MANAGEMENT-101", "음식 타입이 존재하지 않습니다."),
+    DOMAIN_MONG_NOT_EXISTS_MONG(HttpStatus.BAD_REQUEST.value(), "MANAGER-MANAGEMENT-101", "몽이 존재하지 않습니다."),
+    DOMAIN_MONG_NOT_ENOUGH_PAY_POINT(HttpStatus.BAD_REQUEST.value(), "MANAGER-MANAGEMENT-101", "충분한 Paypoint 가 없습니다."),
+    DOMAIN_MONG_INVALID_MONG_TYPE_LEVEL(HttpStatus.BAD_REQUEST.value(), "MANAGER-MANAGEMENT-101", "변경이 불가능한 몽 상태입니다."),
+    DOMAIN_MONG_INVALID_FEED(HttpStatus.BAD_REQUEST.value(), "MANAGER-MANAGEMENT-101", "현재 섭취가 불가능한 음식입니다."),
+    DOMAIN_MONG_INVALID_EVOLUTION(HttpStatus.BAD_REQUEST.value(), "MANAGER-MANAGEMENT-101", "진화 가능한 상태가 압니다."),
+    DOMAIN_MONG_INVALID_GRADUATE(HttpStatus.BAD_REQUEST.value(), "MANAGER-MANAGEMENT-101", "졸업 가능한 상태가 압니다."),
+    ;
+
+    private final Integer httpStatus;
+
+    private final String code;
+
+    private final String message;
+
+    @Override
+    public ResponseDto<Map<String, Object>> toResponseDto() {
+        return new ResponseDto<>(code, message, httpStatus, Collections.emptyMap());
+    }
+
+    @Override
+    public <T> ResponseDto<T> toResponseDto(T result) {
+        return new ResponseDto<>(code, message, httpStatus, result);
+    }
+
+}

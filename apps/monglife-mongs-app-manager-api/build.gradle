@@ -1,13 +1,11 @@
 dependencies {
-    implementation project(':modules:monglife-mongs-module-jpa')
+    // domains
+    implementation project(':domains:monglife-mongs-domain-mong')
+    implementation project(':domains:monglife-mongs-domain-task')
+
+    // modules
     implementation project(':modules:monglife-mongs-module-security')
-
-    // redis
-    implementation 'org.springframework.boot:spring-boot-starter-data-redis'
-
-    // mqtt
-    implementation 'org.springframework.boot:spring-boot-starter-integration'
-    implementation 'org.springframework.integration:spring-integration-mqtt'
+    implementation project(':modules:monglife-mongs-module-mqtt')
 }
 
 tasks.register('copyPrivate', Copy) {

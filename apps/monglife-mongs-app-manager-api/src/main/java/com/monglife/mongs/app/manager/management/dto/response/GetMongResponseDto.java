@@ -1,6 +1,6 @@
 package com.monglife.mongs.app.manager.management.dto.response;
 
-import com.monglife.mongs.app.manager.management.dto.etc.GetMongDto;
+import com.monglife.mongs.domain.mong.dto.etc.GetMongDto;
 import lombok.*;
 
 import java.util.List;

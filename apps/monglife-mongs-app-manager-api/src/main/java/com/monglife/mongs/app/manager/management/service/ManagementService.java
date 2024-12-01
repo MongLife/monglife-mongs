@@ -1,320 +1,100 @@
 package com.monglife.mongs.app.manager.management.service;
 
-import com.monglife.mongs.app.manager.management.domain.*;
-import com.monglife.mongs.app.manager.management.dto.etc.GetFeedItemDto;
-import com.monglife.mongs.app.manager.management.dto.etc.GetMongDto;
-import com.monglife.mongs.app.manager.management.dto.etc.UpdateMongStatusDto;
-import com.monglife.mongs.app.manager.management.enums.MongStateCode;
-import com.monglife.mongs.app.manager.management.exception.*;
-import com.monglife.mongs.app.manager.management.repository.FoodTypeRepository;
-import com.monglife.mongs.app.manager.management.repository.MongFeedHistoryRepository;
-import com.monglife.mongs.app.manager.management.repository.MongRepository;
-import com.monglife.mongs.app.manager.management.repository.MongTypeRepository;
+import com.monglife.mongs.domain.task.service.TaskService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
+import java.time.Duration;
 import java.time.LocalTime;
-import java.util.List;
-import java.util.Random;
-import java.util.UUID;
 
 @Slf4j
 @Service
 @RequiredArgsConstructor
 public class ManagementService {
 
-    private static final Random random = new Random();
+    @Value("${application.app-code}")
+    private String APP_CODE;
 
-    private static final String  MONG_TYPE_EGG_GROUP_CODE = "GCH000";
+    @Value("${application.scheduler.task.sleep.code}")
+    private String TASK_SLEEP_CODE;
+    private static final Long TASK_SLEEP_EXPIRATION = 60 * 60 * 24L;
 
-    private static final Integer DEFAULT_EVOLUTION_SCORE = 200;
-    private static final Integer DEFAULT_PAY_POINT = 50;
-    private static final Double  DEFAULT_STROKE_EXP = 15D;
-    private static final Double  DEFAULT_POOP_CLEAN_EXP = 15D;
+    @Value("${application.scheduler.task.wakeup.code}")
+    private String TASK_WAKEUP_CODE;
+    private static final Long TASK_WAKEUP_EXPIRATION = 60 * 60 * 24L;
+
+    @Value("${application.scheduler.task.egg-evolution.code}")
+    private String TASK_EGG_EVOLUTION_CODE;
+    @Value("${application.scheduler.task.egg-evolution.expiration}")
+    private Long TASK_EGG_EVOLUTION_EXPIRATION;
+
+    @Value("${application.scheduler.task.status-increase.code}")
+    private String TASK_STATUS_INCREASE_CODE;
+    @Value("${application.scheduler.task.status-increase.expiration}")
+    private Long TASK_STATUS_INCREASE_EXPIRATION;
+
+    @Value("${application.scheduler.task.status-decrease.code}")
+    private String TASK_STATUS_DECREASE_CODE;
+    @Value("${application.scheduler.task.status-decrease.expiration}")
+    private Long TASK_STATUS_DECREASE_EXPIRATION;
+
+    @Value("${application.scheduler.task.poop-increase.code}")
+    private String TASK_POOP_INCREASE_CODE;
+    @Value("${application.scheduler.task.poop-increase.expiration}")
+    private Long TASK_POOP_INCREASE_EXPIRATION;
 
 
-    private final MongRepository mongRepository;
-
-    private final MongFeedHistoryRepository mongFeedHistoryRepository;
-
-    private final MongTypeRepository mongTypeRepository;
-
-    private final FoodTypeRepository foodTypeRepository;
+    private final TaskService taskService;
 
 
-    /**
-     * 몽 목록 조회
-     * @param accountId 계정 ID
-     * @return 몽 목록
-     */
-    @Transactional(readOnly = true)
-    public List<GetMongDto> getMongs(Long accountId) {
-
-        List<MongEntity> mongEntities = mongRepository.findByAccountIdAndStateIsActiveIsTrue(accountId);
-
-        return mongEntities.stream()
-                .map(GetMongDto::of)
-                .toList();
-    }
-
-    /**
-     * 몽 단건 조회
-     * @param accountId 계정 ID
-     * @param mongId 몽 ID
-     * @return 몽 정보
-     */
-    @Transactional(readOnly = true)
-    public GetMongDto getMong(Long accountId, Long mongId) {
-
-        MongEntity mongEntity = mongRepository.findByAccountIdAndMongIdAndStateIsActiveIsTrue(accountId, mongId)
-                .orElseThrow(() -> new NotExistsMongException(accountId, mongId));
-
-        log.info("{}", mongEntity);
-
-        return GetMongDto.of(mongEntity);
-    }
-
-    /**
-     * 먹이 목록 조회
-     * @param accountId 계정 ID
-     * @param mongId 몽 ID
-     * @param foodTypeGroupCode 음식 or 간식 그룹 코드
-     * @return 구매 가능 여부를 포함한 음식/간식 목록
-     */
-    @Transactional(readOnly = true)
-    public List<GetFeedItemDto> getFeedItems(Long accountId, Long mongId, String foodTypeGroupCode) {
-
-        mongRepository.findByAccountIdAndMongIdAndStateIsActiveIsTrue(accountId, mongId)
-                .orElseThrow(() -> new NotExistsMongException(accountId, mongId));
-
-        return foodTypeRepository.findByFoodCodeGroupCode(foodTypeGroupCode).stream()
-                .map(foodTypeEntity -> {
-
-                    String foodTypeCode = foodTypeEntity.getFoodCode().getComnCode();
-
-                    Boolean isCanBuy = mongFeedHistoryRepository.findByMongIdAndFoodTypeCode(mongId, foodTypeCode).isEmpty();
-
-                    return GetFeedItemDto.builder()
-                            .isCanBuy(isCanBuy)
-                            .foodTypeCode(foodTypeCode)
-                            .price(foodTypeEntity.getPrice())
-                            .foodTypeName(foodTypeEntity.getFoodCode().getComnName())
-                            .foodTypeGroupCode(foodTypeEntity.getFoodCode().getGroupCode())
-                            .addWeightValue(foodTypeEntity.getAddWeightValue())
-                            .addStrengthValue(foodTypeEntity.getAddStrengthValue())
-                            .addSatietyValue(foodTypeEntity.getAddSatietyValue())
-                            .addHealthyValue(foodTypeEntity.getAddHealthyValue())
-                            .addFatigueValue(foodTypeEntity.getAddFatigueValue())
-                            .build();
-                })
-                .toList();
-    }
-
-    /**
-     * 몽 생성
-     * @param accountId 계정 ID
-     * @param name 몽 이름
-     * @param sleepAt 몽 정기 수면 시작 시간
-     * @param wakeupAt 몽 정기 수면 종료 시간
-     */
     @Transactional
-    public void createMong(Long accountId, String name, LocalTime sleepAt, LocalTime wakeupAt) {
+    public void eggEvolutionScheduler(Long mongId) {
 
-        List<MongTypeEntity> mongTypeEntities = mongTypeRepository.findByMongCodeGroupCode(MONG_TYPE_EGG_GROUP_CODE);
+        String taskOwnerId = String.valueOf(mongId);
 
-        if (mongTypeEntities.isEmpty()) {
-            throw new NotExistsMongTypeCodeException();
-        }
-
-        int mongTypeCodeIndex = random.nextInt(0, mongTypeEntities.size());
-        MongTypeEntity mongTypeEntity = mongTypeEntities.get(mongTypeCodeIndex);
-
-        MongEntity mongEntity = MongEntity.builder()
-                .accountId(accountId)
-                .mongName(name)
-                .type(mongTypeEntity)
-                .sleepAt(sleepAt)
-                .wakeupAt(wakeupAt)
-                .payPoint(DEFAULT_PAY_POINT)
-                .build();
-
-        mongRepository.save(mongEntity);
-
-        // TODO: 알 깨기 스케줄러 시작
+        taskService.createTask(APP_CODE, taskOwnerId, TASK_EGG_EVOLUTION_CODE, TASK_EGG_EVOLUTION_EXPIRATION);
     }
 
-    /**
-     * 몽 삭제
-     * @param accountId 계정 ID
-     * @param mongId 몽 ID
-     */
     @Transactional
-    public void deleteMong(Long accountId, Long mongId) {
+    public void cycleSleepScheduler(Long mongId, LocalTime sleepAt, LocalTime wakeupAt) {
 
-        MongEntity mongEntity = mongRepository.findByAccountIdAndMongIdAndStateIsActiveIsTrue(accountId, mongId)
-                .orElseThrow(() -> new NotExistsMongException(accountId, mongId));
+        String taskOwnerId = String.valueOf(mongId);
 
-        // TODO: 모든 스케줄러 중단
+        Long sleepExpirationSeconds = Duration.between(LocalTime.now(), sleepAt).getSeconds();
+        taskService.createTask(APP_CODE, taskOwnerId, TASK_SLEEP_CODE, sleepExpirationSeconds, Boolean.TRUE, TASK_SLEEP_EXPIRATION);
 
-        mongEntity.delete();
+        Long wakeupExpirationSeconds = Duration.between(LocalTime.now(), wakeupAt).getSeconds();
+        taskService.createTask(APP_CODE, taskOwnerId, TASK_WAKEUP_CODE, wakeupExpirationSeconds, Boolean.TRUE, TASK_WAKEUP_EXPIRATION);
     }
 
-    /**
-     * 몽 먹이 주기
-     * @param accountId 계정 ID
-     * @param mongId 몽 ID
-     * @param foodTypeCode 음식/간식 타입 코드
-     */
     @Transactional
-    public void feedMong(Long accountId, Long mongId, String foodTypeCode) {
+    public void cycleIncreaseStatusScheduler(Long mongId) {
 
-        mongFeedHistoryRepository.findByMongIdAndFoodTypeCode(mongId, foodTypeCode)
-                .ifPresent(mongFeedHistory -> {
-                    LocalDateTime expirationAt = LocalDateTime.now().plusNanos(mongFeedHistory.getExpiration());
-                    throw new InvalidFeedException(mongId, foodTypeCode, expirationAt); });
+        String taskOwnerId = String.valueOf(mongId);
 
-        FoodTypeEntity foodTypeEntity = foodTypeRepository.findByFoodCodeComnCode(foodTypeCode)
-                .orElseThrow(() -> new NotExistsFoodTypeCodeException(foodTypeCode));
-
-        MongEntity mongEntity = mongRepository.findByAccountIdAndMongIdAndStateIsActiveIsTrue(accountId, mongId)
-                .orElseThrow(() -> new NotExistsMongException(accountId, mongId));
-
-        UpdateMongStatusDto updateMongStatusDto = UpdateMongStatusDto.builder()
-                .addWeightValue(foodTypeEntity.getAddWeightValue())
-                .addStrengthValue(foodTypeEntity.getAddStrengthValue())
-                .addSatietyValue(foodTypeEntity.getAddSatietyValue())
-                .addHealthyValue(foodTypeEntity.getAddHealthyValue())
-                .addFatigueValue(foodTypeEntity.getAddFatigueValue())
-                .build();
-
-        mongEntity.feed(updateMongStatusDto);
-
-        MongFeedHistoryEntity mongFeedHistoryEntity = MongFeedHistoryEntity.builder()
-                .mongFeedHistoryId(UUID.randomUUID().toString())
-                .mongId(mongId)
-                .foodTypeCode(foodTypeCode)
-                .expiration(foodTypeEntity.getDelaySeconds().longValue())
-                .build();
-
-        mongFeedHistoryRepository.save(mongFeedHistoryEntity);
+        taskService.deleteTask(APP_CODE, taskOwnerId, TASK_STATUS_DECREASE_CODE);
+        taskService.deleteTask(APP_CODE, taskOwnerId, TASK_POOP_INCREASE_CODE);
+        taskService.createTask(APP_CODE, taskOwnerId, TASK_STATUS_INCREASE_CODE, Boolean.TRUE, TASK_STATUS_INCREASE_EXPIRATION);
     }
 
-    /**
-     * 몽 쓰다 듬기
-     * @param accountId 계정 ID
-     * @param mongId 몽 ID
-     */
     @Transactional
-    public void strokeMong(Long accountId, Long mongId) {
+    public void cycleDecreaseStatusScheduler(Long mongId) {
 
-        MongEntity mongEntity = mongRepository.findByAccountIdAndMongIdAndStateIsActiveIsTrue(accountId, mongId)
-                .orElseThrow(() -> new NotExistsMongException(accountId, mongId));
+        String taskOwnerId = String.valueOf(mongId);
 
-        mongEntity.stroke(DEFAULT_STROKE_EXP);
+        taskService.deleteTask(APP_CODE, taskOwnerId, TASK_STATUS_INCREASE_CODE);
+        taskService.createTask(APP_CODE, taskOwnerId, TASK_STATUS_DECREASE_CODE, Boolean.TRUE, TASK_STATUS_DECREASE_EXPIRATION);
+        taskService.createTask(APP_CODE, taskOwnerId, TASK_POOP_INCREASE_CODE, Boolean.TRUE, TASK_POOP_INCREASE_EXPIRATION);
     }
 
-    /**
-     * 몽 수면/기상
-     * @param accountId 계정 ID
-     * @param mongId 몽 ID
-     */
     @Transactional
-    public void sleepMong(Long accountId, Long mongId) {
+    public void stopAllScheduler(Long mongId) {
 
-        MongEntity mongEntity = mongRepository.findByAccountIdAndMongIdAndStateIsActiveIsTrue(accountId, mongId)
-                .orElseThrow(() -> new NotExistsMongException(accountId, mongId));
+        String taskOwnerId = String.valueOf(mongId);
 
-        if (mongEntity.getState().getIsSleep()) {
-            mongEntity.wakeup();
-        } else {
-            mongEntity.sleep();
-        }
-
-        // TODO: 수면 스케줄러 변경
-    }
-
-    /**
-     * 배변 처리
-     * @param accountId 계정 ID
-     * @param mongId 몽 ID
-     */
-    @Transactional
-    public void poopCleanMong(Long accountId, Long mongId) {
-
-        MongEntity mongEntity = mongRepository.findByAccountIdAndMongIdAndStateIsActiveIsTrue(accountId, mongId)
-                .orElseThrow(() -> new NotExistsMongException(accountId, mongId));
-
-        mongEntity.poopClean(DEFAULT_POOP_CLEAN_EXP);
-    }
-
-    /**
-     * 몽 진화
-     * 1. 진화 준비 상태인 경우에 가능
-     * 2. 더이상 진화가 불가능 한 경우 졸업 준비로 상태 변경
-     * @param accountId 계정 ID
-     * @param mongId 몽 ID
-     */
-    @Transactional
-    public void evolutionMong(Long accountId, Long mongId) {
-
-        MongEntity mongEntity = mongRepository.findByAccountIdAndMongIdAndStateIsActiveIsTrue(accountId, mongId)
-                .orElseThrow(() -> new NotExistsMongException(accountId, mongId));
-
-        if (!MongStateCode.EVOLUTION_READY.equals(mongEntity.getState().getCode())) {
-            throw new InvalidEvolutionException(accountId, mongId);
-        }
-
-        String nextTypeGroupCode = mongEntity.getType().getNextTypeGroupCode();
-
-        List<MongTypeEntity> mongTypeEntities = mongTypeRepository.findByMongCodeGroupCode(nextTypeGroupCode).stream()
-                .sorted((o1, o2) -> o2.getEvolutionScore().compareTo(o1.getEvolutionScore()))
-                .toList();
-
-        if (mongTypeEntities.isEmpty()) {
-
-            // 더이상 진화할 수 없는 경우 졸업 준비 처리
-            mongEntity.graduateReady();
-
-        } else {
-
-            // 진화가 가능한 경우
-            MongTypeEntity nextMongTypeEntity = mongTypeEntities.get(mongTypeEntities.size() - 1);
-
-            // 진화 점수 계산
-            double evolutionScore = DEFAULT_EVOLUTION_SCORE + mongEntity.getState().getReward() - mongEntity.getState().getPenalty();
-
-            // 점수에 맞는 다음 몽 타입 코드 선정
-            for (MongTypeEntity mongTypeEntity : mongTypeEntities) {
-                if (mongTypeEntity.getEvolutionScore() <= evolutionScore) {
-                    nextMongTypeEntity = mongTypeEntity;
-                    break;
-                }
-            }
-
-            // 진화 처리
-            mongEntity.evolution(nextMongTypeEntity);
-        }
-    }
-
-    /**
-     * 몽 졸업
-     * 1. 졸업 준비 상태인 경우에 가능
-     * @param accountId 계정 ID
-     * @param mongId 몽 ID
-     */
-    @Transactional
-    public void graduateMong(Long accountId, Long mongId) {
-
-        MongEntity mongEntity = mongRepository.findByAccountIdAndMongIdAndStateIsActiveIsTrue(accountId, mongId)
-                .orElseThrow(() -> new NotExistsMongException(accountId, mongId));
-
-        if (!MongStateCode.GRADUATE_READY.equals(mongEntity.getState().getCode())) {
-            throw new InvalidGraduateException(accountId, mongId);
-        }
-
-        mongEntity.graduate();
+        taskService.deleteAllTasks(APP_CODE, taskOwnerId);
     }
 }

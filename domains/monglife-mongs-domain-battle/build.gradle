@@ -1,0 +1,13 @@
+dependencies {
+    // modules
+    api project(':modules:monglife-mongs-module-jpa')
+    implementation project(':modules:monglife-mongs-module-redis')
+}
+
+tasks.register('copyPrivate', Copy) {
+    copy {
+        from '../../configs/domains/monglife-mongs-domain-battle/'
+        include 'application*.yml'
+        into 'src/main/resources'
+    }
+}

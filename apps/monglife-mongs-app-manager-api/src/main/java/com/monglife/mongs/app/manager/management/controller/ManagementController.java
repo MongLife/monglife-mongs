@@ -1,14 +1,14 @@
 package com.monglife.mongs.app.manager.management.controller;
 
 import com.monglife.core.dto.response.ResponseDto;
-import com.monglife.mongs.app.manager.global.enums.ManagerResponse;
-import com.monglife.mongs.app.manager.management.dto.etc.GetFeedItemDto;
-import com.monglife.mongs.app.manager.management.dto.etc.GetMongDto;
 import com.monglife.mongs.app.manager.management.dto.request.CreateMongRequestDto;
 import com.monglife.mongs.app.manager.management.dto.request.FeedMongRequestDto;
 import com.monglife.mongs.app.manager.management.dto.response.GetFeedItemsResponseDto;
 import com.monglife.mongs.app.manager.management.dto.response.GetMongResponseDto;
-import com.monglife.mongs.app.manager.management.service.ManagementService;
+import com.monglife.mongs.app.manager.management.enums.ManagerResponse;
+import com.monglife.mongs.domain.mong.dto.etc.GetFeedItemDto;
+import com.monglife.mongs.domain.mong.dto.etc.GetMongDto;
+import com.monglife.mongs.domain.mong.service.MongService;
 import com.monglife.mongs.module.security.global.principal.Passport;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
@@ -28,7 +28,7 @@ import java.util.List;
 @RequestMapping("/manager/management")
 public class ManagementController {
 
-    private final ManagementService managementService;
+    private final MongService mongService;
 
 
     /**
@@ -41,7 +41,7 @@ public class ManagementController {
 
         Long accountId = passport.getAccountId();
 
-        List<GetMongDto> getMongDtos = managementService.getMongs(accountId);
+        List<GetMongDto> getMongDtos = mongService.getMongs(accountId);
 
         List<GetMongResponseDto> getMongResponseDtos = GetMongResponseDto.toList(getMongDtos);
 
@@ -59,7 +59,7 @@ public class ManagementController {
 
         Long accountId = passport.getAccountId();
 
-        GetMongDto getMongDto = managementService.getMong(accountId, mongId);
+        GetMongDto getMongDto = mongService.getMong(accountId, mongId);
 
         GetMongResponseDto getMongResponseDto = GetMongResponseDto.of(getMongDto);
 
@@ -82,7 +82,7 @@ public class ManagementController {
 
         Long accountId = passport.getAccountId();
 
-        List<GetFeedItemDto> getFeedItemDtos = managementService.getFeedItems(accountId, mongId, foodTypeGroupCode);
+        List<GetFeedItemDto> getFeedItemDtos = mongService.getFeedItems(accountId, mongId, foodTypeGroupCode);
 
         GetFeedItemsResponseDto getFeedItemsResponseDto = GetFeedItemsResponseDto.builder()
                 .mongId(mongId)
@@ -106,7 +106,7 @@ public class ManagementController {
         LocalTime sleepAt = createMongRequestDto.getSleepAt();
         LocalTime wakeupAt = createMongRequestDto.getWakeupAt();
 
-        managementService.createMong(accountId, name, sleepAt, wakeupAt);
+        mongService.createMong(accountId, name, sleepAt, wakeupAt);
 
         return ResponseEntity.ok(ManagerResponse.MANAGER_MANAGEMENT_CREATE_MONG.toResponseDto());
     }
@@ -122,7 +122,7 @@ public class ManagementController {
 
         Long accountId = passport.getAccountId();
 
-        managementService.deleteMong(accountId, mongId);
+        mongService.deleteMong(accountId, mongId);
 
         return ResponseEntity.ok(ManagerResponse.MANAGER_MANAGEMENT_DELETE_MONG.toResponseDto());
     }
@@ -140,7 +140,7 @@ public class ManagementController {
         Long accountId = passport.getAccountId();
         String foodTypeCode = feedMongRequestDto.getFoodTypeCode();
 
-        managementService.feedMong(accountId, mongId, foodTypeCode);
+        mongService.feedMong(accountId, mongId, foodTypeCode);
 
         return ResponseEntity.ok(ManagerResponse.MANAGER_MANAGEMENT_FEED_MONG.toResponseDto());
     }
@@ -156,7 +156,7 @@ public class ManagementController {
 
         Long accountId = passport.getAccountId();
 
-        managementService.strokeMong(accountId, mongId);
+        mongService.strokeMong(accountId, mongId);
 
         return ResponseEntity.ok(ManagerResponse.MANAGER_MANAGEMENT_STROKE_MONG.toResponseDto());
     }
@@ -172,7 +172,7 @@ public class ManagementController {
 
         Long accountId = passport.getAccountId();
 
-        managementService.sleepMong(accountId, mongId);
+        mongService.sleepMong(accountId, mongId);
 
         return ResponseEntity.ok(ManagerResponse.MANAGER_MANAGEMENT_SLEEP_MONG.toResponseDto());
     }
@@ -188,7 +188,7 @@ public class ManagementController {
 
         Long accountId = passport.getAccountId();
 
-        managementService.poopCleanMong(accountId, mongId);
+        mongService.poopCleanMong(accountId, mongId);
 
         return ResponseEntity.ok(ManagerResponse.MANAGER_MANAGEMENT_POOP_CLEAN_MONG.toResponseDto());
     }
@@ -204,7 +204,7 @@ public class ManagementController {
 
         Long accountId = passport.getAccountId();
 
-        managementService.evolutionMong(accountId, mongId);
+        mongService.evolutionMong(accountId, mongId);
 
         return ResponseEntity.ok(ManagerResponse.MANAGER_MANAGEMENT_EVOLUTION_MONG.toResponseDto());
     }
@@ -220,7 +220,7 @@ public class ManagementController {
 
         Long accountId = passport.getAccountId();
 
-        managementService.graduateMong(accountId, mongId);
+        mongService.graduateMong(accountId, mongId);
 
         return ResponseEntity.ok(ManagerResponse.MANAGER_MANAGEMENT_GRADUATE_MONG.toResponseDto());
     }

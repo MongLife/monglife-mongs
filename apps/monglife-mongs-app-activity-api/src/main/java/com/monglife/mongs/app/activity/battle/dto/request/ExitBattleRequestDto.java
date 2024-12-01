@@ -10,13 +10,10 @@ import lombok.Setter;
 @NoArgsConstructor
 public class ExitBattleRequestDto {
 
-    private Long roomId;
-
     private String playerId;
 
     @Builder
-    public ExitBattleRequestDto(Long roomId, String playerId) {
-        this.roomId = roomId;
+    public ExitBattleRequestDto(String playerId) {
         this.playerId = playerId;
     }
 }

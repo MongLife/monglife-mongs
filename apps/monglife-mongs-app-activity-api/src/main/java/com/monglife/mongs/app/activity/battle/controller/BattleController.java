@@ -1,88 +1,97 @@
 package com.monglife.mongs.app.activity.battle.controller;
 
 import com.monglife.core.dto.response.ResponseDto;
-import com.monglife.mongs.app.activity.battle.dto.etc.FightBattleDto;
-import com.monglife.mongs.app.activity.battle.dto.etc.OverBattleDto;
 import com.monglife.mongs.app.activity.battle.dto.request.EnterBattleRequestDto;
 import com.monglife.mongs.app.activity.battle.dto.request.ExitBattleRequestDto;
 import com.monglife.mongs.app.activity.battle.dto.request.PickBattleRequestDto;
-import com.monglife.mongs.app.activity.battle.dto.response.BattleResponseDto;
 import com.monglife.mongs.app.activity.battle.dto.response.FightBattleResponseDto;
 import com.monglife.mongs.app.activity.battle.dto.response.OverBattleResponseDto;
-import com.monglife.mongs.app.activity.battle.enums.BattleRoundCode;
-import com.monglife.mongs.app.activity.battle.enums.BattleStateCode;
-import com.monglife.mongs.app.activity.battle.service.BattleService;
-import com.monglife.mongs.app.activity.global.enums.ActivityResponse;
+import com.monglife.mongs.app.activity.battle.enums.BattleResponse;
+import com.monglife.mongs.domain.battle.dto.etc.EnterBattleDto;
+import com.monglife.mongs.domain.battle.dto.etc.ExitBattleDto;
+import com.monglife.mongs.domain.battle.dto.etc.PickBattleDto;
+import com.monglife.mongs.domain.battle.enums.BattleRoundCode;
+import com.monglife.mongs.domain.battle.service.BattleService;
+import com.monglife.mongs.domain.battle.vo.FightBattleVo;
+import com.monglife.mongs.domain.battle.vo.OverBattleVo;
+import com.monglife.mongs.module.mqtt.annotation.MqttConsumer;
+import com.monglife.mongs.module.mqtt.annotation.MqttMapping;
+import com.monglife.mongs.module.mqtt.annotation.MqttPayload;
+import com.monglife.mongs.module.mqtt.annotation.MqttPublish;
+import com.monglife.mongs.module.mqtt.dto.MqttResponseEntity;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.antlr.v4.runtime.misc.Pair;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
 @Slf4j
-@RestController
+@MqttConsumer @MqttMapping("/battle/match")
+@RestController @RequestMapping("/activity/battle/match")
 @RequiredArgsConstructor
-@RequestMapping("/activity/battle")
 public class BattleController {
 
     private final BattleService battleService;
 
 
-    @PostMapping("/enter")
-    public ResponseDto<BattleResponseDto<FightBattleResponseDto>> enterBattle(@RequestBody EnterBattleRequestDto enterBattleRequestDto) {
+    @MqttPublish
+    @MqttMapping("/{roomId}/enter")
+    public MqttResponseEntity<ResponseDto<FightBattleResponseDto>> enterBattle(
+            @PathVariable("roomId") Long roomId,
+            @MqttPayload EnterBattleRequestDto enterBattleRequestDto
+    ) {
 
-        Long roomId = enterBattleRequestDto.getRoomId();
         String playerId = enterBattleRequestDto.getPlayerId();
 
-        Pair<Boolean, FightBattleDto> enterBattlePair = battleService.enterBattle(roomId, playerId);
+        EnterBattleDto enterBattleDto = battleService.enterBattle(roomId, playerId);
 
-        Boolean isEnterAll = enterBattlePair.a;
-        FightBattleDto fightBattleDto = enterBattlePair.b;
+        Boolean isEnterAll = enterBattleDto.getIsEnterAll();
+        FightBattleVo fightBattleVo = enterBattleDto.getFightBattleVo();
 
-        if (isEnterAll && fightBattleDto != null) {
-            List<String> topics = List.of(String.valueOf(roomId));
+        if (isEnterAll && fightBattleVo != null) {
+            List<String> topics = List.of("match/" + roomId);
 
             FightBattleResponseDto fightBattleResponseDto = FightBattleResponseDto.builder()
                     .roomId(roomId)
-                    .round(fightBattleDto.getRound())
-                    .battlePlayers(fightBattleDto.getBattlePlayers())
-                    .isLastRound(fightBattleDto.getIsLastRound())
+                    .round(fightBattleVo.getRound())
+                    .battlePlayers(fightBattleVo.getBattlePlayers())
+                    .isLastRound(fightBattleVo.getIsLastRound())
                     .build();
 
-            // 게임 시작 시그널 반환
-            BattleResponseDto<FightBattleResponseDto> battleResponseDto = BattleResponseDto.<FightBattleResponseDto>builder()
-                    .code(BattleStateCode.BATTLE_FIGHT)
-                    .topics(topics)
-                    .data(fightBattleResponseDto)
-                    .build();
-
-            return ActivityResponse.ACTIVITY_BATTLE_ENTER_ALL_BATTLE_PLAYER.toResponseDto(battleResponseDto);
+            return MqttResponseEntity
+                    .body(BattleResponse.ACTIVITY_BATTLE_ENTER_ALL_BATTLE_PLAYER.toResponseDto(fightBattleResponseDto))
+                    .topics(topics);
         }
 
-        return ActivityResponse.ACTIVITY_BATTLE_NOT_EXISTS_BATTLE_RESPONSE.toResponseDto(null);
+        return MqttResponseEntity.body();
     }
 
-    @DeleteMapping("/exit")
-    public ResponseDto<BattleResponseDto<OverBattleResponseDto>> exitBattle(@RequestBody ExitBattleRequestDto exitBattleRequestDto) {
+    @MqttPublish
+    @MqttMapping("/{roomId}/exit")
+    public MqttResponseEntity<ResponseDto<OverBattleResponseDto>> exitBattle(
+            @PathVariable("roomId") Long roomId,
+            @MqttPayload ExitBattleRequestDto exitBattleRequestDto
+    ) {
 
-        Long roomId = exitBattleRequestDto.getRoomId();
         String playerId = exitBattleRequestDto.getPlayerId();
 
-        Pair<Boolean, List<OverBattleDto>> exitBattlePair = battleService.exitBattle(roomId, playerId);
+        ExitBattleDto exitBattleDto = battleService.exitBattle(roomId, playerId);
 
-        Boolean isExitAll = exitBattlePair.a;
-        List<OverBattleDto> overBattleDtos = exitBattlePair.b;
+        Boolean isExitAll = exitBattleDto.getIsExitAll();
+        List<OverBattleVo> overBattleVos = exitBattleDto.getOverBattleVos();
 
-        if (isExitAll && overBattleDtos != null) {
+        if (isExitAll && overBattleVos != null) {
             // 남은 플레이어 1명 승리로 처리
             battleService.overBattle(roomId);
 
-            List<String> topics = List.of(String.valueOf(roomId));
+            List<String> topics = List.of("battle/match/" + roomId);
 
-            String winPlayerId = overBattleDtos.isEmpty() ? "" : overBattleDtos.get(0).getPlayerId();
-            String winMongTypeCode = overBattleDtos.isEmpty() ? "" : overBattleDtos.get(0).getMongTypeCode();
+            String winPlayerId = overBattleVos.isEmpty() ? "" : overBattleVos.get(0).getPlayerId();
+            String winMongTypeCode = overBattleVos.isEmpty() ? "" : overBattleVos.get(0).getMongTypeCode();
 
             OverBattleResponseDto overBattleResponseDto = OverBattleResponseDto.builder()
                     .roomId(roomId)
@@ -90,69 +99,62 @@ public class BattleController {
                     .winMongTypeCode(winMongTypeCode)
                     .build();
 
-            // 게임 끝 시그널 반환
-            BattleResponseDto<OverBattleResponseDto> battleResponseDto = BattleResponseDto.<OverBattleResponseDto>builder()
-                    .code(BattleStateCode.BATTLE_OVER)
-                    .topics(topics)
-                    .data(overBattleResponseDto)
-                    .build();
-
-            return ActivityResponse.ACTIVITY_BATTLE_OVER_BATTLE.toResponseDto(battleResponseDto);
+            return MqttResponseEntity
+                    .body(BattleResponse.ACTIVITY_BATTLE_OVER_BATTLE.toResponseDto(overBattleResponseDto))
+                    .topics(topics);
         }
 
-        return ActivityResponse.ACTIVITY_BATTLE_NOT_EXISTS_BATTLE_RESPONSE.toResponseDto(null);
+        return MqttResponseEntity.body();
     }
 
-    @PostMapping("/pick")
-    public ResponseDto<BattleResponseDto<FightBattleResponseDto>> pickBattle(@RequestBody PickBattleRequestDto pickBattleRequestDto) {
+    @MqttPublish
+    @MqttMapping("/{roomId}/pick")
+    public MqttResponseEntity<ResponseDto<FightBattleResponseDto>> pickBattle(
+            @PathVariable("roomId") Long roomId,
+            @MqttPayload PickBattleRequestDto pickBattleRequestDto
+    ) {
 
-        Long roomId = pickBattleRequestDto.getRoomId();
         String playerId = pickBattleRequestDto.getPlayerId();
         String targetPlayerId = pickBattleRequestDto.getTargetPlayerId();
         BattleRoundCode battleRoundCode = pickBattleRequestDto.getPickCode();
 
-        Pair<Boolean, FightBattleDto> fightBattleDtoPair = battleService.pickBattle(roomId, playerId, targetPlayerId, battleRoundCode);
+        PickBattleDto pickBattleDto = battleService.pickBattle(roomId, playerId, targetPlayerId, battleRoundCode);
 
-        Boolean isPickAll = fightBattleDtoPair.a;
-        FightBattleDto fightBattleDto = fightBattleDtoPair.b;
+        Boolean isPickAll = pickBattleDto.getIsPickAll();
+        FightBattleVo fightBattleVo = pickBattleDto.getFightBattleVo();
 
-        if (isPickAll && fightBattleDto != null) {
+        if (isPickAll && fightBattleVo != null) {
             // 응답 전송 토픽
-            List<String> topics = List.of(String.valueOf(roomId));
+            List<String> topics = List.of("battle/match/" + roomId);
 
             // 결과 값 반환
             FightBattleResponseDto fightBattleResponseDto = FightBattleResponseDto.builder()
                     .roomId(roomId)
-                    .round(fightBattleDto.getRound())
-                    .battlePlayers(fightBattleDto.getBattlePlayers())
-                    .isLastRound(fightBattleDto.getIsLastRound())
-                    .build();
-
-            // 라운드 결과 정보 반환
-            BattleResponseDto<FightBattleResponseDto> battleResponseDto = BattleResponseDto.<FightBattleResponseDto>builder()
-                    .code(BattleStateCode.BATTLE_FIGHT)
-                    .topics(topics)
-                    .data(fightBattleResponseDto)
+                    .round(fightBattleVo.getRound())
+                    .battlePlayers(fightBattleVo.getBattlePlayers())
+                    .isLastRound(fightBattleVo.getIsLastRound())
                     .build();
 
             // 마지막 라운드 인 경우 배틀 종료 처리
-            if (fightBattleDto.getIsLastRound()) {
+            if (fightBattleVo.getIsLastRound()) {
                 battleService.overBattle(roomId);
             }
 
-            return ActivityResponse.ACTIVITY_BATTLE_FIGHT_BATTLE.toResponseDto(battleResponseDto);
+            return MqttResponseEntity
+                    .body(BattleResponse.ACTIVITY_BATTLE_FIGHT_BATTLE.toResponseDto(fightBattleResponseDto))
+                    .topics(topics);
         }
 
-        return ActivityResponse.ACTIVITY_BATTLE_NOT_EXISTS_BATTLE_RESPONSE.toResponseDto(null);
+        return MqttResponseEntity.body();
     }
 
     @GetMapping("/{roomId}")
     public ResponseEntity<ResponseDto<OverBattleResponseDto>> overBattle(@PathVariable("roomId") Long roomId) {
 
-        List<OverBattleDto> overBattleDtos = battleService.findOverBattle(roomId);
+        List<OverBattleVo> overBattleVos = battleService.findOverBattle(roomId);
 
-        String winPlayerId = overBattleDtos.isEmpty() ? "" : overBattleDtos.get(0).getPlayerId();
-        String winMongTypeCode = overBattleDtos.isEmpty() ? "" : overBattleDtos.get(0).getMongTypeCode();
+        String winPlayerId = overBattleVos.isEmpty() ? "" : overBattleVos.get(0).getPlayerId();
+        String winMongTypeCode = overBattleVos.isEmpty() ? "" : overBattleVos.get(0).getMongTypeCode();
 
         OverBattleResponseDto overBattleResponseDto = OverBattleResponseDto.builder()
                 .roomId(roomId)
@@ -160,6 +162,6 @@ public class BattleController {
                 .winMongTypeCode(winMongTypeCode)
                 .build();
 
-        return ResponseEntity.ok(ActivityResponse.ACTIVITY_BATTLE_OVER_BATTLE.toResponseDto(overBattleResponseDto));
+        return ResponseEntity.ok(BattleResponse.ACTIVITY_BATTLE_OVER_BATTLE.toResponseDto(overBattleResponseDto));
     }
 }
