@@ -1,8 +1,10 @@
 package com.monglife.mongs.domain.member.config;
 
+import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
+import org.hibernate.cfg.AvailableSettings;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.boot.autoconfigure.jdbc.DataSourceProperties;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -25,25 +27,41 @@ import java.util.Properties;
 )
 public class DataSourceConfig {
 
+    @Value("${spring.jpa.member.properties.hibernate.dialect}")
+    private String dialect;
+
+    @Value("${spring.jpa.member.properties.hibernate.hbm2ddl.auto}")
+    private String ddlAuto;
+
+    @Value("${spring.jpa.member.properties.hibernate.show_sql}")
+    private String showSql;
+
     @Bean(name = "memberDataSourceProperties")
-    @ConfigurationProperties(prefix = "spring.datasource")
-    public DataSourceProperties memberDataSourceProperties() {
-        return new DataSourceProperties();
+    @ConfigurationProperties(prefix = "spring.datasource.member.hikari")
+    public HikariConfig memberDataSourceProperties() {
+        return new HikariConfig();
     }
 
     @Bean(name = "memberDataSource")
-    @ConfigurationProperties(prefix = "spring.datasource.hikari")
     public DataSource memberDataSource() {
-        return memberDataSourceProperties().initializeDataSourceBuilder()
-                .type(HikariDataSource.class)
-                .build();
+        return new HikariDataSource(memberDataSourceProperties());
+    }
+
+    @Bean(name = "memberJpaProperties")
+    public Properties memberJpaProperties(@Qualifier("jpaProperties") Properties properties) {
+        Properties jpaProperties = new Properties();
+        jpaProperties.put(AvailableSettings.DIALECT, dialect);
+        jpaProperties.put(AvailableSettings.HBM2DDL_AUTO, ddlAuto);
+        properties.put(AvailableSettings.SHOW_SQL, showSql);
+        properties.keySet().forEach(field -> jpaProperties.put(field, properties.get(field)));
+        return jpaProperties;
     }
 
     @Bean(name = "memberEntityManager")
-    public LocalContainerEntityManagerFactoryBean memberEntityManager(@Qualifier("jpaProperties") Properties jpaProperties) {
+    public LocalContainerEntityManagerFactoryBean memberEntityManager(@Qualifier("memberJpaProperties") Properties jpaProperties) {
         LocalContainerEntityManagerFactoryBean em = new LocalContainerEntityManagerFactoryBean();
         em.setDataSource(memberDataSource());
-        em.setPackagesToScan("com.monglife.mongs.domain.member.entity");
+        em.setPackagesToScan("com.monglife.mongs.**.entity");
         em.setJpaVendorAdapter(new HibernateJpaVendorAdapter());
         em.setJpaProperties(jpaProperties);
         return em;

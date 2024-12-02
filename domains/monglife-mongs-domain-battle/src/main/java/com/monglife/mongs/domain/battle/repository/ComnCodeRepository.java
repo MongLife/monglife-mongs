@@ -1,6 +1,6 @@
 package com.monglife.mongs.domain.battle.repository;
 
-import com.monglife.mongs.domain.battle.entity.ComnCodeEntity;
+import com.monglife.mongs.module.jpa.entity.ComnCodeEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;

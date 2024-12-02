@@ -1,8 +1,11 @@
 package com.monglife.mongs.domain.mong.config;
 
+import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
+import lombok.extern.slf4j.Slf4j;
+import org.hibernate.cfg.AvailableSettings;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.boot.autoconfigure.jdbc.DataSourceProperties;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -16,34 +19,51 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 import javax.sql.DataSource;
 import java.util.Properties;
 
+@Slf4j
 @Configuration("mongDataSourceConfig")
-@EnableTransactionManagement(proxyTargetClass = true)
+@EnableTransactionManagement
 @EnableJpaRepositories(
-        basePackages =  "com.monglife.mongs.domain.mong.repository",
+        basePackages = "com.monglife.mongs.domain.mong.repository",
         entityManagerFactoryRef = "mongEntityManager",
         transactionManagerRef = "mongTransactionManager"
 )
 public class DataSourceConfig {
 
+    @Value("${spring.jpa.mong.properties.hibernate.dialect}")
+    private String dialect;
+
+    @Value("${spring.jpa.mong.properties.hibernate.hbm2ddl.auto}")
+    private String ddlAuto;
+
+    @Value("${spring.jpa.mong.properties.hibernate.show_sql}")
+    private String showSql;
+
     @Bean(name = "mongDataSourceProperties")
-    @ConfigurationProperties(prefix = "spring.datasource")
-    public DataSourceProperties mongDataSourceProperties() {
-        return new DataSourceProperties();
+    @ConfigurationProperties(prefix = "spring.datasource.mong.hikari")
+    public HikariConfig mongDataSourceProperties() {
+        return new HikariConfig();
     }
 
     @Bean(name = "mongDataSource")
-    @ConfigurationProperties(prefix = "spring.datasource.hikari")
     public DataSource mongDataSource() {
-        return mongDataSourceProperties().initializeDataSourceBuilder()
-                .type(HikariDataSource.class)
-                .build();
+        return new HikariDataSource(mongDataSourceProperties());
+    }
+
+    @Bean(name = "mongJpaProperties")
+    public Properties mongJpaProperties(@Qualifier("jpaProperties") Properties properties) {
+        Properties jpaProperties = new Properties();
+        jpaProperties.put(AvailableSettings.DIALECT, dialect);
+        jpaProperties.put(AvailableSettings.HBM2DDL_AUTO, ddlAuto);
+        properties.put(AvailableSettings.SHOW_SQL, showSql);
+        properties.keySet().forEach(field -> jpaProperties.put(field, properties.get(field)));
+        return jpaProperties;
     }
 
     @Bean(name = "mongEntityManager")
-    public LocalContainerEntityManagerFactoryBean mongEntityManager(@Qualifier("jpaProperties") Properties jpaProperties) {
+    public LocalContainerEntityManagerFactoryBean mongEntityManager(@Qualifier("mongJpaProperties") Properties jpaProperties) {
         LocalContainerEntityManagerFactoryBean em = new LocalContainerEntityManagerFactoryBean();
         em.setDataSource(mongDataSource());
-        em.setPackagesToScan("com.monglife.mongs.domain.mong.entity");
+        em.setPackagesToScan("com.monglife.mongs.**.entity");
         em.setJpaVendorAdapter(new HibernateJpaVendorAdapter());
         em.setJpaProperties(jpaProperties);
         return em;

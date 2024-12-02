@@ -1,13 +1,12 @@
 package com.monglife.mongs.domain.mong.service;
 
+import com.monglife.mongs.domain.mong.dto.etc.GetFeedItemDto;
+import com.monglife.mongs.domain.mong.dto.etc.GetMongDto;
+import com.monglife.mongs.domain.mong.dto.etc.UpdateMongStatusDto;
 import com.monglife.mongs.domain.mong.entity.FoodTypeEntity;
 import com.monglife.mongs.domain.mong.entity.MongEntity;
 import com.monglife.mongs.domain.mong.entity.MongFeedHistoryEntity;
 import com.monglife.mongs.domain.mong.entity.MongTypeEntity;
-import com.monglife.mongs.domain.mong.dto.etc.GetFeedItemDto;
-import com.monglife.mongs.domain.mong.dto.etc.GetMongDto;
-import com.monglife.mongs.domain.mong.dto.etc.UpdateMongStatusDto;
-import com.monglife.mongs.domain.mong.dto.event.*;
 import com.monglife.mongs.domain.mong.enums.MongStateCode;
 import com.monglife.mongs.domain.mong.exception.*;
 import com.monglife.mongs.domain.mong.repository.FoodTypeRepository;
@@ -17,7 +16,6 @@ import com.monglife.mongs.domain.mong.repository.MongTypeRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -43,16 +41,11 @@ public class MongService {
     private static final Double  DEFAULT_STROKE_EXP = 15D;
     private static final Double  DEFAULT_POOP_CLEAN_EXP = 15D;
 
-
-    private final ApplicationEventPublisher applicationEventPublisher;
-
     private final MongRepository mongRepository;
-
     private final MongFeedHistoryRepository mongFeedHistoryRepository;
-
     private final MongTypeRepository mongTypeRepository;
-
     private final FoodTypeRepository foodTypeRepository;
+
 
     /**
      * 몽 목록 조회
@@ -128,7 +121,7 @@ public class MongService {
      * @param wakeupAt 몽 정기 수면 종료 시간
      */
     @Transactional
-    public void createMong(Long accountId, String name, LocalTime sleepAt, LocalTime wakeupAt) {
+    public Long createMong(Long accountId, String name, LocalTime sleepAt, LocalTime wakeupAt) {
 
         List<MongTypeEntity> mongTypeEntities = mongTypeRepository.findByMongCodeGroupCode(EGG_MONG_TYPE_GROUP_CODE);
 
@@ -150,9 +143,7 @@ public class MongService {
 
         mongRepository.save(mongEntity);
 
-        applicationEventPublisher.publishEvent(MongCreateEvent.builder()
-                .mongId(mongEntity.getMongId())
-                .build());
+        return mongEntity.getMongId();
     }
 
     /**
@@ -167,10 +158,6 @@ public class MongService {
                 .orElseThrow(() -> new NotExistsMongException(accountId, mongId));
 
         mongEntity.delete();
-
-        applicationEventPublisher.publishEvent(MongDeleteEvent.builder()
-                .mongId(mongEntity.getMongId())
-                .build());
     }
 
     /**
@@ -242,7 +229,7 @@ public class MongService {
     }
 
     /**
-     * 몽 수면/기상
+     * 몽 수면
      * @param accountId 계정 ID
      * @param mongId 몽 ID
      */
@@ -256,17 +243,25 @@ public class MongService {
             throw new InvalidMongTypeLevelException(mongId, mongEntity.getType().getMongCode().getComnCode(), mongEntity.getType().getLevel());
         }
 
-        if (mongEntity.getState().getIsSleep()) {
-            mongEntity.wakeup();
-            applicationEventPublisher.publishEvent(MongWakeupEvent.builder()
-                    .mongId(mongEntity.getMongId())
-                    .build());
-        } else {
-            mongEntity.sleep();
-            applicationEventPublisher.publishEvent(MongSleepEvent.builder()
-                    .mongId(mongEntity.getMongId())
-                    .build());
+        mongEntity.sleep();
+    }
+
+    /**
+     * 몽 기상
+     * @param accountId 계정 ID
+     * @param mongId 몽 ID
+     */
+    @Transactional
+    public void wakeupMong(Long accountId, Long mongId) {
+
+        MongEntity mongEntity = mongRepository.findByAccountIdAndMongIdAndStateIsActiveIsTrue(accountId, mongId)
+                .orElseThrow(() -> new NotExistsMongException(accountId, mongId));
+
+        if (mongEntity.isEgg()) {
+            throw new InvalidMongTypeLevelException(mongId, mongEntity.getType().getMongCode().getComnCode(), mongEntity.getType().getLevel());
         }
+
+        mongEntity.wakeup();
     }
 
     /**
@@ -300,10 +295,6 @@ public class MongService {
         MongEntity mongEntity = mongRepository.findByAccountIdAndMongIdAndStateIsActiveIsTrue(accountId, mongId)
                 .orElseThrow(() -> new NotExistsMongException(accountId, mongId));
 
-        if (mongEntity.isEgg()) {
-            throw new InvalidMongTypeLevelException(mongId, mongEntity.getType().getMongCode().getComnCode(), mongEntity.getType().getLevel());
-        }
-
         if (!MongStateCode.EVOLUTION_READY.equals(mongEntity.getState().getCode())) {
             throw new InvalidEvolutionException(accountId, mongId);
         }
@@ -333,14 +324,6 @@ public class MongService {
                 }
             }
 
-            if (EGG_MONG_TYPE_GROUP_CODE.equals(mongEntity.getType().getMongCode().getGroupCode())) {
-                applicationEventPublisher.publishEvent(MongEggEvolutionEvent.builder()
-                        .mongId(mongEntity.getMongId())
-                        .sleepAt(mongEntity.getSleepAt())
-                        .wakeupAt(mongEntity.getWakeupAt())
-                        .build());
-            }
-
             // 진화 처리
             mongEntity.evolution(nextMongTypeEntity);
         }
@@ -367,9 +350,5 @@ public class MongService {
         }
 
         mongEntity.graduate();
-
-        applicationEventPublisher.publishEvent(MongGraduateEvent.builder()
-                .mongId(mongEntity.getMongId())
-                .build());
     }
 }

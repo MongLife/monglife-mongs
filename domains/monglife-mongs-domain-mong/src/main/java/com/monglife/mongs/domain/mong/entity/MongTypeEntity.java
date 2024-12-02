@@ -1,5 +1,6 @@
 package com.monglife.mongs.domain.mong.entity;
 
+import com.monglife.mongs.module.jpa.entity.ComnCodeEntity;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;

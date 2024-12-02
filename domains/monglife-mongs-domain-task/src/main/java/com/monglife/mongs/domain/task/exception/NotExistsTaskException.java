@@ -11,7 +11,7 @@ import java.util.Map;
 public class NotExistsTaskException extends ErrorException {
 
     public NotExistsTaskException(String appCode, String taskOwnerId, String taskCode) {
-        this.response = TaskResponse.DOMAIN_TASK_NOT_EXISTS_TASK_CODE;
+        this.response = TaskResponse.DOMAIN_TASK_NOT_EXISTS_TASK;
         this.result = Map.of("appCode", appCode, "taskOwnerId", taskOwnerId, "taskCode", taskCode);
     }
 }

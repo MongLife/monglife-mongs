@@ -1,4 +1,4 @@
-package com.monglife.mongs.domain.member.entity;
+package com.monglife.mongs.module.jpa.entity;
 
 import jakarta.persistence.*;
 import lombok.AccessLevel;

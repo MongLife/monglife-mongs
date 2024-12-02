@@ -18,6 +18,7 @@ public enum TaskResponse implements Response {
      */
     DOMAIN_TASK_NOT_EXISTS_TASK_CODE(HttpStatus.BAD_REQUEST.value(), "MANAGER-MANAGEMENT-100", "테스크 코드가 존재하지 않습니다."),
     DOMAIN_TASK_NOT_EXISTS_TASK(HttpStatus.BAD_REQUEST.value(), "MANAGER-MANAGEMENT-100", "테스크가 존재하지 않습니다."),
+    DOMAIN_TASK_NOT_EXISTS_TASK_SCHEDULE(HttpStatus.BAD_REQUEST.value(), "MANAGER-MANAGEMENT-100", "테스크 스케줄러가 존재하지 않습니다."),
     ;
 
     private final Integer httpStatus;

@@ -1,4 +1,4 @@
-package com.monglife.mongs.domain.battle.entity;
+package com.monglife.mongs.module.jpa.entity;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;

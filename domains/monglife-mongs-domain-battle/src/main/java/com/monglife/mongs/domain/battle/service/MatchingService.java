@@ -4,6 +4,7 @@ import com.monglife.mongs.domain.battle.entity.MatchingEntity;
 import com.monglife.mongs.domain.battle.vo.FindMatchingVo;
 import com.monglife.mongs.domain.battle.exception.NotExistsWaitMatchingException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
@@ -17,7 +18,6 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Service
-@RequiredArgsConstructor
 public class MatchingService {
 
     private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("yyyyMMddHHmmssSSS");
@@ -31,6 +31,9 @@ public class MatchingService {
 
     private final RedisTemplate<String, MatchingEntity> redisTemplate;
 
+    public MatchingService(@Qualifier("battleRedisTemplate") RedisTemplate<String, MatchingEntity> redisTemplate) {
+        this.redisTemplate = redisTemplate;
+    }
 
     /**
      * 배틀 매칭 대기열 등록

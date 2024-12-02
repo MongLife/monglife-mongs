@@ -1,5 +1,9 @@
 package com.monglife.mongs.app.manager.management.service;
 
+import com.monglife.mongs.app.manager.global.config.TaskProperties;
+import com.monglife.mongs.domain.mong.dto.etc.GetFeedItemDto;
+import com.monglife.mongs.domain.mong.dto.etc.GetMongDto;
+import com.monglife.mongs.domain.mong.service.MongService;
 import com.monglife.mongs.domain.task.service.TaskService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -9,6 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Duration;
 import java.time.LocalTime;
+import java.util.List;
 
 @Slf4j
 @Service
@@ -18,80 +23,110 @@ public class ManagementService {
     @Value("${application.app-code}")
     private String APP_CODE;
 
-    @Value("${application.scheduler.task.sleep.code}")
-    private String TASK_SLEEP_CODE;
-    private static final Long TASK_SLEEP_EXPIRATION = 60 * 60 * 24L;
+    private final TaskProperties taskProperties;
 
-    @Value("${application.scheduler.task.wakeup.code}")
-    private String TASK_WAKEUP_CODE;
-    private static final Long TASK_WAKEUP_EXPIRATION = 60 * 60 * 24L;
 
-    @Value("${application.scheduler.task.egg-evolution.code}")
-    private String TASK_EGG_EVOLUTION_CODE;
-    @Value("${application.scheduler.task.egg-evolution.expiration}")
-    private Long TASK_EGG_EVOLUTION_EXPIRATION;
-
-    @Value("${application.scheduler.task.status-increase.code}")
-    private String TASK_STATUS_INCREASE_CODE;
-    @Value("${application.scheduler.task.status-increase.expiration}")
-    private Long TASK_STATUS_INCREASE_EXPIRATION;
-
-    @Value("${application.scheduler.task.status-decrease.code}")
-    private String TASK_STATUS_DECREASE_CODE;
-    @Value("${application.scheduler.task.status-decrease.expiration}")
-    private Long TASK_STATUS_DECREASE_EXPIRATION;
-
-    @Value("${application.scheduler.task.poop-increase.code}")
-    private String TASK_POOP_INCREASE_CODE;
-    @Value("${application.scheduler.task.poop-increase.expiration}")
-    private Long TASK_POOP_INCREASE_EXPIRATION;
-
+    private final MongService mongService;
 
     private final TaskService taskService;
 
 
-    @Transactional
-    public void eggEvolutionScheduler(Long mongId) {
+    @Transactional(readOnly = true)
+    public List<GetMongDto> getMongs(Long accountId) {
+        return mongService.getMongs(accountId);
+    }
 
-        String taskOwnerId = String.valueOf(mongId);
+    @Transactional(readOnly = true)
+    public GetMongDto getMong(Long accountId, Long mongId) {
+        return mongService.getMong(accountId, mongId);
+    }
 
-        taskService.createTask(APP_CODE, taskOwnerId, TASK_EGG_EVOLUTION_CODE, TASK_EGG_EVOLUTION_EXPIRATION);
+    @Transactional(readOnly = true)
+    public List<GetFeedItemDto> getFeedItems(Long accountId, Long mongId, String foodTypeGroupCode) {
+        return mongService.getFeedItems(accountId, mongId, foodTypeGroupCode);
     }
 
     @Transactional
-    public void cycleSleepScheduler(Long mongId, LocalTime sleepAt, LocalTime wakeupAt) {
+    public void createMong(Long accountId, String name, LocalTime sleepAt, LocalTime wakeupAt) {
+
+        Long mongId = mongService.createMong(accountId, name, sleepAt, wakeupAt);
 
         String taskOwnerId = String.valueOf(mongId);
 
-        Long sleepExpirationSeconds = Duration.between(LocalTime.now(), sleepAt).getSeconds();
-        taskService.createTask(APP_CODE, taskOwnerId, TASK_SLEEP_CODE, sleepExpirationSeconds, Boolean.TRUE, TASK_SLEEP_EXPIRATION);
-
-        Long wakeupExpirationSeconds = Duration.between(LocalTime.now(), wakeupAt).getSeconds();
-        taskService.createTask(APP_CODE, taskOwnerId, TASK_WAKEUP_CODE, wakeupExpirationSeconds, Boolean.TRUE, TASK_WAKEUP_EXPIRATION);
+        taskService.createTask(APP_CODE, taskOwnerId, taskProperties.eggEvolution.getCode(), taskProperties.eggEvolution.getExpiration());
     }
 
     @Transactional
-    public void cycleIncreaseStatusScheduler(Long mongId) {
+    public void deleteMong(Long accountId, Long mongId) {
+
+        mongService.deleteMong(accountId, mongId);
 
         String taskOwnerId = String.valueOf(mongId);
 
-        taskService.deleteTask(APP_CODE, taskOwnerId, TASK_STATUS_DECREASE_CODE);
-        taskService.deleteTask(APP_CODE, taskOwnerId, TASK_POOP_INCREASE_CODE);
-        taskService.createTask(APP_CODE, taskOwnerId, TASK_STATUS_INCREASE_CODE, Boolean.TRUE, TASK_STATUS_INCREASE_EXPIRATION);
+        taskService.deleteAllTasks(APP_CODE, taskOwnerId);
     }
 
     @Transactional
-    public void cycleDecreaseStatusScheduler(Long mongId) {
+    public void feedMong(Long accountId, Long mongId, String foodTypeCode) {
+        mongService.feedMong(accountId, mongId, foodTypeCode);
+    }
+
+    @Transactional
+    public void strokeMong(Long accountId, Long mongId) {
+        mongService.strokeMong(accountId, mongId);
+    }
+
+    @Transactional
+    public void sleepMong(Long accountId, Long mongId) {
 
         String taskOwnerId = String.valueOf(mongId);
 
-        taskService.deleteTask(APP_CODE, taskOwnerId, TASK_STATUS_INCREASE_CODE);
-        taskService.createTask(APP_CODE, taskOwnerId, TASK_STATUS_DECREASE_CODE, Boolean.TRUE, TASK_STATUS_DECREASE_EXPIRATION);
-        taskService.createTask(APP_CODE, taskOwnerId, TASK_POOP_INCREASE_CODE, Boolean.TRUE, TASK_POOP_INCREASE_EXPIRATION);
+        if (mongService.getMong(accountId, mongId).getIsSleep()) {
+
+            mongService.wakeupMong(accountId, mongId);
+
+            taskService.deleteTask(APP_CODE, taskOwnerId, taskProperties.statusIncrease.getCode());
+            taskService.createTask(APP_CODE, taskOwnerId, taskProperties.statusDecrease.getCode(), Boolean.TRUE, taskProperties.statusDecrease.getExpiration());
+            taskService.createTask(APP_CODE, taskOwnerId, taskProperties.poopIncrease.getCode(), Boolean.TRUE, taskProperties.poopIncrease.getExpiration());
+
+        } else {
+
+            mongService.sleepMong(accountId, mongId);
+
+            taskService.deleteTask(APP_CODE, taskOwnerId, taskProperties.statusDecrease.getCode());
+            taskService.deleteTask(APP_CODE, taskOwnerId, taskProperties.poopIncrease.getCode());
+            taskService.createTask(APP_CODE, taskOwnerId, taskProperties.statusIncrease.getCode(), Boolean.TRUE, taskProperties.statusIncrease.getExpiration());
+        }
     }
 
     @Transactional
-    public void stopAllScheduler(Long mongId) {
+    public void poopCleanMong(Long accountId, Long mongId) {
+        mongService.poopCleanMong(accountId, mongId);
+    }
+
+    @Transactional
+    public void evolutionMong(Long accountId, Long mongId) {
+
+        mongService.evolutionMong(accountId, mongId);
+
+        GetMongDto getMongDto = mongService.getMong(accountId, mongId);
+
+        if (getMongDto.getLevel() == 1) {
+
+            String taskOwnerId = String.valueOf(mongId);
+
+            Long sleepExpirationSeconds = Duration.between(LocalTime.now(), getMongDto.getSleepAt()).getSeconds();
+            taskService.createTask(APP_CODE, taskOwnerId, taskProperties.sleep.getCode(), sleepExpirationSeconds, Boolean.TRUE, taskProperties.sleep.getExpiration());
+
+            Long wakeupExpirationSeconds = Duration.between(LocalTime.now(), getMongDto.getWakeupAt()).getSeconds();
+            taskService.createTask(APP_CODE, taskOwnerId, taskProperties.wakeup.getCode(), wakeupExpirationSeconds, Boolean.TRUE, taskProperties.wakeup.getExpiration());
+        }
+    }
+
+    @Transactional
+    public void graduateMong(Long accountId, Long mongId) {
+
+        mongService.graduateMong(accountId, mongId);
 
         String taskOwnerId = String.valueOf(mongId);
 

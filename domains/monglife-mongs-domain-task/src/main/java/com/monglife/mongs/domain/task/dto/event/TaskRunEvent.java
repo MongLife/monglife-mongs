@@ -8,7 +8,7 @@ import java.time.LocalDateTime;
 
 @Getter
 @ToString
-public class TaskStopEvent {
+public class TaskRunEvent {
 
     private final String appCode;
 
@@ -21,7 +21,7 @@ public class TaskStopEvent {
     private final LocalDateTime expiredAt;
 
     @Builder
-    public TaskStopEvent(String appCode, String taskOwnerId, String taskCode, Long expirationSeconds, LocalDateTime expiredAt) {
+    public TaskRunEvent(String appCode, String taskOwnerId, String taskCode, Long expirationSeconds, LocalDateTime expiredAt) {
         this.appCode = appCode;
         this.taskOwnerId = taskOwnerId;
         this.taskCode = taskCode;

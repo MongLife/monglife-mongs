@@ -4,6 +4,7 @@ import lombok.Getter;
 
 @Getter
 public enum TaskStatusCode {
+
     PROCESSING("task 진행중"),
     PAUSE("task 일시 중지"),
 

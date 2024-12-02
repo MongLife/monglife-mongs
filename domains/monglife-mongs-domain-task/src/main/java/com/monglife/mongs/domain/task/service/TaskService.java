@@ -1,21 +1,19 @@
 package com.monglife.mongs.domain.task.service;
 
-import com.monglife.mongs.domain.task.entity.ComnCodeEntity;
 import com.monglife.mongs.domain.task.entity.TaskEntity;
 import com.monglife.mongs.domain.task.enums.TaskStatusCode;
 import com.monglife.mongs.domain.task.exception.NotExistsTaskCodeException;
 import com.monglife.mongs.domain.task.exception.NotExistsTaskException;
 import com.monglife.mongs.domain.task.repository.ComnCodeRepository;
 import com.monglife.mongs.domain.task.repository.TaskRepository;
+import com.monglife.mongs.module.jpa.entity.ComnCodeEntity;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
-@Slf4j
 @Service
 @RequiredArgsConstructor
 public class TaskService {
@@ -27,8 +25,6 @@ public class TaskService {
 
     @Transactional
     public void createTask(String appCode, String taskOwnerId, String taskCode, Long expirationSeconds) {
-
-        log.info("{}, {}, {}, {}", appCode, taskOwnerId, taskCode, expirationSeconds);
 
         ComnCodeEntity comnCodeEntity = comnCodeRepository.findById(taskCode)
                 .orElseThrow(() -> new NotExistsTaskCodeException(taskCode));

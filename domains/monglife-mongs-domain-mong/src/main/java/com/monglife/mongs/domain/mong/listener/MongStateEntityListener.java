@@ -15,6 +15,10 @@ public class MongStateEntityListener {
 
     private final ApplicationEventPublisher applicationEventPublisher;
 
+    /**
+     * 몽 상태 변경 트리거
+     * @param mongStateEntity 변경된 몽 상태 엔티티
+     */
     @PostUpdate
     public void postUpdate(MongStateEntity mongStateEntity) {
 

@@ -1,8 +1,10 @@
 package com.monglife.mongs.domain.task.config;
 
+import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
+import org.hibernate.cfg.AvailableSettings;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.boot.autoconfigure.jdbc.DataSourceProperties;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -25,25 +27,42 @@ import java.util.Properties;
 )
 public class DataSourceConfig {
 
+    @Value("${spring.jpa.task.properties.hibernate.dialect}")
+    private String dialect;
+
+    @Value("${spring.jpa.task.properties.hibernate.hbm2ddl.auto}")
+    private String ddlAuto;
+
+    @Value("${spring.jpa.task.properties.hibernate.show_sql}")
+    private String showSql;
+
     @Bean(name = "taskDataSourceProperties")
-    @ConfigurationProperties(prefix = "spring.datasource")
-    public DataSourceProperties taskDataSourceProperties() {
-        return new DataSourceProperties();
+    @ConfigurationProperties(prefix = "spring.datasource.task.hikari")
+    public HikariConfig taskDataSourceProperties() {
+        return new HikariConfig();
     }
 
     @Bean(name = "taskDataSource")
-    @ConfigurationProperties(prefix = "spring.datasource.hikari")
     public DataSource taskDataSource() {
-        return taskDataSourceProperties().initializeDataSourceBuilder()
-                .type(HikariDataSource.class)
-                .build();
+        return new HikariDataSource(taskDataSourceProperties());
+    }
+
+    @Bean(name = "taskJpaProperties")
+    public Properties taskJpaProperties(@Qualifier("jpaProperties") Properties properties) {
+        Properties jpaProperties = new Properties();
+        jpaProperties.put(AvailableSettings.DIALECT, dialect);
+        jpaProperties.put(AvailableSettings.HBM2DDL_AUTO, ddlAuto);
+        jpaProperties.put(AvailableSettings.SHOW_SQL, showSql);
+        properties.keySet().forEach(field -> jpaProperties.put(field, properties.get(field)));
+        return jpaProperties;
     }
 
     @Bean(name = "taskEntityManager")
-    public LocalContainerEntityManagerFactoryBean taskEntityManager(@Qualifier("jpaProperties") Properties jpaProperties) {
+    public LocalContainerEntityManagerFactoryBean taskEntityManager(@Qualifier("taskJpaProperties") Properties jpaProperties) {
+
         LocalContainerEntityManagerFactoryBean em = new LocalContainerEntityManagerFactoryBean();
         em.setDataSource(taskDataSource());
-        em.setPackagesToScan("com.monglife.mongs.domain.task.entity");
+        em.setPackagesToScan("com.monglife.mongs.**.entity");
         em.setJpaVendorAdapter(new HibernateJpaVendorAdapter());
         em.setJpaProperties(jpaProperties);
         return em;

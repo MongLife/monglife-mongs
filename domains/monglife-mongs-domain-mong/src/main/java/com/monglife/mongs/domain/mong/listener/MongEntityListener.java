@@ -15,6 +15,10 @@ public class MongEntityListener {
 
     private final ApplicationEventPublisher applicationEventPublisher;
 
+    /**
+     * 몽 변경 트리거
+     * @param mongEntity 변경된 몽 엔티티
+     */
     @PostUpdate
     public void postUpdate(MongEntity mongEntity) {
 
