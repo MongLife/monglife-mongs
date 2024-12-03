@@ -7,9 +7,12 @@ import com.monglife.mongs.app.manager.management.enums.ManagerResponse;
 import com.monglife.mongs.domain.mong.dto.event.MongObserveEvent;
 import com.monglife.mongs.domain.mong.dto.event.MongObserveStateEvent;
 import com.monglife.mongs.domain.mong.dto.event.MongObserveStatusEvent;
+import com.monglife.mongs.domain.mong.service.MongService;
 import com.monglife.mongs.module.mqtt.service.MqttSendService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.event.TransactionPhase;
 import org.springframework.transaction.event.TransactionalEventListener;
 
@@ -18,6 +21,8 @@ import org.springframework.transaction.event.TransactionalEventListener;
 public class MongObserveEventListener {
 
     private final MqttSendService mqttSendService;
+
+    private final MongService mongService;
 
 
     /**
@@ -31,6 +36,7 @@ public class MongObserveEventListener {
 
         MongObserveResponseDto mongObserveResponseDto = MongObserveResponseDto.builder()
                 .payPoint(event.getPayPoint())
+                .mongTypeCode(event.getMongTypeCode())
                 .build();
 
         mqttSendService.sendMessage(topic, ManagerResponse.MANAGER_MANAGEMENT_MONG_OBSERVE_MONG.toResponseDto(mongObserveResponseDto));
@@ -41,14 +47,17 @@ public class MongObserveEventListener {
      * @param event 몽 지수 변경 이벤트
      */
     @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
     public void mongObserveStatusEventListener(MongObserveStatusEvent event) {
+
+        if (event.getExpRatio() >= 100) mongService.evolutionReadyMong(event.getMongId());
 
         String topic = String.valueOf(event.getMongId());
 
         MongStatusObserveResponseDto mongStatusObserveResponseDto = MongStatusObserveResponseDto.builder()
                 .statusCode(event.getStatusCode())
-                .exp(event.getExpRatio())
                 .weight(event.getWeight())
+                .expRatio(event.getExpRatio())
                 .strengthRatio(event.getStrengthRatio())
                 .satietyRatio(event.getSatietyRatio())
                 .healthyRatio(event.getHealthyRatio())

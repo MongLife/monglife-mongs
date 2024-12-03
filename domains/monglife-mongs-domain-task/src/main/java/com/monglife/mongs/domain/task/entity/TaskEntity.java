@@ -8,6 +8,7 @@ import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
+import java.time.Duration;
 import java.time.LocalDateTime;
 
 @Entity
@@ -15,7 +16,6 @@ import java.time.LocalDateTime;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @EntityListeners({ AuditingEntityListener.class, TaskEntityListener.class })
 @Table(name = "mongs_task")
-@ToString(exclude = "previousTaskEntity")
 public class TaskEntity extends BaseTimeEntity {
 
     @Id
@@ -33,14 +33,13 @@ public class TaskEntity extends BaseTimeEntity {
     @JoinColumn(name = "task_code", updatable = false)
     private ComnCodeEntity taskCode;
 
-    @Setter
     @Column(name = "task_status_code")
     private TaskStatusCode taskStatusCode;
 
-    @Column(name = "expiration_seconds", updatable = false)
+    @Column(name = "expiration_seconds")
     private Long expirationSeconds;
 
-    @Column(name = "expired_at", updatable = false)
+    @Column(name = "expired_at")
     private LocalDateTime expiredAt;
 
     @Column(name = "is_cycle", updatable = false)
@@ -48,10 +47,6 @@ public class TaskEntity extends BaseTimeEntity {
 
     @Column(name = "cycle_seconds", updatable = false)
     private Long cycleSeconds;
-
-    @Setter
-    @Transient
-    private TaskEntity previousTaskEntity;
 
     @Builder
     public TaskEntity(Long taskId, String appCode, String taskOwnerId, ComnCodeEntity taskCode, TaskStatusCode taskStatusCode, Long expirationSeconds, LocalDateTime expiredAt, Boolean isCycle, Long cycleSeconds) {
@@ -66,17 +61,33 @@ public class TaskEntity extends BaseTimeEntity {
         this.cycleSeconds = cycleSeconds;
     }
 
-    public TaskEntity clone() {
-        return TaskEntity.builder()
-                .taskId(this.taskId)
-                .appCode(this.appCode)
-                .taskOwnerId(this.taskOwnerId)
-                .taskCode(this.taskCode)
-                .taskStatusCode(this.taskStatusCode)
-                .expirationSeconds(this.expirationSeconds)
-                .expiredAt(this.expiredAt)
-                .isCycle(this.isCycle)
-                .cycleSeconds(this.cycleSeconds)
-                .build();
+    public void pause() {
+        this.taskStatusCode = TaskStatusCode.PAUSE;
+        this.expirationSeconds = Duration.between(LocalDateTime.now(), this.expiredAt).toSeconds();
+        this.expiredAt = null;
+    }
+
+    public void resume() {
+        this.taskStatusCode = TaskStatusCode.PROCESSING;
+        this.expiredAt = LocalDateTime.now().plusSeconds(this.expirationSeconds);
+    }
+
+    public void appStopPause() {
+        if (TaskStatusCode.PROCESSING.equals(this.taskStatusCode)) {
+            this.taskStatusCode = TaskStatusCode.APP_STOP_PROCESSING;
+        } else {
+            this.taskStatusCode = TaskStatusCode.APP_STOP_PAUSE;
+        }
+        this.expirationSeconds = Duration.between(LocalDateTime.now(), this.expiredAt).toSeconds();
+        this.expiredAt = null;
+    }
+
+    public void appStopResume() {
+        if (TaskStatusCode.APP_STOP_PROCESSING.equals(this.taskStatusCode)) {
+            this.taskStatusCode = TaskStatusCode.PROCESSING;
+        } else {
+            this.taskStatusCode = TaskStatusCode.PAUSE;
+        }
+        this.expiredAt = LocalDateTime.now().plusSeconds(this.expirationSeconds);
     }
 }

@@ -8,6 +8,7 @@ import com.monglife.mongs.module.security.global.exception.ForbiddenHandler;
 import com.monglife.mongs.module.security.filter.GlobalExceptionFilter;
 import com.monglife.mongs.module.security.global.exception.UnAuthorizationHandler;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
@@ -25,6 +26,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 public class SecurityConfig {
 
     @Bean
+    @ConditionalOnMissingBean
     public ObjectMapper objectMapper() {
         ObjectMapper objectMapper = new ObjectMapper();
         objectMapper.registerModule(new JavaTimeModule());

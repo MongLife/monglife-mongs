@@ -1,14 +1,12 @@
 package com.monglife.mongs.domain.mong.listener;
 
-import com.monglife.mongs.domain.mong.entity.MongEntity;
 import com.monglife.mongs.domain.mong.dto.event.MongObserveEvent;
+import com.monglife.mongs.domain.mong.entity.MongEntity;
 import jakarta.persistence.PostUpdate;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Component;
 
-@Slf4j
 @Component
 @RequiredArgsConstructor
 public class MongEntityListener {
@@ -25,6 +23,7 @@ public class MongEntityListener {
         MongObserveEvent mongObserveEvent = MongObserveEvent.builder()
                 .mongId(mongEntity.getMongId())
                 .payPoint(mongEntity.getPayPoint())
+                .mongTypeCode(mongEntity.getType().getMongCode().getComnCode())
                 .build();
 
         applicationEventPublisher.publishEvent(mongObserveEvent);

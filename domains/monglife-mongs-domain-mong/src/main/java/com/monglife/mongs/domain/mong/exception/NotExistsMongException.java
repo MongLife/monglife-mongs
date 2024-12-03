@@ -9,8 +9,8 @@ import java.util.Map;
 @Getter
 public class NotExistsMongException extends ErrorException {
 
-    public NotExistsMongException(Long accountId, Long mongId) {
+    public NotExistsMongException(Long mongId) {
         this.response = MongResponse.DOMAIN_MONG_NOT_EXISTS_MONG;
-        this.result = Map.of("accountId", accountId, "mongId", mongId);
+        this.result = Map.of("mongId", mongId);
     }
 }

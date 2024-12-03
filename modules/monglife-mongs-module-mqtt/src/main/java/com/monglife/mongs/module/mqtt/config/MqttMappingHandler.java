@@ -43,12 +43,11 @@ public class MqttMappingHandler implements InitializingBean {
 
 
     @Autowired
-    public MqttMappingHandler(ApplicationContext applicationContext) {
+    public MqttMappingHandler(ApplicationContext applicationContext, ObjectMapper objectMapper) {
         this.applicationContext = applicationContext;
         this.mqttMethodMapping = new HashMap<>();
         this.mqttExceptionHandlerMapping = new HashMap<>();
-        this.objectMapper = new ObjectMapper();
-        objectMapper.registerModule(new JavaTimeModule());
+        this.objectMapper = objectMapper;
     }
 
     @Override

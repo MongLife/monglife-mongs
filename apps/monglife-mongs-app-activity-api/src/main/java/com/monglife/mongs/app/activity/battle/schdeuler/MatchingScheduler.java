@@ -13,7 +13,6 @@ import com.monglife.mongs.domain.battle.vo.FindMatchingVo;
 import com.monglife.mongs.module.mqtt.dto.MqttResponseEntity;
 import com.monglife.mongs.module.mqtt.service.MqttSendService;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
@@ -22,7 +21,6 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-@Slf4j
 @Component
 @RequiredArgsConstructor
 public class MatchingScheduler {
@@ -83,19 +81,13 @@ public class MatchingScheduler {
                         .body(BattleResponse.ACTIVITY_BATTLE_FIND_MATCHING.toResponseDto(createBattleResponseDto))
                         .topics(topics));
 
-                log.info("[MatchingScheduler] [findMatching] {}", createBattleResponseDto);
-
             } catch (NotExistsMongIdException e) {
 
                 mqttSendService.sendMessage(MqttResponseEntity
                         .body(BattleResponse.ACTIVITY_BATTLE_NOT_EXISTS_MONG_ID.toResponseDto(e.getResult()))
                         .topics(topics));
 
-                // 배틀 생성 실패 전송
-                log.error("[MatchingScheduler] [findMatching] {}", e.getResult());
-
             } catch (RuntimeException e) {
-                log.error("[MatchingScheduler] [findMatching] {} : {}", e.getClass().getSimpleName(), e.getMessage());
                 break;
             }
         }

@@ -10,9 +10,12 @@ public class MongObserveEvent {
 
     private final Integer payPoint;
 
+    private final String mongTypeCode;
+
     @Builder
-    public MongObserveEvent(Long mongId, Integer payPoint) {
+    public MongObserveEvent(Long mongId, Integer payPoint, String mongTypeCode) {
         this.mongId = mongId;
         this.payPoint = payPoint;
+        this.mongTypeCode = mongTypeCode;
     }
 }

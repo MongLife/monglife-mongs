@@ -1,12 +1,13 @@
 package com.monglife.mongs.app.manager.management.service;
 
-import com.monglife.mongs.app.manager.global.config.TaskProperties;
+import com.monglife.mongs.app.manager.global.config.TaskScheduleProperties;
+import com.monglife.mongs.domain.mong.annotation.MongAccountCheck;
 import com.monglife.mongs.domain.mong.dto.etc.GetFeedItemDto;
 import com.monglife.mongs.domain.mong.dto.etc.GetMongDto;
 import com.monglife.mongs.domain.mong.service.MongService;
+import com.monglife.mongs.domain.task.enums.TaskStatusCode;
 import com.monglife.mongs.domain.task.service.TaskService;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -15,7 +16,6 @@ import java.time.Duration;
 import java.time.LocalTime;
 import java.util.List;
 
-@Slf4j
 @Service
 @RequiredArgsConstructor
 public class ManagementService {
@@ -23,8 +23,7 @@ public class ManagementService {
     @Value("${application.app-code}")
     private String APP_CODE;
 
-    private final TaskProperties taskProperties;
-
+    private final TaskScheduleProperties taskScheduleProperties;
 
     private final MongService mongService;
 
@@ -36,14 +35,16 @@ public class ManagementService {
         return mongService.getMongs(accountId);
     }
 
+    @MongAccountCheck
     @Transactional(readOnly = true)
     public GetMongDto getMong(Long accountId, Long mongId) {
-        return mongService.getMong(accountId, mongId);
+        return mongService.getMong(mongId);
     }
 
+    @MongAccountCheck
     @Transactional(readOnly = true)
     public List<GetFeedItemDto> getFeedItems(Long accountId, Long mongId, String foodTypeGroupCode) {
-        return mongService.getFeedItems(accountId, mongId, foodTypeGroupCode);
+        return mongService.getFeedItems(mongId, foodTypeGroupCode);
     }
 
     @Transactional
@@ -53,80 +54,96 @@ public class ManagementService {
 
         String taskOwnerId = String.valueOf(mongId);
 
-        taskService.createTask(APP_CODE, taskOwnerId, taskProperties.eggEvolution.getCode(), taskProperties.eggEvolution.getExpiration());
+        taskService.createTask(APP_CODE, taskOwnerId, taskScheduleProperties.eggEvolution.getCode(), taskScheduleProperties.eggEvolution.getExpiration(), TaskStatusCode.PROCESSING);
     }
 
+    @MongAccountCheck
     @Transactional
     public void deleteMong(Long accountId, Long mongId) {
 
-        mongService.deleteMong(accountId, mongId);
+        mongService.deleteMong(mongId);
 
         String taskOwnerId = String.valueOf(mongId);
 
         taskService.deleteAllTasks(APP_CODE, taskOwnerId);
     }
 
+    @MongAccountCheck
     @Transactional
     public void feedMong(Long accountId, Long mongId, String foodTypeCode) {
-        mongService.feedMong(accountId, mongId, foodTypeCode);
+        mongService.feedMong(mongId, foodTypeCode);
     }
 
+    @MongAccountCheck
     @Transactional
     public void strokeMong(Long accountId, Long mongId) {
-        mongService.strokeMong(accountId, mongId);
+        mongService.strokeMong(mongId);
     }
 
+    @MongAccountCheck
     @Transactional
     public void sleepMong(Long accountId, Long mongId) {
 
         String taskOwnerId = String.valueOf(mongId);
 
-        if (mongService.getMong(accountId, mongId).getIsSleep()) {
+        if (mongService.getMong(mongId).getIsSleep()) {
 
-            mongService.wakeupMong(accountId, mongId);
+            mongService.wakeupMong(mongId);
 
-            taskService.deleteTask(APP_CODE, taskOwnerId, taskProperties.statusIncrease.getCode());
-            taskService.createTask(APP_CODE, taskOwnerId, taskProperties.statusDecrease.getCode(), Boolean.TRUE, taskProperties.statusDecrease.getExpiration());
-            taskService.createTask(APP_CODE, taskOwnerId, taskProperties.poopIncrease.getCode(), Boolean.TRUE, taskProperties.poopIncrease.getExpiration());
+            taskService.pauseTask(APP_CODE, taskOwnerId, taskScheduleProperties.statusIncrease.getCode());
+            taskService.resumeTask(APP_CODE, taskOwnerId, taskScheduleProperties.statusDecrease.getCode());
+            taskService.resumeTask(APP_CODE, taskOwnerId, taskScheduleProperties.poopIncrease.getCode());
 
         } else {
 
-            mongService.sleepMong(accountId, mongId);
+            mongService.sleepMong(mongId);
 
-            taskService.deleteTask(APP_CODE, taskOwnerId, taskProperties.statusDecrease.getCode());
-            taskService.deleteTask(APP_CODE, taskOwnerId, taskProperties.poopIncrease.getCode());
-            taskService.createTask(APP_CODE, taskOwnerId, taskProperties.statusIncrease.getCode(), Boolean.TRUE, taskProperties.statusIncrease.getExpiration());
+            taskService.pauseTask(APP_CODE, taskOwnerId, taskScheduleProperties.statusDecrease.getCode());
+            taskService.pauseTask(APP_CODE, taskOwnerId, taskScheduleProperties.poopIncrease.getCode());
+            taskService.resumeTask(APP_CODE, taskOwnerId, taskScheduleProperties.statusIncrease.getCode());
         }
     }
 
+    @MongAccountCheck
     @Transactional
     public void poopCleanMong(Long accountId, Long mongId) {
-        mongService.poopCleanMong(accountId, mongId);
+        mongService.poopCleanMong(mongId);
     }
 
+    @MongAccountCheck
     @Transactional
     public void evolutionMong(Long accountId, Long mongId) {
 
-        mongService.evolutionMong(accountId, mongId);
+        GetMongDto getMongDto = mongService.getMong(mongId);
 
-        GetMongDto getMongDto = mongService.getMong(accountId, mongId);
+        mongService.evolutionMong(mongId);
 
-        if (getMongDto.getLevel() == 1) {
+        if (getMongDto.getIsEgg()) {
 
             String taskOwnerId = String.valueOf(mongId);
 
+            taskService.deleteTask(APP_CODE, taskOwnerId, taskScheduleProperties.eggEvolution.getCode());
+
             Long sleepExpirationSeconds = Duration.between(LocalTime.now(), getMongDto.getSleepAt()).getSeconds();
-            taskService.createTask(APP_CODE, taskOwnerId, taskProperties.sleep.getCode(), sleepExpirationSeconds, Boolean.TRUE, taskProperties.sleep.getExpiration());
+            if (sleepExpirationSeconds < 0) sleepExpirationSeconds = taskScheduleProperties.wakeup.getExpiration() + sleepExpirationSeconds;
+            taskService.createTask(APP_CODE, taskOwnerId, taskScheduleProperties.sleep.getCode(), sleepExpirationSeconds, Boolean.TRUE, taskScheduleProperties.sleep.getExpiration(), TaskStatusCode.PROCESSING);
 
             Long wakeupExpirationSeconds = Duration.between(LocalTime.now(), getMongDto.getWakeupAt()).getSeconds();
-            taskService.createTask(APP_CODE, taskOwnerId, taskProperties.wakeup.getCode(), wakeupExpirationSeconds, Boolean.TRUE, taskProperties.wakeup.getExpiration());
+            if (wakeupExpirationSeconds < 0) wakeupExpirationSeconds = taskScheduleProperties.wakeup.getExpiration() + wakeupExpirationSeconds;
+            taskService.createTask(APP_CODE, taskOwnerId, taskScheduleProperties.wakeup.getCode(), wakeupExpirationSeconds, Boolean.TRUE, taskScheduleProperties.wakeup.getExpiration(), TaskStatusCode.PROCESSING);
+
+            taskService.createTask(APP_CODE, taskOwnerId, taskScheduleProperties.statusIncrease.getCode(), taskScheduleProperties.statusIncrease.getExpiration(), Boolean.TRUE, taskScheduleProperties.statusIncrease.getExpiration(), TaskStatusCode.PAUSE);
+            taskService.createTask(APP_CODE, taskOwnerId, taskScheduleProperties.statusDecrease.getCode(), taskScheduleProperties.statusDecrease.getExpiration(), Boolean.TRUE, taskScheduleProperties.statusDecrease.getExpiration(), TaskStatusCode.PROCESSING);
+            taskService.createTask(APP_CODE, taskOwnerId, taskScheduleProperties.poopIncrease.getCode(), taskScheduleProperties.poopIncrease.getExpiration(), Boolean.TRUE, taskScheduleProperties.poopIncrease.getExpiration(), TaskStatusCode.PROCESSING);
+            taskService.createTask(APP_CODE, taskOwnerId, taskScheduleProperties.dead.getCode(), taskScheduleProperties.dead.getExpiration(), Boolean.TRUE, taskScheduleProperties.dead.getExpiration(), TaskStatusCode.PAUSE);
         }
     }
 
+    @MongAccountCheck
     @Transactional
     public void graduateMong(Long accountId, Long mongId) {
 
-        mongService.graduateMong(accountId, mongId);
+        mongService.graduateMong(mongId);
 
         String taskOwnerId = String.valueOf(mongId);
 

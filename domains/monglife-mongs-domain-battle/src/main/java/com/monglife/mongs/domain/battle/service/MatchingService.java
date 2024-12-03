@@ -1,9 +1,8 @@
 package com.monglife.mongs.domain.battle.service;
 
 import com.monglife.mongs.domain.battle.entity.MatchingEntity;
-import com.monglife.mongs.domain.battle.vo.FindMatchingVo;
 import com.monglife.mongs.domain.battle.exception.NotExistsWaitMatchingException;
-import lombok.RequiredArgsConstructor;
+import com.monglife.mongs.domain.battle.vo.FindMatchingVo;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.RedisTemplate;

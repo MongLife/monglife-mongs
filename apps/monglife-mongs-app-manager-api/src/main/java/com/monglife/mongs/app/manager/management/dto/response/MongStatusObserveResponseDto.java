@@ -11,7 +11,7 @@ public class MongStatusObserveResponseDto {
 
     private MongStatusCode statusCode;
 
-    private Double exp;
+    private Double expRatio;
 
     private Double weight;
 
@@ -26,9 +26,9 @@ public class MongStatusObserveResponseDto {
     private Integer poopCount;
 
     @Builder
-    public MongStatusObserveResponseDto(MongStatusCode statusCode, Double exp, Double weight, Double strengthRatio, Double satietyRatio, Double healthyRatio, Double fatigueRatio, Integer poopCount) {
+    public MongStatusObserveResponseDto(MongStatusCode statusCode, Double expRatio, Double weight, Double strengthRatio, Double satietyRatio, Double healthyRatio, Double fatigueRatio, Integer poopCount) {
         this.statusCode = statusCode;
-        this.exp = exp;
+        this.expRatio = expRatio;
         this.weight = weight;
         this.strengthRatio = strengthRatio;
         this.satietyRatio = satietyRatio;

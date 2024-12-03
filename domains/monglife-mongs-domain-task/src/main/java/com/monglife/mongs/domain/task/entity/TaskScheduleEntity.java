@@ -47,14 +47,14 @@ public class TaskScheduleEntity {
         this.cycleSeconds = cycleSeconds;
     }
 
-    public void init(TaskStatusCode taskStatusCode, Long expirationSeconds, LocalDateTime expiredAt, ScheduledFuture<?> scheduler) {
+    public void start(TaskStatusCode taskStatusCode, Long expirationSeconds, LocalDateTime expiredAt, ScheduledFuture<?> scheduler) {
         this.taskStatusCode = taskStatusCode;
         this.expirationSeconds = expirationSeconds;
         this.expiredAt = expiredAt;
         this.scheduler = scheduler;
     }
 
-    public void delete() {
+    public void stop() {
         this.scheduler.cancel(false);
     }
 }

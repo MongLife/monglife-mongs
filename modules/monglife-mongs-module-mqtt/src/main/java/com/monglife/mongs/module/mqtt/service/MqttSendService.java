@@ -30,8 +30,6 @@ public class MqttSendService {
         String sendTopic = String.format("%s/%s", baseTopic, topic);
 
         mqttOutBoundClient.send(sendTopic, body);
-
-        log.info("[MqttSendService] [sendMessage] {} : {}", sendTopic, body);
     }
 
     public <T> void sendMessage(String topic, T responseDto) {

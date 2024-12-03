@@ -1,8 +1,5 @@
 package com.monglife.mongs.module.mqtt.aspect;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.monglife.mongs.module.mqtt.dto.MqttResponseEntity;
 import com.monglife.mongs.module.mqtt.service.MqttSendService;
 import lombok.extern.slf4j.Slf4j;
@@ -20,13 +17,9 @@ public class MqttPublishAspect {
 
     private final MqttSendService mqttSendService;
 
-    private final ObjectMapper objectMapper;
-
     @Autowired
-    public MqttPublishAspect(MqttSendService mqttSendService, ObjectMapper objectMapper) {
+    public MqttPublishAspect(MqttSendService mqttSendService) {
         this.mqttSendService = mqttSendService;
-        this.objectMapper = new ObjectMapper();
-        objectMapper.registerModule(new JavaTimeModule());
     }
 
     @Pointcut("@annotation(com.monglife.mongs.module.mqtt.annotation.MqttPublish)")
@@ -37,11 +30,7 @@ public class MqttPublishAspect {
 
     @AfterReturning(value = "mqttPublishPointcut() && executionPointcut()", returning = "mqttResponseEntity")
     public void after(JoinPoint joinPoint, MqttResponseEntity<?> mqttResponseEntity) {
-
-        log.info("{}", mqttResponseEntity);
-
-        mqttResponseEntity.getTopics().forEach(topic -> {
-            mqttSendService.sendMessage(topic, mqttResponseEntity.getBody());
-        });
+        log.error("mqtt publish =====> {}", mqttResponseEntity);
+        mqttResponseEntity.getTopics().forEach(topic -> mqttSendService.sendMessage(topic, mqttResponseEntity.getBody()));
     }
 }

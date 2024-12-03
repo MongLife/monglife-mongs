@@ -8,6 +8,8 @@ import java.util.Optional;
 
 public interface TaskRepository extends JpaRepository<TaskEntity, Long> {
 
+    List<TaskEntity> findByAppCode(String appCode);
+
     List<TaskEntity> findByAppCodeAndTaskOwnerId(String appCode, String taskOwnerId);
 
     Optional<TaskEntity> findByAppCodeAndTaskOwnerIdAndTaskCodeComnCode(String appCode, String taskOwnerId, String taskCode);

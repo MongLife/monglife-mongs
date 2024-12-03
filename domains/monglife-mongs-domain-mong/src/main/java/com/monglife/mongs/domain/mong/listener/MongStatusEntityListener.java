@@ -1,19 +1,18 @@
 package com.monglife.mongs.domain.mong.listener;
 
-import com.monglife.mongs.domain.mong.entity.MongStatusEntity;
 import com.monglife.mongs.domain.mong.dto.event.MongObserveStatusEvent;
+import com.monglife.mongs.domain.mong.entity.MongStatusEntity;
 import jakarta.persistence.PostUpdate;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Component;
 
-@Slf4j
 @Component
 @RequiredArgsConstructor
 public class MongStatusEntityListener {
 
     private final ApplicationEventPublisher applicationEventPublisher;
+
 
     /**
      * 몽 지수 변경 트리거
@@ -26,7 +25,7 @@ public class MongStatusEntityListener {
                 .mongId(mongStatusEntity.getMong().getMongId())
                 .statusCode(mongStatusEntity.getCode())
                 .weight(mongStatusEntity.getWeight())
-                .expRatio(mongStatusEntity.getExp() / mongStatusEntity.getMaxStatus() * 100)
+                .expRatio(mongStatusEntity.getExpRatio())
                 .strengthRatio(mongStatusEntity.getStrengthRatio())
                 .satietyRatio(mongStatusEntity.getSatietyRatio())
                 .healthyRatio(mongStatusEntity.getHealthyRatio())

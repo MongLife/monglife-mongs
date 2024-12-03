@@ -9,8 +9,8 @@ import java.util.Map;
 @Getter
 public class InvalidGraduateException extends ErrorException {
 
-    public InvalidGraduateException(Long accountId, Long mongId) {
+    public InvalidGraduateException(Long mongId) {
         this.response = MongResponse.DOMAIN_MONG_INVALID_GRADUATE;
-        this.result = Map.of("accountId", accountId, "mongId", mongId);
+        this.result = Map.of("mongId", mongId);
     }
 }

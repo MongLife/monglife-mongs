@@ -16,15 +16,18 @@ public class TaskStopEvent {
 
     private final String taskCode;
 
+    private final Long restExpirationSeconds;
+
     private final Long expirationSeconds;
 
     private final LocalDateTime expiredAt;
 
     @Builder
-    public TaskStopEvent(String appCode, String taskOwnerId, String taskCode, Long expirationSeconds, LocalDateTime expiredAt) {
+    public TaskStopEvent(String appCode, String taskOwnerId, String taskCode, Long restExpirationSeconds, Long expirationSeconds, LocalDateTime expiredAt) {
         this.appCode = appCode;
         this.taskOwnerId = taskOwnerId;
         this.taskCode = taskCode;
+        this.restExpirationSeconds = restExpirationSeconds;
         this.expirationSeconds = expirationSeconds;
         this.expiredAt = expiredAt;
     }

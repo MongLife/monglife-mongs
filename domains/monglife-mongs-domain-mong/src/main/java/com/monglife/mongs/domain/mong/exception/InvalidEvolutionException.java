@@ -9,8 +9,8 @@ import java.util.Map;
 @Getter
 public class InvalidEvolutionException extends ErrorException {
 
-    public InvalidEvolutionException(Long accountId, Long mongId) {
+    public InvalidEvolutionException(Long mongId) {
         this.response = MongResponse.DOMAIN_MONG_INVALID_EVOLUTION;
-        this.result = Map.of("accountId", accountId, "mongId", mongId);
+        this.result = Map.of("mongId", mongId);
     }
 }

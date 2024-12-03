@@ -8,10 +8,13 @@ import lombok.Setter;
 @Setter
 public class MongObserveResponseDto {
 
+    private String mongTypeCode;
+
     private Integer payPoint;
 
     @Builder
-    public MongObserveResponseDto(Integer payPoint) {
+    public MongObserveResponseDto(String mongTypeCode, Integer payPoint) {
+        this.mongTypeCode = mongTypeCode;
         this.payPoint = payPoint;
     }
 }
