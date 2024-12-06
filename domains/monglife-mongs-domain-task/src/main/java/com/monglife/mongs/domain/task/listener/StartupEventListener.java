@@ -9,6 +9,8 @@ import org.springframework.context.ApplicationListener;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
+import java.lang.reflect.Method;
+
 @Slf4j
 @Order(-9999)
 @Component
@@ -22,9 +24,10 @@ public class StartupEventListener implements ApplicationListener<ApplicationRead
 
     @Override
     public void onApplicationEvent(ApplicationReadyEvent applicationReadyEvent) {
-        log.info("#######################      시작 준비 (Task 재시작)      #######################");
-        applicationReadyEvent.getApplicationContext();
+        String applicationName = applicationReadyEvent.getApplicationContext().getApplicationName();
+
         taskService.appStopResumeAllTask(APP_CODE);
-        log.info("####################### 시작 준비 완료 (Task 재시작 완료) #######################");
+
+        log.info("[TASK LOAD] {} =====> Task load success ", applicationName);
     }
 }

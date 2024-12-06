@@ -1,8 +1,8 @@
 package com.monglife.mongs.domain.task.service;
 
-import com.monglife.mongs.domain.task.dto.etc.CreateTaskScheduleDto;
-import com.monglife.mongs.domain.task.dto.event.TaskRunEvent;
-import com.monglife.mongs.domain.task.dto.event.TaskStopEvent;
+import com.monglife.mongs.domain.task.dto.etc.StartTaskScheduleDto;
+import com.monglife.mongs.domain.task.dto.event.RunTaskScheduleEvent;
+import com.monglife.mongs.domain.task.dto.event.StopTaskScheduleEvent;
 import com.monglife.mongs.domain.task.entity.TaskScheduleEntity;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -17,6 +17,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
 @Slf4j
@@ -41,75 +42,56 @@ public class TaskScheduleService {
     }
 
     @Transactional
-    public void startTaskSchedule(CreateTaskScheduleDto createTaskScheduleDto) {
+    public void startTaskSchedule(StartTaskScheduleDto startTaskScheduleDto) {
 
-        TaskScheduleEntity taskScheduleEntity = TaskScheduleEntity.builder()
-                .taskId(createTaskScheduleDto.getTaskId())
-                .appCode(createTaskScheduleDto.getAppCode())
-                .taskOwnerId(createTaskScheduleDto.getTaskOwnerId())
-                .taskCode(createTaskScheduleDto.getTaskCode())
-                .isCycle(createTaskScheduleDto.getIsCycle())
-                .cycleSeconds(createTaskScheduleDto.getCycleSeconds())
-                .build();
+        TaskScheduleEntity taskScheduleEntity;
 
-        if (!schedulerMap.containsKey(taskScheduleEntity.getTaskId())) {
-
-            long expirationSeconds = Duration.between(LocalDateTime.now(), createTaskScheduleDto.getExpiredAt()).getSeconds();
-
-            // 시작
-            taskScheduleEntity.start(
-                    taskScheduleEntity.getTaskStatusCode(),
-                    expirationSeconds,
-                    taskScheduleEntity.getExpiredAt(),
-                    this.executor.schedule(this.runTaskSchedule(taskScheduleEntity), expirationSeconds, TimeUnit.SECONDS));
-
-            schedulerMap.put(taskScheduleEntity.getTaskId(), taskScheduleEntity);
+        if (!schedulerMap.containsKey(startTaskScheduleDto.getTaskId())) {
+            taskScheduleEntity = TaskScheduleEntity.builder()
+                    .taskId(startTaskScheduleDto.getTaskId())
+                    .appCode(startTaskScheduleDto.getAppCode())
+                    .taskOwnerId(startTaskScheduleDto.getTaskOwnerId())
+                    .taskCode(startTaskScheduleDto.getTaskCode())
+                    .isCycle(startTaskScheduleDto.getIsCycle())
+                    .build();
+        } else {
+            taskScheduleEntity = schedulerMap.get(startTaskScheduleDto.getTaskId());
         }
+
+        long expirationSeconds = Duration.between(LocalDateTime.now(), startTaskScheduleDto.getExpiredAt()).getSeconds();
+        ScheduledFuture<?> timer =  this.executor.schedule(this.runTaskSchedule(taskScheduleEntity), expirationSeconds, TimeUnit.SECONDS);
+
+        taskScheduleEntity.start(expirationSeconds, startTaskScheduleDto.getExpiredAt(), timer);
+
+        schedulerMap.put(taskScheduleEntity.getTaskId(), taskScheduleEntity);
     }
 
+    /**
+     * Pause, AppStopPause, AppStopProcessing, Delete Task Entity
+     * @param taskId Task ID
+     */
     @Transactional
-    public void deleteTaskSchedule(Long taskId) {
+    public void stopTaskSchedule(Long taskId) {
 
         Optional.ofNullable(schedulerMap.get(taskId))
                 .ifPresent(taskScheduleEntity -> {
-
                     taskScheduleEntity.stop();
-
                     schedulerMap.remove(taskId);
-
-                    long restExpirationSeconds = Duration.between(LocalDateTime.now(), taskScheduleEntity.getExpiredAt()).getSeconds();
-
-                    applicationEventPublisher.publishEvent(TaskStopEvent.builder()
-                            .appCode(taskScheduleEntity.getAppCode())
-                            .taskOwnerId(taskScheduleEntity.getTaskOwnerId())
-                            .taskCode(taskScheduleEntity.getTaskCode())
-                            .restExpirationSeconds(restExpirationSeconds)
-                            .expirationSeconds(taskScheduleEntity.getExpirationSeconds())
-                            .build());
                 });
+
+        applicationEventPublisher.publishEvent(StopTaskScheduleEvent.builder()
+                .taskId(taskId)
+                .build());
     }
 
+    /**
+     * Task Scheduler Run
+     * @param taskScheduleEntity Task Scheduler Entity
+     * @return Runnable
+     */
     private Runnable runTaskSchedule(TaskScheduleEntity taskScheduleEntity) {
-        return () -> {
-
-            schedulerMap.remove(taskScheduleEntity.getTaskId());
-
-            if (taskScheduleEntity.getIsCycle()) {
-                // 시작
-                taskScheduleEntity.start(
-                        taskScheduleEntity.getTaskStatusCode(),
-                        taskScheduleEntity.getCycleSeconds(),
-                        LocalDateTime.now().plusSeconds(taskScheduleEntity.getCycleSeconds()),
-                        this.executor.schedule(this.runTaskSchedule(taskScheduleEntity), taskScheduleEntity.getCycleSeconds(), TimeUnit.SECONDS));
-
-                schedulerMap.put(taskScheduleEntity.getTaskId(), taskScheduleEntity);
-            }
-
-            applicationEventPublisher.publishEvent(TaskRunEvent.builder()
-                    .appCode(taskScheduleEntity.getAppCode())
-                    .taskOwnerId(taskScheduleEntity.getTaskOwnerId())
-                    .taskCode(taskScheduleEntity.getTaskCode())
-                    .build());
-        };
+        return () -> applicationEventPublisher.publishEvent(RunTaskScheduleEvent.builder()
+                .taskId(taskScheduleEntity.getTaskId())
+                .build());
     }
 }

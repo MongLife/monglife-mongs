@@ -23,32 +23,22 @@ public class TaskScheduleEntity {
 
     private final Boolean isCycle;
 
-    private final Long cycleSeconds;
-
-    @Setter
-    private TaskStatusCode taskStatusCode;
-
-    @Setter
     private Long expirationSeconds;
 
-    @Setter
     private LocalDateTime expiredAt;
 
-    @Setter
     private ScheduledFuture<?> scheduler;
 
     @Builder
-    public TaskScheduleEntity(Long taskId, String appCode, String taskOwnerId, String taskCode, Boolean isCycle, Long cycleSeconds) {
+    public TaskScheduleEntity(Long taskId, String appCode, String taskOwnerId, String taskCode, Boolean isCycle) {
         this.taskId = taskId;
         this.appCode = appCode;
         this.taskOwnerId = taskOwnerId;
         this.taskCode = taskCode;
         this.isCycle = isCycle;
-        this.cycleSeconds = cycleSeconds;
     }
 
-    public void start(TaskStatusCode taskStatusCode, Long expirationSeconds, LocalDateTime expiredAt, ScheduledFuture<?> scheduler) {
-        this.taskStatusCode = taskStatusCode;
+    public void start(Long expirationSeconds, LocalDateTime expiredAt, ScheduledFuture<?> scheduler) {
         this.expirationSeconds = expirationSeconds;
         this.expiredAt = expiredAt;
         this.scheduler = scheduler;

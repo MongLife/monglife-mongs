@@ -4,11 +4,9 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.ToString;
 
-import java.time.LocalDateTime;
-
 @Getter
 @ToString
-public class TaskStopEvent {
+public class ExecuteTaskEvent {
 
     private final String appCode;
 
@@ -20,15 +18,12 @@ public class TaskStopEvent {
 
     private final Long expirationSeconds;
 
-    private final LocalDateTime expiredAt;
-
     @Builder
-    public TaskStopEvent(String appCode, String taskOwnerId, String taskCode, Long restExpirationSeconds, Long expirationSeconds, LocalDateTime expiredAt) {
+    public ExecuteTaskEvent(String appCode, String taskOwnerId, String taskCode, Long restExpirationSeconds, Long expirationSeconds) {
         this.appCode = appCode;
         this.taskOwnerId = taskOwnerId;
         this.taskCode = taskCode;
         this.restExpirationSeconds = restExpirationSeconds;
         this.expirationSeconds = expirationSeconds;
-        this.expiredAt = expiredAt;
     }
 }

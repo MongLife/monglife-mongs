@@ -1,8 +1,10 @@
 package com.monglife.mongs.domain.mong.entity;
 
-import com.monglife.mongs.domain.mong.listener.MongStateEntityListener;
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.ToString;
 
 import java.util.Optional;
 
@@ -17,7 +19,7 @@ public class MongMetaEntity {
     @Column(name = "mong_meta_id")
     private Long mongMetaId;
 
-    @OneToOne(mappedBy = "meta", fetch = FetchType.LAZY)
+    @OneToOne(mappedBy = "meta")
     @JoinColumn(name = "mong_meta_id")
     private MongEntity mong;
 
@@ -36,9 +38,6 @@ public class MongMetaEntity {
     @Column(name = "is_active")
     private Boolean isActive;
 
-    @Column(name = "is_time_limit")
-    private Boolean isTimeLimit;
-
 
     public MongMetaEntity() {
         this.trainingCount = 0;
@@ -46,7 +45,6 @@ public class MongMetaEntity {
         this.reward = 0D;
         this.penalty = 0D;
         this.isActive = Boolean.TRUE;
-        this.isTimeLimit = Boolean.FALSE;
     }
 
     public void update(UpdateDto updateDto) {
@@ -55,7 +53,6 @@ public class MongMetaEntity {
         this.reward = Optional.ofNullable(updateDto.reward).orElse(this.reward);
         this.penalty = Optional.ofNullable(updateDto.penalty).orElse(this.penalty);
         this.isActive = Optional.ofNullable(updateDto.isActive).orElse(this.isActive);
-        this.isTimeLimit = Optional.ofNullable(updateDto.isTimeLimit).orElse(isTimeLimit);
     }
 
     @Builder
@@ -71,7 +68,5 @@ public class MongMetaEntity {
         private Double penalty;
 
         private Boolean isActive;
-
-        private Boolean isTimeLimit;
     }
 }

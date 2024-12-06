@@ -18,9 +18,9 @@ import org.springframework.data.redis.serializer.StringRedisSerializer;
 @Configuration("mongRedisConfig")
 @EnableRedisRepositories(
         basePackages = "com.monglife.mongs.domain.mong.repository",
-        redisTemplateRef = "mongRedisTemplate"
+        redisTemplateRef = "mongRedisTemplate",
+        enableKeyspaceEvents = RedisKeyValueAdapter.EnableKeyspaceEvents.ON_STARTUP
 )
-//@EnableRedisRepositories(enableKeyspaceEvents = RedisKeyValueAdapter.EnableKeyspaceEvents.ON_STARTUP)
 public class RedisConfig {
 
     @Value("${spring.data.mong.redis.host}")
@@ -36,7 +36,7 @@ public class RedisConfig {
     private Integer database;
 
     @Bean("mongRedisConnectionFactory")
-//    @ConditionalOnMissingBean(RedisConnectionFactory.class)
+    @ConditionalOnMissingBean(name = "mongRedisConnectionFactory")
     public RedisConnectionFactory mongRedisConnectionFactory() {
         RedisStandaloneConfiguration redisStandaloneConfiguration = new RedisStandaloneConfiguration();
         redisStandaloneConfiguration.setHostName(host);

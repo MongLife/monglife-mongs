@@ -16,6 +16,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @EntityListeners({ AuditingEntityListener.class, TaskEntityListener.class })
 @Table(name = "mongs_task")
+@ToString
 public class TaskEntity extends BaseTimeEntity {
 
     @Id
@@ -33,10 +34,14 @@ public class TaskEntity extends BaseTimeEntity {
     @JoinColumn(name = "task_code", updatable = false)
     private ComnCodeEntity taskCode;
 
+    @Enumerated(EnumType.STRING)
     @Column(name = "task_status_code")
     private TaskStatusCode taskStatusCode;
 
-    @Column(name = "expiration_seconds")
+    @Column(name = "rest_expiration_seconds")
+    private Long restExpirationSeconds;
+
+    @Column(name = "expiration_seconds", updatable = false)
     private Long expirationSeconds;
 
     @Column(name = "expired_at")
@@ -49,45 +54,69 @@ public class TaskEntity extends BaseTimeEntity {
     private Long cycleSeconds;
 
     @Builder
-    public TaskEntity(Long taskId, String appCode, String taskOwnerId, ComnCodeEntity taskCode, TaskStatusCode taskStatusCode, Long expirationSeconds, LocalDateTime expiredAt, Boolean isCycle, Long cycleSeconds) {
+    public TaskEntity(Long taskId, String appCode, String taskOwnerId, ComnCodeEntity taskCode, TaskStatusCode taskStatusCode, Long expirationSeconds, Boolean isCycle, Long cycleSeconds) {
         this.taskId = taskId;
         this.appCode = appCode;
         this.taskOwnerId = taskOwnerId;
         this.taskCode = taskCode;
         this.taskStatusCode = taskStatusCode;
-        this.expirationSeconds = expirationSeconds;
-        this.expiredAt = expiredAt;
+        this.expirationSeconds = expirationSeconds <= 0 ? 1 : expirationSeconds;
+        this.restExpirationSeconds = this.expirationSeconds;
         this.isCycle = isCycle;
-        this.cycleSeconds = cycleSeconds;
+        this.cycleSeconds = cycleSeconds <= 0 ? 1 : cycleSeconds;;
+
+        if (TaskStatusCode.PROCESSING.equals(this.taskStatusCode)) {
+            this.expiredAt = LocalDateTime.now().plusSeconds(this.expirationSeconds);
+        }
+    }
+
+    public void cycle() {
+        if (TaskStatusCode.PROCESSING.equals(this.taskStatusCode)) {
+            this.expirationSeconds = this.cycleSeconds;
+            this.restExpirationSeconds = this.expirationSeconds;
+            this.expiredAt = LocalDateTime.now().plusSeconds(this.restExpirationSeconds);
+        }
     }
 
     public void pause() {
-        this.taskStatusCode = TaskStatusCode.PAUSE;
-        this.expirationSeconds = Duration.between(LocalDateTime.now(), this.expiredAt).toSeconds();
-        this.expiredAt = null;
+        if (TaskStatusCode.PROCESSING.equals(this.taskStatusCode)) {
+            this.taskStatusCode = TaskStatusCode.PAUSE;
+            this.restExpirationSeconds = Math.max(1, Duration.between(LocalDateTime.now(), this.expiredAt).toSeconds());
+            this.expiredAt = null;
+        }
     }
 
     public void resume() {
-        this.taskStatusCode = TaskStatusCode.PROCESSING;
-        this.expiredAt = LocalDateTime.now().plusSeconds(this.expirationSeconds);
+        if (TaskStatusCode.PAUSE.equals(this.taskStatusCode)) {
+            this.taskStatusCode = TaskStatusCode.PROCESSING;
+            this.expiredAt = LocalDateTime.now().plusSeconds(this.restExpirationSeconds);
+        }
+    }
+
+    public void delete() {
+        this.taskStatusCode = TaskStatusCode.DELETE;
     }
 
     public void appStopPause() {
         if (TaskStatusCode.PROCESSING.equals(this.taskStatusCode)) {
             this.taskStatusCode = TaskStatusCode.APP_STOP_PROCESSING;
-        } else {
+            this.restExpirationSeconds = Math.max(1, Duration.between(LocalDateTime.now(), this.expiredAt).toSeconds());
+            this.expiredAt = null;
+        } else if (TaskStatusCode.PAUSE.equals(this.taskStatusCode)) {
             this.taskStatusCode = TaskStatusCode.APP_STOP_PAUSE;
         }
-        this.expirationSeconds = Duration.between(LocalDateTime.now(), this.expiredAt).toSeconds();
-        this.expiredAt = null;
     }
 
     public void appStopResume() {
         if (TaskStatusCode.APP_STOP_PROCESSING.equals(this.taskStatusCode)) {
+            Long shutDownSeconds = Duration.between(this.getUpdatedAt(), LocalDateTime.now()).toSeconds();
+            this.restExpirationSeconds = Math.max(1, this.restExpirationSeconds - shutDownSeconds);
+            this.expirationSeconds = Math.max(1, this.expirationSeconds - shutDownSeconds);
+
             this.taskStatusCode = TaskStatusCode.PROCESSING;
-        } else {
+            this.expiredAt = LocalDateTime.now().plusSeconds(this.restExpirationSeconds);
+        } else if (TaskStatusCode.APP_STOP_PAUSE.equals(this.taskStatusCode)) {
             this.taskStatusCode = TaskStatusCode.PAUSE;
         }
-        this.expiredAt = LocalDateTime.now().plusSeconds(this.expirationSeconds);
     }
 }

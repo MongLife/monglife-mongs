@@ -9,8 +9,10 @@ import org.springframework.context.event.ContextClosedEvent;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
+import java.lang.reflect.Method;
+
 @Slf4j
-@Order(9999)
+@Order(-9999)
 @Component
 @RequiredArgsConstructor
 public class ShutdownEventListener implements ApplicationListener<ContextClosedEvent> {
@@ -22,9 +24,11 @@ public class ShutdownEventListener implements ApplicationListener<ContextClosedE
 
     @Override
     public void onApplicationEvent(ContextClosedEvent contextClosedEvent) {
-        log.info("#######################      종료 준비 (Task 일시 중지)      #######################");
-        contextClosedEvent.getApplicationContext();
+
+        String applicationName = contextClosedEvent.getApplicationContext().getApplicationName();
+
         taskService.appStopPauseAllTask(APP_CODE);
-        log.info("####################### 종료 준비 완료 (Task 일시 중지 완료) #######################");
+
+        log.info("[TASK DOWN] {} =====> Task down success ", applicationName);
     }
 }

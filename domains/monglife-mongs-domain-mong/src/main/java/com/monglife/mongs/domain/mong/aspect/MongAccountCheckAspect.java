@@ -46,7 +46,7 @@ public class MongAccountCheckAspect {
         Long mongId = (Long) this.getParameterValue(mongIdParameterName, parameters, args)
                 .orElseThrow(() -> new NotExistsParameterException(mongIdParameterName));
 
-        log.info("[Validation] {}#{} =====> {} -> {}", method.getDeclaringClass().getName(), method.getName(), mongId, accountId);
+        log.debug("[Validation] {}#{} =====> {} -> {}", method.getDeclaringClass().getName(), method.getName(), mongId, accountId);
 
         if (!mongService.validateMongByAccountId(accountId, mongId)) {
             throw new InvalidMongException(accountId, mongId);

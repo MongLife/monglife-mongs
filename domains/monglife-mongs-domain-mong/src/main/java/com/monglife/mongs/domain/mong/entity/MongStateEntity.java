@@ -22,7 +22,7 @@ public class MongStateEntity {
     @Column(name = "mong_state_id")
     private Long mongStateId;
 
-    @OneToOne(mappedBy = "state", fetch = FetchType.LAZY)
+    @OneToOne(mappedBy = "state", cascade = CascadeType.MERGE)
     @JoinColumn(name = "mong_state_id")
     private MongEntity mong;
 

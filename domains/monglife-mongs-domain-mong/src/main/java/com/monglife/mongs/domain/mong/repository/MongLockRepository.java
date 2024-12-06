@@ -8,9 +8,8 @@ import org.springframework.data.jpa.repository.Lock;
 import java.util.List;
 import java.util.Optional;
 
-public interface MongRepository extends JpaRepository<MongEntity, Long> {
+public interface MongLockRepository extends JpaRepository<MongEntity, Long> {
 
-    List<MongEntity> findByAccountIdAndMetaIsActiveIsTrue(Long accountId);
-
+    @Lock(LockModeType.PESSIMISTIC_WRITE)
     Optional<MongEntity> findByMongIdAndMetaIsActiveIsTrue(Long mongId);
 }

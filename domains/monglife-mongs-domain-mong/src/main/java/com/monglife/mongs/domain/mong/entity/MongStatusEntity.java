@@ -20,7 +20,7 @@ public class MongStatusEntity {
     @Column(name = "mong_status_id")
     private Long mongStatusId;
 
-    @OneToOne(mappedBy = "status", fetch = FetchType.LAZY)
+    @OneToOne(mappedBy = "status", cascade = CascadeType.MERGE)
     @JoinColumn(name = "mong_status_id")
     private MongEntity mong;
 
@@ -105,6 +105,7 @@ public class MongStatusEntity {
         this.weight = Optional.ofNullable(updateDto.weight).orElse(this.weight);
         this.poopCount = Optional.ofNullable(updateDto.poopCount).orElse(this.poopCount);
         this.exp = Optional.ofNullable(updateDto.exp).orElse(this.exp);
+
         this.strength = Optional.ofNullable(updateDto.strength).orElse(this.strength);
         this.satiety = Optional.ofNullable(updateDto.satiety).orElse(this.satiety);
         this.healthy = Optional.ofNullable(updateDto.healthy).orElse(this.healthy);
@@ -112,6 +113,40 @@ public class MongStatusEntity {
 
         this.weight = Math.max(0D, this.weight);
         this.poopCount = Math.max(0, Math.min(this.poopCount, 4));
+        this.sinkValueToRatio();
+    }
+
+    public void updateRatio(UpdateRatioDto updateRatioDto) {
+
+        this.weight = this.weight + Optional.ofNullable(updateRatioDto.weight).orElse(0D);
+        this.poopCount = this.poopCount + Optional.ofNullable(updateRatioDto.poopCount).orElse(0);
+        this.exp = this.exp + Optional.ofNullable(updateRatioDto.exp).orElse(0D);
+
+        this.strengthRatio = this.strengthRatio + Optional.ofNullable(updateRatioDto.strengthRatio).orElse(0D);
+        this.satietyRatio = this.satietyRatio + Optional.ofNullable(updateRatioDto.satietyRatio).orElse(0D);
+        this.healthyRatio = this.healthyRatio + Optional.ofNullable(updateRatioDto.healthyRatio).orElse(0D);
+        this.fatigueRatio = this.fatigueRatio + Optional.ofNullable(updateRatioDto.fatigueRatio).orElse(0D);
+
+        this.weight = Math.max(0D, this.weight);
+        this.poopCount = Math.max(0, Math.min(this.poopCount, 4));
+        this.sinkRatioToValue();
+    }
+
+    private void sinkRatioToValue() {
+        this.expRatio = Math.max(0D, Math.min(this.expRatio, 100D));
+        this.strengthRatio = Math.max(0D, Math.min(this.strengthRatio, 100D));
+        this.satietyRatio = Math.max(0D, Math.min(this.satietyRatio, 100D));
+        this.healthyRatio = Math.max(0D, Math.min(this.healthyRatio, 100D));
+        this.fatigueRatio = Math.max(0D, Math.min(this.fatigueRatio, 100D));
+
+        this.exp = this.expRatio * this.maxStatus / 100;
+        this.strength = this.strengthRatio * this.maxStatus / 100;
+        this.satiety = this.satietyRatio * this.maxStatus / 100;
+        this.healthy = this.healthyRatio * this.maxStatus / 100;
+        this.fatigue = this.fatigueRatio * this.maxStatus / 100;
+    }
+
+    private void sinkValueToRatio() {
         this.exp = Math.max(0D, Math.min(this.exp, this.maxStatus));
         this.strength = Math.max(0D, Math.min(this.strength, this.maxStatus));
         this.satiety = Math.max(0D, Math.min(this.satiety, this.maxStatus));
@@ -145,6 +180,25 @@ public class MongStatusEntity {
         private Double healthy;
 
         private Double fatigue;
+
+        private Integer poopCount;
+    }
+
+    @Builder
+    @AllArgsConstructor
+    public static class UpdateRatioDto {
+
+        private Double exp;
+
+        private Double weight;
+
+        private Double strengthRatio;
+
+        private Double satietyRatio;
+
+        private Double healthyRatio;
+
+        private Double fatigueRatio;
 
         private Integer poopCount;
     }

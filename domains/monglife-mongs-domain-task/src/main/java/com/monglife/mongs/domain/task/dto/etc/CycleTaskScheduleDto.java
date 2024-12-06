@@ -12,7 +12,7 @@ import java.time.LocalDateTime;
 @Getter
 @Setter
 @NoArgsConstructor
-public class CreateTaskScheduleDto {
+public class CycleTaskScheduleDto {
 
     private Long taskId;
 
@@ -24,6 +24,8 @@ public class CreateTaskScheduleDto {
 
     private TaskStatusCode taskStatusCode;
 
+    private Long restExpirationSeconds;
+
     private Long expirationSeconds;
 
     private LocalDateTime expiredAt;
@@ -33,25 +35,27 @@ public class CreateTaskScheduleDto {
     private Long cycleSeconds;
 
     @Builder
-    public CreateTaskScheduleDto(Long taskId, String appCode, String taskOwnerId, String taskCode, TaskStatusCode taskStatusCode, Long expirationSeconds, LocalDateTime expiredAt, Boolean isCycle, Long cycleSeconds) {
+    public CycleTaskScheduleDto(Long taskId, String appCode, String taskOwnerId, String taskCode, TaskStatusCode taskStatusCode, Long restExpirationSeconds, Long expirationSeconds, LocalDateTime expiredAt, Boolean isCycle, Long cycleSeconds) {
         this.taskId = taskId;
         this.appCode = appCode;
         this.taskOwnerId = taskOwnerId;
         this.taskCode = taskCode;
         this.taskStatusCode = taskStatusCode;
+        this.restExpirationSeconds = restExpirationSeconds;
         this.expirationSeconds = expirationSeconds;
         this.expiredAt = expiredAt;
         this.isCycle = isCycle;
         this.cycleSeconds = cycleSeconds;
     }
 
-    public static CreateTaskScheduleDto of(TaskEntity taskEntity) {
-        return CreateTaskScheduleDto.builder()
+    public static CycleTaskScheduleDto of(TaskEntity taskEntity) {
+        return CycleTaskScheduleDto.builder()
                 .taskId(taskEntity.getTaskId())
                 .appCode(taskEntity.getAppCode())
                 .taskOwnerId(taskEntity.getTaskOwnerId())
                 .taskCode(taskEntity.getTaskCode().getComnCode())
                 .taskStatusCode(taskEntity.getTaskStatusCode())
+                .restExpirationSeconds(taskEntity.getRestExpirationSeconds())
                 .expirationSeconds(taskEntity.getExpirationSeconds())
                 .expiredAt(taskEntity.getExpiredAt())
                 .isCycle(taskEntity.getIsCycle())

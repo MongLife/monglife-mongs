@@ -1,5 +1,7 @@
 package com.monglife.mongs.domain.mong.entity;
 
+import com.monglife.mongs.domain.mong.dto.etc.DecreaseMongStatusDto;
+import com.monglife.mongs.domain.mong.dto.etc.IncreaseMongStatusDto;
 import com.monglife.mongs.domain.mong.dto.etc.UpdateMongStatusDto;
 import com.monglife.mongs.domain.mong.enums.MongStateCode;
 import com.monglife.mongs.domain.mong.enums.MongStatusCode;
@@ -7,6 +9,7 @@ import com.monglife.mongs.domain.mong.listener.MongEntityListener;
 import com.monglife.mongs.module.jpa.entity.BaseTimeEntity;
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.sql.Update;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.LocalTime;
@@ -89,7 +92,6 @@ public class MongEntity extends BaseTimeEntity {
 
         this.meta.update(MongMetaEntity.UpdateDto.builder()
                 .isActive(Boolean.FALSE)
-                .isTimeLimit(Boolean.FALSE)
                 .build());
     }
 
@@ -156,7 +158,7 @@ public class MongEntity extends BaseTimeEntity {
                 .build();
 
         this.status.update(updateDto);
-        this.payPoint = this.payPoint - foodPrice;
+        this.payPoint = Math.max(0, this.payPoint - foodPrice);
     }
 
     /**
@@ -179,15 +181,11 @@ public class MongEntity extends BaseTimeEntity {
                 .code(MongStateCode.NORMAL)
                 .build());
 
-        this.status.updateMaxStatus(nextType.getMaxStatus());
-
         this.status.update(MongStatusEntity.UpdateDto.builder()
-                .strength(0D)
-                .satiety(0D)
-                .healthy(0D)
-                .fatigue(0D)
+                .exp(0D)
                 .build());
 
+        this.status.updateMaxStatus(nextType.getMaxStatus());
         this.type = nextType;
     }
 
@@ -209,10 +207,6 @@ public class MongEntity extends BaseTimeEntity {
                 .code(MongStateCode.GRADUATE_READY)
                 .isSleep(Boolean.FALSE)
                 .build());
-
-        this.meta.update(MongMetaEntity.UpdateDto.builder()
-                .isTimeLimit(Boolean.FALSE)
-                .build());
     }
 
     /**
@@ -227,10 +221,6 @@ public class MongEntity extends BaseTimeEntity {
         this.state.update(MongStateEntity.UpdateDto.builder()
                 .code(MongStateCode.NORMAL)
                 .isSleep(Boolean.FALSE)
-                .build());
-
-        this.meta.update(MongMetaEntity.UpdateDto.builder()
-                .isTimeLimit(Boolean.FALSE)
                 .build());
     }
 
@@ -247,9 +237,56 @@ public class MongEntity extends BaseTimeEntity {
                 .code(MongStateCode.DEAD)
                 .isSleep(Boolean.FALSE)
                 .build());
+    }
 
-        this.meta.update(MongMetaEntity.UpdateDto.builder()
-                .isTimeLimit(Boolean.FALSE)
+    /**
+     * 몽 지수 증가
+     * @param increaseMongStatusDto 지수 증가치
+     */
+    public void increaseStatus(IncreaseMongStatusDto increaseMongStatusDto) {
+        this.status.updateRatio(MongStatusEntity.UpdateRatioDto.builder()
+                .exp(increaseMongStatusDto.getExp())
+                .weight(increaseMongStatusDto.getWeight())
+                .strengthRatio(increaseMongStatusDto.getStrengthRatio())
+                .satietyRatio(increaseMongStatusDto.getSatietyRatio())
+                .healthyRatio(increaseMongStatusDto.getHealthyRatio())
+                .fatigueRatio(increaseMongStatusDto.getFatigueRatio())
+                .poopCount(increaseMongStatusDto.getPoop())
                 .build());
+    }
+
+    /**
+     * 몽 지수 감소
+     * @param decreaseMongStatusDto 지수 감소치
+     */
+    public void decreaseStatus(DecreaseMongStatusDto decreaseMongStatusDto) {
+        this.status.updateRatio(MongStatusEntity.UpdateRatioDto.builder()
+                .exp(decreaseMongStatusDto.getExp())
+                .weight(decreaseMongStatusDto.getWeight())
+                .strengthRatio(decreaseMongStatusDto.getStrengthRatio())
+                .satietyRatio(decreaseMongStatusDto.getSatietyRatio())
+                .healthyRatio(decreaseMongStatusDto.getHealthyRatio())
+                .fatigueRatio(decreaseMongStatusDto.getFatigueRatio())
+                .poopCount(decreaseMongStatusDto.getPoop())
+                .build());
+    }
+
+    /**
+     * 몽 배변 증가
+     * @param addPoopCount 배변 수
+     */
+    public void increasePoop(Integer addPoopCount) {
+
+        int prePoopCount = this.status.getPoopCount();
+
+        this.status.update(MongStatusEntity.UpdateDto.builder()
+                .poopCount(this.status.getPoopCount() + addPoopCount)
+                .build());
+
+        if (this.status.getPoopCount() == prePoopCount) {
+            this.meta.update(MongMetaEntity.UpdateDto.builder()
+                    .penalty(this.meta.getPenalty() + 0.1)
+                    .build());
+        }
     }
 }

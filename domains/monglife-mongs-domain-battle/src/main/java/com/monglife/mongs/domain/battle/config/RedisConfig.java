@@ -20,7 +20,11 @@ import org.springframework.data.redis.serializer.RedisSerializationContext;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
 
 @Configuration("battleRedisConfig")
-//@EnableRedisRepositories(enableKeyspaceEvents = RedisKeyValueAdapter.EnableKeyspaceEvents.ON_STARTUP)
+@EnableRedisRepositories(
+        basePackages = "com.monglife.mongs.domain.battle.repository",
+        redisTemplateRef = "battleRedisTemplate",
+        enableKeyspaceEvents = RedisKeyValueAdapter.EnableKeyspaceEvents.ON_STARTUP
+)
 public class RedisConfig {
 
     @Value("${spring.data.battle.redis.host}")
@@ -36,6 +40,7 @@ public class RedisConfig {
     private Integer database;
 
     @Bean("battleRedisConnectionFactory")
+    @ConditionalOnMissingBean(name = "battleRedisConnectionFactory")
     public RedisConnectionFactory battleRedisConnectionFactory() {
         RedisStandaloneConfiguration redisStandaloneConfiguration = new RedisStandaloneConfiguration();
         redisStandaloneConfiguration.setHostName(host);

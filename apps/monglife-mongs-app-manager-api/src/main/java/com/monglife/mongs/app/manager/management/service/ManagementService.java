@@ -5,7 +5,6 @@ import com.monglife.mongs.domain.mong.annotation.MongAccountCheck;
 import com.monglife.mongs.domain.mong.dto.etc.GetFeedItemDto;
 import com.monglife.mongs.domain.mong.dto.etc.GetMongDto;
 import com.monglife.mongs.domain.mong.service.MongService;
-import com.monglife.mongs.domain.task.enums.TaskStatusCode;
 import com.monglife.mongs.domain.task.service.TaskService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
@@ -30,23 +29,48 @@ public class ManagementService {
     private final TaskService taskService;
 
 
+    /**
+     * 몽 목록 조회
+     * @param accountId 계정 ID
+     * @return 몽 정보 목록
+     */
     @Transactional(readOnly = true)
     public List<GetMongDto> getMongs(Long accountId) {
         return mongService.getMongs(accountId);
     }
 
+    /**
+     * 몽 조회
+     * @param accountId 계정 ID
+     * @param mongId 몽 ID
+     * @return 몽 정보
+     */
     @MongAccountCheck
     @Transactional(readOnly = true)
     public GetMongDto getMong(Long accountId, Long mongId) {
         return mongService.getMong(mongId);
     }
 
+    /**
+     * 몽 먹이 목록 조회
+     * @param accountId 계정 ID
+     * @param mongId 몽 ID
+     * @param foodTypeGroupCode 먹이 그룹 코드
+     * @return 구매 가능 여부 포함한 먹이 목록 조회
+     */
     @MongAccountCheck
     @Transactional(readOnly = true)
     public List<GetFeedItemDto> getFeedItems(Long accountId, Long mongId, String foodTypeGroupCode) {
         return mongService.getFeedItems(mongId, foodTypeGroupCode);
     }
 
+    /**
+     * 몽 생성
+     * @param accountId 계정 ID
+     * @param name 몽 이름
+     * @param sleepAt 몽 정기 수면 시간
+     * @param wakeupAt 몽 정기 기상 시간
+     */
     @Transactional
     public void createMong(Long accountId, String name, LocalTime sleepAt, LocalTime wakeupAt) {
 
@@ -54,9 +78,14 @@ public class ManagementService {
 
         String taskOwnerId = String.valueOf(mongId);
 
-        taskService.createTask(APP_CODE, taskOwnerId, taskScheduleProperties.eggEvolution.getCode(), taskScheduleProperties.eggEvolution.getExpiration(), TaskStatusCode.PROCESSING);
+        taskService.createTask(APP_CODE, taskOwnerId, taskScheduleProperties.eggEvolution.getCode(), taskScheduleProperties.eggEvolution.getExpiration());
     }
 
+    /**
+     * 몽 삭제
+     * @param accountId 계정 ID
+     * @param mongId 몽 ID
+     */
     @MongAccountCheck
     @Transactional
     public void deleteMong(Long accountId, Long mongId) {
@@ -68,18 +97,34 @@ public class ManagementService {
         taskService.deleteAllTasks(APP_CODE, taskOwnerId);
     }
 
+    /**
+     * 몽 먹이 주기
+     * @param accountId 계정 ID
+     * @param mongId 몽 ID
+     * @param foodTypeCode 먹이 코드
+     */
     @MongAccountCheck
     @Transactional
     public void feedMong(Long accountId, Long mongId, String foodTypeCode) {
         mongService.feedMong(mongId, foodTypeCode);
     }
 
+    /***
+     * 몽 쓰다 듬기
+     * @param accountId 계정 ID
+     * @param mongId 몽 ID
+     */
     @MongAccountCheck
     @Transactional
     public void strokeMong(Long accountId, Long mongId) {
         mongService.strokeMong(mongId);
     }
 
+    /**
+     * 몽 수면/기상
+     * @param accountId 계정 ID
+     * @param mongId 몽 ID
+     */
     @MongAccountCheck
     @Transactional
     public void sleepMong(Long accountId, Long mongId) {
@@ -87,29 +132,37 @@ public class ManagementService {
         String taskOwnerId = String.valueOf(mongId);
 
         if (mongService.getMong(mongId).getIsSleep()) {
-
             mongService.wakeupMong(mongId);
 
-            taskService.pauseTask(APP_CODE, taskOwnerId, taskScheduleProperties.statusIncrease.getCode());
-            taskService.resumeTask(APP_CODE, taskOwnerId, taskScheduleProperties.statusDecrease.getCode());
-            taskService.resumeTask(APP_CODE, taskOwnerId, taskScheduleProperties.poopIncrease.getCode());
+            taskService.createCycleTask(APP_CODE, taskOwnerId, taskScheduleProperties.statusDecrease.getCode(), taskScheduleProperties.statusDecrease.getExpiration(), taskScheduleProperties.statusDecrease.getExpiration());
+            taskService.createCycleTask(APP_CODE, taskOwnerId, taskScheduleProperties.poopIncrease.getCode(), taskScheduleProperties.poopIncrease.getExpiration(), taskScheduleProperties.poopIncrease.getExpiration());
+            taskService.deleteTask(APP_CODE, taskOwnerId, taskScheduleProperties.statusIncrease.getCode());
 
         } else {
-
             mongService.sleepMong(mongId);
 
-            taskService.pauseTask(APP_CODE, taskOwnerId, taskScheduleProperties.statusDecrease.getCode());
-            taskService.pauseTask(APP_CODE, taskOwnerId, taskScheduleProperties.poopIncrease.getCode());
-            taskService.resumeTask(APP_CODE, taskOwnerId, taskScheduleProperties.statusIncrease.getCode());
+            taskService.deleteTask(APP_CODE, taskOwnerId, taskScheduleProperties.statusDecrease.getCode());
+            taskService.deleteTask(APP_CODE, taskOwnerId, taskScheduleProperties.poopIncrease.getCode());
+            taskService.createCycleTask(APP_CODE, taskOwnerId, taskScheduleProperties.statusIncrease.getCode(), taskScheduleProperties.statusIncrease.getExpiration(), taskScheduleProperties.statusIncrease.getExpiration());
         }
     }
 
+    /**
+     * 몽 배변 처리
+     * @param accountId 계정 ID
+     * @param mongId 몽 ID
+     */
     @MongAccountCheck
     @Transactional
     public void poopCleanMong(Long accountId, Long mongId) {
         mongService.poopCleanMong(mongId);
     }
 
+    /**
+     * 몽 진화
+     * @param accountId 계정 ID
+     * @param mongId 몽 ID
+     */
     @MongAccountCheck
     @Transactional
     public void evolutionMong(Long accountId, Long mongId) {
@@ -122,23 +175,26 @@ public class ManagementService {
 
             String taskOwnerId = String.valueOf(mongId);
 
-            taskService.deleteTask(APP_CODE, taskOwnerId, taskScheduleProperties.eggEvolution.getCode());
-
             Long sleepExpirationSeconds = Duration.between(LocalTime.now(), getMongDto.getSleepAt()).getSeconds();
             if (sleepExpirationSeconds < 0) sleepExpirationSeconds = taskScheduleProperties.wakeup.getExpiration() + sleepExpirationSeconds;
-            taskService.createTask(APP_CODE, taskOwnerId, taskScheduleProperties.sleep.getCode(), sleepExpirationSeconds, Boolean.TRUE, taskScheduleProperties.sleep.getExpiration(), TaskStatusCode.PROCESSING);
+            else if (sleepExpirationSeconds == 0) mongService.sleepMong(mongId);
+
+            taskService.createCycleTask(APP_CODE, taskOwnerId, taskScheduleProperties.sleep.getCode(), sleepExpirationSeconds, taskScheduleProperties.sleep.getExpiration());
 
             Long wakeupExpirationSeconds = Duration.between(LocalTime.now(), getMongDto.getWakeupAt()).getSeconds();
             if (wakeupExpirationSeconds < 0) wakeupExpirationSeconds = taskScheduleProperties.wakeup.getExpiration() + wakeupExpirationSeconds;
-            taskService.createTask(APP_CODE, taskOwnerId, taskScheduleProperties.wakeup.getCode(), wakeupExpirationSeconds, Boolean.TRUE, taskScheduleProperties.wakeup.getExpiration(), TaskStatusCode.PROCESSING);
+            taskService.createCycleTask(APP_CODE, taskOwnerId, taskScheduleProperties.wakeup.getCode(), wakeupExpirationSeconds, taskScheduleProperties.wakeup.getExpiration());
 
-            taskService.createTask(APP_CODE, taskOwnerId, taskScheduleProperties.statusIncrease.getCode(), taskScheduleProperties.statusIncrease.getExpiration(), Boolean.TRUE, taskScheduleProperties.statusIncrease.getExpiration(), TaskStatusCode.PAUSE);
-            taskService.createTask(APP_CODE, taskOwnerId, taskScheduleProperties.statusDecrease.getCode(), taskScheduleProperties.statusDecrease.getExpiration(), Boolean.TRUE, taskScheduleProperties.statusDecrease.getExpiration(), TaskStatusCode.PROCESSING);
-            taskService.createTask(APP_CODE, taskOwnerId, taskScheduleProperties.poopIncrease.getCode(), taskScheduleProperties.poopIncrease.getExpiration(), Boolean.TRUE, taskScheduleProperties.poopIncrease.getExpiration(), TaskStatusCode.PROCESSING);
-            taskService.createTask(APP_CODE, taskOwnerId, taskScheduleProperties.dead.getCode(), taskScheduleProperties.dead.getExpiration(), Boolean.TRUE, taskScheduleProperties.dead.getExpiration(), TaskStatusCode.PAUSE);
+            taskService.createCycleTask(APP_CODE, taskOwnerId, taskScheduleProperties.statusDecrease.getCode(), taskScheduleProperties.statusDecrease.getExpiration(), taskScheduleProperties.statusDecrease.getExpiration());
+            taskService.createCycleTask(APP_CODE, taskOwnerId, taskScheduleProperties.poopIncrease.getCode(), taskScheduleProperties.poopIncrease.getExpiration(), taskScheduleProperties.poopIncrease.getExpiration());
         }
     }
 
+    /**
+     * 몽 졸업
+     * @param accountId 계정 ID
+     * @param mongId 몽 ID
+     */
     @MongAccountCheck
     @Transactional
     public void graduateMong(Long accountId, Long mongId) {

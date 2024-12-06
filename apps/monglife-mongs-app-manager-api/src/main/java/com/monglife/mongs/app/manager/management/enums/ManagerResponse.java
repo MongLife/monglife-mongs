@@ -28,15 +28,9 @@ public enum ManagerResponse implements Response {
     MANAGER_MANAGEMENT_EVOLUTION_MONG(HttpStatus.OK.value(), "MANAGER-MANAGEMENT-000", "몽 진화에 성공했습니다."),
     MANAGER_MANAGEMENT_GRADUATE_MONG(HttpStatus.OK.value(), "MANAGER-MANAGEMENT-000", "몽 졸업에 성공했습니다."),
 
-    MANAGER_MANAGEMENT_MONG_OBSERVE_MONG(HttpStatus.OK.value(), "MANAGER-MANAGEMENT-000", "몽 정보에 변동이 있습니다."),
+    MANAGER_MANAGEMENT_OBSERVE_MONG(HttpStatus.OK.value(), "MANAGER-MANAGEMENT-000", "몽 정보에 변동이 있습니다."),
     MANAGER_MANAGEMENT_OBSERVE_MONG_STATE(HttpStatus.OK.value(), "MANAGER-MANAGEMENT-000", "몽 상태 정보에 변동이 있습니다."),
     MANAGER_MANAGEMENT_OBSERVE_MONG_STATUS(HttpStatus.OK.value(), "MANAGER-MANAGEMENT-000", "몽 지수 정보에 변동이 있습니다."),
-
-    /**
-     * 실패 응답
-     */
-
-
     ;
 
     private final Integer httpStatus;
