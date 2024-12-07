@@ -2,6 +2,7 @@ package com.monglife.mongs.domain.task.service;
 
 import com.monglife.mongs.domain.task.dto.etc.GetTaskDto;
 import com.monglife.mongs.domain.task.entity.TaskEntity;
+import com.monglife.mongs.domain.task.enums.TaskStateCode;
 import com.monglife.mongs.domain.task.enums.TaskStatusCode;
 import com.monglife.mongs.domain.task.exception.AlreadyExistsTaskException;
 import com.monglife.mongs.domain.task.exception.NotExistsTaskCodeException;
@@ -12,8 +13,11 @@ import com.monglife.mongs.domain.task.repository.TaskRepository;
 import com.monglife.mongs.module.jpa.entity.ComnCodeEntity;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.time.Duration;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 
 @Service
 @RequiredArgsConstructor
@@ -42,6 +46,34 @@ public class TaskService {
         return taskRepository.findByAppCodeAndTaskOwnerIdAndTaskCodeComnCodeAndTaskStatusCode(appCode, taskOwnerId, taskCode, taskStatusCode).isPresent();
     }
 
+    @Transactional
+    public void createFixTimeTask(String appCode, String taskOwnerId, String taskCode, LocalTime fixTime) {
+
+        ComnCodeEntity comnCodeEntity = comnCodeRepository.findById(taskCode)
+                .orElseThrow(() -> new NotExistsTaskCodeException(taskCode));
+
+        taskRepository.findByAppCodeAndTaskOwnerIdAndTaskCodeComnCode(appCode, taskOwnerId, taskCode)
+                .ifPresent(taskEntity -> { throw new AlreadyExistsTaskException(taskEntity.getTaskId()); });
+
+        TaskEntity taskEntity = new TaskEntity(appCode, taskOwnerId, comnCodeEntity, TaskStateCode.FIX_TIME, fixTime);
+
+        taskRepository.save(taskEntity);
+    }
+
+    @Transactional
+    public void createFixTimeCycleTask(String appCode, String taskOwnerId, String taskCode, LocalTime fixTime) {
+
+        ComnCodeEntity comnCodeEntity = comnCodeRepository.findById(taskCode)
+                .orElseThrow(() -> new NotExistsTaskCodeException(taskCode));
+
+        taskRepository.findByAppCodeAndTaskOwnerIdAndTaskCodeComnCode(appCode, taskOwnerId, taskCode)
+                .ifPresent(taskEntity -> { throw new AlreadyExistsTaskException(taskEntity.getTaskId()); });
+
+        TaskEntity taskEntity = new TaskEntity(appCode, taskOwnerId, comnCodeEntity, TaskStateCode.FIX_TIME_CYCLE, fixTime);
+
+        taskRepository.save(taskEntity);
+    }
+
     /**
      * Task 생성
      * @param appCode 앱 코드
@@ -58,15 +90,7 @@ public class TaskService {
         taskRepository.findByAppCodeAndTaskOwnerIdAndTaskCodeComnCode(appCode, taskOwnerId, taskCode)
                 .ifPresent(taskEntity -> { throw new AlreadyExistsTaskException(taskEntity.getTaskId()); });
 
-        TaskEntity taskEntity = TaskEntity.builder()
-                .appCode(appCode)
-                .taskOwnerId(taskOwnerId)
-                .taskCode(comnCodeEntity)
-                .taskStatusCode(TaskStatusCode.PROCESSING)
-                .expirationSeconds(expirationSeconds)
-                .isCycle(Boolean.FALSE)
-                .cycleSeconds(expirationSeconds)
-                .build();
+        TaskEntity taskEntity = new TaskEntity(appCode, taskOwnerId, comnCodeEntity, TaskStateCode.NONE_FIX_TIME, expirationSeconds);
 
         taskRepository.save(taskEntity);
     }
@@ -77,10 +101,9 @@ public class TaskService {
      * @param taskOwnerId Task 생성자 ID
      * @param taskCode Task 종류 코드
      * @param expirationSeconds Task 만료 시간
-     * @param cycleSeconds 2번째 cycle 부터 적용될 Task 만료 시간
      */
     @Transactional
-    public void createCycleTask(String appCode, String taskOwnerId, String taskCode, Long expirationSeconds, Long cycleSeconds) {
+    public void createCycleTask(String appCode, String taskOwnerId, String taskCode, Long expirationSeconds) {
 
         ComnCodeEntity comnCodeEntity = comnCodeRepository.findById(taskCode)
                 .orElseThrow(() -> new NotExistsTaskCodeException(taskCode));
@@ -88,15 +111,7 @@ public class TaskService {
         taskRepository.findByAppCodeAndTaskOwnerIdAndTaskCodeComnCode(appCode, taskOwnerId, taskCode)
                 .ifPresent(taskEntity -> { throw new AlreadyExistsTaskException(taskEntity.getTaskId()); });
 
-        TaskEntity taskEntity = TaskEntity.builder()
-                .appCode(appCode)
-                .taskOwnerId(taskOwnerId)
-                .taskCode(comnCodeEntity)
-                .taskStatusCode(TaskStatusCode.PROCESSING)
-                .expirationSeconds(expirationSeconds)
-                .isCycle(Boolean.TRUE)
-                .cycleSeconds(cycleSeconds)
-                .build();
+        TaskEntity taskEntity = new TaskEntity(appCode, taskOwnerId, comnCodeEntity, TaskStateCode.NONE_FIX_TIME_CYCLE, expirationSeconds);
 
         taskRepository.save(taskEntity);
     }
@@ -122,7 +137,7 @@ public class TaskService {
     @Transactional
     public void deleteAllTasks(String appCode, String taskOwnerId) {
 
-        lockTaskRepository.findByAppCodeAndTaskOwnerId(appCode, taskOwnerId).forEach(TaskEntity::delete);
+        taskRepository.deleteAll(lockTaskRepository.findByAppCodeAndTaskOwnerId(appCode, taskOwnerId));
     }
 
     /**
@@ -135,16 +150,7 @@ public class TaskService {
     public void deleteTask(String appCode, String taskOwnerId, String taskCode) {
 
         lockTaskRepository.findByAppCodeAndTaskOwnerIdAndTaskCodeComnCode(appCode, taskOwnerId, taskCode)
-                .ifPresent(TaskEntity::delete);
-    }
-
-    /**
-     * Task 물리적 삭제
-     * @param taskId Task ID
-     */
-    @Transactional
-    public void hardDeleteTask(Long taskId) {
-        lockTaskRepository.deleteById(taskId);
+                .ifPresent(taskRepository::delete);
     }
 
     /**

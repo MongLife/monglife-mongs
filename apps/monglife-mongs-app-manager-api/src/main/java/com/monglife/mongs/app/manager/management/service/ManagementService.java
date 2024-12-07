@@ -11,7 +11,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.Duration;
 import java.time.LocalTime;
 import java.util.List;
 
@@ -134,8 +133,8 @@ public class ManagementService {
         if (mongService.getMong(mongId).getIsSleep()) {
             mongService.wakeupMong(mongId);
 
-            taskService.createCycleTask(APP_CODE, taskOwnerId, taskScheduleProperties.statusDecrease.getCode(), taskScheduleProperties.statusDecrease.getExpiration(), taskScheduleProperties.statusDecrease.getExpiration());
-            taskService.createCycleTask(APP_CODE, taskOwnerId, taskScheduleProperties.poopIncrease.getCode(), taskScheduleProperties.poopIncrease.getExpiration(), taskScheduleProperties.poopIncrease.getExpiration());
+            taskService.createCycleTask(APP_CODE, taskOwnerId, taskScheduleProperties.statusDecrease.getCode(), taskScheduleProperties.statusDecrease.getExpiration());
+            taskService.createCycleTask(APP_CODE, taskOwnerId, taskScheduleProperties.poopIncrease.getCode(), taskScheduleProperties.poopIncrease.getExpiration());
             taskService.deleteTask(APP_CODE, taskOwnerId, taskScheduleProperties.statusIncrease.getCode());
 
         } else {
@@ -143,7 +142,7 @@ public class ManagementService {
 
             taskService.deleteTask(APP_CODE, taskOwnerId, taskScheduleProperties.statusDecrease.getCode());
             taskService.deleteTask(APP_CODE, taskOwnerId, taskScheduleProperties.poopIncrease.getCode());
-            taskService.createCycleTask(APP_CODE, taskOwnerId, taskScheduleProperties.statusIncrease.getCode(), taskScheduleProperties.statusIncrease.getExpiration(), taskScheduleProperties.statusIncrease.getExpiration());
+            taskService.createCycleTask(APP_CODE, taskOwnerId, taskScheduleProperties.statusIncrease.getCode(), taskScheduleProperties.statusIncrease.getExpiration());
         }
     }
 
@@ -175,18 +174,11 @@ public class ManagementService {
 
             String taskOwnerId = String.valueOf(mongId);
 
-            Long sleepExpirationSeconds = Duration.between(LocalTime.now(), getMongDto.getSleepAt()).getSeconds();
-            if (sleepExpirationSeconds < 0) sleepExpirationSeconds = taskScheduleProperties.wakeup.getExpiration() + sleepExpirationSeconds;
-            else if (sleepExpirationSeconds == 0) mongService.sleepMong(mongId);
+            taskService.createFixTimeCycleTask(APP_CODE, taskOwnerId, taskScheduleProperties.sleep.getCode(), getMongDto.getSleepAt());
+            taskService.createFixTimeCycleTask(APP_CODE, taskOwnerId, taskScheduleProperties.wakeup.getCode(), getMongDto.getWakeupAt());
 
-            taskService.createCycleTask(APP_CODE, taskOwnerId, taskScheduleProperties.sleep.getCode(), sleepExpirationSeconds, taskScheduleProperties.sleep.getExpiration());
-
-            Long wakeupExpirationSeconds = Duration.between(LocalTime.now(), getMongDto.getWakeupAt()).getSeconds();
-            if (wakeupExpirationSeconds < 0) wakeupExpirationSeconds = taskScheduleProperties.wakeup.getExpiration() + wakeupExpirationSeconds;
-            taskService.createCycleTask(APP_CODE, taskOwnerId, taskScheduleProperties.wakeup.getCode(), wakeupExpirationSeconds, taskScheduleProperties.wakeup.getExpiration());
-
-            taskService.createCycleTask(APP_CODE, taskOwnerId, taskScheduleProperties.statusDecrease.getCode(), taskScheduleProperties.statusDecrease.getExpiration(), taskScheduleProperties.statusDecrease.getExpiration());
-            taskService.createCycleTask(APP_CODE, taskOwnerId, taskScheduleProperties.poopIncrease.getCode(), taskScheduleProperties.poopIncrease.getExpiration(), taskScheduleProperties.poopIncrease.getExpiration());
+            taskService.createCycleTask(APP_CODE, taskOwnerId, taskScheduleProperties.statusDecrease.getCode(), taskScheduleProperties.statusDecrease.getExpiration());
+            taskService.createCycleTask(APP_CODE, taskOwnerId, taskScheduleProperties.poopIncrease.getCode(), taskScheduleProperties.poopIncrease.getExpiration());
         }
     }
 

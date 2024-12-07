@@ -62,13 +62,20 @@ public class LoggingAspect {
                             .append(args[index].getClass().getTypeName())
                             .append(") : ")
                             .append(argJson);
-                } catch (JsonProcessingException ignored) {}
+                } catch (JsonProcessingException ignored) {
+                    argsBuilder
+                            .append(parameters[index].getName())
+                            .append("(")
+                            .append(args[index].getClass().getTypeName())
+                            .append(") : ")
+                            .append(args[index].toString());
+                }
             }
 
             if (index != parameters.length - 1) argsBuilder.append(", ");
         }
 
-        log.debug("[Method Call] {}#{} =====> {}", clazzName, methodName, argsBuilder);
+        log.info("[Method Call] {}#{} =====> {}", clazzName, methodName, argsBuilder);
     }
 
     @AfterThrowing(value = "controllerPointcut() || servicePointcut() || listenerPointcut()", throwing = "exception")

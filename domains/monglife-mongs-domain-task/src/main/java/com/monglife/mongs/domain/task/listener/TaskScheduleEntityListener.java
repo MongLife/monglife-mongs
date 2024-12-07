@@ -3,7 +3,6 @@ package com.monglife.mongs.domain.task.listener;
 import com.monglife.mongs.domain.task.dto.etc.GetTaskDto;
 import com.monglife.mongs.domain.task.dto.event.ExecuteTaskEvent;
 import com.monglife.mongs.domain.task.dto.event.RunTaskScheduleEvent;
-import com.monglife.mongs.domain.task.dto.event.StopTaskScheduleEvent;
 import com.monglife.mongs.domain.task.exception.NotExistsTaskException;
 import com.monglife.mongs.domain.task.service.TaskService;
 import lombok.RequiredArgsConstructor;
@@ -13,8 +12,6 @@ import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.transaction.event.TransactionPhase;
-import org.springframework.transaction.event.TransactionalEventListener;
 
 @Slf4j
 @Component
@@ -47,32 +44,8 @@ public class TaskScheduleEntityListener {
             log.info("[RUN] {} -> {}", getTaskDto.getTaskOwnerId(), getTaskDto.getTaskCode());
 
         } catch (NotExistsTaskException e) {
+
             log.info("[ALREADY DEL] {} -> {}", event.getTaskId(), e.getMessage());
-        }
-    }
-
-    @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
-    @Transactional(propagation = Propagation.REQUIRES_NEW)
-    public void stopTaskScheduleEventListener(StopTaskScheduleEvent event) {
-
-        GetTaskDto getTaskDto = taskService.getTask(event.getTaskId());
-
-        switch (getTaskDto.getTaskStatusCode()) {
-            case DELETE -> {
-                taskService.hardDeleteTask(getTaskDto.getTaskId());
-                log.info("[DEL] {} -> {}", getTaskDto.getTaskOwnerId(), getTaskDto.getTaskCode());
-            }
-            case PAUSE, APP_STOP_PROCESSING -> {
-                applicationEventPublisher.publishEvent(ExecuteTaskEvent.builder()
-                    .appCode(getTaskDto.getAppCode())
-                    .taskOwnerId(getTaskDto.getTaskOwnerId())
-                    .taskCode(getTaskDto.getTaskCode())
-                    .restExpirationSeconds(getTaskDto.getRestExpirationSeconds())
-                    .expirationSeconds(getTaskDto.getExpirationSeconds())
-                    .build());
-
-                log.info("[STOP] {} -> {}", getTaskDto.getTaskOwnerId(), getTaskDto.getTaskCode());
-            }
         }
     }
 }

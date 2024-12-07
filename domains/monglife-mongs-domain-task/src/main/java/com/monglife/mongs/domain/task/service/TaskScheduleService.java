@@ -1,8 +1,11 @@
 package com.monglife.mongs.domain.task.service;
 
+import com.monglife.mongs.domain.task.dto.etc.GetTaskDto;
 import com.monglife.mongs.domain.task.dto.etc.StartTaskScheduleDto;
+import com.monglife.mongs.domain.task.dto.etc.StopTaskScheduleDto;
+import com.monglife.mongs.domain.task.dto.event.AppStopEvent;
+import com.monglife.mongs.domain.task.dto.event.ExecuteTaskEvent;
 import com.monglife.mongs.domain.task.dto.event.RunTaskScheduleEvent;
-import com.monglife.mongs.domain.task.dto.event.StopTaskScheduleEvent;
 import com.monglife.mongs.domain.task.entity.TaskScheduleEntity;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -68,20 +71,41 @@ public class TaskScheduleService {
 
     /**
      * Pause, AppStopPause, AppStopProcessing, Delete Task Entity
-     * @param taskId Task ID
+     * @param stopTaskScheduleDto Task ID
      */
     @Transactional
-    public void stopTaskSchedule(Long taskId) {
+    public void stopTaskSchedule(StopTaskScheduleDto stopTaskScheduleDto) {
 
-        Optional.ofNullable(schedulerMap.get(taskId))
+        Optional.ofNullable(schedulerMap.get(stopTaskScheduleDto.getTaskId()))
                 .ifPresent(taskScheduleEntity -> {
                     taskScheduleEntity.stop();
-                    schedulerMap.remove(taskId);
+                    schedulerMap.remove(stopTaskScheduleDto.getTaskId());
                 });
 
-        applicationEventPublisher.publishEvent(StopTaskScheduleEvent.builder()
-                .taskId(taskId)
-                .build());
+        switch (stopTaskScheduleDto.getTaskStatusCode()) {
+            case PAUSE -> {
+                applicationEventPublisher.publishEvent(ExecuteTaskEvent.builder()
+                        .appCode(stopTaskScheduleDto.getAppCode())
+                        .taskOwnerId(stopTaskScheduleDto.getTaskOwnerId())
+                        .taskCode(stopTaskScheduleDto.getTaskCode())
+                        .restExpirationSeconds(stopTaskScheduleDto.getRestExpirationSeconds())
+                        .expirationSeconds(stopTaskScheduleDto.getExpirationSeconds())
+                        .build());
+
+                log.info("[PAUSE STOP] {} -> {}", stopTaskScheduleDto.getTaskOwnerId(), stopTaskScheduleDto.getTaskCode());
+            }
+            case APP_STOP_PROCESSING -> {
+                applicationEventPublisher.publishEvent(AppStopEvent.builder()
+                        .appCode(stopTaskScheduleDto.getAppCode())
+                        .taskOwnerId(stopTaskScheduleDto.getTaskOwnerId())
+                        .taskCode(stopTaskScheduleDto.getTaskCode())
+                        .restExpirationSeconds(stopTaskScheduleDto.getRestExpirationSeconds())
+                        .expirationSeconds(stopTaskScheduleDto.getExpirationSeconds())
+                        .build());
+
+                log.info("[APP STOP] {} -> {}", stopTaskScheduleDto.getTaskOwnerId(), stopTaskScheduleDto.getTaskCode());
+            }
+        }
     }
 
     /**
@@ -89,6 +113,7 @@ public class TaskScheduleService {
      * @param taskScheduleEntity Task Scheduler Entity
      * @return Runnable
      */
+
     private Runnable runTaskSchedule(TaskScheduleEntity taskScheduleEntity) {
         return () -> applicationEventPublisher.publishEvent(RunTaskScheduleEvent.builder()
                 .taskId(taskScheduleEntity.getTaskId())

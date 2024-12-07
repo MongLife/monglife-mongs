@@ -4,6 +4,7 @@ import com.monglife.mongs.app.manager.global.config.TaskScheduleProperties;
 import com.monglife.mongs.domain.mong.dto.etc.DecreaseMongStatusDto;
 import com.monglife.mongs.domain.mong.dto.etc.IncreaseMongStatusDto;
 import com.monglife.mongs.domain.mong.service.MongService;
+import com.monglife.mongs.domain.task.dto.event.AppStopEvent;
 import com.monglife.mongs.domain.task.dto.event.ExecuteTaskEvent;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
@@ -70,6 +71,46 @@ public class TaskEventListener {
             } else if (taskCode.equals(taskScheduleProperties.poopIncrease.getCode())) {
                 mongService.increasePoop(mongId, (int) (taskScheduleProperties.poopIncrease.getPoop() * ratio));
             }
+        }
+    }
+
+
+    @EventListener
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
+    public void appStopEventListener(AppStopEvent event) {
+
+        // 앱 코드 확인
+        if (!APP_CODE.equals(event.getAppCode())) return;
+
+        String taskCode = event.getTaskCode();
+        Long mongId = Long.parseLong(event.getTaskOwnerId());
+
+        long restExpirationSeconds = Math.max(1, event.getRestExpirationSeconds());
+        long expirationSeconds = Math.max(1, event.getExpirationSeconds());
+
+        double ratio = (double) restExpirationSeconds / (double) expirationSeconds;
+
+        // Task 코드 확인
+        if (taskCode.equals(taskScheduleProperties.statusIncrease.getCode())) {
+            mongService.increaseMongStatus(mongId, IncreaseMongStatusDto.builder()
+                    .exp(taskScheduleProperties.statusIncrease.getExp() * ratio)
+                    .weight(taskScheduleProperties.statusIncrease.getWeight() * ratio)
+                    .strengthRatio(taskScheduleProperties.statusIncrease.getStrengthRatio() * ratio)
+                    .satietyRatio(taskScheduleProperties.statusIncrease.getSatietyRatio() * ratio)
+                    .healthyRatio(taskScheduleProperties.statusIncrease.getHealthyRatio() * ratio)
+                    .fatigueRatio(taskScheduleProperties.statusIncrease.getFatigueRatio() * ratio)
+                    .build());
+        } else if (taskCode.equals(taskScheduleProperties.statusDecrease.getCode())) {
+            mongService.decreaseMongStatus(mongId, DecreaseMongStatusDto.builder()
+                    .exp(taskScheduleProperties.statusDecrease.getExp() * ratio)
+                    .weight(taskScheduleProperties.statusDecrease.getWeight() * ratio)
+                    .strengthRatio(taskScheduleProperties.statusDecrease.getStrengthRatio() * ratio)
+                    .satietyRatio(taskScheduleProperties.statusDecrease.getSatietyRatio() * ratio)
+                    .healthyRatio(taskScheduleProperties.statusDecrease.getHealthyRatio() * ratio)
+                    .fatigueRatio(taskScheduleProperties.statusDecrease.getFatigueRatio() * ratio)
+                    .build());
+        } else if (taskCode.equals(taskScheduleProperties.poopIncrease.getCode())) {
+            mongService.increasePoop(mongId, (int) (taskScheduleProperties.poopIncrease.getPoop() * ratio));
         }
     }
 }

@@ -55,7 +55,7 @@ public class GetTaskDto {
                 .restExpirationSeconds(taskEntity.getRestExpirationSeconds())
                 .expirationSeconds(taskEntity.getExpirationSeconds())
                 .expiredAt(taskEntity.getExpiredAt())
-                .isCycle(taskEntity.getIsCycle())
+                .isCycle(taskEntity.isCycle())
                 .build();
     }
 }

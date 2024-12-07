@@ -20,7 +20,7 @@ public class MongStatusEntity {
     @Column(name = "mong_status_id")
     private Long mongStatusId;
 
-    @OneToOne(mappedBy = "status", cascade = CascadeType.MERGE)
+    @OneToOne(mappedBy = "status")
     @JoinColumn(name = "mong_status_id")
     private MongEntity mong;
 

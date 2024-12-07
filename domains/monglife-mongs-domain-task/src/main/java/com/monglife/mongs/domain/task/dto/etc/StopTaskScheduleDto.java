@@ -12,7 +12,7 @@ import java.time.LocalDateTime;
 @Getter
 @Setter
 @NoArgsConstructor
-public class CycleTaskScheduleDto {
+public class StopTaskScheduleDto {
 
     private Long taskId;
 
@@ -32,10 +32,8 @@ public class CycleTaskScheduleDto {
 
     private Boolean isCycle;
 
-    private Long cycleSeconds;
-
     @Builder
-    public CycleTaskScheduleDto(Long taskId, String appCode, String taskOwnerId, String taskCode, TaskStatusCode taskStatusCode, Long restExpirationSeconds, Long expirationSeconds, LocalDateTime expiredAt, Boolean isCycle, Long cycleSeconds) {
+    public StopTaskScheduleDto(Long taskId, String appCode, String taskOwnerId, String taskCode, TaskStatusCode taskStatusCode, Long restExpirationSeconds, Long expirationSeconds, LocalDateTime expiredAt, Boolean isCycle) {
         this.taskId = taskId;
         this.appCode = appCode;
         this.taskOwnerId = taskOwnerId;
@@ -45,11 +43,10 @@ public class CycleTaskScheduleDto {
         this.expirationSeconds = expirationSeconds;
         this.expiredAt = expiredAt;
         this.isCycle = isCycle;
-        this.cycleSeconds = cycleSeconds;
     }
 
-    public static CycleTaskScheduleDto of(TaskEntity taskEntity) {
-        return CycleTaskScheduleDto.builder()
+    public static StopTaskScheduleDto of(TaskEntity taskEntity) {
+        return StopTaskScheduleDto.builder()
                 .taskId(taskEntity.getTaskId())
                 .appCode(taskEntity.getAppCode())
                 .taskOwnerId(taskEntity.getTaskOwnerId())
@@ -58,8 +55,7 @@ public class CycleTaskScheduleDto {
                 .restExpirationSeconds(taskEntity.getRestExpirationSeconds())
                 .expirationSeconds(taskEntity.getExpirationSeconds())
                 .expiredAt(taskEntity.getExpiredAt())
-                .isCycle(taskEntity.getIsCycle())
-                .cycleSeconds(taskEntity.getCycleSeconds())
+                .isCycle(taskEntity.isCycle())
                 .build();
     }
 }

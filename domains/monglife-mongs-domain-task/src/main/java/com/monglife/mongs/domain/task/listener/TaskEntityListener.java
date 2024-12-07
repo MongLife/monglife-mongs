@@ -1,16 +1,16 @@
 package com.monglife.mongs.domain.task.listener;
 
+import com.monglife.mongs.domain.task.dto.etc.GetTaskDto;
 import com.monglife.mongs.domain.task.dto.etc.StartTaskScheduleDto;
-import com.monglife.mongs.domain.task.dto.event.StopTaskScheduleEvent;
+import com.monglife.mongs.domain.task.dto.etc.StopTaskScheduleDto;
 import com.monglife.mongs.domain.task.entity.TaskEntity;
 import com.monglife.mongs.domain.task.enums.TaskStatusCode;
-import com.monglife.mongs.domain.task.repository.TaskRepository;
 import com.monglife.mongs.domain.task.service.TaskScheduleService;
-import com.monglife.mongs.domain.task.service.TaskService;
-import jakarta.persistence.*;
+import jakarta.persistence.PostPersist;
+import jakarta.persistence.PostUpdate;
+import jakarta.persistence.PreRemove;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Component;
 
 @Slf4j
@@ -39,8 +39,16 @@ public class TaskEntityListener {
         switch (taskEntity.getTaskStatusCode()) {
             case PROCESSING ->
                     taskScheduleService.startTaskSchedule(StartTaskScheduleDto.of(taskEntity));
-            case PAUSE, APP_STOP_PROCESSING, DELETE ->
-                    taskScheduleService.stopTaskSchedule(taskEntity.getTaskId());
+            case PAUSE, APP_STOP_PROCESSING ->
+                    taskScheduleService.stopTaskSchedule(StopTaskScheduleDto.of(taskEntity));
         }
+    }
+
+    @PreRemove
+    public void preRemove(TaskEntity taskEntity) {
+
+        taskScheduleService.stopTaskSchedule(StopTaskScheduleDto.of(taskEntity));
+
+        log.info("[DEL] {} -> {}", taskEntity.getTaskOwnerId(), taskEntity.getTaskCode());
     }
 }

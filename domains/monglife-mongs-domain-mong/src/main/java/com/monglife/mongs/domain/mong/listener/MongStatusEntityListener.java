@@ -1,14 +1,18 @@
 package com.monglife.mongs.domain.mong.listener;
 
+import com.monglife.mongs.domain.mong.dto.event.MongEvolutionEvent;
 import com.monglife.mongs.domain.mong.dto.event.MongObserveStatusEvent;
 import com.monglife.mongs.domain.mong.entity.MongStatusEntity;
 import com.monglife.mongs.domain.mong.enums.MongStatusCode;
+import com.monglife.mongs.domain.mong.service.MongService;
 import jakarta.persistence.PostUpdate;
 import jakarta.persistence.PreUpdate;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Component;
 
+@Slf4j
 @Component
 @RequiredArgsConstructor
 public class MongStatusEntityListener {
@@ -18,6 +22,7 @@ public class MongStatusEntityListener {
     private static final Double SOMNOLENCE_RATIO = 10D;
 
     private final ApplicationEventPublisher applicationEventPublisher;
+
 
     @PreUpdate
     public void preUpdate(MongStatusEntity mongStatusEntity) {
@@ -40,7 +45,9 @@ public class MongStatusEntityListener {
                     .build());
         }
 
-        if (mongStatusEntity.getExpRatio() >= 100) mongStatusEntity.getMong().evolutionReady();
+        applicationEventPublisher.publishEvent(MongEvolutionEvent.builder()
+                .mongId(mongStatusEntity.getMong().getMongId())
+                .build());
     }
 
     /**

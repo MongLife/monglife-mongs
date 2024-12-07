@@ -1,5 +1,6 @@
 package com.monglife.mongs.domain.task.entity;
 
+import com.monglife.mongs.domain.task.enums.TaskStateCode;
 import com.monglife.mongs.domain.task.enums.TaskStatusCode;
 import com.monglife.mongs.domain.task.listener.TaskEntityListener;
 import com.monglife.mongs.module.jpa.entity.BaseTimeEntity;
@@ -9,7 +10,9 @@ import lombok.*;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.Duration;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 
 @Entity
 @Getter
@@ -38,85 +41,162 @@ public class TaskEntity extends BaseTimeEntity {
     @Column(name = "task_status_code")
     private TaskStatusCode taskStatusCode;
 
-    @Column(name = "rest_expiration_seconds")
-    private Long restExpirationSeconds;
+    @Enumerated(EnumType.STRING)
+    @Column(name = "task_state_code")
+    private TaskStateCode taskStateCode;
 
-    @Column(name = "expiration_seconds", updatable = false)
-    private Long expirationSeconds;
+    @Column(name = "rest_expiration_seconds")
+    private Long restExpirationSeconds; // 남은 만료 시간
+
+    @Column(name = "expiration_seconds")
+    private Long expirationSeconds;     // 만료 시간
 
     @Column(name = "expired_at")
-    private LocalDateTime expiredAt;
+    private LocalDateTime expiredAt;    // 만료 시각
 
-    @Column(name = "is_cycle", updatable = false)
-    private Boolean isCycle;
+    @Column(name = "fix_time", updatable = false)
+    private LocalTime fixTime;
 
-    @Column(name = "cycle_seconds", updatable = false)
-    private Long cycleSeconds;
-
-    @Builder
-    public TaskEntity(Long taskId, String appCode, String taskOwnerId, ComnCodeEntity taskCode, TaskStatusCode taskStatusCode, Long expirationSeconds, Boolean isCycle, Long cycleSeconds) {
-        this.taskId = taskId;
+    public TaskEntity(String appCode, String taskOwnerId, ComnCodeEntity taskCode, TaskStateCode taskStateCode, LocalTime fixTime) {
         this.appCode = appCode;
         this.taskOwnerId = taskOwnerId;
         this.taskCode = taskCode;
-        this.taskStatusCode = taskStatusCode;
-        this.expirationSeconds = expirationSeconds <= 0 ? 1 : expirationSeconds;
-        this.restExpirationSeconds = this.expirationSeconds;
-        this.isCycle = isCycle;
-        this.cycleSeconds = cycleSeconds <= 0 ? 1 : cycleSeconds;;
+        this.taskStateCode = taskStateCode;
+        this.fixTime = fixTime == null ? LocalTime.of(0, 0) : fixTime;
+        this.taskStatusCode = TaskStatusCode.PROCESSING;
 
-        if (TaskStatusCode.PROCESSING.equals(this.taskStatusCode)) {
-            this.expiredAt = LocalDateTime.now().plusSeconds(this.expirationSeconds);
-        }
+        LocalDateTime now = LocalDateTime.now();
+        this.resetFixTime(now);
+    }
+
+    public TaskEntity(String appCode, String taskOwnerId, ComnCodeEntity taskCode, TaskStateCode taskStateCode, Long expirationSeconds) {
+        this.appCode = appCode;
+        this.taskOwnerId = taskOwnerId;
+        this.taskCode = taskCode;
+        this.taskStateCode = taskStateCode;
+        this.expirationSeconds = expirationSeconds;
+        this.taskStatusCode = TaskStatusCode.PROCESSING;
+
+        this.restExpirationSeconds = this.expirationSeconds;
+        this.expiredAt = LocalDateTime.now().plusSeconds(this.restExpirationSeconds);
+    }
+
+    public Boolean isFixTime() {
+        return this.taskStateCode.equals(TaskStateCode.FIX_TIME_CYCLE) || this.taskStateCode.equals(TaskStateCode.FIX_TIME);
+    }
+
+    public Boolean isCycle() {
+        return this.taskStateCode.equals(TaskStateCode.FIX_TIME_CYCLE) || this.taskStateCode.equals(TaskStateCode.NONE_FIX_TIME_CYCLE);
+    }
+
+    public Boolean isProcessing() {
+        return this.taskStatusCode.equals(TaskStatusCode.PROCESSING);
     }
 
     public void cycle() {
-        if (TaskStatusCode.PROCESSING.equals(this.taskStatusCode)) {
-            this.expirationSeconds = this.cycleSeconds;
+
+        if (!this.isProcessing() || !this.isCycle()) return;
+
+        LocalDateTime now = LocalDateTime.now();
+
+        if (this.isFixTime()) {
+            this.expiredAt = LocalDateTime.of(now.toLocalDate().plusDays(1), this.fixTime);
+            this.restExpirationSeconds = Duration.between(now, this.expiredAt).toSeconds();
+        } else {
             this.restExpirationSeconds = this.expirationSeconds;
-            this.expiredAt = LocalDateTime.now().plusSeconds(this.restExpirationSeconds);
+            this.expiredAt = now.plusSeconds(this.restExpirationSeconds);
         }
     }
 
     public void pause() {
-        if (TaskStatusCode.PROCESSING.equals(this.taskStatusCode)) {
-            this.taskStatusCode = TaskStatusCode.PAUSE;
-            this.restExpirationSeconds = Math.max(1, Duration.between(LocalDateTime.now(), this.expiredAt).toSeconds());
+
+        if (!this.isProcessing()) return;
+
+        LocalDateTime now = LocalDateTime.now();
+
+        if (this.isFixTime()) {
+            this.expirationSeconds = null;
+            this.restExpirationSeconds = null;
+            this.expiredAt = null;
+        } else {
+            this.restExpirationSeconds = Math.max(1, Duration.between(now, this.expiredAt).toSeconds());
             this.expiredAt = null;
         }
+
+        this.taskStatusCode = TaskStatusCode.PAUSE;
     }
 
     public void resume() {
-        if (TaskStatusCode.PAUSE.equals(this.taskStatusCode)) {
-            this.taskStatusCode = TaskStatusCode.PROCESSING;
-            this.expiredAt = LocalDateTime.now().plusSeconds(this.restExpirationSeconds);
-        }
-    }
 
-    public void delete() {
-        this.taskStatusCode = TaskStatusCode.DELETE;
+        if (this.isProcessing()) return;
+
+        LocalDateTime now = LocalDateTime.now();
+
+        if (this.isFixTime()) {
+            this.resetFixTime(now);
+        } else {
+            this.expiredAt = now.plusSeconds(this.restExpirationSeconds);
+        }
+
+        this.taskStatusCode = TaskStatusCode.PROCESSING;
     }
 
     public void appStopPause() {
-        if (TaskStatusCode.PROCESSING.equals(this.taskStatusCode)) {
+
+        if (this.isProcessing()) {
+
+            LocalDateTime now = LocalDateTime.now();
+
+            if (this.isFixTime()) {
+                this.expirationSeconds = null;
+                this.restExpirationSeconds = null;
+                this.expiredAt = null;
+            } else {
+                this.restExpirationSeconds = Math.max(1, Duration.between(now, this.expiredAt).toSeconds());
+                this.expiredAt = null;
+            }
+
             this.taskStatusCode = TaskStatusCode.APP_STOP_PROCESSING;
-            this.restExpirationSeconds = Math.max(1, Duration.between(LocalDateTime.now(), this.expiredAt).toSeconds());
-            this.expiredAt = null;
-        } else if (TaskStatusCode.PAUSE.equals(this.taskStatusCode)) {
+        } else {
             this.taskStatusCode = TaskStatusCode.APP_STOP_PAUSE;
         }
     }
 
     public void appStopResume() {
-        if (TaskStatusCode.APP_STOP_PROCESSING.equals(this.taskStatusCode)) {
-            Long shutDownSeconds = Duration.between(this.getUpdatedAt(), LocalDateTime.now()).toSeconds();
-            this.restExpirationSeconds = Math.max(1, this.restExpirationSeconds - shutDownSeconds);
-            this.expirationSeconds = Math.max(1, this.expirationSeconds - shutDownSeconds);
+
+        if (this.isProcessing()) {
+
+            LocalDateTime now = LocalDateTime.now();
+
+            if (this.isFixTime()) {
+                this.resetFixTime(now);
+            } else {
+                this.restExpirationSeconds = Math.max(1, this.restExpirationSeconds);
+                this.expiredAt = now.plusSeconds(this.restExpirationSeconds);
+            }
 
             this.taskStatusCode = TaskStatusCode.PROCESSING;
-            this.expiredAt = LocalDateTime.now().plusSeconds(this.restExpirationSeconds);
-        } else if (TaskStatusCode.APP_STOP_PAUSE.equals(this.taskStatusCode)) {
+
+        } else {
             this.taskStatusCode = TaskStatusCode.PAUSE;
         }
+    }
+
+    private void resetFixTime(LocalDateTime now) {
+
+        if (!this.isFixTime()) return;
+
+        this.expiredAt = LocalDateTime.of(now.toLocalDate(), this.fixTime);
+
+        if (this.expiredAt.isBefore(now)) {
+            this.expiredAt = this.expiredAt.plusDays(1);
+            this.expirationSeconds = Duration.between(now, this.expiredAt).toSeconds();
+        } else if (this.expiredAt.isEqual(now)) {
+            this.expirationSeconds = 1L;
+        } else {
+            this.expirationSeconds = Duration.between(now, this.expiredAt).toSeconds();
+        }
+
+        this.restExpirationSeconds = this.expirationSeconds;
     }
 }
