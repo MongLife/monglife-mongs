@@ -8,9 +8,11 @@ import com.monglife.mongs.domain.battle.entity.BattlePlayerEntity;
 import com.monglife.mongs.domain.battle.entity.BattleRoomEntity;
 import com.monglife.mongs.domain.battle.entity.BattleRoundEntity;
 import com.monglife.mongs.domain.battle.enums.BattleRoundCode;
-import com.monglife.mongs.domain.battle.exception.*;
+import com.monglife.mongs.domain.battle.exception.AlreadyExistsRoundException;
+import com.monglife.mongs.domain.battle.exception.NotExistsPlayerIdException;
+import com.monglife.mongs.domain.battle.exception.NotExistsRoomIdException;
+import com.monglife.mongs.domain.battle.exception.OnlyBotMatchingException;
 import com.monglife.mongs.domain.battle.repository.BattleRoomRepository;
-import com.monglife.mongs.domain.battle.repository.ComnCodeRepository;
 import com.monglife.mongs.domain.battle.vo.BattlePlayerVo;
 import com.monglife.mongs.domain.battle.vo.CreateBattleVo;
 import com.monglife.mongs.domain.battle.vo.FightBattleVo;
@@ -32,9 +34,6 @@ public class BattleService {
 
     private static final Random random = new Random();
 
-    @Value("${application.service.battle.bot-mong-type-group-code}")
-    private String BOT_MONG_TYPE_GROUP_CODE;
-
     @Value("${application.service.battle.max-round}")
     public Integer MAX_ROUND;
 
@@ -43,8 +42,6 @@ public class BattleService {
 
     @Value("${application.service.battle.max-random-bound}")
     private Double MAX_RANDOM_BOUND;
-
-    private final ComnCodeRepository comnCodeRepository;
 
     private final BattleRoomRepository battleRoomRepository;
 
@@ -62,24 +59,15 @@ public class BattleService {
         // 배틀 플레이어 엔티티 생성
         List<BattlePlayerEntity> battlePlayerEntities = createBattleVoSet.stream()
                 .map(createBattleVo -> {
-                    String mongTypeCode;
+                    double defenceValue = BattlePlayerEntity.MAX_DEFENCE_VALUE;
                     double attackValue = BattlePlayerEntity.MAX_ATTACK_VALUE;
                     double healValue = BattlePlayerEntity.MAX_HEAL_VALUE;
-                    double defenceValue = BattlePlayerEntity.MAX_DEFENCE_VALUE;
 
                     // 봇이 아닌 경우
                     if (!createBattleVo.getIsBot()) {
-                        mongTypeCode = createBattleVo.getMongTypeCode();
-                        attackValue = BattlePlayerEntity.MAX_ATTACK_VALUE + (BattlePlayerEntity.MAX_ATTACK_VALUE * createBattleVo.getStrengthRatio());
-                        healValue = BattlePlayerEntity.MAX_HEAL_VALUE + (BattlePlayerEntity.MAX_HEAL_VALUE * createBattleVo.getFatigueRatio());
-                        defenceValue = BattlePlayerEntity.MAX_DEFENCE_VALUE + (BattlePlayerEntity.MAX_DEFENCE_VALUE * createBattleVo.getWeightRatio());
-
-                    } else {
-
-                        mongTypeCode = comnCodeRepository.findByGroupCode(BOT_MONG_TYPE_GROUP_CODE).stream()
-                                .findAny()
-                                .orElseThrow(NotExistsMongTypeCodeException::new)
-                                .getComnCode();
+                        defenceValue = BattlePlayerEntity.MAX_DEFENCE_VALUE + createBattleVo.getWeight();
+                        attackValue = BattlePlayerEntity.MAX_ATTACK_VALUE + createBattleVo.getStrength();
+                        healValue = BattlePlayerEntity.MAX_HEAL_VALUE + createBattleVo.getFatigue();
                     }
 
                     return BattlePlayerEntity.builder()
@@ -87,10 +75,10 @@ public class BattleService {
                             .deviceId(createBattleVo.getDeviceId())
                             .accountId(createBattleVo.getAccountId())
                             .mongId(createBattleVo.getMongId())
-                            .mongTypeCode(mongTypeCode)
-                            .attackValue(attackValue / random.nextDouble(MAX_RANDOM_ORIGIN, MAX_RANDOM_BOUND))
-                            .healValue(healValue / random.nextDouble(MAX_RANDOM_ORIGIN, MAX_RANDOM_BOUND))
-                            .defenceValue(defenceValue / random.nextDouble(MAX_RANDOM_ORIGIN, MAX_RANDOM_BOUND))
+                            .mongTypeCode(createBattleVo.getMongTypeCode())
+                            .defenceValue(defenceValue * random.nextDouble(MAX_RANDOM_ORIGIN, MAX_RANDOM_BOUND))
+                            .attackValue(attackValue * random.nextDouble(MAX_RANDOM_ORIGIN, MAX_RANDOM_BOUND))
+                            .healValue(healValue * random.nextDouble(MAX_RANDOM_ORIGIN, MAX_RANDOM_BOUND))
                             .isBot(createBattleVo.getIsBot())
                             .build();
                 })

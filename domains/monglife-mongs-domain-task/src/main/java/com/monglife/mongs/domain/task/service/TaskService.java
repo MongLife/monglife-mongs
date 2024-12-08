@@ -15,9 +15,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.Duration;
-import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -137,7 +137,7 @@ public class TaskService {
     @Transactional
     public void deleteAllTasks(String appCode, String taskOwnerId) {
 
-        taskRepository.deleteAll(lockTaskRepository.findByAppCodeAndTaskOwnerId(appCode, taskOwnerId));
+        lockTaskRepository.deleteAll(lockTaskRepository.findByAppCodeAndTaskOwnerId(appCode, taskOwnerId));
     }
 
     /**
@@ -150,7 +150,7 @@ public class TaskService {
     public void deleteTask(String appCode, String taskOwnerId, String taskCode) {
 
         lockTaskRepository.findByAppCodeAndTaskOwnerIdAndTaskCodeComnCode(appCode, taskOwnerId, taskCode)
-                .ifPresent(taskRepository::delete);
+                .ifPresent(lockTaskRepository::delete);
     }
 
     /**
@@ -184,8 +184,16 @@ public class TaskService {
      * @param appCode 앱 코드
      */
     @Transactional
-    public void appStopPauseAllTask(String appCode) {
-        lockTaskRepository.findByAppCode(appCode).forEach(TaskEntity::appStopPause);
+    public List<GetTaskDto> appStopPauseAllTask(String appCode) {
+
+        List<GetTaskDto> getTaskDtoList = new ArrayList<>();
+
+        lockTaskRepository.findByAppCode(appCode).forEach(taskEntity -> {
+            taskEntity.appStopPause();
+            getTaskDtoList.add(GetTaskDto.of(taskEntity));
+        });
+
+        return getTaskDtoList;
     }
 
     /**
@@ -193,7 +201,15 @@ public class TaskService {
      * @param appCode 앱 코드
      */
     @Transactional
-    public void appStopResumeAllTask(String appCode) {
-        lockTaskRepository.findByAppCode(appCode).forEach(TaskEntity::appStopResume);
+    public List<GetTaskDto> appStopResumeAllTask(String appCode) {
+
+        List<GetTaskDto> getTaskDtoList = new ArrayList<>();
+
+        lockTaskRepository.findByAppCode(appCode).forEach(taskEntity -> {
+            taskEntity.appStopResume();
+            getTaskDtoList.add(GetTaskDto.of(taskEntity));
+        });
+
+        return getTaskDtoList;
     }
 }

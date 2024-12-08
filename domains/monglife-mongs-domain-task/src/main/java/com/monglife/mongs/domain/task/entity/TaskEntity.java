@@ -164,7 +164,7 @@ public class TaskEntity extends BaseTimeEntity {
 
     public void appStopResume() {
 
-        if (this.isProcessing()) {
+        if (TaskStatusCode.APP_STOP_PROCESSING.equals(this.taskStatusCode) || TaskStatusCode.PROCESSING.equals(this.taskStatusCode)) {
 
             LocalDateTime now = LocalDateTime.now();
 
@@ -177,7 +177,7 @@ public class TaskEntity extends BaseTimeEntity {
 
             this.taskStatusCode = TaskStatusCode.PROCESSING;
 
-        } else {
+        } else if (TaskStatusCode.APP_STOP_PAUSE.equals(this.taskStatusCode)) {
             this.taskStatusCode = TaskStatusCode.PAUSE;
         }
     }

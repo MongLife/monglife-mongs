@@ -1,4 +1,4 @@
-package com.monglife.mongs.domain.mong.entity;
+package com.monglife.mongs.domain.mong.entity.type;
 
 import com.monglife.mongs.module.jpa.entity.ComnCodeEntity;
 import jakarta.persistence.*;

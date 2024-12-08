@@ -1,8 +1,8 @@
-package com.monglife.mongs.domain.task.listener;
+package com.monglife.mongs.domain.taskSchedule.listener;
 
 import com.monglife.mongs.domain.task.dto.etc.GetTaskDto;
 import com.monglife.mongs.domain.task.dto.event.ExecuteTaskEvent;
-import com.monglife.mongs.domain.task.dto.event.RunTaskScheduleEvent;
+import com.monglife.mongs.domain.taskSchedule.dto.event.RunTaskScheduleEvent;
 import com.monglife.mongs.domain.task.exception.NotExistsTaskException;
 import com.monglife.mongs.domain.task.service.TaskService;
 import lombok.RequiredArgsConstructor;
@@ -44,8 +44,7 @@ public class TaskScheduleEntityListener {
             log.info("[RUN] {} -> {}", getTaskDto.getTaskOwnerId(), getTaskDto.getTaskCode());
 
         } catch (NotExistsTaskException e) {
-
-            log.info("[ALREADY DEL] {} -> {}", event.getTaskId(), e.getMessage());
+            log.info("[ALREADY RUN] {} -> {}", event.getTaskId(), e.getMessage());
         }
     }
 }

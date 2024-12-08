@@ -1,26 +1,33 @@
 package com.monglife.mongs.domain.task.listener;
 
-import com.monglife.mongs.domain.task.dto.etc.GetTaskDto;
-import com.monglife.mongs.domain.task.dto.etc.StartTaskScheduleDto;
-import com.monglife.mongs.domain.task.dto.etc.StopTaskScheduleDto;
+import com.monglife.mongs.domain.taskSchedule.dto.etc.StartTaskScheduleDto;
+import com.monglife.mongs.domain.taskSchedule.dto.etc.StopTaskScheduleDto;
+import com.monglife.mongs.domain.task.dto.event.ExecuteTaskEvent;
 import com.monglife.mongs.domain.task.entity.TaskEntity;
 import com.monglife.mongs.domain.task.enums.TaskStatusCode;
-import com.monglife.mongs.domain.task.service.TaskScheduleService;
+import com.monglife.mongs.domain.taskSchedule.service.TaskScheduleService;
 import jakarta.persistence.PostPersist;
+import jakarta.persistence.PostRemove;
 import jakarta.persistence.PostUpdate;
-import jakarta.persistence.PreRemove;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Component;
 
-@Slf4j
 @Component
 @RequiredArgsConstructor
 public class TaskEntityListener {
 
+    private final ApplicationEventPublisher applicationEventPublisher;
+
     private final TaskScheduleService taskScheduleService;
 
 
+    /**
+     * PAUSE : Task Scheduler 중지 -> 결과 반영
+     * PROCESSING : Task Scheduler 시작
+     * APP_STOP_PROCESSING : Task Scheduler 중지 -> 결과 반영
+     * @param taskEntity 등록된 Task Entity
+     */
     @PostPersist
     public void postPersist(TaskEntity taskEntity) {
         if (TaskStatusCode.PROCESSING.equals(taskEntity.getTaskStatusCode())) {
@@ -44,11 +51,20 @@ public class TaskEntityListener {
         }
     }
 
-    @PreRemove
+    /**
+     * @param taskEntity 삭제된 Task Entity
+     */
+    @PostRemove
     public void preRemove(TaskEntity taskEntity) {
 
         taskScheduleService.stopTaskSchedule(StopTaskScheduleDto.of(taskEntity));
 
-        log.info("[DEL] {} -> {}", taskEntity.getTaskOwnerId(), taskEntity.getTaskCode());
+        applicationEventPublisher.publishEvent(ExecuteTaskEvent.builder()
+                .appCode(taskEntity.getAppCode())
+                .taskOwnerId(taskEntity.getTaskOwnerId())
+                .taskCode(taskEntity.getTaskCode().getComnCode())
+                .restExpirationSeconds(taskEntity.getRestExpirationSeconds())
+                .expirationSeconds(taskEntity.getExpirationSeconds())
+                .build());
     }
 }

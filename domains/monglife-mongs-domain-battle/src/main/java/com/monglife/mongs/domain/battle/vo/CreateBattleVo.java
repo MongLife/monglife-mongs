@@ -20,24 +20,24 @@ public class CreateBattleVo {
 
     private String mongTypeCode;
 
-    private Double strengthRatio;
+    private Double weight;
 
-    private Double fatigueRatio;
+    private Double strength;
 
-    private Double weightRatio;
+    private Double fatigue;
 
     private Boolean isBot;
 
     @Builder
-    public CreateBattleVo(String playerId, String deviceId, Long accountId, Long mongId, String mongTypeCode, Double strengthRatio, Double fatigueRatio, Double weightRatio, Boolean isBot) {
+    public CreateBattleVo(String playerId, String deviceId, Long accountId, Long mongId, String mongTypeCode, Double weight, Double strength, Double fatigue, Boolean isBot) {
         this.playerId = playerId;
         this.deviceId = deviceId;
         this.accountId = accountId;
         this.mongId = mongId;
         this.mongTypeCode = mongTypeCode;
-        this.strengthRatio = strengthRatio;
-        this.fatigueRatio = fatigueRatio;
-        this.weightRatio = weightRatio;
+        this.weight = weight;
+        this.strength = strength;
+        this.fatigue = fatigue;
         this.isBot = isBot;
     }
 }

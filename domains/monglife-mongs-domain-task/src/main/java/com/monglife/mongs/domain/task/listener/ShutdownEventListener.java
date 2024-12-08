@@ -27,8 +27,11 @@ public class ShutdownEventListener implements ApplicationListener<ContextClosedE
 
         String applicationName = contextClosedEvent.getApplicationContext().getApplicationName();
 
-        taskService.appStopPauseAllTask(APP_CODE);
+        StringBuilder sb = new StringBuilder();
+        taskService.appStopPauseAllTask(APP_CODE).forEach(getTaskDto -> {
+            sb.append("\n").append(getTaskDto.getTaskId()).append(" =====> ").append(getTaskDto.getTaskOwnerId()).append(" : ").append(getTaskDto.getTaskCode());
+        });
 
-        log.info("[TASK DOWN] {} =====> Task down success ", applicationName);
+        log.info("[TASK STOP SUCCESS] {}{}", applicationName, sb);
     }
 }

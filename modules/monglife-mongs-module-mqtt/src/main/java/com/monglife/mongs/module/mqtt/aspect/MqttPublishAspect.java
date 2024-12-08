@@ -30,7 +30,6 @@ public class MqttPublishAspect {
 
     @AfterReturning(value = "mqttPublishPointcut() && executionPointcut()", returning = "mqttResponseEntity")
     public void after(JoinPoint joinPoint, MqttResponseEntity<?> mqttResponseEntity) {
-        log.error("mqtt publish =====> {}", mqttResponseEntity);
         mqttResponseEntity.getTopics().forEach(topic -> mqttSendService.sendMessage(topic, mqttResponseEntity.getBody()));
     }
 }

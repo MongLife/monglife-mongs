@@ -1,7 +1,7 @@
 package com.monglife.mongs.domain.mong.listener;
 
 import com.monglife.mongs.domain.mong.dto.event.MongObserveStateEvent;
-import com.monglife.mongs.domain.mong.entity.MongStateEntity;
+import com.monglife.mongs.domain.mong.entity.data.MongStateEntity;
 import jakarta.persistence.PostUpdate;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.ApplicationEventPublisher;

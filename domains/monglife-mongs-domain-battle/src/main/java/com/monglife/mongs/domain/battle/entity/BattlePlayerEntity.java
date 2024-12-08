@@ -17,7 +17,7 @@ import java.util.Set;
 @Table(name = "mongs_battle_player")
 public class BattlePlayerEntity {
 
-    private static final Double MAX_HP = 500D;
+    public static final Double MAX_HP = 500D;
     public static final Double MAX_ATTACK_VALUE = 50D;
     public static final Double MAX_HEAL_VALUE = 25D;
     public static final Double MAX_DEFENCE_VALUE = 15D;

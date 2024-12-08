@@ -1,4 +1,4 @@
-package com.monglife.mongs.domain.task.config;
+package com.monglife.mongs.domain.global.config;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;

@@ -75,7 +75,7 @@ public class LoggingAspect {
             if (index != parameters.length - 1) argsBuilder.append(", ");
         }
 
-        log.info("[Method Call] {}#{} =====> {}", clazzName, methodName, argsBuilder);
+        log.debug("[Method Call] {}#{} =====> {}", clazzName, methodName, argsBuilder);
     }
 
     @AfterThrowing(value = "controllerPointcut() || servicePointcut() || listenerPointcut()", throwing = "exception")

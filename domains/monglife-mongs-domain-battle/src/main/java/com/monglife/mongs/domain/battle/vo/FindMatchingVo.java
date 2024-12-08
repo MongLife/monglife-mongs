@@ -1,7 +1,10 @@
 package com.monglife.mongs.domain.battle.vo;
 
 import com.monglife.mongs.domain.battle.entity.MatchingEntity;
-import lombok.*;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Getter
 @Setter

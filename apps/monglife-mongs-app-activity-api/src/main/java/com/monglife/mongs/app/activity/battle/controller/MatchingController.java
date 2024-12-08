@@ -2,8 +2,9 @@ package com.monglife.mongs.app.activity.battle.controller;
 
 import com.monglife.core.dto.response.ResponseDto;
 import com.monglife.mongs.app.activity.battle.enums.BattleResponse;
-import com.monglife.mongs.domain.battle.service.BattleService;
 import com.monglife.mongs.domain.battle.service.MatchingService;
+import com.monglife.mongs.domain.mong.exception.InvalidMongException;
+import com.monglife.mongs.domain.mong.service.MongService;
 import com.monglife.mongs.module.security.global.principal.Passport;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -17,9 +18,9 @@ import java.util.Map;
 @RequestMapping("/activity/battle/match")
 public class MatchingController {
 
-    public final BattleService battleService;
-
     private final MatchingService matchingService;
+
+    private final MongService mongService;
 
 
     /**
@@ -33,6 +34,8 @@ public class MatchingController {
 
         Long accountId = passport.getAccountId();
         String deviceId = passport.getDeviceId();
+
+        if (!mongService.validateMongByAccountId(accountId, mongId)) throw new InvalidMongException(accountId, mongId);
 
         matchingService.createWaitMatching(accountId, deviceId, mongId);
 
@@ -50,6 +53,8 @@ public class MatchingController {
 
         Long accountId = passport.getAccountId();
         String deviceId = passport.getDeviceId();
+
+        if (!mongService.validateMongByAccountId(accountId, mongId)) throw new InvalidMongException(accountId, mongId);
 
         matchingService.deleteWaitMatching(accountId, deviceId, mongId);
 

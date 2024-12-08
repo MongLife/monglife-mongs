@@ -28,7 +28,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
-@MqttConsumer @MqttMapping("/battle/match")
+@MqttConsumer @MqttMapping("/match")
 @RestController @RequestMapping("/activity/battle/match")
 @RequiredArgsConstructor
 public class BattleController {
@@ -86,7 +86,7 @@ public class BattleController {
             // 남은 플레이어 1명 승리로 처리
             battleService.overBattle(roomId);
 
-            List<String> topics = List.of("battle/match/" + roomId);
+            List<String> topics = List.of("match/" + roomId);
 
             String winPlayerId = overBattleVos.isEmpty() ? "" : overBattleVos.get(0).getPlayerId();
             String winMongTypeCode = overBattleVos.isEmpty() ? "" : overBattleVos.get(0).getMongTypeCode();
@@ -123,7 +123,7 @@ public class BattleController {
 
         if (isPickAll && fightBattleVo != null) {
             // 응답 전송 토픽
-            List<String> topics = List.of("battle/match/" + roomId);
+            List<String> topics = List.of("match/" + roomId);
 
             // 결과 값 반환
             FightBattleResponseDto fightBattleResponseDto = FightBattleResponseDto.builder()

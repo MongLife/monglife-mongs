@@ -1,4 +1,4 @@
-package com.monglife.mongs.domain.mong.entity;
+package com.monglife.mongs.domain.mong.entity.history;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

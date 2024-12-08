@@ -2,9 +2,8 @@ package com.monglife.mongs.domain.mong.listener;
 
 import com.monglife.mongs.domain.mong.dto.event.MongEvolutionEvent;
 import com.monglife.mongs.domain.mong.dto.event.MongObserveStatusEvent;
-import com.monglife.mongs.domain.mong.entity.MongStatusEntity;
+import com.monglife.mongs.domain.mong.entity.data.MongStatusEntity;
 import com.monglife.mongs.domain.mong.enums.MongStatusCode;
-import com.monglife.mongs.domain.mong.service.MongService;
 import jakarta.persistence.PostUpdate;
 import jakarta.persistence.PreUpdate;
 import lombok.RequiredArgsConstructor;
@@ -27,27 +26,26 @@ public class MongStatusEntityListener {
     @PreUpdate
     public void preUpdate(MongStatusEntity mongStatusEntity) {
 
+        // 지수 최대 최소 값 validation 처리
+        mongStatusEntity.sink();
+
+        // 지수 조건 확인
         if (mongStatusEntity.getHealthyRatio() <= SICK_RATIO) {
-            mongStatusEntity.update(MongStatusEntity.UpdateDto.builder()
-                    .code(MongStatusCode.SICK)
-                    .build());
+            mongStatusEntity.setCode(MongStatusCode.SICK);
         } else if (mongStatusEntity.getSatiety() <= HUNGRY_RATIO) {
-            mongStatusEntity.update(MongStatusEntity.UpdateDto.builder()
-                    .code(MongStatusCode.HUNGRY)
-                    .build());
+            mongStatusEntity.setCode(MongStatusCode.HUNGRY);
         } else if (mongStatusEntity.getFatigue() <= SOMNOLENCE_RATIO) {
-            mongStatusEntity.update(MongStatusEntity.UpdateDto.builder()
-                    .code(MongStatusCode.SOMNOLENCE)
-                    .build());
+            mongStatusEntity.setCode(MongStatusCode.SOMNOLENCE);
         } else {
-            mongStatusEntity.update(MongStatusEntity.UpdateDto.builder()
-                    .code(MongStatusCode.NORMAL)
-                    .build());
+            mongStatusEntity.setCode(MongStatusCode.NORMAL);
         }
 
-        applicationEventPublisher.publishEvent(MongEvolutionEvent.builder()
-                .mongId(mongStatusEntity.getMong().getMongId())
-                .build());
+        // 진화 조건 확인
+        if (mongStatusEntity.getExpRatio() >= 100) {
+            applicationEventPublisher.publishEvent(MongEvolutionEvent.builder()
+                    .mongId(mongStatusEntity.getMong().getMongId())
+                    .build());
+        }
     }
 
     /**

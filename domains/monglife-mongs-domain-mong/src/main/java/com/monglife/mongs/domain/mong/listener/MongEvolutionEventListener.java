@@ -18,7 +18,6 @@ public class MongEvolutionEventListener {
     @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
     @Transactional(propagation = Propagation.REQUIRES_NEW)
     public void mongEvolutionEventListener(MongEvolutionEvent event) {
-
         mongService.evolutionReadyMong(event.getMongId());
     }
 }

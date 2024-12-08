@@ -1,6 +1,6 @@
 package com.monglife.mongs.domain.mong.repository;
 
-import com.monglife.mongs.domain.mong.entity.MongTypeEntity;
+import com.monglife.mongs.domain.mong.entity.type.MongTypeEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;

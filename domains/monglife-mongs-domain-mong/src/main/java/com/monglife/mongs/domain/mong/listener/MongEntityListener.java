@@ -1,9 +1,8 @@
 package com.monglife.mongs.domain.mong.listener;
 
 import com.monglife.mongs.domain.mong.dto.event.MongObserveEvent;
-import com.monglife.mongs.domain.mong.entity.MongEntity;
+import com.monglife.mongs.domain.mong.entity.data.MongEntity;
 import jakarta.persistence.PostUpdate;
-import jakarta.persistence.PreUpdate;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Component;

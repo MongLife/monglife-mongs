@@ -45,7 +45,7 @@ public class MongStatusObserveEventListener {
         if (isDeadStatus) {
             if (taskService.isExistsTask(APP_CODE, taskOwnerId, taskScheduleProperties.dead.getCode(), TaskStatusCode.PAUSE)) {
                 taskService.resumeTask(APP_CODE, taskOwnerId, taskScheduleProperties.dead.getCode());
-            } else if (!MongStateCode.DEAD.equals(event.getStateCode())) {
+            } else if (!taskService.isExistsTask(APP_CODE, taskOwnerId, taskScheduleProperties.dead.getCode(), TaskStatusCode.PROCESSING) && !MongStateCode.DEAD.equals(event.getStateCode())) {
                 taskService.createTask(APP_CODE, taskOwnerId, taskScheduleProperties.dead.getCode(), taskScheduleProperties.dead.getExpiration());
             }
         } else {

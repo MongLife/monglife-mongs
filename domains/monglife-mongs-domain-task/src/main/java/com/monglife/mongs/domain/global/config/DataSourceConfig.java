@@ -1,4 +1,4 @@
-package com.monglife.mongs.domain.task.config;
+package com.monglife.mongs.domain.global.config;
 
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;

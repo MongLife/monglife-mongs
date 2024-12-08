@@ -23,7 +23,7 @@ public class GetMongResponseDto {
         return GetMongResponseDto.builder()
                 .mongId(getMongDto.getMongId())
                 .mongName(getMongDto.getMongName())
-                .mongCode(getMongDto.getMongCode())
+                .mongCode(getMongDto.getMongTypeCode())
                 .build();
     }
 

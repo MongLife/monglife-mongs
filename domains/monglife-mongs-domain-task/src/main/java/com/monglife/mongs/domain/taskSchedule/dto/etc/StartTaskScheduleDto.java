@@ -1,7 +1,6 @@
-package com.monglife.mongs.domain.task.dto.etc;
+package com.monglife.mongs.domain.taskSchedule.dto.etc;
 
 import com.monglife.mongs.domain.task.entity.TaskEntity;
-import com.monglife.mongs.domain.task.enums.TaskStatusCode;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -12,7 +11,7 @@ import java.time.LocalDateTime;
 @Getter
 @Setter
 @NoArgsConstructor
-public class StopTaskScheduleDto {
+public class StartTaskScheduleDto {
 
     private Long taskId;
 
@@ -22,38 +21,26 @@ public class StopTaskScheduleDto {
 
     private String taskCode;
 
-    private TaskStatusCode taskStatusCode;
-
-    private Long restExpirationSeconds;
-
-    private Long expirationSeconds;
-
     private LocalDateTime expiredAt;
 
     private Boolean isCycle;
 
     @Builder
-    public StopTaskScheduleDto(Long taskId, String appCode, String taskOwnerId, String taskCode, TaskStatusCode taskStatusCode, Long restExpirationSeconds, Long expirationSeconds, LocalDateTime expiredAt, Boolean isCycle) {
+    public StartTaskScheduleDto(Long taskId, String appCode, String taskOwnerId, String taskCode, LocalDateTime expiredAt, Boolean isCycle) {
         this.taskId = taskId;
         this.appCode = appCode;
         this.taskOwnerId = taskOwnerId;
         this.taskCode = taskCode;
-        this.taskStatusCode = taskStatusCode;
-        this.restExpirationSeconds = restExpirationSeconds;
-        this.expirationSeconds = expirationSeconds;
         this.expiredAt = expiredAt;
         this.isCycle = isCycle;
     }
 
-    public static StopTaskScheduleDto of(TaskEntity taskEntity) {
-        return StopTaskScheduleDto.builder()
+    public static StartTaskScheduleDto of(TaskEntity taskEntity) {
+        return StartTaskScheduleDto.builder()
                 .taskId(taskEntity.getTaskId())
                 .appCode(taskEntity.getAppCode())
                 .taskOwnerId(taskEntity.getTaskOwnerId())
                 .taskCode(taskEntity.getTaskCode().getComnCode())
-                .taskStatusCode(taskEntity.getTaskStatusCode())
-                .restExpirationSeconds(taskEntity.getRestExpirationSeconds())
-                .expirationSeconds(taskEntity.getExpirationSeconds())
                 .expiredAt(taskEntity.getExpiredAt())
                 .isCycle(taskEntity.isCycle())
                 .build();

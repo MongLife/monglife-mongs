@@ -32,8 +32,9 @@ public class MongStateObserveEventListener {
     @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
     public void mongObserveStateEventListener(MongObserveStateEvent event) {
 
-        if (MongStateCode.DEAD.equals(event.getStateCode())) {
-            String taskOwnerId = String.valueOf(event.getMongId());
+        String taskOwnerId = String.valueOf(event.getMongId());
+
+        if (MongStateCode.DEAD.equals(event.getStateCode()) || MongStateCode.GRADUATE_READY.equals(event.getStateCode())) {
             taskService.deleteAllTasks(APP_CODE, taskOwnerId);
         }
 
