@@ -10,7 +10,7 @@ import java.util.Collections;
 public class NotExistsMongTypeCodeException extends ErrorException {
 
     public NotExistsMongTypeCodeException() {
-        this.response = MatchResponse.DOMAIN_BATTLE_NOT_EXISTS_MONG_TYPE;
+        this.response = MatchResponse.DOMAIN_MATCH_NOT_EXISTS_MONG_TYPE;
         this.result = Collections.emptyMap();
     }
 }

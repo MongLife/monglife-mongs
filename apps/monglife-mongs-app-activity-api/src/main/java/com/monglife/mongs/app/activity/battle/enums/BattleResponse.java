@@ -24,14 +24,10 @@ public enum BattleResponse implements Response {
     ACTIVITY_BATTLE_OVER_BATTLE(HttpStatus.OK.value(), "ACTIVITY-BATTLE-004", "배틀이 종료되었습니다."),
     ACTIVITY_BATTLE_FIGHT_BATTLE(HttpStatus.OK.value(), "ACTIVITY-BATTLE-005", "라운드가 종료되었습니다."),
 
-    // ACTIVITY - TRAINING
-    ACTIVITY_TRAINING_END_RUNNER(HttpStatus.OK.value(), "ACTIVITY-TRAINING-000", "훈련 RUNNER 완료했습니다."),
-
-
     /**
      * 실패 응답
      */
-    ACTIVITY_BATTLE_NOT_EXISTS_OVER_MATCH(HttpStatus.BAD_REQUEST.value(), "ACTIVITY-BATTLE-000", "완료된 매치를 찾을 수 없습니다."),
+    ACTIVITY_BATTLE_NOT_EXISTS_OVER_MATCH(HttpStatus.BAD_REQUEST.value(), "ACTIVITY-BATTLE-100", "완료된 매치를 찾을 수 없습니다."),
     ;
 
 

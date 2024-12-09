@@ -3,10 +3,12 @@ package com.monglife.mongs.app.manager.management.dto.response;
 import com.monglife.mongs.domain.mong.enums.MongStateCode;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Getter
 @Setter
+@NoArgsConstructor
 public class MongStateObserveResponseDto {
 
     private MongStateCode stateCode;

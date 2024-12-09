@@ -24,7 +24,7 @@ public class BattleMatchingScheduler {
 
 
     @Scheduled(fixedDelay = 1000)
-    public void findMatching() {
+    public void matchingSchedule() {
 
         while (true) {
             Set<FindMatchingVo> findMatchingVoSet = matchingService.findWaitMatching();
@@ -43,7 +43,6 @@ public class BattleMatchingScheduler {
             battleConsumer.createBattle(CreateBattleRequestDto.builder()
                     .createBattleVoSet(createBattleVoSet)
                     .build());
-
-        } ;
+        }
     }
 }

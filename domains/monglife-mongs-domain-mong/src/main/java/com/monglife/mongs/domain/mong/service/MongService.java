@@ -122,7 +122,7 @@ public class MongService {
                             .foodTypeCode(foodTypeCode)
                             .price(foodTypeEntity.getPrice())
                             .foodTypeName(foodTypeEntity.getFoodCode().getComnName())
-                            .foodTypeGroupCode(foodTypeEntity.getFoodCode().getGroupCode())
+                            .foodTypeGroupCode(foodTypeEntity.getFoodCode().getGroupCode().getGroupCode())
                             .addWeightValue(foodTypeEntity.getAddWeightValue())
                             .addStrengthValue(foodTypeEntity.getAddStrengthValue())
                             .addSatietyValue(foodTypeEntity.getAddSatietyValue())

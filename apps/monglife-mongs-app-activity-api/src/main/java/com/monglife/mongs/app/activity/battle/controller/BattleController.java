@@ -6,13 +6,17 @@ import com.monglife.mongs.app.activity.battle.dto.response.OverBattleResponseDto
 import com.monglife.mongs.app.activity.battle.enums.BattleResponse;
 import com.monglife.mongs.app.activity.battle.service.BattleService;
 import com.monglife.mongs.module.security.global.principal.Passport;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
 
+@Validated
 @RestController
 @RequestMapping("/activity/battle/match")
 @RequiredArgsConstructor
@@ -28,7 +32,10 @@ public class BattleController {
      * @return 성공 응답
      */
     @PostMapping("/wait/{mongId}")
-    public ResponseEntity<ResponseDto<Map<String, Object>>> createWaitMatching(@AuthenticationPrincipal Passport passport, @PathVariable("mongId") Long mongId) {
+    public ResponseEntity<ResponseDto<Map<String, Object>>> createWaitMatching(
+            @AuthenticationPrincipal Passport passport,
+            @PathVariable("mongId") @NotNull @Min(1)  Long mongId
+    ) {
 
         Long accountId = passport.getAccountId();
         String deviceId = passport.getDeviceId();
@@ -45,7 +52,10 @@ public class BattleController {
      * @return 성공 응답
      */
     @DeleteMapping("/wait/{mongId}")
-    public ResponseEntity<ResponseDto<Map<String, Object>>> deleteWaitMatching(@AuthenticationPrincipal Passport passport, @PathVariable("mongId") Long mongId) {
+    public ResponseEntity<ResponseDto<Map<String, Object>>> deleteWaitMatching(
+            @AuthenticationPrincipal Passport passport,
+            @PathVariable("mongId") @NotNull @Min(1) Long mongId
+    ) {
 
         Long accountId = passport.getAccountId();
         String deviceId = passport.getDeviceId();
@@ -61,7 +71,7 @@ public class BattleController {
      * @return 배틀 결과 응답
      */
     @GetMapping("/{roomId}")
-    public ResponseEntity<ResponseDto<OverBattleResponseDto>> overBattle(@PathVariable("roomId") Long roomId) {
+    public ResponseEntity<ResponseDto<OverBattleResponseDto>> overBattle(@PathVariable("roomId") @NotNull @Min(1) Long roomId) {
 
         OverBattleDto overBattleDto = battleService.findOverBattle(roomId);
 

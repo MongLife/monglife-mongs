@@ -7,8 +7,6 @@ import java.util.List;
 
 @Getter
 @Setter
-@Builder
-@AllArgsConstructor
 @NoArgsConstructor
 public class GetMongResponseDto {
 
@@ -18,6 +16,12 @@ public class GetMongResponseDto {
 
     private String mongCode;
 
+    @Builder
+    public GetMongResponseDto(Long mongId, String mongName, String mongCode) {
+        this.mongId = mongId;
+        this.mongName = mongName;
+        this.mongCode = mongCode;
+    }
 
     public static GetMongResponseDto of(GetMongDto getMongDto) {
         return GetMongResponseDto.builder()

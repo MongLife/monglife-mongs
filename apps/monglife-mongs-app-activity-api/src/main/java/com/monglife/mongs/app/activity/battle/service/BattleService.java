@@ -20,7 +20,6 @@ import com.monglife.mongs.domain.mong.dto.etc.GetMongDto;
 import com.monglife.mongs.domain.mong.service.MongService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -28,7 +27,6 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-@Slf4j
 @Service
 @RequiredArgsConstructor
 public class BattleService {
@@ -91,7 +89,7 @@ public class BattleService {
 
         return CreateBattleDto.builder()
                 .roomId(createMatchDto.getRoomId())
-                .battlePlayers(createMatchDto.getBattlePlayers())
+                .battlePlayers(createMatchDto.getMatchPlayers())
                 .build();
     }
 
@@ -120,7 +118,7 @@ public class BattleService {
     @Transactional
     public OverBattleDto exitBattle(Long roomId, String playerId) {
 
-        ExitMatchDto exitMatchDto = matchService.exitBattle(roomId, playerId);
+        ExitMatchDto exitMatchDto = matchService.exitMatch(roomId, playerId);
 
         Boolean isExitAll = exitMatchDto.getIsExitAll();
         List<OverMatchVo> overMatchVos = exitMatchDto.getOverMatchVos();
@@ -129,7 +127,7 @@ public class BattleService {
 
         if (isExitAll && !overMatchVos.isEmpty()) {
             // 남은 플레이어 1명 승리로 처리
-            matchService.overBattle(roomId);
+            matchService.overMatch(roomId);
 
             OverMatchVo overMatchVo = overMatchVos.stream().findFirst()
                     .orElseThrow(() -> new NotExistsMatchException(roomId));
@@ -147,7 +145,7 @@ public class BattleService {
     @Transactional
     public FightBattleDto pickBattle(Long roomId, String playerId, String targetPlayerId, MatchRoundCode matchRoundCode) {
 
-        PickMatchDto pickMatchDto = matchService.pickBattle(roomId, playerId, targetPlayerId, matchRoundCode);
+        PickMatchDto pickMatchDto = matchService.pickMatch(roomId, playerId, targetPlayerId, matchRoundCode);
 
         Boolean isPickAll = pickMatchDto.getIsPickAll();
         FightMatchVo fightMatchVo = pickMatchDto.getFightMatchVo();
@@ -157,7 +155,7 @@ public class BattleService {
         if (isPickAll && fightMatchVo != null) {
             // 마지막 라운드 인 경우 배틀 종료 처리
             if (fightMatchVo.getIsLastRound()) {
-                matchService.overBattle(roomId);
+                matchService.overMatch(roomId);
             }
 
             fightBattleDto = FightBattleDto.builder()
@@ -174,7 +172,7 @@ public class BattleService {
     @Transactional
     public OverBattleDto findOverBattle(Long roomId) {
 
-        List<OverMatchVo> overMatchVos = matchService.findOverBattle(roomId);
+        List<OverMatchVo> overMatchVos = matchService.findOverMatch(roomId);
 
         OverMatchVo overMatchVo = overMatchVos.stream().findFirst()
                 .orElseThrow(() -> new NotExistsMatchException(roomId));

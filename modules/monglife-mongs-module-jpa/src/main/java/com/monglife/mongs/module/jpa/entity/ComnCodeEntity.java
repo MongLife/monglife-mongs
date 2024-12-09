@@ -19,11 +19,12 @@ public class ComnCodeEntity {
     @Column(name = "comn_name")
     private String comnName;
 
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "group_code")
-    private String groupCode;
+    private GroupCodeEntity groupCode;
 
     @Builder
-    public ComnCodeEntity(String comnCode, String comnName, String groupCode) {
+    public ComnCodeEntity(String comnCode, String comnName, GroupCodeEntity groupCode) {
         this.comnCode = comnCode;
         this.comnName = comnName;
         this.groupCode = groupCode;

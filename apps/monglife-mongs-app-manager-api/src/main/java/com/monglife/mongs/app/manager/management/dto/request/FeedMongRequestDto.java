@@ -11,7 +11,6 @@ public class FeedMongRequestDto {
     @NotBlank
     private String foodTypeCode;
 
-
     @Builder
     public FeedMongRequestDto(String foodTypeCode) {
         this.foodTypeCode = foodTypeCode;

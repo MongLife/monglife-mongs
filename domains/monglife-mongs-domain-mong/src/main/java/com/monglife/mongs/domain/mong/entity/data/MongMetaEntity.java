@@ -4,7 +4,6 @@ import com.monglife.mongs.domain.mong.entity.history.MongMetaHistoryEntity;
 import com.monglife.mongs.domain.mong.enums.MongMetaHistoryCode;
 import jakarta.persistence.*;
 import lombok.Getter;
-import lombok.Setter;
 import lombok.ToString;
 
 import java.util.List;
@@ -32,7 +31,6 @@ public class MongMetaEntity {
     @Column(name = "stroke_count")
     private Integer strokeCount;
 
-    @Setter
     @Column(name = "reward")
     private Double reward;
 
@@ -98,10 +96,20 @@ public class MongMetaEntity {
         if (this.penalty == 0) return;
 
         this.history.add(MongMetaHistoryEntity.builder()
-                .mongMetaHistoryCode(MongMetaHistoryCode.HISTORY_MONG_META_INCREASE_PENALTY)
+                .mongMetaHistoryCode(MongMetaHistoryCode.HISTORY_MONG_META_RESET_PENALTY)
                 .penalty(-this.penalty)
                 .build());
 
         this.penalty = 0D;
+    }
+
+    public void setReward(Double reward) {
+
+        this.reward = reward;
+
+        this.history.add(MongMetaHistoryEntity.builder()
+                .mongMetaHistoryCode(MongMetaHistoryCode.HISTORY_MONG_META_SET_REWARD)
+                .penalty(-this.penalty)
+                .build());
     }
 }

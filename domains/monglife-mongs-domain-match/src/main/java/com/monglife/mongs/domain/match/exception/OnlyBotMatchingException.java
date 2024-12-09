@@ -11,7 +11,7 @@ import java.util.Set;
 public class OnlyBotMatchingException extends ErrorException {
 
     public OnlyBotMatchingException(Set<String> playerIds) {
-        this.response = MatchResponse.DOMAIN_BATTLE_ONLY_BOT_MATCHING;
+        this.response = MatchResponse.DOMAIN_MATCH_ONLY_BOT_MATCHING;
         this.result = Collections.singletonMap("playerIds", playerIds);
     }
 }

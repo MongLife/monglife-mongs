@@ -2,10 +2,8 @@ package com.monglife.mongs.app.activity.battle.vo;
 
 import lombok.Builder;
 import lombok.Getter;
-import lombok.ToString;
 
 @Getter
-@ToString
 public class CreateBattleVo {
 
     private final String deviceId;

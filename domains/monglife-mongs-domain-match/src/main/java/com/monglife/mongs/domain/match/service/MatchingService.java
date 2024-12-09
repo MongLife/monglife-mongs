@@ -1,7 +1,6 @@
 package com.monglife.mongs.domain.match.service;
 
 import com.monglife.mongs.domain.match.entity.MatchingEntity;
-import com.monglife.mongs.domain.match.exception.NotExistsWaitMatchingException;
 import com.monglife.mongs.domain.match.vo.FindMatchingVo;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;

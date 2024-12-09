@@ -10,7 +10,7 @@ import java.util.Collections;
 public class NotExistsPlayerIdException extends ErrorException {
 
     public NotExistsPlayerIdException(String playerId) {
-        this.response = MatchResponse.DOMAIN_BATTLE_NOT_EXISTS_PLAYER_ID;
+        this.response = MatchResponse.DOMAIN_MATCH_NOT_EXISTS_PLAYER_ID;
         this.result = Collections.singletonMap("playerId", playerId);
     }
 }

@@ -2,6 +2,7 @@ package com.monglife.mongs.app.activity.training.controller;
 
 import com.monglife.core.dto.response.ResponseDto;
 import com.monglife.mongs.app.activity.battle.enums.BattleResponse;
+import com.monglife.mongs.app.activity.training.enums.TrainingResponse;
 import com.monglife.mongs.module.security.global.principal.Passport;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -19,7 +20,7 @@ public class TrainingController {
     @PostMapping("/runner/{mongId}")
     public ResponseEntity<ResponseDto<?>> endRunner(@AuthenticationPrincipal Passport passport, @PathVariable("mongId") String mongId) {
 
-        return ResponseEntity.ok(BattleResponse.ACTIVITY_TRAINING_END_RUNNER.toResponseDto());
+        return ResponseEntity.ok(TrainingResponse.ACTIVITY_TRAINING_END_RUNNER.toResponseDto());
     }
 }
 

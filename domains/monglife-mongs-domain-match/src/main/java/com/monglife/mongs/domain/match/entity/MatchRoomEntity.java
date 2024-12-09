@@ -94,7 +94,7 @@ public class MatchRoomEntity extends BaseTimeEntity {
      * 모든 배틀 플레이어 퇴장 여부 확인
      * @return 모든 배틀 플레이어가 나가거나 한명만 남았을 경우 true
      */
-    public Boolean isBattlePlayerExitAll() {
+    public Boolean isMatchPlayerExitAll() {
         int matchPlayerCount = this.matchPlayerSet.size();
         for (MatchPlayerEntity matchPlayerEntity : this.matchPlayerSet) {
             if (!matchPlayerEntity.getIsEnter()) {
@@ -108,7 +108,7 @@ public class MatchRoomEntity extends BaseTimeEntity {
      * 현재 라운드에서 플레이어의 선택 완료 여부
      * @return 현재 라운드에서 모든 플레이어의 선택 완료 여부
      */
-    public Boolean isBattleRoundPickAll() {
+    public Boolean isMatchRoundPickAll() {
 
         Set<String> matchPlayerIds = this.matchPlayerSet.stream()
                 .map(MatchPlayerEntity::getPlayerId)
@@ -127,7 +127,7 @@ public class MatchRoomEntity extends BaseTimeEntity {
      * 모든 플레이어 사망 여부 확인
      * @return 0 ~ 1명의 플레이어 생존 여부
      */
-    public Boolean isBattlePlayerDeadAll() {
+    public Boolean isMatchPlayerDeadAll() {
         int deadPlayerCount = this.matchPlayerSet.size();
         for (MatchPlayerEntity matchPlayerEntity : this.matchPlayerSet) {
             if (matchPlayerEntity.getHp() == 0) {
@@ -142,7 +142,7 @@ public class MatchRoomEntity extends BaseTimeEntity {
      * @param playerId 플레이어 ID
      * @return 플레이어 엔티티 Optional 객체
      */
-    public Optional<MatchPlayerEntity> getBattlePlayer(String playerId) {
+    public Optional<MatchPlayerEntity> getMatchPlayer(String playerId) {
         for (MatchPlayerEntity matchPlayerEntity : this.matchPlayerSet) {
             if (matchPlayerEntity.getPlayerId().equals(playerId)) {
                 return Optional.of(matchPlayerEntity);
@@ -156,7 +156,7 @@ public class MatchRoomEntity extends BaseTimeEntity {
      * @param playerId 플레이어 ID
      * @return 플레이 라운드 엔티티 Optional 객체
      */
-    public Optional<MatchRoundEntity> getCurrentBattleRound(String playerId) {
+    public Optional<MatchRoundEntity> getCurrentMatchRound(String playerId) {
         for (MatchRoundEntity matchRoundEntity : this.matchRoundSet) {
             if (matchRoundEntity.getPlayerId().equals(playerId) && matchRoundEntity.getRound().equals(this.round)) {
                 return Optional.of(matchRoundEntity);
@@ -169,7 +169,7 @@ public class MatchRoomEntity extends BaseTimeEntity {
      * 플레이어 추가
      * @param matchPlayerEntities 입장할 플레이어 엔티티
      */
-    public void joinBattlePlayer(List<MatchPlayerEntity> matchPlayerEntities) {
+    public void joinMatchPlayer(List<MatchPlayerEntity> matchPlayerEntities) {
         this.matchPlayerSet.addAll(matchPlayerEntities);
     }
 
@@ -177,7 +177,7 @@ public class MatchRoomEntity extends BaseTimeEntity {
      * 플레이어 입장
      * @param playerId 플레이어 ID
      */
-    public void enterBattlePlayer(String playerId) {
+    public void enterMatchPlayer(String playerId) {
         for (MatchPlayerEntity matchPlayerEntity : this.matchPlayerSet) {
             if (matchPlayerEntity.getPlayerId().equals(playerId)) {
                 matchPlayerEntity.enter();
@@ -190,7 +190,7 @@ public class MatchRoomEntity extends BaseTimeEntity {
      * 플레이어 중도 퇴장
      * @param playerId 퇴장할 플레이어 ID
      */
-    public void excludeBattlePlayer(String playerId) {
+    public void excludeMatchPlayer(String playerId) {
         for (MatchPlayerEntity matchPlayerEntity : this.matchPlayerSet) {
             if (matchPlayerEntity.getPlayerId().equals(playerId)) {
                 matchPlayerEntity.duringRoundExit();
@@ -203,7 +203,7 @@ public class MatchRoomEntity extends BaseTimeEntity {
      * 라운드 단건 등록
      * @param matchRoundEntity 라운드 엔티티
      */
-    public void joinBattleRound(MatchRoundEntity matchRoundEntity) {
+    public void joinMatchRound(MatchRoundEntity matchRoundEntity) {
         this.matchRoundSet.add(matchRoundEntity);
     }
 
@@ -211,7 +211,7 @@ public class MatchRoomEntity extends BaseTimeEntity {
      * 라운드 다건 등록
      * @param matchRoundEntities 라운드 엔티티 목록
      */
-    public void joinBattleRound(List<MatchRoundEntity> matchRoundEntities) {
+    public void joinMatchRound(List<MatchRoundEntity> matchRoundEntities) {
         this.matchRoundSet.addAll(matchRoundEntities);
     }
 

@@ -2,10 +2,12 @@ package com.monglife.mongs.app.manager.management.dto.response;
 
 import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Getter
 @Setter
+@NoArgsConstructor
 public class MongObserveResponseDto {
 
     private String mongTypeCode;

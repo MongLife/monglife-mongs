@@ -15,11 +15,11 @@ public class CreateMatchDto {
 
     private Long roomId;
 
-    private Set<MatchPlayerVo> battlePlayers;
+    private Set<MatchPlayerVo> matchPlayers;
 
     @Builder
-    public CreateMatchDto(Long roomId, Set<MatchPlayerVo> battlePlayers) {
+    public CreateMatchDto(Long roomId, Set<MatchPlayerVo> matchPlayers) {
         this.roomId = roomId;
-        this.battlePlayers = battlePlayers;
+        this.matchPlayers = matchPlayers;
     }
 }

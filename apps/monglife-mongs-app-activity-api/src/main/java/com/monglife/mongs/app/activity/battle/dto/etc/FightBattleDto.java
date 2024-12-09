@@ -3,12 +3,14 @@ package com.monglife.mongs.app.activity.battle.dto.etc;
 import com.monglife.mongs.domain.match.vo.MatchPlayerVo;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.util.Set;
 
 @Getter
 @Setter
+@NoArgsConstructor
 public class FightBattleDto {
 
     private Long roomId;

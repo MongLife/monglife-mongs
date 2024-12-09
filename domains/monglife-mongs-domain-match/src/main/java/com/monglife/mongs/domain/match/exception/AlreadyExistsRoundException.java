@@ -10,7 +10,7 @@ import java.util.Map;
 public class AlreadyExistsRoundException extends ErrorException {
 
     public AlreadyExistsRoundException(Integer round, String playerId) {
-        this.response = MatchResponse.DOMAIN_BATTLE_ALREADY_EXISTS_ROUND;
+        this.response = MatchResponse.DOMAIN_MATCH_ALREADY_EXISTS_ROUND;
         this.result = Map.of("round", round, "playerId", playerId);
     }
 }

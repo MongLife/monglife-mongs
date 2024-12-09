@@ -17,7 +17,6 @@ public class GetFeedItemsResponseDto {
 
     private List<GetFeedItemDto> feedItems;
 
-
     @Builder
     public GetFeedItemsResponseDto(Long mongId, List<GetFeedItemDto> feedItems) {
         this.mongId = mongId;
