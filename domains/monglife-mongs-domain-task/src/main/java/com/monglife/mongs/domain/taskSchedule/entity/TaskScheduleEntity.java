@@ -2,13 +2,11 @@ package com.monglife.mongs.domain.taskSchedule.entity;
 
 import lombok.Builder;
 import lombok.Getter;
-import lombok.ToString;
 
 import java.time.LocalDateTime;
 import java.util.concurrent.ScheduledFuture;
 
 @Getter
-@ToString
 public class TaskScheduleEntity {
 
     private final Long taskId;

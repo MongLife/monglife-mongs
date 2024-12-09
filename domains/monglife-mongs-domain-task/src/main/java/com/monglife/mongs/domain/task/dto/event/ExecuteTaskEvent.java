@@ -2,10 +2,8 @@ package com.monglife.mongs.domain.task.dto.event;
 
 import lombok.Builder;
 import lombok.Getter;
-import lombok.ToString;
 
 @Getter
-@ToString
 public class ExecuteTaskEvent {
 
     private final String appCode;

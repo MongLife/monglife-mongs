@@ -52,7 +52,6 @@ public class MqttMappingHandler implements InitializingBean {
 
     @Override
     public void afterPropertiesSet() {
-
         this.mqttMappingScan();
         this.mqttExceptionScan();
     }
@@ -174,7 +173,6 @@ public class MqttMappingHandler implements InitializingBean {
             method.setAccessible(true);
             method.invoke(methodClazzBean, parameters);
         } catch (IllegalAccessException | InvocationTargetException e) {
-
             if (e instanceof InvocationTargetException invocationTargetException) {
                 for (Class<?> exceptionMappingClazz : mqttExceptionHandlerMapping.keySet()) {
                     Throwable exception = invocationTargetException.getTargetException();
@@ -261,6 +259,7 @@ public class MqttMappingHandler implements InitializingBean {
 
             } else if (parameter.isAnnotationPresent(MqttPayload.class)) {
                 try {
+                    // @NoArgConstructor 가 필요 -> ObjectMapper 는 기본 생성자가 없으면 파싱이 불가능
                     Object parameterValue = objectMapper.readValue(payload, parameterType);
                     parameters.add(parameterValue);
                 } catch (JsonProcessingException e) {

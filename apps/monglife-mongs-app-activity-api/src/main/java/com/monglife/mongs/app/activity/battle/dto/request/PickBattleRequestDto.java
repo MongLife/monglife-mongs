@@ -1,6 +1,6 @@
 package com.monglife.mongs.app.activity.battle.dto.request;
 
-import com.monglife.mongs.domain.battle.enums.BattleRoundCode;
+import com.monglife.mongs.domain.match.enums.MatchRoundCode;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -15,10 +15,10 @@ public class PickBattleRequestDto {
 
     private String targetPlayerId;
 
-    private BattleRoundCode pickCode;
+    private MatchRoundCode pickCode;
 
     @Builder
-    public PickBattleRequestDto(String playerId, String targetPlayerId, BattleRoundCode pickCode) {
+    public PickBattleRequestDto(String playerId, String targetPlayerId, MatchRoundCode pickCode) {
         this.playerId = playerId;
         this.targetPlayerId = targetPlayerId;
         this.pickCode = pickCode;

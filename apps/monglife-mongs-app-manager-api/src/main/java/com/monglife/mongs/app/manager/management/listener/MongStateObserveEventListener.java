@@ -19,7 +19,6 @@ public class MongStateObserveEventListener {
     @Value("${application.app-code}")
     private String APP_CODE;
 
-
     private final MqttSendService mqttSendService;
 
     private final TaskService taskService;

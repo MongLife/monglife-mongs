@@ -9,8 +9,6 @@ import java.time.LocalTime;
 
 @Getter
 @Setter
-@Builder
-@AllArgsConstructor
 @NoArgsConstructor
 public class GetMongDto {
 
@@ -44,6 +42,24 @@ public class GetMongDto {
 
     private Boolean isEgg;
 
+    @Builder
+    public GetMongDto(Long mongId, String mongName, String mongTypeCode, Integer level, Double weight, Double strength, Double satiety, Double healthy, Double fatigue, MongStateCode stateCode, MongStatusCode statusCode, Boolean isSleep, LocalTime sleepAt, LocalTime wakeupAt, Boolean isEgg) {
+        this.mongId = mongId;
+        this.mongName = mongName;
+        this.mongTypeCode = mongTypeCode;
+        this.level = level;
+        this.weight = weight;
+        this.strength = strength;
+        this.satiety = satiety;
+        this.healthy = healthy;
+        this.fatigue = fatigue;
+        this.stateCode = stateCode;
+        this.statusCode = statusCode;
+        this.isSleep = isSleep;
+        this.sleepAt = sleepAt;
+        this.wakeupAt = wakeupAt;
+        this.isEgg = isEgg;
+    }
 
     public static GetMongDto of(MongEntity mongEntity) {
         return GetMongDto.builder()

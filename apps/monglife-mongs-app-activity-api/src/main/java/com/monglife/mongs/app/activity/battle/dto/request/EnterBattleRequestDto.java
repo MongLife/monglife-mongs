@@ -1,11 +1,13 @@
 package com.monglife.mongs.app.activity.battle.dto.request;
 
-import lombok.*;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Getter
 @Setter
 @NoArgsConstructor
-@ToString
 public class EnterBattleRequestDto {
 
     private String playerId;

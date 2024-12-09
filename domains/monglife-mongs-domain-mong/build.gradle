@@ -1,7 +1,9 @@
 dependencies {
     // modules
     api project(':modules:monglife-mongs-module-jpa')
-    implementation project(':modules:monglife-mongs-module-redis')
+
+    // redis
+    implementation 'org.springframework.boot:spring-boot-starter-data-redis'
 }
 
 tasks.register('copyPrivate', Copy) {

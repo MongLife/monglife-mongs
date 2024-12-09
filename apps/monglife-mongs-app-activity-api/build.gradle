@@ -1,7 +1,7 @@
 dependencies {
     // domains
     implementation project(':domains:monglife-mongs-domain-mong')
-    implementation project(':domains:monglife-mongs-domain-battle')
+    implementation project(':domains:monglife-mongs-domain-match')
 
     // modules
     implementation project(':modules:monglife-mongs-module-security')
