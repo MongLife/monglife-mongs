@@ -14,19 +14,19 @@ public class ComnCodeEntity {
 
     @Id
     @Column(name = "comn_code")
-    private String comnCode;
+    private String code;
 
     @Column(name = "comn_name")
-    private String comnName;
+    private String name;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "group_code")
-    private GroupCodeEntity groupCode;
+    private GroupCodeEntity group;
 
     @Builder
-    public ComnCodeEntity(String comnCode, String comnName, GroupCodeEntity groupCode) {
-        this.comnCode = comnCode;
-        this.comnName = comnName;
-        this.groupCode = groupCode;
+    public ComnCodeEntity(String code, String name, GroupCodeEntity group) {
+        this.code = code;
+        this.name = name;
+        this.group = group;
     }
 }

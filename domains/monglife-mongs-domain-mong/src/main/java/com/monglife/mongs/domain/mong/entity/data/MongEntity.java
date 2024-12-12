@@ -196,7 +196,7 @@ public class MongEntity extends BaseTimeEntity {
         this.type = nextType;
         this.history.add(MongHistoryEntity.builder()
                 .mongHistoryCode(MongHistoryCode.HISTORY_MONG_EVOLUTION)
-                .typeCode(nextType.getMongCode().getComnCode())
+                .typeCode(nextType.getComn().getCode())
                 .build());
     }
 
@@ -274,5 +274,9 @@ public class MongEntity extends BaseTimeEntity {
         if (this.status.getPoopCount() >= MongStatusEntity.MAX_POOP_COUNT) {
             this.meta.increasePenalty();
         }
+    }
+
+    public void increasePayPoint(Integer addPayPoint) {
+        this.payPoint = Math.min(this.payPoint + addPayPoint, Integer.MAX_VALUE);
     }
 }

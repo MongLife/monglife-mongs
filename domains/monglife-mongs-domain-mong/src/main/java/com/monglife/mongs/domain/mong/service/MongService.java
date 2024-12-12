@@ -110,10 +110,10 @@ public class MongService {
     @Transactional(readOnly = true)
     public List<GetFeedItemDto> getFeedItems(Long mongId, String foodTypeGroupCode) {
 
-        return foodTypeRepository.findByFoodCodeGroupCode(foodTypeGroupCode).stream()
+        return foodTypeRepository.findByComnGroupCode(foodTypeGroupCode).stream()
                 .map(foodTypeEntity -> {
 
-                    String foodTypeCode = foodTypeEntity.getFoodCode().getComnCode();
+                    String foodTypeCode = foodTypeEntity.getComn().getCode();
 
                     Boolean isCanBuy = mongFeedHistoryRepository.findByMongIdAndFoodTypeCode(mongId, foodTypeCode).isEmpty();
 
@@ -121,8 +121,8 @@ public class MongService {
                             .isCanBuy(isCanBuy)
                             .foodTypeCode(foodTypeCode)
                             .price(foodTypeEntity.getPrice())
-                            .foodTypeName(foodTypeEntity.getFoodCode().getComnName())
-                            .foodTypeGroupCode(foodTypeEntity.getFoodCode().getGroupCode().getGroupCode())
+                            .foodTypeName(foodTypeEntity.getComn().getName())
+                            .foodTypeGroupCode(foodTypeEntity.getComn().getGroup().getCode())
                             .addWeightValue(foodTypeEntity.getAddWeightValue())
                             .addStrengthValue(foodTypeEntity.getAddStrengthValue())
                             .addSatietyValue(foodTypeEntity.getAddSatietyValue())
@@ -143,7 +143,7 @@ public class MongService {
     @Transactional
     public Long createMong(Long accountId, String name, LocalTime sleepAt, LocalTime wakeupAt) {
 
-        List<MongTypeEntity> mongTypeEntities = mongTypeRepository.findByMongCodeGroupCode(EGG_MONG_TYPE_GROUP_CODE);
+        List<MongTypeEntity> mongTypeEntities = mongTypeRepository.findByComnGroupCode(EGG_MONG_TYPE_GROUP_CODE);
 
         if (mongTypeEntities.isEmpty()) throw new NotExistsMongTypeCodeException();
 
@@ -192,7 +192,7 @@ public class MongService {
 
         if (mongEntity.getState().getIsSleep()) throw new InvalidMongStateException();
 
-        if (mongEntity.isEgg()) throw new InvalidMongTypeLevelException(mongId, mongEntity.getType().getMongCode().getComnCode(), mongEntity.getType().getLevel());
+        if (mongEntity.isEgg()) throw new InvalidMongTypeLevelException(mongId, mongEntity.getType().getComn().getCode(), mongEntity.getType().getLevel());
 
         mongFeedHistoryRepository.findByMongIdAndFoodTypeCode(mongId, foodTypeCode)
                 .ifPresent(mongFeedHistory -> {
@@ -200,7 +200,7 @@ public class MongService {
                     throw new InvalidFeedException(mongId, foodTypeCode, expirationSeconds);
                 });
 
-        FoodTypeEntity foodTypeEntity = foodTypeRepository.findByFoodCodeComnCode(foodTypeCode)
+        FoodTypeEntity foodTypeEntity = foodTypeRepository.findByComnCode(foodTypeCode)
                 .orElseThrow(() -> new NotExistsFoodTypeCodeException(foodTypeCode));
 
         if (mongEntity.getPayPoint() < foodTypeEntity.getPrice()) throw new NotEnoughPayPointException(mongId, foodTypeCode, foodTypeEntity.getPrice(), mongEntity.getPayPoint());
@@ -240,7 +240,7 @@ public class MongService {
 
         if (mongEntity.getState().getIsSleep()) throw new InvalidMongStateException();
 
-        if (mongEntity.isEgg()) throw new InvalidMongTypeLevelException(mongId, mongEntity.getType().getMongCode().getComnCode(), mongEntity.getType().getLevel());
+        if (mongEntity.isEgg()) throw new InvalidMongTypeLevelException(mongId, mongEntity.getType().getComn().getCode(), mongEntity.getType().getLevel());
 
         mongEntity.stroke(DEFAULT_STROKE_EXP);
     }
@@ -257,7 +257,7 @@ public class MongService {
 
         if (mongEntity.isDead()) throw new InvalidMongStateException();
 
-        if (mongEntity.isEgg()) throw new InvalidMongTypeLevelException(mongId, mongEntity.getType().getMongCode().getComnCode(), mongEntity.getType().getLevel());
+        if (mongEntity.isEgg()) throw new InvalidMongTypeLevelException(mongId, mongEntity.getType().getComn().getCode(), mongEntity.getType().getLevel());
 
         mongEntity.sleep();
     }
@@ -274,7 +274,7 @@ public class MongService {
 
         if (mongEntity.isDead()) throw new InvalidMongStateException();
 
-        if (mongEntity.isEgg()) throw new InvalidMongTypeLevelException(mongId, mongEntity.getType().getMongCode().getComnCode(), mongEntity.getType().getLevel());
+        if (mongEntity.isEgg()) throw new InvalidMongTypeLevelException(mongId, mongEntity.getType().getComn().getCode(), mongEntity.getType().getLevel());
 
         mongEntity.wakeup();
     }
@@ -293,7 +293,7 @@ public class MongService {
 
         if (mongEntity.getState().getIsSleep()) throw new InvalidMongStateException();
 
-        if (mongEntity.isEgg()) throw new InvalidMongTypeLevelException(mongId, mongEntity.getType().getMongCode().getComnCode(), mongEntity.getType().getLevel());
+        if (mongEntity.isEgg()) throw new InvalidMongTypeLevelException(mongId, mongEntity.getType().getComn().getCode(), mongEntity.getType().getLevel());
 
         mongEntity.poopClean(DEFAULT_POOP_CLEAN_EXP);
     }
@@ -330,7 +330,7 @@ public class MongService {
         if (!mongEntity.isEvolutionReady()) throw new InvalidEvolutionException(mongId);
 
         String nextTypeGroupCode = mongEntity.getType().getNextTypeGroupCode();
-        List<MongTypeEntity> mongTypeEntities = mongTypeRepository.findByMongCodeGroupCode(nextTypeGroupCode).stream()
+        List<MongTypeEntity> mongTypeEntities = mongTypeRepository.findByComnGroupCode(nextTypeGroupCode).stream()
                 .sorted((o1, o2) -> o2.getEvolutionScore().compareTo(o1.getEvolutionScore()))
                 .toList();
 
@@ -378,7 +378,7 @@ public class MongService {
 
         if (mongEntity.getState().getIsSleep()) throw new InvalidMongStateException();
 
-        if (mongEntity.isEgg()) throw new InvalidMongTypeLevelException(mongId, mongEntity.getType().getMongCode().getComnCode(), mongEntity.getType().getLevel());
+        if (mongEntity.isEgg()) throw new InvalidMongTypeLevelException(mongId, mongEntity.getType().getComn().getCode(), mongEntity.getType().getLevel());
 
         if (!mongEntity.isGraduateReady()) throw new InvalidGraduateException(mongId);
 
@@ -423,5 +423,14 @@ public class MongService {
                 .orElseThrow(() -> new NotExistsMongException(mongId));
 
         mongEntity.increasePoop(addPoopCount);
+    }
+
+    @Transactional
+    public void increasePayPoint(Long mongId, Integer payPoint) {
+
+        MongEntity mongEntity = lockMongRepository.findByMongIdAndMetaIsActiveIsTrue(mongId)
+                .orElseThrow(() -> new NotExistsMongException(mongId));
+
+        mongEntity.increasePayPoint(payPoint);
     }
 }

@@ -17,14 +17,14 @@ public class GroupCodeEntity {
 
     @Id
     @Column(name = "group_code")
-    private String groupCode;
+    private String code;
 
     @Column(name = "group_name")
-    private String groupName;
+    private String name;
 
     @Builder
-    public GroupCodeEntity(String groupCode, String groupName) {
-        this.groupCode = groupCode;
-        this.groupName = groupName;
+    public GroupCodeEntity(String code, String name) {
+        this.code = code;
+        this.name = name;
     }
 }

@@ -7,5 +7,5 @@ import java.util.List;
 
 public interface MongTypeRepository extends JpaRepository<MongTypeEntity, String> {
 
-    List<MongTypeEntity> findByMongCodeGroupCode(String groupCode);
+    List<MongTypeEntity> findByComnGroupCode(String groupCode);
 }

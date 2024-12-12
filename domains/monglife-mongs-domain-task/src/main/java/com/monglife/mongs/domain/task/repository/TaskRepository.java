@@ -10,7 +10,7 @@ public interface TaskRepository extends JpaRepository<TaskEntity, Long> {
 
     Optional<TaskEntity> findByTaskId(Long taskId);
 
-    Optional<TaskEntity> findByAppCodeAndTaskOwnerIdAndTaskCodeComnCode(String appCode, String taskOwnerId, String taskCode);
+    Optional<TaskEntity> findByAppCodeAndTaskOwnerIdAndComnCode(String appCode, String taskOwnerId, String taskCode);
 
-    Optional<TaskEntity> findByAppCodeAndTaskOwnerIdAndTaskCodeComnCodeAndTaskStatusCode(String appCode, String taskOwnerId, String taskCode, TaskStatusCode taskStatusCode);
+    Optional<TaskEntity> findByAppCodeAndTaskOwnerIdAndComnCodeAndTaskStatusCode(String appCode, String taskOwnerId, String taskCode, TaskStatusCode taskStatusCode);
 }

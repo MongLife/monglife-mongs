@@ -19,7 +19,7 @@ public class FoodTypeEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "food_type_code")
-    private ComnCodeEntity foodCode;
+    private ComnCodeEntity comn;
 
     @Column(name = "price")
     private Integer price;

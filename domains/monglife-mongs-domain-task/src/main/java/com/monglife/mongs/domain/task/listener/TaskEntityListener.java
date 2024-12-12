@@ -62,7 +62,7 @@ public class TaskEntityListener {
         applicationEventPublisher.publishEvent(ExecuteTaskEvent.builder()
                 .appCode(taskEntity.getAppCode())
                 .taskOwnerId(taskEntity.getTaskOwnerId())
-                .taskCode(taskEntity.getTaskCode().getComnCode())
+                .taskCode(taskEntity.getComn().getCode())
                 .restExpirationSeconds(taskEntity.getRestExpirationSeconds())
                 .expirationSeconds(taskEntity.getExpirationSeconds())
                 .build());

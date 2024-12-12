@@ -1,5 +1,6 @@
 package com.monglife.mongs.domain.member.entity;
 
+import com.monglife.mongs.module.jpa.entity.ComnCodeEntity;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -17,8 +18,9 @@ public class MapPositionEntity {
     @Column(name = "map_position_id")
     private Long mapPositionId;
 
-    @Column(name = "map_type_id")
-    private Long mapTypeId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "map_type_code")
+    private ComnCodeEntity comn;
 
     @Column(name = "address")
     private String address;
@@ -33,8 +35,8 @@ public class MapPositionEntity {
     private Double positionX;
 
     @Builder
-    public MapPositionEntity(Long mapTypeId, String address, String addressRoad, Double positionY, Double positionX) {
-        this.mapTypeId = mapTypeId;
+    public MapPositionEntity(ComnCodeEntity comn, String address, String addressRoad, Double positionY, Double positionX) {
+        this.comn = comn;
         this.address = address;
         this.addressRoad = addressRoad;
         this.positionY = positionY;

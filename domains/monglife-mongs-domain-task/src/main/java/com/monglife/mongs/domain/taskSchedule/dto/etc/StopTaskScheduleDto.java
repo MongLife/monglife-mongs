@@ -50,7 +50,7 @@ public class StopTaskScheduleDto {
                 .taskId(taskEntity.getTaskId())
                 .appCode(taskEntity.getAppCode())
                 .taskOwnerId(taskEntity.getTaskOwnerId())
-                .taskCode(taskEntity.getTaskCode().getComnCode())
+                .taskCode(taskEntity.getComn().getCode())
                 .taskStatusCode(taskEntity.getTaskStatusCode())
                 .restExpirationSeconds(taskEntity.getRestExpirationSeconds())
                 .expirationSeconds(taskEntity.getExpirationSeconds())

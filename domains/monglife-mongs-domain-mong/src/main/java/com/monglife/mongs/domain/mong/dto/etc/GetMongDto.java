@@ -65,7 +65,7 @@ public class GetMongDto {
         return GetMongDto.builder()
                 .mongId(mongEntity.getMongId())
                 .mongName(mongEntity.getMongName())
-                .mongTypeCode(mongEntity.getType().getMongCode().getComnCode())
+                .mongTypeCode(mongEntity.getType().getComn().getCode())
                 .level(mongEntity.getType().getLevel())
                 .weight(mongEntity.getStatus().getWeight())
                 .strength(mongEntity.getStatus().getStrength())

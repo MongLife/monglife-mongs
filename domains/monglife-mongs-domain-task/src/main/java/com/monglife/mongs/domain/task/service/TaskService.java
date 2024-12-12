@@ -43,7 +43,7 @@ public class TaskService {
 
     @Transactional(readOnly = true)
     public Boolean isExistsTask(String appCode, String taskOwnerId, String taskCode, TaskStatusCode taskStatusCode) {
-        return taskRepository.findByAppCodeAndTaskOwnerIdAndTaskCodeComnCodeAndTaskStatusCode(appCode, taskOwnerId, taskCode, taskStatusCode).isPresent();
+        return taskRepository.findByAppCodeAndTaskOwnerIdAndComnCodeAndTaskStatusCode(appCode, taskOwnerId, taskCode, taskStatusCode).isPresent();
     }
 
     @Transactional
@@ -52,7 +52,7 @@ public class TaskService {
         ComnCodeEntity comnCodeEntity = comnCodeRepository.findById(taskCode)
                 .orElseThrow(() -> new NotExistsTaskCodeException(taskCode));
 
-        taskRepository.findByAppCodeAndTaskOwnerIdAndTaskCodeComnCode(appCode, taskOwnerId, taskCode)
+        taskRepository.findByAppCodeAndTaskOwnerIdAndComnCode(appCode, taskOwnerId, taskCode)
                 .ifPresent(taskEntity -> { throw new AlreadyExistsTaskException(taskEntity.getTaskId()); });
 
         TaskEntity taskEntity = new TaskEntity(appCode, taskOwnerId, comnCodeEntity, TaskStateCode.FIX_TIME, fixTime);
@@ -66,7 +66,7 @@ public class TaskService {
         ComnCodeEntity comnCodeEntity = comnCodeRepository.findById(taskCode)
                 .orElseThrow(() -> new NotExistsTaskCodeException(taskCode));
 
-        taskRepository.findByAppCodeAndTaskOwnerIdAndTaskCodeComnCode(appCode, taskOwnerId, taskCode)
+        taskRepository.findByAppCodeAndTaskOwnerIdAndComnCode(appCode, taskOwnerId, taskCode)
                 .ifPresent(taskEntity -> { throw new AlreadyExistsTaskException(taskEntity.getTaskId()); });
 
         TaskEntity taskEntity = new TaskEntity(appCode, taskOwnerId, comnCodeEntity, TaskStateCode.FIX_TIME_CYCLE, fixTime);
@@ -87,7 +87,7 @@ public class TaskService {
         ComnCodeEntity comnCodeEntity = comnCodeRepository.findById(taskCode)
                 .orElseThrow(() -> new NotExistsTaskCodeException(taskCode));
 
-        taskRepository.findByAppCodeAndTaskOwnerIdAndTaskCodeComnCode(appCode, taskOwnerId, taskCode)
+        taskRepository.findByAppCodeAndTaskOwnerIdAndComnCode(appCode, taskOwnerId, taskCode)
                 .ifPresent(taskEntity -> { throw new AlreadyExistsTaskException(taskEntity.getTaskId()); });
 
         TaskEntity taskEntity = new TaskEntity(appCode, taskOwnerId, comnCodeEntity, TaskStateCode.NONE_FIX_TIME, expirationSeconds);
@@ -108,7 +108,7 @@ public class TaskService {
         ComnCodeEntity comnCodeEntity = comnCodeRepository.findById(taskCode)
                 .orElseThrow(() -> new NotExistsTaskCodeException(taskCode));
 
-        taskRepository.findByAppCodeAndTaskOwnerIdAndTaskCodeComnCode(appCode, taskOwnerId, taskCode)
+        taskRepository.findByAppCodeAndTaskOwnerIdAndComnCode(appCode, taskOwnerId, taskCode)
                 .ifPresent(taskEntity -> { throw new AlreadyExistsTaskException(taskEntity.getTaskId()); });
 
         TaskEntity taskEntity = new TaskEntity(appCode, taskOwnerId, comnCodeEntity, TaskStateCode.NONE_FIX_TIME_CYCLE, expirationSeconds);
@@ -149,7 +149,7 @@ public class TaskService {
     @Transactional
     public void deleteTask(String appCode, String taskOwnerId, String taskCode) {
 
-        lockTaskRepository.findByAppCodeAndTaskOwnerIdAndTaskCodeComnCode(appCode, taskOwnerId, taskCode)
+        lockTaskRepository.findByAppCodeAndTaskOwnerIdAndComnCode(appCode, taskOwnerId, taskCode)
                 .ifPresent(lockTaskRepository::delete);
     }
 
@@ -162,7 +162,7 @@ public class TaskService {
     @Transactional
     public void pauseTask(String appCode, String taskOwnerId, String taskCode) {
 
-        lockTaskRepository.findByAppCodeAndTaskOwnerIdAndTaskCodeComnCode(appCode, taskOwnerId, taskCode)
+        lockTaskRepository.findByAppCodeAndTaskOwnerIdAndComnCode(appCode, taskOwnerId, taskCode)
                 .ifPresent(TaskEntity::pause);
     }
 
@@ -175,7 +175,7 @@ public class TaskService {
     @Transactional
     public void resumeTask(String appCode, String taskOwnerId, String taskCode) {
 
-        lockTaskRepository.findByAppCodeAndTaskOwnerIdAndTaskCodeComnCode(appCode, taskOwnerId, taskCode)
+        lockTaskRepository.findByAppCodeAndTaskOwnerIdAndComnCode(appCode, taskOwnerId, taskCode)
                 .ifPresent(TaskEntity::resume);
     }
 

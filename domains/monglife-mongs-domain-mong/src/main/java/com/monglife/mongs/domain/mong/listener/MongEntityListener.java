@@ -23,7 +23,7 @@ public class MongEntityListener {
         MongObserveEvent mongObserveEvent = MongObserveEvent.builder()
                 .mongId(mongEntity.getMongId())
                 .payPoint(mongEntity.getPayPoint())
-                .mongTypeCode(mongEntity.getType().getMongCode().getComnCode())
+                .mongTypeCode(mongEntity.getType().getComn().getCode())
                 .build();
 
         applicationEventPublisher.publishEvent(mongObserveEvent);

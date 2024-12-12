@@ -10,7 +10,6 @@ import lombok.*;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.Duration;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 
@@ -35,7 +34,7 @@ public class TaskEntity extends BaseTimeEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "task_code", updatable = false)
-    private ComnCodeEntity taskCode;
+    private ComnCodeEntity comn;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "task_status_code")
@@ -57,10 +56,10 @@ public class TaskEntity extends BaseTimeEntity {
     @Column(name = "fix_time", updatable = false)
     private LocalTime fixTime;
 
-    public TaskEntity(String appCode, String taskOwnerId, ComnCodeEntity taskCode, TaskStateCode taskStateCode, LocalTime fixTime) {
+    public TaskEntity(String appCode, String taskOwnerId, ComnCodeEntity comn, TaskStateCode taskStateCode, LocalTime fixTime) {
         this.appCode = appCode;
         this.taskOwnerId = taskOwnerId;
-        this.taskCode = taskCode;
+        this.comn = comn;
         this.taskStateCode = taskStateCode;
         this.fixTime = fixTime == null ? LocalTime.of(0, 0) : fixTime;
         this.taskStatusCode = TaskStatusCode.PROCESSING;
@@ -69,10 +68,10 @@ public class TaskEntity extends BaseTimeEntity {
         this.resetFixTime(now);
     }
 
-    public TaskEntity(String appCode, String taskOwnerId, ComnCodeEntity taskCode, TaskStateCode taskStateCode, Long expirationSeconds) {
+    public TaskEntity(String appCode, String taskOwnerId, ComnCodeEntity comn, TaskStateCode taskStateCode, Long expirationSeconds) {
         this.appCode = appCode;
         this.taskOwnerId = taskOwnerId;
-        this.taskCode = taskCode;
+        this.comn = comn;
         this.taskStateCode = taskStateCode;
         this.expirationSeconds = expirationSeconds;
         this.taskStatusCode = TaskStatusCode.PROCESSING;

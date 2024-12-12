@@ -8,7 +8,7 @@ import java.util.Optional;
 
 public interface FoodTypeRepository extends JpaRepository<FoodTypeEntity, Long> {
 
-    Optional<FoodTypeEntity> findByFoodCodeComnCode(String foodCode);
+    Optional<FoodTypeEntity> findByComnCode(String foodCode);
 
-    List<FoodTypeEntity> findByFoodCodeGroupCode(String foodCodeGroupCode);
+    List<FoodTypeEntity> findByComnGroupCode(String foodCodeGroupCode);
 }

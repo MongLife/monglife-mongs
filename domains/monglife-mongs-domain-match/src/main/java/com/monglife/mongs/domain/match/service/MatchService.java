@@ -83,7 +83,7 @@ public class MatchService {
                         mongTypeCode = comnCodeRepository.findByGroupCode(BOT_MONG_TYPE_GROUP_CODE).stream()
                                 .findAny()
                                 .orElseThrow(NotExistsMongTypeCodeException::new)
-                                .getComnCode();
+                                .getCode();
                     }
 
                     return MatchPlayerEntity.builder()

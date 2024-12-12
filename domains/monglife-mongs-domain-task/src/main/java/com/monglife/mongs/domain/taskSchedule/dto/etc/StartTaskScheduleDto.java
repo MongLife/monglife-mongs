@@ -40,7 +40,7 @@ public class StartTaskScheduleDto {
                 .taskId(taskEntity.getTaskId())
                 .appCode(taskEntity.getAppCode())
                 .taskOwnerId(taskEntity.getTaskOwnerId())
-                .taskCode(taskEntity.getTaskCode().getComnCode())
+                .taskCode(taskEntity.getComn().getCode())
                 .expiredAt(taskEntity.getExpiredAt())
                 .isCycle(taskEntity.isCycle())
                 .build();

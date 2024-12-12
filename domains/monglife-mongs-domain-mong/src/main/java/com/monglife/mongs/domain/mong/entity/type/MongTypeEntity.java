@@ -19,7 +19,7 @@ public class MongTypeEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "mong_type_code")
-    private ComnCodeEntity mongCode;
+    private ComnCodeEntity comn;
 
     @Column(name = "level")
     private Integer level;
