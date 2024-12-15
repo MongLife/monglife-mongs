@@ -21,10 +21,9 @@ public class MemberEntityListener {
                 .accountId(memberEntity.getAccountId())
                 .slotCount(memberEntity.getSlotCount())
                 .starPoint(memberEntity.getStarPoint())
-                .isActive(memberEntity.getIsActive())
+                .walkingCount(memberEntity.getWalkingCount())
                 .build();
 
         applicationEventPublisher.publishEvent(memberObserveEvent);
-
     }
 }

@@ -1,4 +1,4 @@
-package com.monglife.mongs.domain.member.dto.etc;
+package com.monglife.mongs.app.user.player.dto.etc;
 
 import lombok.Builder;
 import lombok.Getter;
@@ -8,7 +8,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @NoArgsConstructor
-public class GetMemberDto {
+public class GetPlayerDto {
 
     private Long accountId;
 
@@ -19,7 +19,7 @@ public class GetMemberDto {
     private Integer walkingCount;
 
     @Builder
-    public GetMemberDto(Long accountId, Integer slotCount, Integer starPoint, Integer walkingCount) {
+    public GetPlayerDto(Long accountId, Integer slotCount, Integer starPoint, Integer walkingCount) {
         this.accountId = accountId;
         this.slotCount = slotCount;
         this.starPoint = starPoint;

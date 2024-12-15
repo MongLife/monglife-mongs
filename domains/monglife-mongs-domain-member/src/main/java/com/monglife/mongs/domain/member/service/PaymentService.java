@@ -2,7 +2,6 @@ package com.monglife.mongs.domain.member.service;
 
 import com.monglife.mongs.domain.member.entity.MemberEntity;
 import com.monglife.mongs.domain.member.entity.PaymentEntity;
-import com.monglife.mongs.domain.member.exception.NotExistsMemberException;
 import com.monglife.mongs.domain.member.exception.NotExistsPaymentCodeException;
 import com.monglife.mongs.domain.member.repository.ComnCodeRepository;
 import com.monglife.mongs.domain.member.repository.MemberRepository;
@@ -26,7 +25,7 @@ public class PaymentService {
                 .orElseThrow(() -> new NotExistsPaymentCodeException(paymentCode));
 
         MemberEntity memberEntity = memberRepository.findByAccountId(accountId)
-                .orElseThrow(() -> new NotExistsMemberException(accountId));
+                .orElseGet(() -> memberRepository.save(new MemberEntity(accountId)));
 
         PaymentEntity paymentEntity = PaymentEntity.builder()
                 .accountId(accountId)

@@ -1,4 +1,4 @@
-package com.monglife.mongs.domain.member.dto.etc;
+package com.monglife.mongs.app.user.collection.dto.response;
 
 import lombok.Builder;
 import lombok.Getter;
@@ -8,7 +8,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @NoArgsConstructor
-public class GetCollectionMongDto {
+public class GetCollectionMongResponseDto {
 
     private String mongTypeCode;
 
@@ -17,7 +17,7 @@ public class GetCollectionMongDto {
     private Boolean isIncluded;
 
     @Builder
-    public GetCollectionMongDto(String mongTypeCode, String mongTypeName, Boolean isIncluded) {
+    public GetCollectionMongResponseDto(String mongTypeCode, String mongTypeName, Boolean isIncluded) {
         this.mongTypeCode = mongTypeCode;
         this.mongTypeName = mongTypeName;
         this.isIncluded = isIncluded;

@@ -1,6 +1,5 @@
-package com.monglife.mongs.domain.member.dto.etc;
+package com.monglife.mongs.app.user.collection.dto.response;
 
-import com.monglife.mongs.domain.member.entity.CollectionMapEntity;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -9,7 +8,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @NoArgsConstructor
-public class GetCollectionMapDto {
+public class GetCollectionMapResponseDto {
 
     private String mapTypeCode;
 
@@ -18,7 +17,7 @@ public class GetCollectionMapDto {
     private Boolean isIncluded;
 
     @Builder
-    public GetCollectionMapDto(String mapTypeCode, String mapTypeName, Boolean isIncluded) {
+    public GetCollectionMapResponseDto(String mapTypeCode, String mapTypeName, Boolean isIncluded) {
         this.mapTypeCode = mapTypeCode;
         this.mapTypeName = mapTypeName;
         this.isIncluded = isIncluded;

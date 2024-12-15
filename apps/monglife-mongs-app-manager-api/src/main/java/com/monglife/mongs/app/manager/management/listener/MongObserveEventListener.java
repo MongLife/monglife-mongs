@@ -1,7 +1,7 @@
 package com.monglife.mongs.app.manager.management.listener;
 
 import com.monglife.mongs.app.manager.management.dto.response.MongObserveResponseDto;
-import com.monglife.mongs.app.manager.management.enums.ManagerResponse;
+import com.monglife.mongs.app.manager.management.enums.ManagementResponse;
 import com.monglife.mongs.domain.mong.dto.event.MongObserveEvent;
 import com.monglife.mongs.module.mqtt.service.MqttSendService;
 import lombok.RequiredArgsConstructor;
@@ -30,6 +30,6 @@ public class MongObserveEventListener {
                 .mongTypeCode(event.getMongTypeCode())
                 .build();
 
-        mqttSendService.sendMessage(topic, ManagerResponse.MANAGER_MANAGEMENT_OBSERVE_MONG.toResponseDto(mongObserveResponseDto));
+        mqttSendService.sendMessage(topic, ManagementResponse.MANAGER_MANAGEMENT_OBSERVE_MONG.toResponseDto(mongObserveResponseDto));
     }
 }

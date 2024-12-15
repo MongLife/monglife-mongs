@@ -10,6 +10,7 @@ import com.monglife.mongs.domain.member.repository.MapPositionRepository;
 import com.monglife.mongs.domain.member.repository.MemberRepository;
 import com.monglife.mongs.module.jpa.entity.ComnCodeEntity;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -19,23 +20,17 @@ import java.util.List;
 @RequiredArgsConstructor
 public class MemberService {
 
+    @Value("${application.service.collection.map-group-code}")
+    private String MAP_GROUP_CODE;
+
+    @Value("${application.service.collection.mong-group-code}")
+    private String MONG_GROUP_CODE;
+
     private final MemberRepository memberRepository;
 
     private final ComnCodeRepository comnCodeRepository;
+
     private final MapPositionRepository mapPositionRepository;
-
-    /**
-     * 회원 생성
-     * @param accountId 계정 ID
-     */
-    @Transactional
-    public void createMember(Long accountId) {
-
-        MemberEntity memberEntity = memberRepository.findByAccountId(accountId)
-                .orElse(new MemberEntity(accountId));
-
-        memberRepository.save(memberEntity);
-    }
 
     /**
      * 회원 조회
@@ -46,12 +41,13 @@ public class MemberService {
     public GetMemberDto getMember(Long accountId) {
 
         MemberEntity memberEntity = memberRepository.findByAccountId(accountId)
-                .orElseThrow(() -> new NotExistsMemberException(accountId));
+                .orElseGet(() -> memberRepository.save(new MemberEntity(accountId)));
 
         return GetMemberDto.builder()
                 .accountId(memberEntity.getAccountId())
                 .slotCount(memberEntity.getSlotCount())
                 .starPoint(memberEntity.getStarPoint())
+                .walkingCount(memberEntity.getWalkingCount())
                 .build();
     }
 
@@ -64,7 +60,7 @@ public class MemberService {
     public void createCollectionMap(Long accountId, String mapTypeCode, Long mapPositionId) {
 
         MemberEntity memberEntity = memberRepository.findByAccountId(accountId)
-                .orElseThrow(() -> new NotExistsMemberException(accountId));
+                .orElseGet(() -> memberRepository.save(new MemberEntity(accountId)));
 
         ComnCodeEntity comnCodeEntity = comnCodeRepository.findById(mapTypeCode)
                 .orElseThrow(() -> new NotExistsMapTypeCodeException(mapTypeCode));
@@ -90,12 +86,20 @@ public class MemberService {
     public List<GetCollectionMapDto> getCollectionMaps(Long accountId) {
 
         MemberEntity memberEntity = memberRepository.findByAccountId(accountId)
-                .orElseThrow(() -> new NotExistsMemberException(accountId));
+                .orElseGet(() -> memberRepository.save(new MemberEntity(accountId)));
 
-        List<CollectionMapEntity> collectionMapEntities = memberEntity.getCollectionMaps();
+        List<ComnCodeEntity> comnCodeEntities = comnCodeRepository.findByGroupCode(MAP_GROUP_CODE);
 
-        return collectionMapEntities.stream()
-                .map(GetCollectionMapDto::of)
+        List<String> collectionMapTypeCodes = memberEntity.getCollectionMaps().stream()
+                .map(collectionMapEntity -> collectionMapEntity.getComn().getCode())
+                .toList();
+
+        return comnCodeEntities.stream()
+                .map(comnCodeEntity -> GetCollectionMapDto.builder()
+                        .mapTypeCode(comnCodeEntity.getCode())
+                        .mapTypeName(comnCodeEntity.getName())
+                        .isIncluded(collectionMapTypeCodes.contains(comnCodeEntity.getCode()))
+                        .build())
                 .toList();
     }
 
@@ -108,7 +112,7 @@ public class MemberService {
     public void createCollectionMong(Long accountId, String mongTypeCode) {
 
         MemberEntity memberEntity = memberRepository.findByAccountId(accountId)
-                .orElseThrow(() -> new NotExistsMemberException(accountId));
+                .orElseGet(() -> memberRepository.save(new MemberEntity(accountId)));
 
         ComnCodeEntity comnCodeEntity = comnCodeRepository.findById(mongTypeCode)
                 .orElseThrow(() -> new NotExistsMongTypeCodeException(mongTypeCode));
@@ -130,12 +134,20 @@ public class MemberService {
     public List<GetCollectionMongDto> getCollectionMongs(Long accountId) {
 
         MemberEntity memberEntity = memberRepository.findByAccountId(accountId)
-                .orElseThrow(() -> new NotExistsMemberException(accountId));
+                .orElseGet(() -> memberRepository.save(new MemberEntity(accountId)));
 
-        List<CollectionMongEntity> collectionMongEntities = memberEntity.getCollectionMongs();
+        List<ComnCodeEntity> comnCodeEntities = comnCodeRepository.findByGroupCodeLike(MONG_GROUP_CODE + "%");
 
-        return collectionMongEntities.stream()
-                .map(GetCollectionMongDto::of)
+        List<String> collectionMongTypeCode = memberEntity.getCollectionMongs().stream()
+                .map(collectionMongEntity -> collectionMongEntity.getComn().getCode())
+                .toList();
+
+        return comnCodeEntities.stream()
+                .map(comnCodeEntity -> GetCollectionMongDto.builder()
+                        .mongTypeCode(comnCodeEntity.getCode())
+                        .mongTypeName(comnCodeEntity.getName())
+                        .isIncluded(collectionMongTypeCode.contains(comnCodeEntity.getCode()))
+                        .build())
                 .toList();
     }
 
@@ -151,7 +163,7 @@ public class MemberService {
     public void createFeedback(Long accountId, String deviceId, String deviceName, String title, String content) {
 
         MemberEntity memberEntity = memberRepository.findByAccountId(accountId)
-                .orElseThrow(() -> new NotExistsMemberException(accountId));
+                .orElseGet(() -> memberRepository.save(new MemberEntity(accountId)));
 
         FeedbackEntity feedbackEntity = FeedbackEntity.builder()
                 .accountId(accountId)
@@ -169,7 +181,7 @@ public class MemberService {
     public void increaseSlot(Long accountId) {
 
         MemberEntity memberEntity = memberRepository.findByAccountId(accountId)
-                .orElseThrow(() -> new NotExistsMemberException(accountId));
+                .orElseGet(() -> memberRepository.save(new MemberEntity(accountId)));
 
         memberEntity.increaseSlotCount();
     }
@@ -178,7 +190,7 @@ public class MemberService {
     public void increaseStarPoint(Long accountId, Integer starPoint) {
 
         MemberEntity memberEntity = memberRepository.findByAccountId(accountId)
-                .orElseThrow(() -> new NotExistsMemberException(accountId));
+                .orElseGet(() -> memberRepository.save(new MemberEntity(accountId)));
 
         memberEntity.increaseStarPoint(starPoint);
     }
@@ -187,7 +199,7 @@ public class MemberService {
     public void decreaseStarPoint(Long accountId, Integer starPoint) {
 
         MemberEntity memberEntity = memberRepository.findByAccountId(accountId)
-                .orElseThrow(() -> new NotExistsMemberException(accountId));
+                .orElseGet(() -> memberRepository.save(new MemberEntity(accountId)));
 
         if (memberEntity.getStarPoint() < starPoint) throw new NotExistsStarPointException(starPoint);
 
@@ -198,7 +210,7 @@ public class MemberService {
     public void increaseWalkingCount(Long accountId, Integer walkingCount) {
 
         MemberEntity memberEntity = memberRepository.findByAccountId(accountId)
-                .orElseThrow(() -> new NotExistsMemberException(accountId));
+                .orElseGet(() -> memberRepository.save(new MemberEntity(accountId)));
 
         memberEntity.increaseWalkingCount(walkingCount);
     }
@@ -207,7 +219,9 @@ public class MemberService {
     public void decreaseWalkingCount(Long accountId, Integer walkingCount) {
 
         MemberEntity memberEntity = memberRepository.findByAccountId(accountId)
-                .orElseThrow(() -> new NotExistsMemberException(accountId));
+                .orElseGet(() -> memberRepository.save(new MemberEntity(accountId)));
+
+        if (memberEntity.getWalkingCount() < walkingCount) throw new NotExistsWalkingCountException(walkingCount);
 
         memberEntity.decreaseWalkingCount(walkingCount);
     }

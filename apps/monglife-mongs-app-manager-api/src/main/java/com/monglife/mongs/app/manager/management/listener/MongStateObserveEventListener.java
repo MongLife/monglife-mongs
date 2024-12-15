@@ -1,7 +1,7 @@
 package com.monglife.mongs.app.manager.management.listener;
 
 import com.monglife.mongs.app.manager.management.dto.response.MongStateObserveResponseDto;
-import com.monglife.mongs.app.manager.management.enums.ManagerResponse;
+import com.monglife.mongs.app.manager.management.enums.ManagementResponse;
 import com.monglife.mongs.domain.mong.dto.event.MongObserveStateEvent;
 import com.monglife.mongs.domain.mong.enums.MongStateCode;
 import com.monglife.mongs.domain.task.service.TaskService;
@@ -44,6 +44,6 @@ public class MongStateObserveEventListener {
                 .isSleep(event.getIsSleep())
                 .build();
 
-        mqttSendService.sendMessage(topic, ManagerResponse.MANAGER_MANAGEMENT_OBSERVE_MONG_STATE.toResponseDto(mongStateObserveResponseDto));
+        mqttSendService.sendMessage(topic, ManagementResponse.MANAGER_MANAGEMENT_OBSERVE_MONG_STATE.toResponseDto(mongStateObserveResponseDto));
     }
 }

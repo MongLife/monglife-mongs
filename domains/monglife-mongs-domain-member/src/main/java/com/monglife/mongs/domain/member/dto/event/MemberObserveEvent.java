@@ -14,14 +14,11 @@ public class MemberObserveEvent {
 
     private final Integer walkingCount;
 
-    private final Boolean isActive;
-
     @Builder
-    public MemberObserveEvent(Long accountId, Integer slotCount, Integer starPoint, Integer walkingCount, Boolean isActive) {
+    public MemberObserveEvent(Long accountId, Integer slotCount, Integer starPoint, Integer walkingCount) {
         this.accountId = accountId;
         this.slotCount = slotCount;
         this.starPoint = starPoint;
         this.walkingCount = walkingCount;
-        this.isActive = isActive;
     }
 }

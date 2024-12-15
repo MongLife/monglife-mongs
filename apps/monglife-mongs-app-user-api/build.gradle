@@ -9,7 +9,7 @@ dependencies {
 
 tasks.register('copyPrivate', Copy) {
     copy {
-        from '../../configs/apps/monglife-mongs-app-player-api/'
+        from '../../configs/apps/monglife-mongs-app-user-api/'
         include 'application*.yml'
         into 'src/main/resources'
     }

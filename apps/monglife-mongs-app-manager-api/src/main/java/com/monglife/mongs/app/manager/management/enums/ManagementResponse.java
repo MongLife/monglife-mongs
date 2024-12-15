@@ -11,7 +11,7 @@ import java.util.Map;
 
 @Getter
 @AllArgsConstructor
-public enum ManagerResponse implements Response {
+public enum ManagementResponse implements Response {
 
     /**
      * 성공 응답

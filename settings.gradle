@@ -4,7 +4,7 @@ include 'core'
 include 'apps'
 include 'apps:monglife-mongs-app-activity-api'
 include 'apps:monglife-mongs-app-manager-api'
-include 'apps:monglife-mongs-app-player-api'
+include 'apps:monglife-mongs-app-user-api'
 
 include 'domains'
 include 'domains:monglife-mongs-domain-match'

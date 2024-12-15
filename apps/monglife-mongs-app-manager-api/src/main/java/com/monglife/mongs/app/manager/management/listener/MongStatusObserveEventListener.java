@@ -2,7 +2,7 @@ package com.monglife.mongs.app.manager.management.listener;
 
 import com.monglife.mongs.app.manager.global.config.TaskScheduleProperties;
 import com.monglife.mongs.app.manager.management.dto.response.MongStatusObserveResponseDto;
-import com.monglife.mongs.app.manager.management.enums.ManagerResponse;
+import com.monglife.mongs.app.manager.management.enums.ManagementResponse;
 import com.monglife.mongs.domain.mong.dto.event.MongObserveStatusEvent;
 import com.monglife.mongs.domain.mong.enums.MongStateCode;
 import com.monglife.mongs.domain.task.enums.TaskStatusCode;
@@ -67,6 +67,6 @@ public class MongStatusObserveEventListener {
                 .poopCount(event.getPoopCount())
                 .build();
 
-        mqttSendService.sendMessage(topic, ManagerResponse.MANAGER_MANAGEMENT_OBSERVE_MONG_STATUS.toResponseDto(mongStatusObserveResponseDto));
+        mqttSendService.sendMessage(topic, ManagementResponse.MANAGER_MANAGEMENT_OBSERVE_MONG_STATUS.toResponseDto(mongStatusObserveResponseDto));
     }
 }

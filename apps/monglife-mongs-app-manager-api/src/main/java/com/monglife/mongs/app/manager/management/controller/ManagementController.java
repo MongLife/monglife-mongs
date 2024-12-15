@@ -5,7 +5,7 @@ import com.monglife.mongs.app.manager.management.dto.request.CreateMongRequestDt
 import com.monglife.mongs.app.manager.management.dto.request.FeedMongRequestDto;
 import com.monglife.mongs.app.manager.management.dto.response.GetFeedItemsResponseDto;
 import com.monglife.mongs.app.manager.management.dto.response.GetMongResponseDto;
-import com.monglife.mongs.app.manager.management.enums.ManagerResponse;
+import com.monglife.mongs.app.manager.management.enums.ManagementResponse;
 import com.monglife.mongs.app.manager.management.service.ManagementService;
 import com.monglife.mongs.domain.mong.dto.etc.GetFeedItemDto;
 import com.monglife.mongs.domain.mong.dto.etc.GetMongDto;
@@ -45,7 +45,7 @@ public class ManagementController {
 
         List<GetMongResponseDto> getMongResponseDtos = GetMongResponseDto.toList(getMongDtos);
 
-        return ResponseEntity.ok(ManagerResponse.MANAGER_MANAGEMENT_GET_MONG.toResponseDto(getMongResponseDtos));
+        return ResponseEntity.ok(ManagementResponse.MANAGER_MANAGEMENT_GET_MONG.toResponseDto(getMongResponseDtos));
     }
 
     /**
@@ -63,7 +63,7 @@ public class ManagementController {
 
         GetMongResponseDto getMongResponseDto = GetMongResponseDto.of(getMongDto);
 
-        return ResponseEntity.ok(ManagerResponse.MANAGER_MANAGEMENT_GET_MONG.toResponseDto(getMongResponseDto));
+        return ResponseEntity.ok(ManagementResponse.MANAGER_MANAGEMENT_GET_MONG.toResponseDto(getMongResponseDto));
     }
 
     /**
@@ -89,7 +89,7 @@ public class ManagementController {
                 .feedItems(getFeedItemDtos)
                 .build();
 
-        return ResponseEntity.ok(ManagerResponse.MANAGER_MANAGEMENT_GET_FEED_ITEM.toResponseDto(getFeedItemsResponseDto));
+        return ResponseEntity.ok(ManagementResponse.MANAGER_MANAGEMENT_GET_FEED_ITEM.toResponseDto(getFeedItemsResponseDto));
     }
 
     /**
@@ -108,7 +108,7 @@ public class ManagementController {
 
         managementService.createMong(accountId, name, sleepAt, wakeupAt);
 
-        return ResponseEntity.ok(ManagerResponse.MANAGER_MANAGEMENT_CREATE_MONG.toResponseDto());
+        return ResponseEntity.ok(ManagementResponse.MANAGER_MANAGEMENT_CREATE_MONG.toResponseDto());
     }
 
     /**
@@ -124,7 +124,7 @@ public class ManagementController {
 
         managementService.deleteMong(accountId, mongId);
 
-        return ResponseEntity.ok(ManagerResponse.MANAGER_MANAGEMENT_DELETE_MONG.toResponseDto());
+        return ResponseEntity.ok(ManagementResponse.MANAGER_MANAGEMENT_DELETE_MONG.toResponseDto());
     }
 
     /**
@@ -142,7 +142,7 @@ public class ManagementController {
 
         managementService.feedMong(accountId, mongId, foodTypeCode);
 
-        return ResponseEntity.ok(ManagerResponse.MANAGER_MANAGEMENT_FEED_MONG.toResponseDto());
+        return ResponseEntity.ok(ManagementResponse.MANAGER_MANAGEMENT_FEED_MONG.toResponseDto());
     }
 
     /**
@@ -158,7 +158,7 @@ public class ManagementController {
 
         managementService.strokeMong(accountId, mongId);
 
-        return ResponseEntity.ok(ManagerResponse.MANAGER_MANAGEMENT_STROKE_MONG.toResponseDto());
+        return ResponseEntity.ok(ManagementResponse.MANAGER_MANAGEMENT_STROKE_MONG.toResponseDto());
     }
 
     /**
@@ -174,7 +174,7 @@ public class ManagementController {
 
         managementService.sleepMong(accountId, mongId);
 
-        return ResponseEntity.ok(ManagerResponse.MANAGER_MANAGEMENT_SLEEP_MONG.toResponseDto());
+        return ResponseEntity.ok(ManagementResponse.MANAGER_MANAGEMENT_SLEEP_MONG.toResponseDto());
     }
 
     /**
@@ -190,7 +190,7 @@ public class ManagementController {
 
         managementService.poopCleanMong(accountId, mongId);
 
-        return ResponseEntity.ok(ManagerResponse.MANAGER_MANAGEMENT_POOP_CLEAN_MONG.toResponseDto());
+        return ResponseEntity.ok(ManagementResponse.MANAGER_MANAGEMENT_POOP_CLEAN_MONG.toResponseDto());
     }
 
     /**
@@ -206,7 +206,7 @@ public class ManagementController {
 
         managementService.evolutionMong(accountId, mongId);
 
-        return ResponseEntity.ok(ManagerResponse.MANAGER_MANAGEMENT_EVOLUTION_MONG.toResponseDto());
+        return ResponseEntity.ok(ManagementResponse.MANAGER_MANAGEMENT_EVOLUTION_MONG.toResponseDto());
     }
 
     /**
@@ -222,6 +222,6 @@ public class ManagementController {
 
         managementService.graduateMong(accountId, mongId);
 
-        return ResponseEntity.ok(ManagerResponse.MANAGER_MANAGEMENT_GRADUATE_MONG.toResponseDto());
+        return ResponseEntity.ok(ManagementResponse.MANAGER_MANAGEMENT_GRADUATE_MONG.toResponseDto());
     }
 }
