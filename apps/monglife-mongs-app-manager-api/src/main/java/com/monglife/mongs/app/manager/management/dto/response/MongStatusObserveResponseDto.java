@@ -11,6 +11,8 @@ import lombok.Setter;
 @NoArgsConstructor
 public class MongStatusObserveResponseDto {
 
+    private Long mongId;
+
     private MongStatusCode statusCode;
 
     private Double expRatio;
@@ -28,7 +30,8 @@ public class MongStatusObserveResponseDto {
     private Integer poopCount;
 
     @Builder
-    public MongStatusObserveResponseDto(MongStatusCode statusCode, Double expRatio, Double weight, Double strengthRatio, Double satietyRatio, Double healthyRatio, Double fatigueRatio, Integer poopCount) {
+    public MongStatusObserveResponseDto(Long mongId, MongStatusCode statusCode, Double expRatio, Double weight, Double strengthRatio, Double satietyRatio, Double healthyRatio, Double fatigueRatio, Integer poopCount) {
+        this.mongId = mongId;
         this.statusCode = statusCode;
         this.expRatio = expRatio;
         this.weight = weight;

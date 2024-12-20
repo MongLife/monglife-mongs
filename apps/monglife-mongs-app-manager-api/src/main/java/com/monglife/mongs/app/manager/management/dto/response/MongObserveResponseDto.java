@@ -10,12 +10,15 @@ import lombok.Setter;
 @NoArgsConstructor
 public class MongObserveResponseDto {
 
+    private Long mongId;
+
     private String mongTypeCode;
 
     private Integer payPoint;
 
     @Builder
-    public MongObserveResponseDto(String mongTypeCode, Integer payPoint) {
+    public MongObserveResponseDto(Long mongId, String mongTypeCode, Integer payPoint) {
+        this.mongId = mongId;
         this.mongTypeCode = mongTypeCode;
         this.payPoint = payPoint;
     }

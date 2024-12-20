@@ -17,19 +17,19 @@ import java.util.List;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @EntityListeners(AuditingEntityListener.class)
-@Table(name = "mongs_payment")
-public class PaymentEntity extends BaseTimeEntity {
+@Table(name = "mongs_product_order")
+public class ProductOrderEntity extends BaseTimeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "payment_id")
-    private Long paymentId;
+    @Column(name = "product_order_id")
+    private Long productOrderId;
 
     @Column(name = "account_id")
     private Long accountId;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "payment_code")
+    @JoinColumn(name = "product_order_code")
     private ComnCodeEntity comn;
 
     @Column(name = "price")
@@ -39,43 +39,44 @@ public class PaymentEntity extends BaseTimeEntity {
     private String receipt;
 
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    @JoinColumn(name = "payment_id")
-    private List<PaymentHistoryEntity> history;
+    @JoinColumn(name = "product_order_id")
+    private List<ProductOrderHistoryEntity> history;
 
     @Builder
-    public PaymentEntity(Long accountId, ComnCodeEntity comn, Integer price, String receipt) {
+    public ProductOrderEntity(Long accountId, ComnCodeEntity comn, Integer price) {
         this.accountId = accountId;
         this.comn = comn;
         this.price = price;
-        this.receipt = receipt;
         this.history = new ArrayList<>();
     }
 
     @PrePersist
     public void prePersist() {
 
-        PaymentHistoryEntity paymentHistoryEntity = PaymentHistoryEntity.builder()
-                .type(PaymentHistoryEntity.PaymentHistoryType.REQUEST)
+        ProductOrderHistoryEntity productOrderHistoryEntity = ProductOrderHistoryEntity.builder()
+                .type(ProductOrderHistoryEntity.ProductOrderHistoryType.ORDER)
                 .build();
 
-        this.history.add(paymentHistoryEntity);
+        this.history.add(productOrderHistoryEntity);
     }
 
-    public void reward() {
+    public void consume(String receipt) {
 
-        PaymentHistoryEntity paymentHistoryEntity = PaymentHistoryEntity.builder()
-                .type(PaymentHistoryEntity.PaymentHistoryType.REWARD)
+        this.receipt = receipt;
+
+        ProductOrderHistoryEntity productOrderHistoryEntity = ProductOrderHistoryEntity.builder()
+                .type(ProductOrderHistoryEntity.ProductOrderHistoryType.CONSUME)
                 .build();
 
-        this.history.add(paymentHistoryEntity);
+        this.history.add(productOrderHistoryEntity);
     }
 
     public void done() {
 
-        PaymentHistoryEntity paymentHistoryEntity = PaymentHistoryEntity.builder()
-                .type(PaymentHistoryEntity.PaymentHistoryType.DONE)
+        ProductOrderHistoryEntity productOrderHistoryEntity = ProductOrderHistoryEntity.builder()
+                .type(ProductOrderHistoryEntity.ProductOrderHistoryType.DONE)
                 .build();
 
-        this.history.add(paymentHistoryEntity);
+        this.history.add(productOrderHistoryEntity);
     }
 }

@@ -71,7 +71,7 @@ public class BattleController {
      * @return 배틀 결과 응답
      */
     @GetMapping("/{roomId}")
-    public ResponseEntity<ResponseDto<OverBattleResponseDto>> overBattle(@PathVariable("roomId") @NotNull @Min(1) Long roomId) {
+    public ResponseEntity<ResponseDto<OverBattleResponseDto>> findOverBattle(@PathVariable("roomId") @NotNull @Min(1) Long roomId) {
 
         OverBattleDto overBattleDto = battleService.findOverBattle(roomId);
 

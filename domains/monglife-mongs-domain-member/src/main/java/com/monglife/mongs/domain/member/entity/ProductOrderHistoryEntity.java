@@ -12,26 +12,26 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @EntityListeners(AuditingEntityListener.class)
-@Table(name = "mongs_payment_history")
-public class PaymentHistoryEntity extends BaseTimeEntity {
+@Table(name = "mongs_product_order_history")
+public class ProductOrderHistoryEntity extends BaseTimeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "payment_history_id")
+    @Column(name = "product_order_history_id")
     private Long paymentHistoryId;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "payment_history_type")
-    private PaymentHistoryType type;
+    @Column(name = "product_order_history_type")
+    private ProductOrderHistoryType type;
 
     @Builder
-    public PaymentHistoryEntity(PaymentHistoryType type) {
+    public ProductOrderHistoryEntity(ProductOrderHistoryType type) {
         this.type = type;
     }
 
-    public enum PaymentHistoryType {
-        REQUEST,
-        REWARD,
+    public enum ProductOrderHistoryType {
+        ORDER,
+        CONSUME,
         DONE,
     }
 }

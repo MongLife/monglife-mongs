@@ -57,6 +57,7 @@ public class MongStatusObserveEventListener {
         String topic = String.valueOf(event.getMongId());
 
         MongStatusObserveResponseDto mongStatusObserveResponseDto = MongStatusObserveResponseDto.builder()
+                .mongId(event.getMongId())
                 .statusCode(event.getStatusCode())
                 .weight(event.getWeight())
                 .expRatio(event.getExpRatio())

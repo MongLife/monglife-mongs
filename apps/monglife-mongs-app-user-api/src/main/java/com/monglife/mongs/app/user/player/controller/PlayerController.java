@@ -2,10 +2,10 @@ package com.monglife.mongs.app.user.player.controller;
 
 import com.monglife.core.dto.response.ResponseDto;
 import com.monglife.mongs.app.user.player.dto.etc.GetPlayerDto;
-import com.monglife.mongs.app.user.player.dto.request.ExchangeStarPointRequestDto;
-import com.monglife.mongs.app.user.player.dto.request.ExchangeWalkingCountRequestDto;
 import com.monglife.mongs.app.user.player.dto.request.ChargeStarPointRequestDto;
 import com.monglife.mongs.app.user.player.dto.request.ChargeWalkingCountRequestDto;
+import com.monglife.mongs.app.user.player.dto.request.ExchangeStarPointRequestDto;
+import com.monglife.mongs.app.user.player.dto.request.ExchangeWalkingCountRequestDto;
 import com.monglife.mongs.app.user.player.dto.response.GetPlayerResponseDto;
 import com.monglife.mongs.app.user.player.enums.PlayerResponse;
 import com.monglife.mongs.app.user.player.service.PlayerService;
@@ -42,9 +42,9 @@ public class PlayerController {
     }
 
     @PatchMapping("/slot")
-    public ResponseEntity<ResponseDto<?>> increaseSlot(@AuthenticationPrincipal Passport passport) {
+    public ResponseEntity<ResponseDto<?>> buySlot(@AuthenticationPrincipal Passport passport) {
 
-        playerService.increaseSlot(passport.getAccountId());
+        playerService.buySlot(passport.getAccountId());
 
         return ResponseEntity.ok(PlayerResponse.USER_PLAYER_INCREASE_SLOT.toResponseDto());
     }
@@ -53,10 +53,9 @@ public class PlayerController {
     public ResponseEntity<ResponseDto<?>> chargeStarPoint(@AuthenticationPrincipal Passport passport, @RequestBody ChargeStarPointRequestDto chargeStarPointRequestDto) {
 
         Long accountId = passport.getAccountId();
-        String receipt = chargeStarPointRequestDto.getReceipt();
         Integer starPoint = chargeStarPointRequestDto.getStarPoint();
 
-        playerService.chargeStarPoint(accountId, receipt, starPoint);
+        playerService.chargeStarPoint(accountId, starPoint);
 
         return ResponseEntity.ok(PlayerResponse.USER_PLAYER_INCREASE_STAR_POINT.toResponseDto());
     }

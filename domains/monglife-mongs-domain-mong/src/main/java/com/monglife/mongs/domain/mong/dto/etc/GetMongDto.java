@@ -18,6 +18,8 @@ public class GetMongDto {
 
     private String mongTypeCode;
 
+    private Integer payPoint;
+
     private Integer level;
 
     private Double weight;
@@ -29,6 +31,18 @@ public class GetMongDto {
     private Double healthy;
 
     private Double fatigue;
+
+    private Double expRatio;
+
+    private Double strengthRatio;
+
+    private Double satietyRatio;
+
+    private Double healthyRatio;
+
+    private Double fatigueRatio;
+
+    private Integer poopCount;
 
     private MongStateCode stateCode;
 
@@ -43,16 +57,23 @@ public class GetMongDto {
     private Boolean isEgg;
 
     @Builder
-    public GetMongDto(Long mongId, String mongName, String mongTypeCode, Integer level, Double weight, Double strength, Double satiety, Double healthy, Double fatigue, MongStateCode stateCode, MongStatusCode statusCode, Boolean isSleep, LocalTime sleepAt, LocalTime wakeupAt, Boolean isEgg) {
+    public GetMongDto(Long mongId, String mongName, String mongTypeCode, Integer payPoint, Integer level, Double weight, Double strength, Double satiety, Double healthy, Double fatigue, Double expRatio, Double strengthRatio, Double satietyRatio, Double healthyRatio, Double fatigueRatio, Integer poopCount, MongStateCode stateCode, MongStatusCode statusCode, Boolean isSleep, LocalTime sleepAt, LocalTime wakeupAt, Boolean isEgg) {
         this.mongId = mongId;
         this.mongName = mongName;
         this.mongTypeCode = mongTypeCode;
+        this.payPoint = payPoint;
         this.level = level;
         this.weight = weight;
         this.strength = strength;
         this.satiety = satiety;
         this.healthy = healthy;
         this.fatigue = fatigue;
+        this.expRatio = expRatio;
+        this.strengthRatio = strengthRatio;
+        this.satietyRatio = satietyRatio;
+        this.healthyRatio = healthyRatio;
+        this.fatigueRatio = fatigueRatio;
+        this.poopCount = poopCount;
         this.stateCode = stateCode;
         this.statusCode = statusCode;
         this.isSleep = isSleep;
@@ -66,12 +87,19 @@ public class GetMongDto {
                 .mongId(mongEntity.getMongId())
                 .mongName(mongEntity.getMongName())
                 .mongTypeCode(mongEntity.getType().getComn().getCode())
+                .poopCount(mongEntity.getPayPoint())
                 .level(mongEntity.getType().getLevel())
                 .weight(mongEntity.getStatus().getWeight())
                 .strength(mongEntity.getStatus().getStrength())
                 .satiety(mongEntity.getStatus().getSatiety())
                 .healthy(mongEntity.getStatus().getHealthy())
                 .fatigue(mongEntity.getStatus().getFatigue())
+                .expRatio(mongEntity.getStatus().getExpRatio())
+                .strengthRatio(mongEntity.getStatus().getStrengthRatio())
+                .satietyRatio(mongEntity.getStatus().getSatietyRatio())
+                .healthyRatio(mongEntity.getStatus().getHealthyRatio())
+                .fatigueRatio(mongEntity.getStatus().getFatigueRatio())
+                .poopCount(mongEntity.getStatus().getPoopCount())
                 .stateCode(mongEntity.getState().getCode())
                 .statusCode(mongEntity.getStatus().getCode())
                 .isSleep(mongEntity.getState().getIsSleep())

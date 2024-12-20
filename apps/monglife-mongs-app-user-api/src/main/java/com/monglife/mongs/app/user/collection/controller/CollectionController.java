@@ -26,6 +26,11 @@ public class CollectionController {
 
     private final CollectionService collectionService;
 
+    /**
+     * 맵 컬렉션 조회
+     * @param passport 패스 포트
+     * @return 맵 컬렉션 목록
+     */
     @GetMapping("/map")
     public ResponseEntity<ResponseDto<List<GetCollectionMapResponseDto>>> getCollectionMaps(@AuthenticationPrincipal Passport passport) {
 
@@ -44,6 +49,12 @@ public class CollectionController {
         return ResponseEntity.ok(CollectionResponse.USER_COLLECTION_GET_COLLECTION_MAP.toResponseDto(getCollectionMapResponseDtos));
     }
 
+    /**
+     * 맵 컬렉션 등록
+     * @param passport 패스 포트
+     * @param createCollectionMapRequestDto 맵 타입 코드
+     * @return 성공 응답 Dto
+     */
     @PostMapping("/map")
     public ResponseEntity<ResponseDto<?>> createCollectionMap(@AuthenticationPrincipal Passport passport, @RequestBody CreateCollectionMapRequestDto createCollectionMapRequestDto) {
 

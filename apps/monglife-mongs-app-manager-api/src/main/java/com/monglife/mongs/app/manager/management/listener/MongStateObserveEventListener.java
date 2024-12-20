@@ -40,6 +40,7 @@ public class MongStateObserveEventListener {
         String topic = String.valueOf(event.getMongId());
 
         MongStateObserveResponseDto mongStateObserveResponseDto = MongStateObserveResponseDto.builder()
+                .mongId(event.getMongId())
                 .stateCode(event.getStateCode())
                 .isSleep(event.getIsSleep())
                 .build();

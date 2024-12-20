@@ -47,7 +47,7 @@ public class MemberEntity extends BaseTimeEntity {
 
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "account_id")
-    private List<PaymentEntity> payments;
+    private List<ProductOrderEntity> payments;
 
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "account_id")
@@ -74,8 +74,8 @@ public class MemberEntity extends BaseTimeEntity {
         this.collectionMongs.add(collectionMongEntity);
     }
 
-    public void joinPayment(PaymentEntity paymentEntity) {
-        this.payments.add(paymentEntity);
+    public void joinProductOrder(ProductOrderEntity productOrderEntity) {
+        this.payments.add(productOrderEntity);
     }
 
     public void joinFeedback(FeedbackEntity feedbackEntity) {

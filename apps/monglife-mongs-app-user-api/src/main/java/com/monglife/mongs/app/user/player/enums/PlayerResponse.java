@@ -24,6 +24,7 @@ public enum PlayerResponse implements Response {
     USER_PLAYER_DECREASE_STAR_POINT(HttpStatus.OK.value(), "USER-PLAYER-005", "스타포인트 감소에 성공했습니다."),
     USER_PLAYER_INCREASE_WALKING_COUNT(HttpStatus.OK.value(), "USER-PLAYER-006", "걸음수 증가에 성공했습니다."),
     USER_PLAYER_DECREASE_WALKING_COUNT(HttpStatus.OK.value(), "USER-PLAYER-007", "걸음수 감소에 성공했습니다."),
+
     ;
 
     private final Integer httpStatus;

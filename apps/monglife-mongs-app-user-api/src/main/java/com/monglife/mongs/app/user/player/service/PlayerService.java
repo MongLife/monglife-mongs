@@ -27,12 +27,12 @@ public class PlayerService {
     }
 
     @Transactional
-    public void increaseSlot(Long accountId) {
+    public void buySlot(Long accountId) {
         memberService.increaseSlot(accountId);
     }
 
     @Transactional
-    public void chargeStarPoint(Long accountId, String receipt, Integer starPoint) {
+    public void chargeStarPoint(Long accountId, Integer starPoint) {
         memberService.increaseStarPoint(accountId, starPoint);
     }
 
