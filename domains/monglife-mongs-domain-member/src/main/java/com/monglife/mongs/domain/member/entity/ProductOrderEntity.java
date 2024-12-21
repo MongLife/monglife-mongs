@@ -25,15 +25,16 @@ public class ProductOrderEntity extends BaseTimeEntity {
     @Column(name = "product_order_id")
     private Long productOrderId;
 
-    @Column(name = "account_id")
-    private Long accountId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "account_id")
+    private MemberEntity member;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "product_order_code")
     private ComnCodeEntity comn;
 
     @Column(name = "price")
-    private Integer price;
+    private Double price;
 
     @Column(name = "receipt")
     private String receipt;
@@ -43,8 +44,8 @@ public class ProductOrderEntity extends BaseTimeEntity {
     private List<ProductOrderHistoryEntity> history;
 
     @Builder
-    public ProductOrderEntity(Long accountId, ComnCodeEntity comn, Integer price) {
-        this.accountId = accountId;
+    public ProductOrderEntity(MemberEntity member, ComnCodeEntity comn, Double price) {
+        this.member = member;
         this.comn = comn;
         this.price = price;
         this.history = new ArrayList<>();

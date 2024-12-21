@@ -18,11 +18,11 @@ import java.security.GeneralSecurityException;
 @Configuration
 public class GoogleCredentialsConfig {
 
-    @Value("${spring.google.account-file-path}")
+    @Value("${application.google.account-file-path}")
     private String googleAccountFilePath;
 
-    @Value("${spring.google.package-name}")
-    private String googleApplicationPackageName;
+    @Value("${application.google.package-name}")
+    private String appPackageName;
 
     @Bean
     public AndroidPublisher androidPublisher() throws IOException, GeneralSecurityException {
@@ -34,6 +34,6 @@ public class GoogleCredentialsConfig {
                 GoogleNetHttpTransport.newTrustedTransport(),
                 GsonFactory.getDefaultInstance(),
                 new HttpCredentialsAdapter(credentials)
-        ).setApplicationName(googleApplicationPackageName).build();
+        ).setApplicationName(appPackageName).build();
     }
 }

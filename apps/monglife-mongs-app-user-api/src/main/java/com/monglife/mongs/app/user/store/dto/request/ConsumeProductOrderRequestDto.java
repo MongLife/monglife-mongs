@@ -15,15 +15,11 @@ public class ConsumeProductOrderRequestDto {
     private Long productOrderId;
 
     @NotBlank
-    private String productId;
-
-    @NotBlank
     private String purchaseToken;
 
     @Builder
-    public ConsumeProductOrderRequestDto(Long productOrderId, String productId, String purchaseToken) {
+    public ConsumeProductOrderRequestDto(Long productOrderId, String purchaseToken) {
         this.productOrderId = productOrderId;
-        this.productId = productId;
         this.purchaseToken = purchaseToken;
     }
 }

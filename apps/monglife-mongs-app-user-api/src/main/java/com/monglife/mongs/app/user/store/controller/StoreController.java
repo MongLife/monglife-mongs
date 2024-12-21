@@ -1,9 +1,9 @@
 package com.monglife.mongs.app.user.store.controller;
 
 import com.monglife.core.dto.response.ResponseDto;
+import com.monglife.mongs.app.user.store.dto.etc.GetProductDto;
 import com.monglife.mongs.app.user.store.dto.request.ConsumeProductOrderRequestDto;
 import com.monglife.mongs.app.user.store.dto.request.CreateProductOrderRequestDto;
-import com.monglife.mongs.app.user.store.dto.etc.GetProductDto;
 import com.monglife.mongs.app.user.store.dto.response.CreateOrderResponseDto;
 import com.monglife.mongs.app.user.store.dto.response.GetProductResponseDto;
 import com.monglife.mongs.app.user.store.enums.StoreResponse;
@@ -58,14 +58,12 @@ public class StoreController {
     }
 
     @PutMapping("/order")
-    public ResponseEntity<ResponseDto<?>> consumeOrder(@AuthenticationPrincipal Passport passport, @RequestBody ConsumeProductOrderRequestDto consumeProductOrderRequestDto) {
+    public ResponseEntity<ResponseDto<?>> consumeOrder(@RequestBody ConsumeProductOrderRequestDto consumeProductOrderRequestDto) {
 
-        Long accountId = passport.getAccountId();
         Long productOrderId = consumeProductOrderRequestDto.getProductOrderId();
-        String productId = consumeProductOrderRequestDto.getProductId();
         String purchaseToken = consumeProductOrderRequestDto.getPurchaseToken();
 
-        storeService.consumeOrder(accountId, productOrderId, productId, purchaseToken);
+        storeService.consumeOrder(productOrderId, purchaseToken);
 
         return ResponseEntity.ok(StoreResponse.USER_STORE_CONSUME_ORDER.toResponseDto());
     }

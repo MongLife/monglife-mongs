@@ -1,5 +1,6 @@
 package com.monglife.mongs.app.user.store.service;
 
+import com.google.api.client.http.GenericUrl;
 import com.google.api.services.androidpublisher.AndroidPublisher;
 import com.google.api.services.androidpublisher.model.InAppProduct;
 import com.google.api.services.androidpublisher.model.ProductPurchase;
@@ -7,9 +8,8 @@ import com.monglife.mongs.app.user.store.dto.etc.GetProductDto;
 import com.monglife.mongs.app.user.store.exception.InvalidConsumeOrderException;
 import com.monglife.mongs.app.user.store.exception.InvalidCreateOrderException;
 import com.monglife.mongs.app.user.store.exception.InvalidGetProductsException;
-import com.monglife.mongs.domain.member.repository.ComnCodeRepository;
+import com.monglife.mongs.domain.member.dto.etc.GetProductOrderDto;
 import com.monglife.mongs.domain.member.service.ProductOrderService;
-import com.monglife.mongs.module.jpa.entity.ComnCodeEntity;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -23,20 +23,21 @@ import java.util.List;
 @RequiredArgsConstructor
 public class StoreService {
 
-    @Value("${spring.google.package-name}")
-    private String googleApplicationPackageName;
+    @Value("${application.google.package-name}")
+    private String appPackageName;
+
+    @Value("${application.google.url}")
+    private String googleApiUrl;
 
     private final AndroidPublisher androidPublisher;
 
     private final ProductOrderService productOrderService;
 
-    private final ComnCodeRepository comnCodeRepository;
-
     @Transactional(readOnly = true)
     public List<GetProductDto> getProducts() {
 
         try {
-            AndroidPublisher.Inappproducts.List products = androidPublisher.inappproducts().list(googleApplicationPackageName);
+            AndroidPublisher.Inappproducts.List products = androidPublisher.inappproducts().list(appPackageName);
 
             return products.execute().getInappproduct().stream()
                     .filter(inAppProduct -> "active".equals(inAppProduct.getStatus()))
@@ -45,13 +46,12 @@ public class StoreService {
 
                         String productName = inAppProduct.getListings().get("ko-KR").getTitle();
 
-                        int priceMicros = Integer.parseInt(inAppProduct.getDefaultPrice().getPriceMicros());
-                        long price = Math.round(priceMicros / 1000000D);
+                        double price = this.priceMicrosToPrice(inAppProduct.getDefaultPrice().getPriceMicros());
 
                         return GetProductDto.builder()
                                 .productId(productId)
                                 .productName(productName)
-                                .price((int) price)
+                                .price(price)
                                 .build();
                     })
                     .toList();
@@ -66,14 +66,12 @@ public class StoreService {
 
         try {
 
-            AndroidPublisher.Inappproducts.Get get = androidPublisher.inappproducts().get(googleApplicationPackageName, productId.toLowerCase());
+            AndroidPublisher.Inappproducts.Get get = androidPublisher.inappproducts().get(appPackageName, productId.toLowerCase());
             InAppProduct product = get.execute();
 
-            int priceMicros = Integer.parseInt(product.getDefaultPrice().getPriceMicros());
+            double price = this.priceMicrosToPrice(product.getDefaultPrice().getPriceMicros());
 
-            long price = Math.round(priceMicros / 1000000D);
-
-            return productOrderService.createProductOrder(accountId, productId, (int) price);
+            return productOrderService.createProductOrder(accountId, productId, price);
 
         } catch (Exception e) {
             throw new InvalidCreateOrderException(productId);
@@ -82,10 +80,15 @@ public class StoreService {
     }
 
     @Transactional
-    public void consumeOrder(Long accountId, Long productOrderId, String productId, String purchaseToken) {
+    public void consumeOrder(Long productOrderId, String purchaseToken) {
 
         try {
-            AndroidPublisher.Purchases.Products.Get get = androidPublisher.purchases().products().get(googleApplicationPackageName, productId.toLowerCase(), purchaseToken);
+
+            GetProductOrderDto getProductOrderDto = productOrderService.getProductOrder(productOrderId);
+
+            String productId = getProductOrderDto.getProductId().toLowerCase();
+
+            AndroidPublisher.Purchases.Products.Get get = androidPublisher.purchases().products().get(appPackageName, productId, purchaseToken);
             ProductPurchase purchase = get.execute();
 
             log.info("orderId: {}", purchase.getOrderId());
@@ -99,11 +102,21 @@ public class StoreService {
 
             productOrderService.consumeProductOrder(productOrderId, purchase.getOrderId());
 
+            String consumeUrl = String.format("%s/%s/purchases/products/%s/tokens/%s:consume", googleApiUrl, appPackageName, productId, purchaseToken);
+
+            androidPublisher.getRequestFactory().buildPostRequest(new GenericUrl(consumeUrl), null).execute();
+
         } catch (Exception e) {
 
-            e.printStackTrace();
-
-            throw new InvalidConsumeOrderException(productId, purchaseToken);
+            throw new InvalidConsumeOrderException(productOrderId, purchaseToken);
         }
+    }
+
+    private Double priceMicrosToPrice(String priceMicrosStr) {
+
+        String head = priceMicrosStr.substring(0, priceMicrosStr.length() - 6);
+        String tail = priceMicrosStr.substring(priceMicrosStr.length() - 6);
+
+        return Double.parseDouble(head + "." + tail);
     }
 }

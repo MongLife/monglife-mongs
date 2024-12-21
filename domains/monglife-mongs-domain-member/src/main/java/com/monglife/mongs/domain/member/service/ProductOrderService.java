@@ -1,8 +1,10 @@
 package com.monglife.mongs.domain.member.service;
 
+import com.monglife.mongs.domain.member.dto.etc.GetProductOrderDto;
 import com.monglife.mongs.domain.member.entity.MemberEntity;
 import com.monglife.mongs.domain.member.entity.ProductOrderEntity;
-import com.monglife.mongs.domain.member.exception.NotExistsPaymentCodeException;
+import com.monglife.mongs.domain.member.exception.NotExistsMemberException;
+import com.monglife.mongs.domain.member.exception.NotExistsProductCodeException;
 import com.monglife.mongs.domain.member.exception.NotExistsProductOrderException;
 import com.monglife.mongs.domain.member.repository.ComnCodeRepository;
 import com.monglife.mongs.domain.member.repository.MemberRepository;
@@ -19,24 +21,36 @@ public class ProductOrderService {
     private final ComnCodeRepository comnCodeRepository;
 
     private final MemberRepository memberRepository;
+
     private final ProductOrderRepository productOrderRepository;
 
+    @Transactional(readOnly = true)
+    public GetProductOrderDto getProductOrder(Long productOrderId) {
+
+        ProductOrderEntity productOrderEntity = productOrderRepository.findById(productOrderId)
+                .orElseThrow(() -> new NotExistsProductOrderException(productOrderId));
+
+        return GetProductOrderDto.builder()
+                .productId(productOrderEntity.getComn().getCode())
+                .build();
+    }
+
     @Transactional
-    public Long createProductOrder(Long accountId, String productId, Integer price) {
+    public Long createProductOrder(Long accountId, String productId, Double price) {
 
         ComnCodeEntity comnCodeEntity = comnCodeRepository.findById(productId)
-                .orElseThrow(() -> new NotExistsPaymentCodeException(productId));
+                .orElseThrow(() -> new NotExistsProductCodeException(productId));
 
         MemberEntity memberEntity = memberRepository.findByAccountId(accountId)
-                .orElseGet(() -> memberRepository.save(new MemberEntity(accountId)));
+                .orElseThrow(() -> new NotExistsMemberException(accountId));
 
         ProductOrderEntity productOrderEntity = ProductOrderEntity.builder()
-                .accountId(accountId)
+                .member(memberEntity)
                 .comn(comnCodeEntity)
                 .price(price)
                 .build();
 
-        memberEntity.joinProductOrder(productOrderEntity);
+        productOrderRepository.save(productOrderEntity);
 
         return productOrderEntity.getProductOrderId();
     }

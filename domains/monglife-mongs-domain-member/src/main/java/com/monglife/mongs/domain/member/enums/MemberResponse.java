@@ -22,7 +22,7 @@ public enum MemberResponse implements Response {
     DOMAIN_MEMBER_NOT_EXISTS_MONG_TYPE(HttpStatus.BAD_REQUEST.value(), "DOMAIN-MONG-103", "몽 타입이 존재하지 않습니다."),
     DOMAIN_MEMBER_NOT_EXISTS_STAR_POINT(HttpStatus.BAD_REQUEST.value(), "DOMAIN-MONG-104", "충분한 스타 포인트가 없습니다."),
     DOMAIN_MEMBER_NOT_EXISTS_WALKING_COUNT(HttpStatus.BAD_REQUEST.value(), "DOMAIN-MONG-105", "충분한 걸음 수가 없습니다."),
-    DOMAIN_MEMBER_NOT_EXISTS_PAYMENT_CODE(HttpStatus.BAD_REQUEST.value(), "DOMAIN-MONG-106", "결제 코드가 존재하지 않습니다."),
+    DOMAIN_MEMBER_NOT_EXISTS_PRODUCT_CODE(HttpStatus.BAD_REQUEST.value(), "DOMAIN-MONG-106", "결제 코드가 존재하지 않습니다."),
     DOMAIN_MEMBER_NOT_EXISTS_PRODUCT_ORDER(HttpStatus.BAD_REQUEST.value(), "DOMAIN-MONG-107", "상품 주문 정보가 존재하지 않습니다."),
     ;
 

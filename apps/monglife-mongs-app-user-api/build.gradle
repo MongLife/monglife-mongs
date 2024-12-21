@@ -19,4 +19,10 @@ tasks.register('copyPrivate', Copy) {
         include 'application*.yml'
         into 'src/main/resources'
     }
+
+    copy {
+        from '../../configs/apps/monglife-mongs-app-user-api/'
+        include 'google*.json'
+        into 'src/main/resources'
+    }
 }
