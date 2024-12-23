@@ -16,7 +16,7 @@ public class GetTaskDto {
 
     private Long taskId;
 
-    private String appCode;
+    private String appPackageName;
 
     private String taskOwnerId;
 
@@ -33,9 +33,9 @@ public class GetTaskDto {
     private Boolean isCycle;
 
     @Builder
-    public GetTaskDto(Long taskId, String appCode, String taskOwnerId, String taskCode, TaskStatusCode taskStatusCode, Long restExpirationSeconds, Long expirationSeconds, LocalDateTime expiredAt, Boolean isCycle) {
+    public GetTaskDto(Long taskId, String appPackageName, String taskOwnerId, String taskCode, TaskStatusCode taskStatusCode, Long restExpirationSeconds, Long expirationSeconds, LocalDateTime expiredAt, Boolean isCycle) {
         this.taskId = taskId;
-        this.appCode = appCode;
+        this.appPackageName = appPackageName;
         this.taskOwnerId = taskOwnerId;
         this.taskCode = taskCode;
         this.taskStatusCode = taskStatusCode;
@@ -48,7 +48,7 @@ public class GetTaskDto {
     public static GetTaskDto of(TaskEntity taskEntity) {
         return GetTaskDto.builder()
                 .taskId(taskEntity.getTaskId())
-                .appCode(taskEntity.getAppCode())
+                .appPackageName(taskEntity.getAppPackageName())
                 .taskOwnerId(taskEntity.getTaskOwnerId())
                 .taskCode(taskEntity.getComn().getCode())
                 .taskStatusCode(taskEntity.getTaskStatusCode())

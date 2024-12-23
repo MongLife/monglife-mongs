@@ -11,7 +11,7 @@ public class TaskScheduleEntity {
 
     private final Long taskId;
 
-    private final String appCode;
+    private final String appPackageName;
 
     private final String taskOwnerId;
 
@@ -26,9 +26,9 @@ public class TaskScheduleEntity {
     private ScheduledFuture<?> scheduler;
 
     @Builder
-    public TaskScheduleEntity(Long taskId, String appCode, String taskOwnerId, String taskCode, Boolean isCycle) {
+    public TaskScheduleEntity(Long taskId, String appPackageName, String taskOwnerId, String taskCode, Boolean isCycle) {
         this.taskId = taskId;
-        this.appCode = appCode;
+        this.appPackageName = appPackageName;
         this.taskOwnerId = taskOwnerId;
         this.taskCode = taskCode;
         this.isCycle = isCycle;

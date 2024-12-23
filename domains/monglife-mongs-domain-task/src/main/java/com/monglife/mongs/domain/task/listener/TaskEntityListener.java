@@ -60,7 +60,7 @@ public class TaskEntityListener {
         taskScheduleService.stopTaskSchedule(StopTaskScheduleDto.of(taskEntity));
 
         applicationEventPublisher.publishEvent(ExecuteTaskEvent.builder()
-                .appCode(taskEntity.getAppCode())
+                .appPackageName(taskEntity.getAppPackageName())
                 .taskOwnerId(taskEntity.getTaskOwnerId())
                 .taskCode(taskEntity.getComn().getCode())
                 .restExpirationSeconds(taskEntity.getRestExpirationSeconds())

@@ -9,16 +9,14 @@ import org.springframework.context.event.ContextClosedEvent;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
-import java.lang.reflect.Method;
-
 @Slf4j
 @Order(-9999)
 @Component
 @RequiredArgsConstructor
 public class ShutdownEventListener implements ApplicationListener<ContextClosedEvent> {
 
-    @Value("${application.app-code}")
-    private String APP_CODE;
+    @Value("${application.app-package-name}")
+    private String APP_PACKAGE_NAME;
 
     private final TaskService taskService;
 
@@ -30,7 +28,7 @@ public class ShutdownEventListener implements ApplicationListener<ContextClosedE
         log.info("[TASK STOP WORKING START] {}", applicationName);
 
         StringBuilder sb = new StringBuilder();
-        taskService.appStopPauseAllTask(APP_CODE).forEach(getTaskDto -> {
+        taskService.appStopPauseAllTask(APP_PACKAGE_NAME).forEach(getTaskDto -> {
             sb.append("\n").append(getTaskDto.getTaskId()).append(" =====> ").append(getTaskDto.getTaskOwnerId()).append(" : ").append(getTaskDto.getTaskCode());
         });
 

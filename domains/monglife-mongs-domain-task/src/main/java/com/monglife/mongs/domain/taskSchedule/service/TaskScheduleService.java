@@ -45,7 +45,7 @@ public class TaskScheduleService {
         TaskScheduleEntity taskScheduleEntity = taskScheduleRepository.findByTaskId(startTaskScheduleDto.getTaskId())
                 .orElse(TaskScheduleEntity.builder()
                         .taskId(startTaskScheduleDto.getTaskId())
-                        .appCode(startTaskScheduleDto.getAppCode())
+                        .appPackageName(startTaskScheduleDto.getAppPackageName())
                         .taskOwnerId(startTaskScheduleDto.getTaskOwnerId())
                         .taskCode(startTaskScheduleDto.getTaskCode())
                         .isCycle(startTaskScheduleDto.getIsCycle())

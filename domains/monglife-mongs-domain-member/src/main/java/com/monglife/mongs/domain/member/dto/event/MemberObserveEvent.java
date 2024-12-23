@@ -12,13 +12,10 @@ public class MemberObserveEvent {
 
     private final Integer starPoint;
 
-    private final Integer walkingCount;
-
     @Builder
-    public MemberObserveEvent(Long accountId, Integer slotCount, Integer starPoint, Integer walkingCount) {
+    public MemberObserveEvent(Long accountId, Integer slotCount, Integer starPoint) {
         this.accountId = accountId;
         this.slotCount = slotCount;
         this.starPoint = starPoint;
-        this.walkingCount = walkingCount;
     }
 }

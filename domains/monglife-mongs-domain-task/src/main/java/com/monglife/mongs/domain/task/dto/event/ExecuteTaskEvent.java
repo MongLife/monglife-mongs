@@ -6,7 +6,7 @@ import lombok.Getter;
 @Getter
 public class ExecuteTaskEvent {
 
-    private final String appCode;
+    private final String appPackageName;
 
     private final String taskOwnerId;
 
@@ -17,8 +17,8 @@ public class ExecuteTaskEvent {
     private final Long expirationSeconds;
 
     @Builder
-    public ExecuteTaskEvent(String appCode, String taskOwnerId, String taskCode, Long restExpirationSeconds, Long expirationSeconds) {
-        this.appCode = appCode;
+    public ExecuteTaskEvent(String appPackageName, String taskOwnerId, String taskCode, Long restExpirationSeconds, Long expirationSeconds) {
+        this.appPackageName = appPackageName;
         this.taskOwnerId = taskOwnerId;
         this.taskCode = taskCode;
         this.restExpirationSeconds = restExpirationSeconds;

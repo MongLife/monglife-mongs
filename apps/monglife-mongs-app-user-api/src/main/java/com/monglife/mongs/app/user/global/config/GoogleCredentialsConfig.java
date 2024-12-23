@@ -21,7 +21,7 @@ public class GoogleCredentialsConfig {
     @Value("${application.google.account-file-path}")
     private String googleAccountFilePath;
 
-    @Value("${application.google.package-name}")
+    @Value("${application.app-package-name}")
     private String appPackageName;
 
     @Bean

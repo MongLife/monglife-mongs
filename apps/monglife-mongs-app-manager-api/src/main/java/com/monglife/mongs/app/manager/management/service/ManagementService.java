@@ -18,8 +18,8 @@ import java.util.List;
 @RequiredArgsConstructor
 public class ManagementService {
 
-    @Value("${application.app-code}")
-    private String APP_CODE;
+    @Value("${application.app-package-name}")
+    private String APP_PACKAGE_NAME;
 
     private final TaskScheduleProperties taskScheduleProperties;
 
@@ -77,7 +77,7 @@ public class ManagementService {
 
         String taskOwnerId = String.valueOf(mongId);
 
-        taskService.createTask(APP_CODE, taskOwnerId, taskScheduleProperties.eggEvolution.getCode(), taskScheduleProperties.eggEvolution.getExpiration());
+        taskService.createTask(APP_PACKAGE_NAME, taskOwnerId, taskScheduleProperties.eggEvolution.getCode(), taskScheduleProperties.eggEvolution.getExpiration());
     }
 
     /**
@@ -93,7 +93,7 @@ public class ManagementService {
 
         String taskOwnerId = String.valueOf(mongId);
 
-        taskService.deleteAllTasks(APP_CODE, taskOwnerId);
+        taskService.deleteAllTasks(APP_PACKAGE_NAME, taskOwnerId);
     }
 
     /**
@@ -133,16 +133,16 @@ public class ManagementService {
         if (mongService.getMong(mongId).getIsSleep()) {
             mongService.wakeupMong(mongId);
 
-            taskService.createCycleTask(APP_CODE, taskOwnerId, taskScheduleProperties.statusDecrease.getCode(), taskScheduleProperties.statusDecrease.getExpiration());
-            taskService.createCycleTask(APP_CODE, taskOwnerId, taskScheduleProperties.poopIncrease.getCode(), taskScheduleProperties.poopIncrease.getExpiration());
-            taskService.deleteTask(APP_CODE, taskOwnerId, taskScheduleProperties.statusIncrease.getCode());
+            taskService.createCycleTask(APP_PACKAGE_NAME, taskOwnerId, taskScheduleProperties.statusDecrease.getCode(), taskScheduleProperties.statusDecrease.getExpiration());
+            taskService.createCycleTask(APP_PACKAGE_NAME, taskOwnerId, taskScheduleProperties.poopIncrease.getCode(), taskScheduleProperties.poopIncrease.getExpiration());
+            taskService.deleteTask(APP_PACKAGE_NAME, taskOwnerId, taskScheduleProperties.statusIncrease.getCode());
 
         } else {
             mongService.sleepMong(mongId);
 
-            taskService.deleteTask(APP_CODE, taskOwnerId, taskScheduleProperties.statusDecrease.getCode());
-            taskService.deleteTask(APP_CODE, taskOwnerId, taskScheduleProperties.poopIncrease.getCode());
-            taskService.createCycleTask(APP_CODE, taskOwnerId, taskScheduleProperties.statusIncrease.getCode(), taskScheduleProperties.statusIncrease.getExpiration());
+            taskService.deleteTask(APP_PACKAGE_NAME, taskOwnerId, taskScheduleProperties.statusDecrease.getCode());
+            taskService.deleteTask(APP_PACKAGE_NAME, taskOwnerId, taskScheduleProperties.poopIncrease.getCode());
+            taskService.createCycleTask(APP_PACKAGE_NAME, taskOwnerId, taskScheduleProperties.statusIncrease.getCode(), taskScheduleProperties.statusIncrease.getExpiration());
         }
     }
 
@@ -174,11 +174,11 @@ public class ManagementService {
 
             String taskOwnerId = String.valueOf(mongId);
 
-            taskService.createFixTimeCycleTask(APP_CODE, taskOwnerId, taskScheduleProperties.sleep.getCode(), getMongDto.getSleepAt());
-            taskService.createFixTimeCycleTask(APP_CODE, taskOwnerId, taskScheduleProperties.wakeup.getCode(), getMongDto.getWakeupAt());
+            taskService.createFixTimeCycleTask(APP_PACKAGE_NAME, taskOwnerId, taskScheduleProperties.sleep.getCode(), getMongDto.getSleepAt());
+            taskService.createFixTimeCycleTask(APP_PACKAGE_NAME, taskOwnerId, taskScheduleProperties.wakeup.getCode(), getMongDto.getWakeupAt());
 
-            taskService.createCycleTask(APP_CODE, taskOwnerId, taskScheduleProperties.statusDecrease.getCode(), taskScheduleProperties.statusDecrease.getExpiration());
-            taskService.createCycleTask(APP_CODE, taskOwnerId, taskScheduleProperties.poopIncrease.getCode(), taskScheduleProperties.poopIncrease.getExpiration());
+            taskService.createCycleTask(APP_PACKAGE_NAME, taskOwnerId, taskScheduleProperties.statusDecrease.getCode(), taskScheduleProperties.statusDecrease.getExpiration());
+            taskService.createCycleTask(APP_PACKAGE_NAME, taskOwnerId, taskScheduleProperties.poopIncrease.getCode(), taskScheduleProperties.poopIncrease.getExpiration());
         }
     }
 
@@ -195,6 +195,6 @@ public class ManagementService {
 
         String taskOwnerId = String.valueOf(mongId);
 
-        taskService.deleteAllTasks(APP_CODE, taskOwnerId);
+        taskService.deleteAllTasks(APP_PACKAGE_NAME, taskOwnerId);
     }
 }

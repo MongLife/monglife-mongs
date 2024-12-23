@@ -17,8 +17,8 @@ import org.springframework.transaction.event.TransactionalEventListener;
 @RequiredArgsConstructor
 public class TaskEventListener {
 
-    @Value("${application.app-code}")
-    private String APP_CODE;
+    @Value("${application.app-package-name}")
+    private String APP_PACKAGE_NAME;
 
     private final TaskScheduleProperties taskScheduleProperties;
 
@@ -32,7 +32,7 @@ public class TaskEventListener {
     public void executeTaskEventListener(ExecuteTaskEvent event) {
 
         // 앱 코드 확인
-        if (!APP_CODE.equals(event.getAppCode())) return;
+        if (!APP_PACKAGE_NAME.equals(event.getAppPackageName())) return;
 
         String taskCode = event.getTaskCode();
         Long mongId = Long.parseLong(event.getTaskOwnerId());
@@ -41,14 +41,14 @@ public class TaskEventListener {
         if (taskCode.equals(taskScheduleProperties.eggEvolution.getCode())) {
             mongService.evolutionReadyMong(mongId);
         } else if (taskCode.equals(taskScheduleProperties.sleep.getCode())) {
-            taskService.deleteTask(APP_CODE, event.getTaskOwnerId(), taskScheduleProperties.statusDecrease.getCode());
-            taskService.deleteTask(APP_CODE, event.getTaskOwnerId(), taskScheduleProperties.poopIncrease.getCode());
-            taskService.createCycleTask(APP_CODE, event.getTaskOwnerId(), taskScheduleProperties.statusIncrease.getCode(), taskScheduleProperties.statusIncrease.getExpiration());
+            taskService.deleteTask(APP_PACKAGE_NAME, event.getTaskOwnerId(), taskScheduleProperties.statusDecrease.getCode());
+            taskService.deleteTask(APP_PACKAGE_NAME, event.getTaskOwnerId(), taskScheduleProperties.poopIncrease.getCode());
+            taskService.createCycleTask(APP_PACKAGE_NAME, event.getTaskOwnerId(), taskScheduleProperties.statusIncrease.getCode(), taskScheduleProperties.statusIncrease.getExpiration());
             mongService.sleepMong(mongId);
         } else if (taskCode.equals(taskScheduleProperties.wakeup.getCode())) {
-            taskService.createCycleTask(APP_CODE, event.getTaskOwnerId(), taskScheduleProperties.statusDecrease.getCode(), taskScheduleProperties.statusDecrease.getExpiration());
-            taskService.createCycleTask(APP_CODE, event.getTaskOwnerId(), taskScheduleProperties.poopIncrease.getCode(), taskScheduleProperties.poopIncrease.getExpiration());
-            taskService.deleteTask(APP_CODE, event.getTaskOwnerId(), taskScheduleProperties.statusIncrease.getCode());
+            taskService.createCycleTask(APP_PACKAGE_NAME, event.getTaskOwnerId(), taskScheduleProperties.statusDecrease.getCode(), taskScheduleProperties.statusDecrease.getExpiration());
+            taskService.createCycleTask(APP_PACKAGE_NAME, event.getTaskOwnerId(), taskScheduleProperties.poopIncrease.getCode(), taskScheduleProperties.poopIncrease.getExpiration());
+            taskService.deleteTask(APP_PACKAGE_NAME, event.getTaskOwnerId(), taskScheduleProperties.statusIncrease.getCode());
             mongService.wakeupMong(mongId);
         } else if (taskCode.equals(taskScheduleProperties.dead.getCode())) {
             mongService.deadMong(mongId);

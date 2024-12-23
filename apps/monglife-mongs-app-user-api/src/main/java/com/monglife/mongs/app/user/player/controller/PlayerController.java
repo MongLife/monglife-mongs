@@ -2,11 +2,12 @@ package com.monglife.mongs.app.user.player.controller;
 
 import com.monglife.core.dto.response.ResponseDto;
 import com.monglife.mongs.app.user.player.dto.etc.GetPlayerDto;
-import com.monglife.mongs.app.user.player.dto.request.ChargeStarPointRequestDto;
-import com.monglife.mongs.app.user.player.dto.request.ChargeWalkingCountRequestDto;
-import com.monglife.mongs.app.user.player.dto.request.ExchangeStarPointRequestDto;
-import com.monglife.mongs.app.user.player.dto.request.ExchangeWalkingCountRequestDto;
+import com.monglife.mongs.app.user.player.vo.PlayerStepVo;
+import com.monglife.mongs.app.user.player.dto.request.*;
+import com.monglife.mongs.app.user.player.dto.response.ExchangeWalkingCountResponseDto;
 import com.monglife.mongs.app.user.player.dto.response.GetPlayerResponseDto;
+import com.monglife.mongs.app.user.player.dto.response.ResetWalkingCountResponseDto;
+import com.monglife.mongs.app.user.player.dto.response.SyncWalkingCountResponseDto;
 import com.monglife.mongs.app.user.player.enums.PlayerResponse;
 import com.monglife.mongs.app.user.player.service.PlayerService;
 import com.monglife.mongs.module.security.global.principal.Passport;
@@ -15,6 +16,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+
+import java.time.LocalDateTime;
 
 @Validated
 @RestController
@@ -35,7 +38,6 @@ public class PlayerController {
                 .accountId(getPlayerDto.getAccountId())
                 .slotCount(getPlayerDto.getSlotCount())
                 .starPoint(getPlayerDto.getStarPoint())
-                .walkingCount(getPlayerDto.getWalkingCount())
                 .build();
 
         return ResponseEntity.ok(PlayerResponse.USER_PLAYER_GET_PLAYER.toResponseDto(getPlayerResponseDto));
@@ -72,26 +74,58 @@ public class PlayerController {
         return ResponseEntity.ok(PlayerResponse.USER_PLAYER_DECREASE_STAR_POINT.toResponseDto());
     }
 
-    @PatchMapping("/charge/walking")
-    public ResponseEntity<ResponseDto<?>> chargeWalkingCount(@AuthenticationPrincipal Passport passport, @RequestBody ChargeWalkingCountRequestDto chargeWalkingCountRequestDto) {
+    @PatchMapping("/sync/walking")
+    public ResponseEntity<ResponseDto<SyncWalkingCountResponseDto>> syncWalking(@RequestBody SyncWalkingCountRequestDto syncWalkingCountRequestDto) {
 
+        String deviceId = syncWalkingCountRequestDto.getDeviceId();
+        Integer totalWalkingCount = syncWalkingCountRequestDto.getTotalWalkingCount();
+        LocalDateTime deviceBootedDt = syncWalkingCountRequestDto.getDeviceBootedDt();
+
+        PlayerStepVo playerStepVo = playerService.syncWalkingCount(deviceId, totalWalkingCount, deviceBootedDt);
+
+        SyncWalkingCountResponseDto syncWalkingCountResponseDto = SyncWalkingCountResponseDto.builder()
+                .consumeWalkingCount(playerStepVo.getConsumeWalkingCount())
+                .walkingCount(playerStepVo.getWalkingCount())
+                .build();
+
+        return ResponseEntity.ok(PlayerResponse.USER_PLAYER_SYNC_WALKING_COUNT.toResponseDto(syncWalkingCountResponseDto));
+    }
+
+    @PatchMapping("/reset/walking")
+    public ResponseEntity<ResponseDto<ResetWalkingCountResponseDto>> resetWalkingCount(@AuthenticationPrincipal Passport passport, @RequestBody ResetWalkingCountRequestDto resetWalkingCountRequestDto) {
+
+        String deviceId = passport.getDeviceId();
         Long accountId = passport.getAccountId();
-        Integer walkingCount = chargeWalkingCountRequestDto.getWalkingCount();
+        Integer totalWalkingCount = resetWalkingCountRequestDto.getTotalWalkingCount();
+        LocalDateTime deviceBootedDt = resetWalkingCountRequestDto.getDeviceBootedDt();
 
-        playerService.chargeWalkingCount(accountId, walkingCount);
+        PlayerStepVo playerStepVo = playerService.resetWalkingCount(deviceId, accountId, totalWalkingCount, deviceBootedDt);
 
-        return ResponseEntity.ok(PlayerResponse.USER_PLAYER_INCREASE_WALKING_COUNT.toResponseDto());
+        ResetWalkingCountResponseDto resetWalkingCountResponseDto = ResetWalkingCountResponseDto.builder()
+                .consumeWalkingCount(playerStepVo.getConsumeWalkingCount())
+                .walkingCount(playerStepVo.getWalkingCount())
+                .build();
+
+        return ResponseEntity.ok(PlayerResponse.USER_PLAYER_RESET_WALKING_COUNT.toResponseDto(resetWalkingCountResponseDto));
     }
 
     @PostMapping("/exchange/walking")
-    public ResponseEntity<ResponseDto<?>> exchangeWalkingCount(@AuthenticationPrincipal Passport passport, @RequestBody ExchangeWalkingCountRequestDto exchangeWalkingCountRequestDto) {
+    public ResponseEntity<ResponseDto<ExchangeWalkingCountResponseDto>> exchangeWalkingCount(@AuthenticationPrincipal Passport passport, @RequestBody ExchangeWalkingCountRequestDto exchangeWalkingCountRequestDto) {
 
+        String deviceId = passport.getDeviceId();
         Long accountId = passport.getAccountId();
         Long mongId = exchangeWalkingCountRequestDto.getMongId();
+        Integer totalWalkingCount = exchangeWalkingCountRequestDto.getTotalWalkingCount();
         Integer walkingCount = exchangeWalkingCountRequestDto.getWalkingCount();
+        LocalDateTime deviceBootedDt = exchangeWalkingCountRequestDto.getDeviceBootedDt();
 
-        playerService.exchangeWalkingCount(accountId, mongId, walkingCount);
+        PlayerStepVo playerStepVo = playerService.exchangeWalkingCount(deviceId, accountId, mongId, totalWalkingCount, walkingCount, deviceBootedDt);
 
-        return ResponseEntity.ok(PlayerResponse.USER_PLAYER_DECREASE_WALKING_COUNT.toResponseDto());
+        ExchangeWalkingCountResponseDto exchangeWalkingCountResponseDto = ExchangeWalkingCountResponseDto.builder()
+                .consumeWalkingCount(playerStepVo.getConsumeWalkingCount())
+                .walkingCount(playerStepVo.getWalkingCount())
+                .build();
+
+        return ResponseEntity.ok(PlayerResponse.USER_PLAYER_DECREASE_WALKING_COUNT.toResponseDto(exchangeWalkingCountResponseDto));
     }
 }

@@ -16,13 +16,10 @@ public class GetMemberDto {
 
     private Integer starPoint;
 
-    private Integer walkingCount;
-
     @Builder
-    public GetMemberDto(Long accountId, Integer slotCount, Integer starPoint, Integer walkingCount) {
+    public GetMemberDto(Long accountId, Integer slotCount, Integer starPoint) {
         this.accountId = accountId;
         this.slotCount = slotCount;
         this.starPoint = starPoint;
-        this.walkingCount = walkingCount;
     }
 }

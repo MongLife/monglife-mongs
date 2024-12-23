@@ -1,12 +1,13 @@
 package com.monglife.mongs.domain.mong.entity.history;
 
-import com.monglife.mongs.domain.mong.enums.MongStateCode;
-import com.monglife.mongs.domain.mong.enums.MongStateHistoryCode;
 import com.monglife.mongs.domain.mong.enums.MongStatusCode;
 import com.monglife.mongs.domain.mong.enums.MongStatusHistoryCode;
 import com.monglife.mongs.module.jpa.entity.BaseTimeEntity;
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.AccessLevel;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 @Entity

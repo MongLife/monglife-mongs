@@ -14,11 +14,11 @@ public interface LockTaskRepository extends JpaRepository<TaskEntity, Long> {
     Optional<TaskEntity> findByTaskId(Long taskId);
 
     @Lock(LockModeType.PESSIMISTIC_WRITE)
-    List<TaskEntity> findByAppCode(String appCode);
+    List<TaskEntity> findByAppPackageName(String appPackageName);
 
     @Lock(LockModeType.PESSIMISTIC_WRITE)
-    List<TaskEntity> findByAppCodeAndTaskOwnerId(String appCode, String taskOwnerId);
+    List<TaskEntity> findByAppPackageNameAndTaskOwnerId(String appPackageName, String taskOwnerId);
 
     @Lock(LockModeType.PESSIMISTIC_WRITE)
-    Optional<TaskEntity> findByAppCodeAndTaskOwnerIdAndComnCode(String appCode, String taskOwnerId, String taskCode);
+    Optional<TaskEntity> findByAppPackageNameAndTaskOwnerIdAndComnCode(String appPackageName, String taskOwnerId, String taskCode);
 }

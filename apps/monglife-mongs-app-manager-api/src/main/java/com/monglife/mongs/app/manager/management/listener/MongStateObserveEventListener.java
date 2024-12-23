@@ -16,8 +16,8 @@ import org.springframework.transaction.event.TransactionalEventListener;
 @RequiredArgsConstructor
 public class MongStateObserveEventListener {
 
-    @Value("${application.app-code}")
-    private String APP_CODE;
+    @Value("${application.app-package-name}")
+    private String APP_PACKAGE_NAME;
 
     private final MqttSendService mqttSendService;
 
@@ -34,7 +34,7 @@ public class MongStateObserveEventListener {
         String taskOwnerId = String.valueOf(event.getMongId());
 
         if (MongStateCode.DEAD.equals(event.getStateCode()) || MongStateCode.GRADUATE_READY.equals(event.getStateCode())) {
-            taskService.deleteAllTasks(APP_CODE, taskOwnerId);
+            taskService.deleteAllTasks(APP_PACKAGE_NAME, taskOwnerId);
         }
 
         String topic = String.valueOf(event.getMongId());

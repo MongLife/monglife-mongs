@@ -30,11 +30,11 @@ public class TaskScheduleEntityListener {
         try {
             GetTaskDto getTaskDto = taskService.getTask(event.getTaskId());
 
-            if (!getTaskDto.getIsCycle()) taskService.deleteTask(getTaskDto.getAppCode(), getTaskDto.getTaskOwnerId(), getTaskDto.getTaskCode());
+            if (!getTaskDto.getIsCycle()) taskService.deleteTask(getTaskDto.getAppPackageName(), getTaskDto.getTaskOwnerId(), getTaskDto.getTaskCode());
             else taskService.cycleTask(getTaskDto.getTaskId());
 
             applicationEventPublisher.publishEvent(ExecuteTaskEvent.builder()
-                    .appCode(getTaskDto.getAppCode())
+                    .appPackageName(getTaskDto.getAppPackageName())
                     .taskOwnerId(getTaskDto.getTaskOwnerId())
                     .taskCode(getTaskDto.getTaskCode())
                     .restExpirationSeconds(getTaskDto.getRestExpirationSeconds())

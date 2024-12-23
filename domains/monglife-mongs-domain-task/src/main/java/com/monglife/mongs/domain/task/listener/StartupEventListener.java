@@ -15,8 +15,8 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 public class StartupEventListener implements ApplicationListener<ApplicationReadyEvent> {
 
-    @Value("${application.app-code}")
-    private String APP_CODE;
+    @Value("${application.app-package-name}")
+    private String APP_PACKAGE_NAME;
 
     private final TaskService taskService;
 
@@ -28,7 +28,7 @@ public class StartupEventListener implements ApplicationListener<ApplicationRead
         log.info("[TASK LOAD WORKING START] {}", applicationName);
 
         StringBuilder sb = new StringBuilder();
-        taskService.appStopResumeAllTask(APP_CODE).forEach(getTaskDto -> {
+        taskService.appStopResumeAllTask(APP_PACKAGE_NAME).forEach(getTaskDto -> {
             sb.append("\n").append(getTaskDto.getTaskId()).append(" =====> ").append(getTaskDto.getTaskOwnerId()).append(" : ").append(getTaskDto.getTaskCode());
         });
 

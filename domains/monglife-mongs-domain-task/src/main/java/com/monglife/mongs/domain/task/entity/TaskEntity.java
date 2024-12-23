@@ -26,8 +26,8 @@ public class TaskEntity extends BaseTimeEntity {
     @Column(name = "task_id", updatable = false)
     private Long taskId;
 
-    @Column(name = "app_code", updatable = false)
-    private String appCode;
+    @Column(name = "app_ackage_name", updatable = false)
+    private String appPackageName;
 
     @Column(name = "task_owner_id", updatable = false)
     private String taskOwnerId;
@@ -56,8 +56,8 @@ public class TaskEntity extends BaseTimeEntity {
     @Column(name = "fix_time", updatable = false)
     private LocalTime fixTime;
 
-    public TaskEntity(String appCode, String taskOwnerId, ComnCodeEntity comn, TaskStateCode taskStateCode, LocalTime fixTime) {
-        this.appCode = appCode;
+    public TaskEntity(String appPackageName, String taskOwnerId, ComnCodeEntity comn, TaskStateCode taskStateCode, LocalTime fixTime) {
+        this.appPackageName = appPackageName;
         this.taskOwnerId = taskOwnerId;
         this.comn = comn;
         this.taskStateCode = taskStateCode;
@@ -68,8 +68,8 @@ public class TaskEntity extends BaseTimeEntity {
         this.resetFixTime(now);
     }
 
-    public TaskEntity(String appCode, String taskOwnerId, ComnCodeEntity comn, TaskStateCode taskStateCode, Long expirationSeconds) {
-        this.appCode = appCode;
+    public TaskEntity(String appPackageName, String taskOwnerId, ComnCodeEntity comn, TaskStateCode taskStateCode, Long expirationSeconds) {
+        this.appPackageName = appPackageName;
         this.taskOwnerId = taskOwnerId;
         this.comn = comn;
         this.taskStateCode = taskStateCode;

@@ -46,7 +46,9 @@ public class LoggingAspect {
         Object[] args = joinPoint.getArgs();
         Parameter[] parameters = method.getParameters();
         for (int index = 0; index < parameters.length; index++) {
-            if (args[index].getClass().isPrimitive()) {
+            if (args[index] == null) {
+                argsBuilder.append("null");
+            } else if (args[index].getClass().isPrimitive()) {
                 argsBuilder
                         .append(parameters[index].getName())
                         .append("(")
@@ -89,6 +91,9 @@ public class LoggingAspect {
 
         String message = exception.getMessage();
         if (exception instanceof ErrorException errorException) message = errorException.getResponse().getMessage();
+
+        exception.printStackTrace();
+
         log.error("[Throwing] {}#{} =====> {}", clazzName, methodName, message);
     }
 }

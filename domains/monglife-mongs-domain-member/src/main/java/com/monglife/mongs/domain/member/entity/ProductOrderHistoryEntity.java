@@ -18,7 +18,7 @@ public class ProductOrderHistoryEntity extends BaseTimeEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "product_order_history_id")
-    private Long paymentHistoryId;
+    private Long productOrderHistoryId;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "product_order_history_type")

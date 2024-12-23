@@ -103,7 +103,20 @@ public class MongStatusEntity {
 
         history.add(MongStatusHistoryEntity.builder()
                 .mongStatusHistoryCode(MongStatusHistoryCode.HISTORY_MONG_STATUS_INCREASE_EXP)
-                .exp(Math.abs(addExp))
+                .maxStatus(maxStatus)
+                .code(this.code)
+                .weight(this.weight)
+                .poopCount(this.poopCount)
+                .exp(this.exp)
+                .strength(this.strength)
+                .satiety(this.satiety)
+                .healthy(this.healthy)
+                .fatigue(this.fatigue)
+                .expRatio(this.expRatio)
+                .strengthRatio(this.strengthRatio)
+                .satietyRatio(this.satietyRatio)
+                .healthyRatio(this.healthyRatio)
+                .fatigueRatio(this.fatigueRatio)
                 .build());
     }
 
@@ -114,7 +127,20 @@ public class MongStatusEntity {
 
         history.add(MongStatusHistoryEntity.builder()
                 .mongStatusHistoryCode(MongStatusHistoryCode.HISTORY_MONG_STATUS_DECREASE_EXP)
-                .exp(-Math.abs(subExp))
+                .maxStatus(maxStatus)
+                .code(this.code)
+                .weight(this.weight)
+                .poopCount(this.poopCount)
+                .exp(this.exp)
+                .strength(this.strength)
+                .satiety(this.satiety)
+                .healthy(this.healthy)
+                .fatigue(this.fatigue)
+                .expRatio(this.expRatio)
+                .strengthRatio(this.strengthRatio)
+                .satietyRatio(this.satietyRatio)
+                .healthyRatio(this.healthyRatio)
+                .fatigueRatio(this.fatigueRatio)
                 .build());
     }
 
@@ -123,7 +149,20 @@ public class MongStatusEntity {
 
         history.add(MongStatusHistoryEntity.builder()
                 .mongStatusHistoryCode(MongStatusHistoryCode.HISTORY_MONG_STATUS_RESET_EXP)
-                .exp(0D)
+                .maxStatus(maxStatus)
+                .code(this.code)
+                .weight(this.weight)
+                .poopCount(this.poopCount)
+                .exp(this.exp)
+                .strength(this.strength)
+                .satiety(this.satiety)
+                .healthy(this.healthy)
+                .fatigue(this.fatigue)
+                .expRatio(this.expRatio)
+                .strengthRatio(this.strengthRatio)
+                .satietyRatio(this.satietyRatio)
+                .healthyRatio(this.healthyRatio)
+                .fatigueRatio(this.fatigueRatio)
                 .build());
     }
 
@@ -134,7 +173,20 @@ public class MongStatusEntity {
 
         history.add(MongStatusHistoryEntity.builder()
                 .mongStatusHistoryCode(MongStatusHistoryCode.HISTORY_MONG_STATUS_INCREASE_POOP_COUNT)
-                .poopCount(Math.abs(addPoopCount))
+                .maxStatus(maxStatus)
+                .code(this.code)
+                .weight(this.weight)
+                .poopCount(this.poopCount)
+                .exp(this.exp)
+                .strength(this.strength)
+                .satiety(this.satiety)
+                .healthy(this.healthy)
+                .fatigue(this.fatigue)
+                .expRatio(this.expRatio)
+                .strengthRatio(this.strengthRatio)
+                .satietyRatio(this.satietyRatio)
+                .healthyRatio(this.healthyRatio)
+                .fatigueRatio(this.fatigueRatio)
                 .build());
     }
 
@@ -145,7 +197,20 @@ public class MongStatusEntity {
 
         history.add(MongStatusHistoryEntity.builder()
                 .mongStatusHistoryCode(MongStatusHistoryCode.HISTORY_MONG_STATUS_DECREASE_POOP_COUNT)
-                .poopCount(-Math.abs(subPoopCount))
+                .maxStatus(maxStatus)
+                .code(this.code)
+                .weight(this.weight)
+                .poopCount(this.poopCount)
+                .exp(this.exp)
+                .strength(this.strength)
+                .satiety(this.satiety)
+                .healthy(this.healthy)
+                .fatigue(this.fatigue)
+                .expRatio(this.expRatio)
+                .strengthRatio(this.strengthRatio)
+                .satietyRatio(this.satietyRatio)
+                .healthyRatio(this.healthyRatio)
+                .fatigueRatio(this.fatigueRatio)
                 .build());
     }
 
@@ -154,7 +219,20 @@ public class MongStatusEntity {
 
         history.add(MongStatusHistoryEntity.builder()
                 .mongStatusHistoryCode(MongStatusHistoryCode.HISTORY_MONG_STATUS_RESET_POOP_COUNT)
-                .poopCount(0)
+                .maxStatus(maxStatus)
+                .code(this.code)
+                .weight(this.weight)
+                .poopCount(this.poopCount)
+                .exp(this.exp)
+                .strength(this.strength)
+                .satiety(this.satiety)
+                .healthy(this.healthy)
+                .fatigue(this.fatigue)
+                .expRatio(this.expRatio)
+                .strengthRatio(this.strengthRatio)
+                .satietyRatio(this.satietyRatio)
+                .healthyRatio(this.healthyRatio)
+                .fatigueRatio(this.fatigueRatio)
                 .build());
     }
 
@@ -165,7 +243,20 @@ public class MongStatusEntity {
 
         history.add(MongStatusHistoryEntity.builder()
                 .mongStatusHistoryCode(MongStatusHistoryCode.HISTORY_MONG_STATUS_INCREASE_WEIGHT)
-                .weight(Math.abs(addWeight))
+                .maxStatus(maxStatus)
+                .code(this.code)
+                .weight(this.weight)
+                .poopCount(this.poopCount)
+                .exp(this.exp)
+                .strength(this.strength)
+                .satiety(this.satiety)
+                .healthy(this.healthy)
+                .fatigue(this.fatigue)
+                .expRatio(this.expRatio)
+                .strengthRatio(this.strengthRatio)
+                .satietyRatio(this.satietyRatio)
+                .healthyRatio(this.healthyRatio)
+                .fatigueRatio(this.fatigueRatio)
                 .build());
     }
 
@@ -176,7 +267,20 @@ public class MongStatusEntity {
 
         history.add(MongStatusHistoryEntity.builder()
                 .mongStatusHistoryCode(MongStatusHistoryCode.HISTORY_MONG_STATUS_DECREASE_WEIGHT)
-                .weight(-Math.abs(subWeight))
+                .maxStatus(maxStatus)
+                .code(this.code)
+                .weight(this.weight)
+                .poopCount(this.poopCount)
+                .exp(this.exp)
+                .strength(this.strength)
+                .satiety(this.satiety)
+                .healthy(this.healthy)
+                .fatigue(this.fatigue)
+                .expRatio(this.expRatio)
+                .strengthRatio(this.strengthRatio)
+                .satietyRatio(this.satietyRatio)
+                .healthyRatio(this.healthyRatio)
+                .fatigueRatio(this.fatigueRatio)
                 .build());
     }
 
@@ -189,10 +293,20 @@ public class MongStatusEntity {
 
         history.add(MongStatusHistoryEntity.builder()
                 .mongStatusHistoryCode(MongStatusHistoryCode.HISTORY_MONG_STATUS_INCREASE_STATUS)
-                .strength(Math.abs(strength))
-                .satiety(Math.abs(satiety))
-                .healthy(Math.abs(healthy))
-                .fatigue(Math.abs(fatigue))
+                .maxStatus(maxStatus)
+                .code(this.code)
+                .weight(this.weight)
+                .poopCount(this.poopCount)
+                .exp(this.exp)
+                .strength(this.strength)
+                .satiety(this.satiety)
+                .healthy(this.healthy)
+                .fatigue(this.fatigue)
+                .expRatio(this.expRatio)
+                .strengthRatio(this.strengthRatio)
+                .satietyRatio(this.satietyRatio)
+                .healthyRatio(this.healthyRatio)
+                .fatigueRatio(this.fatigueRatio)
                 .build());
     }
 
@@ -205,10 +319,20 @@ public class MongStatusEntity {
 
         history.add(MongStatusHistoryEntity.builder()
                 .mongStatusHistoryCode(MongStatusHistoryCode.HISTORY_MONG_STATUS_DECREASE_STATUS)
-                .strength(-Math.abs(strength))
-                .satiety(-Math.abs(satiety))
-                .healthy(-Math.abs(healthy))
-                .fatigue(-Math.abs(fatigue))
+                .maxStatus(maxStatus)
+                .code(this.code)
+                .weight(this.weight)
+                .poopCount(this.poopCount)
+                .exp(this.exp)
+                .strength(this.strength)
+                .satiety(this.satiety)
+                .healthy(this.healthy)
+                .fatigue(this.fatigue)
+                .expRatio(this.expRatio)
+                .strengthRatio(this.strengthRatio)
+                .satietyRatio(this.satietyRatio)
+                .healthyRatio(this.healthyRatio)
+                .fatigueRatio(this.fatigueRatio)
                 .build());
     }
 
@@ -221,10 +345,20 @@ public class MongStatusEntity {
 
         history.add(MongStatusHistoryEntity.builder()
                 .mongStatusHistoryCode(MongStatusHistoryCode.HISTORY_MONG_STATUS_INCREASE_STATUS_RATIO)
-                .strengthRatio(Math.abs(strengthRatio))
-                .satietyRatio(Math.abs(satietyRatio))
-                .healthyRatio(Math.abs(healthyRatio))
-                .fatigueRatio(Math.abs(fatigueRatio))
+                .maxStatus(maxStatus)
+                .code(this.code)
+                .weight(this.weight)
+                .poopCount(this.poopCount)
+                .exp(this.exp)
+                .strength(this.strength)
+                .satiety(this.satiety)
+                .healthy(this.healthy)
+                .fatigue(this.fatigue)
+                .expRatio(this.expRatio)
+                .strengthRatio(this.strengthRatio)
+                .satietyRatio(this.satietyRatio)
+                .healthyRatio(this.healthyRatio)
+                .fatigueRatio(this.fatigueRatio)
                 .build());
     }
 
@@ -237,10 +371,20 @@ public class MongStatusEntity {
 
         history.add(MongStatusHistoryEntity.builder()
                 .mongStatusHistoryCode(MongStatusHistoryCode.HISTORY_MONG_STATUS_INCREASE_STATUS_RATIO)
-                .strengthRatio(-Math.abs(strengthRatio))
-                .satietyRatio(-Math.abs(satietyRatio))
-                .healthyRatio(-Math.abs(healthyRatio))
-                .fatigueRatio(-Math.abs(fatigueRatio))
+                .maxStatus(maxStatus)
+                .code(this.code)
+                .weight(this.weight)
+                .poopCount(this.poopCount)
+                .exp(this.exp)
+                .strength(this.strength)
+                .satiety(this.satiety)
+                .healthy(this.healthy)
+                .fatigue(this.fatigue)
+                .expRatio(this.expRatio)
+                .strengthRatio(this.strengthRatio)
+                .satietyRatio(this.satietyRatio)
+                .healthyRatio(this.healthyRatio)
+                .fatigueRatio(this.fatigueRatio)
                 .build());
     }
 
@@ -259,6 +403,9 @@ public class MongStatusEntity {
         history.add(MongStatusHistoryEntity.builder()
                 .mongStatusHistoryCode(MongStatusHistoryCode.HISTORY_MONG_STATUS_SET_MAX_STATUS)
                 .maxStatus(maxStatus)
+                .code(this.code)
+                .weight(this.weight)
+                .poopCount(this.poopCount)
                 .exp(this.exp)
                 .strength(this.strength)
                 .satiety(this.satiety)
@@ -280,7 +427,20 @@ public class MongStatusEntity {
 
         history.add(MongStatusHistoryEntity.builder()
                 .mongStatusHistoryCode(MongStatusHistoryCode.HISTORY_MONG_STATUS_SET_CODE)
-                .code(code)
+                .maxStatus(maxStatus)
+                .code(this.code)
+                .weight(this.weight)
+                .poopCount(this.poopCount)
+                .exp(this.exp)
+                .strength(this.strength)
+                .satiety(this.satiety)
+                .healthy(this.healthy)
+                .fatigue(this.fatigue)
+                .expRatio(this.expRatio)
+                .strengthRatio(this.strengthRatio)
+                .satietyRatio(this.satietyRatio)
+                .healthyRatio(this.healthyRatio)
+                .fatigueRatio(this.fatigueRatio)
                 .build());
     }
 

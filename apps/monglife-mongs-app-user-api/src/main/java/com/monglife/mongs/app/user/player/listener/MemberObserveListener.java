@@ -24,7 +24,6 @@ public class MemberObserveListener {
                 .accountId(event.getAccountId())
                 .slotCount(event.getSlotCount())
                 .starPoint(event.getStarPoint())
-                .walkingCount(event.getWalkingCount())
                 .build();
 
         mqttSendService.sendMessage(topic, PlayerResponse.USER_PLAYER_OBSERVE_MEMBER.toResponseDto(memberObserveResponseDto));

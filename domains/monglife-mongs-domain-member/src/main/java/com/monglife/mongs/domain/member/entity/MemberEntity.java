@@ -31,9 +31,6 @@ public class MemberEntity extends BaseTimeEntity {
     @Column(name = "start_point")
     private Integer starPoint;
 
-    @Column(name = "walking_count")
-    private Integer walkingCount;
-
     @Column(name = "is_active")
     private Boolean isActive;
 
@@ -54,7 +51,6 @@ public class MemberEntity extends BaseTimeEntity {
         this.accountId = accountId;
         this.slotCount = 1;
         this.starPoint = 0;
-        this.walkingCount = 0;
         this.isActive = Boolean.TRUE;
         this.collectionMaps = new ArrayList<>();
         this.collectionMongs = new ArrayList<>();
@@ -87,13 +83,5 @@ public class MemberEntity extends BaseTimeEntity {
 
     public void decreaseStarPoint(Integer subStarPoint) {
         this.starPoint = Math.max(0, this.starPoint - subStarPoint);
-    }
-
-    public void increaseWalkingCount(Integer addWalkingCount) {
-        this.walkingCount = Math.min(this.walkingCount + addWalkingCount, Integer.MAX_VALUE);
-    }
-
-    public void decreaseWalkingCount(Integer subWalkingCount) {
-        this.walkingCount = Math.max(0, this.walkingCount - subWalkingCount);
     }
 }

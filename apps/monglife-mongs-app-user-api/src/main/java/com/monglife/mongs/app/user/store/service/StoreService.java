@@ -23,7 +23,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class StoreService {
 
-    @Value("${application.google.package-name}")
+    @Value("${application.app-package-name}")
     private String appPackageName;
 
     @Value("${application.google.url}")

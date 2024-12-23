@@ -48,8 +48,8 @@ public class SecurityConfig {
             .addFilterBefore(globalExceptionFilter, PassportFilter.class)
             .authorizeHttpRequests(authorize -> authorize
                     .requestMatchers("/*/prometheus").permitAll()
+                    .requestMatchers("/user/player/sync/walking").permitAll()
                     .requestMatchers("/*/**").hasAnyAuthority(RoleCode.ADMIN.getRole(), RoleCode.NORMAL.getRole())
-//                    .requestMatchers("/internal/**/admin/**").hasAnyAuthority(RoleCode.ADMIN.getRole())
                     .anyRequest().authenticated()
             )
             .exceptionHandling(configurer -> {

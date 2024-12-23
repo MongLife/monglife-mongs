@@ -21,7 +21,6 @@ public class MemberEntityListener {
                 .accountId(memberEntity.getAccountId())
                 .slotCount(memberEntity.getSlotCount())
                 .starPoint(memberEntity.getStarPoint())
-                .walkingCount(memberEntity.getWalkingCount())
                 .build();
 
         applicationEventPublisher.publishEvent(memberObserveEvent);

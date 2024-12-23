@@ -3,18 +3,22 @@ package com.monglife.mongs.domain.member.service;
 import com.monglife.mongs.domain.member.dto.etc.GetCollectionMapDto;
 import com.monglife.mongs.domain.member.dto.etc.GetCollectionMongDto;
 import com.monglife.mongs.domain.member.dto.etc.GetMemberDto;
+import com.monglife.mongs.domain.member.vo.MemberStepVo;
 import com.monglife.mongs.domain.member.entity.*;
 import com.monglife.mongs.domain.member.exception.*;
 import com.monglife.mongs.domain.member.repository.ComnCodeRepository;
 import com.monglife.mongs.domain.member.repository.MapPositionRepository;
 import com.monglife.mongs.domain.member.repository.MemberRepository;
+import com.monglife.mongs.domain.member.repository.MemberStepRepository;
 import com.monglife.mongs.module.jpa.entity.ComnCodeEntity;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -32,12 +36,14 @@ public class MemberService {
 
     private final MapPositionRepository mapPositionRepository;
 
+    private final MemberStepRepository memberStepRepository;
+
     /**
      * 회원 조회
      * @param accountId 계정 ID
      * @return 회원 정보
      */
-    @Transactional(readOnly = true)
+    @Transactional
     public GetMemberDto getMember(Long accountId) {
 
         MemberEntity memberEntity = memberRepository.findByAccountId(accountId)
@@ -47,7 +53,6 @@ public class MemberService {
                 .accountId(memberEntity.getAccountId())
                 .slotCount(memberEntity.getSlotCount())
                 .starPoint(memberEntity.getStarPoint())
-                .walkingCount(memberEntity.getWalkingCount())
                 .build();
     }
 
@@ -82,7 +87,7 @@ public class MemberService {
      * @param accountId 계정 ID
      * @return 컬렉션 맵 목록
      */
-    @Transactional(readOnly = true)
+    @Transactional
     public List<GetCollectionMapDto> getCollectionMaps(Long accountId) {
 
         MemberEntity memberEntity = memberRepository.findByAccountId(accountId)
@@ -130,7 +135,7 @@ public class MemberService {
      * @param accountId 계정 ID
      * @return 컬렉션 몽 목록
      */
-    @Transactional(readOnly = true)
+    @Transactional
     public List<GetCollectionMongDto> getCollectionMongs(Long accountId) {
 
         MemberEntity memberEntity = memberRepository.findByAccountId(accountId)
@@ -207,22 +212,92 @@ public class MemberService {
     }
 
     @Transactional
-    public void increaseWalkingCount(Long accountId, Integer walkingCount) {
+    public MemberStepVo updateWalkingCount(String deviceId, Integer totalWalkingCount, LocalDateTime deviceBootedDt) {
 
-        MemberEntity memberEntity = memberRepository.findByAccountId(accountId)
-                .orElseGet(() -> memberRepository.save(new MemberEntity(accountId)));
+        MemberStepEntity memberStepEntity = memberStepRepository.findByDeviceId(deviceId)
+                .orElseThrow(() -> new NotExistsMongStepException(deviceId));
 
-        memberEntity.increaseWalkingCount(walkingCount);
+        if (deviceBootedDt.equals(memberStepEntity.getDeviceBootedDt())) {
+            // 동기화
+            memberStepEntity.updateTotalWalkingCount(totalWalkingCount);
+        } else {
+            // 초기화
+            memberStepEntity.resetTotalWalkingCount(totalWalkingCount, deviceBootedDt);
+        }
+
+        return MemberStepVo.builder()
+                .totalWalkingCount(memberStepEntity.getTotalWalkingCount())
+                .consumeWalkingCount(memberStepEntity.getConsumeWalkingCount())
+                .walkingCount(memberStepEntity.getWalkingCount())
+                .build();
     }
 
     @Transactional
-    public void decreaseWalkingCount(Long accountId, Integer walkingCount) {
+    public MemberStepVo updateWalkingCount(String deviceId, Long accountId, Integer totalWalkingCount, LocalDateTime deviceBootedDt) {
 
-        MemberEntity memberEntity = memberRepository.findByAccountId(accountId)
-                .orElseGet(() -> memberRepository.save(new MemberEntity(accountId)));
+        Optional<MemberStepEntity> optionalMemberStepEntity = memberStepRepository.findByMemberAccountIdAndDeviceId(accountId, deviceId);
 
-        if (memberEntity.getWalkingCount() < walkingCount) throw new NotExistsWalkingCountException(walkingCount);
+        MemberStepEntity memberStepEntity;
+        if (optionalMemberStepEntity.isPresent()) {
 
-        memberEntity.decreaseWalkingCount(walkingCount);
+            memberStepEntity = optionalMemberStepEntity.get();
+
+            if (deviceBootedDt.equals(memberStepEntity.getDeviceBootedDt())) {
+                // 동기화
+                memberStepEntity.updateTotalWalkingCount(totalWalkingCount);
+            } else {
+                // 초기화
+                memberStepEntity.resetTotalWalkingCount(totalWalkingCount, deviceBootedDt);
+            }
+
+        } else {
+            // 등록
+            MemberEntity memberEntity = memberRepository.findByAccountId(accountId)
+                    .orElseThrow(() -> new NotExistsMemberException(accountId));
+
+            memberStepEntity = memberStepRepository.save(MemberStepEntity.builder()
+                    .member(memberEntity)
+                    .deviceId(deviceId)
+                    .walkingCount(0)
+                    .totalWalkingCount(totalWalkingCount)
+                    .consumeWalkingCount(totalWalkingCount)
+                    .deviceBootedDt(deviceBootedDt)
+                    .build());
+        }
+
+        return MemberStepVo.builder()
+                .totalWalkingCount(memberStepEntity.getTotalWalkingCount())
+                .consumeWalkingCount(memberStepEntity.getConsumeWalkingCount())
+                .walkingCount(memberStepEntity.getWalkingCount())
+                .build();
+    }
+
+    @Transactional
+    public MemberStepVo decreaseWalkingCount(String deviceId, Long accountId, Integer totalWalkingCount, Integer walkingCount, LocalDateTime deviceBootedDt) {
+
+        MemberStepEntity memberStepEntity = memberStepRepository.findByMemberAccountIdAndDeviceId(accountId, deviceId)
+                .orElseThrow(() -> new NotExistsMongStepException(deviceId));
+
+        if (deviceBootedDt.equals(memberStepEntity.getDeviceBootedDt())) {
+            // 동기화
+            memberStepEntity.updateTotalWalkingCount(totalWalkingCount);
+        } else {
+            // 초기화
+            memberStepEntity.resetTotalWalkingCount(totalWalkingCount, deviceBootedDt);
+        }
+
+        int nowWalkingCount = memberStepEntity.getNowWalkingCount();
+
+        if (nowWalkingCount < walkingCount) {
+            throw new NotEnoughWalkingCountException(walkingCount);
+        }
+
+        memberStepEntity.decreaseWalkingCount(walkingCount);
+
+        return MemberStepVo.builder()
+                .totalWalkingCount(memberStepEntity.getTotalWalkingCount())
+                .consumeWalkingCount(memberStepEntity.getConsumeWalkingCount())
+                .walkingCount(memberStepEntity.getWalkingCount())
+                .build();
     }
 }

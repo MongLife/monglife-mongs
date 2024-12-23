@@ -15,7 +15,7 @@ public class StartTaskScheduleDto {
 
     private Long taskId;
 
-    private String appCode;
+    private String appPackageName;
 
     private String taskOwnerId;
 
@@ -26,9 +26,9 @@ public class StartTaskScheduleDto {
     private Boolean isCycle;
 
     @Builder
-    public StartTaskScheduleDto(Long taskId, String appCode, String taskOwnerId, String taskCode, LocalDateTime expiredAt, Boolean isCycle) {
+    public StartTaskScheduleDto(Long taskId, String appPackageName, String taskOwnerId, String taskCode, LocalDateTime expiredAt, Boolean isCycle) {
         this.taskId = taskId;
-        this.appCode = appCode;
+        this.appPackageName = appPackageName;
         this.taskOwnerId = taskOwnerId;
         this.taskCode = taskCode;
         this.expiredAt = expiredAt;
@@ -38,7 +38,7 @@ public class StartTaskScheduleDto {
     public static StartTaskScheduleDto of(TaskEntity taskEntity) {
         return StartTaskScheduleDto.builder()
                 .taskId(taskEntity.getTaskId())
-                .appCode(taskEntity.getAppCode())
+                .appPackageName(taskEntity.getAppPackageName())
                 .taskOwnerId(taskEntity.getTaskOwnerId())
                 .taskCode(taskEntity.getComn().getCode())
                 .expiredAt(taskEntity.getExpiredAt())

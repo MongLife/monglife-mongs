@@ -16,13 +16,10 @@ public class MemberObserveResponseDto {
 
     private Integer starPoint;
 
-    private Integer walkingCount;
-
     @Builder
-    public MemberObserveResponseDto(Long accountId, Integer slotCount, Integer starPoint, Integer walkingCount) {
+    public MemberObserveResponseDto(Long accountId, Integer slotCount, Integer starPoint) {
         this.accountId = accountId;
         this.slotCount = slotCount;
         this.starPoint = starPoint;
-        this.walkingCount = walkingCount;
     }
 }
