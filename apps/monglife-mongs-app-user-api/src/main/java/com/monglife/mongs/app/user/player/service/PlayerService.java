@@ -3,7 +3,8 @@ package com.monglife.mongs.app.user.player.service;
 import com.monglife.mongs.app.user.player.dto.etc.GetPlayerDto;
 import com.monglife.mongs.app.user.player.vo.PlayerStepVo;
 import com.monglife.mongs.domain.member.dto.etc.GetMemberDto;
-import com.monglife.mongs.domain.member.vo.MemberStepVo;
+import com.monglife.mongs.domain.member.service.StepService;
+import com.monglife.mongs.domain.member.vo.StepVo;
 import com.monglife.mongs.domain.member.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -16,6 +17,8 @@ import java.time.LocalDateTime;
 public class PlayerService {
 
     private final MemberService memberService;
+
+    private final StepService stepService;
 
     @Transactional
     public GetPlayerDto getPlayer(Long accountId) {
@@ -47,38 +50,26 @@ public class PlayerService {
     @Transactional
     public PlayerStepVo syncWalkingCount(String deviceId, Integer totalWalkingCount, LocalDateTime deviceBootedDt) {
 
-        MemberStepVo memberStepVo = memberService.updateWalkingCount(deviceId, totalWalkingCount, deviceBootedDt);
+        StepVo stepVo = stepService.updateWalkingCount(deviceId, totalWalkingCount, deviceBootedDt);
 
         return PlayerStepVo.builder()
-                .totalWalkingCount(memberStepVo.getTotalWalkingCount())
-                .consumeWalkingCount(memberStepVo.getConsumeWalkingCount())
-                .walkingCount(memberStepVo.getWalkingCount())
+                .totalWalkingCount(stepVo.getTotalWalkingCount())
+                .consumeWalkingCount(stepVo.getConsumeWalkingCount())
+                .walkingCount(stepVo.getWalkingCount())
                 .build();
     }
 
     @Transactional
-    public PlayerStepVo resetWalkingCount(String deviceId, Long accountId, Integer totalWalkingCount, LocalDateTime deviceBootedDt) {
+    public PlayerStepVo exchangeWalkingCount(String deviceId, Long mongId, Integer totalWalkingCount, Integer walkingCount, LocalDateTime deviceBootedDt) {
 
-        MemberStepVo memberStepVo =  memberService.updateWalkingCount(deviceId, accountId, totalWalkingCount, deviceBootedDt);
-
-        return PlayerStepVo.builder()
-                .totalWalkingCount(memberStepVo.getTotalWalkingCount())
-                .consumeWalkingCount(memberStepVo.getConsumeWalkingCount())
-                .walkingCount(memberStepVo.getWalkingCount())
-                .build();
-    }
-
-    @Transactional
-    public PlayerStepVo exchangeWalkingCount(String deviceId, Long accountId, Long mongId, Integer totalWalkingCount, Integer walkingCount, LocalDateTime deviceBootedDt) {
-
-        MemberStepVo memberStepVo = memberService.decreaseWalkingCount(deviceId, accountId, totalWalkingCount, walkingCount, deviceBootedDt);
+        StepVo stepVo = stepService.decreaseWalkingCount(deviceId, totalWalkingCount, walkingCount, deviceBootedDt);
 
         // TODO: 몽 페이포인트 증가 로직 추가
 
         return PlayerStepVo.builder()
-                .totalWalkingCount(memberStepVo.getTotalWalkingCount())
-                .consumeWalkingCount(memberStepVo.getConsumeWalkingCount())
-                .walkingCount(memberStepVo.getWalkingCount())
+                .totalWalkingCount(stepVo.getTotalWalkingCount())
+                .consumeWalkingCount(stepVo.getConsumeWalkingCount())
+                .walkingCount(stepVo.getWalkingCount())
                 .build();
     }
 }

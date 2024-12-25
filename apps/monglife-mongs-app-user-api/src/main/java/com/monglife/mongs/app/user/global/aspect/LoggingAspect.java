@@ -92,8 +92,6 @@ public class LoggingAspect {
         String message = exception.getMessage();
         if (exception instanceof ErrorException errorException) message = errorException.getResponse().getMessage();
 
-        exception.printStackTrace();
-
         log.error("[Throwing] {}#{} =====> {}", clazzName, methodName, message);
     }
 }

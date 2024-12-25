@@ -23,7 +23,6 @@ public enum PlayerResponse implements Response {
     USER_PLAYER_INCREASE_STAR_POINT(HttpStatus.OK.value(), "USER-PLAYER-004", "스타포인트 증가에 성공했습니다."),
     USER_PLAYER_DECREASE_STAR_POINT(HttpStatus.OK.value(), "USER-PLAYER-005", "스타포인트 감소에 성공했습니다."),
     USER_PLAYER_SYNC_WALKING_COUNT(HttpStatus.OK.value(), "USER-PLAYER-006", "걸음수 동기화에 성공했습니다."),
-    USER_PLAYER_RESET_WALKING_COUNT(HttpStatus.OK.value(), "USER-PLAYER-007", "걸음수 초기화에 성공했습니다."),
     USER_PLAYER_DECREASE_WALKING_COUNT(HttpStatus.OK.value(), "USER-PLAYER-008", "걸음수 감소에 성공했습니다."),
 
     ;

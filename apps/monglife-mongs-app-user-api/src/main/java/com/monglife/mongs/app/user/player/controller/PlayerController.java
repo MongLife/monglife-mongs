@@ -6,7 +6,6 @@ import com.monglife.mongs.app.user.player.vo.PlayerStepVo;
 import com.monglife.mongs.app.user.player.dto.request.*;
 import com.monglife.mongs.app.user.player.dto.response.ExchangeWalkingCountResponseDto;
 import com.monglife.mongs.app.user.player.dto.response.GetPlayerResponseDto;
-import com.monglife.mongs.app.user.player.dto.response.ResetWalkingCountResponseDto;
 import com.monglife.mongs.app.user.player.dto.response.SyncWalkingCountResponseDto;
 import com.monglife.mongs.app.user.player.enums.PlayerResponse;
 import com.monglife.mongs.app.user.player.service.PlayerService;
@@ -91,35 +90,16 @@ public class PlayerController {
         return ResponseEntity.ok(PlayerResponse.USER_PLAYER_SYNC_WALKING_COUNT.toResponseDto(syncWalkingCountResponseDto));
     }
 
-    @PatchMapping("/reset/walking")
-    public ResponseEntity<ResponseDto<ResetWalkingCountResponseDto>> resetWalkingCount(@AuthenticationPrincipal Passport passport, @RequestBody ResetWalkingCountRequestDto resetWalkingCountRequestDto) {
-
-        String deviceId = passport.getDeviceId();
-        Long accountId = passport.getAccountId();
-        Integer totalWalkingCount = resetWalkingCountRequestDto.getTotalWalkingCount();
-        LocalDateTime deviceBootedDt = resetWalkingCountRequestDto.getDeviceBootedDt();
-
-        PlayerStepVo playerStepVo = playerService.resetWalkingCount(deviceId, accountId, totalWalkingCount, deviceBootedDt);
-
-        ResetWalkingCountResponseDto resetWalkingCountResponseDto = ResetWalkingCountResponseDto.builder()
-                .consumeWalkingCount(playerStepVo.getConsumeWalkingCount())
-                .walkingCount(playerStepVo.getWalkingCount())
-                .build();
-
-        return ResponseEntity.ok(PlayerResponse.USER_PLAYER_RESET_WALKING_COUNT.toResponseDto(resetWalkingCountResponseDto));
-    }
-
     @PostMapping("/exchange/walking")
     public ResponseEntity<ResponseDto<ExchangeWalkingCountResponseDto>> exchangeWalkingCount(@AuthenticationPrincipal Passport passport, @RequestBody ExchangeWalkingCountRequestDto exchangeWalkingCountRequestDto) {
 
         String deviceId = passport.getDeviceId();
-        Long accountId = passport.getAccountId();
         Long mongId = exchangeWalkingCountRequestDto.getMongId();
         Integer totalWalkingCount = exchangeWalkingCountRequestDto.getTotalWalkingCount();
         Integer walkingCount = exchangeWalkingCountRequestDto.getWalkingCount();
         LocalDateTime deviceBootedDt = exchangeWalkingCountRequestDto.getDeviceBootedDt();
 
-        PlayerStepVo playerStepVo = playerService.exchangeWalkingCount(deviceId, accountId, mongId, totalWalkingCount, walkingCount, deviceBootedDt);
+        PlayerStepVo playerStepVo = playerService.exchangeWalkingCount(deviceId, mongId, totalWalkingCount, walkingCount, deviceBootedDt);
 
         ExchangeWalkingCountResponseDto exchangeWalkingCountResponseDto = ExchangeWalkingCountResponseDto.builder()
                 .consumeWalkingCount(playerStepVo.getConsumeWalkingCount())

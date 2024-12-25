@@ -16,17 +16,13 @@ import java.util.List;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @EntityListeners({ AuditingEntityListener.class })
-@Table(name = "mongs_member_step")
-public class MemberStepEntity extends BaseTimeEntity {
+@Table(name = "mongs_step")
+public class StepEntity extends BaseTimeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "member_step_id")
-    private Long memberStepId;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "account_id")
-    private MemberEntity member;
+    @Column(name = "step_id")
+    private Long stepId;
 
     @Column(name = "device_id", unique = true)
     private String deviceId;
@@ -44,12 +40,11 @@ public class MemberStepEntity extends BaseTimeEntity {
     private LocalDateTime deviceBootedDt;
 
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    @JoinColumn(name = "member_step_id")
-    private List<MemberStepHistoryEntity> history;
+    @JoinColumn(name = "step_id")
+    private List<StepHistoryEntity> history;
 
     @Builder
-    public MemberStepEntity(MemberEntity member, String deviceId, Integer walkingCount, Integer totalWalkingCount, Integer consumeWalkingCount, LocalDateTime deviceBootedDt) {
-        this.member = member;
+    public StepEntity(String deviceId, Integer walkingCount, Integer totalWalkingCount, Integer consumeWalkingCount, LocalDateTime deviceBootedDt) {
         this.deviceId = deviceId;
         this.walkingCount = walkingCount;
         this.totalWalkingCount = totalWalkingCount;
@@ -61,12 +56,12 @@ public class MemberStepEntity extends BaseTimeEntity {
     @PrePersist
     public void prePersist() {
 
-        this.history.add(MemberStepHistoryEntity.builder()
+        this.history.add(StepHistoryEntity.builder()
                 .walkingCount(this.walkingCount)
                 .totalWalkingCount(this.totalWalkingCount)
                 .consumeWalkingCount(this.consumeWalkingCount)
                 .deviceBootedDt(this.deviceBootedDt)
-                .type(MemberStepHistoryEntity.MemberStepHistoryType.CREATE)
+                .type(StepHistoryEntity.StepHistoryType.CREATE)
                 .build());
     }
 
@@ -78,12 +73,12 @@ public class MemberStepEntity extends BaseTimeEntity {
 
         this.totalWalkingCount = totalWalkingCount;
 
-        this.history.add(MemberStepHistoryEntity.builder()
+        this.history.add(StepHistoryEntity.builder()
                 .walkingCount(this.walkingCount)
                 .totalWalkingCount(this.totalWalkingCount)
                 .consumeWalkingCount(this.consumeWalkingCount)
                 .deviceBootedDt(this.deviceBootedDt)
-                .type(MemberStepHistoryEntity.MemberStepHistoryType.UPDATE)
+                .type(StepHistoryEntity.StepHistoryType.UPDATE)
                 .build());
     }
 
@@ -94,12 +89,12 @@ public class MemberStepEntity extends BaseTimeEntity {
         this.consumeWalkingCount = 0;
         this.deviceBootedDt = deviceBootedDt;
 
-        this.history.add(MemberStepHistoryEntity.builder()
+        this.history.add(StepHistoryEntity.builder()
                 .walkingCount(this.walkingCount)
                 .totalWalkingCount(this.totalWalkingCount)
                 .consumeWalkingCount(this.consumeWalkingCount)
                 .deviceBootedDt(this.deviceBootedDt)
-                .type(MemberStepHistoryEntity.MemberStepHistoryType.RESET)
+                .type(StepHistoryEntity.StepHistoryType.RESET)
                 .build());
     }
 
@@ -107,12 +102,12 @@ public class MemberStepEntity extends BaseTimeEntity {
 
         this.consumeWalkingCount = this.consumeWalkingCount + walkingCount;
 
-        this.history.add(MemberStepHistoryEntity.builder()
+        this.history.add(StepHistoryEntity.builder()
                 .walkingCount(this.walkingCount)
                 .totalWalkingCount(this.totalWalkingCount)
                 .consumeWalkingCount(this.consumeWalkingCount)
                 .deviceBootedDt(this.deviceBootedDt)
-                .type(MemberStepHistoryEntity.MemberStepHistoryType.DECREASE)
+                .type(StepHistoryEntity.StepHistoryType.DECREASE)
                 .build());
     }
 }

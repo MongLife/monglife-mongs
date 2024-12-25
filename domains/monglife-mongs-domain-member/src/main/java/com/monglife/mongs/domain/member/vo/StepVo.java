@@ -4,7 +4,7 @@ import lombok.Builder;
 import lombok.Getter;
 
 @Getter
-public class MemberStepVo {
+public class StepVo {
 
     private final Integer totalWalkingCount;
 
@@ -13,7 +13,7 @@ public class MemberStepVo {
     private final Integer walkingCount;
 
     @Builder
-    public MemberStepVo(Integer totalWalkingCount, Integer consumeWalkingCount, Integer walkingCount) {
+    public StepVo(Integer totalWalkingCount, Integer consumeWalkingCount, Integer walkingCount) {
         this.totalWalkingCount = totalWalkingCount;
         this.consumeWalkingCount = consumeWalkingCount;
         this.walkingCount = walkingCount;
