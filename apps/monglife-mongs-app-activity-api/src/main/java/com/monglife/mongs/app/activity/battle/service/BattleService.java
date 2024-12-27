@@ -4,7 +4,7 @@ import com.monglife.mongs.app.activity.battle.dto.etc.CreateBattleDto;
 import com.monglife.mongs.app.activity.battle.dto.etc.FightBattleDto;
 import com.monglife.mongs.app.activity.battle.dto.etc.OverBattleDto;
 import com.monglife.mongs.app.activity.battle.vo.CreateBattleVo;
-import com.monglife.mongs.app.activity.global.exception.NotExistsMatchException;
+import com.monglife.mongs.app.activity.battle.exception.NotExistsMatchException;
 import com.monglife.mongs.domain.match.dto.etc.CreateMatchDto;
 import com.monglife.mongs.domain.match.dto.etc.EnterMatchDto;
 import com.monglife.mongs.domain.match.dto.etc.ExitMatchDto;

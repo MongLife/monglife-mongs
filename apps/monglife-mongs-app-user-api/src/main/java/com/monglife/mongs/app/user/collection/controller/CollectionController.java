@@ -7,6 +7,7 @@ import com.monglife.mongs.app.user.collection.dto.response.GetCollectionMapRespo
 import com.monglife.mongs.app.user.collection.dto.response.GetCollectionMongResponseDto;
 import com.monglife.mongs.app.user.collection.enums.CollectionResponse;
 import com.monglife.mongs.app.user.collection.service.CollectionService;
+import com.monglife.mongs.client.manager.client.ManagementClient;
 import com.monglife.mongs.domain.member.dto.etc.GetCollectionMapDto;
 import com.monglife.mongs.domain.member.dto.etc.GetCollectionMongDto;
 import com.monglife.mongs.module.security.global.principal.Passport;
@@ -20,11 +21,21 @@ import java.util.List;
 
 @Validated
 @RestController
+@RequestMapping("/collection")
 @RequiredArgsConstructor
-@RequestMapping("/user/collection")
 public class CollectionController {
 
     private final CollectionService collectionService;
+
+    /**
+     * For Test
+     * TODO: 삭제 필요
+     */
+    private final ManagementClient managementClient;
+    @GetMapping("/healthCheck")
+    public String healthCheck() {
+        return managementClient.healthCheck();
+    }
 
     /**
      * 맵 컬렉션 조회
@@ -46,24 +57,7 @@ public class CollectionController {
                         .build())
                 .toList();
 
-        return ResponseEntity.ok(CollectionResponse.USER_COLLECTION_GET_COLLECTION_MAP.toResponseDto(getCollectionMapResponseDtos));
-    }
-
-    /**
-     * 맵 컬렉션 등록
-     * @param passport 패스 포트
-     * @param createCollectionMapRequestDto 맵 타입 코드
-     * @return 성공 응답 Dto
-     */
-    @PostMapping("/map")
-    public ResponseEntity<ResponseDto<?>> createCollectionMap(@AuthenticationPrincipal Passport passport, @RequestBody CreateCollectionMapRequestDto createCollectionMapRequestDto) {
-
-        Long accountId = passport.getAccountId();
-        String mapTypeCode = createCollectionMapRequestDto.getMapTypeCode();
-
-        collectionService.createCollectionMap(accountId, mapTypeCode);
-
-        return ResponseEntity.ok(CollectionResponse.USER_COLLECTION_CREATE_COLLECTION_MAP.toResponseDto());
+        return ResponseEntity.ok(CollectionResponse.APP_USER_COLLECTION_GET_COLLECTION_MAP.toResponseDto(getCollectionMapResponseDtos));
     }
 
     @GetMapping("/mong")
@@ -81,17 +75,6 @@ public class CollectionController {
                         .build())
                 .toList();
 
-        return ResponseEntity.ok(CollectionResponse.USER_COLLECTION_GET_COLLECTION_MONG.toResponseDto(getCollectionMongResponseDtos));
-    }
-
-    @PostMapping("/mong")
-    public ResponseEntity<ResponseDto<?>> createCollectionMong(@AuthenticationPrincipal Passport passport, @RequestBody CreateCollectionMongRequestDto createCollectionMongRequestDto) {
-
-        Long accountId = passport.getAccountId();
-        String mongTypeCode = createCollectionMongRequestDto.getMongTypeCode();
-
-        collectionService.createCollectionMong(accountId, mongTypeCode);
-
-        return ResponseEntity.ok(CollectionResponse.USER_COLLECTION_CREATE_COLLECTION_MONG.toResponseDto());
+        return ResponseEntity.ok(CollectionResponse.APP_USER_COLLECTION_GET_COLLECTION_MONG.toResponseDto(getCollectionMongResponseDtos));
     }
 }

@@ -10,9 +10,11 @@ import jakarta.persistence.PostPersist;
 import jakarta.persistence.PostRemove;
 import jakarta.persistence.PostUpdate;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Component;
 
+@Slf4j
 @Component
 @RequiredArgsConstructor
 public class TaskEntityListener {
@@ -43,6 +45,7 @@ public class TaskEntityListener {
      */
     @PostUpdate
     public void postUpdate(TaskEntity taskEntity) {
+        log.info("{}", taskEntity);
         switch (taskEntity.getTaskStatusCode()) {
             case PROCESSING ->
                     taskScheduleService.startTaskSchedule(StartTaskScheduleDto.of(taskEntity));

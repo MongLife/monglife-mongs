@@ -87,7 +87,7 @@ public class GetMongDto {
                 .mongId(mongEntity.getMongId())
                 .mongName(mongEntity.getMongName())
                 .mongTypeCode(mongEntity.getType().getComn().getCode())
-                .poopCount(mongEntity.getPayPoint())
+                .payPoint(mongEntity.getPayPoint())
                 .level(mongEntity.getType().getLevel())
                 .weight(mongEntity.getStatus().getWeight())
                 .strength(mongEntity.getStatus().getStrength())

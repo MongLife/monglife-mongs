@@ -1,0 +1,17 @@
+dependencies {
+
+}
+
+tasks.register('copyPrivate', Copy) {
+    copy {
+        from '../../configs/clients/monglife-mongs-client-fcm/'
+        include 'application*.yml'
+        into 'src/main/resources'
+    }
+
+    copy {
+        from '../../configs/clients/monglife-mongs-client-fcm/'
+        include '*.json'
+        into 'src/main/resources'
+    }
+}

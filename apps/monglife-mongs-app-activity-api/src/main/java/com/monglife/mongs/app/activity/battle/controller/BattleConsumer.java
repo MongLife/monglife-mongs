@@ -28,7 +28,7 @@ import java.util.List;
 import java.util.Set;
 
 @MqttConsumer
-@MqttMapping("/match")
+@MqttMapping("/battle/match")
 @RequiredArgsConstructor
 public class BattleConsumer {
 
@@ -56,7 +56,7 @@ public class BattleConsumer {
         Set<MatchPlayerVo> battlePlayers = createBattleDto.getBattlePlayers();
 
         return MqttResponseEntity
-                .body(BattleResponse.ACTIVITY_BATTLE_FIND_MATCHING.toResponseDto(CreateBattleResponseDto.builder()
+                .body(BattleResponse.APP_ACTIVITY_BATTLE_FIND_MATCHING.toResponseDto(CreateBattleResponseDto.builder()
                         .roomId(roomId)
                         .battlePlayers(battlePlayers)
                         .build()))
@@ -85,7 +85,7 @@ public class BattleConsumer {
             List<String> topics = List.of("match/" + roomId);
 
             return MqttResponseEntity
-                    .body(BattleResponse.ACTIVITY_BATTLE_ENTER_ALL_BATTLE_PLAYER.toResponseDto(FightBattleResponseDto.builder()
+                    .body(BattleResponse.APP_ACTIVITY_BATTLE_ENTER_ALL_BATTLE_PLAYER.toResponseDto(FightBattleResponseDto.builder()
                             .roomId(fightBattleDto.getRoomId())
                             .round(fightBattleDto.getRound())
                             .isLastRound(fightBattleDto.getIsLastRound())
@@ -120,7 +120,7 @@ public class BattleConsumer {
             List<String> topics = List.of("match/" + roomId);
 
             return MqttResponseEntity
-                    .body(BattleResponse.ACTIVITY_BATTLE_OVER_BATTLE.toResponseDto(OverBattleResponseDto.builder()
+                    .body(BattleResponse.APP_ACTIVITY_BATTLE_OVER_BATTLE.toResponseDto(OverBattleResponseDto.builder()
                             .roomId(overBattleDto.getRoomId())
                             .winPlayerId(overBattleDto.getWinPlayerId())
                             .winMongTypeCode(overBattleDto.getWinMongTypeCode())
@@ -155,7 +155,7 @@ public class BattleConsumer {
             List<String> topics = List.of("match/" + roomId);
 
             return MqttResponseEntity
-                    .body(BattleResponse.ACTIVITY_BATTLE_FIGHT_BATTLE.toResponseDto(FightBattleResponseDto.builder()
+                    .body(BattleResponse.APP_ACTIVITY_BATTLE_FIGHT_BATTLE.toResponseDto(FightBattleResponseDto.builder()
                             .roomId(roomId)
                             .round(fightBattleDto.getRound())
                             .battlePlayers(fightBattleDto.getBattlePlayers())

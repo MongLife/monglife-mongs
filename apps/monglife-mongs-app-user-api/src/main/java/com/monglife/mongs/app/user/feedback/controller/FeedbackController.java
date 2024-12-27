@@ -16,8 +16,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 @Validated
 @RestController
+@RequestMapping("/feedback")
 @RequiredArgsConstructor
-@RequestMapping("/user/feedback")
 public class FeedbackController {
 
     private final FeedbackService feedbackService;
@@ -33,6 +33,6 @@ public class FeedbackController {
 
         feedbackService.createFeedback(accountId, deviceId, deviceName, title, content);
 
-        return ResponseEntity.ok(FeedbackResponse.USER_FEEDBACK_CREATE_FEEDBACK.toResponseDto());
+        return ResponseEntity.ok(FeedbackResponse.APP_USER_FEEDBACK_CREATE_FEEDBACK.toResponseDto());
     }
 }

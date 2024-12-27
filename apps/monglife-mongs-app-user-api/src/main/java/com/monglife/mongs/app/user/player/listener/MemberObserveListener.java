@@ -26,6 +26,6 @@ public class MemberObserveListener {
                 .starPoint(event.getStarPoint())
                 .build();
 
-        mqttSendService.sendMessage(topic, PlayerResponse.USER_PLAYER_OBSERVE_MEMBER.toResponseDto(memberObserveResponseDto));
+        mqttSendService.sendMessage(topic, PlayerResponse.APP_USER_PLAYER_OBSERVE_MEMBER.toResponseDto(memberObserveResponseDto));
     }
 }

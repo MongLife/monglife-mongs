@@ -16,7 +16,7 @@ public enum FeedbackResponse implements Response {
     /**
      * 성공 응답
      */
-    USER_FEEDBACK_CREATE_FEEDBACK(HttpStatus.OK.value(), "USER-FEEDBACK-000", "오류 신고 등록에 성공했습니다."),
+    APP_USER_FEEDBACK_CREATE_FEEDBACK(HttpStatus.OK.value(), "USER-FEEDBACK-000", "오류 신고 등록에 성공했습니다."),
     ;
 
     private final Integer httpStatus;

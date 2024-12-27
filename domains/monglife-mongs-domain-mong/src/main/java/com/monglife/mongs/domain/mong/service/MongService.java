@@ -318,7 +318,7 @@ public class MongService {
      * @param mongId 몽 ID
      */
     @Transactional
-    public void evolutionMong(Long mongId) {
+    public GetMongDto evolutionMong(Long mongId) {
 
         MongEntity mongEntity = lockMongRepository.findByMongIdAndMetaIsActiveIsTrue(mongId)
                 .orElseThrow(() -> new NotExistsMongException(mongId));
@@ -361,6 +361,8 @@ public class MongService {
             double reward = Math.max(0, evolutionScore - DEFAULT_EVOLUTION_SCORE);
             mongEntity.evolution(nextMongTypeEntity, reward);
         }
+
+        return GetMongDto.of(mongEntity);
     }
 
     /**

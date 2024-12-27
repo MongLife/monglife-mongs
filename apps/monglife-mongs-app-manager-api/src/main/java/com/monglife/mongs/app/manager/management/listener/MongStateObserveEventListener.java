@@ -45,6 +45,6 @@ public class MongStateObserveEventListener {
                 .isSleep(event.getIsSleep())
                 .build();
 
-        mqttSendService.sendMessage(topic, ManagementResponse.MANAGER_MANAGEMENT_OBSERVE_MONG_STATE.toResponseDto(mongStateObserveResponseDto));
+        mqttSendService.sendMessage(topic, ManagementResponse.APP_MANAGER_MANAGEMENT_OBSERVE_MONG_STATE.toResponseDto(mongStateObserveResponseDto));
     }
 }

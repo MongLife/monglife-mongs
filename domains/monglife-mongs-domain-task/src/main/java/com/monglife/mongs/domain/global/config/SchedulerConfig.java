@@ -11,10 +11,10 @@ import java.util.concurrent.ScheduledExecutorService;
 public class SchedulerConfig {
 
     @Value("${application.scheduler.pool-size}")
-    private Integer SINGLE_POOL_SIZE;
+    private Integer SCHEDULER_POOL_SIZE;
 
     @Bean
     public ScheduledExecutorService scheduledExecutorService() {
-        return Executors.newScheduledThreadPool(SINGLE_POOL_SIZE);
+        return Executors.newScheduledThreadPool(SCHEDULER_POOL_SIZE);
     }
 }

@@ -19,8 +19,8 @@ import java.util.List;
 
 @Validated
 @RestController
+@RequestMapping("/store")
 @RequiredArgsConstructor
-@RequestMapping("/user/store")
 public class StoreController {
 
     private final StoreService storeService;
@@ -29,17 +29,17 @@ public class StoreController {
     @GetMapping("/product")
     public ResponseEntity<ResponseDto<List<GetProductResponseDto>>> getProducts() {
 
-        List<GetProductDto> getProductDtos = storeService.getProducts();
+        List<GetProductDto> getInAppProductDtos = storeService.getProducts();
 
-        List<GetProductResponseDto> getProductResponseDtos = getProductDtos.stream()
-                .map(getProductDto -> GetProductResponseDto.builder()
-                        .productId(getProductDto.getProductId())
-                        .productName(getProductDto.getProductName())
-                        .price(getProductDto.getPrice())
+        List<GetProductResponseDto> getProductResponseDtos = getInAppProductDtos.stream()
+                .map(getInAppProductDto -> GetProductResponseDto.builder()
+                        .productId(getInAppProductDto.getProductId())
+                        .productName(getInAppProductDto.getProductName())
+                        .price(getInAppProductDto.getPrice())
                         .build())
                 .toList();
 
-        return ResponseEntity.ok(StoreResponse.USER_STORE_GET_PRODUCT.toResponseDto(getProductResponseDtos));
+        return ResponseEntity.ok(StoreResponse.APP_USER_STORE_GET_PRODUCT.toResponseDto(getProductResponseDtos));
     }
 
     @PostMapping("/order")
@@ -54,17 +54,18 @@ public class StoreController {
                 .productOrderId(productOrderId)
                 .build();
 
-        return ResponseEntity.ok(StoreResponse.USER_STORE_CREATE_ORDER.toResponseDto(createOrderResponseDto));
+        return ResponseEntity.ok(StoreResponse.APP_USER_STORE_CREATE_ORDER.toResponseDto(createOrderResponseDto));
     }
 
     @PutMapping("/order")
-    public ResponseEntity<ResponseDto<?>> consumeOrder(@RequestBody ConsumeProductOrderRequestDto consumeProductOrderRequestDto) {
+    public ResponseEntity<ResponseDto<?>> consumeOrder(@AuthenticationPrincipal Passport passport, @RequestBody ConsumeProductOrderRequestDto consumeProductOrderRequestDto) {
 
+        Long accountId = passport.getAccountId();
         Long productOrderId = consumeProductOrderRequestDto.getProductOrderId();
         String purchaseToken = consumeProductOrderRequestDto.getPurchaseToken();
 
-        storeService.consumeOrder(productOrderId, purchaseToken);
+        storeService.consumeOrder(accountId, productOrderId, purchaseToken);
 
-        return ResponseEntity.ok(StoreResponse.USER_STORE_CONSUME_ORDER.toResponseDto());
+        return ResponseEntity.ok(StoreResponse.APP_USER_STORE_CONSUME_ORDER.toResponseDto());
     }
 }

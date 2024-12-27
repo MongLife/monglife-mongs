@@ -18,7 +18,7 @@ import java.util.Map;
 
 @Validated
 @RestController
-@RequestMapping("/activity/battle/match")
+@RequestMapping("/battle/match")
 @RequiredArgsConstructor
 public class BattleController {
 
@@ -42,7 +42,7 @@ public class BattleController {
 
         battleService.createWaitMatching(accountId, mongId, deviceId);
 
-        return ResponseEntity.ok().body(BattleResponse.ACTIVITY_BATTLE_CREATE_WAIT_MATCHING.toResponseDto());
+        return ResponseEntity.ok().body(BattleResponse.APP_ACTIVITY_BATTLE_CREATE_WAIT_MATCHING.toResponseDto());
     }
 
     /**
@@ -62,7 +62,7 @@ public class BattleController {
 
         battleService.deleteWaitMatching(accountId, mongId, deviceId);
 
-        return ResponseEntity.ok().body(BattleResponse.ACTIVITY_BATTLE_DELETE_WAIT_MATCHING.toResponseDto());
+        return ResponseEntity.ok().body(BattleResponse.APP_ACTIVITY_BATTLE_DELETE_WAIT_MATCHING.toResponseDto());
     }
 
     /**
@@ -81,6 +81,6 @@ public class BattleController {
                 .winMongTypeCode(overBattleDto.getWinMongTypeCode())
                 .build();
 
-        return ResponseEntity.ok(BattleResponse.ACTIVITY_BATTLE_OVER_BATTLE.toResponseDto(overBattleResponseDto));
+        return ResponseEntity.ok(BattleResponse.APP_ACTIVITY_BATTLE_OVER_BATTLE.toResponseDto(overBattleResponseDto));
     }
 }

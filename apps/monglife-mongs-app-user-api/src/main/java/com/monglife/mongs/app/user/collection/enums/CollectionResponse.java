@@ -16,10 +16,10 @@ public enum CollectionResponse implements Response {
     /**
      * 성공 응답
      */
-    USER_COLLECTION_CREATE_COLLECTION_MAP(HttpStatus.OK.value(), "USER-COLLECTION-000", "컬렉션 맵 등록에 성공했습니다."),
-    USER_COLLECTION_CREATE_COLLECTION_MONG(HttpStatus.OK.value(), "USER-COLLECTION-001", "컬렉션 몽 등록에 성공했습니다."),
-    USER_COLLECTION_GET_COLLECTION_MAP(HttpStatus.OK.value(), "USER-COLLECTION-002", "컬렉션 맵 조회에 성공했습니다."),
-    USER_COLLECTION_GET_COLLECTION_MONG(HttpStatus.OK.value(), "USER-COLLECTION-003", "컬렉션 몽 조회에 성공했습니다."),
+    APP_USER_COLLECTION_CREATE_COLLECTION_MAP(HttpStatus.OK.value(), "USER-COLLECTION-000", "컬렉션 맵 등록에 성공했습니다."),
+    APP_USER_COLLECTION_CREATE_COLLECTION_MONG(HttpStatus.OK.value(), "USER-COLLECTION-001", "컬렉션 몽 등록에 성공했습니다."),
+    APP_USER_COLLECTION_GET_COLLECTION_MAP(HttpStatus.OK.value(), "USER-COLLECTION-002", "컬렉션 맵 조회에 성공했습니다."),
+    APP_USER_COLLECTION_GET_COLLECTION_MONG(HttpStatus.OK.value(), "USER-COLLECTION-003", "컬렉션 몽 조회에 성공했습니다."),
     ;
 
     private final Integer httpStatus;

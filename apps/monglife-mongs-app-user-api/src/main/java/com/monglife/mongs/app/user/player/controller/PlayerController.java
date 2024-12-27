@@ -20,12 +20,17 @@ import java.time.LocalDateTime;
 
 @Validated
 @RestController
+@RequestMapping("/player")
 @RequiredArgsConstructor
-@RequestMapping("/user/player")
 public class PlayerController {
 
     private final PlayerService playerService;
 
+    /**
+     * 플레이어 정보 조회
+     * @param passport 패스 포트
+     * @return 플레이어 정보
+     */
     @GetMapping("")
     public ResponseEntity<ResponseDto<GetPlayerResponseDto>> getPlayer(@AuthenticationPrincipal Passport passport) {
 
@@ -39,7 +44,7 @@ public class PlayerController {
                 .starPoint(getPlayerDto.getStarPoint())
                 .build();
 
-        return ResponseEntity.ok(PlayerResponse.USER_PLAYER_GET_PLAYER.toResponseDto(getPlayerResponseDto));
+        return ResponseEntity.ok(PlayerResponse.APP_USER_PLAYER_GET_PLAYER.toResponseDto(getPlayerResponseDto));
     }
 
     @PatchMapping("/slot")
@@ -47,47 +52,7 @@ public class PlayerController {
 
         playerService.buySlot(passport.getAccountId());
 
-        return ResponseEntity.ok(PlayerResponse.USER_PLAYER_INCREASE_SLOT.toResponseDto());
-    }
-
-    @PostMapping("/charge/starPoint")
-    public ResponseEntity<ResponseDto<?>> chargeStarPoint(@AuthenticationPrincipal Passport passport, @RequestBody ChargeStarPointRequestDto chargeStarPointRequestDto) {
-
-        Long accountId = passport.getAccountId();
-        Integer starPoint = chargeStarPointRequestDto.getStarPoint();
-
-        playerService.chargeStarPoint(accountId, starPoint);
-
-        return ResponseEntity.ok(PlayerResponse.USER_PLAYER_INCREASE_STAR_POINT.toResponseDto());
-    }
-
-    @PostMapping("/exchange/starPoint")
-    public ResponseEntity<ResponseDto<?>> exchangeStarPoint(@AuthenticationPrincipal Passport passport, @RequestBody ExchangeStarPointRequestDto exchangeStarPointRequestDto) {
-
-        Long accountId = passport.getAccountId();
-        Long mongId = exchangeStarPointRequestDto.getMongId();
-        Integer starPoint = exchangeStarPointRequestDto.getStarPoint();
-
-        playerService.exchangeStarPoint(accountId, mongId, starPoint);
-
-        return ResponseEntity.ok(PlayerResponse.USER_PLAYER_DECREASE_STAR_POINT.toResponseDto());
-    }
-
-    @PatchMapping("/sync/walking")
-    public ResponseEntity<ResponseDto<SyncWalkingCountResponseDto>> syncWalking(@RequestBody SyncWalkingCountRequestDto syncWalkingCountRequestDto) {
-
-        String deviceId = syncWalkingCountRequestDto.getDeviceId();
-        Integer totalWalkingCount = syncWalkingCountRequestDto.getTotalWalkingCount();
-        LocalDateTime deviceBootedDt = syncWalkingCountRequestDto.getDeviceBootedDt();
-
-        PlayerStepVo playerStepVo = playerService.syncWalkingCount(deviceId, totalWalkingCount, deviceBootedDt);
-
-        SyncWalkingCountResponseDto syncWalkingCountResponseDto = SyncWalkingCountResponseDto.builder()
-                .consumeWalkingCount(playerStepVo.getConsumeWalkingCount())
-                .walkingCount(playerStepVo.getWalkingCount())
-                .build();
-
-        return ResponseEntity.ok(PlayerResponse.USER_PLAYER_SYNC_WALKING_COUNT.toResponseDto(syncWalkingCountResponseDto));
+        return ResponseEntity.ok(PlayerResponse.APP_USER_PLAYER_INCREASE_SLOT.toResponseDto());
     }
 
     @PostMapping("/exchange/walking")
@@ -106,6 +71,18 @@ public class PlayerController {
                 .walkingCount(playerStepVo.getWalkingCount())
                 .build();
 
-        return ResponseEntity.ok(PlayerResponse.USER_PLAYER_DECREASE_WALKING_COUNT.toResponseDto(exchangeWalkingCountResponseDto));
+        return ResponseEntity.ok(PlayerResponse.APP_USER_PLAYER_EXCHANGE_WALKING_COUNT.toResponseDto(exchangeWalkingCountResponseDto));
+    }
+
+    @PostMapping("/exchange/starPoint")
+    public ResponseEntity<ResponseDto<?>> exchangeStarPoint(@AuthenticationPrincipal Passport passport, @RequestBody ExchangeStarPointRequestDto exchangeStarPointRequestDto) {
+
+        Long accountId = passport.getAccountId();
+        Long mongId = exchangeStarPointRequestDto.getMongId();
+        Integer starPoint = exchangeStarPointRequestDto.getStarPoint();
+
+        playerService.exchangeStarPoint(accountId, mongId, starPoint);
+
+        return ResponseEntity.ok(PlayerResponse.APP_USER_PLAYER_EXCHANGE_STAR_POINT.toResponseDto());
     }
 }

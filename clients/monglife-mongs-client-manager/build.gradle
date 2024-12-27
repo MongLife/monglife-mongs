@@ -1,0 +1,12 @@
+dependencies {
+    // modules
+    api project(':modules:monglife-mongs-module-feign')
+}
+
+tasks.register('copyPrivate', Copy) {
+    copy {
+        from '../../configs/clients/monglife-mongs-client-manager/'
+        include 'application*.yml'
+        into 'src/main/resources'
+    }
+}

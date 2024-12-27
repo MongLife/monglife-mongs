@@ -1,6 +1,7 @@
 package com.monglife.mongs.app.manager.management.service;
 
 import com.monglife.mongs.app.manager.global.config.TaskScheduleProperties;
+import com.monglife.mongs.client.user.service.CollectionService;
 import com.monglife.mongs.domain.mong.annotation.MongAccountCheck;
 import com.monglife.mongs.domain.mong.dto.etc.GetFeedItemDto;
 import com.monglife.mongs.domain.mong.dto.etc.GetMongDto;
@@ -27,6 +28,7 @@ public class ManagementService {
 
     private final TaskService taskService;
 
+    private final CollectionService collectionService;
 
     /**
      * 몽 목록 조회
@@ -166,11 +168,12 @@ public class ManagementService {
     @Transactional
     public void evolutionMong(Long accountId, Long mongId) {
 
-        GetMongDto getMongDto = mongService.getMong(mongId);
+        GetMongDto getMongDto = mongService.evolutionMong(mongId);
 
-        mongService.evolutionMong(mongId);
+        // 몽 컬렉션 등록
+        collectionService.createCollectionMong(getMongDto.getMongTypeCode());
 
-        if (getMongDto.getIsEgg()) {
+        if (getMongDto.getLevel().equals(1)) {
 
             String taskOwnerId = String.valueOf(mongId);
 
@@ -196,5 +199,17 @@ public class ManagementService {
         String taskOwnerId = String.valueOf(mongId);
 
         taskService.deleteAllTasks(APP_PACKAGE_NAME, taskOwnerId);
+    }
+
+    /**
+     * 몽 페이 포인트 증가
+     * @param accountId 계정 ID
+     * @param mongId 몽 ID
+     * @param payPoint 페이 포인트
+     */
+    @MongAccountCheck
+    @Transactional
+    public void chargePayPoint(Long accountId, Long mongId, Integer payPoint) {
+        mongService.increasePayPoint(mongId, payPoint);
     }
 }

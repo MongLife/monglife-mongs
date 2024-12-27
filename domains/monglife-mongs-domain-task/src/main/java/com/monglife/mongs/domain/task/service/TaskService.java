@@ -29,7 +29,6 @@ public class TaskService {
 
     private final LockTaskRepository lockTaskRepository;
 
-
     /**
      * Task 조회
      * @param taskId Task ID

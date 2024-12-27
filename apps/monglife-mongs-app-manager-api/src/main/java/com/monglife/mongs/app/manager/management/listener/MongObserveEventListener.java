@@ -15,7 +15,6 @@ public class MongObserveEventListener {
 
     private final MqttSendService mqttSendService;
 
-
     /**
      * 몽 변경 이벤트 리스너
      * @param event 몽 변경 이벤트
@@ -30,6 +29,6 @@ public class MongObserveEventListener {
                 .mongTypeCode(event.getMongTypeCode())
                 .build();
 
-        mqttSendService.sendMessage(topic, ManagementResponse.MANAGER_MANAGEMENT_OBSERVE_MONG.toResponseDto(mongObserveResponseDto));
+        mqttSendService.sendMessage(topic, ManagementResponse.APP_MANAGER_MANAGEMENT_OBSERVE_MONG.toResponseDto(mongObserveResponseDto));
     }
 }
