@@ -1,5 +1,4 @@
 dependencies {
-    api "org.springframework.cloud:spring-cloud-starter-openfeign:3.1.1"
-//    api 'org.springframework.cloud:spring-cloud-commons'
-    api 'io.github.openfeign:feign-okhttp'
+    api "org.springframework.cloud:spring-cloud-starter-openfeign"
+    api 'io.github.openfeign:feign-hc5'
 }

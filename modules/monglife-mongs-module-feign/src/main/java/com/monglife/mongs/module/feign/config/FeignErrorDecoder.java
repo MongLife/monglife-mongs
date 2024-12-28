@@ -25,14 +25,15 @@ public class FeignErrorDecoder implements ErrorDecoder {
 
         ResponseDto<Map<String, Object>> responseDto;
 
-        log.info("{} ===> {}", response, response.request());
-
         try {
+
             responseDto = objectMapper.readValue(response.body().asInputStream(), new TypeReference<>() {});
+
+            throw new FeignClientException(responseDto);
+
         } catch (IOException exception) {
+
             throw new RuntimeException(exception);
         }
-
-        throw new FeignClientException(responseDto);
     }
 }

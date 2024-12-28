@@ -26,7 +26,7 @@ import java.util.List;
 
 @Validated
 @RestController
-@RequestMapping("/management/internal")
+@RequestMapping("/internal/management")
 @RequiredArgsConstructor
 public class ManagementInternalController {
 
@@ -36,7 +36,7 @@ public class ManagementInternalController {
      * For Test
      * TODO: 삭제 필요
      */
-    @GetMapping("/health")
+    @PatchMapping("/health")
     public String health() {
         return "manager health";
     }
@@ -47,7 +47,7 @@ public class ManagementInternalController {
      * @param chargePayPointRequestDto 증가 정보
      * @return 성공 응답
      */
-    @PatchMapping("/payPoint")
+    @PostMapping("/payPoint")
     public ResponseEntity<ResponseDto<?>> chargePayPoint(@AuthenticationPrincipal Passport passport, @RequestBody ChargePayPointRequestDto chargePayPointRequestDto) {
 
         Long accountId = passport.getAccountId();

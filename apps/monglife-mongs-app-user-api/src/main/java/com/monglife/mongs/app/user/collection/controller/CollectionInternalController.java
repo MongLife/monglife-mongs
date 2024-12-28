@@ -21,7 +21,7 @@ import java.util.List;
 
 @Validated
 @RestController
-@RequestMapping("/collection/internal")
+@RequestMapping("/internal/collection")
 @RequiredArgsConstructor
 public class CollectionInternalController {
 
@@ -31,9 +31,9 @@ public class CollectionInternalController {
      * For Test
      * TODO: 삭제 필요
      */
-    @GetMapping("/health")
+    @PatchMapping("/health")
     public String health() {
-        return "manager health";
+        return "collection health";
     }
 
     /**

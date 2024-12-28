@@ -7,18 +7,19 @@ import com.monglife.mongs.module.feign.config.FeignClientConfig;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
-@FeignClient(name = "MONGS-USER", configuration = FeignClientConfig.class)
+@FeignClient(name = "MONGS-USER"/*, url="http://localhost:8040"*/, configuration = FeignClientConfig.class)
 public interface CollectionClient {
 
-    @GetMapping("/api/user/collection/healthCheck")
+    @PatchMapping("/user/internal/collection/health")
     String healthCheck();
 
-    @PostMapping("/api/internal/user/collection/map")
+    @PostMapping("/user/internal/collection/map")
     ResponseEntity<ResponseDto<?>> createCollectionMap(@RequestBody CreateCollectionMapRequestDto createCollectionMapRequestDto);
 
-    @PostMapping("/api/internal/user/collection/mong")
+    @PostMapping("/user/internal/collection/mong")
     ResponseEntity<ResponseDto<?>> createCollectionMong(@RequestBody CreateCollectionMongRequestDto createCollectionMongRequestDto);
 }

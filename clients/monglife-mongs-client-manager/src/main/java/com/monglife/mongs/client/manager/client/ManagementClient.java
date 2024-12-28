@@ -7,14 +7,15 @@ import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
-@FeignClient(name = "MONGS-MANAGER", configuration = FeignClientConfig.class)
+@FeignClient(name = "MONGS-MANAGER"/*, url="http://localhost:8030"*/, configuration = FeignClientConfig.class)
 public interface ManagementClient {
 
-    @GetMapping("/api/manager/internal/management/healthCheck")
+    @PatchMapping("/manager/internal/management/health")
     String healthCheck();
 
-    @PatchMapping("/api/internal/manager/management/payPoint")
+    @PostMapping("/manager/internal/management/payPoint")
     ResponseEntity<ResponseDto<?>> chargePayPoint(@RequestBody ChargePayPointRequestDto chargePayPointRequestDto);
 }
