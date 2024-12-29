@@ -1,15 +1,12 @@
 package com.monglife.mongs.app.manager.management.controller;
 
 import com.monglife.core.dto.response.ResponseDto;
-import com.monglife.mongs.app.manager.management.dto.request.ChargePayPointRequestDto;
 import com.monglife.mongs.app.manager.management.dto.request.CreateMongRequestDto;
 import com.monglife.mongs.app.manager.management.dto.request.FeedMongRequestDto;
 import com.monglife.mongs.app.manager.management.dto.response.GetFeedItemsResponseDto;
 import com.monglife.mongs.app.manager.management.dto.response.GetMongResponseDto;
 import com.monglife.mongs.app.manager.management.enums.ManagementResponse;
 import com.monglife.mongs.app.manager.management.service.ManagementService;
-import com.monglife.mongs.client.user.client.CollectionClient;
-import com.monglife.mongs.client.user.service.CollectionService;
 import com.monglife.mongs.domain.mong.dto.etc.GetFeedItemDto;
 import com.monglife.mongs.domain.mong.dto.etc.GetMongDto;
 import com.monglife.mongs.module.security.global.principal.Passport;
@@ -32,16 +29,6 @@ import java.util.List;
 public class ManagementController {
 
     private final ManagementService managementService;
-
-    /**
-     * For Test
-     * TODO: 삭제 필요
-     */
-    private final CollectionClient collectionClient;
-    @GetMapping("/healthCheck")
-    public String healthCheck() {
-        return collectionClient.healthCheck();
-    }
 
     /**
      * 몽 목록 조회

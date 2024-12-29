@@ -1,6 +1,7 @@
 package com.monglife.mongs.domain.mong.service;
 
 import com.monglife.mongs.domain.mong.dto.etc.*;
+import com.monglife.mongs.domain.mong.entity.history.MongStrokeHistoryEntity;
 import com.monglife.mongs.domain.mong.entity.type.FoodTypeEntity;
 import com.monglife.mongs.domain.mong.entity.data.MongEntity;
 import com.monglife.mongs.domain.mong.entity.history.MongFeedHistoryEntity;
@@ -46,11 +47,16 @@ public class MongService {
     @Value("${application.service.mong.default-training-evolution-score}")
     private Integer DEFAULT_TRAINING_EVOLUTION_SCORE;
 
+    @Value("${application.service.mong.default-stroke-expiration}")
+    private Long DEFAULT_STROKE_EXPIRATION;
+
     private final MongRepository mongRepository;
 
     private final LockMongRepository lockMongRepository;
 
     private final MongFeedHistoryRepository mongFeedHistoryRepository;
+
+    private final MongStrokeHistoryRepository mongStrokeHistoryRepository;
 
     private final MongTypeRepository mongTypeRepository;
 
@@ -242,7 +248,22 @@ public class MongService {
 
         if (mongEntity.isEgg()) throw new InvalidMongTypeLevelException(mongId, mongEntity.getType().getComn().getCode(), mongEntity.getType().getLevel());
 
+        mongStrokeHistoryRepository.findByMongId(mongId)
+                .ifPresent(mongStrokeHistory -> {
+                    Long expirationSeconds = mongStrokeHistory.getExpiration() - Duration.between(mongStrokeHistory.getStrokeAt(), LocalDateTime.now()).getSeconds();
+                    throw new InvalidStrokeException(mongId, expirationSeconds);
+                });
+
         mongEntity.stroke(DEFAULT_STROKE_EXP);
+
+        MongStrokeHistoryEntity mongStrokeHistoryEntity = MongStrokeHistoryEntity.builder()
+                .mongStrokeHistoryId(UUID.randomUUID().toString())
+                .mongId(mongId)
+                .strokeAt(LocalDateTime.now())
+                .expiration(DEFAULT_STROKE_EXPIRATION)
+                .build();
+
+        mongStrokeHistoryRepository.save(mongStrokeHistoryEntity);
     }
 
     /**

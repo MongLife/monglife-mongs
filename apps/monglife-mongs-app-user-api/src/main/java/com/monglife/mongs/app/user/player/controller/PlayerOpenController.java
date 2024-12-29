@@ -22,7 +22,7 @@ import java.time.LocalDateTime;
 
 @Validated
 @RestController
-@RequestMapping("/player/open")
+@RequestMapping("/open/player")
 @RequiredArgsConstructor
 public class PlayerOpenController {
 

@@ -27,7 +27,7 @@ public class MongStatusEntityListener {
     public void preUpdate(MongStatusEntity mongStatusEntity) {
 
         // 지수 최대 최소 값 validation 처리
-        mongStatusEntity.sink();
+        mongStatusEntity.sync();
 
         // 지수 조건 확인
         if (mongStatusEntity.getHealthyRatio() <= SICK_RATIO) {
@@ -38,13 +38,6 @@ public class MongStatusEntityListener {
             mongStatusEntity.setCode(MongStatusCode.SOMNOLENCE);
         } else {
             mongStatusEntity.setCode(MongStatusCode.NORMAL);
-        }
-
-        // 진화 조건 확인
-        if (mongStatusEntity.getExpRatio() >= 100) {
-            applicationEventPublisher.publishEvent(MongEvolutionEvent.builder()
-                    .mongId(mongStatusEntity.getMong().getMongId())
-                    .build());
         }
     }
 
@@ -69,5 +62,12 @@ public class MongStatusEntityListener {
                 .build();
 
         applicationEventPublisher.publishEvent(mongObserveStatusEvent);
+
+        // 진화 조건 확인
+        if (mongStatusEntity.getExpRatio() >= 100) {
+            applicationEventPublisher.publishEvent(MongEvolutionEvent.builder()
+                    .mongId(mongStatusEntity.getMong().getMongId())
+                    .build());
+        }
     }
 }

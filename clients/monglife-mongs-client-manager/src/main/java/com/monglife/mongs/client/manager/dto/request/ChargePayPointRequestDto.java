@@ -1,13 +1,11 @@
 package com.monglife.mongs.client.manager.dto.request;
 
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 @Getter
 @Setter
 @NoArgsConstructor
+@ToString
 public class ChargePayPointRequestDto {
 
     private Long mongId;

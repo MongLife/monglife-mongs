@@ -44,6 +44,7 @@ public class PassportFilter extends GenericFilterBean {
 
             UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken
                     = new UsernamePasswordAuthenticationToken(passport, null, passport.getAuthorities());
+
             SecurityContextHolder.getContext().setAuthentication(usernamePasswordAuthenticationToken);
         }
 

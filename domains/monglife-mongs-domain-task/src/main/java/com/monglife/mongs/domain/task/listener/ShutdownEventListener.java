@@ -23,15 +23,18 @@ public class ShutdownEventListener implements ApplicationListener<ContextClosedE
     @Override
     public void onApplicationEvent(ContextClosedEvent contextClosedEvent) {
 
-        String applicationName = contextClosedEvent.getApplicationContext().getApplicationName();
+        if (contextClosedEvent.getApplicationContext().getParent() == null) {
 
-        log.info("[TASK STOP WORKING START] {}", applicationName);
+            String applicationName = contextClosedEvent.getApplicationContext().getApplicationName();
 
-        StringBuilder sb = new StringBuilder();
-        taskService.appStopPauseAllTask(APP_PACKAGE_NAME).forEach(getTaskDto -> {
-            sb.append("\n").append(getTaskDto.getTaskId()).append(" =====> ").append(getTaskDto.getTaskOwnerId()).append(" : ").append(getTaskDto.getTaskCode());
-        });
+            log.info("[TASK STOP WORKING START] {}", applicationName);
 
-        log.info("[TASK STOP WORKING SUCCESS] {}{}", applicationName, sb);
+            StringBuilder sb = new StringBuilder();
+            taskService.appStopPauseAllTask(APP_PACKAGE_NAME).forEach(getTaskDto -> {
+                sb.append("\n").append(getTaskDto.getTaskId()).append(" =====> ").append(getTaskDto.getTaskOwnerId()).append(" : ").append(getTaskDto.getTaskCode());
+            });
+
+            log.info("[TASK STOP WORKING SUCCESS] {}{}", applicationName, sb);
+        }
     }
 }

@@ -11,15 +11,12 @@ import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
-@FeignClient(name = "MONGS-USER"/*, url="http://localhost:8040"*/, configuration = FeignClientConfig.class)
+@FeignClient(name = "MONGS-USER", path = "/user/internal", configuration = FeignClientConfig.class)
 public interface CollectionClient {
 
-    @PatchMapping("/user/internal/collection/health")
-    String healthCheck();
-
-    @PostMapping("/user/internal/collection/map")
+    @PostMapping("/collection/map")
     ResponseEntity<ResponseDto<?>> createCollectionMap(@RequestBody CreateCollectionMapRequestDto createCollectionMapRequestDto);
 
-    @PostMapping("/user/internal/collection/mong")
+    @PostMapping("/collection/mong")
     ResponseEntity<ResponseDto<?>> createCollectionMong(@RequestBody CreateCollectionMongRequestDto createCollectionMongRequestDto);
 }

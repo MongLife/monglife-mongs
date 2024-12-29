@@ -1,13 +1,10 @@
 package com.monglife.mongs.app.user.collection.controller;
 
 import com.monglife.core.dto.response.ResponseDto;
-import com.monglife.mongs.app.user.collection.dto.request.CreateCollectionMapRequestDto;
-import com.monglife.mongs.app.user.collection.dto.request.CreateCollectionMongRequestDto;
 import com.monglife.mongs.app.user.collection.dto.response.GetCollectionMapResponseDto;
 import com.monglife.mongs.app.user.collection.dto.response.GetCollectionMongResponseDto;
 import com.monglife.mongs.app.user.collection.enums.CollectionResponse;
 import com.monglife.mongs.app.user.collection.service.CollectionService;
-import com.monglife.mongs.client.manager.client.ManagementClient;
 import com.monglife.mongs.domain.member.dto.etc.GetCollectionMapDto;
 import com.monglife.mongs.domain.member.dto.etc.GetCollectionMongDto;
 import com.monglife.mongs.module.security.global.principal.Passport;
@@ -15,7 +12,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
@@ -26,16 +25,6 @@ import java.util.List;
 public class CollectionController {
 
     private final CollectionService collectionService;
-
-    /**
-     * For Test
-     * TODO: 삭제 필요
-     */
-    private final ManagementClient managementClient;
-    @GetMapping("/healthCheck")
-    public String healthCheck() {
-        return managementClient.healthCheck();
-    }
 
     /**
      * 맵 컬렉션 조회

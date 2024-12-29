@@ -2,27 +2,17 @@ package com.monglife.mongs.app.manager.management.controller;
 
 import com.monglife.core.dto.response.ResponseDto;
 import com.monglife.mongs.app.manager.management.dto.request.ChargePayPointRequestDto;
-import com.monglife.mongs.app.manager.management.dto.request.CreateMongRequestDto;
-import com.monglife.mongs.app.manager.management.dto.request.FeedMongRequestDto;
-import com.monglife.mongs.app.manager.management.dto.response.GetFeedItemsResponseDto;
-import com.monglife.mongs.app.manager.management.dto.response.GetMongResponseDto;
 import com.monglife.mongs.app.manager.management.enums.ManagementResponse;
 import com.monglife.mongs.app.manager.management.service.ManagementService;
-import com.monglife.mongs.client.user.client.CollectionClient;
-import com.monglife.mongs.domain.mong.dto.etc.GetFeedItemDto;
-import com.monglife.mongs.domain.mong.dto.etc.GetMongDto;
 import com.monglife.mongs.module.security.global.principal.Passport;
-import jakarta.validation.constraints.Min;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.*;
-
-import java.time.LocalTime;
-import java.util.List;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 @Validated
 @RestController
@@ -31,15 +21,6 @@ import java.util.List;
 public class ManagementInternalController {
 
     private final ManagementService managementService;
-
-    /**
-     * For Test
-     * TODO: 삭제 필요
-     */
-    @PatchMapping("/health")
-    public String health() {
-        return "manager health";
-    }
 
     /**
      * 몽 페이 포인트 증가

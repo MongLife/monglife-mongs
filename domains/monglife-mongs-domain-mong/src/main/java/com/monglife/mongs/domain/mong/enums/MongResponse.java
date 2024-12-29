@@ -27,6 +27,7 @@ public enum MongResponse implements Response {
     DOMAIN_MONG_INVALID_GRADUATE(HttpStatus.BAD_REQUEST.value(), "DOMAIN-MONG-108", "졸업 불가능한 상태 입니다."),
     DOMAIN_MONG_INVALID_MONG(HttpStatus.BAD_REQUEST.value(), "DOMAIN-MONG-109", "접근할 수 없는 몽입니다."),
     DOMAIN_MONG_NOT_EXISTS_PARAMETER(HttpStatus.INTERNAL_SERVER_ERROR.value(), "DOMAIN-MONG-110", "메서드에 파라미터가 존재하지 않습니다."),
+    DOMAIN_MONG_INVALID_STROKE(HttpStatus.BAD_REQUEST.value(), "DOMAIN-MONG-111", "현재 쓰다듬기가 불가능한 상태입니다."),
     ;
 
     private final Integer httpStatus;

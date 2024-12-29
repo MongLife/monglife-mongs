@@ -29,6 +29,9 @@ public class LoggingAspect {
         objectMapper.registerModule(new JavaTimeModule());
     }
 
+    @Pointcut("execution(* com.monglife.mongs..*Consumer.*(..))")
+    private void consumerPointcut() {}
+
     @Pointcut("execution(* com.monglife.mongs..*Controller.*(..))")
     private void controllerPointcut() {}
 
@@ -38,7 +41,7 @@ public class LoggingAspect {
     @Pointcut("execution(* com.monglife.mongs..*Listener.*(..))")
     private void listenerPointcut() {}
 
-    @Before("controllerPointcut() || servicePointcut() || listenerPointcut()")
+    @Before("consumerPointcut() || controllerPointcut() || servicePointcut() || listenerPointcut()")
     public void before(JoinPoint joinPoint) {
 
         MethodSignature signature = (MethodSignature) joinPoint.getSignature();
@@ -82,7 +85,7 @@ public class LoggingAspect {
             if (index != parameters.length - 1) argsBuilder.append(", ");
         }
 
-        log.debug("[Method Call] {}#{} =====> {}", clazzName, methodName, argsBuilder);
+        log.info("[Method Call] {}#{} =====> {}", clazzName, methodName, argsBuilder);
     }
 
     @AfterThrowing(value = "controllerPointcut() || servicePointcut() || listenerPointcut()", throwing = "exception")

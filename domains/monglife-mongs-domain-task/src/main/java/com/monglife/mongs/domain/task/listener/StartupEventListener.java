@@ -23,15 +23,18 @@ public class StartupEventListener implements ApplicationListener<ApplicationRead
     @Override
     public void onApplicationEvent(ApplicationReadyEvent applicationReadyEvent) {
 
-        String applicationName = applicationReadyEvent.getApplicationContext().getApplicationName();
+        if (applicationReadyEvent.getApplicationContext().getParent() == null) {
 
-        log.info("[TASK LOAD WORKING START] {}", applicationName);
+            String applicationName = applicationReadyEvent.getApplicationContext().getApplicationName();
 
-        StringBuilder sb = new StringBuilder();
-        taskService.appStopResumeAllTask(APP_PACKAGE_NAME).forEach(getTaskDto -> {
-            sb.append("\n").append(getTaskDto.getTaskId()).append(" =====> ").append(getTaskDto.getTaskOwnerId()).append(" : ").append(getTaskDto.getTaskCode());
-        });
+            log.info("[TASK LOAD WORKING START] {}", applicationName);
 
-        log.info("[TASK LOAD WORKING SUCCESS] {}{}", applicationName, sb);
+            StringBuilder sb = new StringBuilder();
+            taskService.appStopResumeAllTask(APP_PACKAGE_NAME).forEach(getTaskDto -> {
+                sb.append("\n").append(getTaskDto.getTaskId()).append(" =====> ").append(getTaskDto.getTaskOwnerId()).append(" : ").append(getTaskDto.getTaskCode());
+            });
+
+            log.info("[TASK LOAD WORKING SUCCESS] {}{}", applicationName, sb);
+        }
     }
 }

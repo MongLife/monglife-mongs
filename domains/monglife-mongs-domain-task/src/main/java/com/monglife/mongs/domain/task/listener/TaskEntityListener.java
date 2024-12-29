@@ -45,12 +45,11 @@ public class TaskEntityListener {
      */
     @PostUpdate
     public void postUpdate(TaskEntity taskEntity) {
-        log.info("{}", taskEntity);
         switch (taskEntity.getTaskStatusCode()) {
             case PROCESSING ->
                     taskScheduleService.startTaskSchedule(StartTaskScheduleDto.of(taskEntity));
             case PAUSE, APP_STOP_PROCESSING ->
-                    taskScheduleService.stopTaskSchedule(StopTaskScheduleDto.of(taskEntity));
+                    taskScheduleService.stopTaskSchedule(taskEntity.getTaskId());
         }
     }
 
@@ -60,7 +59,7 @@ public class TaskEntityListener {
     @PostRemove
     public void preRemove(TaskEntity taskEntity) {
 
-        taskScheduleService.stopTaskSchedule(StopTaskScheduleDto.of(taskEntity));
+        taskScheduleService.stopTaskSchedule(taskEntity.getTaskId());
 
         applicationEventPublisher.publishEvent(ExecuteTaskEvent.builder()
                 .appPackageName(taskEntity.getAppPackageName())

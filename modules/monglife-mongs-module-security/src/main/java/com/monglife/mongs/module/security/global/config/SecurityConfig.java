@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -47,9 +48,9 @@ public class SecurityConfig {
             .addFilterBefore(passportFilter, UsernamePasswordAuthenticationFilter.class)
             .addFilterBefore(globalExceptionFilter, PassportFilter.class)
             .authorizeHttpRequests(authorize -> authorize
-                    .requestMatchers("/*/prometheus").permitAll()
-                    .requestMatchers("/*/open").permitAll()
-                    .requestMatchers("/*/**").hasAnyAuthority(RoleCode.ADMIN.getRole(), RoleCode.NORMAL.getRole())
+                    .requestMatchers("/prometheus").permitAll()
+                    .requestMatchers("/open/**").permitAll()
+                    .requestMatchers("/**").hasAnyAuthority(RoleCode.ADMIN.getRole(), RoleCode.NORMAL.getRole())
                     .anyRequest().authenticated()
             )
             .exceptionHandling(configurer -> {

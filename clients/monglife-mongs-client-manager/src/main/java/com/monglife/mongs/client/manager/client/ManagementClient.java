@@ -10,12 +10,9 @@ import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
-@FeignClient(name = "MONGS-MANAGER"/*, url="http://localhost:8030"*/, configuration = FeignClientConfig.class)
+@FeignClient(name = "MONGS-MANAGER", path = "/manager/internal", configuration = FeignClientConfig.class)
 public interface ManagementClient {
 
-    @PatchMapping("/manager/internal/management/health")
-    String healthCheck();
-
-    @PostMapping("/manager/internal/management/payPoint")
+    @PostMapping("/management/payPoint")
     ResponseEntity<ResponseDto<?>> chargePayPoint(@RequestBody ChargePayPointRequestDto chargePayPointRequestDto);
 }

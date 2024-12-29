@@ -8,7 +8,6 @@ import com.monglife.mongs.domain.taskSchedule.repository.TaskScheduleRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.ApplicationEventPublisher;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -28,16 +27,6 @@ public class TaskScheduleService {
     private final ApplicationEventPublisher applicationEventPublisher;
 
     private final ScheduledExecutorService executor;
-
-
-    @Scheduled(fixedDelay = 1000)
-    public void scheduleTask() {
-        StringBuffer sb = new StringBuffer();
-        taskScheduleRepository.findAll().forEach(taskScheduleEntity ->
-            sb.append("\n").append(taskScheduleEntity.getTaskOwnerId()).append(" : ").append(taskScheduleEntity.getTaskCode()).append("[").append(taskScheduleEntity.getExpiredAt()).append("]"));
-
-        if (sb.toString().trim().isEmpty()) log.debug(sb.toString());
-    }
 
     @Transactional
     public void startTaskSchedule(StartTaskScheduleDto startTaskScheduleDto) {
@@ -61,11 +50,16 @@ public class TaskScheduleService {
 
     /**
      * Pause, AppStopPause, AppStopProcessing, Delete Task Entity
-     * @param stopTaskScheduleDto Task ID
+     * @param taskId Task ID
      */
     @Transactional
-    public void stopTaskSchedule(StopTaskScheduleDto stopTaskScheduleDto) {
-        taskScheduleRepository.deleteByTaskId(stopTaskScheduleDto.getTaskId());
+    public void stopTaskSchedule(Long taskId) {
+        taskScheduleRepository.stopAndDeleteByTaskId(taskId);
+    }
+
+    @Transactional
+    public void deleteTaskSchedule(Long taskId) {
+        taskScheduleRepository.deleteByTaskId(taskId);
     }
 
     /**

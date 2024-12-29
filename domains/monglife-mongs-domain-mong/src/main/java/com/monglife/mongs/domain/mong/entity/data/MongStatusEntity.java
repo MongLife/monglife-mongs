@@ -215,6 +215,9 @@ public class MongStatusEntity {
     }
 
     public void resetPoopCount() {
+
+        if (this.poopCount == 0) return;
+
         this.poopCount = 0;
 
         history.add(MongStatusHistoryEntity.builder()
@@ -289,7 +292,7 @@ public class MongStatusEntity {
         this.satiety += Math.abs(satiety);
         this.healthy += Math.abs(healthy);
         this.fatigue += Math.abs(fatigue);
-        this.sinkStatusValueToStatusRatio();
+        this.syncStatusValueToStatusRatio();
 
         history.add(MongStatusHistoryEntity.builder()
                 .mongStatusHistoryCode(MongStatusHistoryCode.HISTORY_MONG_STATUS_INCREASE_STATUS)
@@ -315,7 +318,7 @@ public class MongStatusEntity {
         this.satiety -= Math.abs(satiety);
         this.healthy -= Math.abs(healthy);
         this.fatigue -= Math.abs(fatigue);
-        this.sinkStatusValueToStatusRatio();
+        this.syncStatusValueToStatusRatio();
 
         history.add(MongStatusHistoryEntity.builder()
                 .mongStatusHistoryCode(MongStatusHistoryCode.HISTORY_MONG_STATUS_DECREASE_STATUS)
@@ -341,7 +344,7 @@ public class MongStatusEntity {
         this.satietyRatio += Math.abs(satietyRatio);
         this.healthyRatio += Math.abs(healthyRatio);
         this.fatigueRatio += Math.abs(fatigueRatio);
-        this.sinkStatusRatioToStatusValue();
+        this.syncStatusRatioToStatusValue();
 
         history.add(MongStatusHistoryEntity.builder()
                 .mongStatusHistoryCode(MongStatusHistoryCode.HISTORY_MONG_STATUS_INCREASE_STATUS_RATIO)
@@ -367,7 +370,7 @@ public class MongStatusEntity {
         this.satietyRatio -= Math.abs(satietyRatio);
         this.healthyRatio -= Math.abs(healthyRatio);
         this.fatigueRatio -= Math.abs(fatigueRatio);
-        this.sinkStatusRatioToStatusValue();
+        this.syncStatusRatioToStatusValue();
 
         history.add(MongStatusHistoryEntity.builder()
                 .mongStatusHistoryCode(MongStatusHistoryCode.HISTORY_MONG_STATUS_INCREASE_STATUS_RATIO)
@@ -444,7 +447,7 @@ public class MongStatusEntity {
                 .build());
     }
 
-    private void sinkStatusRatioToStatusValue() {
+    private void syncStatusRatioToStatusValue() {
         this.strengthRatio = Math.max(0D, Math.min(this.strengthRatio, 100D));
         this.satietyRatio = Math.max(0D, Math.min(this.satietyRatio, 100D));
         this.healthyRatio = Math.max(0D, Math.min(this.healthyRatio, 100D));
@@ -456,7 +459,7 @@ public class MongStatusEntity {
         this.fatigue = this.fatigueRatio * this.maxStatus / 100;
     }
 
-    private void sinkStatusValueToStatusRatio() {
+    private void syncStatusValueToStatusRatio() {
         this.strength = Math.max(0D, Math.min(this.strength, this.maxStatus));
         this.satiety = Math.max(0D, Math.min(this.satiety, this.maxStatus));
         this.healthy = Math.max(0D, Math.min(this.healthy, this.maxStatus));
@@ -468,7 +471,7 @@ public class MongStatusEntity {
         this.fatigueRatio = this.fatigue / this.maxStatus * 100;
     }
 
-    public void sink() {
+    public void sync() {
         this.weight = Math.max(0D, this.weight);
         this.poopCount = Math.max(0, Math.min(this.poopCount, MAX_POOP_COUNT));
 
