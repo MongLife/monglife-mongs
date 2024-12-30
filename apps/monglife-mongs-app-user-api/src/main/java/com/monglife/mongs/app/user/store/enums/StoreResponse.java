@@ -17,8 +17,7 @@ public enum StoreResponse implements Response {
      * 성공 응답
      */
     APP_USER_STORE_GET_PRODUCT(HttpStatus.OK.value(), "USER-STORE-000", "상품 조회에 성공했습니다."),
-    APP_USER_STORE_CREATE_ORDER(HttpStatus.OK.value(), "USER-STORE-001", "상품 주문 생성에 성공했습니다."),
-    APP_USER_STORE_CONSUME_ORDER(HttpStatus.OK.value(), "USER-STORE-002", "상품 주문 소비에 성공했습니다."),
+    APP_USER_STORE_CONSUME_ORDER(HttpStatus.OK.value(), "USER-STORE-001", "상품 주문 소비에 성공했습니다."),
 
     ;
 

@@ -12,14 +12,8 @@ public class GetProductResponseDto {
 
     private String productId;
 
-    private String productName;
-
-    private Double price;
-
     @Builder
-    public GetProductResponseDto(String productId, String productName, Double price) {
+    public GetProductResponseDto(String productId) {
         this.productId = productId;
-        this.productName = productName;
-        this.price = price;
     }
 }

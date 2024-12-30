@@ -11,18 +11,32 @@ import com.monglife.mongs.domain.member.repository.MemberRepository;
 import com.monglife.mongs.domain.member.repository.ProductOrderRepository;
 import com.monglife.mongs.module.jpa.entity.ComnCodeEntity;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
 public class ProductOrderService {
+
+    @Value("${application.service.product-order.product-group-code}")
+    private String PRODUCT_GROUP_CODE;
 
     private final ComnCodeRepository comnCodeRepository;
 
     private final MemberRepository memberRepository;
 
     private final ProductOrderRepository productOrderRepository;
+
+    @Transactional
+    public List<String> getProductIds() {
+
+        return comnCodeRepository.findByGroupCode(PRODUCT_GROUP_CODE).stream()
+                .map(ComnCodeEntity::getCode)
+                .toList();
+    }
 
     @Transactional(readOnly = true)
     public GetProductOrderDto getProductOrder(Long productOrderId) {
@@ -31,12 +45,13 @@ public class ProductOrderService {
                 .orElseThrow(() -> new NotExistsProductOrderException(productOrderId));
 
         return GetProductOrderDto.builder()
+                .accountId(productOrderEntity.getMember().getAccountId())
                 .productId(productOrderEntity.getComn().getCode())
                 .build();
     }
 
     @Transactional
-    public Long createProductOrder(Long accountId, String productId, Double price) {
+    public Long createProductOrder(Long accountId, String productId, Double price, String purchaseToken) {
 
         ComnCodeEntity comnCodeEntity = comnCodeRepository.findById(productId)
                 .orElseThrow(() -> new NotExistsProductCodeException(productId));
@@ -44,28 +59,24 @@ public class ProductOrderService {
         MemberEntity memberEntity = memberRepository.findByAccountId(accountId)
                 .orElseThrow(() -> new NotExistsMemberException(accountId));
 
-        ProductOrderEntity productOrderEntity = ProductOrderEntity.builder()
-                .member(memberEntity)
-                .comn(comnCodeEntity)
-                .price(price)
-                .build();
-
-        productOrderRepository.save(productOrderEntity);
+        ProductOrderEntity productOrderEntity = productOrderRepository.findByPurchaseToken(purchaseToken)
+                .orElseGet(() -> productOrderRepository.save(
+                        ProductOrderEntity.builder()
+                                .member(memberEntity)
+                                .comn(comnCodeEntity)
+                                .price(price)
+                                .purchaseToken(purchaseToken)
+                                .build()));
 
         return productOrderEntity.getProductOrderId();
     }
 
     @Transactional
-    public void consumeProductOrder(Long productOrderId, String receipt) {
+    public void consumeProductOrder(Long productOrderId) {
 
         ProductOrderEntity productOrderEntity = productOrderRepository.findById(productOrderId)
                 .orElseThrow(() -> new NotExistsProductOrderException(productOrderId));
 
-        productOrderEntity.consume(receipt);
-    }
-
-    @Transactional
-    public void doneProductOrder(Long productOrderId) {
-
+        productOrderEntity.consume();
     }
 }

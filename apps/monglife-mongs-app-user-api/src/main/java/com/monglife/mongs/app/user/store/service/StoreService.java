@@ -25,38 +25,43 @@ public class StoreService {
 
     @Transactional(readOnly = true)
     public List<GetProductDto> getProducts() {
-        return googleService.getInAppProducts().stream()
-                .map(getInAppProductDto -> GetProductDto.builder()
-                        .productId(getInAppProductDto.getProductId())
-                        .productName(getInAppProductDto.getProductName())
-                        .price(getInAppProductDto.getPrice())
+        return productOrderService.getProductIds().stream()
+                .map(productId -> GetProductDto.builder()
+                        .productId(productId)
                         .build())
                 .toList();
     }
 
     @Transactional
-    public Long createOrder(Long accountId, String productId) {
+    public Long createProductOrder(Long accountId, String productId, String purchaseToken) {
 
-        double price = googleService.getInAppOrder(productId);
+        // 인앱 상품 현재 가격
+        double price = googleService.getInAppProductPrice(productId);
 
-        return productOrderService.createProductOrder(accountId, productId, price);
+        // 상품 주문 등록
+        return productOrderService.createProductOrder(accountId, productId, price, purchaseToken);
     }
 
     @Transactional
-    public void consumeOrder(Long accountId, Long productOrderId, String purchaseToken) {
+    public void consumeProductOrder(Long productOrderId, String purchaseToken) {
 
         GetProductOrderDto getProductOrderDto = productOrderService.getProductOrder(productOrderId);
 
+        Long accountId = getProductOrderDto.getAccountId();
         String productId = getProductOrderDto.getProductId();
 
+        // 구매 검증
+        googleService.verityInAppOrder(productId, purchaseToken);
+
         // 주문 소비 실행
-        Integer starPoint = switch (productId) {
+        memberService.increaseStarPoint(accountId, switch (productId) {
             case "PRDT000" -> 10;
             case "PRDT001" -> 30;
             case "PRDT002" -> 50;
             default -> 0;
-        };
+        });
 
-        memberService.increaseStarPoint(accountId, starPoint);
+        // 소비 처리
+        productOrderService.consumeProductOrder(productOrderId);
     }
 }

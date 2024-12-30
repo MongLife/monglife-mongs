@@ -12,14 +12,14 @@ import lombok.Setter;
 public class ConsumeProductOrderRequestDto {
 
     @NotBlank
-    private Long productOrderId;
+    private String productId;
 
     @NotBlank
     private String purchaseToken;
 
     @Builder
-    public ConsumeProductOrderRequestDto(Long productOrderId, String purchaseToken) {
-        this.productOrderId = productOrderId;
+    public ConsumeProductOrderRequestDto(String productId, String purchaseToken) {
+        this.productId = productId;
         this.purchaseToken = purchaseToken;
     }
 }

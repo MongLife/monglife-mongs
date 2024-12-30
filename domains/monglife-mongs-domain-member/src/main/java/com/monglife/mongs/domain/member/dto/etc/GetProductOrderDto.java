@@ -10,10 +10,13 @@ import lombok.Setter;
 @NoArgsConstructor
 public class GetProductOrderDto {
 
+    private Long accountId;
+
     private String productId;
 
     @Builder
-    public GetProductOrderDto(String productId) {
+    public GetProductOrderDto(Long accountId, String productId) {
+        this.accountId = accountId;
         this.productId = productId;
     }
 }

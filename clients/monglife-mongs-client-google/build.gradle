@@ -1,8 +1,7 @@
 dependencies {
-    implementation 'com.google.api-client:google-api-client:1.33.0'
-    implementation 'com.google.auth:google-auth-library-oauth2-http:1.6.0'
-    implementation 'com.google.apis:google-api-services-androidpublisher:v3-rev20220411-1.32.1'
-    implementation group: 'com.google.http-client', name: 'google-http-client-jackson2', version: '1.41.7'
+    api 'com.google.api-client:google-api-client:2.2.0'
+    api 'com.google.apis:google-api-services-androidpublisher:v3-rev20231012-2.0.0'
+    api 'com.google.auth:google-auth-library-oauth2-http:1.20.0'
 }
 
 tasks.register('copyPrivate', Copy) {

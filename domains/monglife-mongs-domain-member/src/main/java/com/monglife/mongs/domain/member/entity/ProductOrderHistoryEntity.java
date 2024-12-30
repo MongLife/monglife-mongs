@@ -32,6 +32,5 @@ public class ProductOrderHistoryEntity extends BaseTimeEntity {
     public enum ProductOrderHistoryType {
         ORDER,
         CONSUME,
-        DONE,
     }
 }

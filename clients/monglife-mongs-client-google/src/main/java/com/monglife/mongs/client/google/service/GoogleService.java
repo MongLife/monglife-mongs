@@ -1,15 +1,26 @@
 package com.monglife.mongs.client.google.service;
 
+import com.google.api.client.googleapis.javanet.GoogleNetHttpTransport;
+import com.google.api.client.json.gson.GsonFactory;
 import com.google.api.services.androidpublisher.AndroidPublisher;
+import com.google.api.services.androidpublisher.AndroidPublisherScopes;
 import com.google.api.services.androidpublisher.model.InAppProduct;
+import com.google.auth.http.HttpCredentialsAdapter;
+import com.google.auth.oauth2.GoogleCredentials;
 import com.monglife.mongs.client.google.dto.etc.GetInAppProductDto;
 import com.monglife.mongs.client.google.exception.InvalidConsumeOrderException;
 import com.monglife.mongs.client.google.exception.InvalidGetOrderException;
 import com.monglife.mongs.client.google.exception.InvalidGetProductsException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Bean;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.security.GeneralSecurityException;
 import java.util.List;
 
 @Slf4j
@@ -21,52 +32,57 @@ public class GoogleService {
 
     private final AndroidPublisher androidPublisher;
 
-    public List<GetInAppProductDto> getInAppProducts() {
+
+//    public List<GetInAppProductDto> getInAppProducts() {
+//
+//        try {
+//            AndroidPublisher.Inappproducts.List products = androidPublisher.inappproducts().list(appPackageName);
+//
+//            return products.execute().getInappproduct().stream()
+//                    .filter(inAppProduct -> "active".equals(inAppProduct.getStatus()))
+//                    .map(inAppProduct -> {
+//                        String productId = inAppProduct.getSku().toUpperCase();
+//
+//                        String productName = inAppProduct.getListings().get("ko-KR").getTitle();
+//
+//                        double price = priceMicrosToPrice(inAppProduct.getDefaultPrice().getPriceMicros());
+//
+//                        return GetInAppProductDto.builder()
+//                                .productId(productId)
+//                                .productName(productName)
+//                                .price(price)
+//                                .build();
+//                    })
+//                    .toList();
+//
+//        } catch (Exception e) {
+//            throw new InvalidGetProductsException();
+//        }
+//    }
+
+    public Double getInAppProductPrice(String productId) {
 
         try {
-            AndroidPublisher.Inappproducts.List products = androidPublisher.inappproducts().list(appPackageName);
-
-            return products.execute().getInappproduct().stream()
-                    .filter(inAppProduct -> "active".equals(inAppProduct.getStatus()))
-                    .map(inAppProduct -> {
-                        String productId = inAppProduct.getSku().toUpperCase();
-
-                        String productName = inAppProduct.getListings().get("ko-KR").getTitle();
-
-                        double price = priceMicrosToPrice(inAppProduct.getDefaultPrice().getPriceMicros());
-
-                        return GetInAppProductDto.builder()
-                                .productId(productId)
-                                .productName(productName)
-                                .price(price)
-                                .build();
-                    })
-                    .toList();
-
-        } catch (Exception e) {
-            throw new InvalidGetProductsException();
-        }
-    }
-
-    public Double getInAppOrder(String productId) {
-
-        try {
-
             AndroidPublisher.Inappproducts.Get get = androidPublisher.inappproducts().get(appPackageName, productId.toLowerCase());
             InAppProduct product = get.execute();
+
+            log.info("Get inappproduct price: {}", product);
 
             return priceMicrosToPrice(product.getDefaultPrice().getPriceMicros());
 
         } catch (Exception e) {
             throw new InvalidGetOrderException(productId);
         }
+    }
+
+    public void verityInAppOrder(String productId, String purchaseToken) {
 
     }
 
-    public void consumeInAppOrder(Long accountId, Long productOrderId, String purchaseToken) {
-
-        try {
-
+//    public void consumeInAppOrder(Long accountId, Long productOrderId, String purchaseToken) {
+//
+//        try {
+//
 //            GetProductOrderDto getProductOrderDto = productOrderService.getProductOrder(productOrderId);
 //
 //            String productId = getProductOrderDto.getProductId();
@@ -95,11 +111,11 @@ public class GoogleService {
 //                case "PRDT002" -> 50;
 //                default -> 0;
 //            };
-
-        } catch (Exception e) {
-            throw new InvalidConsumeOrderException(productOrderId, purchaseToken);
-        }
-    }
+//
+//        } catch (Exception e) {
+//            throw new InvalidConsumeOrderException(productOrderId, purchaseToken);
+//        }
+//    }
 
     private static Double priceMicrosToPrice(String priceMicrosStr) {
 

@@ -17,7 +17,7 @@ import java.security.GeneralSecurityException;
 @Configuration
 public class GoogleCredentialsConfig {
 
-    private static final String googleAccountFilePath = "google-payment-account.json";
+    private static final String googleAccountFilePath = "in-app-payment.json";
 
     private static final String appPackageName = "com.mongs.wear";
 

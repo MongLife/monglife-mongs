@@ -36,18 +36,19 @@ public class ProductOrderEntity extends BaseTimeEntity {
     @Column(name = "price")
     private Double price;
 
-    @Column(name = "receipt")
-    private String receipt;
+    @Column(name = "purchaseToken")
+    private String purchaseToken;
 
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "product_order_id")
     private List<ProductOrderHistoryEntity> history;
 
     @Builder
-    public ProductOrderEntity(MemberEntity member, ComnCodeEntity comn, Double price) {
+    public ProductOrderEntity(MemberEntity member, ComnCodeEntity comn, Double price, String purchaseToken) {
         this.member = member;
         this.comn = comn;
         this.price = price;
+        this.purchaseToken = purchaseToken;
         this.history = new ArrayList<>();
     }
 
@@ -61,21 +62,10 @@ public class ProductOrderEntity extends BaseTimeEntity {
         this.history.add(productOrderHistoryEntity);
     }
 
-    public void consume(String receipt) {
-
-        this.receipt = receipt;
+    public void consume() {
 
         ProductOrderHistoryEntity productOrderHistoryEntity = ProductOrderHistoryEntity.builder()
                 .type(ProductOrderHistoryEntity.ProductOrderHistoryType.CONSUME)
-                .build();
-
-        this.history.add(productOrderHistoryEntity);
-    }
-
-    public void done() {
-
-        ProductOrderHistoryEntity productOrderHistoryEntity = ProductOrderHistoryEntity.builder()
-                .type(ProductOrderHistoryEntity.ProductOrderHistoryType.DONE)
                 .build();
 
         this.history.add(productOrderHistoryEntity);
