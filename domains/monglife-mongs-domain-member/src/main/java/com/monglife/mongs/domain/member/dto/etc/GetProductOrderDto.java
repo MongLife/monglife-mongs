@@ -14,9 +14,15 @@ public class GetProductOrderDto {
 
     private String productId;
 
+    private String orderId;
+
+    private String purchaseToken;
+
     @Builder
-    public GetProductOrderDto(Long accountId, String productId) {
+    public GetProductOrderDto(Long accountId, String productId, String orderId, String purchaseToken) {
         this.accountId = accountId;
         this.productId = productId;
+        this.orderId = orderId;
+        this.purchaseToken = purchaseToken;
     }
 }

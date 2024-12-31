@@ -7,6 +7,7 @@ import com.monglife.mongs.domain.member.exception.NotExistsMemberException;
 import com.monglife.mongs.domain.member.exception.NotExistsProductCodeException;
 import com.monglife.mongs.domain.member.exception.NotExistsProductOrderException;
 import com.monglife.mongs.domain.member.repository.ComnCodeRepository;
+import com.monglife.mongs.domain.member.repository.LockProductOrderRepository;
 import com.monglife.mongs.domain.member.repository.MemberRepository;
 import com.monglife.mongs.domain.member.repository.ProductOrderRepository;
 import com.monglife.mongs.module.jpa.entity.ComnCodeEntity;
@@ -30,6 +31,8 @@ public class ProductOrderService {
 
     private final ProductOrderRepository productOrderRepository;
 
+    private final LockProductOrderRepository lockProductOrderRepository;
+
     @Transactional
     public List<String> getProductIds() {
 
@@ -41,17 +44,19 @@ public class ProductOrderService {
     @Transactional(readOnly = true)
     public GetProductOrderDto getProductOrder(Long productOrderId) {
 
-        ProductOrderEntity productOrderEntity = productOrderRepository.findById(productOrderId)
+        ProductOrderEntity productOrderEntity = productOrderRepository.findByProductOrderId(productOrderId)
                 .orElseThrow(() -> new NotExistsProductOrderException(productOrderId));
 
         return GetProductOrderDto.builder()
                 .accountId(productOrderEntity.getMember().getAccountId())
                 .productId(productOrderEntity.getComn().getCode())
+                .orderId(productOrderEntity.getOrderId())
+                .purchaseToken(productOrderEntity.getPurchaseToken())
                 .build();
     }
 
     @Transactional
-    public Long createProductOrder(Long accountId, String productId, Double price, String purchaseToken) {
+    public Long createProductOrder(Long accountId, String productId, Double price, String orderId, String purchaseToken) {
 
         ComnCodeEntity comnCodeEntity = comnCodeRepository.findById(productId)
                 .orElseThrow(() -> new NotExistsProductCodeException(productId));
@@ -59,12 +64,13 @@ public class ProductOrderService {
         MemberEntity memberEntity = memberRepository.findByAccountId(accountId)
                 .orElseThrow(() -> new NotExistsMemberException(accountId));
 
-        ProductOrderEntity productOrderEntity = productOrderRepository.findByPurchaseToken(purchaseToken)
+        ProductOrderEntity productOrderEntity = productOrderRepository.findByOrderId(orderId)
                 .orElseGet(() -> productOrderRepository.save(
                         ProductOrderEntity.builder()
                                 .member(memberEntity)
                                 .comn(comnCodeEntity)
                                 .price(price)
+                                .orderId(orderId)
                                 .purchaseToken(purchaseToken)
                                 .build()));
 
@@ -74,7 +80,7 @@ public class ProductOrderService {
     @Transactional
     public void consumeProductOrder(Long productOrderId) {
 
-        ProductOrderEntity productOrderEntity = productOrderRepository.findById(productOrderId)
+        ProductOrderEntity productOrderEntity = lockProductOrderRepository.findByProductOrderId(productOrderId)
                 .orElseThrow(() -> new NotExistsProductOrderException(productOrderId));
 
         productOrderEntity.consume();

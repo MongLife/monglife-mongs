@@ -1,7 +1,11 @@
 package com.monglife.mongs.app.user.store.service;
 
 import com.monglife.mongs.app.user.store.dto.etc.GetProductDto;
+import com.monglife.mongs.app.user.store.exception.AlreadyConsumeOrderException;
+import com.monglife.mongs.app.user.store.exception.InvalidConsumeOrderException;
 import com.monglife.mongs.client.google.service.GoogleService;
+import com.monglife.mongs.client.google.vo.InAppOrderVo;
+import com.monglife.mongs.client.google.vo.InAppProductVo;
 import com.monglife.mongs.domain.member.dto.etc.GetProductOrderDto;
 import com.monglife.mongs.domain.member.service.MemberService;
 import com.monglife.mongs.domain.member.service.ProductOrderService;
@@ -33,25 +37,39 @@ public class StoreService {
     }
 
     @Transactional
-    public Long createProductOrder(Long accountId, String productId, String purchaseToken) {
+    public Long createProductOrder(Long accountId, String productId, String orderId, String purchaseToken) {
 
-        // 인앱 상품 현재 가격
-        double price = googleService.getInAppProductPrice(productId);
+        // 상품 정보 확인
+        InAppProductVo productVo = googleService.getInAppProduct(productId);
+
+        Double price = productVo.getPrice();
 
         // 상품 주문 등록
-        return productOrderService.createProductOrder(accountId, productId, price, purchaseToken);
+        return productOrderService.createProductOrder(accountId, productId, price, orderId, purchaseToken);
     }
 
     @Transactional
-    public void consumeProductOrder(Long productOrderId, String purchaseToken) {
+    public void consumeProductOrder(Long productOrderId) {
 
         GetProductOrderDto getProductOrderDto = productOrderService.getProductOrder(productOrderId);
 
         Long accountId = getProductOrderDto.getAccountId();
         String productId = getProductOrderDto.getProductId();
+        String orderId = getProductOrderDto.getOrderId();
+        String purchaseToken = getProductOrderDto.getPurchaseToken();
 
         // 구매 검증
-        googleService.verityInAppOrder(productId, purchaseToken);
+        InAppOrderVo inAppOrderVo = googleService.getInAppOrder(productId, orderId, purchaseToken);
+
+        // 구매 안함
+        if (!inAppOrderVo.getIsPurchase()) {
+            throw new InvalidConsumeOrderException(productOrderId, purchaseToken);
+        }
+
+        // 소비 완료
+        if (inAppOrderVo.getIsConsume()) {
+            throw new AlreadyConsumeOrderException(productOrderId, purchaseToken);
+        }
 
         // 주문 소비 실행
         memberService.increaseStarPoint(accountId, switch (productId) {
@@ -63,5 +81,8 @@ public class StoreService {
 
         // 소비 처리
         productOrderService.consumeProductOrder(productOrderId);
+
+        // 구글 소비 처리
+        googleService.consumeOrder(productId, purchaseToken);
     }
 }

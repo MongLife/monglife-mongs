@@ -38,16 +38,17 @@ public class StoreController {
         return ResponseEntity.ok(StoreResponse.APP_USER_STORE_GET_PRODUCT.toResponseDto(getProductResponseDtos));
     }
 
-    @PutMapping("/order")
+    @PostMapping("/order")
     public ResponseEntity<ResponseDto<?>> consumeProductOrder(@AuthenticationPrincipal Passport passport, @RequestBody ConsumeProductOrderRequestDto consumeProductOrderRequestDto) {
 
         Long accountId = passport.getAccountId();
-        String productId = consumeProductOrderRequestDto.getProductId();
+        String productId = consumeProductOrderRequestDto.getProductId().toUpperCase();
+        String orderId = consumeProductOrderRequestDto.getOrderId();
         String purchaseToken = consumeProductOrderRequestDto.getPurchaseToken();
 
-        Long productOrderId = storeService.createProductOrder(accountId, productId, purchaseToken);
+        Long productOrderId = storeService.createProductOrder(accountId, productId, orderId, purchaseToken);
 
-        storeService.consumeProductOrder(productOrderId, purchaseToken);
+        storeService.consumeProductOrder(productOrderId);
 
         return ResponseEntity.ok(StoreResponse.APP_USER_STORE_CONSUME_ORDER.toResponseDto());
     }

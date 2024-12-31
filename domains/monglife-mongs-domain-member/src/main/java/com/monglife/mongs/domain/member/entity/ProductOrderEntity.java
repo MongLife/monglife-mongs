@@ -12,6 +12,7 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 @Entity
 @Getter
@@ -36,6 +37,9 @@ public class ProductOrderEntity extends BaseTimeEntity {
     @Column(name = "price")
     private Double price;
 
+    @Column(name = "orderId")
+    private String orderId;
+
     @Column(name = "purchaseToken")
     private String purchaseToken;
 
@@ -44,10 +48,11 @@ public class ProductOrderEntity extends BaseTimeEntity {
     private List<ProductOrderHistoryEntity> history;
 
     @Builder
-    public ProductOrderEntity(MemberEntity member, ComnCodeEntity comn, Double price, String purchaseToken) {
+    public ProductOrderEntity(MemberEntity member, ComnCodeEntity comn, Double price, String orderId, String purchaseToken) {
         this.member = member;
         this.comn = comn;
         this.price = price;
+        this.orderId = orderId;
         this.purchaseToken = purchaseToken;
         this.history = new ArrayList<>();
     }

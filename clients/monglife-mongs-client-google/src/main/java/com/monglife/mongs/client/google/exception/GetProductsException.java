@@ -7,10 +7,10 @@ import lombok.Getter;
 import java.util.Collections;
 
 @Getter
-public class InvalidGetProductsException extends ErrorException {
+public class GetProductsException extends ErrorException {
 
-    public InvalidGetProductsException() {
+    public GetProductsException(String productId) {
         this.response = GoogleResponse.CLIENT_GOOGLE_GET_PRODUCTS_FAIL;
-        this.result = Collections.emptyMap();
+        this.result = Collections.singletonMap("productId", productId);
     }
 }

@@ -17,8 +17,8 @@ public enum GoogleResponse implements Response {
      * 실패 응답
      */
     CLIENT_GOOGLE_GET_PRODUCTS_FAIL(HttpStatus.INTERNAL_SERVER_ERROR.value(), "GOOGLE-100", "상품 조회에 실패했습니다."),
-    CLIENT_GOOGLE_GET_ORDER_FAIL(HttpStatus.INTERNAL_SERVER_ERROR.value(), "GOOGLE-101", "상품 주문 내역 조회에 실패했습니다."),
-    CLIENT_GOOGLE_CONSUME_ORDER_FAIL(HttpStatus.INTERNAL_SERVER_ERROR.value(), "GOOGLE-102", "상품 소비 처리에 실패했습니다."),
+    CLIENT_GOOGLE_GET_ORDER_FAIL(HttpStatus.BAD_REQUEST.value(), "GOOGLE-101", "주문 조회에 실패했습니다."),
+    CLIENT_GOOGLE_CONSUME_ORDER(HttpStatus.INTERNAL_SERVER_ERROR.value(), "GOOGLE-102", "주문 소비에 실패했습니다."),
     ;
 
     private final Integer httpStatus;

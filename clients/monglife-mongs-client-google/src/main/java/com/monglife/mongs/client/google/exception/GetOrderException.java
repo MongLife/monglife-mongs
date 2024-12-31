@@ -7,10 +7,10 @@ import lombok.Getter;
 import java.util.Map;
 
 @Getter
-public class InvalidGetOrderException extends ErrorException {
+public class GetOrderException extends ErrorException {
 
-    public InvalidGetOrderException(String productId) {
+    public GetOrderException(String productId, String orderId, String purchaseToken) {
         this.response = GoogleResponse.CLIENT_GOOGLE_GET_ORDER_FAIL;
-        this.result = Map.of("productId", productId);
+        this.result = Map.of("productId", productId, "orderId", orderId, "purchaseToken", purchaseToken);
     }
 }
