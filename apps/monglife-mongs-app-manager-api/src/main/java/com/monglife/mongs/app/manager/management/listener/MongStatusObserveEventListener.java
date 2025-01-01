@@ -54,7 +54,7 @@ public class MongStatusObserveEventListener {
             }
         }
 
-        String topic = String.valueOf(event.getMongId());
+        String topic = "management/" + event.getMongId();
 
         MongStatusObserveResponseDto mongStatusObserveResponseDto = MongStatusObserveResponseDto.builder()
                 .mongId(event.getMongId())

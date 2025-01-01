@@ -55,6 +55,24 @@ public class ProductOrderService {
                 .build();
     }
 
+    @Transactional(readOnly = true)
+    public List<GetProductOrderDto> getConsumedProductOrders(List<String> orderIds) {
+
+        List<ProductOrderEntity> productOrderEntities = productOrderRepository.findAllByOrderIdIn(orderIds).stream()
+                .filter(ProductOrderEntity::isConsumed)
+                .toList();
+
+
+        return productOrderEntities.stream()
+                .map(productOrderEntity -> GetProductOrderDto.builder()
+                        .accountId(productOrderEntity.getMember().getAccountId())
+                        .productId(productOrderEntity.getComn().getCode())
+                        .orderId(productOrderEntity.getOrderId())
+                        .purchaseToken(productOrderEntity.getPurchaseToken())
+                        .build())
+                .toList();
+    }
+
     @Transactional
     public Long createProductOrder(Long accountId, String productId, Double price, String orderId, String purchaseToken) {
 

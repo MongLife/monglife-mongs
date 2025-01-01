@@ -5,6 +5,7 @@ import com.monglife.mongs.domain.mong.enums.MongStateCode;
 import com.monglife.mongs.domain.mong.enums.MongStatusCode;
 import lombok.*;
 
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 
 @Getter
@@ -56,8 +57,10 @@ public class GetMongDto {
 
     private Boolean isEgg;
 
+    private LocalDateTime createdAt;
+
     @Builder
-    public GetMongDto(Long mongId, String mongName, String mongTypeCode, Integer payPoint, Integer level, Double weight, Double strength, Double satiety, Double healthy, Double fatigue, Double expRatio, Double strengthRatio, Double satietyRatio, Double healthyRatio, Double fatigueRatio, Integer poopCount, MongStateCode stateCode, MongStatusCode statusCode, Boolean isSleep, LocalTime sleepAt, LocalTime wakeupAt, Boolean isEgg) {
+    public GetMongDto(Long mongId, String mongName, String mongTypeCode, Integer payPoint, Integer level, Double weight, Double strength, Double satiety, Double healthy, Double fatigue, Double expRatio, Double strengthRatio, Double satietyRatio, Double healthyRatio, Double fatigueRatio, Integer poopCount, MongStateCode stateCode, MongStatusCode statusCode, Boolean isSleep, LocalTime sleepAt, LocalTime wakeupAt, Boolean isEgg, LocalDateTime createdAt) {
         this.mongId = mongId;
         this.mongName = mongName;
         this.mongTypeCode = mongTypeCode;
@@ -80,6 +83,7 @@ public class GetMongDto {
         this.sleepAt = sleepAt;
         this.wakeupAt = wakeupAt;
         this.isEgg = isEgg;
+        this.createdAt = createdAt;
     }
 
     public static GetMongDto of(MongEntity mongEntity) {
@@ -106,6 +110,7 @@ public class GetMongDto {
                 .sleepAt(mongEntity.getSleepAt())
                 .wakeupAt(mongEntity.getWakeupAt())
                 .isEgg(mongEntity.isEgg())
+                .createdAt(mongEntity.getCreatedAt())
                 .build();
     }
 }

@@ -18,7 +18,7 @@ public class MemberObserveListener {
     @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
     public void memberObserveEventListener(MemberObserveEvent event) {
 
-        String topic = String.valueOf(event.getAccountId());
+        String topic = "player/" + event.getAccountId();
 
         MemberObserveResponseDto memberObserveResponseDto = MemberObserveResponseDto.builder()
                 .accountId(event.getAccountId())

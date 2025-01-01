@@ -57,6 +57,17 @@ public class ProductOrderEntity extends BaseTimeEntity {
         this.history = new ArrayList<>();
     }
 
+    public Boolean isConsumed() {
+
+        for (ProductOrderHistoryEntity productOrderHistoryEntity : this.history) {
+            if (ProductOrderHistoryEntity.ProductOrderHistoryType.CONSUME.equals(productOrderHistoryEntity.getType())) {
+                return Boolean.TRUE;
+            }
+        }
+
+        return Boolean.FALSE;
+    }
+
     @PrePersist
     public void prePersist() {
 

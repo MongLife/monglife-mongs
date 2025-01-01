@@ -37,7 +37,7 @@ public class MongStateObserveEventListener {
             taskService.deleteAllTasks(APP_PACKAGE_NAME, taskOwnerId);
         }
 
-        String topic = String.valueOf(event.getMongId());
+        String topic = "management/" + event.getMongId();
 
         MongStateObserveResponseDto mongStateObserveResponseDto = MongStateObserveResponseDto.builder()
                 .mongId(event.getMongId())

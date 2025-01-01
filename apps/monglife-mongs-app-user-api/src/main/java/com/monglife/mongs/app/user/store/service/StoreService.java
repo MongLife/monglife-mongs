@@ -85,4 +85,18 @@ public class StoreService {
         // 구글 소비 처리
         googleService.consumeOrder(productId, purchaseToken);
     }
+
+    @Transactional
+    public List<String> getConsumedOrderIds(List<String> orderIds) {
+
+        List<GetProductOrderDto> getProductOrderDtos = productOrderService.getConsumedProductOrders(orderIds);
+
+        List<String> consumedOrderIds = getProductOrderDtos.stream()
+                .map(GetProductOrderDto::getOrderId)
+                .toList();
+
+        return orderIds.stream()
+                .filter(consumedOrderIds::contains)
+                .toList();
+    }
 }

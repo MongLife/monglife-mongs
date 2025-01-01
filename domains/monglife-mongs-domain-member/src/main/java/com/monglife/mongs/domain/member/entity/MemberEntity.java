@@ -70,7 +70,7 @@ public class MemberEntity extends BaseTimeEntity {
     }
 
     public void increaseSlotCount() {
-        this.slotCount = Math.max(this.slotCount + 1, MAX_SLOT);
+        this.slotCount = Math.min(this.slotCount + 1, MAX_SLOT);
     }
 
     public void decreaseSlotCount() {

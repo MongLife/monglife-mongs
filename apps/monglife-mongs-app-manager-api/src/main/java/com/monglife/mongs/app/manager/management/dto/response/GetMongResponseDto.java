@@ -1,10 +1,13 @@
 package com.monglife.mongs.app.manager.management.dto.response;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.monglife.mongs.domain.mong.dto.etc.GetMongDto;
 import com.monglife.mongs.domain.mong.enums.MongStateCode;
 import com.monglife.mongs.domain.mong.enums.MongStatusCode;
 import lombok.*;
+import org.springframework.format.annotation.DateTimeFormat;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Getter
@@ -40,8 +43,11 @@ public class GetMongResponseDto {
 
     private Boolean isSleep;
 
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS", timezone = "Asia/Seoul")
+    private LocalDateTime createdAt;
+
     @Builder
-    public GetMongResponseDto(Long mongId, String mongName, String mongTypeCode, Integer payPoint, Double weight, Double expRatio, Double strengthRatio, Double satietyRatio, Double healthyRatio, Double fatigueRatio, Integer poopCount, MongStateCode stateCode, MongStatusCode statusCode, Boolean isSleep) {
+    public GetMongResponseDto(Long mongId, String mongName, String mongTypeCode, Integer payPoint, Double weight, Double expRatio, Double strengthRatio, Double satietyRatio, Double healthyRatio, Double fatigueRatio, Integer poopCount, MongStateCode stateCode, MongStatusCode statusCode, Boolean isSleep, LocalDateTime createdAt) {
         this.mongId = mongId;
         this.mongName = mongName;
         this.mongTypeCode = mongTypeCode;
@@ -56,6 +62,7 @@ public class GetMongResponseDto {
         this.stateCode = stateCode;
         this.statusCode = statusCode;
         this.isSleep = isSleep;
+        this.createdAt = createdAt;
     }
 
     public static GetMongResponseDto of(GetMongDto getMongDto) {
@@ -74,6 +81,7 @@ public class GetMongResponseDto {
                 .stateCode(getMongDto.getStateCode())
                 .statusCode(getMongDto.getStatusCode())
                 .isSleep(getMongDto.getIsSleep())
+                .createdAt(getMongDto.getCreatedAt())
                 .build();
     }
 

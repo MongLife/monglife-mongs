@@ -103,7 +103,7 @@ public class MongEntity extends BaseTimeEntity {
      * 삭제
      */
     public void delete() {
-        this.state.setCode(MongStateCode.NORMAL);
+        this.state.setCode(MongStateCode.DELETE);
         this.meta.deActivate();
         this.history.add(MongHistoryEntity.builder()
                 .mongHistoryCode(MongHistoryCode.HISTORY_MONG_DELETE)
@@ -217,7 +217,7 @@ public class MongEntity extends BaseTimeEntity {
      * 몽 졸업
      */
     public void graduate() {
-        this.state.setCode(MongStateCode.NORMAL);
+        this.state.setCode(MongStateCode.DELETE);
         this.status.setCode(MongStatusCode.NORMAL);
         this.meta.deActivate();
         this.history.add(MongHistoryEntity.builder()

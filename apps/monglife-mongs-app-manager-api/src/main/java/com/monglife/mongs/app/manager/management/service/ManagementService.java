@@ -3,6 +3,7 @@ package com.monglife.mongs.app.manager.management.service;
 import com.monglife.mongs.app.manager.global.config.TaskScheduleProperties;
 import com.monglife.mongs.client.user.service.CollectionService;
 import com.monglife.mongs.domain.mong.annotation.MongAccountCheck;
+import com.monglife.mongs.domain.mong.dto.etc.CreateMongDto;
 import com.monglife.mongs.domain.mong.dto.etc.GetFeedItemDto;
 import com.monglife.mongs.domain.mong.dto.etc.GetMongDto;
 import com.monglife.mongs.domain.mong.service.MongService;
@@ -75,11 +76,14 @@ public class ManagementService {
     @Transactional
     public void createMong(Long accountId, String name, LocalTime sleepAt, LocalTime wakeupAt) {
 
-        Long mongId = mongService.createMong(accountId, name, sleepAt, wakeupAt);
+        CreateMongDto createMongDto = mongService.createMong(accountId, name, sleepAt, wakeupAt);
 
-        String taskOwnerId = String.valueOf(mongId);
+        String taskOwnerId = String.valueOf(createMongDto.getMongId());
+        String mongTypeCode = createMongDto.getMongTypeCode();
 
         taskService.createTask(APP_PACKAGE_NAME, taskOwnerId, taskScheduleProperties.eggEvolution.getCode(), taskScheduleProperties.eggEvolution.getExpiration());
+
+        collectionService.createCollectionMong(mongTypeCode);
     }
 
     /**

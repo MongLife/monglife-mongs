@@ -62,12 +62,7 @@ public class TaskEntity extends BaseTimeEntity {
     private LocalTime fixTime;
 
     @Transient
-    private LocalDateTime now;
-
-    @PostLoad
-    public void postLoad() {
-        this.now = LocalDateTime.now();
-    }
+    private LocalDateTime now = LocalDateTime.now();
 
     /**
      * 시간 고정 Task 생성자

@@ -147,7 +147,7 @@ public class MongService {
      * @param wakeupAt 몽 정기 수면 종료 시간
      */
     @Transactional
-    public Long createMong(Long accountId, String name, LocalTime sleepAt, LocalTime wakeupAt) {
+    public CreateMongDto createMong(Long accountId, String name, LocalTime sleepAt, LocalTime wakeupAt) {
 
         List<MongTypeEntity> mongTypeEntities = mongTypeRepository.findByComnGroupCode(EGG_MONG_TYPE_GROUP_CODE);
 
@@ -167,7 +167,10 @@ public class MongService {
 
         mongRepository.save(mongEntity);
 
-        return mongEntity.getMongId();
+        return CreateMongDto.builder()
+                .mongId(mongEntity.getMongId())
+                .mongTypeCode(mongEntity.getType().getComn().getCode())
+                .build();
     }
 
     /**

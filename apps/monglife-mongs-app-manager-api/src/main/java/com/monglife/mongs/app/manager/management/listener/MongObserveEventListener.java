@@ -22,7 +22,7 @@ public class MongObserveEventListener {
     @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
     public void mongObserveEventListener(MongObserveEvent event) {
 
-        String topic = String.valueOf(event.getMongId());
+        String topic = "management/" + event.getMongId();
 
         MongObserveResponseDto mongObserveResponseDto = MongObserveResponseDto.builder()
                 .payPoint(event.getPayPoint())

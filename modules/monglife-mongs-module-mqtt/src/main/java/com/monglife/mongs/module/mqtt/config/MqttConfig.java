@@ -103,8 +103,6 @@ public class MqttConfig {
             @Qualifier("mqttInboundChannel") MessageChannel mqttInboundChannel,
             @Qualifier("mqttClientFactory") MqttPahoClientFactory mqttPahoClientFactory
     ) {
-        //"tcp://" + HOST + ":" + PORT
-
         MqttPahoMessageDrivenChannelAdapter adapter =
                 new MqttPahoMessageDrivenChannelAdapter(MqttAsyncClient.generateClientId(), mqttPahoClientFactory, BASE_TOPIC + "/#");
         adapter.setCompletionTimeout(5000);
