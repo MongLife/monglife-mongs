@@ -25,6 +25,7 @@ public class MongObserveEventListener {
         String topic = "management/" + event.getMongId();
 
         MongObserveResponseDto mongObserveResponseDto = MongObserveResponseDto.builder()
+                .mongId(event.getMongId())
                 .payPoint(event.getPayPoint())
                 .mongTypeCode(event.getMongTypeCode())
                 .build();
