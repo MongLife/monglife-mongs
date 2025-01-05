@@ -3,28 +3,16 @@ package com.monglife.mongs.domain.mong.entity.data;
 import com.monglife.mongs.domain.mong.entity.history.MongStateHistoryEntity;
 import com.monglife.mongs.domain.mong.enums.MongStateCode;
 import com.monglife.mongs.domain.mong.enums.MongStateHistoryCode;
-import com.monglife.mongs.domain.mong.listener.MongStateEntityListener;
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.Getter;
+import lombok.ToString;
 
 import java.util.List;
-import java.util.Optional;
 
-@Entity
+@Embeddable
 @Getter
-@EntityListeners(MongStateEntityListener.class)
-@Table(name = "mongs_mong_state")
-@ToString(exclude = "mong")
+@ToString(exclude = { "history" })
 public class MongStateEntity {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "mong_state_id")
-    private Long mongStateId;
-
-    @OneToOne(mappedBy = "state")
-    @JoinColumn(name = "mong_state_id")
-    private MongEntity mong;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "mong_state_code")
@@ -34,7 +22,7 @@ public class MongStateEntity {
     private Boolean isSleep;
 
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    @JoinColumn(name = "mong_state_id")
+    @JoinColumn(name = "mong_id")
     private List<MongStateHistoryEntity> history;
 
     public MongStateEntity() {

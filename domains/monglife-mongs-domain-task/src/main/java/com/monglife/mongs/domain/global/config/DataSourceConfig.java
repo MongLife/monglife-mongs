@@ -36,6 +36,9 @@ public class DataSourceConfig {
     @Value("${spring.jpa.task.properties.hibernate.show_sql}")
     private String showSql;
 
+    @Value("${spring.jpa.task.properties.hibernate.format_sql}")
+    private String formatSql;
+
     @Bean(name = "taskDataSourceProperties")
     @ConfigurationProperties(prefix = "spring.datasource.task.hikari")
     public HikariConfig taskDataSourceProperties() {
@@ -53,6 +56,7 @@ public class DataSourceConfig {
         jpaProperties.put(AvailableSettings.DIALECT, dialect);
         jpaProperties.put(AvailableSettings.HBM2DDL_AUTO, ddlAuto);
         jpaProperties.put(AvailableSettings.SHOW_SQL, showSql);
+        jpaProperties.put(AvailableSettings.FORMAT_SQL, formatSql);
         properties.keySet().forEach(field -> jpaProperties.put(field, properties.get(field)));
         return jpaProperties;
     }

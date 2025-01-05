@@ -23,7 +23,7 @@ import java.util.Optional;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @EntityListeners({ AuditingEntityListener.class, MongEntityListener.class })
 @Table(name = "mongs_mong")
-@ToString(exclude = { "type", "state", "status" })
+@ToString(exclude = { "history" })
 public class MongEntity extends BaseTimeEntity {
 
     @Id
@@ -50,21 +50,18 @@ public class MongEntity extends BaseTimeEntity {
     @JoinColumn(name = "mong_type_id")
     private MongTypeEntity type;
 
-    @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-    @JoinColumn(name = "mong_meta_id")
-    private MongMetaEntity meta;
-
-    @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-    @JoinColumn(name = "mong_state_id")
-    private MongStateEntity state;
-
-    @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-    @JoinColumn(name = "mong_status_id")
-    private MongStatusEntity status;
-
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "mong_id")
     private List<MongHistoryEntity> history;
+
+    @Embedded
+    private MongMetaEntity meta;
+
+    @Embedded
+    private MongStateEntity state;
+
+    @Embedded
+    private MongStatusEntity status;
 
     @Builder
     public MongEntity(Long accountId, String mongName, LocalTime sleepAt, LocalTime wakeupAt, MongTypeEntity type, Integer payPoint) {

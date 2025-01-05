@@ -152,8 +152,7 @@ public class TaskService {
     @Transactional
     public void deleteTask(String appPackageName, String taskOwnerId, String taskCode) {
 
-        lockTaskRepository.findByAppPackageNameAndTaskOwnerIdAndComnCode(appPackageName, taskOwnerId, taskCode)
-                .ifPresent(lockTaskRepository::delete);
+        lockTaskRepository.deleteAll(lockTaskRepository.findByAppPackageNameAndTaskOwnerIdAndComnCode(appPackageName, taskOwnerId, taskCode));
     }
 
     /**
@@ -166,7 +165,7 @@ public class TaskService {
     public void pauseTask(String appPackageName, String taskOwnerId, String taskCode) {
 
         lockTaskRepository.findByAppPackageNameAndTaskOwnerIdAndComnCode(appPackageName, taskOwnerId, taskCode)
-                .ifPresent(TaskEntity::pause);
+                .forEach(TaskEntity::pause);
     }
 
     /**
@@ -179,7 +178,7 @@ public class TaskService {
     public void resumeTask(String appPackageName, String taskOwnerId, String taskCode) {
 
         lockTaskRepository.findByAppPackageNameAndTaskOwnerIdAndComnCode(appPackageName, taskOwnerId, taskCode)
-                .ifPresent(TaskEntity::resume);
+                .forEach(TaskEntity::resume);
     }
 
     /**

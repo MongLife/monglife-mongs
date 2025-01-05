@@ -16,7 +16,6 @@ public class MqttConsumer implements MessageHandler {
 
     private final MqttMappingHandler mqttMappingHandler;
 
-
     @Override
     public void handleMessage(Message<?> message) throws MessagingException {
 

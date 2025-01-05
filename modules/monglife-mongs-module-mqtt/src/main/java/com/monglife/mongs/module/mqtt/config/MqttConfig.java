@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.integration.annotation.ServiceActivator;
@@ -99,6 +100,7 @@ public class MqttConfig {
     }
 
     @Bean
+    @ConditionalOnProperty(value = "spring.mqtt.consume", havingValue = "true")
     public MessageProducer mqttInboundMessageDrivenAdapter(
             @Qualifier("mqttInboundChannel") MessageChannel mqttInboundChannel,
             @Qualifier("mqttClientFactory") MqttPahoClientFactory mqttPahoClientFactory
@@ -114,6 +116,7 @@ public class MqttConfig {
     }
 
     @Bean
+    @ConditionalOnProperty(value = "spring.mqtt.consume", havingValue = "true")
     @ServiceActivator(inputChannel = "mqttInboundChannel")
     public MessageHandler mqttInbound(@Autowired MqttConsumer mqttConsumer) {
         return mqttConsumer;

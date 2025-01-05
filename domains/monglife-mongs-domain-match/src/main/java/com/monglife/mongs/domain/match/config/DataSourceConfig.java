@@ -36,6 +36,8 @@ public class DataSourceConfig {
     @Value("${spring.jpa.match.properties.hibernate.show_sql}")
     private String showSql;
 
+    @Value("${spring.jpa.match.properties.hibernate.format_sql}")
+    private String formatSql;
 
     @Bean(name = "matchDataSourceProperties")
     @ConfigurationProperties(prefix = "spring.datasource.match.hikari")
@@ -54,6 +56,7 @@ public class DataSourceConfig {
         jpaProperties.put(AvailableSettings.DIALECT, dialect);
         jpaProperties.put(AvailableSettings.HBM2DDL_AUTO, ddlAuto);
         jpaProperties.put(AvailableSettings.SHOW_SQL, showSql);
+        jpaProperties.put(AvailableSettings.FORMAT_SQL, formatSql);
         properties.keySet().forEach(field -> jpaProperties.put(field, properties.get(field)));
         return jpaProperties;
     }

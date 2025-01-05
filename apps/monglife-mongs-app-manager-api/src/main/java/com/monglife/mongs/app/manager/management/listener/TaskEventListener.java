@@ -9,6 +9,7 @@ import com.monglife.mongs.domain.task.service.TaskService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.event.TransactionPhase;
 import org.springframework.transaction.event.TransactionalEventListener;
@@ -28,7 +29,7 @@ public class TaskEventListener {
 
 
     @TransactionalEventListener(phase = TransactionPhase.BEFORE_COMMIT)
-    @Transactional
+    @Transactional(propagation = Propagation.REQUIRED)
     public void executeTaskEventListener(ExecuteTaskEvent event) {
 
         // 앱 코드 확인

@@ -8,22 +8,12 @@ import lombok.ToString;
 
 import java.util.List;
 
-@Entity
+@Embeddable
 @Getter
-@Table(name = "mongs_mong_meta")
-@ToString(exclude = "mong")
+@ToString(exclude = { "history" })
 public class MongMetaEntity {
 
     private static final Double DEFAULT_PENALTY = 0.3;
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "mong_meta_id")
-    private Long mongMetaId;
-
-    @OneToOne(mappedBy = "meta")
-    @JoinColumn(name = "mong_meta_id")
-    private MongEntity mong;
 
     @Column(name = "training_count")
     private Integer trainingCount;
@@ -41,7 +31,7 @@ public class MongMetaEntity {
     private Boolean isActive;
 
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    @JoinColumn(name = "mong_meta_id")
+    @JoinColumn(name = "mong_id")
     private List<MongMetaHistoryEntity> history;
 
     public MongMetaEntity() {

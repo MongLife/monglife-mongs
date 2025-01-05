@@ -4,7 +4,6 @@ import com.monglife.mongs.domain.task.dto.etc.GetTaskDto;
 import com.monglife.mongs.domain.task.dto.event.ExecuteTaskEvent;
 import com.monglife.mongs.domain.task.exception.NotExistsTaskException;
 import com.monglife.mongs.domain.task.service.TaskService;
-import com.monglife.mongs.domain.taskSchedule.dto.etc.StopTaskScheduleDto;
 import com.monglife.mongs.domain.taskSchedule.dto.event.RunTaskScheduleEvent;
 import com.monglife.mongs.domain.taskSchedule.service.TaskScheduleService;
 import lombok.RequiredArgsConstructor;

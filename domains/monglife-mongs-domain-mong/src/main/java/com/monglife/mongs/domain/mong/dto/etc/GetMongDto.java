@@ -3,7 +3,10 @@ package com.monglife.mongs.domain.mong.dto.etc;
 import com.monglife.mongs.domain.mong.entity.data.MongEntity;
 import com.monglife.mongs.domain.mong.enums.MongStateCode;
 import com.monglife.mongs.domain.mong.enums.MongStatusCode;
-import lombok.*;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -59,8 +62,10 @@ public class GetMongDto {
 
     private LocalDateTime createdAt;
 
+    private LocalDateTime updatedAt;
+
     @Builder
-    public GetMongDto(Long mongId, String mongName, String mongTypeCode, Integer payPoint, Integer level, Double weight, Double strength, Double satiety, Double healthy, Double fatigue, Double expRatio, Double strengthRatio, Double satietyRatio, Double healthyRatio, Double fatigueRatio, Integer poopCount, MongStateCode stateCode, MongStatusCode statusCode, Boolean isSleep, LocalTime sleepAt, LocalTime wakeupAt, Boolean isEgg, LocalDateTime createdAt) {
+    public GetMongDto(Long mongId, String mongName, String mongTypeCode, Integer payPoint, Integer level, Double weight, Double strength, Double satiety, Double healthy, Double fatigue, Double expRatio, Double strengthRatio, Double satietyRatio, Double healthyRatio, Double fatigueRatio, Integer poopCount, MongStateCode stateCode, MongStatusCode statusCode, Boolean isSleep, LocalTime sleepAt, LocalTime wakeupAt, Boolean isEgg, LocalDateTime createdAt, LocalDateTime updatedAt) {
         this.mongId = mongId;
         this.mongName = mongName;
         this.mongTypeCode = mongTypeCode;
@@ -84,9 +89,11 @@ public class GetMongDto {
         this.wakeupAt = wakeupAt;
         this.isEgg = isEgg;
         this.createdAt = createdAt;
+        this.updatedAt = updatedAt;
     }
 
     public static GetMongDto of(MongEntity mongEntity) {
+
         return GetMongDto.builder()
                 .mongId(mongEntity.getMongId())
                 .mongName(mongEntity.getMongName())
@@ -111,6 +118,7 @@ public class GetMongDto {
                 .wakeupAt(mongEntity.getWakeupAt())
                 .isEgg(mongEntity.isEgg())
                 .createdAt(mongEntity.getCreatedAt())
+                .updatedAt(mongEntity.getUpdatedAt())
                 .build();
     }
 }

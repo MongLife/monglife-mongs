@@ -137,17 +137,15 @@ public class ManagementService {
         String taskOwnerId = String.valueOf(mongId);
 
         if (mongService.getMong(mongId).getIsSleep()) {
+            taskService.deleteTask(APP_PACKAGE_NAME, taskOwnerId, taskScheduleProperties.statusIncrease.getCode());
             mongService.wakeupMong(mongId);
-
             taskService.createCycleTask(APP_PACKAGE_NAME, taskOwnerId, taskScheduleProperties.statusDecrease.getCode(), taskScheduleProperties.statusDecrease.getExpiration());
             taskService.createCycleTask(APP_PACKAGE_NAME, taskOwnerId, taskScheduleProperties.poopIncrease.getCode(), taskScheduleProperties.poopIncrease.getExpiration());
-            taskService.deleteTask(APP_PACKAGE_NAME, taskOwnerId, taskScheduleProperties.statusIncrease.getCode());
 
         } else {
-            mongService.sleepMong(mongId);
-
             taskService.deleteTask(APP_PACKAGE_NAME, taskOwnerId, taskScheduleProperties.statusDecrease.getCode());
             taskService.deleteTask(APP_PACKAGE_NAME, taskOwnerId, taskScheduleProperties.poopIncrease.getCode());
+            mongService.sleepMong(mongId);
             taskService.createCycleTask(APP_PACKAGE_NAME, taskOwnerId, taskScheduleProperties.statusIncrease.getCode(), taskScheduleProperties.statusIncrease.getExpiration());
         }
     }

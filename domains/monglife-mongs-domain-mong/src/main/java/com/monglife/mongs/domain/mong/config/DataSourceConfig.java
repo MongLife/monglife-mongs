@@ -36,6 +36,9 @@ public class DataSourceConfig {
     @Value("${spring.jpa.mong.properties.hibernate.show_sql}")
     private String showSql;
 
+    @Value("${spring.jpa.mong.properties.hibernate.format_sql}")
+    private String formatSql;
+
     @Bean(name = "mongDataSourceProperties")
     @ConfigurationProperties(prefix = "spring.datasource.mong.hikari")
     public HikariConfig mongDataSourceProperties() {
@@ -53,6 +56,7 @@ public class DataSourceConfig {
         jpaProperties.put(AvailableSettings.DIALECT, dialect);
         jpaProperties.put(AvailableSettings.HBM2DDL_AUTO, ddlAuto);
         properties.put(AvailableSettings.SHOW_SQL, showSql);
+        properties.put(AvailableSettings.FORMAT_SQL, formatSql);
         properties.keySet().forEach(field -> jpaProperties.put(field, properties.get(field)));
         return jpaProperties;
     }

@@ -1,14 +1,15 @@
 package com.monglife.mongs.domain.mong.service;
 
 import com.monglife.mongs.domain.mong.dto.etc.*;
-import com.monglife.mongs.domain.mong.entity.history.MongStrokeHistoryEntity;
-import com.monglife.mongs.domain.mong.entity.type.FoodTypeEntity;
 import com.monglife.mongs.domain.mong.entity.data.MongEntity;
 import com.monglife.mongs.domain.mong.entity.history.MongFeedHistoryEntity;
+import com.monglife.mongs.domain.mong.entity.history.MongStrokeHistoryEntity;
+import com.monglife.mongs.domain.mong.entity.type.FoodTypeEntity;
 import com.monglife.mongs.domain.mong.entity.type.MongTypeEntity;
 import com.monglife.mongs.domain.mong.exception.*;
 import com.monglife.mongs.domain.mong.repository.*;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -20,6 +21,7 @@ import java.util.List;
 import java.util.Random;
 import java.util.UUID;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class MongService {
@@ -180,10 +182,11 @@ public class MongService {
     @Transactional
     public void deleteMong(Long mongId) {
 
-        MongEntity mongEntity = mongRepository.findByMongIdAndMetaIsActiveIsTrue(mongId)
+        MongEntity mongEntity = lockMongRepository.findByMongIdAndMetaIsActiveIsTrue(mongId)
                 .orElseThrow(() -> new NotExistsMongException(mongId));
 
         mongEntity.delete();
+
     }
 
     /**
@@ -384,6 +387,7 @@ public class MongService {
             // 진화 처리
             double reward = Math.max(0, evolutionScore - DEFAULT_EVOLUTION_SCORE);
             mongEntity.evolution(nextMongTypeEntity, reward);
+
         }
 
         return GetMongDto.of(mongEntity);

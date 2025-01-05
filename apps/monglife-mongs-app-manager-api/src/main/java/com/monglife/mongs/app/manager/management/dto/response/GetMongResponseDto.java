@@ -1,87 +1,57 @@
 package com.monglife.mongs.app.manager.management.dto.response;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
 import com.monglife.mongs.domain.mong.dto.etc.GetMongDto;
-import com.monglife.mongs.domain.mong.enums.MongStateCode;
-import com.monglife.mongs.domain.mong.enums.MongStatusCode;
 import lombok.*;
-import org.springframework.format.annotation.DateTimeFormat;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 @Getter
 @Setter
 @NoArgsConstructor
+@ToString
 public class GetMongResponseDto {
 
-    private Long mongId;
+    private MongResponseDto mong;
 
-    private String mongName;
+    private MongStateResponseDto mongState;
 
-    private String mongTypeCode;
-
-    private Integer payPoint;
-
-    private Double weight;
-
-    private Double expRatio;
-
-    private Double strengthRatio;
-
-    private Double satietyRatio;
-
-    private Double healthyRatio;
-
-    private Double fatigueRatio;
-
-    private Integer poopCount;
-
-    private MongStateCode stateCode;
-
-    private MongStatusCode statusCode;
-
-    private Boolean isSleep;
-
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS", timezone = "Asia/Seoul")
-    private LocalDateTime createdAt;
+    private MongStatusResponseDto mongStatus;
 
     @Builder
-    public GetMongResponseDto(Long mongId, String mongName, String mongTypeCode, Integer payPoint, Double weight, Double expRatio, Double strengthRatio, Double satietyRatio, Double healthyRatio, Double fatigueRatio, Integer poopCount, MongStateCode stateCode, MongStatusCode statusCode, Boolean isSleep, LocalDateTime createdAt) {
-        this.mongId = mongId;
-        this.mongName = mongName;
-        this.mongTypeCode = mongTypeCode;
-        this.payPoint = payPoint;
-        this.weight = weight;
-        this.expRatio = expRatio;
-        this.strengthRatio = strengthRatio;
-        this.satietyRatio = satietyRatio;
-        this.healthyRatio = healthyRatio;
-        this.fatigueRatio = fatigueRatio;
-        this.poopCount = poopCount;
-        this.stateCode = stateCode;
-        this.statusCode = statusCode;
-        this.isSleep = isSleep;
-        this.createdAt = createdAt;
+    public GetMongResponseDto(MongResponseDto mong, MongStateResponseDto mongState, MongStatusResponseDto mongStatus) {
+        this.mong = mong;
+        this.mongState = mongState;
+        this.mongStatus = mongStatus;
     }
 
     public static GetMongResponseDto of(GetMongDto getMongDto) {
         return GetMongResponseDto.builder()
-                .mongId(getMongDto.getMongId())
-                .mongName(getMongDto.getMongName())
-                .mongTypeCode(getMongDto.getMongTypeCode())
-                .payPoint(getMongDto.getPayPoint())
-                .weight(getMongDto.getWeight())
-                .expRatio(getMongDto.getExpRatio())
-                .strengthRatio(getMongDto.getStrengthRatio())
-                .satietyRatio(getMongDto.getSatietyRatio())
-                .healthyRatio(getMongDto.getHealthyRatio())
-                .fatigueRatio(getMongDto.getFatigueRatio())
-                .poopCount(getMongDto.getPoopCount())
-                .stateCode(getMongDto.getStateCode())
-                .statusCode(getMongDto.getStatusCode())
-                .isSleep(getMongDto.getIsSleep())
-                .createdAt(getMongDto.getCreatedAt())
+                .mong(MongResponseDto.builder()
+                        .mongId(getMongDto.getMongId())
+                        .mongName(getMongDto.getMongName())
+                        .mongTypeCode(getMongDto.getMongTypeCode())
+                        .payPoint(getMongDto.getPayPoint())
+                        .createdAt(getMongDto.getCreatedAt())
+                        .updatedAt(getMongDto.getUpdatedAt())
+                        .build())
+                .mongState(MongStateResponseDto.builder()
+                        .mongId(getMongDto.getMongId())
+                        .stateCode(getMongDto.getStateCode())
+                        .isSleep(getMongDto.getIsSleep())
+                        .updatedAt(getMongDto.getUpdatedAt())
+                        .build())
+                .mongStatus(MongStatusResponseDto.builder()
+                        .mongId(getMongDto.getMongId())
+                        .statusCode(getMongDto.getStatusCode())
+                        .expRatio(getMongDto.getExpRatio())
+                        .weight(getMongDto.getWeight())
+                        .strengthRatio(getMongDto.getStrengthRatio())
+                        .satietyRatio(getMongDto.getSatietyRatio())
+                        .healthyRatio(getMongDto.getHealthyRatio())
+                        .fatigueRatio(getMongDto.getFatigueRatio())
+                        .poopCount(getMongDto.getPoopCount())
+                        .updatedAt(getMongDto.getUpdatedAt())
+                        .build())
                 .build();
     }
 

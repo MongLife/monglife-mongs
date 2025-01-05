@@ -21,6 +21,7 @@ public class RetryTaskSchedule {
 
     private final TaskScheduleRepository taskScheduleRepository;
 
+    /* 스케줄러 목록 로깅
     @Scheduled(fixedDelay = 1000)
     @Transactional(readOnly = true)
     public void scheduleTask() {
@@ -30,6 +31,7 @@ public class RetryTaskSchedule {
 
         if (!sb.toString().trim().isEmpty()) log.info(sb.toString());
     }
+     */
 
     /**
      * 10 분 간격으로 누락 Task 찾아서 재등록

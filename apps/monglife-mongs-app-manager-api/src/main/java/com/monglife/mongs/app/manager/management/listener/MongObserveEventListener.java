@@ -1,11 +1,21 @@
 package com.monglife.mongs.app.manager.management.listener;
 
-import com.monglife.mongs.app.manager.management.dto.response.MongObserveResponseDto;
+import com.monglife.mongs.app.manager.global.config.TaskScheduleProperties;
+import com.monglife.mongs.app.manager.management.dto.response.GetMongResponseDto;
+import com.monglife.mongs.app.manager.management.dto.response.MongResponseDto;
+import com.monglife.mongs.app.manager.management.dto.response.MongStateResponseDto;
+import com.monglife.mongs.app.manager.management.dto.response.MongStatusResponseDto;
 import com.monglife.mongs.app.manager.management.enums.ManagementResponse;
 import com.monglife.mongs.domain.mong.dto.event.MongObserveEvent;
+import com.monglife.mongs.domain.mong.enums.MongStateCode;
+import com.monglife.mongs.domain.task.enums.TaskStatusCode;
+import com.monglife.mongs.domain.task.service.TaskService;
 import com.monglife.mongs.module.mqtt.service.MqttSendService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.event.TransactionPhase;
 import org.springframework.transaction.event.TransactionalEventListener;
 
@@ -13,23 +23,75 @@ import org.springframework.transaction.event.TransactionalEventListener;
 @RequiredArgsConstructor
 public class MongObserveEventListener {
 
+    @Value("${application.app-package-name}")
+    private String APP_PACKAGE_NAME;
+
+    private final TaskScheduleProperties taskScheduleProperties;
+
     private final MqttSendService mqttSendService;
+
+    private final TaskService taskService;
 
     /**
      * 몽 변경 이벤트 리스너
      * @param event 몽 변경 이벤트
      */
     @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
     public void mongObserveEventListener(MongObserveEvent event) {
 
         String topic = "management/" + event.getMongId();
+        String taskOwnerId = String.valueOf(event.getMongId());
 
-        MongObserveResponseDto mongObserveResponseDto = MongObserveResponseDto.builder()
-                .mongId(event.getMongId())
-                .payPoint(event.getPayPoint())
-                .mongTypeCode(event.getMongTypeCode())
+        // STATUS
+        if (MongStateCode.DEAD.equals(event.getStateCode()) || MongStateCode.GRADUATE_READY.equals(event.getStateCode())) {
+            taskService.deleteAllTasks(APP_PACKAGE_NAME, taskOwnerId);
+        }
+
+        // STATE
+        boolean isDeadStatus = event.getSatietyRatio() <= taskScheduleProperties.dead.getSatietyRatio() || event.getHealthyRatio() <= taskScheduleProperties.dead.getHealthyRatio();
+
+        if (isDeadStatus) {
+            if (taskService.isExistsTask(APP_PACKAGE_NAME, taskOwnerId, taskScheduleProperties.dead.getCode(), TaskStatusCode.PAUSE)) {
+                taskService.resumeTask(APP_PACKAGE_NAME, taskOwnerId, taskScheduleProperties.dead.getCode());
+            } else if (!taskService.isExistsTask(APP_PACKAGE_NAME, taskOwnerId, taskScheduleProperties.dead.getCode(), TaskStatusCode.PROCESSING) && !MongStateCode.DEAD.equals(event.getStateCode())) {
+                taskService.createTask(APP_PACKAGE_NAME, taskOwnerId, taskScheduleProperties.dead.getCode(), taskScheduleProperties.dead.getExpiration());
+            }
+        } else {
+            if (taskService.isExistsTask(APP_PACKAGE_NAME, taskOwnerId, taskScheduleProperties.dead.getCode(), TaskStatusCode.PROCESSING)) {
+                taskService.pauseTask(APP_PACKAGE_NAME, taskOwnerId, taskScheduleProperties.dead.getCode());
+            }
+        }
+
+        GetMongResponseDto getMongResponseDto = GetMongResponseDto.builder()
+                .mong(MongResponseDto.builder()
+                        .mongId(event.getMongId())
+                        .mongName(event.getMongName())
+                        .mongTypeCode(event.getMongTypeCode())
+                        .payPoint(event.getPayPoint())
+                        .createdAt(event.getCreatedAt())
+                        .updatedAt(event.getUpdatedAt())
+                        .build())
+                .mongState(MongStateResponseDto.builder()
+                        .mongId(event.getMongId())
+                        .stateCode(event.getStateCode())
+                        .isSleep(event.getIsSleep())
+                        .updatedAt(event.getUpdatedAt())
+                        .build())
+                .mongStatus(MongStatusResponseDto.builder()
+                        .mongId(event.getMongId())
+                        .statusCode(event.getStatusCode())
+                        .expRatio(event.getExpRatio())
+                        .weight(event.getWeight())
+                        .strengthRatio(event.getStrengthRatio())
+                        .satietyRatio(event.getSatietyRatio())
+                        .healthyRatio(event.getHealthyRatio())
+                        .fatigueRatio(event.getFatigueRatio())
+                        .poopCount(event.getPoopCount())
+                        .updatedAt(event.getUpdatedAt())
+                        .build())
                 .build();
 
-        mqttSendService.sendMessage(topic, ManagementResponse.APP_MANAGER_MANAGEMENT_OBSERVE_MONG.toResponseDto(mongObserveResponseDto));
+        mqttSendService.sendMessage(topic, ManagementResponse.APP_MANAGER_MANAGEMENT_OBSERVE_MONG.toResponseDto(getMongResponseDto));
     }
 }

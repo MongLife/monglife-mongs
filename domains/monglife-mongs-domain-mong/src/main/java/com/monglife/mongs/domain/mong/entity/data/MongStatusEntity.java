@@ -3,31 +3,22 @@ package com.monglife.mongs.domain.mong.entity.data;
 import com.monglife.mongs.domain.mong.entity.history.MongStatusHistoryEntity;
 import com.monglife.mongs.domain.mong.enums.MongStatusCode;
 import com.monglife.mongs.domain.mong.enums.MongStatusHistoryCode;
-import com.monglife.mongs.domain.mong.listener.MongStatusEntityListener;
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 import java.util.List;
 import java.util.Objects;
 
-@Entity
+@Embeddable
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@EntityListeners(MongStatusEntityListener.class)
-@Table(name = "mongs_mong_status")
-@ToString(exclude = "mong")
+@ToString(exclude = { "history" })
 public class MongStatusEntity {
 
     public static final Integer MAX_POOP_COUNT = 4;
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "mong_status_id")
-    private Long mongStatusId;
-
-    @OneToOne(mappedBy = "status")
-    @JoinColumn(name = "mong_status_id")
-    private MongEntity mong;
 
     @Column(name = "max_status")
     private Double maxStatus;
@@ -73,7 +64,7 @@ public class MongStatusEntity {
     private Double fatigueRatio;
 
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    @JoinColumn(name = "mong_status_id")
+    @JoinColumn(name = "mong_id")
     private List<MongStatusHistoryEntity> history;
 
     public MongStatusEntity(Double maxStatus) {
