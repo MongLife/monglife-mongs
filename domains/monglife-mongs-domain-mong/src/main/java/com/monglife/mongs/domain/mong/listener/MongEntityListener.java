@@ -22,7 +22,6 @@ public class MongEntityListener {
 
     private final ApplicationEventPublisher applicationEventPublisher;
 
-
     @PreUpdate
     public void preUpdate(MongEntity mongEntity) {
 

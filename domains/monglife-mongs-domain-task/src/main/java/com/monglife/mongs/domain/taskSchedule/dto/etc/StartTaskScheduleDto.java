@@ -1,6 +1,5 @@
 package com.monglife.mongs.domain.taskSchedule.dto.etc;
 
-import com.monglife.mongs.domain.task.entity.TaskEntity;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -33,16 +32,5 @@ public class StartTaskScheduleDto {
         this.taskCode = taskCode;
         this.expiredAt = expiredAt;
         this.isCycle = isCycle;
-    }
-
-    public static StartTaskScheduleDto of(TaskEntity taskEntity) {
-        return StartTaskScheduleDto.builder()
-                .taskId(taskEntity.getTaskId())
-                .appPackageName(taskEntity.getAppPackageName())
-                .taskOwnerId(taskEntity.getTaskOwnerId())
-                .taskCode(taskEntity.getComn().getCode())
-                .expiredAt(taskEntity.getExpiredAt())
-                .isCycle(taskEntity.isCycle())
-                .build();
     }
 }

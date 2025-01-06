@@ -1,7 +1,6 @@
 package com.monglife.mongs.domain.taskSchedule.service;
 
 import com.monglife.mongs.domain.taskSchedule.dto.etc.StartTaskScheduleDto;
-import com.monglife.mongs.domain.taskSchedule.dto.etc.StopTaskScheduleDto;
 import com.monglife.mongs.domain.taskSchedule.dto.event.RunTaskScheduleEvent;
 import com.monglife.mongs.domain.taskSchedule.entity.TaskScheduleEntity;
 import com.monglife.mongs.domain.taskSchedule.repository.TaskScheduleRepository;
@@ -9,7 +8,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
@@ -28,7 +26,6 @@ public class TaskScheduleService {
 
     private final ScheduledExecutorService executor;
 
-    @Transactional
     public void startTaskSchedule(StartTaskScheduleDto startTaskScheduleDto) {
 
         TaskScheduleEntity taskScheduleEntity = taskScheduleRepository.findByTaskId(startTaskScheduleDto.getTaskId())
@@ -38,7 +35,7 @@ public class TaskScheduleService {
                         .taskOwnerId(startTaskScheduleDto.getTaskOwnerId())
                         .taskCode(startTaskScheduleDto.getTaskCode())
                         .isCycle(startTaskScheduleDto.getIsCycle())
-                        .build());;
+                        .build());
 
         long expirationSeconds = Duration.between(LocalDateTime.now(), startTaskScheduleDto.getExpiredAt()).getSeconds();
         ScheduledFuture<?> timer =  this.executor.schedule(this.runTaskSchedule(taskScheduleEntity), expirationSeconds, TimeUnit.SECONDS);
@@ -52,14 +49,8 @@ public class TaskScheduleService {
      * Pause, AppStopPause, AppStopProcessing, Delete Task Entity
      * @param taskId Task ID
      */
-    @Transactional
     public void stopTaskSchedule(Long taskId) {
         taskScheduleRepository.stopAndDeleteByTaskId(taskId);
-    }
-
-    @Transactional
-    public void deleteTaskSchedule(Long taskId) {
-        taskScheduleRepository.deleteByTaskId(taskId);
     }
 
     /**
@@ -70,6 +61,12 @@ public class TaskScheduleService {
     private Runnable runTaskSchedule(TaskScheduleEntity taskScheduleEntity) {
         return () -> applicationEventPublisher.publishEvent(RunTaskScheduleEvent.builder()
                 .taskId(taskScheduleEntity.getTaskId())
+                .appPackageName(taskScheduleEntity.getAppPackageName())
+                .taskOwnerId(taskScheduleEntity.getTaskOwnerId())
+                .taskCode(taskScheduleEntity.getTaskCode())
+                .expiredAt(taskScheduleEntity.getExpiredAt())
+                .expirationSeconds(taskScheduleEntity.getExpirationSeconds())
+                .isCycle(taskScheduleEntity.getIsCycle())
                 .build());
     }
 }

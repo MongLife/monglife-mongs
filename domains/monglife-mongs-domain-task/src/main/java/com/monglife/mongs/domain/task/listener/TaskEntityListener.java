@@ -2,12 +2,11 @@ package com.monglife.mongs.domain.task.listener;
 
 import com.monglife.mongs.domain.task.dto.event.ExecuteTaskEvent;
 import com.monglife.mongs.domain.task.entity.TaskEntity;
-import com.monglife.mongs.domain.task.enums.TaskStatusCode;
-import com.monglife.mongs.domain.taskSchedule.dto.etc.StartTaskScheduleDto;
-import com.monglife.mongs.domain.taskSchedule.service.TaskScheduleService;
+import com.monglife.mongs.domain.taskSchedule.dto.event.StartTaskScheduleEvent;
+import com.monglife.mongs.domain.taskSchedule.dto.event.StopTaskScheduleEvent;
 import jakarta.persistence.PostPersist;
+import jakarta.persistence.PostRemove;
 import jakarta.persistence.PostUpdate;
-import jakarta.persistence.PreRemove;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.ApplicationEventPublisher;
@@ -20,9 +19,6 @@ public class TaskEntityListener {
 
     private final ApplicationEventPublisher applicationEventPublisher;
 
-    private final TaskScheduleService taskScheduleService;
-
-
     /**
      * PAUSE : Task Scheduler 중지 -> 결과 반영
      * PROCESSING : Task Scheduler 시작
@@ -31,11 +27,8 @@ public class TaskEntityListener {
      */
     @PostPersist
     public void postPersist(TaskEntity taskEntity) {
-        if (TaskStatusCode.PROCESSING.equals(taskEntity.getTaskStatusCode())) {
-            taskScheduleService.startTaskSchedule(StartTaskScheduleDto.of(taskEntity));
-        }
+        applicationEventPublisher.publishEvent(StartTaskScheduleEvent.of(taskEntity));
     }
-
     /**
      * PAUSE : Task Scheduler 중지 -> 결과 반영
      * PROCESSING : Task Scheduler 시작
@@ -46,26 +39,26 @@ public class TaskEntityListener {
     public void postUpdate(TaskEntity taskEntity) {
         switch (taskEntity.getTaskStatusCode()) {
             case PROCESSING ->
-                    taskScheduleService.startTaskSchedule(StartTaskScheduleDto.of(taskEntity));
+                applicationEventPublisher.publishEvent(StartTaskScheduleEvent.of(taskEntity));
             case PAUSE, APP_STOP_PROCESSING ->
-                    taskScheduleService.stopTaskSchedule(taskEntity.getTaskId());
+                applicationEventPublisher.publishEvent(StopTaskScheduleEvent.of(taskEntity));
         }
     }
 
     /**
      * @param taskEntity 삭제된 Task Entity
      */
-    @PreRemove
-    public void preRemove(TaskEntity taskEntity) {
+    @PostRemove
+    public void postRemove(TaskEntity taskEntity) {
 
-        taskScheduleService.stopTaskSchedule(taskEntity.getTaskId());
+//        applicationEventPublisher.publishEvent(ExecuteTaskEvent.builder()
+//                .appPackageName(taskEntity.getAppPackageName())
+//                .taskOwnerId(taskEntity.getTaskOwnerId())
+//                .taskCode(taskEntity.getComn().getCode())
+//                .expiredAt(taskEntity.getExpiredAt())
+//                .expirationSeconds(taskEntity.getExpirationSeconds())
+//                .build());
 
-        applicationEventPublisher.publishEvent(ExecuteTaskEvent.builder()
-                .appPackageName(taskEntity.getAppPackageName())
-                .taskOwnerId(taskEntity.getTaskOwnerId())
-                .taskCode(taskEntity.getComn().getCode())
-                .restExpirationSeconds(taskEntity.getRestExpirationSeconds())
-                .expirationSeconds(taskEntity.getExpirationSeconds())
-                .build());
+        applicationEventPublisher.publishEvent(StopTaskScheduleEvent.of(taskEntity));
     }
 }

@@ -8,8 +8,6 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 
 @SpringBootApplication
 @EnableDiscoveryClient
-@EnableScheduling
-@EnableAsync
 public class ManagerApplication {
 
     public static void main(String[] args) {

@@ -1,39 +1,35 @@
-package com.monglife.mongs.domain.task.dto.etc;
+package com.monglife.mongs.domain.task.vo;
 
 import com.monglife.mongs.domain.task.entity.TaskEntity;
 import com.monglife.mongs.domain.task.enums.TaskStatusCode;
 import lombok.Builder;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 import java.time.LocalDateTime;
 
 @Getter
-@Setter
-@NoArgsConstructor
-public class GetTaskDto {
+public class TaskVo {
 
-    private Long taskId;
+    private final Long taskId;
 
-    private String appPackageName;
+    private final String appPackageName;
 
-    private String taskOwnerId;
+    private final String taskOwnerId;
 
-    private String taskCode;
+    private final String taskCode;
 
-    private TaskStatusCode taskStatusCode;
+    private final TaskStatusCode taskStatusCode;
 
-    private Long restExpirationSeconds;
+    private final Long restExpirationSeconds;
 
-    private Long expirationSeconds;
+    private final Long expirationSeconds;
 
-    private LocalDateTime expiredAt;
+    private final LocalDateTime expiredAt;
 
-    private Boolean isCycle;
+    private final Boolean isCycle;
 
     @Builder
-    public GetTaskDto(Long taskId, String appPackageName, String taskOwnerId, String taskCode, TaskStatusCode taskStatusCode, Long restExpirationSeconds, Long expirationSeconds, LocalDateTime expiredAt, Boolean isCycle) {
+    public TaskVo(Long taskId, String appPackageName, String taskOwnerId, String taskCode, TaskStatusCode taskStatusCode, Long restExpirationSeconds, Long expirationSeconds, LocalDateTime expiredAt, Boolean isCycle) {
         this.taskId = taskId;
         this.appPackageName = appPackageName;
         this.taskOwnerId = taskOwnerId;
@@ -45,8 +41,8 @@ public class GetTaskDto {
         this.isCycle = isCycle;
     }
 
-    public static GetTaskDto of(TaskEntity taskEntity) {
-        return GetTaskDto.builder()
+    public static TaskVo of(TaskEntity taskEntity) {
+        return TaskVo.builder()
                 .taskId(taskEntity.getTaskId())
                 .appPackageName(taskEntity.getAppPackageName())
                 .taskOwnerId(taskEntity.getTaskOwnerId())

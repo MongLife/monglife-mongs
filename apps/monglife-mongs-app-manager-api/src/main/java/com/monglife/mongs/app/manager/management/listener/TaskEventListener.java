@@ -14,6 +14,9 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.event.TransactionPhase;
 import org.springframework.transaction.event.TransactionalEventListener;
 
+import java.time.Duration;
+import java.time.LocalDateTime;
+
 @Component
 @RequiredArgsConstructor
 public class TaskEventListener {
@@ -27,9 +30,8 @@ public class TaskEventListener {
 
     private final TaskService taskService;
 
-
-    @TransactionalEventListener(phase = TransactionPhase.BEFORE_COMMIT)
-    @Transactional(propagation = Propagation.REQUIRED)
+    @TransactionalEventListener(phase = TransactionPhase.AFTER_COMPLETION)
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
     public void executeTaskEventListener(ExecuteTaskEvent event) {
 
         // 앱 코드 확인
@@ -37,6 +39,11 @@ public class TaskEventListener {
 
         String taskCode = event.getTaskCode();
         Long mongId = Long.parseLong(event.getTaskOwnerId());
+
+        long restExpirationSeconds = Math.max(0, Duration.between(LocalDateTime.now(), event.getExpiredAt()).toSeconds());
+        long expirationSeconds = Math.max(1, event.getExpirationSeconds());
+
+        double ratio = restExpirationSeconds == 0 ? 1 : (double) restExpirationSeconds / (double) expirationSeconds;
 
         // Task 코드 확인
         if (taskCode.equals(taskScheduleProperties.eggEvolution.getCode())) {
@@ -53,43 +60,31 @@ public class TaskEventListener {
             mongService.wakeupMong(mongId);
         } else if (taskCode.equals(taskScheduleProperties.dead.getCode())) {
             mongService.deadMong(mongId);
-        } else {
-
-            long restExpirationSeconds = Math.max(1, event.getRestExpirationSeconds());
-            long expirationSeconds = Math.max(1, event.getExpirationSeconds());
-
-            double ratio = (double) restExpirationSeconds / (double) expirationSeconds;
-
-            if (taskCode.equals(taskScheduleProperties.statusIncrease.getCode())) {
-//                int addPoop = ratio >= 0.5 ? taskScheduleProperties.statusIncrease.getPoop() : 0;
-                mongService.increaseMongStatus(mongId, IncreaseMongStatusDto.builder()
-//                        .exp(taskScheduleProperties.statusIncrease.getExp() * ratio)
-                        .exp(0D)
-//                        .weight(taskScheduleProperties.statusIncrease.getWeight() * ratio)
-                        .weight(0D)
-                        .strengthRatio(taskScheduleProperties.statusIncrease.getStrengthRatio() * ratio)
-                        .satietyRatio(taskScheduleProperties.statusIncrease.getSatietyRatio() * ratio)
-                        .healthyRatio(taskScheduleProperties.statusIncrease.getHealthyRatio() * ratio)
-                        .fatigueRatio(taskScheduleProperties.statusIncrease.getFatigueRatio() * ratio)
-//                        .poop(addPoop)
-                        .poop(0)
-                        .build());
-            } else if (taskCode.equals(taskScheduleProperties.statusDecrease.getCode())) {
-//                int addPoop = ratio >= 0.5 ? taskScheduleProperties.statusDecrease.getPoop() : 0;
-                mongService.decreaseMongStatus(mongId, DecreaseMongStatusDto.builder()
-//                        .exp(taskScheduleProperties.statusDecrease.getExp() * ratio)
-                        .exp(0D)
-                        .weight(taskScheduleProperties.statusDecrease.getWeight() * ratio)
-                        .strengthRatio(taskScheduleProperties.statusDecrease.getStrengthRatio() * ratio)
-                        .satietyRatio(taskScheduleProperties.statusDecrease.getSatietyRatio() * ratio)
-                        .healthyRatio(taskScheduleProperties.statusDecrease.getHealthyRatio() * ratio)
-                        .fatigueRatio(taskScheduleProperties.statusDecrease.getFatigueRatio() * ratio)
-//                        .poop(addPoop)
-                        .poop(0)
-                        .build());
-            } else if (taskCode.equals(taskScheduleProperties.poopIncrease.getCode())) {
-                if (ratio >= 0.5) mongService.increasePoop(mongId, taskScheduleProperties.poopIncrease.getPoop());
-            }
+        } else if (taskCode.equals(taskScheduleProperties.statusIncrease.getCode())) {
+            // 지수 증가
+            mongService.increaseMongStatus(mongId, IncreaseMongStatusDto.builder()
+                    .exp(taskScheduleProperties.statusIncrease.getExp() * ratio)            // TODO: 삭제
+                    .weight(taskScheduleProperties.statusIncrease.getWeight() * ratio)      // TODO: 삭제
+                    .strengthRatio(taskScheduleProperties.statusIncrease.getStrengthRatio() * ratio)
+                    .satietyRatio(taskScheduleProperties.statusIncrease.getSatietyRatio() * ratio)
+                    .healthyRatio(taskScheduleProperties.statusIncrease.getHealthyRatio() * ratio)
+                    .fatigueRatio(taskScheduleProperties.statusIncrease.getFatigueRatio() * ratio)
+                    .poop(taskScheduleProperties.statusIncrease.getPoop())
+                    .build());
+        } else if (taskCode.equals(taskScheduleProperties.statusDecrease.getCode())) {
+            // 지수 감소
+            mongService.decreaseMongStatus(mongId, DecreaseMongStatusDto.builder()
+                    .exp(taskScheduleProperties.statusDecrease.getExp() * ratio)
+                    .weight(taskScheduleProperties.statusDecrease.getWeight() * ratio)
+                    .strengthRatio(taskScheduleProperties.statusDecrease.getStrengthRatio() * ratio)
+                    .satietyRatio(taskScheduleProperties.statusDecrease.getSatietyRatio() * ratio)
+                    .healthyRatio(taskScheduleProperties.statusDecrease.getHealthyRatio() * ratio)
+                    .fatigueRatio(taskScheduleProperties.statusDecrease.getFatigueRatio() * ratio)
+                    .poop(taskScheduleProperties.statusDecrease.getPoop())
+                    .build());
+        } else if (taskCode.equals(taskScheduleProperties.poopIncrease.getCode()) && ratio >= 0.5) {
+            // 배변 증가
+            mongService.increasePoop(mongId, taskScheduleProperties.poopIncrease.getPoop());
         }
     }
 }

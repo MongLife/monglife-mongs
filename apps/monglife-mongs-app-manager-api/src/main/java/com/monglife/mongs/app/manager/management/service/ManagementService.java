@@ -63,6 +63,7 @@ public class ManagementService {
     @MongAccountCheck
     @Transactional(readOnly = true)
     public List<GetFeedItemDto> getFeedItems(Long accountId, Long mongId, String foodTypeGroupCode) {
+
         return mongService.getFeedItems(mongId, foodTypeGroupCode);
     }
 
@@ -111,6 +112,7 @@ public class ManagementService {
     @MongAccountCheck
     @Transactional
     public void feedMong(Long accountId, Long mongId, String foodTypeCode) {
+
         mongService.feedMong(mongId, foodTypeCode);
     }
 
@@ -122,6 +124,7 @@ public class ManagementService {
     @MongAccountCheck
     @Transactional
     public void strokeMong(Long accountId, Long mongId) {
+
         mongService.strokeMong(mongId);
     }
 
@@ -138,15 +141,15 @@ public class ManagementService {
 
         if (mongService.getMong(mongId).getIsSleep()) {
             taskService.deleteTask(APP_PACKAGE_NAME, taskOwnerId, taskScheduleProperties.statusIncrease.getCode());
-            mongService.wakeupMong(mongId);
             taskService.createCycleTask(APP_PACKAGE_NAME, taskOwnerId, taskScheduleProperties.statusDecrease.getCode(), taskScheduleProperties.statusDecrease.getExpiration());
             taskService.createCycleTask(APP_PACKAGE_NAME, taskOwnerId, taskScheduleProperties.poopIncrease.getCode(), taskScheduleProperties.poopIncrease.getExpiration());
+            mongService.wakeupMong(mongId);
 
         } else {
             taskService.deleteTask(APP_PACKAGE_NAME, taskOwnerId, taskScheduleProperties.statusDecrease.getCode());
             taskService.deleteTask(APP_PACKAGE_NAME, taskOwnerId, taskScheduleProperties.poopIncrease.getCode());
-            mongService.sleepMong(mongId);
             taskService.createCycleTask(APP_PACKAGE_NAME, taskOwnerId, taskScheduleProperties.statusIncrease.getCode(), taskScheduleProperties.statusIncrease.getExpiration());
+            mongService.sleepMong(mongId);
         }
     }
 

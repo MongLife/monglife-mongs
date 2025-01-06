@@ -18,7 +18,7 @@ public class FeignInterceptor implements RequestInterceptor {
 
         Request feignRequest = template.request();
 
-        log.info("[FeignInterceptor] {} ===> {}", feignRequest.url(), feignRequest.body());
+        log.info("[FeignInterceptor] {} ===> {}", feignRequest.url(), new String(feignRequest.body()));
 
         if (requestAttributes != null) {
             HttpServletRequest request = (HttpServletRequest) requestAttributes.resolveReference(RequestAttributes.REFERENCE_REQUEST);

@@ -436,7 +436,7 @@ public class MongService {
 
         mongEntity.increaseStatus(increaseMongStatusDto);
     }
-    
+
     @Transactional
     public void decreaseMongStatus(Long mongId, DecreaseMongStatusDto decreaseMongStatusDto) {
 
@@ -445,7 +445,7 @@ public class MongService {
 
         mongEntity.decreaseStatus(decreaseMongStatusDto);
     }
-    
+
     @Transactional
     public void increasePoop(Long mongId, Integer addPoopCount) {
 

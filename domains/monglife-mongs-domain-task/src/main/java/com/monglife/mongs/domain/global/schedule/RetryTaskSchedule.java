@@ -1,6 +1,5 @@
 package com.monglife.mongs.domain.global.schedule;
 
-import com.monglife.mongs.domain.task.entity.TaskEntity;
 import com.monglife.mongs.domain.task.enums.TaskStatusCode;
 import com.monglife.mongs.domain.task.repository.TaskRepository;
 import com.monglife.mongs.domain.taskSchedule.repository.TaskScheduleRepository;
@@ -40,11 +39,14 @@ public class RetryTaskSchedule {
     @Transactional
     public void retryTasks() {
         try {
-
             Set<Long> taskIds = taskScheduleRepository.findTaskIdAll();
 
             taskRepository.findByTaskIdNotInAndTaskStatusCode(taskIds, TaskStatusCode.PROCESSING)
-                    .forEach(TaskEntity::retry);
+                    .forEach(taskEntity -> {
+                        taskEntity.retry();
+
+                        log.info("[{}] TASK RETRY : {} - {}", taskEntity.getTaskId(), taskEntity.getTaskOwnerId(), taskEntity.getComn().getCode());
+                    });
 
         } catch (RuntimeException e) {
             log.error("[RETRY FAIL] {}", e.getMessage());

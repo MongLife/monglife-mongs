@@ -4,7 +4,6 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.monglife.core.exception.ErrorException;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.AfterThrowing;
@@ -13,6 +12,7 @@ import org.aspectj.lang.annotation.Before;
 import org.aspectj.lang.annotation.Pointcut;
 import org.aspectj.lang.reflect.MethodSignature;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.support.TransactionSynchronizationManager;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
@@ -41,8 +41,14 @@ public class LoggingAspect {
     @Pointcut("execution(* com.monglife.mongs..*Listener.*(..))")
     private void listenerPointcut() {}
 
-    @Before("consumerPointcut() || controllerPointcut() || servicePointcut() || listenerPointcut()")
-    public void before(JoinPoint joinPoint) {
+    @Pointcut("execution(* com.monglife.mongs..*Repository.*(..))")
+    private void repositoryPointcut() {}
+
+    @Pointcut("consumerPointcut() || controllerPointcut() || servicePointcut() || listenerPointcut()")
+    private void targetPointcut() {}
+
+    @Before("targetPointcut() && !@annotation(org.springframework.transaction.annotation.Transactional)")
+    public void around(JoinPoint joinPoint) {
 
         MethodSignature signature = (MethodSignature) joinPoint.getSignature();
         Method method = signature.getMethod();
@@ -50,42 +56,20 @@ public class LoggingAspect {
         String clazzName = method.getDeclaringClass().getName();
         String methodName = method.getName();
 
-        StringBuilder argsBuilder = new StringBuilder();
-        Object[] args = joinPoint.getArgs();
-        Parameter[] parameters = method.getParameters();
-        for (int index = 0; index < parameters.length; index++) {
-            if (args[index] == null) {
-                argsBuilder.append("null");
-            } else if (args[index].getClass().isPrimitive()) {
-                argsBuilder
-                        .append(parameters[index].getName())
-                        .append("(")
-                        .append(args[index].getClass().getTypeName())
-                        .append(") : ")
-                        .append(args[index]);
-            } else {
-                try {
-                    String argJson = objectMapper.writeValueAsString(args[index]);
-                    argsBuilder
-                            .append(parameters[index].getName())
-                            .append("(")
-                            .append(args[index].getClass().getTypeName())
-                            .append(") : ")
-                            .append(argJson);
-                } catch (JsonProcessingException ignored) {
-                    argsBuilder
-                            .append(parameters[index].getName())
-                            .append("(")
-                            .append(args[index].getClass().getTypeName())
-                            .append(") : ")
-                            .append(args[index].toString());
-                }
-            }
+        log.info("[INVOKE] [-] {}#{} {}", clazzName, methodName, generateArgs(method, joinPoint.getArgs()));
+    }
 
-            if (index != parameters.length - 1) argsBuilder.append(", ");
-        }
+    @Before("targetPointcut() && @annotation(org.springframework.transaction.annotation.Transactional)")
+    public void beforeTransactional(JoinPoint joinPoint) {
 
-        log.info("[Method Call] {}#{} =====> {}", clazzName, methodName, argsBuilder);
+        MethodSignature signature = (MethodSignature) joinPoint.getSignature();
+        Method method = signature.getMethod();
+
+        String clazzName = method.getDeclaringClass().getName();
+        String methodName = method.getName();
+
+        log.info("[INVOKE] [{}] {}#{} {}", TransactionSynchronizationManager.getCurrentTransactionName(), clazzName, methodName, generateArgs(method, joinPoint.getArgs()));
+
     }
 
     @AfterThrowing(value = "controllerPointcut() || servicePointcut() || listenerPointcut()", throwing = "exception")
@@ -98,8 +82,62 @@ public class LoggingAspect {
         String methodName = method.getName();
 
         String message = exception.getMessage();
-        if (exception instanceof ErrorException errorException) message = errorException.getMessage();
 
-        log.error("[Throwing] {}#{} =====> {}", clazzName, methodName, message);
+        if (exception instanceof ErrorException errorException) {
+            message = errorException.getResponse().getMessage();
+        }
+
+        log.error("[THROW] {}#{}\n{}", clazzName, methodName, message);
+    }
+
+    private String generateArgs(Method method, Object[] args) {
+
+        StringBuilder argsBuilder = new StringBuilder();
+        Parameter[] parameters = method.getParameters();
+        for (int index = 0; index < parameters.length; index++) {
+            if (args[index] == null) {
+                argsBuilder.append("null");
+            } else if (args[index].getClass().isPrimitive()) {
+                argsBuilder
+                        .append("\n")
+                        .append("[")
+                        .append(index)
+                        .append("] ")
+                        .append(parameters[index].getName())
+                        .append("<")
+                        .append(args[index].getClass().getTypeName())
+                        .append("> : ")
+                        .append(args[index]);
+            } else {
+                try {
+                    String argJson = objectMapper.writeValueAsString(args[index]);
+                    argsBuilder
+                            .append("\n")
+                            .append("[")
+                            .append(index)
+                            .append("] ")
+                            .append(parameters[index].getName())
+                            .append("<")
+                            .append(args[index].getClass().getTypeName())
+                            .append("> : ")
+                            .append(argJson);
+                } catch (JsonProcessingException ignored) {
+                    argsBuilder
+                            .append("\n")
+                            .append("[")
+                            .append(index)
+                            .append("] ")
+                            .append(parameters[index].getName())
+                            .append("<")
+                            .append(args[index].getClass().getTypeName())
+                            .append("> : ")
+                            .append(args[index].toString());
+                }
+            }
+
+            if (index != parameters.length - 1) argsBuilder.append(", ");
+        }
+
+        return argsBuilder.toString();
     }
 }

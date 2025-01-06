@@ -1,23 +1,21 @@
 package com.monglife.mongs.domain.task.service;
 
-import com.monglife.mongs.domain.task.dto.etc.GetTaskDto;
 import com.monglife.mongs.domain.task.entity.TaskEntity;
 import com.monglife.mongs.domain.task.enums.TaskStateCode;
 import com.monglife.mongs.domain.task.enums.TaskStatusCode;
-import com.monglife.mongs.domain.task.exception.AlreadyExistsTaskException;
 import com.monglife.mongs.domain.task.exception.NotExistsTaskCodeException;
 import com.monglife.mongs.domain.task.exception.NotExistsTaskException;
 import com.monglife.mongs.domain.task.repository.ComnCodeRepository;
 import com.monglife.mongs.domain.task.repository.LockTaskRepository;
 import com.monglife.mongs.domain.task.repository.TaskRepository;
+import com.monglife.mongs.domain.task.vo.TaskVo;
 import com.monglife.mongs.module.jpa.entity.ComnCodeEntity;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -33,17 +31,6 @@ public class TaskService {
 
     private final LockTaskRepository lockTaskRepository;
 
-    /**
-     * Task 조회
-     * @param taskId Task ID
-     * @return Task 정보
-     */
-    @Transactional(readOnly = true)
-    public GetTaskDto getTask(Long taskId) {
-        return GetTaskDto.of(taskRepository.findByTaskId(taskId)
-                .orElseThrow(() -> new NotExistsTaskException(taskId)));
-    }
-
     @Transactional(readOnly = true)
     public Boolean isExistsTask(String appPackageName, String taskOwnerId, String taskCode, TaskStatusCode taskStatusCode) {
         return taskRepository.findByAppPackageNameAndTaskOwnerIdAndComnCodeAndTaskStatusCode(appPackageName, taskOwnerId, taskCode, taskStatusCode).isPresent();
@@ -55,10 +42,8 @@ public class TaskService {
         ComnCodeEntity comnCodeEntity = comnCodeRepository.findById(taskCode)
                 .orElseThrow(() -> new NotExistsTaskCodeException(taskCode));
 
-        taskRepository.findByAppPackageNameAndTaskOwnerIdAndComnCode(appPackageName, taskOwnerId, taskCode)
-                .ifPresent(taskEntity -> { throw new AlreadyExistsTaskException(taskEntity.getTaskId()); });
-
-        TaskEntity taskEntity = new TaskEntity(appPackageName, taskOwnerId, comnCodeEntity, TaskStateCode.FIX_TIME, fixTime);
+        TaskEntity taskEntity = taskRepository.findByAppPackageNameAndTaskOwnerIdAndComnCode(appPackageName, taskOwnerId, taskCode)
+                .orElseGet(() -> new TaskEntity(appPackageName, taskOwnerId, comnCodeEntity, TaskStateCode.FIX_TIME, fixTime));
 
         taskRepository.save(taskEntity);
     }
@@ -69,10 +54,8 @@ public class TaskService {
         ComnCodeEntity comnCodeEntity = comnCodeRepository.findById(taskCode)
                 .orElseThrow(() -> new NotExistsTaskCodeException(taskCode));
 
-        taskRepository.findByAppPackageNameAndTaskOwnerIdAndComnCode(appPackageName, taskOwnerId, taskCode)
-                .ifPresent(taskEntity -> { throw new AlreadyExistsTaskException(taskEntity.getTaskId()); });
-
-        TaskEntity taskEntity = new TaskEntity(appPackageName, taskOwnerId, comnCodeEntity, TaskStateCode.FIX_TIME_CYCLE, fixTime);
+        TaskEntity taskEntity = taskRepository.findByAppPackageNameAndTaskOwnerIdAndComnCode(appPackageName, taskOwnerId, taskCode)
+                .orElseGet(() -> new TaskEntity(appPackageName, taskOwnerId, comnCodeEntity, TaskStateCode.FIX_TIME_CYCLE, fixTime));
 
         taskRepository.save(taskEntity);
     }
@@ -90,10 +73,8 @@ public class TaskService {
         ComnCodeEntity comnCodeEntity = comnCodeRepository.findById(taskCode)
                 .orElseThrow(() -> new NotExistsTaskCodeException(taskCode));
 
-        taskRepository.findByAppPackageNameAndTaskOwnerIdAndComnCode(appPackageName, taskOwnerId, taskCode)
-                .ifPresent(taskEntity -> { throw new AlreadyExistsTaskException(taskEntity.getTaskId()); });
-
-        TaskEntity taskEntity = new TaskEntity(appPackageName, taskOwnerId, comnCodeEntity, TaskStateCode.NONE_FIX_TIME, expirationSeconds);
+        TaskEntity taskEntity = taskRepository.findByAppPackageNameAndTaskOwnerIdAndComnCode(appPackageName, taskOwnerId, taskCode)
+                .orElseGet(() -> new TaskEntity(appPackageName, taskOwnerId, comnCodeEntity, TaskStateCode.NONE_FIX_TIME, expirationSeconds));
 
         taskRepository.save(taskEntity);
     }
@@ -111,10 +92,8 @@ public class TaskService {
         ComnCodeEntity comnCodeEntity = comnCodeRepository.findById(taskCode)
                 .orElseThrow(() -> new NotExistsTaskCodeException(taskCode));
 
-        taskRepository.findByAppPackageNameAndTaskOwnerIdAndComnCode(appPackageName, taskOwnerId, taskCode)
-                .ifPresent(taskEntity -> { throw new AlreadyExistsTaskException(taskEntity.getTaskId()); });
-
-        TaskEntity taskEntity = new TaskEntity(appPackageName, taskOwnerId, comnCodeEntity, TaskStateCode.NONE_FIX_TIME_CYCLE, expirationSeconds);
+        TaskEntity taskEntity = taskRepository.findByAppPackageNameAndTaskOwnerIdAndComnCode(appPackageName, taskOwnerId, taskCode)
+                .orElseGet(() -> new TaskEntity(appPackageName, taskOwnerId, comnCodeEntity, TaskStateCode.NONE_FIX_TIME_CYCLE, expirationSeconds));
 
         taskRepository.save(taskEntity);
     }
@@ -186,16 +165,16 @@ public class TaskService {
      * @param appPackageName 앱 코드
      */
     @Transactional
-    public List<GetTaskDto> appStopPauseAllTask(String appPackageName) {
+    public List<TaskVo> appStopPauseAllTask(String appPackageName) {
 
-        List<GetTaskDto> getTaskDtoList = new ArrayList<>();
+        List<TaskVo> taskVoList = new ArrayList<>();
 
         lockTaskRepository.findByAppPackageName(appPackageName).forEach(taskEntity -> {
             taskEntity.appStopPause();
-            getTaskDtoList.add(GetTaskDto.of(taskEntity));
+            taskVoList.add(TaskVo.of(taskEntity));
         });
 
-        return getTaskDtoList;
+        return taskVoList;
     }
 
     /**
@@ -203,15 +182,15 @@ public class TaskService {
      * @param appPackageName 앱 코드
      */
     @Transactional
-    public List<GetTaskDto> appStopResumeAllTask(String appPackageName) {
+    public List<TaskVo> appStopResumeAllTask(String appPackageName) {
 
-        List<GetTaskDto> getTaskDtoList = new ArrayList<>();
+        List<TaskVo> taskVoList = new ArrayList<>();
 
         lockTaskRepository.findByAppPackageName(appPackageName).forEach(taskEntity -> {
             taskEntity.appStopResume();
-            getTaskDtoList.add(GetTaskDto.of(taskEntity));
+            taskVoList.add(TaskVo.of(taskEntity));
         });
 
-        return getTaskDtoList;
+        return taskVoList;
     }
 }

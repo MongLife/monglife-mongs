@@ -1,6 +1,5 @@
 package com.monglife.mongs.domain.taskSchedule.listener;
 
-import com.monglife.mongs.domain.task.dto.etc.GetTaskDto;
 import com.monglife.mongs.domain.task.dto.event.ExecuteTaskEvent;
 import com.monglife.mongs.domain.task.exception.NotExistsTaskException;
 import com.monglife.mongs.domain.task.service.TaskService;
@@ -31,25 +30,29 @@ public class TaskScheduleEntityListener {
     public void runTaskScheduleEventListener(RunTaskScheduleEvent event) {
 
         try {
-            GetTaskDto getTaskDto = taskService.getTask(event.getTaskId());
+            if (!event.getIsCycle()) {
+                // 단발성 Task 는 @PostRemove 에서 처리
+                taskService.deleteTask(event.getAppPackageName(), event.getTaskOwnerId(), event.getTaskCode());
+            }
+            else {
+                // 반복 Task 는 @PostUpdate 에서 테스크 스케 줄러 실행 후
+                taskService.cycleTask(event.getTaskId());
+                // 실행 이벤트 발생
+                applicationEventPublisher.publishEvent(ExecuteTaskEvent.builder()
+                        .appPackageName(event.getAppPackageName())
+                        .taskOwnerId(event.getTaskOwnerId())
+                        .taskCode(event.getTaskCode())
+                        .expiredAt(event.getExpiredAt())
+                        .expirationSeconds(event.getExpirationSeconds())
+                        .build());
+            }
 
-            if (!getTaskDto.getIsCycle()) taskService.deleteTask(getTaskDto.getAppPackageName(), getTaskDto.getTaskOwnerId(), getTaskDto.getTaskCode());
-            else taskService.cycleTask(getTaskDto.getTaskId());
-
-            applicationEventPublisher.publishEvent(ExecuteTaskEvent.builder()
-                    .appPackageName(getTaskDto.getAppPackageName())
-                    .taskOwnerId(getTaskDto.getTaskOwnerId())
-                    .taskCode(getTaskDto.getTaskCode())
-                    .restExpirationSeconds(getTaskDto.getRestExpirationSeconds())
-                    .expirationSeconds(getTaskDto.getExpirationSeconds())
-                    .build());
-
-            log.info("[TaskScheduleEntityListener] RUN ===> {} -> {}", getTaskDto.getTaskOwnerId(), getTaskDto.getTaskCode());
+            log.info("[{}] TASK RUN : {}", event.getTaskOwnerId(), event.getTaskCode());
         } catch (NotExistsTaskException e) {
-            log.info("[TaskScheduleEntityListener] NOT EXISTS TASK ===> {} -> {}", event.getTaskId(), e.getMessage());
+            log.warn("[{}] NOT EXISTS TASK : {}", event.getTaskId(), e.getMessage());
         } catch (RuntimeException e) {
-            taskScheduleService.deleteTaskSchedule(event.getTaskId());
-            log.error("[TaskScheduleEntityListener] ERROR ===> {} -> {}", event.getTaskId(), e.getMessage());
+            taskScheduleService.stopTaskSchedule(event.getTaskId());
+            log.error("[{}] TASK EXECUTE ERROR : {}", event.getTaskId(), e.getMessage());
         }
     }
 }
