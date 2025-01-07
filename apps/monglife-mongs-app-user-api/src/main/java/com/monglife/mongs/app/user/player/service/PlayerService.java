@@ -6,7 +6,7 @@ import com.monglife.mongs.app.user.player.vo.PlayerStepVo;
 import com.monglife.mongs.client.manager.service.ManagementService;
 import com.monglife.mongs.domain.device.service.StepService;
 import com.monglife.mongs.domain.device.vo.StepVo;
-import com.monglife.mongs.domain.member.dto.etc.GetMemberDto;
+import com.monglife.mongs.domain.member.vo.MemberVo;
 import com.monglife.mongs.domain.member.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
@@ -34,22 +34,22 @@ public class PlayerService {
     @Transactional
     public GetPlayerDto getPlayer(Long accountId) {
 
-        GetMemberDto getMemberDto = memberService.getMember(accountId);
+        MemberVo memberVo = memberService.getMember(accountId);
 
         return GetPlayerDto.builder()
-                .accountId(getMemberDto.getAccountId())
-                .slotCount(getMemberDto.getSlotCount())
-                .starPoint(getMemberDto.getStarPoint())
+                .accountId(memberVo.getAccountId())
+                .slotCount(memberVo.getSlotCount())
+                .starPoint(memberVo.getStarPoint())
                 .build();
     }
 
     @Transactional
     public void buySlot(Long accountId) {
 
-        GetMemberDto getMemberDto = memberService.getMember(accountId);
+        MemberVo memberVo = memberService.getMember(accountId);
 
-        if (getMemberDto.getSlotCount() >= MAX_SLOT_COUNT) {
-            throw new AlreadyMaxSlotCountException(getMemberDto.getSlotCount());
+        if (memberVo.getSlotCount() >= MAX_SLOT_COUNT) {
+            throw new AlreadyMaxSlotCountException(memberVo.getSlotCount());
         }
 
         memberService.decreaseStarPoint(accountId, PRICE_SLOT);

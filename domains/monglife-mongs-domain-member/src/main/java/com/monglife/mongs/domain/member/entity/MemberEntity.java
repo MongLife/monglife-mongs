@@ -36,15 +36,19 @@ public class MemberEntity extends BaseTimeEntity {
 
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "account_id")
-    private List<CollectionMapEntity> collectionMaps;
+    private List<CollectionMapEntity> collectionMaps = new ArrayList<>();
 
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "account_id")
-    private List<CollectionMongEntity> collectionMongs;
+    private List<CollectionMongEntity> collectionMongs = new ArrayList<>();
 
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "account_id")
-    private List<FeedbackEntity> feedbacks;
+    private List<FeedbackEntity> feedbacks = new ArrayList<>();
+
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JoinColumn(name = "account_id")
+    private List<MemberHistoryEntity> history = new ArrayList<>();
 
     @Builder
     public MemberEntity(Long accountId) {
@@ -52,36 +56,63 @@ public class MemberEntity extends BaseTimeEntity {
         this.slotCount = 1;
         this.starPoint = 0;
         this.isActive = Boolean.TRUE;
-        this.collectionMaps = new ArrayList<>();
-        this.collectionMongs = new ArrayList<>();
-        this.feedbacks = new ArrayList<>();
     }
 
     public void joinCollectionMap(CollectionMapEntity collectionMapEntity) {
+
         this.collectionMaps.add(collectionMapEntity);
+
+        this.addHistory(MemberHistoryEntity.MemberHistoryType.JOIN_COLLECTION_MAP);
     }
 
     public void joinCollectionMong(CollectionMongEntity collectionMongEntity) {
+
         this.collectionMongs.add(collectionMongEntity);
+
+        this.addHistory(MemberHistoryEntity.MemberHistoryType.JOIN_COLLECTION_MONG);
     }
 
     public void joinFeedback(FeedbackEntity feedbackEntity) {
+
         this.feedbacks.add(feedbackEntity);
+
+        this.addHistory(MemberHistoryEntity.MemberHistoryType.JOIN_FEEDBACK);
     }
 
     public void increaseSlotCount() {
+
         this.slotCount = Math.min(this.slotCount + 1, MAX_SLOT);
+
+        this.addHistory(MemberHistoryEntity.MemberHistoryType.INCREASE_SLOT_COUNT);
     }
 
     public void decreaseSlotCount() {
+
         this.slotCount = Math.max(1, this.slotCount - 1);
+
+        this.addHistory(MemberHistoryEntity.MemberHistoryType.DECREASE_SLOT_COUNT);
     }
 
     public void increaseStarPoint(Integer addStarPoint) {
+
         this.starPoint = this.starPoint + addStarPoint;
+
+        this.addHistory(MemberHistoryEntity.MemberHistoryType.INCREASE_STAR_POINT);
     }
 
     public void decreaseStarPoint(Integer subStarPoint) {
+
         this.starPoint = Math.max(0, this.starPoint - subStarPoint);
+
+        this.addHistory(MemberHistoryEntity.MemberHistoryType.DECREASE_STAR_POINT);
+    }
+
+    private void addHistory(MemberHistoryEntity.MemberHistoryType memberHistoryType) {
+        this.history.add(MemberHistoryEntity.builder()
+                .memberHistoryType(memberHistoryType)
+                .slotCount(this.slotCount)
+                .starPoint(this.starPoint)
+                .isActive(this.isActive)
+                .build());
     }
 }

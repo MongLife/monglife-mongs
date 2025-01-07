@@ -1,6 +1,6 @@
 package com.monglife.mongs.domain.mong.repository;
 
-import com.monglife.mongs.domain.mong.entity.history.MongStrokeHistoryEntity;
+import com.monglife.mongs.domain.mong.entity.MongStrokeHistoryEntity;
 import org.springframework.data.repository.CrudRepository;
 
 import java.util.Optional;

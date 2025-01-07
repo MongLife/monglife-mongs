@@ -2,16 +2,14 @@ package com.monglife.mongs.domain.mong.listener;
 
 import com.monglife.mongs.domain.mong.dto.event.MongEvolutionEvent;
 import com.monglife.mongs.domain.mong.dto.event.MongObserveEvent;
-import com.monglife.mongs.domain.mong.entity.data.MongEntity;
+import com.monglife.mongs.domain.mong.entity.MongEntity;
 import com.monglife.mongs.domain.mong.enums.MongStatusCode;
 import jakarta.persistence.PostUpdate;
 import jakarta.persistence.PreUpdate;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Component;
 
-@Slf4j
 @Component
 @RequiredArgsConstructor
 public class MongEntityListener {
@@ -24,9 +22,6 @@ public class MongEntityListener {
 
     @PreUpdate
     public void preUpdate(MongEntity mongEntity) {
-
-        // 지수 최대 최소 값 validation 처리
-        mongEntity.getStatus().sync();
 
         // 지수 조건 확인
         if (mongEntity.getStatus().getHealthyRatio() <= SICK_RATIO) {
@@ -47,26 +42,7 @@ public class MongEntityListener {
     @PostUpdate
     public void postUpdate(MongEntity mongEntity) {
 
-        MongObserveEvent mongObserveEvent = MongObserveEvent.builder()
-                .mongId(mongEntity.getMongId())
-                .mongName(mongEntity.getMongName())
-                .payPoint(mongEntity.getPayPoint())
-                .mongTypeCode(mongEntity.getType().getComn().getCode())
-                .stateCode(mongEntity.getState().getCode())
-                .isSleep(mongEntity.getState().getIsSleep())
-                .statusCode(mongEntity.getStatus().getCode())
-                .weight(mongEntity.getStatus().getWeight())
-                .expRatio(mongEntity.getStatus().getExpRatio())
-                .strengthRatio(mongEntity.getStatus().getStrengthRatio())
-                .satietyRatio(mongEntity.getStatus().getSatietyRatio())
-                .healthyRatio(mongEntity.getStatus().getHealthyRatio())
-                .fatigueRatio(mongEntity.getStatus().getFatigueRatio())
-                .poopCount(mongEntity.getStatus().getPoopCount())
-                .createdAt(mongEntity.getCreatedAt())
-                .updatedAt(mongEntity.getUpdatedAt())
-                .build();
-
-        applicationEventPublisher.publishEvent(mongObserveEvent);
+        applicationEventPublisher.publishEvent(MongObserveEvent.of(mongEntity));
 
         // 진화 조건 확인
         if (mongEntity.getStatus().getExpRatio() >= 100) {

@@ -7,8 +7,8 @@ import com.monglife.mongs.app.manager.management.dto.response.GetFeedItemsRespon
 import com.monglife.mongs.app.manager.management.dto.response.GetMongResponseDto;
 import com.monglife.mongs.app.manager.management.enums.ManagementResponse;
 import com.monglife.mongs.app.manager.management.service.ManagementService;
-import com.monglife.mongs.domain.mong.dto.etc.GetFeedItemDto;
-import com.monglife.mongs.domain.mong.dto.etc.GetMongDto;
+import com.monglife.mongs.domain.mong.vo.FeedItemVo;
+import com.monglife.mongs.domain.mong.vo.MongVo;
 import com.monglife.mongs.module.security.global.principal.Passport;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
@@ -40,9 +40,9 @@ public class ManagementController {
 
         Long accountId = passport.getAccountId();
 
-        List<GetMongDto> getMongDtos = managementService.getMongs(accountId);
+        List<MongVo> mongVos = managementService.getMongs(accountId);
 
-        List<GetMongResponseDto> getMongResponseDtos = GetMongResponseDto.toList(getMongDtos);
+        List<GetMongResponseDto> getMongResponseDtos = GetMongResponseDto.toList(mongVos);
 
         return ResponseEntity.ok(ManagementResponse.APP_MANAGER_MANAGEMENT_GET_MONG.toResponseDto(getMongResponseDtos));
     }
@@ -58,9 +58,9 @@ public class ManagementController {
 
         Long accountId = passport.getAccountId();
 
-        GetMongDto getMongDto = managementService.getMong(accountId, mongId);
+        MongVo mongVo = managementService.getMong(accountId, mongId);
 
-        GetMongResponseDto getMongResponseDto = GetMongResponseDto.of(getMongDto);
+        GetMongResponseDto getMongResponseDto = GetMongResponseDto.of(mongVo);
 
         return ResponseEntity.ok(ManagementResponse.APP_MANAGER_MANAGEMENT_GET_MONG.toResponseDto(getMongResponseDto));
     }
@@ -81,11 +81,11 @@ public class ManagementController {
 
         Long accountId = passport.getAccountId();
 
-        List<GetFeedItemDto> getFeedItemDtos = managementService.getFeedItems(accountId, mongId, foodTypeGroupCode);
+        List<FeedItemVo> feedItemVos = managementService.getFeedItems(accountId, mongId, foodTypeGroupCode);
 
         GetFeedItemsResponseDto getFeedItemsResponseDto = GetFeedItemsResponseDto.builder()
                 .mongId(mongId)
-                .feedItems(getFeedItemDtos)
+                .feedItems(feedItemVos)
                 .build();
 
         return ResponseEntity.ok(ManagementResponse.APP_MANAGER_MANAGEMENT_GET_FEED_ITEM.toResponseDto(getFeedItemsResponseDto));

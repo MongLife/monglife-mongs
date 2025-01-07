@@ -1,6 +1,6 @@
 package com.monglife.mongs.domain.member.service;
 
-import com.monglife.mongs.domain.member.dto.etc.GetProductOrderDto;
+import com.monglife.mongs.domain.member.vo.ProductOrderVo;
 import com.monglife.mongs.domain.member.entity.MemberEntity;
 import com.monglife.mongs.domain.member.entity.ProductOrderEntity;
 import com.monglife.mongs.domain.member.exception.NotExistsMemberException;
@@ -42,12 +42,12 @@ public class ProductOrderService {
     }
 
     @Transactional(readOnly = true)
-    public GetProductOrderDto getProductOrder(Long productOrderId) {
+    public ProductOrderVo getProductOrder(Long productOrderId) {
 
         ProductOrderEntity productOrderEntity = productOrderRepository.findByProductOrderId(productOrderId)
                 .orElseThrow(() -> new NotExistsProductOrderException(productOrderId));
 
-        return GetProductOrderDto.builder()
+        return ProductOrderVo.builder()
                 .accountId(productOrderEntity.getMember().getAccountId())
                 .productId(productOrderEntity.getComn().getCode())
                 .orderId(productOrderEntity.getOrderId())
@@ -56,7 +56,7 @@ public class ProductOrderService {
     }
 
     @Transactional(readOnly = true)
-    public List<GetProductOrderDto> getConsumedProductOrders(List<String> orderIds) {
+    public List<ProductOrderVo> getConsumedProductOrders(List<String> orderIds) {
 
         List<ProductOrderEntity> productOrderEntities = productOrderRepository.findAllByOrderIdIn(orderIds).stream()
                 .filter(ProductOrderEntity::isConsumed)
@@ -64,7 +64,7 @@ public class ProductOrderService {
 
 
         return productOrderEntities.stream()
-                .map(productOrderEntity -> GetProductOrderDto.builder()
+                .map(productOrderEntity -> ProductOrderVo.builder()
                         .accountId(productOrderEntity.getMember().getAccountId())
                         .productId(productOrderEntity.getComn().getCode())
                         .orderId(productOrderEntity.getOrderId())

@@ -6,7 +6,7 @@ import com.monglife.mongs.app.user.store.exception.InvalidConsumeOrderException;
 import com.monglife.mongs.client.google.service.GoogleService;
 import com.monglife.mongs.client.google.vo.InAppOrderVo;
 import com.monglife.mongs.client.google.vo.InAppProductVo;
-import com.monglife.mongs.domain.member.dto.etc.GetProductOrderDto;
+import com.monglife.mongs.domain.member.vo.ProductOrderVo;
 import com.monglife.mongs.domain.member.service.MemberService;
 import com.monglife.mongs.domain.member.service.ProductOrderService;
 import lombok.RequiredArgsConstructor;
@@ -51,12 +51,12 @@ public class StoreService {
     @Transactional
     public void consumeProductOrder(Long productOrderId) {
 
-        GetProductOrderDto getProductOrderDto = productOrderService.getProductOrder(productOrderId);
+        ProductOrderVo productOrderVo = productOrderService.getProductOrder(productOrderId);
 
-        Long accountId = getProductOrderDto.getAccountId();
-        String productId = getProductOrderDto.getProductId();
-        String orderId = getProductOrderDto.getOrderId();
-        String purchaseToken = getProductOrderDto.getPurchaseToken();
+        Long accountId = productOrderVo.getAccountId();
+        String productId = productOrderVo.getProductId();
+        String orderId = productOrderVo.getOrderId();
+        String purchaseToken = productOrderVo.getPurchaseToken();
 
         // 구매 검증
         InAppOrderVo inAppOrderVo = googleService.getInAppOrder(productId, orderId, purchaseToken);
@@ -89,10 +89,10 @@ public class StoreService {
     @Transactional
     public List<String> getConsumedOrderIds(List<String> orderIds) {
 
-        List<GetProductOrderDto> getProductOrderDtos = productOrderService.getConsumedProductOrders(orderIds);
+        List<ProductOrderVo> productOrderVos = productOrderService.getConsumedProductOrders(orderIds);
 
-        List<String> consumedOrderIds = getProductOrderDtos.stream()
-                .map(GetProductOrderDto::getOrderId)
+        List<String> consumedOrderIds = productOrderVos.stream()
+                .map(ProductOrderVo::getOrderId)
                 .toList();
 
         return orderIds.stream()

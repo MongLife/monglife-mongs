@@ -1,0 +1,366 @@
+package com.monglife.mongs.domain.mong.entity;
+
+import com.monglife.mongs.domain.mong.enums.MongStatusCode;
+import jakarta.persistence.*;
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.ToString;
+
+import java.util.ArrayList;
+import java.util.List;
+
+@Embeddable
+@Getter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@ToString(exclude = { "history" })
+public class MongStatusEntity {
+
+    protected static final Integer MAX_POOP_COUNT = 4;
+
+    @Column(name = "max_status")
+    private Double maxStatus;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "mong_status_code")
+    private MongStatusCode code;
+
+    @Column(name = "weight")
+    private Double weight;
+
+    @Column(name = "poop_count")
+    private Integer poopCount;
+
+    @Column(name = "exp")
+    private Double exp;
+
+    @Column(name = "strength")
+    private Double strength;
+
+    @Column(name = "satiety")
+    private Double satiety;
+
+    @Column(name = "healthy")
+    private Double healthy;
+
+    @Column(name = "fatigue")
+    private Double fatigue;
+
+    @Column(name = "exp_ratio")
+    private Double expRatio;
+
+    @Column(name = "strength_ratio")
+    private Double strengthRatio;
+
+    @Column(name = "satiety_ratio")
+    private Double satietyRatio;
+
+    @Column(name = "healthy_ratio")
+    private Double healthyRatio;
+
+    @Column(name = "fatigue_ratio")
+    private Double fatigueRatio;
+
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JoinColumn(name = "mong_id")
+    private List<MongStatusHistoryEntity> history = new ArrayList<>();
+
+    public MongStatusEntity(Double maxStatus) {
+
+        this.maxStatus = maxStatus;
+        this.code = MongStatusCode.NORMAL;
+        this.weight = 0D;
+        this.poopCount = 0;
+
+        this.exp = 0D;
+        this.strength = maxStatus;
+        this.satiety = maxStatus;
+        this.healthy = maxStatus;
+        this.fatigue = maxStatus;
+
+        this.expRatio = 0D;
+        this.strengthRatio = 100D;
+        this.satietyRatio = 100D;
+        this.healthyRatio = 100D;
+        this.fatigueRatio = 100D;
+    }
+
+    /**
+     * 경험치 증가
+     * @param exp 경험치
+     */
+    public void increaseExp(Double exp) {
+
+        if (exp <= 0D) return;
+
+        this.exp = this.exp + exp;
+
+        this.exp = Math.max(0D, Math.min(this.exp, this.maxStatus));
+        this.expRatio = this.exp / this.maxStatus * 100;
+
+        this.addHistory(MongStatusHistoryEntity.MongStatusHistoryType.HISTORY_MONG_STATUS_INCREASE_EXP);
+    }
+
+    /**
+     * 경험치 감소
+     * @param exp 경험치
+     */
+    public void decreaseExp(Double exp) {
+
+        if (this.exp <= 0D || exp <= 0D) return;
+
+        this.exp = this.exp - exp;
+
+        this.exp = Math.max(0D, Math.min(this.exp, this.maxStatus));
+        this.expRatio = this.exp / this.maxStatus * 100;
+
+        this.addHistory(MongStatusHistoryEntity.MongStatusHistoryType.HISTORY_MONG_STATUS_DECREASE_EXP);
+    }
+
+    /**
+     * 경험치 초기화
+     */
+    public void resetExp() {
+
+        if (this.exp <= 0D) return;
+
+        this.exp = 0D;
+
+        this.exp = Math.max(0D, Math.min(this.exp, this.maxStatus));
+        this.expRatio = this.exp / this.maxStatus * 100;
+
+        this.addHistory(MongStatusHistoryEntity.MongStatusHistoryType.HISTORY_MONG_STATUS_RESET_EXP);
+    }
+
+    /**
+     * 배변 수 증가
+     * @param poopCount 배변 수
+     */
+    public void increasePoopCount(Integer poopCount) {
+
+        if (poopCount <= 0) return;
+
+        this.poopCount = this.poopCount + poopCount;
+
+        this.poopCount = Math.max(0, Math.min(this.poopCount, MAX_POOP_COUNT));
+
+        this.addHistory(MongStatusHistoryEntity.MongStatusHistoryType.HISTORY_MONG_STATUS_INCREASE_POOP_COUNT);
+    }
+
+    /**
+     * 배변 수 감소
+     * @param poopCount 배변 수
+     */
+    public void decreasePoopCount(Integer poopCount) {
+
+        if (this.poopCount <= 0 || poopCount <= 0) return;
+
+        this.poopCount = this.poopCount - poopCount;
+
+        this.poopCount = Math.max(0, Math.min(this.poopCount, MAX_POOP_COUNT));
+
+        this.addHistory(MongStatusHistoryEntity.MongStatusHistoryType.HISTORY_MONG_STATUS_DECREASE_POOP_COUNT);
+    }
+
+    /**
+     * 배변 수 초기화
+     */
+    public void resetPoopCount() {
+
+        if (this.poopCount <= 0) return;
+
+        this.poopCount = 0;
+
+        this.addHistory(MongStatusHistoryEntity.MongStatusHistoryType.HISTORY_MONG_STATUS_RESET_POOP_COUNT);
+    }
+
+    /**
+     * 몸무게 증가
+     * @param weight 몸무게
+     */
+    public void increaseWeight(Double weight) {
+
+        if (weight <= 0) return;
+
+        this.weight = this.weight + weight;
+
+        this.weight = Math.max(0D, this.weight);
+
+        this.addHistory(MongStatusHistoryEntity.MongStatusHistoryType.HISTORY_MONG_STATUS_INCREASE_WEIGHT);
+    }
+
+    /**
+     * 몸무게 감소
+     * @param weight 몸무게
+     */
+    public void decreaseWeight(Double weight) {
+
+        if (this.weight <= 0D || weight <= 0D) return;
+
+        this.weight = this.weight - weight;
+
+        this.weight = Math.max(0D, this.weight);
+
+        this.addHistory(MongStatusHistoryEntity.MongStatusHistoryType.HISTORY_MONG_STATUS_DECREASE_WEIGHT);
+    }
+
+    /**
+     * 지수 증가
+     * @param strength 힘
+     * @param satiety 포만감
+     * @param healthy 체력
+     * @param fatigue 피로도
+     */
+    public void increaseStatus(Double strength, Double satiety, Double healthy, Double fatigue) {
+
+        if (this.maxStatus >= this.strength && this.maxStatus >= this.satiety && this.maxStatus >= this.healthy && this.maxStatus >= this.fatigue) {
+            return;
+        }
+
+        this.strength = this.strength + strength;
+        this.satiety = this.satiety + satiety;
+        this.healthy = this.healthy + healthy;
+        this.fatigue = this.fatigue + fatigue;
+        this.syncStatusValueToStatusRatio();
+
+        this.addHistory(MongStatusHistoryEntity.MongStatusHistoryType.HISTORY_MONG_STATUS_INCREASE_STATUS);
+    }
+
+    /**
+     * 지수 감소
+     * @param strength 힘
+     * @param satiety 포만감
+     * @param healthy 체력
+     * @param fatigue 피로도
+     */
+    public void decreaseStatus(Double strength, Double satiety, Double healthy, Double fatigue) {
+
+        if (0D >= strength && 0D >= satiety && 0D >= healthy && 0D >= fatigue) return;
+
+        if (0D >= this.strength && 0D >= this.satiety && 0D >= this.healthy && 0D >= this.fatigue) return;
+
+        this.strength = this.strength - strength;
+        this.satiety = this.satiety - satiety;
+        this.healthy = this.healthy - healthy;
+        this.fatigue = this.fatigue - fatigue;
+        this.syncStatusValueToStatusRatio();
+
+        this.addHistory(MongStatusHistoryEntity.MongStatusHistoryType.HISTORY_MONG_STATUS_DECREASE_STATUS);
+    }
+
+    /**
+     * 지수 퍼센트 증가
+     * @param strengthRatio 힘 퍼센트
+     * @param satietyRatio 포만감 퍼센트
+     * @param healthyRatio 체력 퍼센트
+     * @param fatigueRatio 피로도 퍼센트
+     */
+    public void increaseStatusRatio(Double strengthRatio, Double satietyRatio, Double healthyRatio, Double fatigueRatio) {
+
+        if (100D <= this.strengthRatio && 100D <= this.satietyRatio && 100D <= this.healthyRatio && 100D <= this.fatigueRatio) {
+            return;
+        }
+
+        this.strengthRatio = this.strengthRatio + strengthRatio;
+        this.satietyRatio = this.satietyRatio + satietyRatio;
+        this.healthyRatio = this.healthyRatio + healthyRatio;
+        this.fatigueRatio = this.fatigueRatio + fatigueRatio;
+        this.syncStatusRatioToStatusValue();
+
+        this.addHistory(MongStatusHistoryEntity.MongStatusHistoryType.HISTORY_MONG_STATUS_INCREASE_STATUS_RATIO);
+    }
+
+    /**
+     * 지수 퍼센트 감소
+     * @param strengthRatio 힘 퍼센트
+     * @param satietyRatio 포만감 퍼센트
+     * @param healthyRatio 체력 퍼센트
+     * @param fatigueRatio 피로도 퍼센트
+     */
+    public void decreaseStatusRatio(Double strengthRatio, Double satietyRatio, Double healthyRatio, Double fatigueRatio) {
+
+        if (0D >= strengthRatio && 0D >= satietyRatio && 0D >= healthyRatio && 0D >= fatigueRatio) return;
+
+        if (0D >= this.strengthRatio && 0D >= this.satietyRatio && 0D >= this.healthyRatio && 0D >= this.fatigueRatio) return;
+
+        this.strengthRatio = this.strengthRatio - strengthRatio;
+        this.satietyRatio = this.satietyRatio - satietyRatio;
+        this.healthyRatio = this.healthyRatio - healthyRatio;
+        this.fatigueRatio = this.fatigueRatio - fatigueRatio;
+        this.syncStatusRatioToStatusValue();
+
+        this.addHistory(MongStatusHistoryEntity.MongStatusHistoryType.HISTORY_MONG_STATUS_DECREASE_STATUS_RATIO);
+    }
+
+    public void setMaxStatus(Double maxStatus) {
+
+        if (this.maxStatus.equals(maxStatus)) return;
+
+        this.exp = this.exp / this.maxStatus * maxStatus;
+        this.strength = this.strength / this.maxStatus * maxStatus;
+        this.satiety = this.satiety / this.maxStatus * maxStatus;
+        this.healthy = this.healthy / this.maxStatus * maxStatus;
+        this.fatigue = this.fatigue / this.maxStatus * maxStatus;
+
+        this.maxStatus = maxStatus;
+
+        this.exp = Math.max(0D, Math.min(this.exp, this.maxStatus));
+        this.expRatio = this.exp / this.maxStatus * 100;
+
+        this.addHistory(MongStatusHistoryEntity.MongStatusHistoryType.HISTORY_MONG_STATUS_SET_MAX_STATUS);
+    }
+
+    public void setCode(MongStatusCode code) {
+
+        if (this.code == code) return;
+
+        this.code = code;
+
+        this.addHistory(MongStatusHistoryEntity.MongStatusHistoryType.HISTORY_MONG_STATUS_SET_CODE);
+    }
+
+    private void syncStatusRatioToStatusValue() {
+        this.strengthRatio = Math.max(0D, Math.min(this.strengthRatio, 100D));
+        this.satietyRatio = Math.max(0D, Math.min(this.satietyRatio, 100D));
+        this.healthyRatio = Math.max(0D, Math.min(this.healthyRatio, 100D));
+        this.fatigueRatio = Math.max(0D, Math.min(this.fatigueRatio, 100D));
+
+        this.strength = this.strengthRatio * this.maxStatus / 100;
+        this.satiety = this.satietyRatio * this.maxStatus / 100;
+        this.healthy = this.healthyRatio * this.maxStatus / 100;
+        this.fatigue = this.fatigueRatio * this.maxStatus / 100;
+    }
+
+    private void syncStatusValueToStatusRatio() {
+        this.strength = Math.max(0D, Math.min(this.strength, this.maxStatus));
+        this.satiety = Math.max(0D, Math.min(this.satiety, this.maxStatus));
+        this.healthy = Math.max(0D, Math.min(this.healthy, this.maxStatus));
+        this.fatigue = Math.max(0D, Math.min(this.fatigue, this.maxStatus));
+
+        this.strengthRatio = this.strength / this.maxStatus * 100;
+        this.satietyRatio = this.satiety / this.maxStatus * 100;
+        this.healthyRatio = this.healthy / this.maxStatus * 100;
+        this.fatigueRatio = this.fatigue / this.maxStatus * 100;
+    }
+
+    private void addHistory(MongStatusHistoryEntity.MongStatusHistoryType mongStatusHistoryType) {
+
+        this.history.add(MongStatusHistoryEntity.builder()
+                .mongStatusHistoryType(mongStatusHistoryType)
+                .maxStatus(this.maxStatus)
+                .code(this.code)
+                .weight(this.weight)
+                .poopCount(this.poopCount)
+                .exp(this.exp)
+                .strength(this.strength)
+                .satiety(this.satiety)
+                .healthy(this.healthy)
+                .fatigue(this.fatigue)
+                .expRatio(this.expRatio)
+                .strengthRatio(this.strengthRatio)
+                .satietyRatio(this.satietyRatio)
+                .healthyRatio(this.healthyRatio)
+                .fatigueRatio(this.fatigueRatio)
+                .build());
+    }
+}

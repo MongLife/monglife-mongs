@@ -14,24 +14,24 @@ public class IncreaseMongStatusDto {
 
     private Double weight;
 
-    private Double strengthRatio;
+    private Double strength;
 
-    private Double satietyRatio;
+    private Double satiety;
 
-    private Double healthyRatio;
+    private Double healthy;
 
-    private Double fatigueRatio;
+    private Double fatigue;
 
-    private Integer poop;
+    private Integer poopCount;
 
     @Builder
-    public IncreaseMongStatusDto(Double exp, Double weight, Double strengthRatio, Double satietyRatio, Double healthyRatio, Double fatigueRatio, Integer poop) {
+    public IncreaseMongStatusDto(Double exp, Double weight, Double strength, Double satiety, Double healthy, Double fatigue, Integer poopCount) {
         this.exp = exp;
         this.weight = weight;
-        this.strengthRatio = strengthRatio;
-        this.satietyRatio = satietyRatio;
-        this.healthyRatio = healthyRatio;
-        this.fatigueRatio = fatigueRatio;
-        this.poop = poop;
+        this.strength = strength;
+        this.satiety = satiety;
+        this.healthy = healthy;
+        this.fatigue = fatigue;
+        this.poopCount = poopCount;
     }
 }

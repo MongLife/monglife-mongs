@@ -1,6 +1,6 @@
 package com.monglife.mongs.app.manager.management.dto.response;
 
-import com.monglife.mongs.domain.mong.dto.etc.GetMongDto;
+import com.monglife.mongs.domain.mong.vo.MongVo;
 import lombok.*;
 
 import java.util.List;
@@ -24,39 +24,39 @@ public class GetMongResponseDto {
         this.mongStatus = mongStatus;
     }
 
-    public static GetMongResponseDto of(GetMongDto getMongDto) {
+    public static GetMongResponseDto of(MongVo mongVo) {
         return GetMongResponseDto.builder()
                 .mong(MongResponseDto.builder()
-                        .mongId(getMongDto.getMongId())
-                        .mongName(getMongDto.getMongName())
-                        .mongTypeCode(getMongDto.getMongTypeCode())
-                        .payPoint(getMongDto.getPayPoint())
-                        .createdAt(getMongDto.getCreatedAt())
-                        .updatedAt(getMongDto.getUpdatedAt())
+                        .mongId(mongVo.getMongId())
+                        .mongName(mongVo.getMongName())
+                        .mongTypeCode(mongVo.getMongTypeCode())
+                        .payPoint(mongVo.getPayPoint())
+                        .createdAt(mongVo.getCreatedAt())
+                        .updatedAt(mongVo.getUpdatedAt())
                         .build())
                 .mongState(MongStateResponseDto.builder()
-                        .mongId(getMongDto.getMongId())
-                        .stateCode(getMongDto.getStateCode())
-                        .isSleep(getMongDto.getIsSleep())
-                        .updatedAt(getMongDto.getUpdatedAt())
+                        .mongId(mongVo.getMongId())
+                        .stateCode(mongVo.getStateCode())
+                        .isSleep(mongVo.getIsSleep())
+                        .updatedAt(mongVo.getUpdatedAt())
                         .build())
                 .mongStatus(MongStatusResponseDto.builder()
-                        .mongId(getMongDto.getMongId())
-                        .statusCode(getMongDto.getStatusCode())
-                        .expRatio(getMongDto.getExpRatio())
-                        .weight(getMongDto.getWeight())
-                        .strengthRatio(getMongDto.getStrengthRatio())
-                        .satietyRatio(getMongDto.getSatietyRatio())
-                        .healthyRatio(getMongDto.getHealthyRatio())
-                        .fatigueRatio(getMongDto.getFatigueRatio())
-                        .poopCount(getMongDto.getPoopCount())
-                        .updatedAt(getMongDto.getUpdatedAt())
+                        .mongId(mongVo.getMongId())
+                        .statusCode(mongVo.getStatusCode())
+                        .expRatio(mongVo.getExpRatio())
+                        .weight(mongVo.getWeight())
+                        .strengthRatio(mongVo.getStrengthRatio())
+                        .satietyRatio(mongVo.getSatietyRatio())
+                        .healthyRatio(mongVo.getHealthyRatio())
+                        .fatigueRatio(mongVo.getFatigueRatio())
+                        .poopCount(mongVo.getPoopCount())
+                        .updatedAt(mongVo.getUpdatedAt())
                         .build())
                 .build();
     }
 
-    public static List<GetMongResponseDto> toList(List<GetMongDto> getMongDtos) {
-        return getMongDtos.stream()
+    public static List<GetMongResponseDto> toList(List<MongVo> mongVos) {
+        return mongVos.stream()
                 .map(GetMongResponseDto::of)
                 .toList();
     }

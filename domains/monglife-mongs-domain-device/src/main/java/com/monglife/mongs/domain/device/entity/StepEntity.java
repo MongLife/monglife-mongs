@@ -41,7 +41,7 @@ public class StepEntity extends BaseTimeEntity {
 
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "step_id")
-    private List<StepHistoryEntity> history;
+    private List<StepHistoryEntity> history = new ArrayList<>();
 
     @Builder
     public StepEntity(String deviceId, Integer walkingCount, Integer totalWalkingCount, Integer consumeWalkingCount, LocalDateTime deviceBootedDt) {
@@ -50,64 +50,55 @@ public class StepEntity extends BaseTimeEntity {
         this.totalWalkingCount = totalWalkingCount;
         this.consumeWalkingCount = consumeWalkingCount;
         this.deviceBootedDt = deviceBootedDt;
-        this.history = new ArrayList<>();
     }
 
     @PrePersist
     public void prePersist() {
-
-        this.history.add(StepHistoryEntity.builder()
-                .walkingCount(this.walkingCount)
-                .totalWalkingCount(this.totalWalkingCount)
-                .consumeWalkingCount(this.consumeWalkingCount)
-                .deviceBootedDt(this.deviceBootedDt)
-                .type(StepHistoryEntity.StepHistoryType.CREATE)
-                .build());
+        this.addHistory(StepHistoryEntity.StepHistoryType.CREATE);
     }
 
     public Integer getNowWalkingCount() {
-        return walkingCount + (totalWalkingCount - consumeWalkingCount);
+        return this.walkingCount + (this.totalWalkingCount - this.consumeWalkingCount);
     }
 
     public void updateTotalWalkingCount(Integer totalWalkingCount) {
 
+        if (this.totalWalkingCount.equals(totalWalkingCount)) return;
+
         this.totalWalkingCount = totalWalkingCount;
 
-        this.history.add(StepHistoryEntity.builder()
-                .walkingCount(this.walkingCount)
-                .totalWalkingCount(this.totalWalkingCount)
-                .consumeWalkingCount(this.consumeWalkingCount)
-                .deviceBootedDt(this.deviceBootedDt)
-                .type(StepHistoryEntity.StepHistoryType.UPDATE)
-                .build());
+        this.addHistory(StepHistoryEntity.StepHistoryType.UPDATE);
     }
 
     public void resetTotalWalkingCount(Integer totalWalkingCount, LocalDateTime deviceBootedDt) {
+
+        if (this.totalWalkingCount.equals(totalWalkingCount) && this.deviceBootedDt == deviceBootedDt) return;
 
         this.walkingCount = this.walkingCount + this.totalWalkingCount - this.consumeWalkingCount;
         this.totalWalkingCount = totalWalkingCount;
         this.consumeWalkingCount = 0;
         this.deviceBootedDt = deviceBootedDt;
 
-        this.history.add(StepHistoryEntity.builder()
-                .walkingCount(this.walkingCount)
-                .totalWalkingCount(this.totalWalkingCount)
-                .consumeWalkingCount(this.consumeWalkingCount)
-                .deviceBootedDt(this.deviceBootedDt)
-                .type(StepHistoryEntity.StepHistoryType.RESET)
-                .build());
+        this.addHistory(StepHistoryEntity.StepHistoryType.RESET);
     }
 
     public void decreaseWalkingCount(Integer walkingCount) {
 
+        if (walkingCount <= 0) return;
+
         this.consumeWalkingCount = this.consumeWalkingCount + walkingCount;
+
+        this.addHistory(StepHistoryEntity.StepHistoryType.DECREASE);
+    }
+
+    private void addHistory(StepHistoryEntity.StepHistoryType stepHistoryType) {
 
         this.history.add(StepHistoryEntity.builder()
                 .walkingCount(this.walkingCount)
                 .totalWalkingCount(this.totalWalkingCount)
                 .consumeWalkingCount(this.consumeWalkingCount)
                 .deviceBootedDt(this.deviceBootedDt)
-                .type(StepHistoryEntity.StepHistoryType.DECREASE)
+                .type(stepHistoryType)
                 .build());
     }
 }

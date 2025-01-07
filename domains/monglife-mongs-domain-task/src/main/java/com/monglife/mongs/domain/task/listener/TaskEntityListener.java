@@ -51,14 +51,14 @@ public class TaskEntityListener {
     @PostRemove
     public void postRemove(TaskEntity taskEntity) {
 
-//        applicationEventPublisher.publishEvent(ExecuteTaskEvent.builder()
-//                .appPackageName(taskEntity.getAppPackageName())
-//                .taskOwnerId(taskEntity.getTaskOwnerId())
-//                .taskCode(taskEntity.getComn().getCode())
-//                .expiredAt(taskEntity.getExpiredAt())
-//                .expirationSeconds(taskEntity.getExpirationSeconds())
-//                .build());
-
         applicationEventPublisher.publishEvent(StopTaskScheduleEvent.of(taskEntity));
+
+        applicationEventPublisher.publishEvent(ExecuteTaskEvent.builder()
+                .appPackageName(taskEntity.getAppPackageName())
+                .taskOwnerId(taskEntity.getTaskOwnerId())
+                .taskCode(taskEntity.getComn().getCode())
+                .expiredAt(taskEntity.getExpiredAt())
+                .expirationSeconds(taskEntity.getExpirationSeconds())
+                .build());
     }
 }

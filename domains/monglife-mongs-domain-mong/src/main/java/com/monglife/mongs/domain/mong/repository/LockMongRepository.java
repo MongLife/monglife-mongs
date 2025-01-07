@@ -1,6 +1,6 @@
 package com.monglife.mongs.domain.mong.repository;
 
-import com.monglife.mongs.domain.mong.entity.data.MongEntity;
+import com.monglife.mongs.domain.mong.entity.MongEntity;
 import jakarta.persistence.LockModeType;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Lock;

@@ -1,5 +1,6 @@
 package com.monglife.mongs.domain.mong.dto.event;
 
+import com.monglife.mongs.domain.mong.entity.MongEntity;
 import com.monglife.mongs.domain.mong.enums.MongStateCode;
 import com.monglife.mongs.domain.mong.enums.MongStatusCode;
 import lombok.Builder;
@@ -62,5 +63,26 @@ public class MongObserveEvent {
         this.poopCount = poopCount;
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
+    }
+
+    public static MongObserveEvent of(MongEntity mongEntity) {
+        return MongObserveEvent.builder()
+                .mongId(mongEntity.getMongId())
+                .mongName(mongEntity.getMongName())
+                .payPoint(mongEntity.getPayPoint())
+                .mongTypeCode(mongEntity.getType().getComn().getCode())
+                .stateCode(mongEntity.getState().getCode())
+                .isSleep(mongEntity.getState().getIsSleep())
+                .statusCode(mongEntity.getStatus().getCode())
+                .weight(mongEntity.getStatus().getWeight())
+                .expRatio(mongEntity.getStatus().getExpRatio())
+                .strengthRatio(mongEntity.getStatus().getStrengthRatio())
+                .satietyRatio(mongEntity.getStatus().getSatietyRatio())
+                .healthyRatio(mongEntity.getStatus().getHealthyRatio())
+                .fatigueRatio(mongEntity.getStatus().getFatigueRatio())
+                .poopCount(mongEntity.getStatus().getPoopCount())
+                .createdAt(mongEntity.getCreatedAt())
+                .updatedAt(mongEntity.getUpdatedAt())
+                .build();
     }
 }

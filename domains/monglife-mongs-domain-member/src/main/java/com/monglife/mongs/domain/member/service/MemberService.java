@@ -1,8 +1,8 @@
 package com.monglife.mongs.domain.member.service;
 
-import com.monglife.mongs.domain.member.dto.etc.GetCollectionMapDto;
-import com.monglife.mongs.domain.member.dto.etc.GetCollectionMongDto;
-import com.monglife.mongs.domain.member.dto.etc.GetMemberDto;
+import com.monglife.mongs.domain.member.vo.CollectionMapVo;
+import com.monglife.mongs.domain.member.vo.CollectionMongVo;
+import com.monglife.mongs.domain.member.vo.MemberVo;
 import com.monglife.mongs.domain.member.entity.*;
 import com.monglife.mongs.domain.member.exception.*;
 import com.monglife.mongs.domain.member.repository.ComnCodeRepository;
@@ -38,12 +38,12 @@ public class MemberService {
      * @return 회원 정보
      */
     @Transactional
-    public GetMemberDto getMember(Long accountId) {
+    public MemberVo getMember(Long accountId) {
 
         MemberEntity memberEntity = memberRepository.findByAccountId(accountId)
                 .orElseGet(() -> memberRepository.save(new MemberEntity(accountId)));
 
-        return GetMemberDto.builder()
+        return MemberVo.builder()
                 .accountId(memberEntity.getAccountId())
                 .slotCount(memberEntity.getSlotCount())
                 .starPoint(memberEntity.getStarPoint())
@@ -82,7 +82,7 @@ public class MemberService {
      * @return 컬렉션 맵 목록
      */
     @Transactional
-    public List<GetCollectionMapDto> getCollectionMaps(Long accountId) {
+    public List<CollectionMapVo> getCollectionMaps(Long accountId) {
 
         MemberEntity memberEntity = memberRepository.findByAccountId(accountId)
                 .orElseGet(() -> memberRepository.save(new MemberEntity(accountId)));
@@ -94,7 +94,7 @@ public class MemberService {
                 .toList();
 
         return comnCodeEntities.stream()
-                .map(comnCodeEntity -> GetCollectionMapDto.builder()
+                .map(comnCodeEntity -> CollectionMapVo.builder()
                         .mapTypeCode(comnCodeEntity.getCode())
                         .mapTypeName(comnCodeEntity.getName())
                         .isIncluded(collectionMapTypeCodes.contains(comnCodeEntity.getCode()))
@@ -130,7 +130,7 @@ public class MemberService {
      * @return 컬렉션 몽 목록
      */
     @Transactional
-    public List<GetCollectionMongDto> getCollectionMongs(Long accountId) {
+    public List<CollectionMongVo> getCollectionMongs(Long accountId) {
 
         MemberEntity memberEntity = memberRepository.findByAccountId(accountId)
                 .orElseGet(() -> memberRepository.save(new MemberEntity(accountId)));
@@ -142,7 +142,7 @@ public class MemberService {
                 .toList();
 
         return comnCodeEntities.stream()
-                .map(comnCodeEntity -> GetCollectionMongDto.builder()
+                .map(comnCodeEntity -> CollectionMongVo.builder()
                         .mongTypeCode(comnCodeEntity.getCode())
                         .mongTypeName(comnCodeEntity.getName())
                         .isIncluded(collectionMongTypeCode.contains(comnCodeEntity.getCode()))

@@ -49,17 +49,17 @@ public class MongObserveEventListener {
         }
 
         // STATE
-        boolean isDeadStatus = event.getSatietyRatio() <= taskScheduleProperties.dead.getSatietyRatio() || event.getHealthyRatio() <= taskScheduleProperties.dead.getHealthyRatio();
+        boolean isDeadStatus = event.getSatietyRatio() <= taskScheduleProperties.getDeadSatietyRatio() || event.getHealthyRatio() <= taskScheduleProperties.getDeadHealthyRatio();
 
         if (isDeadStatus) {
-            if (taskService.isExistsTask(APP_PACKAGE_NAME, taskOwnerId, taskScheduleProperties.dead.getCode(), TaskStatusCode.PAUSE)) {
-                taskService.resumeTask(APP_PACKAGE_NAME, taskOwnerId, taskScheduleProperties.dead.getCode());
-            } else if (!taskService.isExistsTask(APP_PACKAGE_NAME, taskOwnerId, taskScheduleProperties.dead.getCode(), TaskStatusCode.PROCESSING) && !MongStateCode.DEAD.equals(event.getStateCode())) {
-                taskService.createTask(APP_PACKAGE_NAME, taskOwnerId, taskScheduleProperties.dead.getCode(), taskScheduleProperties.dead.getExpiration());
+            if (taskService.isExistsTask(APP_PACKAGE_NAME, taskOwnerId, taskScheduleProperties.getDeadCode(), TaskStatusCode.PAUSE)) {
+                taskService.resumeTask(APP_PACKAGE_NAME, taskOwnerId, taskScheduleProperties.getDeadCode());
+            } else if (!taskService.isExistsTask(APP_PACKAGE_NAME, taskOwnerId, taskScheduleProperties.getDeadCode(), TaskStatusCode.PROCESSING) && !MongStateCode.DEAD.equals(event.getStateCode())) {
+                taskService.createTask(APP_PACKAGE_NAME, taskOwnerId, taskScheduleProperties.getDeadCode(), taskScheduleProperties.getDeadExpiration());
             }
         } else {
-            if (taskService.isExistsTask(APP_PACKAGE_NAME, taskOwnerId, taskScheduleProperties.dead.getCode(), TaskStatusCode.PROCESSING)) {
-                taskService.pauseTask(APP_PACKAGE_NAME, taskOwnerId, taskScheduleProperties.dead.getCode());
+            if (taskService.isExistsTask(APP_PACKAGE_NAME, taskOwnerId, taskScheduleProperties.getDeadCode(), TaskStatusCode.PROCESSING)) {
+                taskService.pauseTask(APP_PACKAGE_NAME, taskOwnerId, taskScheduleProperties.getDeadCode());
             }
         }
 

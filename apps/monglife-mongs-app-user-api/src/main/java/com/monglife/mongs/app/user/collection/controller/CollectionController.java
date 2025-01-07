@@ -5,8 +5,8 @@ import com.monglife.mongs.app.user.collection.dto.response.GetCollectionMapRespo
 import com.monglife.mongs.app.user.collection.dto.response.GetCollectionMongResponseDto;
 import com.monglife.mongs.app.user.collection.enums.CollectionResponse;
 import com.monglife.mongs.app.user.collection.service.CollectionService;
-import com.monglife.mongs.domain.member.dto.etc.GetCollectionMapDto;
-import com.monglife.mongs.domain.member.dto.etc.GetCollectionMongDto;
+import com.monglife.mongs.domain.member.vo.CollectionMapVo;
+import com.monglife.mongs.domain.member.vo.CollectionMongVo;
 import com.monglife.mongs.module.security.global.principal.Passport;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -36,13 +36,13 @@ public class CollectionController {
 
         Long accountId = passport.getAccountId();
 
-        List<GetCollectionMapDto> getCollectionMapDtos = collectionService.getCollectionMaps(accountId);
+        List<CollectionMapVo> collectionMapVos = collectionService.getCollectionMaps(accountId);
 
-        List<GetCollectionMapResponseDto> getCollectionMapResponseDtos = getCollectionMapDtos.stream()
-                .map(getCollectionMapDto -> GetCollectionMapResponseDto.builder()
-                        .mapTypeCode(getCollectionMapDto.getMapTypeCode())
-                        .mapTypeName(getCollectionMapDto.getMapTypeName())
-                        .isIncluded(getCollectionMapDto.getIsIncluded())
+        List<GetCollectionMapResponseDto> getCollectionMapResponseDtos = collectionMapVos.stream()
+                .map(collectionMapVo -> GetCollectionMapResponseDto.builder()
+                        .mapTypeCode(collectionMapVo.getMapTypeCode())
+                        .mapTypeName(collectionMapVo.getMapTypeName())
+                        .isIncluded(collectionMapVo.getIsIncluded())
                         .build())
                 .toList();
 
@@ -54,13 +54,13 @@ public class CollectionController {
 
         Long accountId = passport.getAccountId();
 
-        List<GetCollectionMongDto> getCollectionMongDtos = collectionService.getCollectionMongs(accountId);
+        List<CollectionMongVo> collectionMongVos = collectionService.getCollectionMongs(accountId);
 
-        List<GetCollectionMongResponseDto> getCollectionMongResponseDtos = getCollectionMongDtos.stream()
-                .map(getCollectionMongDto -> GetCollectionMongResponseDto.builder()
-                        .mongTypeCode(getCollectionMongDto.getMongTypeCode())
-                        .mongTypeName(getCollectionMongDto.getMongTypeName())
-                        .isIncluded(getCollectionMongDto.getIsIncluded())
+        List<GetCollectionMongResponseDto> getCollectionMongResponseDtos = collectionMongVos.stream()
+                .map(collectionMongVo -> GetCollectionMongResponseDto.builder()
+                        .mongTypeCode(collectionMongVo.getMongTypeCode())
+                        .mongTypeName(collectionMongVo.getMongTypeName())
+                        .isIncluded(collectionMongVo.getIsIncluded())
                         .build())
                 .toList();
 

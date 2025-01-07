@@ -1,7 +1,7 @@
 package com.monglife.mongs.app.user.collection.service;
 
-import com.monglife.mongs.domain.member.dto.etc.GetCollectionMapDto;
-import com.monglife.mongs.domain.member.dto.etc.GetCollectionMongDto;
+import com.monglife.mongs.domain.member.vo.CollectionMapVo;
+import com.monglife.mongs.domain.member.vo.CollectionMongVo;
 import com.monglife.mongs.domain.member.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -25,7 +25,7 @@ public class CollectionService {
     }
 
     @Transactional(readOnly = true)
-    public List<GetCollectionMapDto> getCollectionMaps(Long accountId) {
+    public List<CollectionMapVo> getCollectionMaps(Long accountId) {
         return memberService.getCollectionMaps(accountId);
     }
 
@@ -35,7 +35,7 @@ public class CollectionService {
     }
 
     @Transactional(readOnly = true)
-    public List<GetCollectionMongDto> getCollectionMongs(Long accountId) {
+    public List<CollectionMongVo> getCollectionMongs(Long accountId) {
         return memberService.getCollectionMongs(accountId);
     }
 }

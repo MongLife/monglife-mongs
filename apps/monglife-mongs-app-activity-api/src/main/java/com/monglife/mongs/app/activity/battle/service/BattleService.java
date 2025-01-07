@@ -16,7 +16,7 @@ import com.monglife.mongs.domain.match.vo.CreateMatchVo;
 import com.monglife.mongs.domain.match.vo.FightMatchVo;
 import com.monglife.mongs.domain.match.vo.OverMatchVo;
 import com.monglife.mongs.domain.mong.annotation.MongAccountCheck;
-import com.monglife.mongs.domain.mong.dto.etc.GetMongDto;
+import com.monglife.mongs.domain.mong.vo.MongVo;
 import com.monglife.mongs.domain.mong.service.MongService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -63,11 +63,11 @@ public class BattleService {
                     String mongTypeCode = "";
 
                     if (!createBattleVo.getIsBot()) {
-                        GetMongDto getMongDto = mongService.getMong(createBattleVo.getMongId());
-                        weight = getMongDto.getWeight();
-                        strength = getMongDto.getStrength();
-                        fatigue = getMongDto.getFatigue();
-                        mongTypeCode = getMongDto.getMongTypeCode();
+                        MongVo mongVo = mongService.getMong(createBattleVo.getMongId());
+                        weight = mongVo.getWeight();
+                        strength = mongVo.getStrength();
+                        fatigue = mongVo.getFatigue();
+                        mongTypeCode = mongVo.getMongTypeCode();
                     }
 
                     return CreateMatchVo.builder()

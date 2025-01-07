@@ -1,15 +1,16 @@
 package com.monglife.mongs.domain.mong.service;
 
 import com.monglife.mongs.domain.mong.dto.etc.*;
-import com.monglife.mongs.domain.mong.entity.data.MongEntity;
-import com.monglife.mongs.domain.mong.entity.history.MongFeedHistoryEntity;
-import com.monglife.mongs.domain.mong.entity.history.MongStrokeHistoryEntity;
-import com.monglife.mongs.domain.mong.entity.type.FoodTypeEntity;
-import com.monglife.mongs.domain.mong.entity.type.MongTypeEntity;
+import com.monglife.mongs.domain.mong.entity.MongEntity;
+import com.monglife.mongs.domain.mong.entity.MongFeedHistoryEntity;
+import com.monglife.mongs.domain.mong.entity.MongStrokeHistoryEntity;
+import com.monglife.mongs.domain.mong.entity.FoodTypeEntity;
+import com.monglife.mongs.domain.mong.entity.MongTypeEntity;
 import com.monglife.mongs.domain.mong.exception.*;
 import com.monglife.mongs.domain.mong.repository.*;
+import com.monglife.mongs.domain.mong.vo.FeedItemVo;
+import com.monglife.mongs.domain.mong.vo.MongVo;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -21,7 +22,6 @@ import java.util.List;
 import java.util.Random;
 import java.util.UUID;
 
-@Slf4j
 @Service
 @RequiredArgsConstructor
 public class MongService {
@@ -86,12 +86,12 @@ public class MongService {
      * @return 몽 목록
      */
     @Transactional(readOnly = true)
-    public List<GetMongDto> getMongs(Long accountId) {
+    public List<MongVo> getMongs(Long accountId) {
 
         List<MongEntity> mongEntities = mongRepository.findByAccountIdAndMetaIsActiveIsTrue(accountId);
 
         return mongEntities.stream()
-                .map(GetMongDto::of)
+                .map(MongVo::of)
                 .toList();
     }
 
@@ -101,12 +101,12 @@ public class MongService {
      * @return 몽 정보
      */
     @Transactional(readOnly = true)
-    public GetMongDto getMong(Long mongId) {
+    public MongVo getMong(Long mongId) {
 
         MongEntity mongEntity = mongRepository.findByMongIdAndMetaIsActiveIsTrue(mongId)
                 .orElseThrow(() -> new NotExistsMongException(mongId));
 
-        return GetMongDto.of(mongEntity);
+        return MongVo.of(mongEntity);
     }
 
     /**
@@ -116,7 +116,7 @@ public class MongService {
      * @return 구매 가능 여부를 포함한 음식/간식 목록
      */
     @Transactional(readOnly = true)
-    public List<GetFeedItemDto> getFeedItems(Long mongId, String foodTypeGroupCode) {
+    public List<FeedItemVo> getFeedItems(Long mongId, String foodTypeGroupCode) {
 
         return foodTypeRepository.findByComnGroupCode(foodTypeGroupCode).stream()
                 .map(foodTypeEntity -> {
@@ -125,7 +125,7 @@ public class MongService {
 
                     Boolean isCanBuy = mongFeedHistoryRepository.findByMongIdAndFoodTypeCode(mongId, foodTypeCode).isEmpty();
 
-                    return GetFeedItemDto.builder()
+                    return FeedItemVo.builder()
                             .isCanBuy(isCanBuy)
                             .foodTypeCode(foodTypeCode)
                             .price(foodTypeEntity.getPrice())
@@ -149,7 +149,7 @@ public class MongService {
      * @param wakeupAt 몽 정기 수면 종료 시간
      */
     @Transactional
-    public CreateMongDto createMong(Long accountId, String name, LocalTime sleepAt, LocalTime wakeupAt) {
+    public MongVo createMong(Long accountId, String name, LocalTime sleepAt, LocalTime wakeupAt) {
 
         List<MongTypeEntity> mongTypeEntities = mongTypeRepository.findByComnGroupCode(EGG_MONG_TYPE_GROUP_CODE);
 
@@ -169,10 +169,7 @@ public class MongService {
 
         mongRepository.save(mongEntity);
 
-        return CreateMongDto.builder()
-                .mongId(mongEntity.getMongId())
-                .mongTypeCode(mongEntity.getType().getComn().getCode())
-                .build();
+        return MongVo.of(mongEntity);
     }
 
     /**
@@ -217,15 +214,15 @@ public class MongService {
 
         if (mongEntity.getPayPoint() < foodTypeEntity.getPrice()) throw new NotEnoughPayPointException(mongId, foodTypeCode, foodTypeEntity.getPrice(), mongEntity.getPayPoint());
 
-        UpdateMongStatusDto updateMongStatusDto = UpdateMongStatusDto.builder()
-                .changeWeightValue(foodTypeEntity.getAddWeightValue())
-                .changeStrengthValue(foodTypeEntity.getAddStrengthValue())
-                .changeSatietyValue(foodTypeEntity.getAddSatietyValue())
-                .changeHealthyValue(foodTypeEntity.getAddHealthyValue())
-                .changeFatigueValue(foodTypeEntity.getAddFatigueValue())
+        IncreaseMongStatusDto increaseMongStatusDto = IncreaseMongStatusDto.builder()
+                .weight(foodTypeEntity.getAddWeightValue())
+                .strength(foodTypeEntity.getAddStrengthValue())
+                .satiety(foodTypeEntity.getAddSatietyValue())
+                .healthy(foodTypeEntity.getAddHealthyValue())
+                .fatigue(foodTypeEntity.getAddFatigueValue())
                 .build();
 
-        mongEntity.feed(foodTypeEntity.getPrice(), updateMongStatusDto);
+        mongEntity.feed(foodTypeEntity.getPrice(), increaseMongStatusDto);
 
         MongFeedHistoryEntity mongFeedHistoryEntity = MongFeedHistoryEntity.builder()
                 .mongFeedHistoryId(UUID.randomUUID().toString())
@@ -345,7 +342,7 @@ public class MongService {
      * @param mongId 몽 ID
      */
     @Transactional
-    public GetMongDto evolutionMong(Long mongId) {
+    public MongVo evolutionMong(Long mongId) {
 
         MongEntity mongEntity = lockMongRepository.findByMongIdAndMetaIsActiveIsTrue(mongId)
                 .orElseThrow(() -> new NotExistsMongException(mongId));
@@ -390,7 +387,7 @@ public class MongService {
 
         }
 
-        return GetMongDto.of(mongEntity);
+        return MongVo.of(mongEntity);
     }
 
     /**
@@ -427,23 +424,28 @@ public class MongService {
 
         mongEntity.dead();
     }
-    
+
+    /**
+     * 몽 지수 증가
+     * @param mongId 몽 ID
+     * @param increaseMongStatusRatioDto 지수 증가 Dto
+     */
     @Transactional
-    public void increaseMongStatus(Long mongId, IncreaseMongStatusDto increaseMongStatusDto) {
+    public void increaseMongStatus(Long mongId, IncreaseMongStatusRatioDto increaseMongStatusRatioDto) {
 
         MongEntity mongEntity = lockMongRepository.findByMongIdAndMetaIsActiveIsTrue(mongId)
                 .orElseThrow(() -> new NotExistsMongException(mongId));
 
-        mongEntity.increaseStatus(increaseMongStatusDto);
+        mongEntity.increaseStatus(increaseMongStatusRatioDto);
     }
 
     @Transactional
-    public void decreaseMongStatus(Long mongId, DecreaseMongStatusDto decreaseMongStatusDto) {
+    public void decreaseMongStatus(Long mongId, DecreaseMongStatusRatioDto decreaseMongStatusRatioDto) {
 
         MongEntity mongEntity = lockMongRepository.findByMongIdAndMetaIsActiveIsTrue(mongId)
                 .orElseThrow(() -> new NotExistsMongException(mongId));
 
-        mongEntity.decreaseStatus(decreaseMongStatusDto);
+        mongEntity.decreaseStatus(decreaseMongStatusRatioDto);
     }
 
     @Transactional

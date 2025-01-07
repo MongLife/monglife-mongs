@@ -33,8 +33,7 @@ public class TaskScheduleEntityListener {
             if (!event.getIsCycle()) {
                 // 단발성 Task 는 @PostRemove 에서 처리
                 taskService.deleteTask(event.getAppPackageName(), event.getTaskOwnerId(), event.getTaskCode());
-            }
-            else {
+            } else {
                 // 반복 Task 는 @PostUpdate 에서 테스크 스케 줄러 실행 후
                 taskService.cycleTask(event.getTaskId());
                 // 실행 이벤트 발생

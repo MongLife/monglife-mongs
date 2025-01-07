@@ -1,13 +1,12 @@
 package com.monglife.mongs.app.manager.management.listener;
 
 import com.monglife.mongs.app.manager.global.config.TaskScheduleProperties;
-import com.monglife.mongs.domain.mong.dto.etc.DecreaseMongStatusDto;
-import com.monglife.mongs.domain.mong.dto.etc.IncreaseMongStatusDto;
 import com.monglife.mongs.domain.mong.service.MongService;
 import com.monglife.mongs.domain.task.dto.event.ExecuteTaskEvent;
 import com.monglife.mongs.domain.task.service.TaskService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -30,7 +29,8 @@ public class TaskEventListener {
 
     private final TaskService taskService;
 
-    @TransactionalEventListener(phase = TransactionPhase.AFTER_COMPLETION)
+    @Async
+    @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
     @Transactional(propagation = Propagation.REQUIRES_NEW)
     public void executeTaskEventListener(ExecuteTaskEvent event) {
 
@@ -46,45 +46,29 @@ public class TaskEventListener {
         double ratio = restExpirationSeconds == 0 ? 1 : (double) restExpirationSeconds / (double) expirationSeconds;
 
         // Task 코드 확인
-        if (taskCode.equals(taskScheduleProperties.eggEvolution.getCode())) {
+        if (taskCode.equals(taskScheduleProperties.getEggEvolutionCode())) {
             mongService.evolutionReadyMong(mongId);
-        } else if (taskCode.equals(taskScheduleProperties.sleep.getCode())) {
-            taskService.deleteTask(APP_PACKAGE_NAME, event.getTaskOwnerId(), taskScheduleProperties.statusDecrease.getCode());
-            taskService.deleteTask(APP_PACKAGE_NAME, event.getTaskOwnerId(), taskScheduleProperties.poopIncrease.getCode());
-            taskService.createCycleTask(APP_PACKAGE_NAME, event.getTaskOwnerId(), taskScheduleProperties.statusIncrease.getCode(), taskScheduleProperties.statusIncrease.getExpiration());
+        } else if (taskCode.equals(taskScheduleProperties.getSleepCode())) {
+            taskService.deleteTask(APP_PACKAGE_NAME, event.getTaskOwnerId(), taskScheduleProperties.getStatusDecreaseCode());
+            taskService.deleteTask(APP_PACKAGE_NAME, event.getTaskOwnerId(), taskScheduleProperties.getPoopIncreaseCode());
+            taskService.createCycleTask(APP_PACKAGE_NAME, event.getTaskOwnerId(), taskScheduleProperties.getStatusIncreaseCode(), taskScheduleProperties.getStatusIncreaseExpiration());
             mongService.sleepMong(mongId);
-        } else if (taskCode.equals(taskScheduleProperties.wakeup.getCode())) {
-            taskService.createCycleTask(APP_PACKAGE_NAME, event.getTaskOwnerId(), taskScheduleProperties.statusDecrease.getCode(), taskScheduleProperties.statusDecrease.getExpiration());
-            taskService.createCycleTask(APP_PACKAGE_NAME, event.getTaskOwnerId(), taskScheduleProperties.poopIncrease.getCode(), taskScheduleProperties.poopIncrease.getExpiration());
-            taskService.deleteTask(APP_PACKAGE_NAME, event.getTaskOwnerId(), taskScheduleProperties.statusIncrease.getCode());
+        } else if (taskCode.equals(taskScheduleProperties.getWakeupCode())) {
+            taskService.createCycleTask(APP_PACKAGE_NAME, event.getTaskOwnerId(), taskScheduleProperties.getStatusDecreaseCode(), taskScheduleProperties.getStatusDecreaseExpiration());
+            taskService.createCycleTask(APP_PACKAGE_NAME, event.getTaskOwnerId(), taskScheduleProperties.getPoopIncreaseCode(), taskScheduleProperties.getPoopIncreaseExpiration());
+            taskService.deleteTask(APP_PACKAGE_NAME, event.getTaskOwnerId(), taskScheduleProperties.getStatusIncreaseCode());
             mongService.wakeupMong(mongId);
-        } else if (taskCode.equals(taskScheduleProperties.dead.getCode())) {
+        } else if (taskCode.equals(taskScheduleProperties.getDeadCode())) {
             mongService.deadMong(mongId);
-        } else if (taskCode.equals(taskScheduleProperties.statusIncrease.getCode())) {
+        } else if (taskCode.equals(taskScheduleProperties.getStatusIncreaseCode())) {
             // 지수 증가
-            mongService.increaseMongStatus(mongId, IncreaseMongStatusDto.builder()
-                    .exp(taskScheduleProperties.statusIncrease.getExp() * ratio)            // TODO: 삭제
-                    .weight(taskScheduleProperties.statusIncrease.getWeight() * ratio)      // TODO: 삭제
-                    .strengthRatio(taskScheduleProperties.statusIncrease.getStrengthRatio() * ratio)
-                    .satietyRatio(taskScheduleProperties.statusIncrease.getSatietyRatio() * ratio)
-                    .healthyRatio(taskScheduleProperties.statusIncrease.getHealthyRatio() * ratio)
-                    .fatigueRatio(taskScheduleProperties.statusIncrease.getFatigueRatio() * ratio)
-                    .poop(taskScheduleProperties.statusIncrease.getPoop())
-                    .build());
-        } else if (taskCode.equals(taskScheduleProperties.statusDecrease.getCode())) {
+            mongService.increaseMongStatus(mongId, taskScheduleProperties.getIncreaseMongStatusDto(ratio));
+        } else if (taskCode.equals(taskScheduleProperties.getStatusDecreaseCode())) {
             // 지수 감소
-            mongService.decreaseMongStatus(mongId, DecreaseMongStatusDto.builder()
-                    .exp(taskScheduleProperties.statusDecrease.getExp() * ratio)
-                    .weight(taskScheduleProperties.statusDecrease.getWeight() * ratio)
-                    .strengthRatio(taskScheduleProperties.statusDecrease.getStrengthRatio() * ratio)
-                    .satietyRatio(taskScheduleProperties.statusDecrease.getSatietyRatio() * ratio)
-                    .healthyRatio(taskScheduleProperties.statusDecrease.getHealthyRatio() * ratio)
-                    .fatigueRatio(taskScheduleProperties.statusDecrease.getFatigueRatio() * ratio)
-                    .poop(taskScheduleProperties.statusDecrease.getPoop())
-                    .build());
-        } else if (taskCode.equals(taskScheduleProperties.poopIncrease.getCode()) && ratio >= 0.5) {
+            mongService.decreaseMongStatus(mongId, taskScheduleProperties.getDecreaseMongStatusDto(ratio));
+        } else if (taskCode.equals(taskScheduleProperties.getPoopIncreaseCode()) && ratio >= 0.5) {
             // 배변 증가
-            mongService.increasePoop(mongId, taskScheduleProperties.poopIncrease.getPoop());
+            mongService.increasePoop(mongId, taskScheduleProperties.getIncreasePoopCount(ratio));
         }
     }
 }

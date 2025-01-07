@@ -5,7 +5,6 @@ import com.monglife.mongs.domain.mong.exception.InvalidMongException;
 import com.monglife.mongs.domain.mong.exception.NotExistsParameterException;
 import com.monglife.mongs.domain.mong.service.MongService;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;
@@ -17,7 +16,6 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
 import java.util.Optional;
 
-@Slf4j
 @Aspect
 @Component
 @RequiredArgsConstructor
@@ -46,20 +44,21 @@ public class MongAccountCheckAspect {
         Long mongId = (Long) this.getParameterValue(mongIdParameterName, parameters, args)
                 .orElseThrow(() -> new NotExistsParameterException(mongIdParameterName));
 
-        log.debug("[Account Check] {}#{} =====> {} -> {}", method.getDeclaringClass().getName(), method.getName(), mongId, accountId);
-
         if (!mongService.validateMongByAccountId(accountId, mongId)) {
             throw new InvalidMongException(accountId, mongId);
         }
     }
 
     private Optional<Object> getParameterValue(String parameterName, Parameter[] parameters, Object[] args) {
+
         Object arg = null;
+
         for (int index = 0; index < parameters.length; index++) {
             if (parameters[index].getName().equals(parameterName)) {
                 arg = args[index];
             }
         }
+
         return Optional.ofNullable(arg);
     }
 }

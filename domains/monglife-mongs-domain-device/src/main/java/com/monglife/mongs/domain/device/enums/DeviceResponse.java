@@ -16,8 +16,8 @@ public enum DeviceResponse implements Response {
     /**
      * 실패 응답
      */
-    DOMAIN_DEVICE_NOT_ENOUGH_WALKING_COUNT(HttpStatus.BAD_REQUEST.value(), "DOMAIN-DEVICE-105", "충분한 걸음 수가 없습니다."),
-    DOMAIN_DEVICE_NOT_EXISTS_STEP(HttpStatus.BAD_REQUEST.value(), "DOMAIN-DEVICE-108", "걸음 수가 존재하지 않습니다."),
+    DOMAIN_DEVICE_NOT_ENOUGH_WALKING_COUNT(HttpStatus.BAD_REQUEST.value(), "DOMAIN-DEVICE-100", "충분한 걸음 수가 없습니다."),
+    DOMAIN_DEVICE_NOT_EXISTS_STEP(HttpStatus.BAD_REQUEST.value(), "DOMAIN-DEVICE-101", "걸음 수가 존재하지 않습니다."),
     ;
 
     private final Integer httpStatus;

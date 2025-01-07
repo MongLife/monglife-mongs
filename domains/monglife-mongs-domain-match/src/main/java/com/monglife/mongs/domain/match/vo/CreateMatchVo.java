@@ -25,7 +25,6 @@ public class CreateMatchVo {
 
     private final Boolean isBot;
 
-
     @Builder
     public CreateMatchVo(String playerId, String deviceId, Long accountId, Long mongId, String mongTypeCode, Double weight, Double strength, Double fatigue, Boolean isBot) {
         this.playerId = playerId;

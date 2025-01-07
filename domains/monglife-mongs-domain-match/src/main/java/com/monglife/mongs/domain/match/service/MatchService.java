@@ -48,7 +48,6 @@ public class MatchService {
 
     private final ComnCodeRepository comnCodeRepository;
 
-
     /**
      * 배틀 생성
      * @param createMatchVoSet 매칭 플레이어 Set

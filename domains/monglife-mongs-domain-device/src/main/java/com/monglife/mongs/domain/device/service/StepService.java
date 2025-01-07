@@ -3,7 +3,7 @@ package com.monglife.mongs.domain.device.service;
 import com.monglife.mongs.domain.device.entity.StepEntity;
 import com.monglife.mongs.domain.device.exception.NotEnoughWalkingCountException;
 import com.monglife.mongs.domain.device.exception.NotExistsStepException;
-import com.monglife.mongs.domain.device.repository.StepRepository;
+import com.monglife.mongs.domain.device.repository.LockStepRepository;
 import com.monglife.mongs.domain.device.vo.StepVo;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -16,13 +16,13 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class StepService {
 
-    private final StepRepository stepRepository;
+    private final LockStepRepository lockStepRepository;
 
 
     @Transactional
     public StepVo updateWalkingCount(String deviceId, Integer totalWalkingCount, LocalDateTime deviceBootedDt) {
 
-        Optional<StepEntity> optionalStepEntity = stepRepository.findByDeviceId(deviceId);
+        Optional<StepEntity> optionalStepEntity = lockStepRepository.findByDeviceId(deviceId);
 
         StepEntity stepEntity;
         if (optionalStepEntity.isPresent()) {
@@ -40,7 +40,7 @@ public class StepService {
             }
 
         } else {
-            stepEntity = stepRepository.save(StepEntity.builder()
+            stepEntity = lockStepRepository.save(StepEntity.builder()
                     .deviceId(deviceId)
                     .walkingCount(0)
                     .totalWalkingCount(totalWalkingCount)
@@ -59,7 +59,7 @@ public class StepService {
     @Transactional
     public StepVo decreaseWalkingCount(String deviceId, Integer totalWalkingCount, Integer walkingCount, LocalDateTime deviceBootedDt) {
 
-        StepEntity stepEntity = stepRepository.findByDeviceId(deviceId)
+        StepEntity stepEntity = lockStepRepository.findByDeviceId(deviceId)
                 .orElseThrow(() -> new NotExistsStepException(deviceId));
 
         if (deviceBootedDt.equals(stepEntity.getDeviceBootedDt())) {

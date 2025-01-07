@@ -3,10 +3,9 @@ package com.monglife.mongs.app.manager.management.service;
 import com.monglife.mongs.app.manager.global.config.TaskScheduleProperties;
 import com.monglife.mongs.client.user.service.CollectionService;
 import com.monglife.mongs.domain.mong.annotation.MongAccountCheck;
-import com.monglife.mongs.domain.mong.dto.etc.CreateMongDto;
-import com.monglife.mongs.domain.mong.dto.etc.GetFeedItemDto;
-import com.monglife.mongs.domain.mong.dto.etc.GetMongDto;
+import com.monglife.mongs.domain.mong.vo.FeedItemVo;
 import com.monglife.mongs.domain.mong.service.MongService;
+import com.monglife.mongs.domain.mong.vo.MongVo;
 import com.monglife.mongs.domain.task.service.TaskService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
@@ -37,7 +36,7 @@ public class ManagementService {
      * @return 몽 정보 목록
      */
     @Transactional(readOnly = true)
-    public List<GetMongDto> getMongs(Long accountId) {
+    public List<MongVo> getMongs(Long accountId) {
         return mongService.getMongs(accountId);
     }
 
@@ -49,7 +48,7 @@ public class ManagementService {
      */
     @MongAccountCheck
     @Transactional(readOnly = true)
-    public GetMongDto getMong(Long accountId, Long mongId) {
+    public MongVo getMong(Long accountId, Long mongId) {
         return mongService.getMong(mongId);
     }
 
@@ -62,7 +61,7 @@ public class ManagementService {
      */
     @MongAccountCheck
     @Transactional(readOnly = true)
-    public List<GetFeedItemDto> getFeedItems(Long accountId, Long mongId, String foodTypeGroupCode) {
+    public List<FeedItemVo> getFeedItems(Long accountId, Long mongId, String foodTypeGroupCode) {
 
         return mongService.getFeedItems(mongId, foodTypeGroupCode);
     }
@@ -77,12 +76,12 @@ public class ManagementService {
     @Transactional
     public void createMong(Long accountId, String name, LocalTime sleepAt, LocalTime wakeupAt) {
 
-        CreateMongDto createMongDto = mongService.createMong(accountId, name, sleepAt, wakeupAt);
+        MongVo mongVo = mongService.createMong(accountId, name, sleepAt, wakeupAt);
 
-        String taskOwnerId = String.valueOf(createMongDto.getMongId());
-        String mongTypeCode = createMongDto.getMongTypeCode();
+        String taskOwnerId = String.valueOf(mongVo.getMongId());
+        String mongTypeCode = mongVo.getMongTypeCode();
 
-        taskService.createTask(APP_PACKAGE_NAME, taskOwnerId, taskScheduleProperties.eggEvolution.getCode(), taskScheduleProperties.eggEvolution.getExpiration());
+        taskService.createTask(APP_PACKAGE_NAME, taskOwnerId, taskScheduleProperties.getEggEvolutionCode(), taskScheduleProperties.getEggEvolutionExpiration());
 
         collectionService.createCollectionMong(mongTypeCode);
     }
@@ -140,15 +139,15 @@ public class ManagementService {
         String taskOwnerId = String.valueOf(mongId);
 
         if (mongService.getMong(mongId).getIsSleep()) {
-            taskService.deleteTask(APP_PACKAGE_NAME, taskOwnerId, taskScheduleProperties.statusIncrease.getCode());
-            taskService.createCycleTask(APP_PACKAGE_NAME, taskOwnerId, taskScheduleProperties.statusDecrease.getCode(), taskScheduleProperties.statusDecrease.getExpiration());
-            taskService.createCycleTask(APP_PACKAGE_NAME, taskOwnerId, taskScheduleProperties.poopIncrease.getCode(), taskScheduleProperties.poopIncrease.getExpiration());
+            taskService.deleteTask(APP_PACKAGE_NAME, taskOwnerId, taskScheduleProperties.getStatusIncreaseCode());
+            taskService.createCycleTask(APP_PACKAGE_NAME, taskOwnerId, taskScheduleProperties.getStatusDecreaseCode(), taskScheduleProperties.getStatusDecreaseExpiration());
+            taskService.createCycleTask(APP_PACKAGE_NAME, taskOwnerId, taskScheduleProperties.getPoopIncreaseCode(), taskScheduleProperties.getPoopIncreaseExpiration());
             mongService.wakeupMong(mongId);
 
         } else {
-            taskService.deleteTask(APP_PACKAGE_NAME, taskOwnerId, taskScheduleProperties.statusDecrease.getCode());
-            taskService.deleteTask(APP_PACKAGE_NAME, taskOwnerId, taskScheduleProperties.poopIncrease.getCode());
-            taskService.createCycleTask(APP_PACKAGE_NAME, taskOwnerId, taskScheduleProperties.statusIncrease.getCode(), taskScheduleProperties.statusIncrease.getExpiration());
+            taskService.deleteTask(APP_PACKAGE_NAME, taskOwnerId, taskScheduleProperties.getStatusDecreaseCode());
+            taskService.deleteTask(APP_PACKAGE_NAME, taskOwnerId, taskScheduleProperties.getPoopIncreaseCode());
+            taskService.createCycleTask(APP_PACKAGE_NAME, taskOwnerId, taskScheduleProperties.getStatusIncreaseCode(), taskScheduleProperties.getStatusIncreaseExpiration());
             mongService.sleepMong(mongId);
         }
     }
@@ -173,21 +172,21 @@ public class ManagementService {
     @Transactional
     public void evolutionMong(Long accountId, Long mongId) {
 
-        GetMongDto getMongDto = mongService.evolutionMong(mongId);
+        MongVo mongVo = mongService.evolutionMong(mongId);
 
-        // 몽 컬렉션 등록
-        collectionService.createCollectionMong(getMongDto.getMongTypeCode());
-
-        if (getMongDto.getLevel().equals(1)) {
+        if (mongVo.getLevel().equals(1)) {
 
             String taskOwnerId = String.valueOf(mongId);
 
-            taskService.createFixTimeCycleTask(APP_PACKAGE_NAME, taskOwnerId, taskScheduleProperties.sleep.getCode(), getMongDto.getSleepAt());
-            taskService.createFixTimeCycleTask(APP_PACKAGE_NAME, taskOwnerId, taskScheduleProperties.wakeup.getCode(), getMongDto.getWakeupAt());
+            taskService.createFixTimeCycleTask(APP_PACKAGE_NAME, taskOwnerId, taskScheduleProperties.getSleepCode(), mongVo.getSleepAt());
+            taskService.createFixTimeCycleTask(APP_PACKAGE_NAME, taskOwnerId, taskScheduleProperties.getWakeupCode(), mongVo.getWakeupAt());
 
-            taskService.createCycleTask(APP_PACKAGE_NAME, taskOwnerId, taskScheduleProperties.statusDecrease.getCode(), taskScheduleProperties.statusDecrease.getExpiration());
-            taskService.createCycleTask(APP_PACKAGE_NAME, taskOwnerId, taskScheduleProperties.poopIncrease.getCode(), taskScheduleProperties.poopIncrease.getExpiration());
+            taskService.createCycleTask(APP_PACKAGE_NAME, taskOwnerId, taskScheduleProperties.getStatusDecreaseCode(), taskScheduleProperties.getStatusDecreaseExpiration());
+            taskService.createCycleTask(APP_PACKAGE_NAME, taskOwnerId, taskScheduleProperties.getPoopIncreaseCode(), taskScheduleProperties.getPoopIncreaseExpiration());
         }
+
+        // 몽 컬렉션 등록
+        collectionService.createCollectionMong(mongVo.getMongTypeCode());
     }
 
     /**
