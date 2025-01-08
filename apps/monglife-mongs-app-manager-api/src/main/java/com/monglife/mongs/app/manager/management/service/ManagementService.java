@@ -1,20 +1,25 @@
 package com.monglife.mongs.app.manager.management.service;
 
 import com.monglife.mongs.app.manager.global.config.TaskScheduleProperties;
+import com.monglife.mongs.client.user.exception.InvalidGetCollectionMongException;
 import com.monglife.mongs.client.user.service.CollectionService;
+import com.monglife.mongs.client.user.vo.CollectionMongVo;
 import com.monglife.mongs.domain.mong.annotation.MongAccountCheck;
-import com.monglife.mongs.domain.mong.vo.FeedItemVo;
 import com.monglife.mongs.domain.mong.service.MongService;
+import com.monglife.mongs.domain.mong.vo.FeedItemVo;
 import com.monglife.mongs.domain.mong.vo.MongVo;
 import com.monglife.mongs.domain.task.service.TaskService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalTime;
+import java.util.Collections;
 import java.util.List;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class ManagementService {
@@ -172,7 +177,20 @@ public class ManagementService {
     @Transactional
     public void evolutionMong(Long accountId, Long mongId) {
 
-        MongVo mongVo = mongService.evolutionMong(mongId);
+        List<CollectionMongVo> collectionMongVos = Collections.emptyList();
+
+        try {
+            collectionMongVos = collectionService.getCollectionMongTypeCodes();
+        } catch (InvalidGetCollectionMongException e) {
+            log.warn("[{}] {}", e.getResponse().getCode(), e.getResponse().getMessage());
+        }
+
+        List<String> collectionMongTypeCodes = collectionMongVos.stream()
+                .filter(CollectionMongVo::getIsIncluded)
+                .map(CollectionMongVo::getMongTypeCode)
+                .toList();
+
+        MongVo mongVo = mongService.evolutionMong(mongId, collectionMongTypeCodes);
 
         if (mongVo.getLevel().equals(1)) {
 

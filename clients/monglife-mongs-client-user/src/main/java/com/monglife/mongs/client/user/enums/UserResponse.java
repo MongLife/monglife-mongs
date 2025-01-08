@@ -18,6 +18,7 @@ public enum UserResponse implements Response {
      */
     CLIENT_USER_CREATE_COLLECTION_MAP(HttpStatus.INTERNAL_SERVER_ERROR.value(), "CLIENT-USER-100", "맵 컬렉션 등록에 실패했습니다."),
     CLIENT_USER_CREATE_COLLECTION_MONG(HttpStatus.INTERNAL_SERVER_ERROR.value(), "CLIENT-USER-101", "몽 컬렉션 등록에 실패했습니다."),
+    CLIENT_USER_GET_COLLECTION_MONG(HttpStatus.INTERNAL_SERVER_ERROR.value(), "CLIENT-USER-102", "몽 컬렉션 조회에 실패했습니다."),
     ;
 
     private final Integer httpStatus;

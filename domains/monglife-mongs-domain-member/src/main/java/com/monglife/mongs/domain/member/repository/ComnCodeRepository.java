@@ -8,6 +8,4 @@ import java.util.List;
 public interface ComnCodeRepository extends JpaRepository<ComnCodeEntity, String> {
 
     List<ComnCodeEntity> findByGroupCode(String groupCode);
-
-    List<ComnCodeEntity> findByGroupCodeLike(String groupCode);
 }

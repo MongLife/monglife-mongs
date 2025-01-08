@@ -186,6 +186,8 @@ public class MongEntity extends BaseTimeEntity {
         this.status.resetExp();
         this.status.setMaxStatus(nextMongType.getMaxStatus());
         this.meta.setReward(reward);
+        this.meta.resetStrokeCount();
+        this.meta.resetTrainingCount();
         this.meta.resetPenalty();
         this.type = nextMongType;
 

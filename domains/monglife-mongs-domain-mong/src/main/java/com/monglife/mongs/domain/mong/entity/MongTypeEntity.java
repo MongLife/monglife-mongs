@@ -5,11 +5,13 @@ import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Table(name = "mongs_mong_type")
+@ToString
 public class MongTypeEntity {
 
     @Id
@@ -30,6 +32,9 @@ public class MongTypeEntity {
     @Column(name = "max_status")
     private Double maxStatus;
 
-    @Column(name = "next_type_group_code")
-    private String nextTypeGroupCode;
+    @Column(name = "next_group_type")
+    private String nextGroupType;
+
+    @Column(name = "group_type")
+    private String groupType;
 }

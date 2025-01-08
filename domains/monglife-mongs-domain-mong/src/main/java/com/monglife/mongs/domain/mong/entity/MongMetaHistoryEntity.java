@@ -52,7 +52,9 @@ public class MongMetaHistoryEntity extends BaseTimeEntity {
     public enum MongMetaHistoryType {
 
         HISTORY_MONG_META_INCREASE_STROKE_COUNT("쓰다듬기 횟수 증가"),
+        HISTORY_MONG_META_RESET_STROKE_COUNT("쓰다듬기 횟수 초기화"),
         HISTORY_MONG_META_INCREASE_TRAINING_COUNT("훈련 횟수 증가"),
+        HISTORY_MONG_META_RESET_TRAINING_COUNT("훈련 횟수 초기화"),
         HISTORY_MONG_META_INCREASE_PENALTY("진화 패널티 증가"),
         HISTORY_MONG_META_DEACTIVATE("비활성화"),
         HISTORY_MONG_META_SET_REWARD("진화 리워드 수정"),

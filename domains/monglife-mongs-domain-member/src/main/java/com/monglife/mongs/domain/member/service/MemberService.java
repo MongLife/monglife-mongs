@@ -135,7 +135,7 @@ public class MemberService {
         MemberEntity memberEntity = memberRepository.findByAccountId(accountId)
                 .orElseGet(() -> memberRepository.save(new MemberEntity(accountId)));
 
-        List<ComnCodeEntity> comnCodeEntities = comnCodeRepository.findByGroupCodeLike(MONG_GROUP_CODE + "%");
+        List<ComnCodeEntity> comnCodeEntities = comnCodeRepository.findByGroupCode(MONG_GROUP_CODE);
 
         List<String> collectionMongTypeCode = memberEntity.getCollectionMongs().stream()
                 .map(collectionMongEntity -> collectionMongEntity.getComn().getCode())

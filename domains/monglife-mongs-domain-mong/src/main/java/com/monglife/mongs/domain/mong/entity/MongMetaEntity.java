@@ -51,6 +51,15 @@ public class MongMetaEntity {
         this.addHistory(MongMetaHistoryEntity.MongMetaHistoryType.HISTORY_MONG_META_INCREASE_STROKE_COUNT);
     }
 
+    public void resetStrokeCount() {
+
+        if (this.strokeCount == 0) return;
+
+        this.strokeCount = 0;
+
+        this.addHistory(MongMetaHistoryEntity.MongMetaHistoryType.HISTORY_MONG_META_RESET_STROKE_COUNT);
+    }
+
     /**
      * 훈련 횟수 증가
      */
@@ -59,6 +68,15 @@ public class MongMetaEntity {
         this.trainingCount = this.trainingCount + 1;
 
         this.addHistory(MongMetaHistoryEntity.MongMetaHistoryType.HISTORY_MONG_META_INCREASE_TRAINING_COUNT);
+    }
+
+    public void resetTrainingCount() {
+
+        if (this.trainingCount == 0) return;
+
+        this.trainingCount = 0;
+
+        this.addHistory(MongMetaHistoryEntity.MongMetaHistoryType.HISTORY_MONG_META_RESET_TRAINING_COUNT);
     }
 
     /**

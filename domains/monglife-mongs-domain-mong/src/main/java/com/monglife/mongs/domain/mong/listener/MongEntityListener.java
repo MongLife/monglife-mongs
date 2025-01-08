@@ -3,6 +3,7 @@ package com.monglife.mongs.domain.mong.listener;
 import com.monglife.mongs.domain.mong.dto.event.MongEvolutionEvent;
 import com.monglife.mongs.domain.mong.dto.event.MongObserveEvent;
 import com.monglife.mongs.domain.mong.entity.MongEntity;
+import com.monglife.mongs.domain.mong.enums.MongStateCode;
 import com.monglife.mongs.domain.mong.enums.MongStatusCode;
 import jakarta.persistence.PostUpdate;
 import jakarta.persistence.PreUpdate;
@@ -44,11 +45,14 @@ public class MongEntityListener {
 
         applicationEventPublisher.publishEvent(MongObserveEvent.of(mongEntity));
 
-        // 진화 조건 확인
-        if (mongEntity.getStatus().getExpRatio() >= 100) {
-            applicationEventPublisher.publishEvent(MongEvolutionEvent.builder()
-                    .mongId(mongEntity.getMongId())
-                    .build());
-        }
+        if (mongEntity.getStatus().getExpRatio() < 100) return;
+
+        if (mongEntity.isEgg()) return;
+
+        if (MongStateCode.EVOLUTION_READY.equals(mongEntity.getState().getCode())) return;
+
+        applicationEventPublisher.publishEvent(MongEvolutionEvent.builder()
+                .mongId(mongEntity.getMongId())
+                .build());
     }
 }

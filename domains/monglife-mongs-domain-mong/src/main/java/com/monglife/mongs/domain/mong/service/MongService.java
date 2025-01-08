@@ -11,6 +11,7 @@ import com.monglife.mongs.domain.mong.repository.*;
 import com.monglife.mongs.domain.mong.vo.FeedItemVo;
 import com.monglife.mongs.domain.mong.vo.MongVo;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -18,10 +19,12 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Random;
 import java.util.UUID;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class MongService {
@@ -151,7 +154,7 @@ public class MongService {
     @Transactional
     public MongVo createMong(Long accountId, String name, LocalTime sleepAt, LocalTime wakeupAt) {
 
-        List<MongTypeEntity> mongTypeEntities = mongTypeRepository.findByComnGroupCode(EGG_MONG_TYPE_GROUP_CODE);
+        List<MongTypeEntity> mongTypeEntities = mongTypeRepository.findByGroupType(EGG_MONG_TYPE_GROUP_CODE);
 
         if (mongTypeEntities.isEmpty()) throw new NotExistsMongTypeCodeException();
 
@@ -183,7 +186,6 @@ public class MongService {
                 .orElseThrow(() -> new NotExistsMongException(mongId));
 
         mongEntity.delete();
-
     }
 
     /**
@@ -342,7 +344,7 @@ public class MongService {
      * @param mongId 몽 ID
      */
     @Transactional
-    public MongVo evolutionMong(Long mongId) {
+    public MongVo evolutionMong(Long mongId, List<String> excludeMongTypeCodes) {
 
         MongEntity mongEntity = lockMongRepository.findByMongIdAndMetaIsActiveIsTrue(mongId)
                 .orElseThrow(() -> new NotExistsMongException(mongId));
@@ -353,8 +355,8 @@ public class MongService {
 
         if (!mongEntity.isEvolutionReady()) throw new InvalidEvolutionException(mongId);
 
-        String nextTypeGroupCode = mongEntity.getType().getNextTypeGroupCode();
-        List<MongTypeEntity> mongTypeEntities = mongTypeRepository.findByComnGroupCode(nextTypeGroupCode).stream()
+        String nextGroupType = mongEntity.getType().getNextGroupType();
+        List<MongTypeEntity> mongTypeEntities = mongTypeRepository.findByGroupType(nextGroupType).stream()
                 .sorted((o1, o2) -> o2.getEvolutionScore().compareTo(o1.getEvolutionScore()))
                 .toList();
 
@@ -362,9 +364,30 @@ public class MongService {
             // 더이상 진화할 수 없는 경우 졸업 준비 처리
             mongEntity.graduateReady();
 
+        } else if (mongEntity.getType().getLevel() == 0) {
+
+            // 중복된 몽 필터링
+            List<MongTypeEntity> excludeDuplicateMongTypeEntities = mongTypeEntities.stream()
+                    .filter(mongTypeEntity -> !excludeMongTypeCodes.contains(mongTypeEntity.getComn().getCode()))
+                    .sorted((o1, o2) -> o2.getEvolutionScore().compareTo(o1.getEvolutionScore()))
+                    .toList();
+
+            // 1단계 몽을 모두 소유한 경우 목록 채움
+            if (excludeDuplicateMongTypeEntities.isEmpty()) {
+                excludeDuplicateMongTypeEntities = mongTypeEntities.stream().toList();
+            }
+
+            // 랜덤 선택
+            int mongTypeCodeIndex = random.nextInt(0, excludeDuplicateMongTypeEntities.size());
+
+            MongTypeEntity nextMongTypeEntity = excludeDuplicateMongTypeEntities.get(mongTypeCodeIndex);
+
+            // 진화 처리
+            mongEntity.evolution(nextMongTypeEntity, 0D);
+
         } else {
             // 진화가 가능한 경우
-            MongTypeEntity nextMongTypeEntity = mongTypeEntities.get(mongTypeEntities.size() - 1);
+            MongTypeEntity nextMongTypeEntity = mongTypeEntities.get(mongTypeEntities.size() - 1);      // 시작은 패널티 몽 (까몽 까까몽)
 
             // 진화 점수 계산
             double evolutionScore = DEFAULT_EVOLUTION_SCORE;
@@ -373,18 +396,39 @@ public class MongService {
             evolutionScore += mongEntity.getMeta().getStrokeCount() * DEFAULT_STROKE_EVOLUTION_SCORE;
             evolutionScore += mongEntity.getMeta().getTrainingCount() * DEFAULT_TRAINING_EVOLUTION_SCORE;
 
-            // 점수에 맞는 다음 몽 타입 코드 선정
-            for (MongTypeEntity mongTypeEntity : mongTypeEntities) {
-                if (mongTypeEntity.getEvolutionScore() <= evolutionScore) {
-                    nextMongTypeEntity = mongTypeEntity;
-                    break;
+            // 패널티 몽 필터링
+            List<MongTypeEntity> excludePenaltyMongTypeEntities = mongTypeEntities.stream()
+                    .filter(mongTypeEntity -> mongTypeEntity.getEvolutionScore() > 0)
+                    .sorted(Comparator.comparing(MongTypeEntity::getEvolutionScore))
+                    .toList();
+
+            // 패널티 몽, 중복된 몽 필터링
+            List<MongTypeEntity> excludePenaltyAndDuplicateMongTypeEntities = excludePenaltyMongTypeEntities.stream()
+                    .filter(mongTypeEntity -> !excludeMongTypeCodes.contains(mongTypeEntity.getComn().getCode()))
+                    .sorted((o1, o2) -> o2.getEvolutionScore().compareTo(o1.getEvolutionScore()))
+                    .toList();
+
+            if (excludePenaltyAndDuplicateMongTypeEntities.isEmpty()) {
+                // 이미 다 보유한 상태
+                int mongTypeCodeIndex = random.nextInt(0, excludePenaltyMongTypeEntities.size());
+                // 선택 가능한 몽 중에서 랜덤 선택
+                nextMongTypeEntity =  excludePenaltyMongTypeEntities.get(mongTypeCodeIndex);
+
+            } else {
+                // 가능한 몽 찾아서 선택
+                for (MongTypeEntity mongTypeEntity : excludePenaltyAndDuplicateMongTypeEntities) {
+                    if (mongTypeEntity.getEvolutionScore() <= evolutionScore) {
+                        nextMongTypeEntity = mongTypeEntity;
+                        break;
+                    }
                 }
             }
 
-            // 진화 처리
-            double reward = Math.max(0, evolutionScore - DEFAULT_EVOLUTION_SCORE);
-            mongEntity.evolution(nextMongTypeEntity, reward);
+            // 리워드 (다음 진화 때 가산점)
+            double reward = Math.max(0, Math.min(evolutionScore - 100D, 25D));
 
+            // 진화 처리
+            mongEntity.evolution(nextMongTypeEntity, reward);
         }
 
         return MongVo.of(mongEntity);

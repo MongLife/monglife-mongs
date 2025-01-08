@@ -2,9 +2,6 @@ package com.monglife.mongs.app.manager.management.listener;
 
 import com.monglife.mongs.app.manager.global.config.TaskScheduleProperties;
 import com.monglife.mongs.app.manager.management.dto.response.GetMongResponseDto;
-import com.monglife.mongs.app.manager.management.dto.response.MongResponseDto;
-import com.monglife.mongs.app.manager.management.dto.response.MongStateResponseDto;
-import com.monglife.mongs.app.manager.management.dto.response.MongStatusResponseDto;
 import com.monglife.mongs.app.manager.management.enums.ManagementResponse;
 import com.monglife.mongs.domain.mong.dto.event.MongObserveEvent;
 import com.monglife.mongs.domain.mong.enums.MongStateCode;
@@ -63,35 +60,6 @@ public class MongObserveEventListener {
             }
         }
 
-        GetMongResponseDto getMongResponseDto = GetMongResponseDto.builder()
-                .mong(MongResponseDto.builder()
-                        .mongId(event.getMongId())
-                        .mongName(event.getMongName())
-                        .mongTypeCode(event.getMongTypeCode())
-                        .payPoint(event.getPayPoint())
-                        .createdAt(event.getCreatedAt())
-                        .updatedAt(event.getUpdatedAt())
-                        .build())
-                .mongState(MongStateResponseDto.builder()
-                        .mongId(event.getMongId())
-                        .stateCode(event.getStateCode())
-                        .isSleep(event.getIsSleep())
-                        .updatedAt(event.getUpdatedAt())
-                        .build())
-                .mongStatus(MongStatusResponseDto.builder()
-                        .mongId(event.getMongId())
-                        .statusCode(event.getStatusCode())
-                        .expRatio(event.getExpRatio())
-                        .weight(event.getWeight())
-                        .strengthRatio(event.getStrengthRatio())
-                        .satietyRatio(event.getSatietyRatio())
-                        .healthyRatio(event.getHealthyRatio())
-                        .fatigueRatio(event.getFatigueRatio())
-                        .poopCount(event.getPoopCount())
-                        .updatedAt(event.getUpdatedAt())
-                        .build())
-                .build();
-
-        mqttSendService.sendMessage(topic, ManagementResponse.APP_MANAGER_MANAGEMENT_OBSERVE_MONG.toResponseDto(getMongResponseDto));
+        mqttSendService.sendMessage(topic, ManagementResponse.APP_MANAGER_MANAGEMENT_OBSERVE_MONG.toResponseDto(GetMongResponseDto.of(event)));
     }
 }
