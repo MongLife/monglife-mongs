@@ -24,6 +24,7 @@ subprojects {
 
     dependencies {
         implementation project(':core')
+        implementation project(':modules:monglife-mongs-module-logging')
 
         compileOnly 'org.projectlombok:lombok'
         annotationProcessor 'org.projectlombok:lombok'

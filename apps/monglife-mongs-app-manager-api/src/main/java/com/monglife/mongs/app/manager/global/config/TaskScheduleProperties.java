@@ -14,139 +14,65 @@ import org.springframework.stereotype.Component;
 @ConfigurationProperties(prefix = "application.scheduler.task")
 public class TaskScheduleProperties {
 
-    private SchedulerProperty eggEvolution;
+    public Property eggEvolution;
 
-    private SchedulerProperty sleep;
+    public Property sleep;
 
-    private SchedulerProperty wakeup;
+    public Property wakeup;
 
-    private SchedulerProperty statusIncrease;
+    public Property increaseStatus;
 
-    private SchedulerProperty statusDecrease;
+    public Property decreaseStatus;
 
-    private SchedulerProperty poopIncrease;
+    public Property increasePoop;
 
-    private SchedulerProperty dead;
-
-    /**
-     * code
-     */
-    public String getEggEvolutionCode() {
-        return this.eggEvolution.getCode();
-    }
-
-    public String getSleepCode() {
-        return this.sleep.getCode();
-    }
-
-    public String getWakeupCode() {
-        return this.wakeup.getCode();
-    }
-
-    public String getStatusIncreaseCode() {
-        return this.statusIncrease.getCode();
-    }
-
-    public String getStatusDecreaseCode() {
-        return this.statusDecrease.getCode();
-    }
-
-    public String getPoopIncreaseCode() {
-        return this.poopIncrease.getCode();
-    }
-
-    public String getDeadCode() {
-        return this.dead.getCode();
-    }
+    public Property dead;
 
     /**
-     * expiration
+     * 속성 클래스
      */
-    public Long getEggEvolutionExpiration() {
-        return this.eggEvolution.getExpiration();
-    }
-
-    public Long getStatusIncreaseExpiration() {
-        return this.statusIncrease.getExpiration();
-    }
-
-    public Long getStatusDecreaseExpiration() {
-        return this.statusDecrease.getExpiration();
-    }
-
-    public Long getPoopIncreaseExpiration() {
-        return this.poopIncrease.getExpiration();
-    }
-
-    public Long getDeadExpiration() {
-        return this.dead.getExpiration();
-    }
-
-    /**
-     * data
-     */
-    public IncreaseMongStatusRatioDto getIncreaseMongStatusDto(Double ratio) {
-        return this.statusIncrease.toIncreaseMongStatusDto(ratio);
-    }
-
-    public DecreaseMongStatusRatioDto getDecreaseMongStatusDto(Double ratio) {
-        return this.statusDecrease.toDecreaseMongStatusDto(ratio);
-    }
-
-    public Integer getIncreasePoopCount(Double ratio) {
-        return ratio >= 0.5 ? this.poopIncrease.poopCount : 0;
-    }
-
-    public Double getDeadSatietyRatio() {
-        return this.dead.getSatietyRatio();
-    }
-
-    public Double getDeadHealthyRatio() {
-        return this.dead.getHealthyRatio();
-    }
-
     @Getter
     @Setter
-    private static class SchedulerProperty {
+    public static class Property {
 
-        private String code;
+        public String code;
 
-        private Long expiration;
+        public Long expiration;
 
-        private Double exp;
+        public Double exp;
 
-        private Double weight;
+        public Double weight;
 
-        private Double strengthRatio;
+        public Double strengthRatio;
 
-        private Double satietyRatio;
+        public Double satietyRatio;
 
-        private Double healthyRatio;
+        public Double healthyRatio;
 
-        private Double fatigueRatio;
+        public Double fatigueRatio;
 
-        private Integer poopCount;
+        public Integer poopCount;
 
-        public IncreaseMongStatusRatioDto toIncreaseMongStatusDto(Double ratio) {
+        public IncreaseMongStatusRatioDto toIncreaseMongStatusDto(Double percentage) {
             return IncreaseMongStatusRatioDto.builder()
-                    .exp(this.exp * ratio)
-                    .weight(this.weight * ratio)
-                    .strengthRatio(this.strengthRatio * ratio)
-                    .satietyRatio(this.satietyRatio * ratio)
-                    .healthyRatio(this.healthyRatio * ratio)
-                    .fatigueRatio(this.fatigueRatio * ratio)
+                    .exp(this.exp * percentage)
+                    .weight(this.weight * percentage)
+                    .strengthRatio(this.strengthRatio * percentage)
+                    .satietyRatio(this.satietyRatio * percentage)
+                    .healthyRatio(this.healthyRatio * percentage)
+                    .fatigueRatio(this.fatigueRatio * percentage)
                     .poopCount(this.poopCount)
                     .build();
         }
 
-        public DecreaseMongStatusRatioDto toDecreaseMongStatusDto(Double ratio) {
+        public DecreaseMongStatusRatioDto toDecreaseMongStatusDto(Double percentage) {
             return DecreaseMongStatusRatioDto.builder()
-                    .exp(this.exp * ratio)
-                    .weight(this.weight * ratio)
-                    .strengthRatio(this.strengthRatio * ratio)
-                    .satietyRatio(this.satietyRatio * ratio)
-                    .healthyRatio(this.healthyRatio * ratio)
-                    .fatigueRatio(this.fatigueRatio * ratio)
+                    .exp(this.exp * percentage)
+                    .weight(this.weight * percentage)
+                    .strengthRatio(this.strengthRatio * percentage)
+                    .satietyRatio(this.satietyRatio * percentage)
+                    .healthyRatio(this.healthyRatio * percentage)
+                    .fatigueRatio(this.fatigueRatio * percentage)
                     .poopCount(this.poopCount)
                     .build();
         }

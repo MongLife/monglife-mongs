@@ -25,16 +25,30 @@ public class ShutdownEventListener implements ApplicationListener<ContextClosedE
 
         if (contextClosedEvent.getApplicationContext().getParent() == null) {
 
-            String applicationName = contextClosedEvent.getApplicationContext().getApplicationName();
-
-            log.info("[TASK STOP WORKING START] {}", applicationName);
+            String applicationName = contextClosedEvent.getApplicationContext().getId();
 
             StringBuilder sb = new StringBuilder();
             taskService.appStopPauseAllTask(APP_PACKAGE_NAME).forEach(getTaskDto -> {
-                sb.append("\n").append(getTaskDto.getTaskId()).append(" =====> ").append(getTaskDto.getTaskOwnerId()).append(" : ").append(getTaskDto.getTaskCode());
+                sb.append("\n")
+                        .append("[")
+                        .append(getTaskDto.getTaskId())
+                        .append("]")
+                        .append(getTaskDto.getTaskOwnerId())
+                        .append(" | ")
+                        .append(getTaskDto.getTaskCode())
+                        .append(" | ")
+                        .append(getTaskDto.getRestExpirationSeconds())
+                        .append("/")
+                        .append(getTaskDto.getExpirationSeconds())
+                        .append("(")
+                        .append(getTaskDto.getExpiredAt())
+                        .append(")")
+                        .append(" | ")
+                        .append(getTaskDto.getIsCycle() ? "cycle" : "")
+                ;
             });
 
-            log.info("[TASK STOP WORKING SUCCESS] {}{}", applicationName, sb);
+            log.info("\n[TASK DOWN ON \"{}\"] {}", applicationName, sb);
         }
     }
 }

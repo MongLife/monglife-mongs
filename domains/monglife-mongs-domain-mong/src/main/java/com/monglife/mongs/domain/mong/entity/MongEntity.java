@@ -1,5 +1,6 @@
 package com.monglife.mongs.domain.mong.entity;
 
+import com.monglife.mongs.domain.mong.dto.etc.PatchMongStatusDto;
 import com.monglife.mongs.domain.mong.dto.etc.DecreaseMongStatusRatioDto;
 import com.monglife.mongs.domain.mong.dto.etc.IncreaseMongStatusDto;
 import com.monglife.mongs.domain.mong.dto.etc.IncreaseMongStatusRatioDto;
@@ -156,14 +157,35 @@ public class MongEntity extends BaseTimeEntity {
 
         this.status.increaseWeight(increaseMongStatusDto.getWeight());
         this.status.increaseStatus(
-                increaseMongStatusDto.getWeight(),
                 increaseMongStatusDto.getStrength(),
                 increaseMongStatusDto.getSatiety(),
-                increaseMongStatusDto.getHealthy());
+                increaseMongStatusDto.getHealthy(),
+                increaseMongStatusDto.getFatigue()
+        );
 
         this.payPoint = Math.max(0, this.payPoint - foodPrice);
 
         this.addHistory(MongHistoryEntity.MongHistoryType.HISTORY_MONG_FEED);
+    }
+
+    /**
+     * 몽 훈련
+     * @param patchMongStatusDto 지수 변동 값
+     */
+    public void training(PatchMongStatusDto patchMongStatusDto) {
+
+        this.payPoint = Math.max(0, this.payPoint + patchMongStatusDto.getPayPoint());
+        this.status.patchStatus(
+                patchMongStatusDto.getWeight(),
+                patchMongStatusDto.getPoopCount(),
+                patchMongStatusDto.getExp(),
+                patchMongStatusDto.getStrength(),
+                patchMongStatusDto.getSatiety(),
+                patchMongStatusDto.getHealthy(),
+                patchMongStatusDto.getFatigue()
+        );
+
+        this.addHistory(MongHistoryEntity.MongHistoryType.HISTORY_MONG_TRAINING);
     }
 
     /**
@@ -241,7 +263,8 @@ public class MongEntity extends BaseTimeEntity {
                 increaseMongStatusRatioDto.getStrengthRatio(),
                 increaseMongStatusRatioDto.getSatietyRatio(),
                 increaseMongStatusRatioDto.getHealthyRatio(),
-                increaseMongStatusRatioDto.getFatigueRatio());
+                increaseMongStatusRatioDto.getFatigueRatio()
+        );
 
         if (increaseMongStatusRatioDto.getPoopCount() > 0 && this.status.getPoopCount() >= MongStatusEntity.MAX_POOP_COUNT) {
             this.meta.increasePenalty();
@@ -258,12 +281,13 @@ public class MongEntity extends BaseTimeEntity {
 
         this.status.decreaseExp(decreaseMongStatusRatioDto.getExp());
         this.status.decreaseWeight(decreaseMongStatusRatioDto.getWeight());
+        this.status.decreasePoopCount(decreaseMongStatusRatioDto.getPoopCount());
         this.status.decreaseStatusRatio(
                 decreaseMongStatusRatioDto.getStrengthRatio(),
                 decreaseMongStatusRatioDto.getSatietyRatio(),
                 decreaseMongStatusRatioDto.getHealthyRatio(),
-                decreaseMongStatusRatioDto.getFatigueRatio());
-        this.status.decreasePoopCount(decreaseMongStatusRatioDto.getPoopCount());
+                decreaseMongStatusRatioDto.getFatigueRatio()
+        );
     }
 
     /**

@@ -20,7 +20,7 @@ public class FeignInterceptor implements RequestInterceptor {
 
         byte[] body = feignRequest.body();
 
-        log.info("[FEIGN] {} ===> {}", feignRequest.url(), body != null ? new String(body) : "");
+        log.info("\n[FEIGN] {} ===> {}", feignRequest.url(), body != null ? new String(body) : "");
 
         if (requestAttributes != null) {
             HttpServletRequest request = (HttpServletRequest) requestAttributes.resolveReference(RequestAttributes.REFERENCE_REQUEST);

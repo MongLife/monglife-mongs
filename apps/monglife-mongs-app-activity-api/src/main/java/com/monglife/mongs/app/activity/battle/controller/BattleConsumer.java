@@ -34,7 +34,6 @@ public class BattleConsumer {
 
     private final BattleService battleService;
 
-
     /**
      * 배틀룸 생성
      * @param createBattleRequestDto 매칭된 플레이어 정보

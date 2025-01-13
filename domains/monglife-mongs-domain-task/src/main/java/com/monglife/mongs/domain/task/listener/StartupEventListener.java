@@ -26,16 +26,30 @@ public class StartupEventListener implements ApplicationListener<ApplicationRead
 
         if (applicationReadyEvent.getApplicationContext().getParent() == null) {
 
-            String applicationName = applicationReadyEvent.getApplicationContext().getApplicationName();
-
-            log.info("[TASK LOAD WORKING START] {}", applicationName);
+            String applicationName = applicationReadyEvent.getApplicationContext().getId();
 
             StringBuilder sb = new StringBuilder();
             taskService.appStopResumeAllTask(APP_PACKAGE_NAME).forEach(getTaskDto -> {
-                sb.append("\n").append(getTaskDto.getTaskId()).append(" =====> ").append(getTaskDto.getTaskOwnerId()).append(" : ").append(getTaskDto.getTaskCode());
+                sb.append("\n")
+                        .append("[")
+                        .append(getTaskDto.getTaskId())
+                        .append("]")
+                        .append(getTaskDto.getTaskOwnerId())
+                        .append(" | ")
+                        .append(getTaskDto.getTaskCode())
+                        .append(" | ")
+                        .append(getTaskDto.getRestExpirationSeconds())
+                        .append("/")
+                        .append(getTaskDto.getExpirationSeconds())
+                        .append("(")
+                        .append(getTaskDto.getExpiredAt())
+                        .append(")")
+                        .append(" | ")
+                        .append(getTaskDto.getIsCycle() ? "cycle" : "")
+                ;
             });
 
-            log.info("[TASK LOAD WORKING SUCCESS] {}{}", applicationName, sb);
+            log.info("\n[TASK LOAD ON \"{}\"] {}", applicationName, sb);
         }
     }
 }

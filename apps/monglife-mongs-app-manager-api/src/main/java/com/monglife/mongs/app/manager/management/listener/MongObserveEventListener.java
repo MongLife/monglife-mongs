@@ -23,7 +23,7 @@ public class MongObserveEventListener {
     @Value("${application.app-package-name}")
     private String APP_PACKAGE_NAME;
 
-    private final TaskScheduleProperties taskScheduleProperties;
+    private final TaskScheduleProperties properties;
 
     private final MqttSendService mqttSendService;
 
@@ -46,17 +46,17 @@ public class MongObserveEventListener {
         }
 
         // STATE
-        boolean isDeadStatus = event.getSatietyRatio() <= taskScheduleProperties.getDeadSatietyRatio() || event.getHealthyRatio() <= taskScheduleProperties.getDeadHealthyRatio();
+        boolean isDeadStatus = event.getSatietyRatio() <= properties.dead.satietyRatio || event.getHealthyRatio() <= properties.dead.healthyRatio;
 
         if (isDeadStatus) {
-            if (taskService.isExistsTask(APP_PACKAGE_NAME, taskOwnerId, taskScheduleProperties.getDeadCode(), TaskStatusCode.PAUSE)) {
-                taskService.resumeTask(APP_PACKAGE_NAME, taskOwnerId, taskScheduleProperties.getDeadCode());
-            } else if (!taskService.isExistsTask(APP_PACKAGE_NAME, taskOwnerId, taskScheduleProperties.getDeadCode(), TaskStatusCode.PROCESSING) && !MongStateCode.DEAD.equals(event.getStateCode())) {
-                taskService.createTask(APP_PACKAGE_NAME, taskOwnerId, taskScheduleProperties.getDeadCode(), taskScheduleProperties.getDeadExpiration());
+            if (taskService.isExistsTask(APP_PACKAGE_NAME, taskOwnerId, properties.dead.code, TaskStatusCode.PAUSE)) {
+                taskService.resumeTask(APP_PACKAGE_NAME, taskOwnerId, properties.dead.code);
+            } else if (!taskService.isExistsTask(APP_PACKAGE_NAME, taskOwnerId, properties.dead.code, TaskStatusCode.PROCESSING) && !MongStateCode.DEAD.equals(event.getStateCode())) {
+                taskService.createTask(APP_PACKAGE_NAME, taskOwnerId, properties.dead.code, properties.dead.expiration);
             }
         } else {
-            if (taskService.isExistsTask(APP_PACKAGE_NAME, taskOwnerId, taskScheduleProperties.getDeadCode(), TaskStatusCode.PROCESSING)) {
-                taskService.pauseTask(APP_PACKAGE_NAME, taskOwnerId, taskScheduleProperties.getDeadCode());
+            if (taskService.isExistsTask(APP_PACKAGE_NAME, taskOwnerId, properties.dead.code, TaskStatusCode.PROCESSING)) {
+                taskService.pauseTask(APP_PACKAGE_NAME, taskOwnerId, properties.dead.code);
             }
         }
 

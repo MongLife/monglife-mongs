@@ -62,8 +62,8 @@ public class PlayerService {
 
         memberService.decreaseStarPoint(accountId, starPoint);
 
-        // 스타 포인트 1개당 100 페이 포인트 적립
-        Integer payPoint = starPoint * 100;
+        // 스타 포인트 1개당 1000 페이 포인트 적립
+        Integer payPoint = starPoint * 1000;
 
         managementService.chargePayPoint(mongId, payPoint);
     }

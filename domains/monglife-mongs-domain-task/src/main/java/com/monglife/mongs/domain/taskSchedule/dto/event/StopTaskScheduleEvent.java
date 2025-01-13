@@ -3,10 +3,8 @@ package com.monglife.mongs.domain.taskSchedule.dto.event;
 import com.monglife.mongs.domain.task.entity.TaskEntity;
 import lombok.Builder;
 import lombok.Getter;
-import lombok.ToString;
 
 @Getter
-@ToString
 public class StopTaskScheduleEvent {
 
     private final Long taskId;

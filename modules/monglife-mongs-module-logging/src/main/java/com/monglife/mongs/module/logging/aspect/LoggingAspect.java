@@ -47,7 +47,7 @@ public class LoggingAspect {
     @Pointcut("consumerPointcut() || controllerPointcut() || servicePointcut() || listenerPointcut()")
     private void targetPointcut() {}
 
-    @Before("targetPointcut() && !@annotation(org.springframework.transaction.annotation.Transactional)")
+    @Before("targetPointcut() && !@annotation(org.springframework.transaction.annotation.Transactional) && !@annotation(com.monglife.mongs.module.logging.annotation.NotInvokeLog)")
     public void around(JoinPoint joinPoint) {
 
         MethodSignature signature = (MethodSignature) joinPoint.getSignature();
@@ -56,10 +56,10 @@ public class LoggingAspect {
         String clazzName = method.getDeclaringClass().getName();
         String methodName = method.getName();
 
-        log.info("[INVOKE] [-] {}#{} {}", clazzName, methodName, generateArgs(method, joinPoint.getArgs()));
+        log.info("\n[METHOD INVOKE] < X > {}#{} {}", clazzName, methodName, generateArgs(method, joinPoint.getArgs()));
     }
 
-    @Before("targetPointcut() && @annotation(org.springframework.transaction.annotation.Transactional)")
+    @Before("targetPointcut() && @annotation(org.springframework.transaction.annotation.Transactional) && !@annotation(com.monglife.mongs.module.logging.annotation.NotInvokeLog)")
     public void beforeTransactional(JoinPoint joinPoint) {
 
         MethodSignature signature = (MethodSignature) joinPoint.getSignature();
@@ -68,11 +68,11 @@ public class LoggingAspect {
         String clazzName = method.getDeclaringClass().getName();
         String methodName = method.getName();
 
-        log.info("[INVOKE] [{}] {}#{} {}", TransactionSynchronizationManager.getCurrentTransactionName(), clazzName, methodName, generateArgs(method, joinPoint.getArgs()));
+        log.info("\n[METHOD INVOKE] <{}> {}#{} {}", TransactionSynchronizationManager.getCurrentTransactionName(), clazzName, methodName, generateArgs(method, joinPoint.getArgs()));
 
     }
 
-    @AfterThrowing(value = "controllerPointcut() || servicePointcut() || listenerPointcut()", throwing = "exception")
+    @AfterThrowing(value = "controllerPointcut() || consumerPointcut() || listenerPointcut()", throwing = "exception")
     public void afterThrowingException(JoinPoint joinPoint, Exception exception) {
 
         MethodSignature signature = (MethodSignature) joinPoint.getSignature();
@@ -87,7 +87,7 @@ public class LoggingAspect {
             message = errorException.getResponse().getMessage();
         }
 
-        log.error("[THROW] {}#{}\n{}", clazzName, methodName, message);
+        log.error("\n[THROW] {}#{}\n{}", clazzName, methodName, message);
     }
 
     private String generateArgs(Method method, Object[] args) {
@@ -100,6 +100,7 @@ public class LoggingAspect {
             } else if (args[index].getClass().isPrimitive()) {
                 argsBuilder
                         .append("\n")
+                        .append(" - ")
                         .append("[")
                         .append(index)
                         .append("] ")
@@ -113,6 +114,7 @@ public class LoggingAspect {
                     String argJson = objectMapper.writeValueAsString(args[index]);
                     argsBuilder
                             .append("\n")
+                            .append(" - ")
                             .append("[")
                             .append(index)
                             .append("] ")
@@ -124,6 +126,7 @@ public class LoggingAspect {
                 } catch (JsonProcessingException ignored) {
                     argsBuilder
                             .append("\n")
+                            .append(" - ")
                             .append("[")
                             .append(index)
                             .append("] ")

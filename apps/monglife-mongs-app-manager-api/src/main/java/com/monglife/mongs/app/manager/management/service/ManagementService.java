@@ -27,7 +27,7 @@ public class ManagementService {
     @Value("${application.app-package-name}")
     private String APP_PACKAGE_NAME;
 
-    private final TaskScheduleProperties taskScheduleProperties;
+    private final TaskScheduleProperties properties;
 
     private final MongService mongService;
 
@@ -86,7 +86,7 @@ public class ManagementService {
         String taskOwnerId = String.valueOf(mongVo.getMongId());
         String mongTypeCode = mongVo.getMongTypeCode();
 
-        taskService.createTask(APP_PACKAGE_NAME, taskOwnerId, taskScheduleProperties.getEggEvolutionCode(), taskScheduleProperties.getEggEvolutionExpiration());
+        taskService.createTask(APP_PACKAGE_NAME, taskOwnerId, properties.eggEvolution.code, properties.eggEvolution.expiration);
 
         collectionService.createCollectionMong(mongTypeCode);
     }
@@ -144,15 +144,15 @@ public class ManagementService {
         String taskOwnerId = String.valueOf(mongId);
 
         if (mongService.getMong(mongId).getIsSleep()) {
-            taskService.deleteTask(APP_PACKAGE_NAME, taskOwnerId, taskScheduleProperties.getStatusIncreaseCode());
-            taskService.createCycleTask(APP_PACKAGE_NAME, taskOwnerId, taskScheduleProperties.getStatusDecreaseCode(), taskScheduleProperties.getStatusDecreaseExpiration());
-            taskService.createCycleTask(APP_PACKAGE_NAME, taskOwnerId, taskScheduleProperties.getPoopIncreaseCode(), taskScheduleProperties.getPoopIncreaseExpiration());
+            taskService.deleteTask(APP_PACKAGE_NAME, taskOwnerId, properties.increaseStatus.code);
+            taskService.createCycleTask(APP_PACKAGE_NAME, taskOwnerId, properties.decreaseStatus.code, properties.decreaseStatus.expiration);
+            taskService.createCycleTask(APP_PACKAGE_NAME, taskOwnerId, properties.increasePoop.code, properties.increasePoop.expiration);
             mongService.wakeupMong(mongId);
 
         } else {
-            taskService.deleteTask(APP_PACKAGE_NAME, taskOwnerId, taskScheduleProperties.getStatusDecreaseCode());
-            taskService.deleteTask(APP_PACKAGE_NAME, taskOwnerId, taskScheduleProperties.getPoopIncreaseCode());
-            taskService.createCycleTask(APP_PACKAGE_NAME, taskOwnerId, taskScheduleProperties.getStatusIncreaseCode(), taskScheduleProperties.getStatusIncreaseExpiration());
+            taskService.deleteTask(APP_PACKAGE_NAME, taskOwnerId, properties.decreaseStatus.code);
+            taskService.deleteTask(APP_PACKAGE_NAME, taskOwnerId, properties.increasePoop.code);
+            taskService.createCycleTask(APP_PACKAGE_NAME, taskOwnerId, properties.increaseStatus.code, properties.increaseStatus.expiration);
             mongService.sleepMong(mongId);
         }
     }
@@ -196,11 +196,11 @@ public class ManagementService {
 
             String taskOwnerId = String.valueOf(mongId);
 
-            taskService.createFixTimeCycleTask(APP_PACKAGE_NAME, taskOwnerId, taskScheduleProperties.getSleepCode(), mongVo.getSleepAt());
-            taskService.createFixTimeCycleTask(APP_PACKAGE_NAME, taskOwnerId, taskScheduleProperties.getWakeupCode(), mongVo.getWakeupAt());
+            taskService.createFixTimeCycleTask(APP_PACKAGE_NAME, taskOwnerId, properties.sleep.code, mongVo.getSleepAt());
+            taskService.createFixTimeCycleTask(APP_PACKAGE_NAME, taskOwnerId, properties.wakeup.code, mongVo.getWakeupAt());
 
-            taskService.createCycleTask(APP_PACKAGE_NAME, taskOwnerId, taskScheduleProperties.getStatusDecreaseCode(), taskScheduleProperties.getStatusDecreaseExpiration());
-            taskService.createCycleTask(APP_PACKAGE_NAME, taskOwnerId, taskScheduleProperties.getPoopIncreaseCode(), taskScheduleProperties.getPoopIncreaseExpiration());
+            taskService.createCycleTask(APP_PACKAGE_NAME, taskOwnerId, properties.decreaseStatus.code, properties.decreaseStatus.expiration);
+            taskService.createCycleTask(APP_PACKAGE_NAME, taskOwnerId, properties.increasePoop.code, properties.increasePoop.expiration);
         }
 
         // 몽 컬렉션 등록

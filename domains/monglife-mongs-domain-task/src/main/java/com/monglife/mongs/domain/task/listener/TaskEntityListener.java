@@ -29,6 +29,7 @@ public class TaskEntityListener {
     public void postPersist(TaskEntity taskEntity) {
         applicationEventPublisher.publishEvent(StartTaskScheduleEvent.of(taskEntity));
     }
+
     /**
      * PAUSE : Task Scheduler 중지 -> 결과 반영
      * PROCESSING : Task Scheduler 시작

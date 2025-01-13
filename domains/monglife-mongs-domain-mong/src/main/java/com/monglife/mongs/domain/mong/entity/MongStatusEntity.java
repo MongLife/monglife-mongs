@@ -86,12 +86,41 @@ public class MongStatusEntity {
     }
 
     /**
+     * 지수 갱신 (증감 연산)
+     * @param weight 몸무게 변동 값
+     * @param poopCount 배변 수 변동 값
+     * @param exp 경험치 변동 값
+     * @param strength 힘 변동 값
+     * @param satiety 포만감 변동 값
+     * @param healthy 체력 변동 값
+     * @param fatigue 피로도 변동 값
+     */
+    public void patchStatus(Double weight, Integer poopCount, Double exp, Double strength, Double satiety, Double healthy, Double fatigue) {
+
+        this.weight = this.weight + weight;
+        this.poopCount = this.poopCount + poopCount;
+        this.exp = this.exp + exp;
+        this.strength = this.strength + strength;
+        this.satiety = this.satiety + satiety;
+        this.healthy = this.healthy + healthy;
+        this.fatigue = this.fatigue + fatigue;
+
+        this.weight = Math.max(0D, this.weight);
+        this.poopCount = Math.max(0, Math.min(this.poopCount, MAX_POOP_COUNT));
+        this.exp = Math.max(0D, Math.min(this.exp, this.maxStatus));
+        this.expRatio = this.exp / this.maxStatus * 100;
+        this.syncStatusValueToStatusRatio();
+
+        this.addHistory(MongStatusHistoryEntity.MongStatusHistoryType.HISTORY_MONG_STATUS_PATCH_STATUS);
+    }
+
+    /**
      * 경험치 증가
      * @param exp 경험치
      */
     public void increaseExp(Double exp) {
 
-        if (exp <= 0D) return;
+        if (0D >= exp) return;
 
         this.exp = this.exp + exp;
 
@@ -107,7 +136,7 @@ public class MongStatusEntity {
      */
     public void decreaseExp(Double exp) {
 
-        if (this.exp <= 0D || exp <= 0D) return;
+        if (0D >= this.exp|| 0D >= exp) return;
 
         this.exp = this.exp - exp;
 
@@ -122,7 +151,7 @@ public class MongStatusEntity {
      */
     public void resetExp() {
 
-        if (this.exp <= 0D) return;
+        if (0D >= this.exp) return;
 
         this.exp = 0D;
 
@@ -138,7 +167,7 @@ public class MongStatusEntity {
      */
     public void increasePoopCount(Integer poopCount) {
 
-        if (poopCount <= 0) return;
+        if (0 >= poopCount) return;
 
         this.poopCount = this.poopCount + poopCount;
 
@@ -153,7 +182,7 @@ public class MongStatusEntity {
      */
     public void decreasePoopCount(Integer poopCount) {
 
-        if (this.poopCount <= 0 || poopCount <= 0) return;
+        if (0 >= this.poopCount || 0 >= poopCount) return;
 
         this.poopCount = this.poopCount - poopCount;
 
@@ -167,7 +196,7 @@ public class MongStatusEntity {
      */
     public void resetPoopCount() {
 
-        if (this.poopCount <= 0) return;
+        if (0 >= this.poopCount) return;
 
         this.poopCount = 0;
 
@@ -180,7 +209,7 @@ public class MongStatusEntity {
      */
     public void increaseWeight(Double weight) {
 
-        if (weight <= 0) return;
+        if (0 >= weight) return;
 
         this.weight = this.weight + weight;
 
@@ -195,7 +224,7 @@ public class MongStatusEntity {
      */
     public void decreaseWeight(Double weight) {
 
-        if (this.weight <= 0D || weight <= 0D) return;
+        if (0D >= this.weight || 0D >= weight) return;
 
         this.weight = this.weight - weight;
 
@@ -213,7 +242,7 @@ public class MongStatusEntity {
      */
     public void increaseStatus(Double strength, Double satiety, Double healthy, Double fatigue) {
 
-        if (this.maxStatus >= this.strength && this.maxStatus >= this.satiety && this.maxStatus >= this.healthy && this.maxStatus >= this.fatigue) {
+        if (this.maxStatus <= this.strength && this.maxStatus <= this.satiety && this.maxStatus <= this.healthy && this.maxStatus <= this.fatigue) {
             return;
         }
 

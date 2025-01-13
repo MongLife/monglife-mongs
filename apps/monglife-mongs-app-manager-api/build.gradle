@@ -7,7 +7,6 @@ dependencies {
     implementation project(':domains:monglife-mongs-domain-task')
 
     // modules
-    implementation project(':modules:monglife-mongs-module-logging')
     implementation project(':modules:monglife-mongs-module-security')
     implementation project(':modules:monglife-mongs-module-mqtt')
 }

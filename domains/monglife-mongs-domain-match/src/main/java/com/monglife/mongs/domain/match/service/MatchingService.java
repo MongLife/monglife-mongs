@@ -1,7 +1,9 @@
 package com.monglife.mongs.domain.match.service;
 
+import com.monglife.core.utils.CommonUtil;
 import com.monglife.mongs.domain.match.entity.MatchingEntity;
 import com.monglife.mongs.domain.match.vo.FindMatchingVo;
+import com.monglife.mongs.module.logging.annotation.NotInvokeLog;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -12,7 +14,6 @@ import java.time.format.DateTimeFormatter;
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
-import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Service
@@ -77,6 +78,7 @@ public class MatchingService {
      * 대기열 조회 후 매칭 생성
      * @return 매칭 성사 된 대기열 Dto 목록
      */
+    @NotInvokeLog
     public Set<FindMatchingVo> findWaitMatching() {
 
         // 대기열에서 일자를 기준으로 최근 순 MAX_PLAYER 명까지 조회
@@ -115,7 +117,7 @@ public class MatchingService {
             for (int index = findWaitMatchingDtoSet.size(); index < MAX_PLAYER; index++) {
                 FindMatchingVo botFindMatchingVo = FindMatchingVo.builder()
                         .mongId(0L)
-                        .deviceId(UUID.randomUUID().toString().replace("-", ""))
+                        .deviceId(CommonUtil.randomId())
                         .accountId(0L)
                         .isBot(Boolean.TRUE)
                         .build();

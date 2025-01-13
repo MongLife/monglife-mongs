@@ -45,11 +45,11 @@ public class RetryTaskSchedule {
                     .forEach(taskEntity -> {
                         taskEntity.retry();
 
-                        log.info("[{}] TASK RETRY : {} - {}", taskEntity.getTaskId(), taskEntity.getTaskOwnerId(), taskEntity.getComn().getCode());
+                        log.info("\n[TASK RETRY] {} : {} - {}", taskEntity.getTaskId(), taskEntity.getTaskOwnerId(), taskEntity.getComn().getCode());
                     });
 
         } catch (RuntimeException e) {
-            log.error("[RETRY FAIL] {}", e.getMessage());
+            log.error("\n[TASK RETRY] {} fail.", e.getMessage());
         }
     }
 }

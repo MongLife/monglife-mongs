@@ -51,6 +51,7 @@ public class MongHistoryEntity extends BaseTimeEntity {
         HISTORY_MONG_GRADUATE("졸업"),
         HISTORY_MONG_DEAD("죽음"),
         HISTORY_MONG_INCREASE_PAY_POINT("페이포인트 증가"),
+        HISTORY_MONG_TRAINING("훈련"),
         ;
 
         public final String name;

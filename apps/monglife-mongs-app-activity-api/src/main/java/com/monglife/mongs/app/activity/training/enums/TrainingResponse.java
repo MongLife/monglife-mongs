@@ -18,11 +18,6 @@ public enum TrainingResponse implements Response {
      */
     // ACTIVITY - TRAINING
     APP_ACTIVITY_TRAINING_END_RUNNER(HttpStatus.OK.value(), "ACTIVITY-TRAINING-000", "훈련 RUNNER 완료했습니다."),
-
-
-    /**
-     * 실패 응답
-     */
     ;
 
     private final Integer httpStatus;

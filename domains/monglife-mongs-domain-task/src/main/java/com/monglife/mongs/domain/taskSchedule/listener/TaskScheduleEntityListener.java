@@ -46,12 +46,12 @@ public class TaskScheduleEntityListener {
                         .build());
             }
 
-            log.info("[{}] TASK RUN : {}", event.getTaskOwnerId(), event.getTaskCode());
+            log.info("\n[TASK RUN] [{}] {}", event.getTaskOwnerId(), event.getTaskCode());
         } catch (NotExistsTaskException e) {
-            log.warn("[{}] NOT EXISTS TASK : {}", event.getTaskId(), e.getMessage());
+            log.warn("\n[TASK NOT EXISTS] [{}] {}", event.getTaskId(), e.getMessage());
         } catch (RuntimeException e) {
             taskScheduleService.stopTaskSchedule(event.getTaskId());
-            log.error("[{}] TASK EXECUTE ERROR : {}", event.getTaskId(), e.getMessage());
+            log.error("\n[TASK EXECUTE ERROR] [{}] {}", event.getTaskId(), e.getMessage());
         }
     }
 }

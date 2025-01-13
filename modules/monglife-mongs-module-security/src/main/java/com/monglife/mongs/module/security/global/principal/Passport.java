@@ -1,5 +1,6 @@
 package com.monglife.mongs.module.security.global.principal;
 
+import com.monglife.core.utils.CommonUtil;
 import com.monglife.core.vo.passport.PassportVo;
 import lombok.Getter;
 import lombok.ToString;
@@ -28,7 +29,7 @@ public class Passport extends User {
     public Passport(PassportVo passportVo) {
         super(
                 passportVo.data().account().email(),
-                UUID.randomUUID().toString(),
+                CommonUtil.randomId(),
                 Arrays.stream(passportVo.data().account().role().split(","))
                         .map(SimpleGrantedAuthority::new)
                         .collect(Collectors.toList())

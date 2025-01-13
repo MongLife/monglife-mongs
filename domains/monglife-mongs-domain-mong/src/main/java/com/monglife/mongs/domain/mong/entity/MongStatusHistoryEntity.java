@@ -88,6 +88,7 @@ public class MongStatusHistoryEntity extends BaseTimeEntity {
     @AllArgsConstructor
     public enum MongStatusHistoryType {
 
+        HISTORY_MONG_STATUS_PATCH_STATUS("지수 갱신"),
         HISTORY_MONG_STATUS_INCREASE_EXP("경험치 증가"),
         HISTORY_MONG_STATUS_DECREASE_EXP("경험치 감소"),
         HISTORY_MONG_STATUS_RESET_EXP("경험치 초기화"),

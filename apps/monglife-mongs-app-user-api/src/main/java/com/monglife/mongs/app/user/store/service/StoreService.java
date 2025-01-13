@@ -72,12 +72,12 @@ public class StoreService {
         }
 
         // 주문 소비 실행
-        memberService.increaseStarPoint(accountId, switch (productId) {
-            case "PRDT000" -> 10;
-            case "PRDT001" -> 30;
-            case "PRDT002" -> 50;
-            default -> 0;
-        });
+
+        switch (productId) {
+            case "PRDT000" -> memberService.increaseStarPoint(accountId, 5);
+            case "PRDT001" -> memberService.increaseStarPoint(accountId, 10);
+            case "PRDT002" -> memberService.increaseStarPoint(accountId, 20);
+        }
 
         // 소비 처리
         productOrderService.consumeProductOrder(productOrderId);

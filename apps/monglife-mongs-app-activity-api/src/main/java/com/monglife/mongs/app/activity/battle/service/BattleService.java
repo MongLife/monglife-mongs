@@ -1,5 +1,6 @@
 package com.monglife.mongs.app.activity.battle.service;
 
+import com.monglife.core.utils.CommonUtil;
 import com.monglife.mongs.app.activity.battle.dto.etc.CreateBattleDto;
 import com.monglife.mongs.app.activity.battle.dto.etc.FightBattleDto;
 import com.monglife.mongs.app.activity.battle.dto.etc.OverBattleDto;
@@ -56,7 +57,7 @@ public class BattleService {
         Set<CreateMatchVo> createMatchVoSet = createBattleVoSet.stream()
                 .map(createBattleVo -> {
 
-                    String playerId = UUID.randomUUID().toString().replace("-", "");
+                    String playerId = CommonUtil.randomId();
                     double weight = 0D;
                     double strength = 0D;
                     double fatigue = 0D;
