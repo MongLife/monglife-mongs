@@ -12,7 +12,7 @@ import java.time.LocalDateTime;
 @Getter
 @Setter
 @NoArgsConstructor
-public class SyncWalkingCountRequestDto {
+public class CreateDeviceRequestDto {
 
     @NotBlank
     private String deviceId;
@@ -23,10 +23,14 @@ public class SyncWalkingCountRequestDto {
     @NotBlank
     private LocalDateTime deviceBootedDt;
 
+    @NotBlank
+    private String fcmToken;
+
     @Builder
-    public SyncWalkingCountRequestDto(String deviceId, Integer totalWalkingCount, LocalDateTime deviceBootedDt) {
+    public CreateDeviceRequestDto(String deviceId, Integer totalWalkingCount, LocalDateTime deviceBootedDt, String fcmToken) {
         this.deviceId = deviceId;
         this.totalWalkingCount = totalWalkingCount;
         this.deviceBootedDt = deviceBootedDt;
+        this.fcmToken = fcmToken;
     }
 }

@@ -2,10 +2,7 @@ package com.monglife.mongs.domain.device.entity;
 
 import com.monglife.mongs.module.jpa.entity.BaseTimeEntity;
 import jakarta.persistence.*;
-import lombok.AccessLevel;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.LocalDateTime;
@@ -16,14 +13,10 @@ import java.util.List;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @EntityListeners({ AuditingEntityListener.class })
-@Table(name = "mongs_step")
-public class StepEntity extends BaseTimeEntity {
+@Table(name = "mongs_device")
+public class DeviceEntity extends BaseTimeEntity {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "step_id")
-    private Long stepId;
-
     @Column(name = "device_id", unique = true)
     private String deviceId;
 
@@ -39,22 +32,22 @@ public class StepEntity extends BaseTimeEntity {
     @Column(name = "device_booted_dt")
     private LocalDateTime deviceBootedDt;
 
+    @Setter
+    @Column(name = "fcm_token")
+    private String fcmToken;
+
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    @JoinColumn(name = "step_id")
-    private List<StepHistoryEntity> history = new ArrayList<>();
+    @JoinColumn(name = "device_id")
+    private List<DeviceHistoryEntity> history = new ArrayList<>();
 
     @Builder
-    public StepEntity(String deviceId, Integer walkingCount, Integer totalWalkingCount, Integer consumeWalkingCount, LocalDateTime deviceBootedDt) {
+    public DeviceEntity(String deviceId, Integer walkingCount, Integer totalWalkingCount, Integer consumeWalkingCount, LocalDateTime deviceBootedDt, String fcmToken) {
         this.deviceId = deviceId;
         this.walkingCount = walkingCount;
         this.totalWalkingCount = totalWalkingCount;
         this.consumeWalkingCount = consumeWalkingCount;
         this.deviceBootedDt = deviceBootedDt;
-    }
-
-    @PrePersist
-    public void prePersist() {
-        this.addHistory(StepHistoryEntity.StepHistoryType.CREATE);
+        this.fcmToken = fcmToken;
     }
 
     public Integer getNowWalkingCount() {
@@ -67,7 +60,7 @@ public class StepEntity extends BaseTimeEntity {
 
         this.totalWalkingCount = totalWalkingCount;
 
-        this.addHistory(StepHistoryEntity.StepHistoryType.UPDATE);
+        this.addHistory(DeviceHistoryEntity.DeviceHistoryType.TOTAL_WALKING_COUNT_UPDATE);
     }
 
     public void resetTotalWalkingCount(Integer totalWalkingCount, LocalDateTime deviceBootedDt) {
@@ -79,7 +72,7 @@ public class StepEntity extends BaseTimeEntity {
         this.consumeWalkingCount = 0;
         this.deviceBootedDt = deviceBootedDt;
 
-        this.addHistory(StepHistoryEntity.StepHistoryType.RESET);
+        this.addHistory(DeviceHistoryEntity.DeviceHistoryType.TOTAL_WALKING_COUNT_RESET);
     }
 
     public void decreaseWalkingCount(Integer walkingCount) {
@@ -88,17 +81,18 @@ public class StepEntity extends BaseTimeEntity {
 
         this.consumeWalkingCount = this.consumeWalkingCount + walkingCount;
 
-        this.addHistory(StepHistoryEntity.StepHistoryType.DECREASE);
+        this.addHistory(DeviceHistoryEntity.DeviceHistoryType.STEPS_DECREASE);
     }
 
-    private void addHistory(StepHistoryEntity.StepHistoryType stepHistoryType) {
+    private void addHistory(DeviceHistoryEntity.DeviceHistoryType deviceHistoryType) {
 
-        this.history.add(StepHistoryEntity.builder()
+        this.history.add(DeviceHistoryEntity.builder()
                 .walkingCount(this.walkingCount)
                 .totalWalkingCount(this.totalWalkingCount)
                 .consumeWalkingCount(this.consumeWalkingCount)
                 .deviceBootedDt(this.deviceBootedDt)
-                .type(stepHistoryType)
+                .fcmToken(this.fcmToken)
+                .type(deviceHistoryType)
                 .build());
     }
 }

@@ -14,13 +14,13 @@ import java.time.LocalDateTime;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @EntityListeners({ AuditingEntityListener.class })
-@Table(name = "mongs_step_history")
-public class StepHistoryEntity extends BaseTimeEntity {
+@Table(name = "mongs_device_history")
+public class DeviceHistoryEntity extends BaseTimeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "step_history_id")
-    private Long stepHistoryId;
+    @Column(name = "device_history_id")
+    private Long deviceHistoryId;
 
     @Column(name = "walking_count")
     private Integer walkingCount;
@@ -34,23 +34,27 @@ public class StepHistoryEntity extends BaseTimeEntity {
     @Column(name = "device_booted_dt")
     private LocalDateTime deviceBootedDt;
 
+    @Column(name = "fcm_token")
+    private String fcmToken;
+
     @Enumerated(EnumType.STRING)
-    @Column(name = "step_history_type")
-    private StepHistoryType type;
+    @Column(name = "device_history_type")
+    private DeviceHistoryType type;
 
     @Builder
-    public StepHistoryEntity(Integer walkingCount, Integer totalWalkingCount, Integer consumeWalkingCount, LocalDateTime deviceBootedDt, StepHistoryType type) {
+    public DeviceHistoryEntity(Integer walkingCount, Integer totalWalkingCount, Integer consumeWalkingCount, LocalDateTime deviceBootedDt, DeviceHistoryType type, String fcmToken) {
         this.walkingCount = walkingCount;
         this.totalWalkingCount = totalWalkingCount;
         this.consumeWalkingCount = consumeWalkingCount;
         this.deviceBootedDt = deviceBootedDt;
+        this.fcmToken = fcmToken;
         this.type = type;
     }
 
-    public enum StepHistoryType {
-        UPDATE,
-        RESET,
-        DECREASE,
-        CREATE
+    public enum DeviceHistoryType {
+        TOTAL_WALKING_COUNT_UPDATE,
+        TOTAL_WALKING_COUNT_RESET,
+        STEPS_DECREASE,
+        FCM_TOKEN_UPDATE,
     }
 }

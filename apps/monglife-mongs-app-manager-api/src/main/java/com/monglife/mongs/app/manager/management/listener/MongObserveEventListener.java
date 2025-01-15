@@ -20,6 +20,8 @@ import org.springframework.transaction.event.TransactionalEventListener;
 @RequiredArgsConstructor
 public class MongObserveEventListener {
 
+    private static final String SERVICE_DOMAIN = "management";
+
     @Value("${application.app-package-name}")
     private String APP_PACKAGE_NAME;
 
@@ -37,25 +39,32 @@ public class MongObserveEventListener {
     @Transactional(propagation = Propagation.REQUIRES_NEW)
     public void mongObserveEventListener(MongObserveEvent event) {
 
-        String topic = "management/" + event.getMongId();
+        String topic = String.format("%s/%d", SERVICE_DOMAIN, event.getMongId());
         String taskOwnerId = String.valueOf(event.getMongId());
 
-        // STATUS
+        // mong status
         if (MongStateCode.DEAD.equals(event.getStateCode()) || MongStateCode.GRADUATE_READY.equals(event.getStateCode())) {
             taskService.deleteAllTasks(APP_PACKAGE_NAME, taskOwnerId);
         }
 
-        // STATE
+        // mong state
         boolean isDeadStatus = event.getSatietyRatio() <= properties.dead.satietyRatio || event.getHealthyRatio() <= properties.dead.healthyRatio;
 
         if (isDeadStatus) {
+            // 죽음 스케줄러 존재하는 경우
             if (taskService.isExistsTask(APP_PACKAGE_NAME, taskOwnerId, properties.dead.code, TaskStatusCode.PAUSE)) {
+                // 기존 죽음 스케줄러 재가동
                 taskService.resumeTask(APP_PACKAGE_NAME, taskOwnerId, properties.dead.code);
-            } else if (!taskService.isExistsTask(APP_PACKAGE_NAME, taskOwnerId, properties.dead.code, TaskStatusCode.PROCESSING) && !MongStateCode.DEAD.equals(event.getStateCode())) {
+            }
+            // 죽음 스케줄러 없는 경우
+            else if (!taskService.isExistsTask(APP_PACKAGE_NAME, taskOwnerId, properties.dead.code, TaskStatusCode.PROCESSING) && !MongStateCode.DEAD.equals(event.getStateCode())) {
+                // 새로운 죽음 스케줄러 생성
                 taskService.createTask(APP_PACKAGE_NAME, taskOwnerId, properties.dead.code, properties.dead.expiration);
             }
         } else {
+            // 죽음 스케줄러 존재하는 경우
             if (taskService.isExistsTask(APP_PACKAGE_NAME, taskOwnerId, properties.dead.code, TaskStatusCode.PROCESSING)) {
+                // 일시 중지
                 taskService.pauseTask(APP_PACKAGE_NAME, taskOwnerId, properties.dead.code);
             }
         }

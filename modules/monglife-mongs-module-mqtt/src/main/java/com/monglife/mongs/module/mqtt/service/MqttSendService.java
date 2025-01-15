@@ -37,7 +37,7 @@ public class MqttSendService {
             String body = objectMapper.writeValueAsString(responseDto);
             this.sendMessage(topic, body);
         } catch (JsonProcessingException e) {
-            log.error("{}", e.getMessage());
+            log.error("[MQTT] {}", e.getMessage());
         }
     }
 
@@ -47,7 +47,7 @@ public class MqttSendService {
                 String body = objectMapper.writeValueAsString(mqttResponseEntity.getBody());
                 this.sendMessage(topic, body);
             } catch (JsonProcessingException e) {
-                log.error("{}", e.getMessage());
+                log.error("[MQTT] {}", e.getMessage());
             }
         });
     }

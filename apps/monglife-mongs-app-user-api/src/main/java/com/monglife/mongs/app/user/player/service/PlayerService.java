@@ -2,18 +2,13 @@ package com.monglife.mongs.app.user.player.service;
 
 import com.monglife.mongs.app.user.player.dto.etc.GetPlayerDto;
 import com.monglife.mongs.app.user.player.exception.AlreadyMaxSlotCountException;
-import com.monglife.mongs.app.user.player.vo.PlayerStepVo;
 import com.monglife.mongs.client.manager.service.ManagementService;
-import com.monglife.mongs.domain.device.service.StepService;
-import com.monglife.mongs.domain.device.vo.StepVo;
-import com.monglife.mongs.domain.member.vo.MemberVo;
 import com.monglife.mongs.domain.member.service.MemberService;
+import com.monglife.mongs.domain.member.vo.MemberVo;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.time.LocalDateTime;
 
 @Service
 @RequiredArgsConstructor
@@ -27,10 +22,22 @@ public class PlayerService {
 
     private final MemberService memberService;
 
-    private final StepService stepService;
-
     private final ManagementService managementService;
 
+    /**
+     * 플레이어 등록
+     * @param accountId 계정 ID
+     */
+    @Transactional
+    public void createPlayer(Long accountId) {
+        memberService.createMember(accountId);
+    }
+
+    /**
+     * 플레이어 조회
+     * @param accountId 계정 ID
+     * @return 플레이어 정보 Dto
+     */
     @Transactional
     public GetPlayerDto getPlayer(Long accountId) {
 
@@ -43,6 +50,10 @@ public class PlayerService {
                 .build();
     }
 
+    /**
+     * 슬롯 구매
+     * @param accountId 계정 ID
+     */
     @Transactional
     public void buySlot(Long accountId) {
 
@@ -57,6 +68,12 @@ public class PlayerService {
         memberService.increaseSlot(accountId);
     }
 
+    /**
+     * 스타 포인트 환전
+     * @param accountId 계정 ID
+     * @param mongId 페이 포인트 지급할 몽 ID
+     * @param starPoint 차감할 스타 포인트
+     */
     @Transactional
     public void exchangeStarPoint(Long accountId, Long mongId, Integer starPoint) {
 
@@ -66,34 +83,5 @@ public class PlayerService {
         Integer payPoint = starPoint * 1000;
 
         managementService.chargePayPoint(mongId, payPoint);
-    }
-
-    @Transactional
-    public PlayerStepVo syncWalkingCount(String deviceId, Integer totalWalkingCount, LocalDateTime deviceBootedDt) {
-
-        StepVo stepVo = stepService.updateWalkingCount(deviceId, totalWalkingCount, deviceBootedDt);
-
-        return PlayerStepVo.builder()
-                .totalWalkingCount(stepVo.getTotalWalkingCount())
-                .consumeWalkingCount(stepVo.getConsumeWalkingCount())
-                .walkingCount(stepVo.getWalkingCount())
-                .build();
-    }
-
-    @Transactional
-    public PlayerStepVo exchangeWalkingCount(String deviceId, Long mongId, Integer totalWalkingCount, Integer walkingCount, LocalDateTime deviceBootedDt) {
-
-        StepVo stepVo = stepService.decreaseWalkingCount(deviceId, totalWalkingCount, walkingCount, deviceBootedDt);
-
-        // 100 걸음 당 10 페이 포인트 적립
-        Integer payPoint = walkingCount / 100 * 10;
-
-        managementService.chargePayPoint(mongId, payPoint);
-
-        return PlayerStepVo.builder()
-                .totalWalkingCount(stepVo.getTotalWalkingCount())
-                .consumeWalkingCount(stepVo.getConsumeWalkingCount())
-                .walkingCount(stepVo.getWalkingCount())
-                .build();
     }
 }

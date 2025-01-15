@@ -2,13 +2,14 @@ package com.monglife.mongs.app.user.player.controller;
 
 import com.monglife.core.dto.response.ResponseDto;
 import com.monglife.mongs.app.user.player.dto.etc.GetPlayerDto;
-import com.monglife.mongs.app.user.player.vo.PlayerStepVo;
-import com.monglife.mongs.app.user.player.dto.request.*;
+import com.monglife.mongs.app.user.player.dto.request.CreateDeviceRequestDto;
+import com.monglife.mongs.app.user.player.dto.request.ExchangeStarPointRequestDto;
+import com.monglife.mongs.app.user.player.dto.request.ExchangeWalkingCountRequestDto;
 import com.monglife.mongs.app.user.player.dto.response.ExchangeWalkingCountResponseDto;
 import com.monglife.mongs.app.user.player.dto.response.GetPlayerResponseDto;
-import com.monglife.mongs.app.user.player.dto.response.SyncWalkingCountResponseDto;
 import com.monglife.mongs.app.user.player.enums.PlayerResponse;
 import com.monglife.mongs.app.user.player.service.PlayerService;
+import com.monglife.mongs.app.user.player.vo.PlayerStepVo;
 import com.monglife.mongs.module.security.global.principal.Passport;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -25,6 +26,21 @@ import java.time.LocalDateTime;
 public class PlayerController {
 
     private final PlayerService playerService;
+
+    /**
+     * 플레이어 정보 등록
+     * @param passport 패스 포트
+     * @return 성공 응답
+     */
+    @PostMapping("")
+    public ResponseEntity<ResponseDto<?>> createPlayer(@AuthenticationPrincipal Passport passport) {
+
+        Long accountId = passport.getAccountId();
+
+        playerService.createPlayer(accountId);
+
+        return ResponseEntity.ok(PlayerResponse.APP_USER_PLAYER_CREATE_PLAYER.toResponseDto());
+    }
 
     /**
      * 플레이어 정보 조회
@@ -47,6 +63,11 @@ public class PlayerController {
         return ResponseEntity.ok(PlayerResponse.APP_USER_PLAYER_GET_PLAYER.toResponseDto(getPlayerResponseDto));
     }
 
+    /**
+     * 슬롯 구매
+     * @param passport 패스 포트
+     * @return 성공 응답
+     */
     @PatchMapping("/slot")
     public ResponseEntity<ResponseDto<?>> buySlot(@AuthenticationPrincipal Passport passport) {
 
@@ -55,25 +76,12 @@ public class PlayerController {
         return ResponseEntity.ok(PlayerResponse.APP_USER_PLAYER_INCREASE_SLOT.toResponseDto());
     }
 
-    @PostMapping("/exchange/walking")
-    public ResponseEntity<ResponseDto<ExchangeWalkingCountResponseDto>> exchangeWalkingCount(@AuthenticationPrincipal Passport passport, @RequestBody ExchangeWalkingCountRequestDto exchangeWalkingCountRequestDto) {
-
-        String deviceId = passport.getDeviceId();
-        Long mongId = exchangeWalkingCountRequestDto.getMongId();
-        Integer totalWalkingCount = exchangeWalkingCountRequestDto.getTotalWalkingCount();
-        Integer walkingCount = exchangeWalkingCountRequestDto.getWalkingCount();
-        LocalDateTime deviceBootedDt = exchangeWalkingCountRequestDto.getDeviceBootedDt();
-
-        PlayerStepVo playerStepVo = playerService.exchangeWalkingCount(deviceId, mongId, totalWalkingCount, walkingCount, deviceBootedDt);
-
-        ExchangeWalkingCountResponseDto exchangeWalkingCountResponseDto = ExchangeWalkingCountResponseDto.builder()
-                .consumeWalkingCount(playerStepVo.getConsumeWalkingCount())
-                .walkingCount(playerStepVo.getWalkingCount())
-                .build();
-
-        return ResponseEntity.ok(PlayerResponse.APP_USER_PLAYER_EXCHANGE_WALKING_COUNT.toResponseDto(exchangeWalkingCountResponseDto));
-    }
-
+    /**
+     * 스타 포인트 환전
+     * @param passport 패스 포트
+     * @param exchangeStarPointRequestDto 스타 포인트 환전 요청 Dto
+     * @return 성공 응답
+     */
     @PostMapping("/exchange/starPoint")
     public ResponseEntity<ResponseDto<?>> exchangeStarPoint(@AuthenticationPrincipal Passport passport, @RequestBody ExchangeStarPointRequestDto exchangeStarPointRequestDto) {
 

@@ -13,12 +13,14 @@ import org.springframework.transaction.event.TransactionalEventListener;
 @RequiredArgsConstructor
 public class MemberObserveListener {
 
+    private static final String SERVICE_DOMAIN = "player";
+
     private final MqttSendService mqttSendService;
 
     @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
     public void memberObserveEventListener(MemberObserveEvent event) {
 
-        String topic = "player/" + event.getAccountId();
+        String topic = String.format("%s/%d", SERVICE_DOMAIN, event.getAccountId());
 
         MemberObserveResponseDto memberObserveResponseDto = MemberObserveResponseDto.builder()
                 .accountId(event.getAccountId())

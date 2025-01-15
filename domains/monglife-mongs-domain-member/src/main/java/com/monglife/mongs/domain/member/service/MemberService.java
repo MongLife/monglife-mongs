@@ -1,13 +1,13 @@
 package com.monglife.mongs.domain.member.service;
 
-import com.monglife.mongs.domain.member.vo.CollectionMapVo;
-import com.monglife.mongs.domain.member.vo.CollectionMongVo;
-import com.monglife.mongs.domain.member.vo.MemberVo;
 import com.monglife.mongs.domain.member.entity.*;
 import com.monglife.mongs.domain.member.exception.*;
 import com.monglife.mongs.domain.member.repository.ComnCodeRepository;
 import com.monglife.mongs.domain.member.repository.MapPositionRepository;
 import com.monglife.mongs.domain.member.repository.MemberRepository;
+import com.monglife.mongs.domain.member.vo.CollectionMapVo;
+import com.monglife.mongs.domain.member.vo.CollectionMongVo;
+import com.monglife.mongs.domain.member.vo.MemberVo;
 import com.monglife.mongs.module.jpa.entity.ComnCodeEntity;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
@@ -32,6 +32,14 @@ public class MemberService {
 
     private final MapPositionRepository mapPositionRepository;
 
+    @Transactional
+    public void createMember(Long accountId) {
+
+        if (memberRepository.findByAccountId(accountId).isEmpty()) {
+            memberRepository.save(new MemberEntity(accountId));
+        }
+    }
+
     /**
      * 회원 조회
      * @param accountId 계정 ID
@@ -41,7 +49,7 @@ public class MemberService {
     public MemberVo getMember(Long accountId) {
 
         MemberEntity memberEntity = memberRepository.findByAccountId(accountId)
-                .orElseGet(() -> memberRepository.save(new MemberEntity(accountId)));
+                .orElseThrow(() -> new NotExistsMemberException(accountId));
 
         return MemberVo.builder()
                 .accountId(memberEntity.getAccountId())
@@ -59,7 +67,7 @@ public class MemberService {
     public void createCollectionMap(Long accountId, String mapTypeCode, Long mapPositionId) {
 
         MemberEntity memberEntity = memberRepository.findByAccountId(accountId)
-                .orElseGet(() -> memberRepository.save(new MemberEntity(accountId)));
+                .orElseThrow(() -> new NotExistsMemberException(accountId));
 
         ComnCodeEntity comnCodeEntity = comnCodeRepository.findById(mapTypeCode)
                 .orElseThrow(() -> new NotExistsMapTypeCodeException(mapTypeCode));
@@ -85,7 +93,7 @@ public class MemberService {
     public List<CollectionMapVo> getCollectionMaps(Long accountId) {
 
         MemberEntity memberEntity = memberRepository.findByAccountId(accountId)
-                .orElseGet(() -> memberRepository.save(new MemberEntity(accountId)));
+                .orElseThrow(() -> new NotExistsMemberException(accountId));
 
         List<ComnCodeEntity> comnCodeEntities = comnCodeRepository.findByGroupCode(MAP_GROUP_CODE);
 
@@ -111,7 +119,7 @@ public class MemberService {
     public void createCollectionMong(Long accountId, String mongTypeCode) {
 
         MemberEntity memberEntity = memberRepository.findByAccountId(accountId)
-                .orElseGet(() -> memberRepository.save(new MemberEntity(accountId)));
+                .orElseThrow(() -> new NotExistsMemberException(accountId));
 
         ComnCodeEntity comnCodeEntity = comnCodeRepository.findById(mongTypeCode)
                 .orElseThrow(() -> new NotExistsMongTypeCodeException(mongTypeCode));
@@ -133,7 +141,7 @@ public class MemberService {
     public List<CollectionMongVo> getCollectionMongs(Long accountId) {
 
         MemberEntity memberEntity = memberRepository.findByAccountId(accountId)
-                .orElseGet(() -> memberRepository.save(new MemberEntity(accountId)));
+                .orElseThrow(() -> new NotExistsMemberException(accountId));
 
         List<ComnCodeEntity> comnCodeEntities = comnCodeRepository.findByGroupCode(MONG_GROUP_CODE);
 
@@ -162,7 +170,7 @@ public class MemberService {
     public void createFeedback(Long accountId, String deviceId, String deviceName, String title, String content) {
 
         MemberEntity memberEntity = memberRepository.findByAccountId(accountId)
-                .orElseGet(() -> memberRepository.save(new MemberEntity(accountId)));
+                .orElseThrow(() -> new NotExistsMemberException(accountId));
 
         FeedbackEntity feedbackEntity = FeedbackEntity.builder()
                 .accountId(accountId)
@@ -175,30 +183,43 @@ public class MemberService {
         memberEntity.joinFeedback(feedbackEntity);
     }
 
-
+    /**
+     * 슬롯 증가
+     * @param accountId 계정 ID
+     */
     @Transactional
     public void increaseSlot(Long accountId) {
 
         MemberEntity memberEntity = memberRepository.findByAccountId(accountId)
-                .orElseGet(() -> memberRepository.save(new MemberEntity(accountId)));
+                .orElseThrow(() -> new NotExistsMemberException(accountId));
 
         memberEntity.increaseSlotCount();
     }
 
+    /**
+     * 스타 포인트 증가
+     * @param accountId 계정 ID
+     * @param starPoint 스타 포인트
+     */
     @Transactional
     public void increaseStarPoint(Long accountId, Integer starPoint) {
 
         MemberEntity memberEntity = memberRepository.findByAccountId(accountId)
-                .orElseGet(() -> memberRepository.save(new MemberEntity(accountId)));
+                .orElseThrow(() -> new NotExistsMemberException(accountId));
 
         memberEntity.increaseStarPoint(starPoint);
     }
 
+    /**
+     * 스타 포인트 감소
+     * @param accountId 계정 ID
+     * @param starPoint 스타 포인트
+     */
     @Transactional
     public void decreaseStarPoint(Long accountId, Integer starPoint) {
 
         MemberEntity memberEntity = memberRepository.findByAccountId(accountId)
-                .orElseGet(() -> memberRepository.save(new MemberEntity(accountId)));
+                .orElseThrow(() -> new NotExistsMemberException(accountId));
 
         if (memberEntity.getStarPoint() < starPoint) throw new NotExistsStarPointException(starPoint);
 

@@ -7,10 +7,10 @@ import lombok.Getter;
 import java.util.Collections;
 
 @Getter
-public class NotExistsStepException extends ErrorException {
+public class NotExistsDeviceException extends ErrorException {
 
-    public NotExistsStepException(String deviceId) {
-        this.response = DeviceResponse.DOMAIN_DEVICE_NOT_EXISTS_STEP;
+    public NotExistsDeviceException(String deviceId) {
+        this.response = DeviceResponse.DOMAIN_DEVICE_NOT_EXISTS_DEVICE;
         this.result = Collections.singletonMap("deviceId", deviceId);
     }
 }

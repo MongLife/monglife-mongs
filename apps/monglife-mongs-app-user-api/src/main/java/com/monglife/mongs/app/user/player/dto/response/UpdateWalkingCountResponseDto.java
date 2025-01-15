@@ -8,14 +8,14 @@ import lombok.Setter;
 @Getter
 @Setter
 @NoArgsConstructor
-public class SyncWalkingCountResponseDto {
+public class UpdateWalkingCountResponseDto {
 
     private Integer consumeWalkingCount;
 
     private Integer walkingCount;
 
     @Builder
-    public SyncWalkingCountResponseDto(Integer consumeWalkingCount, Integer walkingCount) {
+    public UpdateWalkingCountResponseDto(Integer consumeWalkingCount, Integer walkingCount) {
         this.consumeWalkingCount = consumeWalkingCount;
         this.walkingCount = walkingCount;
     }
