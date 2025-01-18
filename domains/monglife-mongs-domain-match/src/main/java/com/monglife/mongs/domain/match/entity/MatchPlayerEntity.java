@@ -67,7 +67,6 @@ public class MatchPlayerEntity {
     @Column(name = "exit_dt")
     private LocalDateTime exitDt;
 
-
     @Transient
     private Double attackedValue = 0D;
 
@@ -93,6 +92,7 @@ public class MatchPlayerEntity {
         this.defenceValue = defenceValue;
         this.isBot = isBot;
 
+        // 봇인 경우 즉시 입장 처리
         if (this.isBot) {
             this.enter();
         }
@@ -153,7 +153,8 @@ public class MatchPlayerEntity {
      * @return 라운드 상태
      */
     public MatchRoundCode hpCalculation() {
-        Double totalAttackedValue = Math.max(0, this.attackedValue - this.defencedValue);
+
+        double totalAttackedValue = Math.max(0, this.attackedValue - this.defencedValue);
         double newHp = this.hp - totalAttackedValue + this.healedValue;
         this.hp = Math.max(0, Math.min(newHp, MAX_HP));
 

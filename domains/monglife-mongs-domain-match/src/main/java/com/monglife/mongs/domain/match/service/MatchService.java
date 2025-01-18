@@ -32,15 +32,19 @@ public class MatchService {
 
     private static final Random random = new Random();
 
+    // 봇 몽 그룹 코드
     @Value("${application.service.match.bot-mong-type-group-code}")
     private String BOT_MONG_TYPE_GROUP_CODE;
 
+    // 매치 최대 라운드 수
     @Value("${application.service.match.max-round}")
     public Integer MAX_ROUND;
 
+    // 매치 플레이어 공격, 방어, 힐 수치 랜덤 값 시작점
     @Value("${application.service.match.max-random-origin}")
     private Double MAX_RANDOM_ORIGIN;
 
+    // 매치 플레이어 공격, 방어, 힐 수치 랜덤 값 종료점
     @Value("${application.service.match.max-random-bound}")
     private Double MAX_RANDOM_BOUND;
 

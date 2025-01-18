@@ -2,7 +2,10 @@ package com.monglife.mongs.domain.device.entity;
 
 import com.monglife.mongs.module.jpa.entity.BaseTimeEntity;
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.AccessLevel;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.LocalDateTime;
@@ -32,28 +35,31 @@ public class DeviceEntity extends BaseTimeEntity {
     @Column(name = "device_booted_dt")
     private LocalDateTime deviceBootedDt;
 
-    @Setter
-    @Column(name = "fcm_token")
-    private String fcmToken;
-
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "device_id")
     private List<DeviceHistoryEntity> history = new ArrayList<>();
 
     @Builder
-    public DeviceEntity(String deviceId, Integer walkingCount, Integer totalWalkingCount, Integer consumeWalkingCount, LocalDateTime deviceBootedDt, String fcmToken) {
+    public DeviceEntity(String deviceId, Integer walkingCount, Integer totalWalkingCount, Integer consumeWalkingCount, LocalDateTime deviceBootedDt) {
         this.deviceId = deviceId;
         this.walkingCount = walkingCount;
         this.totalWalkingCount = totalWalkingCount;
         this.consumeWalkingCount = consumeWalkingCount;
         this.deviceBootedDt = deviceBootedDt;
-        this.fcmToken = fcmToken;
     }
 
+    /**
+     * 현재 보유한 걸음 수 조회
+     * @return 현재 보유한 걸음 수
+     */
     public Integer getNowWalkingCount() {
         return this.walkingCount + (this.totalWalkingCount - this.consumeWalkingCount);
     }
 
+    /**
+     * 총 걸음 수 갱신
+     * @param totalWalkingCount 총 걸음 수 (기기 상 총 걸음 수)
+     */
     public void updateTotalWalkingCount(Integer totalWalkingCount) {
 
         if (this.totalWalkingCount.equals(totalWalkingCount)) return;
@@ -63,6 +69,11 @@ public class DeviceEntity extends BaseTimeEntity {
         this.addHistory(DeviceHistoryEntity.DeviceHistoryType.TOTAL_WALKING_COUNT_UPDATE);
     }
 
+    /**
+     * 총 걸음 수 초기화
+     * @param totalWalkingCount 총 걸음 수 (기기 상 총 걸음 수)
+     * @param deviceBootedDt 기기 부팅 시간
+     */
     public void resetTotalWalkingCount(Integer totalWalkingCount, LocalDateTime deviceBootedDt) {
 
         if (this.totalWalkingCount.equals(totalWalkingCount) && this.deviceBootedDt == deviceBootedDt) return;
@@ -75,15 +86,23 @@ public class DeviceEntity extends BaseTimeEntity {
         this.addHistory(DeviceHistoryEntity.DeviceHistoryType.TOTAL_WALKING_COUNT_RESET);
     }
 
+    /**
+     * 보유한 걸음 수 감소
+     * @param walkingCount 감소할 걸음 수
+     */
     public void decreaseWalkingCount(Integer walkingCount) {
 
         if (walkingCount <= 0) return;
 
         this.consumeWalkingCount = this.consumeWalkingCount + walkingCount;
 
-        this.addHistory(DeviceHistoryEntity.DeviceHistoryType.STEPS_DECREASE);
+        this.addHistory(DeviceHistoryEntity.DeviceHistoryType.WALKING_COUNT_DECREASE);
     }
 
+    /**
+     * 변경 이력 저장
+     * @param deviceHistoryType 변경 이력 코드
+     */
     private void addHistory(DeviceHistoryEntity.DeviceHistoryType deviceHistoryType) {
 
         this.history.add(DeviceHistoryEntity.builder()
@@ -91,7 +110,6 @@ public class DeviceEntity extends BaseTimeEntity {
                 .totalWalkingCount(this.totalWalkingCount)
                 .consumeWalkingCount(this.consumeWalkingCount)
                 .deviceBootedDt(this.deviceBootedDt)
-                .fcmToken(this.fcmToken)
                 .type(deviceHistoryType)
                 .build());
     }

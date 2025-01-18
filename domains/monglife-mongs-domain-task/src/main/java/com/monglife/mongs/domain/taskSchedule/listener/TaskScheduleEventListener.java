@@ -18,7 +18,7 @@ public class TaskScheduleEventListener {
     private final TaskScheduleService taskScheduleService;
 
     /**
-     * 커밋 이후 실행할 테스크 스케줄러 실행 이벤트
+     * 커밋 이후 실행할 Task 실행 이벤트
      * postPersist 는 커밋 이후가 아닌 영속화 한 직후 실행 된다.
      */
     @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
@@ -37,7 +37,7 @@ public class TaskScheduleEventListener {
     }
 
     /**
-     * 커밋 이후 실행할 테스크 스케줄러 중지 이벤트
+     * 커밋 이후 실행할 Task 중지 이벤트
      */
     @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
     public void stopTaskScheduleEventListener(StopTaskScheduleEvent stopTaskScheduleEvent) {

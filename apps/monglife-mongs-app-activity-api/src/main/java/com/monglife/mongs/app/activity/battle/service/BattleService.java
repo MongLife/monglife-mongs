@@ -16,7 +16,7 @@ import com.monglife.mongs.domain.match.service.MatchingService;
 import com.monglife.mongs.domain.match.vo.CreateMatchVo;
 import com.monglife.mongs.domain.match.vo.FightMatchVo;
 import com.monglife.mongs.domain.match.vo.OverMatchVo;
-import com.monglife.mongs.domain.mong.annotation.MongAccountCheck;
+import com.monglife.mongs.domain.mong.annotation.VerifyMongAccount;
 import com.monglife.mongs.domain.mong.vo.MongVo;
 import com.monglife.mongs.domain.mong.service.MongService;
 import jakarta.transaction.Transactional;
@@ -25,7 +25,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Set;
-import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Service
@@ -39,13 +38,13 @@ public class BattleService {
     private final MatchingService matchingService;
 
 
-    @MongAccountCheck
+    @VerifyMongAccount
     @Transactional
     public void createWaitMatching(Long accountId, Long mongId, String deviceId) {
         matchingService.createWaitMatching(accountId, deviceId, mongId);
     }
 
-    @MongAccountCheck
+    @VerifyMongAccount
     @Transactional
     public void deleteWaitMatching(Long accountId, Long mongId, String deviceId) {
         matchingService.deleteWaitMatching(accountId, deviceId, mongId);

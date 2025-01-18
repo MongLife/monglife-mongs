@@ -1,6 +1,5 @@
 package com.monglife.mongs.domain.member.entity;
 
-
 import com.monglife.mongs.module.jpa.entity.BaseTimeEntity;
 import com.monglife.mongs.module.jpa.entity.ComnCodeEntity;
 import jakarta.persistence.*;
@@ -12,12 +11,11 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@EntityListeners(AuditingEntityListener.class)
+@EntityListeners({ AuditingEntityListener.class })
 @Table(name = "mongs_product_order")
 public class ProductOrderEntity extends BaseTimeEntity {
 
@@ -37,10 +35,10 @@ public class ProductOrderEntity extends BaseTimeEntity {
     @Column(name = "price")
     private Double price;
 
-    @Column(name = "orderId")
+    @Column(name = "order_id")
     private String orderId;
 
-    @Column(name = "purchaseToken")
+    @Column(name = "purchase_token")
     private String purchaseToken;
 
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
@@ -57,6 +55,20 @@ public class ProductOrderEntity extends BaseTimeEntity {
         this.history = new ArrayList<>();
     }
 
+    @PrePersist
+    public void prePersist() {
+
+        ProductOrderHistoryEntity productOrderHistoryEntity = ProductOrderHistoryEntity.builder()
+                .type(ProductOrderHistoryEntity.ProductOrderHistoryType.ORDER)
+                .build();
+
+        this.history.add(productOrderHistoryEntity);
+    }
+
+    /**
+     * 소비 여부 확인
+     * @return 소비 여부
+     */
     public Boolean isConsumed() {
 
         for (ProductOrderHistoryEntity productOrderHistoryEntity : this.history) {
@@ -68,16 +80,9 @@ public class ProductOrderEntity extends BaseTimeEntity {
         return Boolean.FALSE;
     }
 
-    @PrePersist
-    public void prePersist() {
-
-        ProductOrderHistoryEntity productOrderHistoryEntity = ProductOrderHistoryEntity.builder()
-                .type(ProductOrderHistoryEntity.ProductOrderHistoryType.ORDER)
-                .build();
-
-        this.history.add(productOrderHistoryEntity);
-    }
-
+    /**
+     * 소비 처리
+     */
     public void consume() {
 
         ProductOrderHistoryEntity productOrderHistoryEntity = ProductOrderHistoryEntity.builder()

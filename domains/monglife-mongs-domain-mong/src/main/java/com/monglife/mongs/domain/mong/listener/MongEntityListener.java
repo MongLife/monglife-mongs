@@ -14,21 +14,26 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 public class MongEntityListener {
 
-    private static final Double SICK_RATIO = 10D;
-    private static final Double HUNGRY_RATIO = 10D;
-    private static final Double SOMNOLENCE_RATIO = 10D;
+    // 아픔 상태 돌입 체력 지수 비율 (퍼센트)
+    private static final Double HEALTH_SICK_RATIO = 10D;
+
+    // 배고픔 상태 돌입 포만감 지수 비율
+    private static final Double SATIETY_HUNGRY_RATIO = 10D;
+
+    // 피곤함 상태 돌입 피로도 지수 비율
+    private static final Double FATIGUE_SOMNOLENCE_RATIO = 10D;
 
     private final ApplicationEventPublisher applicationEventPublisher;
 
     @PreUpdate
     public void preUpdate(MongEntity mongEntity) {
 
-        // 지수 조건 확인
-        if (mongEntity.getStatus().getHealthyRatio() <= SICK_RATIO) {
+        // 지수 코드 변경 조건 확인
+        if (mongEntity.getStatus().getHealthyRatio() <= HEALTH_SICK_RATIO) {
             mongEntity.getStatus().setCode(MongStatusCode.SICK);
-        } else if (mongEntity.getStatus().getSatiety() <= HUNGRY_RATIO) {
+        } else if (mongEntity.getStatus().getSatiety() <= SATIETY_HUNGRY_RATIO) {
             mongEntity.getStatus().setCode(MongStatusCode.HUNGRY);
-        } else if (mongEntity.getStatus().getFatigue() <= SOMNOLENCE_RATIO) {
+        } else if (mongEntity.getStatus().getFatigue() <= FATIGUE_SOMNOLENCE_RATIO) {
             mongEntity.getStatus().setCode(MongStatusCode.SOMNOLENCE);
         } else {
             mongEntity.getStatus().setCode(MongStatusCode.NORMAL);
@@ -36,7 +41,7 @@ public class MongEntityListener {
     }
 
     /**
-     * 몽 변경 트리거
+     * 몽 엔티티 변경 리스너
      * @param mongEntity 변경된 몽 엔티티
      */
     @PostUpdate
@@ -48,10 +53,14 @@ public class MongEntityListener {
 
         if (mongEntity.isEgg()) return;
 
-        if (mongEntity.isEvolutionReady()) return;
+        if (mongEntity.isGraduateReady()) return;
 
-        applicationEventPublisher.publishEvent(MongEvolutionEvent.builder()
-                .mongId(mongEntity.getMongId())
-                .build());
+        if (mongEntity.isDead()) return;
+
+        if (!mongEntity.isEvolutionReady()) {
+            applicationEventPublisher.publishEvent(MongEvolutionEvent.builder()
+                    .mongId(mongEntity.getMongId())
+                    .build());
+        }
     }
 }

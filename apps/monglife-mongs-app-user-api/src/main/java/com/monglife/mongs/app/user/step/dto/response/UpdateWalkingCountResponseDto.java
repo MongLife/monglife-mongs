@@ -1,4 +1,4 @@
-package com.monglife.mongs.app.user.player.dto.response;
+package com.monglife.mongs.app.user.step.dto.response;
 
 import lombok.Builder;
 import lombok.Getter;

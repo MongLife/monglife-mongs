@@ -49,6 +49,11 @@ public class CollectionController {
         return ResponseEntity.ok(CollectionResponse.APP_USER_COLLECTION_GET_COLLECTION_MAP.toResponseDto(getCollectionMapResponseDtos));
     }
 
+    /**
+     * 몽 컬렉션 조회
+     * @param passport 패스 포트
+     * @return 몽 컬렉션 목록
+     */
     @GetMapping("/mong")
     public ResponseEntity<ResponseDto<List<GetCollectionMongResponseDto>>> getCollectionMongs(@AuthenticationPrincipal Passport passport) {
 

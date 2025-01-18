@@ -2,16 +2,28 @@ package com.monglife.mongs.domain.mong.entity;
 
 import com.monglife.mongs.domain.mong.enums.MongStateCode;
 import jakarta.persistence.*;
+import lombok.AccessLevel;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.ToString;
 
 import java.util.ArrayList;
 import java.util.List;
 
-@Embeddable
+@Entity
 @Getter
-@ToString(exclude = { "history" })
+//@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@Table(name = "mongs_mong_state")
+@ToString(exclude = { "history", "mong" })
 public class MongStateEntity {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "mong_state_id")
+    private Long mongStateId;
+
+    @OneToOne(mappedBy = "state", cascade = CascadeType.PERSIST)
+    private MongEntity mong;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "mong_state_code")
@@ -21,9 +33,11 @@ public class MongStateEntity {
     private Boolean isSleep;
 
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    @JoinColumn(name = "mong_id")
+    @JoinColumn(name = "mong_state_id")
     private List<MongStateHistoryEntity> history = new ArrayList<>();
 
+//    public MongStateEntity(MongEntity mong) {
+//        this.mong = mong;
     public MongStateEntity() {
         this.code = MongStateCode.NORMAL;
         this.isSleep = Boolean.FALSE;
@@ -38,7 +52,7 @@ public class MongStateEntity {
 
         this.isSleep = Boolean.TRUE;
 
-        this.addHistory(MongStateHistoryEntity.MongStateHistoryType.HISTORY_MONG_STATE_SET_SLEEP);
+        this.addHistory(MongStateHistoryEntity.MongStateHistoryType.SET_SLEEP);
     }
 
     /**
@@ -50,7 +64,7 @@ public class MongStateEntity {
 
         this.isSleep = Boolean.FALSE;
 
-        this.addHistory(MongStateHistoryEntity.MongStateHistoryType.HISTORY_MONG_STATE_SET_WAKEUP);
+        this.addHistory(MongStateHistoryEntity.MongStateHistoryType.SET_WAKEUP);
     }
 
     /**
@@ -63,12 +77,15 @@ public class MongStateEntity {
 
         this.code = code;
 
-        this.addHistory(MongStateHistoryEntity.MongStateHistoryType.HISTORY_MONG_STATE_SET_CODE);
+        this.addHistory(MongStateHistoryEntity.MongStateHistoryType.SET_CODE);
     }
 
     private void addHistory(MongStateHistoryEntity.MongStateHistoryType mongStateHistoryType) {
 
         this.history.add(MongStateHistoryEntity.builder()
+                .mongId(this.mong.getMongId())
+                .accountId(this.mong.getAccountId())
+                .mongName(this.mong.getMongName())
                 .mongStateHistoryType(mongStateHistoryType)
                 .code(this.code)
                 .isSleep(this.isSleep)

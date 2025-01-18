@@ -28,7 +28,15 @@ public class FirebaseConfig {
                 .setCredentials(credentials)
                 .build();
 
-        return FirebaseApp.initializeApp(options);
+        FirebaseApp app;
+
+        if (FirebaseApp.getApps().isEmpty()) {
+            app = FirebaseApp.initializeApp(options, "com.monglife-mongs");
+        } else {
+            app = FirebaseApp.getApps().get(0);
+        }
+
+        return app;
     }
 
     @Bean

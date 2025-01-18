@@ -17,6 +17,15 @@ public class MongMetaHistoryEntity extends BaseTimeEntity {
     @Column(name = "mong_meta_history_id")
     private Long mongMetaHistoryId;
 
+    @Column(name = "mong_id")
+    private Long mongId;
+
+    @Column(name = "account_id")
+    private Long accountId;
+
+    @Column(name = "mong_name")
+    private String mongName;
+
     @Enumerated(EnumType.STRING)
     @Column(name = "mong_meta_history_type")
     private MongMetaHistoryType mongMetaHistoryType;
@@ -38,7 +47,10 @@ public class MongMetaHistoryEntity extends BaseTimeEntity {
     private Boolean isActive;
 
     @Builder
-    public MongMetaHistoryEntity(MongMetaHistoryType mongMetaHistoryType, Integer trainingCount, Integer strokeCount, Double reward, Double penalty, Boolean isActive) {
+    public MongMetaHistoryEntity(Long mongId, Long accountId, String mongName, MongMetaHistoryType mongMetaHistoryType, Integer trainingCount, Integer strokeCount, Double reward, Double penalty, Boolean isActive) {
+        this.mongId = mongId;
+        this.accountId = accountId;
+        this.mongName = mongName;
         this.mongMetaHistoryType = mongMetaHistoryType;
         this.trainingCount = trainingCount;
         this.strokeCount = strokeCount;
@@ -51,14 +63,14 @@ public class MongMetaHistoryEntity extends BaseTimeEntity {
     @AllArgsConstructor
     public enum MongMetaHistoryType {
 
-        HISTORY_MONG_META_INCREASE_STROKE_COUNT("쓰다듬기 횟수 증가"),
-        HISTORY_MONG_META_RESET_STROKE_COUNT("쓰다듬기 횟수 초기화"),
-        HISTORY_MONG_META_INCREASE_TRAINING_COUNT("훈련 횟수 증가"),
-        HISTORY_MONG_META_RESET_TRAINING_COUNT("훈련 횟수 초기화"),
-        HISTORY_MONG_META_INCREASE_PENALTY("진화 패널티 증가"),
-        HISTORY_MONG_META_DEACTIVATE("비활성화"),
-        HISTORY_MONG_META_SET_REWARD("진화 리워드 수정"),
-        HISTORY_MONG_META_RESET_PENALTY("진화 패널티 초기화"),
+        INCREASE_STROKE_COUNT("쓰다듬기 횟수 증가"),
+        RESET_STROKE_COUNT("쓰다듬기 횟수 초기화"),
+        INCREASE_TRAINING_COUNT("훈련 횟수 증가"),
+        RESET_TRAINING_COUNT("훈련 횟수 초기화"),
+        INCREASE_PENALTY("진화 패널티 증가"),
+        DEACTIVATE("비활성화"),
+        SET_REWARD("진화 리워드 수정"),
+        RESET_PENALTY("진화 패널티 초기화"),
         ;
 
         public final String name;

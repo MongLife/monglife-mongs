@@ -2,10 +2,7 @@ package com.monglife.mongs.domain.device.entity;
 
 import com.monglife.mongs.module.jpa.entity.BaseTimeEntity;
 import jakarta.persistence.*;
-import lombok.AccessLevel;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.LocalDateTime;
@@ -34,27 +31,31 @@ public class DeviceHistoryEntity extends BaseTimeEntity {
     @Column(name = "device_booted_dt")
     private LocalDateTime deviceBootedDt;
 
-    @Column(name = "fcm_token")
-    private String fcmToken;
-
     @Enumerated(EnumType.STRING)
     @Column(name = "device_history_type")
     private DeviceHistoryType type;
 
     @Builder
-    public DeviceHistoryEntity(Integer walkingCount, Integer totalWalkingCount, Integer consumeWalkingCount, LocalDateTime deviceBootedDt, DeviceHistoryType type, String fcmToken) {
+    public DeviceHistoryEntity(Integer walkingCount, Integer totalWalkingCount, Integer consumeWalkingCount, LocalDateTime deviceBootedDt, DeviceHistoryType type) {
         this.walkingCount = walkingCount;
         this.totalWalkingCount = totalWalkingCount;
         this.consumeWalkingCount = consumeWalkingCount;
         this.deviceBootedDt = deviceBootedDt;
-        this.fcmToken = fcmToken;
         this.type = type;
     }
 
+    /**
+     * 변경 이력 코드
+     */
+    @Getter
+    @AllArgsConstructor
     public enum DeviceHistoryType {
-        TOTAL_WALKING_COUNT_UPDATE,
-        TOTAL_WALKING_COUNT_RESET,
-        STEPS_DECREASE,
-        FCM_TOKEN_UPDATE,
+
+        TOTAL_WALKING_COUNT_UPDATE("총 걸음 수 갱신"),
+        TOTAL_WALKING_COUNT_RESET("총 걸음 수 초기화"),
+        WALKING_COUNT_DECREASE("보유 걸음 수 감소"),
+        ;
+
+        public final String name;
     }
 }

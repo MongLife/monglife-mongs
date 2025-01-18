@@ -22,6 +22,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class ProductOrderService {
 
+    // 상품 그룹 코드
     @Value("${application.service.product-order.product-group-code}")
     private String PRODUCT_GROUP_CODE;
 
@@ -33,6 +34,10 @@ public class ProductOrderService {
 
     private final LockProductOrderRepository lockProductOrderRepository;
 
+    /**
+     * 구매 가능한 상품 ID 목록 조회
+     * @return 상품 ID 목록 (UpperCase)
+     */
     @Transactional
     public List<String> getProductIds() {
 
@@ -41,6 +46,11 @@ public class ProductOrderService {
                 .toList();
     }
 
+    /**
+     * 상품 주문 내역 조회
+     * @param productOrderId 상품 주문 ID
+     * @return 상품 주문 Vo
+     */
     @Transactional(readOnly = true)
     public ProductOrderVo getProductOrder(Long productOrderId) {
 
@@ -55,6 +65,11 @@ public class ProductOrderService {
                 .build();
     }
 
+    /**
+     * 소비 완료 처리된 상품 주문 내역 목록 조회
+     * @param orderIds 플랫폼 주문 ID 목록
+     * @return 상품 주문 Vo 목록
+     */
     @Transactional(readOnly = true)
     public List<ProductOrderVo> getConsumedProductOrders(List<String> orderIds) {
 
@@ -73,6 +88,15 @@ public class ProductOrderService {
                 .toList();
     }
 
+    /**
+     * 상품 주문 등록
+     * @param accountId 계정 ID
+     * @param productId 상품 ID
+     * @param price 상품 가격
+     * @param orderId 플랫폼 주문 ID
+     * @param purchaseToken 플랫폼 주문 검증 토큰
+     * @return 상품 주문 ID
+     */
     @Transactional
     public Long createProductOrder(Long accountId, String productId, Double price, String orderId, String purchaseToken) {
 
@@ -95,6 +119,10 @@ public class ProductOrderService {
         return productOrderEntity.getProductOrderId();
     }
 
+    /**
+     * 상품 주문 소비 처리
+     * @param productOrderId 상품 주문 ID
+     */
     @Transactional
     public void consumeProductOrder(Long productOrderId) {
 

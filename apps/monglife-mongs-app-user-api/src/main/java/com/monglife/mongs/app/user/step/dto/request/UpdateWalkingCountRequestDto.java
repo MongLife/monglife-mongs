@@ -1,4 +1,4 @@
-package com.monglife.mongs.app.user.player.dto.request;
+package com.monglife.mongs.app.user.step.dto.request;
 
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
@@ -12,10 +12,7 @@ import java.time.LocalDateTime;
 @Getter
 @Setter
 @NoArgsConstructor
-public class CreateDeviceRequestDto {
-
-    @NotBlank
-    private String deviceId;
+public class UpdateWalkingCountRequestDto {
 
     @Min(0)
     private Integer totalWalkingCount;
@@ -23,14 +20,9 @@ public class CreateDeviceRequestDto {
     @NotBlank
     private LocalDateTime deviceBootedDt;
 
-    @NotBlank
-    private String fcmToken;
-
     @Builder
-    public CreateDeviceRequestDto(String deviceId, Integer totalWalkingCount, LocalDateTime deviceBootedDt, String fcmToken) {
-        this.deviceId = deviceId;
+    public UpdateWalkingCountRequestDto(Integer totalWalkingCount, LocalDateTime deviceBootedDt) {
         this.totalWalkingCount = totalWalkingCount;
         this.deviceBootedDt = deviceBootedDt;
-        this.fcmToken = fcmToken;
     }
 }

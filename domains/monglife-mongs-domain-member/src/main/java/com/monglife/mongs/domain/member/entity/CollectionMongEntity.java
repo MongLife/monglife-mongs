@@ -12,7 +12,7 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@EntityListeners(AuditingEntityListener.class)
+@EntityListeners({ AuditingEntityListener.class })
 @Table(name = "mongs_collection_mong")
 public class CollectionMongEntity extends BaseTimeEntity {
 

@@ -2,22 +2,16 @@ package com.monglife.mongs.app.user.player.controller;
 
 import com.monglife.core.dto.response.ResponseDto;
 import com.monglife.mongs.app.user.player.dto.etc.GetPlayerDto;
-import com.monglife.mongs.app.user.player.dto.request.CreateDeviceRequestDto;
 import com.monglife.mongs.app.user.player.dto.request.ExchangeStarPointRequestDto;
-import com.monglife.mongs.app.user.player.dto.request.ExchangeWalkingCountRequestDto;
-import com.monglife.mongs.app.user.player.dto.response.ExchangeWalkingCountResponseDto;
 import com.monglife.mongs.app.user.player.dto.response.GetPlayerResponseDto;
 import com.monglife.mongs.app.user.player.enums.PlayerResponse;
 import com.monglife.mongs.app.user.player.service.PlayerService;
-import com.monglife.mongs.app.user.player.vo.PlayerStepVo;
 import com.monglife.mongs.module.security.global.principal.Passport;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-
-import java.time.LocalDateTime;
 
 @Validated
 @RestController

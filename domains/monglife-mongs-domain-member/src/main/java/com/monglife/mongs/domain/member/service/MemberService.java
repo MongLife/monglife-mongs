@@ -20,9 +20,11 @@ import java.util.List;
 @RequiredArgsConstructor
 public class MemberService {
 
+    // 맵 그룹 코드
     @Value("${application.service.collection.map-group-code}")
     private String MAP_GROUP_CODE;
 
+    // 몽 그룹 코드
     @Value("${application.service.collection.mong-group-code}")
     private String MONG_GROUP_CODE;
 
@@ -32,6 +34,10 @@ public class MemberService {
 
     private final MapPositionRepository mapPositionRepository;
 
+    /**
+     * 회원 정보 등록
+     * @param accountId 계정 ID
+     */
     @Transactional
     public void createMember(Long accountId) {
 
@@ -221,7 +227,10 @@ public class MemberService {
         MemberEntity memberEntity = memberRepository.findByAccountId(accountId)
                 .orElseThrow(() -> new NotExistsMemberException(accountId));
 
-        if (memberEntity.getStarPoint() < starPoint) throw new NotExistsStarPointException(starPoint);
+        // 스타 포인트 보유 여부 확인
+        if (memberEntity.getStarPoint() < starPoint) {
+            throw new NotExistsStarPointException(starPoint);
+        }
 
         memberEntity.decreaseStarPoint(starPoint);
     }

@@ -53,6 +53,10 @@ public class TaskScheduleProperties {
 
         public Integer poopCount;
 
+        public IncreaseMongStatusRatioDto toIncreaseMongStatusDto() {
+            return this.toIncreaseMongStatusDto(1D);
+        }
+
         public IncreaseMongStatusRatioDto toIncreaseMongStatusDto(Double percentage) {
             return IncreaseMongStatusRatioDto.builder()
                     .exp(this.exp * percentage)
@@ -63,6 +67,10 @@ public class TaskScheduleProperties {
                     .fatigueRatio(this.fatigueRatio * percentage)
                     .poopCount(this.poopCount)
                     .build();
+        }
+
+        public DecreaseMongStatusRatioDto toDecreaseMongStatusDto() {
+            return this.toDecreaseMongStatusDto(1D);
         }
 
         public DecreaseMongStatusRatioDto toDecreaseMongStatusDto(Double percentage) {

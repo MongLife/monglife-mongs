@@ -58,6 +58,10 @@ public class MemberEntity extends BaseTimeEntity {
         this.isActive = Boolean.TRUE;
     }
 
+    /**
+     * 맵 컬렉션 등록
+     * @param collectionMapEntity 맵 컬렉션 엔티티
+     */
     public void joinCollectionMap(CollectionMapEntity collectionMapEntity) {
 
         this.collectionMaps.add(collectionMapEntity);
@@ -65,6 +69,10 @@ public class MemberEntity extends BaseTimeEntity {
         this.addHistory(MemberHistoryEntity.MemberHistoryType.JOIN_COLLECTION_MAP);
     }
 
+    /**
+     * 몽 컬렉션 등록
+     * @param collectionMongEntity 몽 컬렉션 엔티티
+     */
     public void joinCollectionMong(CollectionMongEntity collectionMongEntity) {
 
         this.collectionMongs.add(collectionMongEntity);
@@ -72,6 +80,10 @@ public class MemberEntity extends BaseTimeEntity {
         this.addHistory(MemberHistoryEntity.MemberHistoryType.JOIN_COLLECTION_MONG);
     }
 
+    /**
+     * 오류 신고 등록
+     * @param feedbackEntity 오류 신고 엔티티
+     */
     public void joinFeedback(FeedbackEntity feedbackEntity) {
 
         this.feedbacks.add(feedbackEntity);
@@ -79,6 +91,9 @@ public class MemberEntity extends BaseTimeEntity {
         this.addHistory(MemberHistoryEntity.MemberHistoryType.JOIN_FEEDBACK);
     }
 
+    /**
+     * 보유 슬롯 증가
+     */
     public void increaseSlotCount() {
 
         this.slotCount = Math.min(this.slotCount + 1, MAX_SLOT);
@@ -86,6 +101,9 @@ public class MemberEntity extends BaseTimeEntity {
         this.addHistory(MemberHistoryEntity.MemberHistoryType.INCREASE_SLOT_COUNT);
     }
 
+    /**
+     * 보유 슬롯 감소
+     */
     public void decreaseSlotCount() {
 
         this.slotCount = Math.max(1, this.slotCount - 1);
@@ -93,16 +111,24 @@ public class MemberEntity extends BaseTimeEntity {
         this.addHistory(MemberHistoryEntity.MemberHistoryType.DECREASE_SLOT_COUNT);
     }
 
-    public void increaseStarPoint(Integer addStarPoint) {
+    /**
+     * 스타 포인트 증가
+     * @param starPoint 증가할 스타 포인트
+     */
+    public void increaseStarPoint(Integer starPoint) {
 
-        this.starPoint = this.starPoint + addStarPoint;
+        this.starPoint = this.starPoint + starPoint;
 
         this.addHistory(MemberHistoryEntity.MemberHistoryType.INCREASE_STAR_POINT);
     }
 
-    public void decreaseStarPoint(Integer subStarPoint) {
+    /**
+     * 스타 포인트 감소
+     * @param starPoint 감소할 스타 포인트
+     */
+    public void decreaseStarPoint(Integer starPoint) {
 
-        this.starPoint = Math.max(0, this.starPoint - subStarPoint);
+        this.starPoint = Math.max(0, this.starPoint - starPoint);
 
         this.addHistory(MemberHistoryEntity.MemberHistoryType.DECREASE_STAR_POINT);
     }

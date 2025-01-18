@@ -1,5 +1,6 @@
 package com.monglife.mongs.domain.taskSchedule.listener;
 
+import com.monglife.mongs.domain.task.dto.event.ExecuteCycleTaskEvent;
 import com.monglife.mongs.domain.task.dto.event.ExecuteTaskEvent;
 import com.monglife.mongs.domain.task.exception.NotExistsTaskException;
 import com.monglife.mongs.domain.task.service.TaskService;
@@ -31,13 +32,21 @@ public class TaskScheduleEntityListener {
 
         try {
             if (!event.getIsCycle()) {
-                // 단발성 Task 는 @PostRemove 에서 처리
+                // 일회성 Task 엔티티 삭제
                 taskService.deleteTask(event.getAppPackageName(), event.getTaskOwnerId(), event.getTaskCode());
+                // 일회성 Task 완료 이벤트 발생
+                applicationEventPublisher.publishEvent(ExecuteTaskEvent.builder()
+                        .appPackageName(event.getAppPackageName())
+                        .taskOwnerId(event.getTaskOwnerId())
+                        .taskCode(event.getTaskCode())
+                        .expiredAt(event.getExpiredAt())
+                        .expirationSeconds(event.getExpirationSeconds())
+                        .build());
             } else {
                 // 반복 Task 는 @PostUpdate 에서 테스크 스케 줄러 실행 후
                 taskService.cycleTask(event.getTaskId());
-                // 실행 이벤트 발생
-                applicationEventPublisher.publishEvent(ExecuteTaskEvent.builder()
+                // 반복 Task 완료 이벤트 발생
+                applicationEventPublisher.publishEvent(ExecuteCycleTaskEvent.builder()
                         .appPackageName(event.getAppPackageName())
                         .taskOwnerId(event.getTaskOwnerId())
                         .taskCode(event.getTaskCode())

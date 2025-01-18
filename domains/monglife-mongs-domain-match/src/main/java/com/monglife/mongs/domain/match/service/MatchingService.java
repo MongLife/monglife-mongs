@@ -19,14 +19,16 @@ import java.util.stream.Collectors;
 @Service
 public class MatchingService {
 
-    private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("yyyyMMddHHmmssSSS");
-    private static final String MATCHING_ENTITY_KEY = "matching";
-
+    // 매치 당 최대 플레이어 수
     @Value("${application.service.matching.max-player}")
     private Integer MAX_PLAYER;
 
+    // 매칭 최대 대기 시간 (초)
     @Value("${application.service.matching.max-matching-seconds}")
     private Integer MAX_MATCHING_SECONDS;
+
+    // Redis 매칭 엔티티 해싱키
+    private static final String MATCHING_ENTITY_KEY = "matching";
 
     private final RedisTemplate<String, MatchingEntity> redisTemplate;
 
@@ -51,7 +53,7 @@ public class MatchingService {
                 .isBot(Boolean.FALSE)
                 .build();
 
-        long createdScore = Long.parseLong(createdAt.format(DATE_FORMATTER));
+        long createdScore = Long.parseLong(createdAt.format(DateTimeFormatter.ofPattern("yyyyMMddHHmmssSSS")));
 
         redisTemplate.opsForZSet().addIfAbsent(MATCHING_ENTITY_KEY, matchingEntity, createdScore);
     }
@@ -81,7 +83,7 @@ public class MatchingService {
     @NotInvokeLog
     public Set<FindMatchingVo> findWaitMatching() {
 
-        // 대기열에서 일자를 기준으로 최근 순 MAX_PLAYER 명까지 조회
+        // 대기열 최근 순 MAX_PLAYER 명까지 조회
         Set<MatchingEntity> matchingEntitySet = redisTemplate.opsForZSet().range(MATCHING_ENTITY_KEY, 0, MAX_PLAYER);
 
         // 생성된 매칭 플레이어 저장 Set
@@ -89,7 +91,7 @@ public class MatchingService {
 
         if (matchingEntitySet != null && !matchingEntitySet.isEmpty()) {
             if (matchingEntitySet.size() == 1) {
-                // 매칭 대기열이 1 명인 경우
+                // 매칭 대기열 1 명인 경우
                 MatchingEntity matchingEntity = matchingEntitySet.iterator().next();
 
                 LocalDateTime createdAt = LocalDateTime.now();

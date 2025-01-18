@@ -1,7 +1,4 @@
 dependencies {
-    // clients
-    implementation project(':clients:monglife-mongs-client-user')
-
     // domains
     implementation project(':domains:monglife-mongs-domain-mong')
     implementation project(':domains:monglife-mongs-domain-task')
@@ -9,6 +6,10 @@ dependencies {
     // modules
     implementation project(':modules:monglife-mongs-module-security')
     implementation project(':modules:monglife-mongs-module-mqtt')
+
+    // clients
+    implementation project(':clients:monglife-mongs-client-fcm')
+    implementation project(':clients:monglife-mongs-client-user')
 }
 
 tasks.register('copyPrivate', Copy) {

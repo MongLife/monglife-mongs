@@ -2,16 +2,13 @@ package com.monglife.mongs.domain.member.entity;
 
 import com.monglife.mongs.module.jpa.entity.BaseTimeEntity;
 import jakarta.persistence.*;
-import lombok.AccessLevel;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@EntityListeners(AuditingEntityListener.class)
+@EntityListeners({ AuditingEntityListener.class })
 @Table(name = "mongs_product_order_history")
 public class ProductOrderHistoryEntity extends BaseTimeEntity {
 
@@ -29,8 +26,14 @@ public class ProductOrderHistoryEntity extends BaseTimeEntity {
         this.type = type;
     }
 
+    @Getter
+    @AllArgsConstructor
     public enum ProductOrderHistoryType {
-        ORDER,
-        CONSUME,
+
+        ORDER("주문"),
+        CONSUME("소비"),
+        ;
+
+        private final String name;
     }
 }

@@ -1,6 +1,7 @@
 dependencies {
     // modules
     api project(':modules:monglife-mongs-module-jpa')
+    annotationProcessor project(':modules:monglife-mongs-module-jpa')       // For QueryDSL Generate QClass
 
     // redis
     implementation 'org.springframework.boot:spring-boot-starter-data-redis'

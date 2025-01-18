@@ -1,9 +1,9 @@
 package com.monglife.mongs.domain.mong.entity;
 
-import com.monglife.mongs.domain.mong.dto.etc.PatchMongStatusDto;
 import com.monglife.mongs.domain.mong.dto.etc.DecreaseMongStatusRatioDto;
 import com.monglife.mongs.domain.mong.dto.etc.IncreaseMongStatusDto;
 import com.monglife.mongs.domain.mong.dto.etc.IncreaseMongStatusRatioDto;
+import com.monglife.mongs.domain.mong.dto.etc.PatchMongStatusDto;
 import com.monglife.mongs.domain.mong.enums.MongStateCode;
 import com.monglife.mongs.domain.mong.enums.MongStatusCode;
 import com.monglife.mongs.domain.mong.listener.MongEntityListener;
@@ -22,7 +22,7 @@ import java.util.Optional;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @EntityListeners({ AuditingEntityListener.class, MongEntityListener.class })
 @Table(name = "mongs_mong")
-@ToString(exclude = { "history" })
+@ToString(exclude = { "history", "meta", "state", "status" })
 public class MongEntity extends BaseTimeEntity {
 
     @Id
@@ -53,13 +53,16 @@ public class MongEntity extends BaseTimeEntity {
     @JoinColumn(name = "mong_id")
     private List<MongHistoryEntity> history = new ArrayList<>();
 
-    @Embedded
+    @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @JoinColumn(name = "mong_meta_id")
     private MongMetaEntity meta;
 
-    @Embedded
+    @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @JoinColumn(name = "mong_state_id")
     private MongStateEntity state;
 
-    @Embedded
+    @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @JoinColumn(name = "mong_status_id")
     private MongStatusEntity status;
 
     @Builder
@@ -83,14 +86,26 @@ public class MongEntity extends BaseTimeEntity {
         return Optional.ofNullable(this.type.getLevel()).orElse(0).equals(0);
     }
 
+    /**
+     * 죽음 여부 확인
+     * @return 죽음 여부
+     */
     public Boolean isDead() {
         return MongStateCode.DEAD.equals(this.state.getCode());
     }
 
+    /**
+     * 졸업 대기 상태 여부 확인
+     * @return 졸업 대기 상태 여부
+     */
     public Boolean isGraduateReady() {
         return MongStateCode.GRADUATE_READY.equals(this.state.getCode());
     }
 
+    /**
+     * 진화 대기 상태 여부 확인
+     * @return 진화 대기 상태 여부
+     */
     public Boolean isEvolutionReady() {
         return MongStateCode.EVOLUTION_READY.equals(this.state.getCode());
     }
@@ -103,7 +118,7 @@ public class MongEntity extends BaseTimeEntity {
         this.state.setCode(MongStateCode.DELETE);
         this.meta.deActivate();
 
-        this.addHistory(MongHistoryEntity.MongHistoryType.HISTORY_MONG_DELETE);
+        this.addHistory(MongHistoryEntity.MongHistoryType.DELETE);
     }
 
     /**
@@ -115,7 +130,7 @@ public class MongEntity extends BaseTimeEntity {
         this.status.increaseExp(exp);
         this.meta.increaseStrokeCount();
 
-        this.addHistory(MongHistoryEntity.MongHistoryType.HISTORY_MONG_STROKE);
+        this.addHistory(MongHistoryEntity.MongHistoryType.STROKE);
     }
 
     /**
@@ -125,7 +140,7 @@ public class MongEntity extends BaseTimeEntity {
 
         this.state.setSleep();
 
-        this.addHistory(MongHistoryEntity.MongHistoryType.HISTORY_MONG_SLEEP);
+        this.addHistory(MongHistoryEntity.MongHistoryType.SLEEP);
     }
 
     /**
@@ -135,7 +150,7 @@ public class MongEntity extends BaseTimeEntity {
 
         this.state.setWakeup();
 
-        this.addHistory(MongHistoryEntity.MongHistoryType.HISTORY_MONG_WAKEUP);
+        this.addHistory(MongHistoryEntity.MongHistoryType.WAKEUP);
     }
 
     /**
@@ -146,7 +161,7 @@ public class MongEntity extends BaseTimeEntity {
         this.status.increaseExp(this.status.getPoopCount() * exp);
         this.status.resetPoopCount();
 
-        this.addHistory(MongHistoryEntity.MongHistoryType.HISTORY_MONG_POOP_CLEAN);
+        this.addHistory(MongHistoryEntity.MongHistoryType.POOP_CLEAN);
     }
 
     /**
@@ -165,7 +180,7 @@ public class MongEntity extends BaseTimeEntity {
 
         this.payPoint = Math.max(0, this.payPoint - foodPrice);
 
-        this.addHistory(MongHistoryEntity.MongHistoryType.HISTORY_MONG_FEED);
+        this.addHistory(MongHistoryEntity.MongHistoryType.FEED);
     }
 
     /**
@@ -184,8 +199,9 @@ public class MongEntity extends BaseTimeEntity {
                 patchMongStatusDto.getHealthy(),
                 patchMongStatusDto.getFatigue()
         );
+        this.meta.increaseTrainingCount();
 
-        this.addHistory(MongHistoryEntity.MongHistoryType.HISTORY_MONG_TRAINING);
+        this.addHistory(MongHistoryEntity.MongHistoryType.TRAINING);
     }
 
     /**
@@ -195,7 +211,7 @@ public class MongEntity extends BaseTimeEntity {
 
         this.state.setCode(MongStateCode.EVOLUTION_READY);
 
-        this.addHistory(MongHistoryEntity.MongHistoryType.HISTORY_MONG_EVOLUTION_READY);
+        this.addHistory(MongHistoryEntity.MongHistoryType.EVOLUTION_READY);
     }
 
     /**
@@ -213,7 +229,7 @@ public class MongEntity extends BaseTimeEntity {
         this.meta.resetPenalty();
         this.type = nextMongType;
 
-        this.addHistory(MongHistoryEntity.MongHistoryType.HISTORY_MONG_EVOLUTION);
+        this.addHistory(MongHistoryEntity.MongHistoryType.EVOLUTION);
     }
 
     /**
@@ -226,7 +242,7 @@ public class MongEntity extends BaseTimeEntity {
         this.status.setCode(MongStatusCode.NORMAL);
         this.status.resetExp();
 
-        this.addHistory(MongHistoryEntity.MongHistoryType.HISTORY_MONG_GRADUATE_READY);
+        this.addHistory(MongHistoryEntity.MongHistoryType.GRADUATE_READY);
     }
 
     /**
@@ -238,7 +254,7 @@ public class MongEntity extends BaseTimeEntity {
         this.status.setCode(MongStatusCode.NORMAL);
         this.meta.deActivate();
 
-        this.addHistory(MongHistoryEntity.MongHistoryType.HISTORY_MONG_GRADUATE);
+        this.addHistory(MongHistoryEntity.MongHistoryType.GRADUATE);
     }
 
     /**
@@ -248,7 +264,7 @@ public class MongEntity extends BaseTimeEntity {
 
         this.state.setCode(MongStateCode.DEAD);
 
-        this.addHistory(MongHistoryEntity.MongHistoryType.HISTORY_MONG_DEAD);
+        this.addHistory(MongHistoryEntity.MongHistoryType.DEAD);
     }
 
     /**
@@ -303,13 +319,17 @@ public class MongEntity extends BaseTimeEntity {
         }
     }
 
+    /**
+     * 페이 포인트 증가
+     * @param payPoint 증가할 페이 포인트
+     */
     public void increasePayPoint(Integer payPoint) {
 
         if (payPoint == Integer.MAX_VALUE) return;
 
         this.payPoint = Math.min(this.payPoint + payPoint, Integer.MAX_VALUE);
 
-        this.addHistory(MongHistoryEntity.MongHistoryType.HISTORY_MONG_INCREASE_PAY_POINT);
+        this.addHistory(MongHistoryEntity.MongHistoryType.INCREASE_PAY_POINT);
     }
 
     private void addHistory(MongHistoryEntity.MongHistoryType mongHistoryType) {

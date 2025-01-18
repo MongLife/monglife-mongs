@@ -1,6 +1,9 @@
 dependencies {
+    // modules
+    api project(':modules:monglife-mongs-module-feign')
+
     // Firebase Admin SDK
-    implementation 'com.google.firebase:firebase-admin:9.2.0'
+    api 'com.google.firebase:firebase-admin:9.2.0'
 }
 
 tasks.register('copyPrivate', Copy) {

@@ -13,7 +13,6 @@ import com.monglife.mongs.module.jpa.entity.ComnCodeEntity;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalTime;
@@ -31,11 +30,26 @@ public class TaskService {
 
     private final LockTaskRepository lockTaskRepository;
 
+    /**
+     * Task 존재 여부 조회
+     * @param appPackageName 앱 패키지 명
+     * @param taskOwnerId Task 소유자 ID
+     * @param taskCode Task 종류 코드
+     * @param taskStatusCode Task 상태 코드
+     * @return Task 존재 여부
+     */
     @Transactional(readOnly = true)
     public Boolean isExistsTask(String appPackageName, String taskOwnerId, String taskCode, TaskStatusCode taskStatusCode) {
         return taskRepository.findByAppPackageNameAndTaskOwnerIdAndComnCodeAndTaskStatusCode(appPackageName, taskOwnerId, taskCode, taskStatusCode).isPresent();
     }
 
+    /**
+     * 고정 시간 일회성 Task 생성
+     * @param appPackageName 앱 패키지 명
+     * @param taskOwnerId Task 소유자 ID
+     * @param taskCode Task 종류 코드
+     * @param fixTime Task 실행 시간
+     */
     @Transactional
     public void createFixTimeTask(String appPackageName, String taskOwnerId, String taskCode, LocalTime fixTime) {
 
@@ -48,6 +62,13 @@ public class TaskService {
         taskRepository.save(taskEntity);
     }
 
+    /**
+     * 고정 시간 반복 Task 생성
+     * @param appPackageName 앱 패키지 명
+     * @param taskOwnerId Task 소유자 ID
+     * @param taskCode Task 종류 코드
+     * @param fixTime Task 실행 시간
+     */
     @Transactional
     public void createFixTimeCycleTask(String appPackageName, String taskOwnerId, String taskCode, LocalTime fixTime) {
 

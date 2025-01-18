@@ -4,7 +4,10 @@ import com.monglife.mongs.app.manager.global.config.TaskScheduleProperties;
 import com.monglife.mongs.client.user.exception.InvalidGetCollectionMongException;
 import com.monglife.mongs.client.user.service.CollectionService;
 import com.monglife.mongs.client.user.vo.CollectionMongVo;
-import com.monglife.mongs.domain.mong.annotation.MongAccountCheck;
+import com.monglife.mongs.domain.mong.annotation.AllowMongState;
+import com.monglife.mongs.domain.mong.annotation.DenyMongState;
+import com.monglife.mongs.domain.mong.annotation.VerifyMongAccount;
+import com.monglife.mongs.domain.mong.enums.MongStateCode;
 import com.monglife.mongs.domain.mong.service.MongService;
 import com.monglife.mongs.domain.mong.vo.FeedItemVo;
 import com.monglife.mongs.domain.mong.vo.MongVo;
@@ -51,8 +54,8 @@ public class ManagementService {
      * @param mongId 몽 ID
      * @return 몽 정보
      */
-    @MongAccountCheck
     @Transactional(readOnly = true)
+    @VerifyMongAccount
     public MongVo getMong(Long accountId, Long mongId) {
         return mongService.getMong(mongId);
     }
@@ -64,8 +67,8 @@ public class ManagementService {
      * @param foodTypeGroupCode 먹이 그룹 코드
      * @return 구매 가능 여부 포함한 먹이 목록 조회
      */
-    @MongAccountCheck
     @Transactional(readOnly = true)
+    @VerifyMongAccount
     public List<FeedItemVo> getFeedItems(Long accountId, Long mongId, String foodTypeGroupCode) {
 
         return mongService.getFeedItems(mongId, foodTypeGroupCode);
@@ -96,8 +99,8 @@ public class ManagementService {
      * @param accountId 계정 ID
      * @param mongId 몽 ID
      */
-    @MongAccountCheck
     @Transactional
+    @VerifyMongAccount
     public void deleteMong(Long accountId, Long mongId) {
 
         mongService.deleteMong(mongId);
@@ -109,12 +112,14 @@ public class ManagementService {
 
     /**
      * 몽 먹이 주기
+     * 불가능 상태 : 수면, 죽음, 알
      * @param accountId 계정 ID
      * @param mongId 몽 ID
      * @param foodTypeCode 먹이 코드
      */
-    @MongAccountCheck
     @Transactional
+    @VerifyMongAccount
+    @DenyMongState(stateCodes = { MongStateCode.DEAD }, sleep = true, egg = true)
     public void feedMong(Long accountId, Long mongId, String foodTypeCode) {
 
         mongService.feedMong(mongId, foodTypeCode);
@@ -122,11 +127,13 @@ public class ManagementService {
 
     /***
      * 몽 쓰다 듬기
+     * 불가능 상태 : 졸업 대기, 수면, 죽음, 알
      * @param accountId 계정 ID
      * @param mongId 몽 ID
      */
-    @MongAccountCheck
     @Transactional
+    @VerifyMongAccount
+    @DenyMongState(stateCodes = { MongStateCode.DEAD, MongStateCode.GRADUATE_READY }, sleep = true, egg = true)
     public void strokeMong(Long accountId, Long mongId) {
 
         mongService.strokeMong(mongId);
@@ -134,47 +141,54 @@ public class ManagementService {
 
     /**
      * 몽 수면/기상
+     * 불가능 상태 : 졸업 대기, 죽음, 알
      * @param accountId 계정 ID
      * @param mongId 몽 ID
      */
-    @MongAccountCheck
     @Transactional
+    @VerifyMongAccount
+    @DenyMongState(stateCodes = { MongStateCode.DEAD, MongStateCode.GRADUATE_READY }, egg = true)
     public void sleepMong(Long accountId, Long mongId) {
 
         String taskOwnerId = String.valueOf(mongId);
 
         if (mongService.getMong(mongId).getIsSleep()) {
+            mongService.wakeupMong(mongId);
             taskService.deleteTask(APP_PACKAGE_NAME, taskOwnerId, properties.increaseStatus.code);
             taskService.createCycleTask(APP_PACKAGE_NAME, taskOwnerId, properties.decreaseStatus.code, properties.decreaseStatus.expiration);
             taskService.createCycleTask(APP_PACKAGE_NAME, taskOwnerId, properties.increasePoop.code, properties.increasePoop.expiration);
-            mongService.wakeupMong(mongId);
 
         } else {
+            mongService.sleepMong(mongId);
             taskService.deleteTask(APP_PACKAGE_NAME, taskOwnerId, properties.decreaseStatus.code);
             taskService.deleteTask(APP_PACKAGE_NAME, taskOwnerId, properties.increasePoop.code);
             taskService.createCycleTask(APP_PACKAGE_NAME, taskOwnerId, properties.increaseStatus.code, properties.increaseStatus.expiration);
-            mongService.sleepMong(mongId);
         }
     }
 
     /**
      * 몽 배변 처리
+     * 불가능 상태 : 졸업 대기, 수면, 죽음, 알
      * @param accountId 계정 ID
      * @param mongId 몽 ID
      */
-    @MongAccountCheck
     @Transactional
+    @VerifyMongAccount
+    @DenyMongState(stateCodes = { MongStateCode.DEAD, MongStateCode.GRADUATE_READY }, sleep = true, egg = true)
     public void poopCleanMong(Long accountId, Long mongId) {
         mongService.poopCleanMong(mongId);
     }
 
     /**
      * 몽 진화
+     * 불가능 상태 : 졸업 대기, 죽음
      * @param accountId 계정 ID
      * @param mongId 몽 ID
      */
-    @MongAccountCheck
     @Transactional
+    @VerifyMongAccount
+    @DenyMongState(stateCodes = { MongStateCode.DEAD, MongStateCode.GRADUATE_READY })
+    @AllowMongState(stateCodes = { MongStateCode.EVOLUTION_READY })
     public void evolutionMong(Long accountId, Long mongId) {
 
         List<CollectionMongVo> collectionMongVos = Collections.emptyList();
@@ -209,11 +223,13 @@ public class ManagementService {
 
     /**
      * 몽 졸업
+     * 불가능 상태 : 죽음, 알
      * @param accountId 계정 ID
      * @param mongId 몽 ID
      */
-    @MongAccountCheck
     @Transactional
+    @VerifyMongAccount
+    @DenyMongState(stateCodes = { MongStateCode.DEAD }, egg = true)
     public void graduateMong(Long accountId, Long mongId) {
 
         mongService.graduateMong(mongId);
@@ -229,8 +245,8 @@ public class ManagementService {
      * @param mongId 몽 ID
      * @param payPoint 페이 포인트
      */
-    @MongAccountCheck
     @Transactional
+    @VerifyMongAccount
     public void chargePayPoint(Long accountId, Long mongId, Integer payPoint) {
         mongService.increasePayPoint(mongId, payPoint);
     }

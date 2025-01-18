@@ -20,10 +20,7 @@ public enum PlayerResponse implements Response {
     APP_USER_PLAYER_CREATE_PLAYER(HttpStatus.OK.value(), "USER-PLAYER-001", "플레이어 등록에 성공했습니다."),
     APP_USER_PLAYER_GET_PLAYER(HttpStatus.OK.value(), "USER-PLAYER-002", "플레이어 조회에 성공했습니다."),
     APP_USER_PLAYER_INCREASE_SLOT(HttpStatus.OK.value(), "USER-PLAYER-003", "슬롯 수 증가에 성공했습니다."),
-    APP_USER_PLAYER_UPDATE_WALKING_COUNT(HttpStatus.OK.value(), "USER-PLAYER-004", "걸음수 동기화에 성공했습니다."),
-    APP_USER_PLAYER_EXCHANGE_WALKING_COUNT(HttpStatus.OK.value(), "USER-PLAYER-005", "걸음수 감소에 성공했습니다."),
-    APP_USER_PLAYER_EXCHANGE_STAR_POINT(HttpStatus.OK.value(), "USER-PLAYER-006", "스타포인트 환전에 성공했습니다."),
-    APP_USER_PLAYER_CREATE_DEVICE(HttpStatus.OK.value(), "USER-PLAYER-008", "기기 등록에 성공했습니다."),
+    APP_USER_PLAYER_EXCHANGE_STAR_POINT(HttpStatus.OK.value(), "USER-PLAYER-004", "스타포인트 환전에 성공했습니다."),
 
     /**
      * 실패 응답

@@ -1,18 +1,30 @@
 package com.monglife.mongs.domain.mong.entity;
 
 import jakarta.persistence.*;
+import lombok.AccessLevel;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.ToString;
 
 import java.util.ArrayList;
 import java.util.List;
 
-@Embeddable
+@Entity
 @Getter
-@ToString(exclude = { "history" })
+//@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@Table(name = "mongs_mong_meta")
+@ToString(exclude = { "history", "mong" })
 public class MongMetaEntity {
 
     private static final Double DEFAULT_PENALTY = 0.3;
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "mong_meta_id")
+    private Long mongMetaId;
+
+    @OneToOne(mappedBy = "meta", cascade = CascadeType.PERSIST)
+    private MongEntity mong;
 
     @Column(name = "training_count")
     private Integer trainingCount;
@@ -30,9 +42,11 @@ public class MongMetaEntity {
     private Boolean isActive;
 
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    @JoinColumn(name = "mong_id")
+    @JoinColumn(name = "mong_meta_id")
     private List<MongMetaHistoryEntity> history = new ArrayList<>();
 
+//    public MongMetaEntity(MongEntity mong) {
+//        this.mong = mong;
     public MongMetaEntity() {
         this.trainingCount = 0;
         this.strokeCount = 0;
@@ -48,16 +62,19 @@ public class MongMetaEntity {
 
         this.strokeCount = this.strokeCount + 1;
 
-        this.addHistory(MongMetaHistoryEntity.MongMetaHistoryType.HISTORY_MONG_META_INCREASE_STROKE_COUNT);
+        this.addHistory(MongMetaHistoryEntity.MongMetaHistoryType.INCREASE_STROKE_COUNT);
     }
 
+    /**
+     * 쓰다듬 횟수 초기화
+     */
     public void resetStrokeCount() {
 
         if (this.strokeCount == 0) return;
 
         this.strokeCount = 0;
 
-        this.addHistory(MongMetaHistoryEntity.MongMetaHistoryType.HISTORY_MONG_META_RESET_STROKE_COUNT);
+        this.addHistory(MongMetaHistoryEntity.MongMetaHistoryType.RESET_STROKE_COUNT);
     }
 
     /**
@@ -67,16 +84,19 @@ public class MongMetaEntity {
 
         this.trainingCount = this.trainingCount + 1;
 
-        this.addHistory(MongMetaHistoryEntity.MongMetaHistoryType.HISTORY_MONG_META_INCREASE_TRAINING_COUNT);
+        this.addHistory(MongMetaHistoryEntity.MongMetaHistoryType.INCREASE_TRAINING_COUNT);
     }
 
+    /**
+     * 훈련 횟수 초기화
+     */
     public void resetTrainingCount() {
 
         if (this.trainingCount == 0) return;
 
         this.trainingCount = 0;
 
-        this.addHistory(MongMetaHistoryEntity.MongMetaHistoryType.HISTORY_MONG_META_RESET_TRAINING_COUNT);
+        this.addHistory(MongMetaHistoryEntity.MongMetaHistoryType.RESET_TRAINING_COUNT);
     }
 
     /**
@@ -86,7 +106,7 @@ public class MongMetaEntity {
 
         this.penalty = this.penalty + DEFAULT_PENALTY;
 
-        this.addHistory(MongMetaHistoryEntity.MongMetaHistoryType.HISTORY_MONG_META_INCREASE_PENALTY);
+        this.addHistory(MongMetaHistoryEntity.MongMetaHistoryType.INCREASE_PENALTY);
     }
 
     /**
@@ -98,7 +118,7 @@ public class MongMetaEntity {
 
         this.penalty = 0D;
 
-        this.addHistory(MongMetaHistoryEntity.MongMetaHistoryType.HISTORY_MONG_META_RESET_PENALTY);
+        this.addHistory(MongMetaHistoryEntity.MongMetaHistoryType.RESET_PENALTY);
     }
 
     /**
@@ -111,7 +131,7 @@ public class MongMetaEntity {
 
         this.reward = reward;
 
-        this.addHistory(MongMetaHistoryEntity.MongMetaHistoryType.HISTORY_MONG_META_SET_REWARD);
+        this.addHistory(MongMetaHistoryEntity.MongMetaHistoryType.SET_REWARD);
     }
 
     /**
@@ -123,12 +143,15 @@ public class MongMetaEntity {
 
         this.isActive = Boolean.FALSE;
 
-        this.addHistory(MongMetaHistoryEntity.MongMetaHistoryType.HISTORY_MONG_META_DEACTIVATE);
+        this.addHistory(MongMetaHistoryEntity.MongMetaHistoryType.DEACTIVATE);
     }
 
     private void addHistory(MongMetaHistoryEntity.MongMetaHistoryType mongMetaHistoryType) {
 
         this.history.add(MongMetaHistoryEntity.builder()
+                .mongId(this.mong.getMongId())
+                .accountId(this.mong.getAccountId())
+                .mongName(this.mong.getMongName())
                 .mongMetaHistoryType(mongMetaHistoryType)
                 .trainingCount(this.trainingCount)
                 .strokeCount(this.strokeCount)

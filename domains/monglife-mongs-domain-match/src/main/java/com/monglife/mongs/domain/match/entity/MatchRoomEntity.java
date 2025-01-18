@@ -16,7 +16,7 @@ import java.util.stream.Collectors;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@EntityListeners(AuditingEntityListener.class)
+@EntityListeners({ AuditingEntityListener.class })
 @Table(name = "mongs_match_room")
 public class MatchRoomEntity extends BaseTimeEntity {
 
@@ -66,6 +66,10 @@ public class MatchRoomEntity extends BaseTimeEntity {
         }
     }
 
+    /**
+     * 마지막 라운드 여부 확인
+     * @return 마지막 라운드 여부
+     */
     public Boolean isLastRound() {
 
         boolean isLastRound = this.round.equals(this.maxRound + 1);

@@ -1,10 +1,8 @@
 package com.monglife.mongs.client.user.service;
 
-import com.monglife.core.dto.response.ResponseDto;
 import com.monglife.mongs.client.user.client.CollectionClient;
 import com.monglife.mongs.client.user.dto.request.CreateCollectionMapRequestDto;
 import com.monglife.mongs.client.user.dto.request.CreateCollectionMongRequestDto;
-import com.monglife.mongs.client.user.dto.response.GetCollectionMongResponseDto;
 import com.monglife.mongs.client.user.exception.InvalidCreateCollectionMapException;
 import com.monglife.mongs.client.user.exception.InvalidCreateCollectionMongException;
 import com.monglife.mongs.client.user.exception.InvalidGetCollectionMongException;
@@ -12,7 +10,6 @@ import com.monglife.mongs.client.user.vo.CollectionMongVo;
 import feign.RetryableException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.Collections;
@@ -58,7 +55,7 @@ public class CollectionService {
         List<CollectionMongVo> collectionMapVos = Collections.emptyList();
 
         try {
-            ResponseEntity<ResponseDto<List<GetCollectionMongResponseDto>>> response = collectionClient.getCollectionMongs();
+            var response = collectionClient.getCollectionMongs();
 
             if (response.getStatusCode().is2xxSuccessful() && response.getBody() != null) {
                 collectionMapVos = response.getBody().getResult().stream()

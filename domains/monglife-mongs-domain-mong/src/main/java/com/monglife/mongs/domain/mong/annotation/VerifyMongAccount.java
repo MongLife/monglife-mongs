@@ -5,9 +5,9 @@ import java.lang.annotation.*;
 @Target({ ElementType.METHOD })
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
-public @interface MongAccountCheck {
+public @interface VerifyMongAccount {
 
-    String accountId() default "accountId";
+    String accountIdFieldName() default "accountId";
 
-    String mongId() default "mongId";
+    String mongIdFieldName() default "mongId";
 }

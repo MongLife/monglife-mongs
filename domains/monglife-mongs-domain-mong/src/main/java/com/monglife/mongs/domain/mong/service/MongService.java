@@ -11,7 +11,6 @@ import com.monglife.mongs.domain.mong.repository.*;
 import com.monglife.mongs.domain.mong.vo.FeedItemVo;
 import com.monglife.mongs.domain.mong.vo.MongVo;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -21,9 +20,9 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Optional;
 import java.util.Random;
 
-@Slf4j
 @Service
 @RequiredArgsConstructor
 public class MongService {
@@ -66,22 +65,6 @@ public class MongService {
 
     private final FoodTypeRepository foodTypeRepository;
 
-
-    /**
-     * 몽 소유자 여부 확인
-     * @param accountId 계정 ID
-     * @param mongId 몽 ID
-     * @return 계정이 몽 소유 여부
-     */
-    @Transactional(readOnly = true)
-    public Boolean validateMongByAccountId(Long accountId, Long mongId) {
-
-        MongEntity mongEntity =  mongRepository.findByMongIdAndMetaIsActiveIsTrue(mongId)
-                .orElseThrow(() -> new NotExistsMongException(mongId));
-
-        return mongEntity.getAccountId().equals(accountId);
-    }
-
     /**
      * 몽 목록 조회
      * @param accountId 계정 ID
@@ -95,6 +78,26 @@ public class MongService {
         return mongEntities.stream()
                 .map(MongVo::of)
                 .toList();
+    }
+
+    /**
+     * 몽 단건 조회
+     * @param accountId 계정 ID
+     * @param mongId 몽 ID
+     * @return 계정이 몽 소유 여부
+     */
+    @Transactional(readOnly = true)
+    public Optional<MongVo> getMong(Long accountId, Long mongId) {
+
+        Optional<MongEntity> optionalMongEntity = mongRepository.findByMongIdAndAccountIdAndMetaIsActiveIsTrue(mongId, accountId);
+
+        Optional<MongVo> optionalMongVo = Optional.empty();
+
+        if (optionalMongEntity.isPresent()) {
+            optionalMongVo = Optional.of(MongVo.of(optionalMongEntity.get()));
+        }
+
+        return optionalMongVo;
     }
 
     /**
@@ -200,19 +203,6 @@ public class MongService {
         MongEntity mongEntity = lockMongRepository.findByMongIdAndMetaIsActiveIsTrue(mongId)
                 .orElseThrow(() -> new NotExistsMongException(mongId));
 
-        if (mongEntity.getState().getIsSleep()) {
-            throw new InvalidMongStateException();
-        }
-
-        if (mongEntity.isDead()) {
-            throw new InvalidMongStateException();
-        }
-
-        if (mongEntity.isEgg()) {
-            throw new InvalidMongTypeLevelException(
-                    mongId, mongEntity.getType().getComn().getCode(), mongEntity.getType().getLevel());
-        }
-
         mongFeedHistoryRepository.findByMongIdAndFoodTypeCode(mongId, foodTypeCode)
                 .ifPresent(mongFeedHistory -> {
                     Long expirationSeconds = mongFeedHistory.getExpiration() - Duration.between(mongFeedHistory.getBuyAt(), LocalDateTime.now()).getSeconds();
@@ -257,19 +247,6 @@ public class MongService {
         MongEntity mongEntity = lockMongRepository.findByMongIdAndMetaIsActiveIsTrue(mongId)
                 .orElseThrow(() -> new NotExistsMongException(mongId));
 
-        if (mongEntity.getState().getIsSleep()) {
-            throw new InvalidMongStateException();
-        }
-
-        if (mongEntity.isDead()) {
-            throw new InvalidMongStateException();
-        }
-
-        if (mongEntity.isEgg()) {
-            throw new InvalidMongTypeLevelException(
-                    mongId, mongEntity.getType().getComn().getCode(), mongEntity.getType().getLevel());
-        }
-
         mongStrokeHistoryRepository.findByMongId(mongId)
                 .ifPresent(mongStrokeHistory -> {
                     Long expirationSeconds = mongStrokeHistory.getExpiration() - Duration.between(mongStrokeHistory.getStrokeAt(), LocalDateTime.now()).getSeconds();
@@ -298,15 +275,6 @@ public class MongService {
         MongEntity mongEntity = lockMongRepository.findByMongIdAndMetaIsActiveIsTrue(mongId)
                 .orElseThrow(() -> new NotExistsMongException(mongId));
 
-        if (mongEntity.isDead()) {
-            throw new InvalidMongStateException();
-        }
-
-        if (mongEntity.isEgg()) {
-            throw new InvalidMongTypeLevelException(
-                    mongId, mongEntity.getType().getComn().getCode(), mongEntity.getType().getLevel());
-        }
-
         mongEntity.sleep();
     }
 
@@ -320,15 +288,6 @@ public class MongService {
         MongEntity mongEntity = lockMongRepository.findByMongIdAndMetaIsActiveIsTrue(mongId)
                 .orElseThrow(() -> new NotExistsMongException(mongId));
 
-        if (mongEntity.isDead()) {
-            throw new InvalidMongStateException();
-        }
-
-        if (mongEntity.isEgg()) {
-            throw new InvalidMongTypeLevelException(
-                    mongId, mongEntity.getType().getComn().getCode(), mongEntity.getType().getLevel());
-        }
-
         mongEntity.wakeup();
     }
 
@@ -341,6 +300,10 @@ public class MongService {
 
         MongEntity mongEntity = lockMongRepository.findByMongIdAndMetaIsActiveIsTrue(mongId)
                 .orElseThrow(() -> new NotExistsMongException(mongId));
+
+        if (mongEntity.isGraduateReady()) {
+            throw new InvalidMongStateException();
+        }
 
         if (mongEntity.getState().getIsSleep()) {
             throw new InvalidMongStateException();
@@ -358,6 +321,11 @@ public class MongService {
         mongEntity.poopClean(DEFAULT_POOP_CLEAN_EXP);
     }
 
+    /**
+     * 몽 훈련
+     * @param mongId 몽 ID
+     * @param patchMongStatusDto 갱신할 지수 Dto
+     */
     @Transactional
     public void trainingMong(Long mongId, PatchMongStatusDto patchMongStatusDto) {
 
@@ -386,6 +354,10 @@ public class MongService {
         MongEntity mongEntity = lockMongRepository.findByMongIdAndMetaIsActiveIsTrue(mongId)
                 .orElseThrow(() -> new NotExistsMongException(mongId));
 
+        if (mongEntity.isGraduateReady()) throw new InvalidMongStateException();
+
+        if (mongEntity.isDead()) throw new InvalidMongStateException();
+
         mongEntity.evolutionReady();
     }
 
@@ -400,14 +372,6 @@ public class MongService {
 
         MongEntity mongEntity = lockMongRepository.findByMongIdAndMetaIsActiveIsTrue(mongId)
                 .orElseThrow(() -> new NotExistsMongException(mongId));
-
-        if (mongEntity.getState().getIsSleep()) {
-            throw new InvalidMongStateException();
-        }
-
-        if (mongEntity.isDead()) {
-            throw new InvalidMongStateException();
-        }
 
         String nextGroupType = mongEntity.getType().getNextGroupType();
         List<MongTypeEntity> mongTypeEntities = mongTypeRepository.findByGroupType(nextGroupType).stream()
@@ -499,22 +463,7 @@ public class MongService {
         MongEntity mongEntity = lockMongRepository.findByMongIdAndMetaIsActiveIsTrue(mongId)
                 .orElseThrow(() -> new NotExistsMongException(mongId));
 
-        if (mongEntity.getState().getIsSleep()) {
-            throw new InvalidMongStateException();
-        }
-
-        if (mongEntity.isDead()) {
-            throw new InvalidMongStateException();
-        }
-
-        if (mongEntity.isEgg()) {
-            throw new InvalidMongTypeLevelException(
-                    mongId, mongEntity.getType().getComn().getCode(), mongEntity.getType().getLevel());
-        }
-
-        if (!mongEntity.isGraduateReady()) {
-            throw new InvalidGraduateException(mongId);
-        }
+        if (!mongEntity.isGraduateReady()) throw new InvalidGraduateException(mongId);
 
         mongEntity.graduate();
     }
@@ -574,6 +523,11 @@ public class MongService {
         mongEntity.increasePoop(poopCount);
     }
 
+    /**
+     * 페이 포인트 증가
+     * @param mongId 몽 ID
+     * @param payPoint 증가할 페이 포인트
+     */
     @Transactional
     public void increasePayPoint(Long mongId, Integer payPoint) {
 

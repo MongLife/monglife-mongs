@@ -1,6 +1,7 @@
 package com.monglife.mongs.domain.task.listener;
 
-import com.monglife.mongs.domain.task.dto.event.ExecuteTaskEvent;
+import com.monglife.mongs.domain.task.dto.event.DeleteCycleTaskEvent;
+import com.monglife.mongs.domain.task.dto.event.DeleteTaskEvent;
 import com.monglife.mongs.domain.task.entity.TaskEntity;
 import com.monglife.mongs.domain.taskSchedule.dto.event.StartTaskScheduleEvent;
 import com.monglife.mongs.domain.taskSchedule.dto.event.StopTaskScheduleEvent;
@@ -54,12 +55,25 @@ public class TaskEntityListener {
 
         applicationEventPublisher.publishEvent(StopTaskScheduleEvent.of(taskEntity));
 
-        applicationEventPublisher.publishEvent(ExecuteTaskEvent.builder()
-                .appPackageName(taskEntity.getAppPackageName())
-                .taskOwnerId(taskEntity.getTaskOwnerId())
-                .taskCode(taskEntity.getComn().getCode())
-                .expiredAt(taskEntity.getExpiredAt())
-                .expirationSeconds(taskEntity.getExpirationSeconds())
-                .build());
+        if (!taskEntity.isCycle()) {
+            // 일회성 Task 삭제 이벤트
+            applicationEventPublisher.publishEvent(DeleteTaskEvent.builder()
+                    .appPackageName(taskEntity.getAppPackageName())
+                    .taskOwnerId(taskEntity.getTaskOwnerId())
+                    .taskCode(taskEntity.getComn().getCode())
+                    .expiredAt(taskEntity.getExpiredAt())
+                    .expirationSeconds(taskEntity.getExpirationSeconds())
+                    .build());
+        } else {
+            // 반복 Task 삭제 이벤트
+            applicationEventPublisher.publishEvent(DeleteCycleTaskEvent.builder()
+                    .appPackageName(taskEntity.getAppPackageName())
+                    .taskOwnerId(taskEntity.getTaskOwnerId())
+                    .taskCode(taskEntity.getComn().getCode())
+                    .expiredAt(taskEntity.getExpiredAt())
+                    .expirationSeconds(taskEntity.getExpirationSeconds())
+                    .build());
+
+        }
     }
 }

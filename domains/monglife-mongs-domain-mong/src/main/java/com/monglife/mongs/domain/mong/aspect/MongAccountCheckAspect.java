@@ -1,9 +1,14 @@
 package com.monglife.mongs.domain.mong.aspect;
 
-import com.monglife.mongs.domain.mong.annotation.MongAccountCheck;
+import com.monglife.mongs.domain.mong.annotation.DenyMongState;
+import com.monglife.mongs.domain.mong.annotation.VerifyMongAccount;
+import com.monglife.mongs.domain.mong.enums.MongStateCode;
 import com.monglife.mongs.domain.mong.exception.InvalidMongException;
+import com.monglife.mongs.domain.mong.exception.InvalidMongStateException;
+import com.monglife.mongs.domain.mong.exception.InvalidMongTypeLevelException;
 import com.monglife.mongs.domain.mong.exception.NotExistsParameterException;
 import com.monglife.mongs.domain.mong.service.MongService;
+import com.monglife.mongs.domain.mong.vo.MongVo;
 import lombok.RequiredArgsConstructor;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.Aspect;
@@ -14,6 +19,8 @@ import org.springframework.stereotype.Component;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Optional;
 
 @Aspect
@@ -23,15 +30,17 @@ public class MongAccountCheckAspect {
 
     private final MongService mongService;
 
+    @Pointcut("@annotation(com.monglife.mongs.domain.mong.annotation.VerifyMongAccount)")
+    private void verifyMongAccountPointcut() {}
 
-    @Pointcut("@annotation(com.monglife.mongs.domain.mong.annotation.MongAccountCheck)")
-    private void mongAccountCheckPointcut() {}
+    /**
+     * 계정 소유의 몽인지 판별 Aspect
+     */
+    @Before(value = "verifyMongAccountPointcut() && @annotation(verifyMongAccount)")
+    public void before(JoinPoint joinPoint, VerifyMongAccount verifyMongAccount) {
 
-    @Before(value = "mongAccountCheckPointcut() && @annotation(mongAccountCheck)")
-    public void before(JoinPoint joinPoint, MongAccountCheck mongAccountCheck) {
-
-        String accountIdParameterName = mongAccountCheck.accountId();
-        String mongIdParameterName = mongAccountCheck.mongId();
+        String accountIdParameterName = verifyMongAccount.accountIdFieldName();
+        String mongIdParameterName = verifyMongAccount.mongIdFieldName();
 
         MethodSignature methodSignature = (MethodSignature) joinPoint.getSignature();
         Method method = methodSignature.getMethod();
@@ -44,11 +53,17 @@ public class MongAccountCheckAspect {
         Long mongId = (Long) this.getParameterValue(mongIdParameterName, parameters, args)
                 .orElseThrow(() -> new NotExistsParameterException(mongIdParameterName));
 
-        if (!mongService.validateMongByAccountId(accountId, mongId)) {
-            throw new InvalidMongException(accountId, mongId);
-        }
+        mongService.getMong(accountId, mongId)
+                .orElseThrow(() -> new InvalidMongException(accountId, mongId));
     }
 
+    /**
+     * 파라미터명을 기준으로 파라미터 값 반환 함수
+     * @param parameterName 파라미터명
+     * @param parameters 파라미터 목록
+     * @param args 파라미터 값 목록
+     * @return 매칭되는 파라미터 값
+     */
     private Optional<Object> getParameterValue(String parameterName, Parameter[] parameters, Object[] args) {
 
         Object arg = null;

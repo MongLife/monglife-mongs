@@ -10,13 +10,22 @@ import lombok.ToString;
 import java.util.ArrayList;
 import java.util.List;
 
-@Embeddable
+@Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@ToString(exclude = { "history" })
+@Table(name = "mongs_mong_status")
+@ToString(exclude = { "history", "mong" })
 public class MongStatusEntity {
 
     protected static final Integer MAX_POOP_COUNT = 4;
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "mong_status_id")
+    private Long mongStatusId;
+
+    @OneToOne(mappedBy = "status", cascade = CascadeType.PERSIST)
+    private MongEntity mong;
 
     @Column(name = "max_status")
     private Double maxStatus;
@@ -62,11 +71,12 @@ public class MongStatusEntity {
     private Double fatigueRatio;
 
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    @JoinColumn(name = "mong_id")
+    @JoinColumn(name = "mong_status_id")
     private List<MongStatusHistoryEntity> history = new ArrayList<>();
 
+//    public MongStatusEntity(MongEntity mong, Double maxStatus) {
+//        this.mong = mong;
     public MongStatusEntity(Double maxStatus) {
-
         this.maxStatus = maxStatus;
         this.code = MongStatusCode.NORMAL;
         this.weight = 0D;
@@ -111,7 +121,7 @@ public class MongStatusEntity {
         this.expRatio = this.exp / this.maxStatus * 100;
         this.syncStatusValueToStatusRatio();
 
-        this.addHistory(MongStatusHistoryEntity.MongStatusHistoryType.HISTORY_MONG_STATUS_PATCH_STATUS);
+        this.addHistory(MongStatusHistoryEntity.MongStatusHistoryType.PATCH_STATUS);
     }
 
     /**
@@ -127,7 +137,7 @@ public class MongStatusEntity {
         this.exp = Math.max(0D, Math.min(this.exp, this.maxStatus));
         this.expRatio = this.exp / this.maxStatus * 100;
 
-        this.addHistory(MongStatusHistoryEntity.MongStatusHistoryType.HISTORY_MONG_STATUS_INCREASE_EXP);
+        this.addHistory(MongStatusHistoryEntity.MongStatusHistoryType.INCREASE_EXP);
     }
 
     /**
@@ -143,7 +153,7 @@ public class MongStatusEntity {
         this.exp = Math.max(0D, Math.min(this.exp, this.maxStatus));
         this.expRatio = this.exp / this.maxStatus * 100;
 
-        this.addHistory(MongStatusHistoryEntity.MongStatusHistoryType.HISTORY_MONG_STATUS_DECREASE_EXP);
+        this.addHistory(MongStatusHistoryEntity.MongStatusHistoryType.DECREASE_EXP);
     }
 
     /**
@@ -158,7 +168,7 @@ public class MongStatusEntity {
         this.exp = Math.max(0D, Math.min(this.exp, this.maxStatus));
         this.expRatio = this.exp / this.maxStatus * 100;
 
-        this.addHistory(MongStatusHistoryEntity.MongStatusHistoryType.HISTORY_MONG_STATUS_RESET_EXP);
+        this.addHistory(MongStatusHistoryEntity.MongStatusHistoryType.RESET_EXP);
     }
 
     /**
@@ -173,7 +183,7 @@ public class MongStatusEntity {
 
         this.poopCount = Math.max(0, Math.min(this.poopCount, MAX_POOP_COUNT));
 
-        this.addHistory(MongStatusHistoryEntity.MongStatusHistoryType.HISTORY_MONG_STATUS_INCREASE_POOP_COUNT);
+        this.addHistory(MongStatusHistoryEntity.MongStatusHistoryType.INCREASE_POOP_COUNT);
     }
 
     /**
@@ -188,7 +198,7 @@ public class MongStatusEntity {
 
         this.poopCount = Math.max(0, Math.min(this.poopCount, MAX_POOP_COUNT));
 
-        this.addHistory(MongStatusHistoryEntity.MongStatusHistoryType.HISTORY_MONG_STATUS_DECREASE_POOP_COUNT);
+        this.addHistory(MongStatusHistoryEntity.MongStatusHistoryType.DECREASE_POOP_COUNT);
     }
 
     /**
@@ -200,7 +210,7 @@ public class MongStatusEntity {
 
         this.poopCount = 0;
 
-        this.addHistory(MongStatusHistoryEntity.MongStatusHistoryType.HISTORY_MONG_STATUS_RESET_POOP_COUNT);
+        this.addHistory(MongStatusHistoryEntity.MongStatusHistoryType.RESET_POOP_COUNT);
     }
 
     /**
@@ -215,7 +225,7 @@ public class MongStatusEntity {
 
         this.weight = Math.max(0D, this.weight);
 
-        this.addHistory(MongStatusHistoryEntity.MongStatusHistoryType.HISTORY_MONG_STATUS_INCREASE_WEIGHT);
+        this.addHistory(MongStatusHistoryEntity.MongStatusHistoryType.INCREASE_WEIGHT);
     }
 
     /**
@@ -230,7 +240,7 @@ public class MongStatusEntity {
 
         this.weight = Math.max(0D, this.weight);
 
-        this.addHistory(MongStatusHistoryEntity.MongStatusHistoryType.HISTORY_MONG_STATUS_DECREASE_WEIGHT);
+        this.addHistory(MongStatusHistoryEntity.MongStatusHistoryType.DECREASE_WEIGHT);
     }
 
     /**
@@ -252,7 +262,7 @@ public class MongStatusEntity {
         this.fatigue = this.fatigue + fatigue;
         this.syncStatusValueToStatusRatio();
 
-        this.addHistory(MongStatusHistoryEntity.MongStatusHistoryType.HISTORY_MONG_STATUS_INCREASE_STATUS);
+        this.addHistory(MongStatusHistoryEntity.MongStatusHistoryType.INCREASE_STATUS);
     }
 
     /**
@@ -274,7 +284,7 @@ public class MongStatusEntity {
         this.fatigue = this.fatigue - fatigue;
         this.syncStatusValueToStatusRatio();
 
-        this.addHistory(MongStatusHistoryEntity.MongStatusHistoryType.HISTORY_MONG_STATUS_DECREASE_STATUS);
+        this.addHistory(MongStatusHistoryEntity.MongStatusHistoryType.DECREASE_STATUS);
     }
 
     /**
@@ -296,7 +306,7 @@ public class MongStatusEntity {
         this.fatigueRatio = this.fatigueRatio + fatigueRatio;
         this.syncStatusRatioToStatusValue();
 
-        this.addHistory(MongStatusHistoryEntity.MongStatusHistoryType.HISTORY_MONG_STATUS_INCREASE_STATUS_RATIO);
+        this.addHistory(MongStatusHistoryEntity.MongStatusHistoryType.INCREASE_STATUS_RATIO);
     }
 
     /**
@@ -318,9 +328,13 @@ public class MongStatusEntity {
         this.fatigueRatio = this.fatigueRatio - fatigueRatio;
         this.syncStatusRatioToStatusValue();
 
-        this.addHistory(MongStatusHistoryEntity.MongStatusHistoryType.HISTORY_MONG_STATUS_DECREASE_STATUS_RATIO);
+        this.addHistory(MongStatusHistoryEntity.MongStatusHistoryType.DECREASE_STATUS_RATIO);
     }
 
+    /**
+     * 지수 최대 수치 변경
+     * @param maxStatus 지수 최대 수치
+     */
     public void setMaxStatus(Double maxStatus) {
 
         if (this.maxStatus.equals(maxStatus)) return;
@@ -336,18 +350,26 @@ public class MongStatusEntity {
         this.exp = Math.max(0D, Math.min(this.exp, this.maxStatus));
         this.expRatio = this.exp / this.maxStatus * 100;
 
-        this.addHistory(MongStatusHistoryEntity.MongStatusHistoryType.HISTORY_MONG_STATUS_SET_MAX_STATUS);
+        this.addHistory(MongStatusHistoryEntity.MongStatusHistoryType.SET_MAX_STATUS);
     }
 
+    /**
+     * 지수 코드 변경
+     * @param code 코드
+     */
     public void setCode(MongStatusCode code) {
 
         if (this.code == code) return;
 
         this.code = code;
 
-        this.addHistory(MongStatusHistoryEntity.MongStatusHistoryType.HISTORY_MONG_STATUS_SET_CODE);
+        this.addHistory(MongStatusHistoryEntity.MongStatusHistoryType.SET_CODE);
     }
 
+    /**
+     * 지수 비율 -> 지수 수치 동기화
+     * ex) 퍼센트 증가 후, 지수 수치 갱신
+     */
     private void syncStatusRatioToStatusValue() {
         this.strengthRatio = Math.max(0D, Math.min(this.strengthRatio, 100D));
         this.satietyRatio = Math.max(0D, Math.min(this.satietyRatio, 100D));
@@ -360,6 +382,10 @@ public class MongStatusEntity {
         this.fatigue = this.fatigueRatio * this.maxStatus / 100;
     }
 
+    /**
+     * 지수 수치 -> 지수 비율 동기화
+     * ex) 지수 수치 증가 후, 퍼센트 갱신
+     */
     private void syncStatusValueToStatusRatio() {
         this.strength = Math.max(0D, Math.min(this.strength, this.maxStatus));
         this.satiety = Math.max(0D, Math.min(this.satiety, this.maxStatus));
@@ -375,6 +401,9 @@ public class MongStatusEntity {
     private void addHistory(MongStatusHistoryEntity.MongStatusHistoryType mongStatusHistoryType) {
 
         this.history.add(MongStatusHistoryEntity.builder()
+                .mongId(this.mong.getMongId())
+                .accountId(this.mong.getAccountId())
+                .mongName(this.mong.getMongName())
                 .mongStatusHistoryType(mongStatusHistoryType)
                 .maxStatus(this.maxStatus)
                 .code(this.code)

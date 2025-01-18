@@ -1,6 +1,7 @@
 package com.monglife.mongs.domain.mong.entity;
 
 import com.monglife.mongs.domain.mong.enums.MongStatusCode;
+import com.monglife.mongs.domain.mong.listener.MongStatusHistoryEntityListener;
 import com.monglife.mongs.module.jpa.entity.BaseTimeEntity;
 import jakarta.persistence.*;
 import lombok.*;
@@ -9,7 +10,7 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@EntityListeners(AuditingEntityListener.class)
+@EntityListeners({ AuditingEntityListener.class, MongStatusHistoryEntityListener.class})
 @Table(name = "mongs_mong_status_history")
 public class MongStatusHistoryEntity extends BaseTimeEntity {
 
@@ -17,6 +18,15 @@ public class MongStatusHistoryEntity extends BaseTimeEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "mong_status_history_id")
     private Long mongStatusHistoryId;
+
+    @Column(name = "mong_id")
+    private Long mongId;
+
+    @Column(name = "account_id")
+    private Long accountId;
+
+    @Column(name = "mong_name")
+    private String mongName;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "mong_status_history_type")
@@ -66,7 +76,10 @@ public class MongStatusHistoryEntity extends BaseTimeEntity {
     private Double fatigueRatio;
 
     @Builder
-    public MongStatusHistoryEntity(MongStatusHistoryType mongStatusHistoryType, Double maxStatus, MongStatusCode code, Double weight, Integer poopCount, Double exp, Double strength, Double satiety, Double healthy, Double fatigue, Double expRatio, Double strengthRatio, Double satietyRatio, Double healthyRatio, Double fatigueRatio) {
+    public MongStatusHistoryEntity(Long mongId, Long accountId, String mongName, MongStatusHistoryType mongStatusHistoryType, Double maxStatus, MongStatusCode code, Double weight, Integer poopCount, Double exp, Double strength, Double satiety, Double healthy, Double fatigue, Double expRatio, Double strengthRatio, Double satietyRatio, Double healthyRatio, Double fatigueRatio) {
+        this.mongId = mongId;
+        this.accountId = accountId;
+        this.mongName = mongName;
         this.mongStatusHistoryType = mongStatusHistoryType;
         this.maxStatus = maxStatus;
         this.code = code;
@@ -88,21 +101,21 @@ public class MongStatusHistoryEntity extends BaseTimeEntity {
     @AllArgsConstructor
     public enum MongStatusHistoryType {
 
-        HISTORY_MONG_STATUS_PATCH_STATUS("지수 갱신"),
-        HISTORY_MONG_STATUS_INCREASE_EXP("경험치 증가"),
-        HISTORY_MONG_STATUS_DECREASE_EXP("경험치 감소"),
-        HISTORY_MONG_STATUS_RESET_EXP("경험치 초기화"),
-        HISTORY_MONG_STATUS_INCREASE_POOP_COUNT("배변 수 증가"),
-        HISTORY_MONG_STATUS_DECREASE_POOP_COUNT("배변 수 감소"),
-        HISTORY_MONG_STATUS_RESET_POOP_COUNT("배변 수 초기화"),
-        HISTORY_MONG_STATUS_INCREASE_WEIGHT("몸무게 증가"),
-        HISTORY_MONG_STATUS_DECREASE_WEIGHT("몸무게 감소"),
-        HISTORY_MONG_STATUS_INCREASE_STATUS("지수 증가"),
-        HISTORY_MONG_STATUS_DECREASE_STATUS("지수 감소"),
-        HISTORY_MONG_STATUS_INCREASE_STATUS_RATIO("지수 비율 증가"),
-        HISTORY_MONG_STATUS_DECREASE_STATUS_RATIO("지수 비율 감소"),
-        HISTORY_MONG_STATUS_SET_MAX_STATUS("최대 지수 값 변경"),
-        HISTORY_MONG_STATUS_SET_CODE("지수 코드 값 변경")
+        PATCH_STATUS("지수 갱신"),
+        INCREASE_EXP("경험치 증가"),
+        DECREASE_EXP("경험치 감소"),
+        RESET_EXP("경험치 초기화"),
+        INCREASE_POOP_COUNT("배변 수 증가"),
+        DECREASE_POOP_COUNT("배변 수 감소"),
+        RESET_POOP_COUNT("배변 수 초기화"),
+        INCREASE_WEIGHT("몸무게 증가"),
+        DECREASE_WEIGHT("몸무게 감소"),
+        INCREASE_STATUS("지수 증가"),
+        DECREASE_STATUS("지수 감소"),
+        INCREASE_STATUS_RATIO("지수 비율 증가"),
+        DECREASE_STATUS_RATIO("지수 비율 감소"),
+        SET_MAX_STATUS("최대 지수 값 변경"),
+        SET_CODE("지수 코드 값 변경")
         ;
 
         public final String name;

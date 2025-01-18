@@ -38,6 +38,9 @@ public class MemberHistoryEntity extends BaseTimeEntity {
         this.memberHistoryType = memberHistoryType;
     }
 
+    /**
+     * 변경 이력 코드
+     */
     @Getter
     @AllArgsConstructor
     public enum MemberHistoryType {

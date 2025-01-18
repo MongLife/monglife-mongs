@@ -1,4 +1,4 @@
-package com.monglife.mongs.app.user.player.service;
+package com.monglife.mongs.app.user.step.service;
 
 import com.monglife.mongs.app.user.player.vo.PlayerStepVo;
 import com.monglife.mongs.client.manager.service.ManagementService;
@@ -12,22 +12,11 @@ import java.time.LocalDateTime;
 
 @Service
 @RequiredArgsConstructor
-public class PlayerDeviceService {
+public class StepService {
 
     private final DeviceService deviceService;
 
     private final ManagementService managementService;
-
-    /**
-     * 기기 정보 등록
-     * @param deviceId 기기 ID
-     * @param totalWalkingCount 총 걸음 수
-     * @param deviceBootedDt 기기 부팅 시간
-     */
-    @Transactional
-    public void createDevice(String deviceId, Integer totalWalkingCount, LocalDateTime deviceBootedDt, String fcmToken) {
-        deviceService.createDevice(deviceId, totalWalkingCount, deviceBootedDt, fcmToken);
-    }
 
     /**
      * 총 걸음 수 갱신

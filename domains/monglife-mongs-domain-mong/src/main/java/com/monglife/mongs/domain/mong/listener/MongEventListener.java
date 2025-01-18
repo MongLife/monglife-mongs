@@ -15,6 +15,10 @@ public class MongEventListener {
 
     private final MongService mongService;
 
+    /**
+     * 몽 진화 이벤트 리스너
+     * @param event 몽 진화 이벤트
+     */
     @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
     @Transactional(propagation = Propagation.REQUIRES_NEW)
     public void mongEvolutionEventListener(MongEvolutionEvent event) {
