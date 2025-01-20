@@ -4,7 +4,7 @@ import com.monglife.core.utils.CommonUtil;
 import com.monglife.mongs.domain.mong.dto.etc.DecreaseMongStatusRatioDto;
 import com.monglife.mongs.domain.mong.dto.etc.IncreaseMongStatusDto;
 import com.monglife.mongs.domain.mong.dto.etc.IncreaseMongStatusRatioDto;
-import com.monglife.mongs.domain.mong.dto.etc.PatchMongStatusDto;
+import com.monglife.mongs.domain.mong.dto.etc.PatchMongDto;
 import com.monglife.mongs.domain.mong.entity.*;
 import com.monglife.mongs.domain.mong.exception.*;
 import com.monglife.mongs.domain.mong.repository.*;
@@ -324,10 +324,10 @@ public class MongService {
     /**
      * 몽 훈련
      * @param mongId 몽 ID
-     * @param patchMongStatusDto 갱신할 지수 Dto
+     * @param patchMongDto 갱신할 지수 Dto
      */
     @Transactional
-    public void trainingMong(Long mongId, PatchMongStatusDto patchMongStatusDto) {
+    public void trainingMong(Long mongId, PatchMongDto patchMongDto) {
 
         MongEntity mongEntity = lockMongRepository.findByMongIdAndMetaIsActiveIsTrue(mongId)
                 .orElseThrow(() -> new NotExistsMongException(mongId));
@@ -341,7 +341,7 @@ public class MongService {
                     mongId, mongEntity.getType().getComn().getCode(), mongEntity.getType().getLevel());
         }
 
-        mongEntity.training(patchMongStatusDto);
+        mongEntity.training(patchMongDto);
     }
 
     /**

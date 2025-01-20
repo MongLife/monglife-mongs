@@ -1,11 +1,15 @@
 package com.monglife.mongs.domain.mong.entity;
 
 import com.monglife.mongs.domain.mong.enums.MongStatusCode;
+import com.monglife.mongs.domain.mong.listener.MongStateEntityListener;
+import com.monglife.mongs.domain.mong.listener.MongStatusEntityListener;
+import com.monglife.mongs.module.jpa.entity.BaseTimeEntity;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -13,11 +17,22 @@ import java.util.List;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@EntityListeners({ AuditingEntityListener.class, MongStatusEntityListener.class })
 @Table(name = "mongs_mong_status")
 @ToString(exclude = { "history", "mong" })
-public class MongStatusEntity {
+public class MongStatusEntity extends BaseTimeEntity {
 
+    // 최대 배변 개수
     protected static final Integer MAX_POOP_COUNT = 4;
+
+    // 아픔 상태 돌입 체력 지수 비율 (퍼센트)
+    private static final Double HEALTH_SICK_RATIO = 10D;
+
+    // 배고픔 상태 돌입 포만감 지수 비율
+    private static final Double SATIETY_HUNGRY_RATIO = 10D;
+
+    // 피곤함 상태 돌입 피로도 지수 비율
+    private static final Double FATIGUE_SOMNOLENCE_RATIO = 10D;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -74,8 +89,6 @@ public class MongStatusEntity {
     @JoinColumn(name = "mong_status_id")
     private List<MongStatusHistoryEntity> history = new ArrayList<>();
 
-//    public MongStatusEntity(MongEntity mong, Double maxStatus) {
-//        this.mong = mong;
     public MongStatusEntity(Double maxStatus) {
         this.maxStatus = maxStatus;
         this.code = MongStatusCode.NORMAL;
@@ -380,6 +393,8 @@ public class MongStatusEntity {
         this.satiety = this.satietyRatio * this.maxStatus / 100;
         this.healthy = this.healthyRatio * this.maxStatus / 100;
         this.fatigue = this.fatigueRatio * this.maxStatus / 100;
+
+        this.syncStatusCode();
     }
 
     /**
@@ -396,6 +411,24 @@ public class MongStatusEntity {
         this.satietyRatio = this.satiety / this.maxStatus * 100;
         this.healthyRatio = this.healthy / this.maxStatus * 100;
         this.fatigueRatio = this.fatigue / this.maxStatus * 100;
+
+        this.syncStatusCode();
+    }
+
+    /**
+     * 지수에 따른 코드 변경
+     */
+    public void syncStatusCode() {
+        // 지수 코드 변경 조건 확인
+        if (this.getHealthyRatio() <= HEALTH_SICK_RATIO) {
+            this.setCode(MongStatusCode.SICK);
+        } else if (this.getSatiety() <= SATIETY_HUNGRY_RATIO) {
+            this.setCode(MongStatusCode.HUNGRY);
+        } else if (this.getFatigue() <= FATIGUE_SOMNOLENCE_RATIO) {
+            this.setCode(MongStatusCode.SOMNOLENCE);
+        } else {
+            this.setCode(MongStatusCode.NORMAL);
+        }
     }
 
     private void addHistory(MongStatusHistoryEntity.MongStatusHistoryType mongStatusHistoryType) {

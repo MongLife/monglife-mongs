@@ -83,7 +83,7 @@ public class MatchService {
                         attackValue = MatchPlayerEntity.DEFAULT_ATTACK_VALUE;
                         healValue = MatchPlayerEntity.DEFAULT_HEAL_VALUE;
                         defenceValue = MatchPlayerEntity.DEFAULT_DEFENCE_VALUE;
-                        mongTypeCode = comnCodeRepository.findByGroupCode(BOT_MONG_TYPE_GROUP_CODE).stream()
+                        mongTypeCode = comnCodeRepository.findByCodeLike(BOT_MONG_TYPE_GROUP_CODE + "1%").stream()  // CH1XX 몽 코드 조회
                                 .findAny()
                                 .orElseThrow(NotExistsMongTypeCodeException::new)
                                 .getCode();

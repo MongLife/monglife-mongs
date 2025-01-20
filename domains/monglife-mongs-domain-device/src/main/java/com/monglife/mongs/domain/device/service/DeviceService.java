@@ -28,7 +28,13 @@ public class DeviceService {
     public StepVo updateWalkingCount(String deviceId, Integer totalWalkingCount, LocalDateTime deviceBootedDt) {
 
         DeviceEntity deviceEntity = lockDeviceRepository.findByDeviceId(deviceId)
-                .orElseThrow(() -> new NotExistsDeviceException(deviceId));
+                .orElseGet(() -> lockDeviceRepository.save(DeviceEntity.builder()
+                        .deviceId(deviceId)
+                        .walkingCount(0)
+                        .totalWalkingCount(totalWalkingCount)
+                        .consumeWalkingCount(totalWalkingCount)
+                        .deviceBootedDt(deviceBootedDt)
+                        .build()));
 
         if (deviceBootedDt.equals(deviceEntity.getDeviceBootedDt())) {
             // 총 걸음 수 갱신

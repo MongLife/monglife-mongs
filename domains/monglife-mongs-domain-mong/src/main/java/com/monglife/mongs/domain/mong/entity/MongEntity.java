@@ -3,7 +3,7 @@ package com.monglife.mongs.domain.mong.entity;
 import com.monglife.mongs.domain.mong.dto.etc.DecreaseMongStatusRatioDto;
 import com.monglife.mongs.domain.mong.dto.etc.IncreaseMongStatusDto;
 import com.monglife.mongs.domain.mong.dto.etc.IncreaseMongStatusRatioDto;
-import com.monglife.mongs.domain.mong.dto.etc.PatchMongStatusDto;
+import com.monglife.mongs.domain.mong.dto.etc.PatchMongDto;
 import com.monglife.mongs.domain.mong.enums.MongStateCode;
 import com.monglife.mongs.domain.mong.enums.MongStatusCode;
 import com.monglife.mongs.domain.mong.listener.MongEntityListener;
@@ -49,10 +49,6 @@ public class MongEntity extends BaseTimeEntity {
     @JoinColumn(name = "mong_type_id")
     private MongTypeEntity type;
 
-    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    @JoinColumn(name = "mong_id")
-    private List<MongHistoryEntity> history = new ArrayList<>();
-
     @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JoinColumn(name = "mong_meta_id")
     private MongMetaEntity meta;
@@ -64,6 +60,10 @@ public class MongEntity extends BaseTimeEntity {
     @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JoinColumn(name = "mong_status_id")
     private MongStatusEntity status;
+
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JoinColumn(name = "mong_id")
+    private List<MongHistoryEntity> history = new ArrayList<>();
 
     @Builder
     public MongEntity(Long accountId, String mongName, LocalTime sleepAt, LocalTime wakeupAt, MongTypeEntity type, Integer payPoint) {
@@ -185,19 +185,19 @@ public class MongEntity extends BaseTimeEntity {
 
     /**
      * 몽 훈련
-     * @param patchMongStatusDto 지수 변동 값
+     * @param patchMongDto 지수 변동 값
      */
-    public void training(PatchMongStatusDto patchMongStatusDto) {
+    public void training(PatchMongDto patchMongDto) {
 
-        this.payPoint = Math.max(0, this.payPoint + patchMongStatusDto.getPayPoint());
+        this.payPoint = Math.max(0, this.payPoint + patchMongDto.getPayPoint());
         this.status.patchStatus(
-                patchMongStatusDto.getWeight(),
-                patchMongStatusDto.getPoopCount(),
-                patchMongStatusDto.getExp(),
-                patchMongStatusDto.getStrength(),
-                patchMongStatusDto.getSatiety(),
-                patchMongStatusDto.getHealthy(),
-                patchMongStatusDto.getFatigue()
+                patchMongDto.getWeight(),
+                patchMongDto.getPoopCount(),
+                patchMongDto.getExp(),
+                patchMongDto.getStrength(),
+                patchMongDto.getSatiety(),
+                patchMongDto.getHealthy(),
+                patchMongDto.getFatigue()
         );
         this.meta.increaseTrainingCount();
 

@@ -17,6 +17,13 @@ public class TrainingController {
 
     private final TrainingService trainingService;
 
+    /**
+     * 훈련 달리기 완료
+     * @param passport 패스 포트
+     * @param mongId 몽 ID
+     * @param trainingRunnerRequestDto 훈련 달리기 완료 Dto
+     * @return 성공 응답
+     */
     @PostMapping("/runner/{mongId}")
     public ResponseEntity<ResponseDto<?>> trainingRunner(@AuthenticationPrincipal Passport passport, @PathVariable("mongId") Long mongId, @RequestBody TrainingRunnerRequestDto trainingRunnerRequestDto) {
 

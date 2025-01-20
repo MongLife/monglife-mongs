@@ -10,13 +10,10 @@ import lombok.Setter;
 @NoArgsConstructor
 public class ChargePayPointRequestDto {
 
-    private Long mongId;
-
     private Integer payPoint;
 
     @Builder
-    public ChargePayPointRequestDto(Long mongId, Integer payPoint) {
-        this.mongId = mongId;
+    public ChargePayPointRequestDto(Integer payPoint) {
         this.payPoint = payPoint;
     }
 }

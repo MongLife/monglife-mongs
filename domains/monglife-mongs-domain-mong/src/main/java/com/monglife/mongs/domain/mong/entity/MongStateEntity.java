@@ -1,21 +1,22 @@
 package com.monglife.mongs.domain.mong.entity;
 
 import com.monglife.mongs.domain.mong.enums.MongStateCode;
+import com.monglife.mongs.domain.mong.listener.MongStateEntityListener;
+import com.monglife.mongs.module.jpa.entity.BaseTimeEntity;
 import jakarta.persistence.*;
-import lombok.AccessLevel;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.ToString;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.util.ArrayList;
 import java.util.List;
 
 @Entity
 @Getter
-//@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@EntityListeners({ AuditingEntityListener.class, MongStateEntityListener.class })
 @Table(name = "mongs_mong_state")
 @ToString(exclude = { "history", "mong" })
-public class MongStateEntity {
+public class MongStateEntity extends BaseTimeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -36,8 +37,6 @@ public class MongStateEntity {
     @JoinColumn(name = "mong_state_id")
     private List<MongStateHistoryEntity> history = new ArrayList<>();
 
-//    public MongStateEntity(MongEntity mong) {
-//        this.mong = mong;
     public MongStateEntity() {
         this.code = MongStateCode.NORMAL;
         this.isSleep = Boolean.FALSE;

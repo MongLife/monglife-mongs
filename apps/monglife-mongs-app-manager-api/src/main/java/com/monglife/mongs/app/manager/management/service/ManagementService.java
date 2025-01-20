@@ -7,6 +7,7 @@ import com.monglife.mongs.client.user.vo.CollectionMongVo;
 import com.monglife.mongs.domain.mong.annotation.AllowMongState;
 import com.monglife.mongs.domain.mong.annotation.DenyMongState;
 import com.monglife.mongs.domain.mong.annotation.VerifyMongAccount;
+import com.monglife.mongs.domain.mong.dto.etc.PatchMongDto;
 import com.monglife.mongs.domain.mong.enums.MongStateCode;
 import com.monglife.mongs.domain.mong.service.MongService;
 import com.monglife.mongs.domain.mong.vo.FeedItemVo;
@@ -46,6 +47,11 @@ public class ManagementService {
     @Transactional(readOnly = true)
     public List<MongVo> getMongs(Long accountId) {
         return mongService.getMongs(accountId);
+    }
+
+    @Transactional(readOnly = true)
+    public MongVo getMong(Long mongId) {
+        return mongService.getMong(mongId);
     }
 
     /**
@@ -249,5 +255,18 @@ public class ManagementService {
     @VerifyMongAccount
     public void chargePayPoint(Long accountId, Long mongId, Integer payPoint) {
         mongService.increasePayPoint(mongId, payPoint);
+    }
+
+    /**
+     * 몽 훈련 이후 갱신
+     * @param accountId 계정 ID
+     * @param mongId 몽 ID
+     * @param patchMongDto 몽 정보 변경 Dto
+     */
+    @Transactional
+    @VerifyMongAccount
+    @DenyMongState(stateCodes = { MongStateCode.DEAD }, egg = true)
+    public void trainingMong(Long accountId, Long mongId, PatchMongDto patchMongDto) {
+        mongService.trainingMong(mongId, patchMongDto);
     }
 }

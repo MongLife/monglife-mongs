@@ -48,7 +48,7 @@ public class BattleConsumer {
 
         List<String> topics = createBattleRequestDto.getCreateBattleVoSet().stream()
                 .filter(createBattleVo -> !createBattleVo.getIsBot())
-                .map(createBattleVo -> "search/" + createBattleVo.getDeviceId())
+                .map(createBattleVo -> "battle/search/" + createBattleVo.getDeviceId())
                 .toList();
 
         Long roomId = createBattleDto.getRoomId();
@@ -81,7 +81,7 @@ public class BattleConsumer {
 
         if (fightBattleDto != null) {
 
-            List<String> topics = List.of("match/" + roomId);
+            List<String> topics = List.of("battle/match/" + roomId);
 
             return MqttResponseEntity
                     .body(BattleResponse.APP_ACTIVITY_BATTLE_ENTER_ALL_BATTLE_PLAYER.toResponseDto(FightBattleResponseDto.builder()
@@ -116,7 +116,7 @@ public class BattleConsumer {
 
         if (overBattleDto != null) {
 
-            List<String> topics = List.of("match/" + roomId);
+            List<String> topics = List.of("battle/match/" + roomId);
 
             return MqttResponseEntity
                     .body(BattleResponse.APP_ACTIVITY_BATTLE_OVER_BATTLE.toResponseDto(OverBattleResponseDto.builder()
@@ -151,7 +151,7 @@ public class BattleConsumer {
 
         if (fightBattleDto != null) {
 
-            List<String> topics = List.of("match/" + roomId);
+            List<String> topics = List.of("battle/match/" + roomId);
 
             return MqttResponseEntity
                     .body(BattleResponse.APP_ACTIVITY_BATTLE_FIGHT_BATTLE.toResponseDto(FightBattleResponseDto.builder()

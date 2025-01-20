@@ -19,7 +19,7 @@ import java.time.LocalDateTime;
 
 @Validated
 @RestController
-@RequestMapping("/open/step")
+@RequestMapping("/step")
 @RequiredArgsConstructor
 public class StepController {
 

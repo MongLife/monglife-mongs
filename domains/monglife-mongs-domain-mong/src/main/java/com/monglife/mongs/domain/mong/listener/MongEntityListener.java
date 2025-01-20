@@ -1,11 +1,9 @@
 package com.monglife.mongs.domain.mong.listener;
 
+import com.monglife.mongs.domain.mong.dto.event.MongBasicObserveEvent;
 import com.monglife.mongs.domain.mong.dto.event.MongEvolutionEvent;
-import com.monglife.mongs.domain.mong.dto.event.MongObserveEvent;
 import com.monglife.mongs.domain.mong.entity.MongEntity;
-import com.monglife.mongs.domain.mong.enums.MongStatusCode;
 import jakarta.persistence.PostUpdate;
-import jakarta.persistence.PreUpdate;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Component;
@@ -14,31 +12,7 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 public class MongEntityListener {
 
-    // 아픔 상태 돌입 체력 지수 비율 (퍼센트)
-    private static final Double HEALTH_SICK_RATIO = 10D;
-
-    // 배고픔 상태 돌입 포만감 지수 비율
-    private static final Double SATIETY_HUNGRY_RATIO = 10D;
-
-    // 피곤함 상태 돌입 피로도 지수 비율
-    private static final Double FATIGUE_SOMNOLENCE_RATIO = 10D;
-
     private final ApplicationEventPublisher applicationEventPublisher;
-
-    @PreUpdate
-    public void preUpdate(MongEntity mongEntity) {
-
-        // 지수 코드 변경 조건 확인
-        if (mongEntity.getStatus().getHealthyRatio() <= HEALTH_SICK_RATIO) {
-            mongEntity.getStatus().setCode(MongStatusCode.SICK);
-        } else if (mongEntity.getStatus().getSatiety() <= SATIETY_HUNGRY_RATIO) {
-            mongEntity.getStatus().setCode(MongStatusCode.HUNGRY);
-        } else if (mongEntity.getStatus().getFatigue() <= FATIGUE_SOMNOLENCE_RATIO) {
-            mongEntity.getStatus().setCode(MongStatusCode.SOMNOLENCE);
-        } else {
-            mongEntity.getStatus().setCode(MongStatusCode.NORMAL);
-        }
-    }
 
     /**
      * 몽 엔티티 변경 리스너
@@ -47,7 +21,14 @@ public class MongEntityListener {
     @PostUpdate
     public void postUpdate(MongEntity mongEntity) {
 
-        applicationEventPublisher.publishEvent(MongObserveEvent.of(mongEntity));
+        applicationEventPublisher.publishEvent(MongBasicObserveEvent.builder()
+                .mongId(mongEntity.getMongId())
+                .mongName(mongEntity.getMongName())
+                .mongTypeCode(mongEntity.getType().getComn().getCode())
+                .payPoint(mongEntity.getPayPoint())
+                .createdAt(mongEntity.getCreatedAt())
+                .updatedAt(mongEntity.getUpdatedAt())
+                .build());
 
         if (mongEntity.getStatus().getExpRatio() < 100) return;
 
@@ -58,6 +39,7 @@ public class MongEntityListener {
         if (mongEntity.isDead()) return;
 
         if (!mongEntity.isEvolutionReady()) {
+            // 진화 준비 상태가 된 경우 몽 진화 이벤트 발생
             applicationEventPublisher.publishEvent(MongEvolutionEvent.builder()
                     .mongId(mongEntity.getMongId())
                     .build());

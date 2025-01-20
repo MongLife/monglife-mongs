@@ -22,7 +22,6 @@ public class BattleMatchingScheduler {
 
     private final BattleConsumer battleConsumer;
 
-
     @Scheduled(fixedDelay = 1000)
     public void matchingSchedule() {
 

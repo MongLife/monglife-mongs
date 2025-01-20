@@ -1,4 +1,4 @@
-package com.monglife.mongs.domain.mong.dto.etc;
+package com.monglife.mongs.client.manager.dto.request;
 
 import lombok.Builder;
 import lombok.Getter;
@@ -8,7 +8,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @NoArgsConstructor
-public class PatchMongStatusDto {
+public class PatchMongAfterTrainingRequestDto {
 
     private Double exp;
 
@@ -27,7 +27,7 @@ public class PatchMongStatusDto {
     private Integer payPoint;
 
     @Builder
-    public PatchMongStatusDto(Double exp, Double weight, Double strength, Double satiety, Double healthy, Double fatigue, Integer poopCount, Integer payPoint) {
+    public PatchMongAfterTrainingRequestDto(Double exp, Double weight, Double strength, Double satiety, Double healthy, Double fatigue, Integer poopCount, Integer payPoint) {
         this.exp = exp;
         this.weight = weight;
         this.strength = strength;

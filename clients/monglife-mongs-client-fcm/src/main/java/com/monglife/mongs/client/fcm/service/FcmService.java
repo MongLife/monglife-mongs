@@ -3,7 +3,6 @@ package com.monglife.mongs.client.fcm.service;
 import com.google.firebase.messaging.FirebaseMessaging;
 import com.google.firebase.messaging.FirebaseMessagingException;
 import com.google.firebase.messaging.MulticastMessage;
-import com.google.firebase.messaging.Notification;
 import com.monglife.mongs.client.fcm.client.AuthClient;
 import com.monglife.mongs.client.fcm.exception.InvalidGetDevicesException;
 import com.monglife.mongs.client.fcm.vo.DeviceVo;
@@ -31,6 +30,17 @@ public class FcmService {
      * @param body 본문
      */
     public void sendPush(Long accountId, String title, String body) {
+        this.sendPush(accountId, title, body, false);
+    }
+
+    /**
+     * FCM 전송
+     * @param accountId 계정 ID
+     * @param title 제목
+     * @param body 본문
+     * @param isAppForegroundMessage 백그라운드 메시지 여부
+     */
+    public void sendPush(Long accountId, String title, String body, Boolean isAppForegroundMessage) {
 
         try {
             List<DeviceVo> deviceVos = this.getDevices(accountId);
@@ -41,13 +51,10 @@ public class FcmService {
 
             if (!tokens.isEmpty()) {
 
-                Notification notification = Notification.builder()
-                        .setTitle(title)
-                        .setBody(body)
-                        .build();
-
                 firebaseMessaging.sendEachForMulticast(MulticastMessage.builder()
-                        .setNotification(notification)
+                        .putData("title", title)
+                        .putData("body", body)
+                        .putData("isAppForegroundMessage", isAppForegroundMessage.toString())
                         .addAllTokens(tokens)
                         .build());
             }

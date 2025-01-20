@@ -4,8 +4,11 @@ import com.monglife.core.utils.CommonUtil;
 import com.monglife.mongs.app.activity.battle.dto.etc.CreateBattleDto;
 import com.monglife.mongs.app.activity.battle.dto.etc.FightBattleDto;
 import com.monglife.mongs.app.activity.battle.dto.etc.OverBattleDto;
-import com.monglife.mongs.app.activity.battle.vo.CreateBattleVo;
 import com.monglife.mongs.app.activity.battle.exception.NotExistsMatchException;
+import com.monglife.mongs.app.activity.battle.exception.NotExistsMongException;
+import com.monglife.mongs.app.activity.battle.vo.CreateBattleVo;
+import com.monglife.mongs.client.manager.service.ManagementService;
+import com.monglife.mongs.client.manager.vo.MongVo;
 import com.monglife.mongs.domain.match.dto.etc.CreateMatchDto;
 import com.monglife.mongs.domain.match.dto.etc.EnterMatchDto;
 import com.monglife.mongs.domain.match.dto.etc.ExitMatchDto;
@@ -16,35 +19,28 @@ import com.monglife.mongs.domain.match.service.MatchingService;
 import com.monglife.mongs.domain.match.vo.CreateMatchVo;
 import com.monglife.mongs.domain.match.vo.FightMatchVo;
 import com.monglife.mongs.domain.match.vo.OverMatchVo;
-import com.monglife.mongs.domain.mong.annotation.VerifyMongAccount;
-import com.monglife.mongs.domain.mong.vo.MongVo;
-import com.monglife.mongs.domain.mong.service.MongService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
 public class BattleService {
 
-    private final MongService mongService;
-
     private final MatchService matchService;
 
     private final MatchingService matchingService;
+    private final ManagementService managementService;
 
 
-    @VerifyMongAccount
     @Transactional
     public void createWaitMatching(Long accountId, Long mongId, String deviceId) {
         matchingService.createWaitMatching(accountId, deviceId, mongId);
     }
 
-    @VerifyMongAccount
     @Transactional
     public void deleteWaitMatching(Long accountId, Long mongId, String deviceId) {
         matchingService.deleteWaitMatching(accountId, deviceId, mongId);
@@ -52,6 +48,28 @@ public class BattleService {
 
     @Transactional
     public CreateBattleDto createBattle(Set<CreateBattleVo> createBattleVoSet) {
+
+        Map<Long, MongVo> mongVoMap = new HashMap<>();
+
+        for (CreateBattleVo createBattleVo : createBattleVoSet) {
+
+            if (createBattleVo.getIsBot()) continue;
+
+            Long mongId = createBattleVo.getMongId();
+            Optional<MongVo> optionalMongVo = managementService.getMong(mongId);
+
+            if (optionalMongVo.isPresent()) {
+                // 있는 경우
+                MongVo mongVo = optionalMongVo.get();
+                mongVoMap.put(mongVo.getMongId(), mongVo);
+            } else {
+                createBattleVoSet.stream()
+                        .filter(vo -> !vo.getMongId().equals(mongId))
+                        .forEach(vo -> matchingService.createWaitMatching(vo.getAccountId(), vo.getDeviceId(), vo.getMongId()));
+
+                throw new NotExistsMongException(mongId);
+            }
+        }
 
         Set<CreateMatchVo> createMatchVoSet = createBattleVoSet.stream()
                 .map(createBattleVo -> {
@@ -63,7 +81,8 @@ public class BattleService {
                     String mongTypeCode = "";
 
                     if (!createBattleVo.getIsBot()) {
-                        MongVo mongVo = mongService.getMong(createBattleVo.getMongId());
+                        MongVo mongVo = mongVoMap.get(createBattleVo.getMongId());
+
                         weight = mongVo.getWeight();
                         strength = mongVo.getStrength();
                         fatigue = mongVo.getFatigue();
