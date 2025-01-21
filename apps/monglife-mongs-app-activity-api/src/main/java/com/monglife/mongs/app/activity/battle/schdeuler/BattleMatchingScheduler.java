@@ -1,6 +1,6 @@
 package com.monglife.mongs.app.activity.battle.schdeuler;
 
-import com.monglife.mongs.app.activity.battle.controller.BattleConsumer;
+import com.monglife.mongs.app.activity.battle.consumer.BattleConsumer;
 import com.monglife.mongs.app.activity.battle.dto.request.CreateBattleRequestDto;
 import com.monglife.mongs.app.activity.battle.vo.CreateBattleVo;
 import com.monglife.mongs.domain.match.service.MatchingService;

@@ -2,21 +2,18 @@ package com.monglife.mongs.module.mqtt.config;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-import com.monglife.mongs.module.mqtt.annotation.MqttConsumer;
-import com.monglife.mongs.module.mqtt.annotation.MqttConsumerAdvice;
-import com.monglife.mongs.module.mqtt.annotation.MqttMapping;
-import com.monglife.mongs.module.mqtt.annotation.MqttPayload;
+import com.monglife.mongs.module.mqtt.annotation.*;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
+import org.eclipse.paho.client.mqttv3.MqttClient;
+import org.eclipse.paho.client.mqttv3.MqttMessage;
 import org.springframework.aop.framework.AopProxyUtils;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
-import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.PathVariable;
 
 import java.lang.reflect.InvocationTargetException;
@@ -116,10 +113,13 @@ public class MqttMappingHandler implements InitializingBean {
             Class<?> beanClass = AopProxyUtils.ultimateTargetClass(bean);
 
             for (Method method : beanClass.getDeclaredMethods()) {
+                // 반환 타입이 void 가 아닌 경우에 패스
+                if (method.getReturnType() != void.class) continue;
 
-                if (method.isAnnotationPresent(ExceptionHandler.class)) {
-                    ExceptionHandler exceptionHandler = method.getAnnotation(ExceptionHandler.class);
-                    Class<? extends Throwable>[] exceptions = exceptionHandler.value();
+                // MqttExceptionHandler Annotation 을 가진 메서드
+                if (method.isAnnotationPresent(MqttExceptionHandler.class)) {
+                    MqttExceptionHandler mqttExceptionHandler = method.getAnnotation(MqttExceptionHandler.class);
+                    Class<? extends Throwable>[] exceptions = mqttExceptionHandler.value();
 
                     for (Class<? extends Throwable> exception : exceptions) {
                         mqttExceptionHandlerMapping.put(exception, method);
@@ -134,7 +134,7 @@ public class MqttMappingHandler implements InitializingBean {
      * @param topic topic
      * @param payload payload
      */
-    public void invokeMappingMethod(String topic, String payload) {
+    public void invoke(String topic, String payload) throws Exception {
 
         if (topic.startsWith("/")) topic = topic.substring(1);
         if (topic.endsWith("/")) topic = topic.substring(0, topic.length() - 1);
@@ -153,7 +153,25 @@ public class MqttMappingHandler implements InitializingBean {
 
                 log.debug("{} => method: {}#{}, parameters: {}", topic, method.getDeclaringClass(), method.getName(), parameters);
 
-                this.invokeMappingMethod(method, parameters);
+                try {
+                    this.invokeMappingMethod(method, parameters);
+                } catch (Throwable throwable) {
+                    Method exceptionHandlerMethod = null;
+
+                    for (Class<?> exceptionMappingClazz : mqttExceptionHandlerMapping.keySet()) {
+                        if (exceptionMappingClazz.isAssignableFrom(throwable.getClass())) {
+                            exceptionHandlerMethod = mqttExceptionHandlerMapping.get(exceptionMappingClazz);
+                        }
+                    }
+                    // 예외 처리 메서드가 있는 경우 실행
+                    if (exceptionHandlerMethod != null) {
+                        // 예외 처리 메서드 실행
+                        this.invokeExceptionMappingMethod(exceptionHandlerMethod, Collections.singletonList(throwable).toArray());
+                        break;
+                    } else {
+                        throw new Exception(throwable);
+                    }
+                }
             }
         } else {
             // topic 과 매칭되는 메서드가 다수인 경우
@@ -166,25 +184,18 @@ public class MqttMappingHandler implements InitializingBean {
      * @param method 메서드
      * @param parameters 메서드 파라 미터
      */
-    private void invokeMappingMethod(Method method, Object[] parameters) {
+    private void invokeMappingMethod(Method method, Object[] parameters) throws Throwable {
         try {
             Class<?> methodClazz = method.getDeclaringClass();
             Object methodClazzBean = applicationContext.getBean(methodClazz);
             method.setAccessible(true);
             method.invoke(methodClazzBean, parameters);
-        } catch (IllegalAccessException | InvocationTargetException e) {
-            if (e instanceof InvocationTargetException invocationTargetException) {
-                for (Class<?> exceptionMappingClazz : mqttExceptionHandlerMapping.keySet()) {
-                    Throwable exception = invocationTargetException.getTargetException();
-                    if (exceptionMappingClazz.isAssignableFrom(exception.getClass())) {
-                        Method exceptionHandlerMethod = mqttExceptionHandlerMapping.get(exceptionMappingClazz);
-                        this.invokeExceptionMappingMethod(exceptionHandlerMethod, Collections.singletonList(exception).toArray());
-                        return;
-                    }
-                }
+        } catch (IllegalAccessException | InvocationTargetException exception) {
+            if (exception instanceof InvocationTargetException invocationTargetException) {
+                throw invocationTargetException.getTargetException();
+            } else {
+                throw exception;
             }
-
-            log.error("invoke mapping method error");
         }
     }
 

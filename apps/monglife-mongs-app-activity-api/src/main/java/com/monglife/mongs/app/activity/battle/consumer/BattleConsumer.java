@@ -1,4 +1,4 @@
-package com.monglife.mongs.app.activity.battle.controller;
+package com.monglife.mongs.app.activity.battle.consumer;
 
 import com.monglife.core.dto.response.ResponseDto;
 import com.monglife.mongs.app.activity.battle.dto.etc.CreateBattleDto;
@@ -74,7 +74,6 @@ public class BattleConsumer {
             @PathVariable("roomId") Long roomId,
             @MqttPayload EnterBattleRequestDto enterBattleRequestDto
     ) {
-
         String playerId = enterBattleRequestDto.getPlayerId();
 
         FightBattleDto fightBattleDto = battleService.enterBattle(roomId, playerId);

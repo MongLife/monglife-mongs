@@ -11,6 +11,9 @@ import org.springframework.scheduling.annotation.EnableAsync;
 public class ManagerApplication {
 
     public static void main(String[] args) {
+
+        System.setProperty("spring.config.name", "application,client,domain,module");
+
         SpringApplication.run(ManagerApplication.class, args);
     }
 

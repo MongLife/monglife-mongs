@@ -2,6 +2,7 @@ package com.monglife.mongs.module.mqtt.consumer;
 
 import com.monglife.mongs.module.mqtt.config.MqttMappingHandler;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.integration.annotation.MessagingGateway;
 import org.springframework.integration.mqtt.support.MqttHeaders;
 import org.springframework.messaging.Message;
@@ -9,6 +10,7 @@ import org.springframework.messaging.MessageHandler;
 import org.springframework.messaging.MessagingException;
 import org.springframework.stereotype.Component;
 
+@Slf4j
 @Component
 @RequiredArgsConstructor
 @MessagingGateway(defaultRequestChannel = "mqttInboundChannel")
@@ -22,6 +24,10 @@ public class MqttConsumer implements MessageHandler {
         String topic = (String) message.getHeaders().get(MqttHeaders.RECEIVED_TOPIC);
         String payload = (String) message.getPayload();
 
-        mqttMappingHandler.invokeMappingMethod(topic == null ? "" : topic, payload);
+        try {
+            mqttMappingHandler.invoke(topic == null ? "" : topic, payload);
+        } catch (Exception e) {
+            log.error("\n[THROW CONSUME] {}#{}\n{} : {}", "MqttConsumer", "handleMessage", e, e.getMessage());
+        }
     }
 }

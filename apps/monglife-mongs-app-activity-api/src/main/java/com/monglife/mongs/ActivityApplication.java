@@ -14,6 +14,9 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 public class ActivityApplication {
 
     public static void main(String[] args) {
+
+        System.setProperty("spring.config.name", "application,client,domain,module");
+
         SpringApplication.run(ActivityApplication.class, args);
     }
 

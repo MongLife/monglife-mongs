@@ -9,7 +9,7 @@ dependencies {
 tasks.register('copyPrivate', Copy) {
     copy {
         from '../../configs/clients/monglife-mongs-client-fcm/'
-        include 'application*.yml'
+        include '*.yml'
         into 'src/main/resources'
     }
 

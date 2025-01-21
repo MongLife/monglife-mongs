@@ -6,7 +6,7 @@ dependencies {
 tasks.register('copyPrivate', Copy) {
     copy {
         from '../../configs/domains/monglife-mongs-domain-task/'
-        include 'application*.yml'
+        include '*.yml'
         into 'src/main/resources'
     }
 }

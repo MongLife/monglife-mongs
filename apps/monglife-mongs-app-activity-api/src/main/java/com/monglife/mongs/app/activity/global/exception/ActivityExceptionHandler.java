@@ -4,8 +4,10 @@ import com.monglife.core.dto.response.ResponseDto;
 import com.monglife.core.enums.response.GlobalResponse;
 import com.monglife.core.exception.ErrorException;
 import com.monglife.mongs.module.mqtt.annotation.MqttConsumerAdvice;
+import com.monglife.mongs.module.mqtt.annotation.MqttExceptionHandler;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.ConstraintViolationException;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
@@ -19,9 +21,17 @@ import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
 
+@Slf4j
 @MqttConsumerAdvice
 @RestControllerAdvice
 public class ActivityExceptionHandler {
+
+    /**
+     * mqtt consumer exception handler
+     * @param e 예외 객체
+     */
+    @MqttExceptionHandler(ErrorException.class)
+    public void handleErrorExceptionFromMqtt(ErrorException e) {}
 
     /**
      * exception handler

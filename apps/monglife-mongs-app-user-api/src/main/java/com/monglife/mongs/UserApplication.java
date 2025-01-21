@@ -9,6 +9,9 @@ import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 public class UserApplication {
 
     public static void main(String[] args) {
+
+        System.setProperty("spring.config.name", "application,client,domain,module");
+
         SpringApplication.run(UserApplication.class, args);
     }
 

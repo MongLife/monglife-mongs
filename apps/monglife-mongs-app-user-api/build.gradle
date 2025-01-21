@@ -3,13 +3,13 @@ dependencies {
     implementation project(':domains:monglife-mongs-domain-device')
     implementation project(':domains:monglife-mongs-domain-member')
 
-    // modules
-    implementation project(':modules:monglife-mongs-module-security')
-    implementation project(':modules:monglife-mongs-module-mqtt')
-
     // clients
     implementation project(':clients:monglife-mongs-client-manager')
     implementation project(':clients:monglife-mongs-client-google')
+
+    // modules
+    implementation project(':modules:monglife-mongs-module-security')
+    implementation project(':modules:monglife-mongs-module-mqtt')
 }
 
 tasks.register('copyPrivate', Copy) {

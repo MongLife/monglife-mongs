@@ -41,6 +41,10 @@ public class MqttConfig {
     @Value("${spring.mqtt.base-topic}")
     private String BASE_TOPIC;
 
+    private static final String OUTBOUND_CLIENT_ID = MqttAsyncClient.generateClientId();
+
+    private static final String INBOUND_CLIENT_ID = MqttAsyncClient.generateClientId();
+
     @Bean
     @ConditionalOnMissingBean
     public ObjectMapper objectMapper() {
@@ -55,7 +59,10 @@ public class MqttConfig {
     @Bean
     public MqttPahoClientFactory mqttClientFactory() {
 
+        DefaultMqttPahoClientFactory factory = new DefaultMqttPahoClientFactory();
         MqttConnectOptions options = new MqttConnectOptions();
+
+        options.setCleanSession(true);
         options.setConnectionTimeout(30);
         options.setKeepAliveInterval(60);
         options.setAutomaticReconnect(true);
@@ -64,7 +71,6 @@ public class MqttConfig {
         options.setUserName(USERNAME);
         options.setPassword(PASSWORD.toCharArray());
 
-        DefaultMqttPahoClientFactory factory = new DefaultMqttPahoClientFactory();
         factory.setConnectionOptions(options);
 
         return factory;
@@ -82,10 +88,10 @@ public class MqttConfig {
     @ServiceActivator(inputChannel = "mqttOutboundChannel")
     public MessageHandler mqttOutbound(@Qualifier("mqttClientFactory") MqttPahoClientFactory mqttPahoClientFactory) {
 
-        MqttPahoMessageHandler messageHandler = new MqttPahoMessageHandler(MqttAsyncClient.generateClientId(), mqttPahoClientFactory);
+        MqttPahoMessageHandler messageHandler = new MqttPahoMessageHandler(OUTBOUND_CLIENT_ID, mqttPahoClientFactory);
 
         messageHandler.setAsync(true);
-        messageHandler.setDefaultQos(1);
+        messageHandler.setDefaultQos(2);
         messageHandler.setDefaultTopic(BASE_TOPIC + "/error");
 
         return messageHandler;
@@ -105,11 +111,10 @@ public class MqttConfig {
             @Qualifier("mqttInboundChannel") MessageChannel mqttInboundChannel,
             @Qualifier("mqttClientFactory") MqttPahoClientFactory mqttPahoClientFactory
     ) {
-        MqttPahoMessageDrivenChannelAdapter adapter =
-                new MqttPahoMessageDrivenChannelAdapter(MqttAsyncClient.generateClientId(), mqttPahoClientFactory, BASE_TOPIC + "/#");
+        MqttPahoMessageDrivenChannelAdapter adapter = new MqttPahoMessageDrivenChannelAdapter(INBOUND_CLIENT_ID, mqttPahoClientFactory, BASE_TOPIC + "/#");
         adapter.setCompletionTimeout(5000);
         adapter.setConverter(new DefaultPahoMessageConverter());
-        adapter.setQos(1);
+        adapter.setQos(2);
         adapter.setOutputChannel(mqttInboundChannel);
 
         return adapter;

@@ -6,6 +6,7 @@ import com.google.api.services.androidpublisher.AndroidPublisher;
 import com.google.api.services.androidpublisher.AndroidPublisherScopes;
 import com.google.auth.http.HttpCredentialsAdapter;
 import com.google.auth.oauth2.GoogleCredentials;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.ClassPathResource;
@@ -17,20 +18,22 @@ import java.security.GeneralSecurityException;
 @Configuration
 public class GoogleCredentialsConfig {
 
-    private static final String googleAccountFilePath = "in-app-payment.json";
+    @Value("${google.account.filepath}")
+    private String GOOGLE_ACCOUNT_FILE_PATH;
 
-    private static final String appPackageName = "com.mongs.wear";
+    @Value("${google.package-name}")
+    private String APP_PACKAGE_NAME;
 
     @Bean
     public AndroidPublisher androidPublisher() throws IOException, GeneralSecurityException {
 
-        InputStream inputStream = new ClassPathResource(googleAccountFilePath).getInputStream();
+        InputStream inputStream = new ClassPathResource(GOOGLE_ACCOUNT_FILE_PATH).getInputStream();
         GoogleCredentials credentials = GoogleCredentials.fromStream(inputStream).createScoped(AndroidPublisherScopes.ANDROIDPUBLISHER);
 
         return new AndroidPublisher.Builder(
                 GoogleNetHttpTransport.newTrustedTransport(),
                 GsonFactory.getDefaultInstance(),
                 new HttpCredentialsAdapter(credentials)
-        ).setApplicationName(appPackageName).build();
+        ).setApplicationName(APP_PACKAGE_NAME).build();
     }
 }

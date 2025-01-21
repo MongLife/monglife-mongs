@@ -29,8 +29,8 @@ public class MongService {
 
     private static final Random random = new Random();
 
-    @Value("${application.service.mong.egg-mong-type-group-code}")
-    private String  EGG_MONG_TYPE_GROUP_CODE;
+    @Value("${application.service.mong.egg-mong-type-group-type}")
+    private String EGG_MONG_TYPE_GROUP_TYPE;
 
     @Value("${application.service.mong.default-evolution-score}")
     private Integer DEFAULT_EVOLUTION_SCORE;
@@ -156,7 +156,7 @@ public class MongService {
     @Transactional
     public MongVo createMong(Long accountId, String name, LocalTime sleepAt, LocalTime wakeupAt) {
 
-        List<MongTypeEntity> mongTypeEntities = mongTypeRepository.findByGroupType(EGG_MONG_TYPE_GROUP_CODE);
+        List<MongTypeEntity> mongTypeEntities = mongTypeRepository.findByGroupType(EGG_MONG_TYPE_GROUP_TYPE);
 
         if (mongTypeEntities.isEmpty()) {
             throw new NotExistsMongTypeCodeException();
