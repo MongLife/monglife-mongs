@@ -3,12 +3,11 @@ package com.monglife.mongs.module.mqtt.config;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.monglife.mongs.module.mqtt.consumer.MqttConsumer;
+import lombok.RequiredArgsConstructor;
 import org.eclipse.paho.client.mqttv3.MqttAsyncClient;
 import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -24,29 +23,15 @@ import org.springframework.messaging.MessageChannel;
 import org.springframework.messaging.MessageHandler;
 
 @Configuration
+@RequiredArgsConstructor
 public class MqttConfig {
 
-    @Value("${spring.mqtt.host}")
-    private String HOST;
+    private final MqttConfigProperties mqttConfigProperties;
 
-    @Value("${spring.mqtt.port}")
-    private Integer PORT;
-
-    @Value("${spring.mqtt.username}")
-    private String USERNAME;
-
-    @Value("${spring.mqtt.password}")
-    private String PASSWORD;
-
-    @Value("${spring.mqtt.base-topic}")
-    private String BASE_TOPIC;
-
-    private static final String OUTBOUND_CLIENT_ID = MqttAsyncClient.generateClientId();
-
-    private static final String INBOUND_CLIENT_ID = MqttAsyncClient.generateClientId();
-
-    @Bean
-    @ConditionalOnMissingBean
+    /**
+     * Mqtt ObjectMapper
+     */
+    @Bean("moduleMqttObjectMapper")
     public ObjectMapper objectMapper() {
         ObjectMapper objectMapper = new ObjectMapper();
         objectMapper.registerModule(new JavaTimeModule());
@@ -62,14 +47,13 @@ public class MqttConfig {
         DefaultMqttPahoClientFactory factory = new DefaultMqttPahoClientFactory();
         MqttConnectOptions options = new MqttConnectOptions();
 
-        options.setCleanSession(true);
         options.setConnectionTimeout(30);
         options.setKeepAliveInterval(60);
         options.setAutomaticReconnect(true);
 
-        options.setServerURIs(new String[]{ "tcp://" + HOST + ":" + PORT });
-        options.setUserName(USERNAME);
-        options.setPassword(PASSWORD.toCharArray());
+        options.setServerURIs(new String[]{ "tcp://" + mqttConfigProperties.host + ":" + mqttConfigProperties.port });
+        options.setUserName(mqttConfigProperties.userName);
+        options.setPassword(mqttConfigProperties.password.toCharArray());
 
         factory.setConnectionOptions(options);
 
@@ -88,11 +72,11 @@ public class MqttConfig {
     @ServiceActivator(inputChannel = "mqttOutboundChannel")
     public MessageHandler mqttOutbound(@Qualifier("mqttClientFactory") MqttPahoClientFactory mqttPahoClientFactory) {
 
-        MqttPahoMessageHandler messageHandler = new MqttPahoMessageHandler(OUTBOUND_CLIENT_ID, mqttPahoClientFactory);
+        MqttPahoMessageHandler messageHandler = new MqttPahoMessageHandler(MqttAsyncClient.generateClientId(), mqttPahoClientFactory);
 
         messageHandler.setAsync(true);
         messageHandler.setDefaultQos(2);
-        messageHandler.setDefaultTopic(BASE_TOPIC + "/error");
+        messageHandler.setDefaultTopic(mqttConfigProperties.publisher.baseTopic + "/error");
 
         return messageHandler;
     }
@@ -101,27 +85,32 @@ public class MqttConfig {
      * Mqtt Inbound Configuration
      */
     @Bean
+    @ConditionalOnProperty(value = "module.mqtt.consumer.enabled", havingValue = "true", matchIfMissing = false)
     public MessageChannel mqttInboundChannel() {
         return new DirectChannel();
     }
 
     @Bean
-    @ConditionalOnProperty(value = "spring.mqtt.consume", havingValue = "true")
+    @ConditionalOnProperty(value = "module.mqtt.consumer.enabled", havingValue = "true", matchIfMissing = false)
     public MessageProducer mqttInboundMessageDrivenAdapter(
             @Qualifier("mqttInboundChannel") MessageChannel mqttInboundChannel,
             @Qualifier("mqttClientFactory") MqttPahoClientFactory mqttPahoClientFactory
     ) {
-        MqttPahoMessageDrivenChannelAdapter adapter = new MqttPahoMessageDrivenChannelAdapter(INBOUND_CLIENT_ID, mqttPahoClientFactory, BASE_TOPIC + "/#");
+        MqttPahoMessageDrivenChannelAdapter adapter = new MqttPahoMessageDrivenChannelAdapter(MqttAsyncClient.generateClientId(), mqttPahoClientFactory);
+
         adapter.setCompletionTimeout(5000);
         adapter.setConverter(new DefaultPahoMessageConverter());
         adapter.setQos(2);
         adapter.setOutputChannel(mqttInboundChannel);
 
+        // 구독 토픽 추가
+        mqttConfigProperties.consumer.topics.forEach(adapter::addTopic);
+
         return adapter;
     }
 
     @Bean
-    @ConditionalOnProperty(value = "spring.mqtt.consume", havingValue = "true")
+    @ConditionalOnProperty(value = "module.mqtt.consumer.enabled", havingValue = "true", matchIfMissing = false)
     @ServiceActivator(inputChannel = "mqttInboundChannel")
     public MessageHandler mqttInbound(@Autowired MqttConsumer mqttConsumer) {
         return mqttConsumer;

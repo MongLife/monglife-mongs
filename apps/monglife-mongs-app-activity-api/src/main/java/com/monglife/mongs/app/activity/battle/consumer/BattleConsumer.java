@@ -28,39 +28,10 @@ import java.util.List;
 import java.util.Set;
 
 @MqttConsumer
-@MqttMapping("/battle/match")
 @RequiredArgsConstructor
 public class BattleConsumer {
 
     private final BattleService battleService;
-
-    /**
-     * 배틀룸 생성
-     * @param createBattleRequestDto 매칭된 플레이어 정보
-     * @return 배틀룸 생성 시, 비동기 응답
-     */
-    @MqttPublish
-    public MqttResponseEntity<ResponseDto<CreateBattleResponseDto>> createBattle(CreateBattleRequestDto createBattleRequestDto) {
-
-        Set<CreateBattleVo> createBattleVoSet = createBattleRequestDto.getCreateBattleVoSet();
-
-        CreateBattleDto createBattleDto = battleService.createBattle(createBattleVoSet);
-
-        List<String> topics = createBattleRequestDto.getCreateBattleVoSet().stream()
-                .filter(createBattleVo -> !createBattleVo.getIsBot())
-                .map(createBattleVo -> "battle/search/" + createBattleVo.getDeviceId())
-                .toList();
-
-        Long roomId = createBattleDto.getRoomId();
-        Set<MatchPlayerVo> battlePlayers = createBattleDto.getBattlePlayers();
-
-        return MqttResponseEntity
-                .body(BattleResponse.APP_ACTIVITY_BATTLE_FIND_MATCHING.toResponseDto(CreateBattleResponseDto.builder()
-                        .roomId(roomId)
-                        .battlePlayers(battlePlayers)
-                        .build()))
-                .topics(topics);
-    }
 
     /**
      * 배틀룸 입장
@@ -68,8 +39,8 @@ public class BattleConsumer {
      * @param enterBattleRequestDto player ID
      * @return 입장 완료 시, 비동기 응답
      */
-    @MqttPublish
-    @MqttMapping("/{roomId}/enter")
+    @MqttPublish("/battle/match/{topic}")
+    @MqttMapping("/battle/match/{roomId}/enter")
     public MqttResponseEntity<ResponseDto<FightBattleResponseDto>> enterBattle(
             @PathVariable("roomId") Long roomId,
             @MqttPayload EnterBattleRequestDto enterBattleRequestDto
@@ -79,9 +50,6 @@ public class BattleConsumer {
         FightBattleDto fightBattleDto = battleService.enterBattle(roomId, playerId);
 
         if (fightBattleDto != null) {
-
-            List<String> topics = List.of("battle/match/" + roomId);
-
             return MqttResponseEntity
                     .body(BattleResponse.APP_ACTIVITY_BATTLE_ENTER_ALL_BATTLE_PLAYER.toResponseDto(FightBattleResponseDto.builder()
                             .roomId(fightBattleDto.getRoomId())
@@ -89,7 +57,7 @@ public class BattleConsumer {
                             .isLastRound(fightBattleDto.getIsLastRound())
                             .battlePlayers(fightBattleDto.getBattlePlayers())
                             .build()))
-                    .topics(topics);
+                    .topic(roomId.toString());
 
         } else {
             return MqttResponseEntity.body();
@@ -102,8 +70,8 @@ public class BattleConsumer {
      * @param exitBattleRequestDto player ID
      * @return 모든 플레이어 퇴장 시, 비동기 응답
      */
-    @MqttPublish
-    @MqttMapping("/{roomId}/exit")
+    @MqttPublish("/battle/match/{topic}")
+    @MqttMapping("/battle/match/{roomId}/exit")
     public MqttResponseEntity<ResponseDto<OverBattleResponseDto>> exitBattle(
             @PathVariable("roomId") Long roomId,
             @MqttPayload ExitBattleRequestDto exitBattleRequestDto
@@ -114,16 +82,13 @@ public class BattleConsumer {
         OverBattleDto overBattleDto = battleService.exitBattle(roomId, playerId);
 
         if (overBattleDto != null) {
-
-            List<String> topics = List.of("battle/match/" + roomId);
-
             return MqttResponseEntity
                     .body(BattleResponse.APP_ACTIVITY_BATTLE_OVER_BATTLE.toResponseDto(OverBattleResponseDto.builder()
                             .roomId(overBattleDto.getRoomId())
                             .winPlayerId(overBattleDto.getWinPlayerId())
                             .winMongTypeCode(overBattleDto.getWinMongTypeCode())
                             .build()))
-                    .topics(topics);
+                    .topic(roomId.toString());
         } else {
             return MqttResponseEntity.body();
         }
@@ -135,8 +100,8 @@ public class BattleConsumer {
      * @param pickBattleRequestDto 선택 정보
      * @return 모든 플레이어 라운드 선택 완료 시, 비동기 응답
      */
-    @MqttPublish
-    @MqttMapping("/{roomId}/pick")
+    @MqttPublish("/battle/match/{topic}")
+    @MqttMapping("/battle/match/{roomId}/pick")
     public MqttResponseEntity<ResponseDto<FightBattleResponseDto>> pickBattle(
             @PathVariable("roomId") Long roomId,
             @MqttPayload PickBattleRequestDto pickBattleRequestDto
@@ -149,9 +114,6 @@ public class BattleConsumer {
         FightBattleDto fightBattleDto = battleService.pickBattle(roomId, playerId, targetPlayerId, matchRoundCode);
 
         if (fightBattleDto != null) {
-
-            List<String> topics = List.of("battle/match/" + roomId);
-
             return MqttResponseEntity
                     .body(BattleResponse.APP_ACTIVITY_BATTLE_FIGHT_BATTLE.toResponseDto(FightBattleResponseDto.builder()
                             .roomId(roomId)
@@ -159,7 +121,7 @@ public class BattleConsumer {
                             .battlePlayers(fightBattleDto.getBattlePlayers())
                             .isLastRound(fightBattleDto.getIsLastRound())
                             .build()))
-                    .topics(topics);
+                    .topic(roomId.toString());
         } else {
             return MqttResponseEntity.body();
         }

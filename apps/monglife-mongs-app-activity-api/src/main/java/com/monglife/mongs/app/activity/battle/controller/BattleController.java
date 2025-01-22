@@ -24,7 +24,6 @@ public class BattleController {
 
     private final BattleService battleService;
 
-
     /**
      * 매칭 대기열 등록
      * @param passport 패스 포트

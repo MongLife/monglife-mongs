@@ -235,6 +235,7 @@ public class ManagementService {
      */
     @Transactional
     @VerifyMongAccount
+    @AllowMongState(stateCodes = { MongStateCode.GRADUATE_READY })
     @DenyMongState(stateCodes = { MongStateCode.DEAD }, egg = true)
     public void graduateMong(Long accountId, Long mongId) {
 

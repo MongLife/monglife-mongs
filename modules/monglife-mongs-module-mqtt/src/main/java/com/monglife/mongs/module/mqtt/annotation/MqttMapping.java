@@ -11,5 +11,6 @@ import java.lang.annotation.*;
 @Mapping
 @Indexed
 public @interface MqttMapping {
-    String value();
+
+    String value() default "";
 }

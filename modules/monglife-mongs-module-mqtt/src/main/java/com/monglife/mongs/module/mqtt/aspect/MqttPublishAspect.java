@@ -1,7 +1,9 @@
 package com.monglife.mongs.module.mqtt.aspect;
 
+import com.monglife.mongs.module.mqtt.annotation.MqttPublish;
 import com.monglife.mongs.module.mqtt.dto.MqttResponseEntity;
 import com.monglife.mongs.module.mqtt.service.MqttSendService;
+import com.monglife.mongs.module.mqtt.utils.TopicUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.AfterReturning;
@@ -22,14 +24,19 @@ public class MqttPublishAspect {
         this.mqttSendService = mqttSendService;
     }
 
-    @Pointcut("@annotation(com.monglife.mongs.module.mqtt.annotation.MqttPublish)")
-    private void mqttPublishPointcut() {}
-
     @Pointcut("execution(com.monglife.mongs.module.mqtt.dto.MqttResponseEntity *(..))")
     private void executionPointcut() {}
 
-    @AfterReturning(value = "mqttPublishPointcut() && executionPointcut()", returning = "mqttResponseEntity")
-    public void after(JoinPoint joinPoint, MqttResponseEntity<?> mqttResponseEntity) {
-        mqttResponseEntity.getTopics().forEach(topic -> mqttSendService.sendMessage(topic, mqttResponseEntity.getBody()));
+    @AfterReturning(value = "executionPointcut() && @annotation(mqttPublish)", returning = "mqttResponseEntity")
+    public void afterReturning(JoinPoint joinPoint, MqttPublish mqttPublish, MqttResponseEntity<?> mqttResponseEntity) {
+
+        String prefixTopic = TopicUtil.preProcessTopic(mqttPublish.value());
+
+        for (String topic : mqttResponseEntity.getTopics()) {
+
+            String sendTopic = String.format("%s/%s", prefixTopic, topic);
+
+            mqttSendService.sendMessage(sendTopic, mqttResponseEntity.getBody());
+        }
     }
 }

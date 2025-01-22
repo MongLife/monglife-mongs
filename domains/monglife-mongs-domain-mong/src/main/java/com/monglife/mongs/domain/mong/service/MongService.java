@@ -301,23 +301,6 @@ public class MongService {
         MongEntity mongEntity = lockMongRepository.findByMongIdAndMetaIsActiveIsTrue(mongId)
                 .orElseThrow(() -> new NotExistsMongException(mongId));
 
-        if (mongEntity.isGraduateReady()) {
-            throw new InvalidMongStateException();
-        }
-
-        if (mongEntity.getState().getIsSleep()) {
-            throw new InvalidMongStateException();
-        }
-
-        if (mongEntity.isDead()) {
-            throw new InvalidMongStateException();
-        }
-
-        if (mongEntity.isEgg()) {
-            throw new InvalidMongTypeLevelException(
-                    mongId, mongEntity.getType().getComn().getCode(), mongEntity.getType().getLevel());
-        }
-
         mongEntity.poopClean(DEFAULT_POOP_CLEAN_EXP);
     }
 
@@ -331,15 +314,6 @@ public class MongService {
 
         MongEntity mongEntity = lockMongRepository.findByMongIdAndMetaIsActiveIsTrue(mongId)
                 .orElseThrow(() -> new NotExistsMongException(mongId));
-
-        if (mongEntity.isDead()) {
-            throw new InvalidMongStateException();
-        }
-
-        if (mongEntity.isEgg()) {
-            throw new InvalidMongTypeLevelException(
-                    mongId, mongEntity.getType().getComn().getCode(), mongEntity.getType().getLevel());
-        }
 
         mongEntity.training(patchMongDto);
     }
@@ -462,8 +436,6 @@ public class MongService {
 
         MongEntity mongEntity = lockMongRepository.findByMongIdAndMetaIsActiveIsTrue(mongId)
                 .orElseThrow(() -> new NotExistsMongException(mongId));
-
-        if (!mongEntity.isGraduateReady()) throw new InvalidGraduateException(mongId);
 
         mongEntity.graduate();
     }

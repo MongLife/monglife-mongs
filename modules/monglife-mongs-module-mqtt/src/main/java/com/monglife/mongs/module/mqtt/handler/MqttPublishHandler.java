@@ -1,13 +1,12 @@
-package com.monglife.mongs.module.mqtt.config;
+package com.monglife.mongs.module.mqtt.handler;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.monglife.mongs.module.mqtt.annotation.*;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.eclipse.paho.client.mqttv3.MqttClient;
-import org.eclipse.paho.client.mqttv3.MqttMessage;
 import org.springframework.aop.framework.AopProxyUtils;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,7 +22,8 @@ import java.util.*;
 
 @Slf4j
 @Component
-public class MqttMappingHandler implements InitializingBean {
+@RequiredArgsConstructor
+public class MqttPublishHandler implements InitializingBean {
 
     @Value("${spring.mqtt.base-topic}")
     private String BASE_TOPIC;
@@ -38,19 +38,30 @@ public class MqttMappingHandler implements InitializingBean {
 
     private final ObjectMapper objectMapper;
 
-
     @Autowired
-    public MqttMappingHandler(ApplicationContext applicationContext, ObjectMapper objectMapper) {
+    public MqttPublishHandler(ApplicationContext applicationContext, ObjectMapper objectMapper) {
         this.applicationContext = applicationContext;
         this.mqttMethodMapping = new HashMap<>();
         this.mqttExceptionHandlerMapping = new HashMap<>();
         this.objectMapper = objectMapper;
     }
 
+    /**
+     * 전송 메서드 스캔
+     */
     @Override
     public void afterPropertiesSet() {
-        this.mqttMappingScan();
-        this.mqttExceptionScan();
+
+        String[] beanNames = applicationContext.getBeanNamesForAnnotation(MqttPublish.class);
+
+        for (String beanName : beanNames) {
+            Object bean = applicationContext.getBean(beanName);
+            Class<?> beanClass = AopProxyUtils.ultimateTargetClass(bean);
+
+            MqttPublish mqttPublish = beanClass.getAnnotation(MqttPublish.class);
+
+//            String clazzTopic =
+        }
     }
 
     /**

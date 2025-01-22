@@ -6,6 +6,8 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 
 @Getter
@@ -45,8 +47,13 @@ public class MqttResponseEntity<T> {
             return this;
         }
 
+        public MqttResponseEntity<T> topic(final String... topics) {
+            this.topics = Arrays.stream(topics).toList();
+            return new MqttResponseEntity<T>(this.body, this.topics);
+        }
+
         public MqttResponseEntity<T> topics(final List<String> topics) {
-            this.topics = topics;
+            this.topics = topics.stream().toList();
             return new MqttResponseEntity<T>(this.body, this.topics);
         }
     }
