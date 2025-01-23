@@ -27,7 +27,7 @@ public class ManagementInternalController {
      * @param chargePayPointRequestDto 증가 정보
      * @return 성공 응답
      */
-    @PostMapping("/payPoint/{mongId}")
+    @PatchMapping("/payPoint/{mongId}")
     public ResponseEntity<ResponseDto<?>> chargePayPoint(@AuthenticationPrincipal Passport passport, @PathVariable("mongId") Long mongId, @RequestBody ChargePayPointRequestDto chargePayPointRequestDto) {
 
         Long accountId = passport.getAccountId();

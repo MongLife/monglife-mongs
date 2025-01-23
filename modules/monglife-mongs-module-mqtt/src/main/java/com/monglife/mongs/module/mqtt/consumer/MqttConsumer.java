@@ -1,6 +1,6 @@
 package com.monglife.mongs.module.mqtt.consumer;
 
-import com.monglife.mongs.module.mqtt.handler.MqttExecuteHandler;
+import com.monglife.mongs.module.mqtt.bean.MqttExecuteBean;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.integration.annotation.MessagingGateway;
@@ -16,7 +16,7 @@ import org.springframework.stereotype.Component;
 @MessagingGateway(defaultRequestChannel = "mqttInboundChannel")
 public class MqttConsumer implements MessageHandler {
 
-    private final MqttExecuteHandler mqttExecuteHandler;
+    private final MqttExecuteBean mqttExecuteBean;
 
     @Override
     public void handleMessage(Message<?> message) throws MessagingException {
@@ -25,9 +25,9 @@ public class MqttConsumer implements MessageHandler {
         String payload = (String) message.getPayload();
 
         try {
-            mqttExecuteHandler.invoke(topic == null ? "" : topic, payload);
+            mqttExecuteBean.invoke(topic == null ? "" : topic, payload);
         } catch (Exception e) {
-            throw new MessagingException(e.getMessage(), e);
+            throw new MessagingException(message, e);
         }
     }
 }

@@ -32,6 +32,8 @@ public class MqttConfigProperties {
 
         public Boolean enabled = false;
 
+        public String baseTopic = "";
+
         public List<String> topics = new ArrayList<>();
     }
 
@@ -39,6 +41,6 @@ public class MqttConfigProperties {
     @Setter
     public static class Publisher {
 
-        public String baseTopic = "topic";
+        public String baseTopic = "";
     }
 }

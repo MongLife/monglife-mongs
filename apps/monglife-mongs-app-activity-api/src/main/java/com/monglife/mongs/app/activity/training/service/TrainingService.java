@@ -15,7 +15,15 @@ public class TrainingService {
     private final ManagementService managementService;
 
     /**
-     * 몽 훈련 처리
+     * 훈련 달리기 스코어 당 페이 포인트 조회
+     * @return 스코어 당 페이 포인트
+     */
+    public Integer getTrainingRunnerPayPoint() {
+        return trainingProperties.runner.payPoint;
+    }
+
+    /**
+     * 훈련 달리기 처리
      * 불가능 상태 : 죽음, 알
      * @param accountId 계정 ID
      * @param mongId 몽 ID

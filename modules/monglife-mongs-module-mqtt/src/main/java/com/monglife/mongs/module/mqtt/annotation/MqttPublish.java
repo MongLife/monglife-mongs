@@ -2,7 +2,7 @@ package com.monglife.mongs.module.mqtt.annotation;
 
 import java.lang.annotation.*;
 
-@Target({ ElementType.METHOD, ElementType.TYPE })
+@Target({ ElementType.METHOD })
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
 public @interface MqttPublish {

@@ -25,10 +25,10 @@ import org.springframework.transaction.event.TransactionalEventListener;
 @RequiredArgsConstructor
 public class MongObserveEventListener {
 
-    private static final String SERVICE_DOMAIN = "management";
-
     @Value("${application.app-package-name}")
     private String APP_PACKAGE_NAME;
+
+    private static final String SERVICE_DOMAIN = "management";
 
     private final TaskScheduleProperties properties;
 

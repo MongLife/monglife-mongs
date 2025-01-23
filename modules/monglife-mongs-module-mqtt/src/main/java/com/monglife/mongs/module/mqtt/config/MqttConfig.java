@@ -3,6 +3,7 @@ package com.monglife.mongs.module.mqtt.config;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.monglife.mongs.module.mqtt.consumer.MqttConsumer;
+import com.monglife.mongs.module.mqtt.utils.TopicUtil;
 import lombok.RequiredArgsConstructor;
 import org.eclipse.paho.client.mqttv3.MqttAsyncClient;
 import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
@@ -76,7 +77,7 @@ public class MqttConfig {
 
         messageHandler.setAsync(true);
         messageHandler.setDefaultQos(2);
-        messageHandler.setDefaultTopic(mqttConfigProperties.publisher.baseTopic + "/error");
+        messageHandler.setDefaultTopic(TopicUtil.preProcessTopic(mqttConfigProperties.publisher.baseTopic) + "/error");
 
         return messageHandler;
     }

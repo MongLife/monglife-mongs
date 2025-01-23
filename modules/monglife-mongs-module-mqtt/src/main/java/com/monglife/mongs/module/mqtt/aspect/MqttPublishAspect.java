@@ -1,6 +1,8 @@
 package com.monglife.mongs.module.mqtt.aspect;
 
 import com.monglife.mongs.module.mqtt.annotation.MqttPublish;
+import com.monglife.mongs.module.mqtt.bean.MqttPublishBean;
+import com.monglife.mongs.module.mqtt.config.MqttConfigProperties;
 import com.monglife.mongs.module.mqtt.dto.MqttResponseEntity;
 import com.monglife.mongs.module.mqtt.service.MqttSendService;
 import com.monglife.mongs.module.mqtt.utils.TopicUtil;
@@ -30,11 +32,11 @@ public class MqttPublishAspect {
     @AfterReturning(value = "executionPointcut() && @annotation(mqttPublish)", returning = "mqttResponseEntity")
     public void afterReturning(JoinPoint joinPoint, MqttPublish mqttPublish, MqttResponseEntity<?> mqttResponseEntity) {
 
-        String prefixTopic = TopicUtil.preProcessTopic(mqttPublish.value());
+        String annotationTopic = TopicUtil.preProcessTopic(mqttPublish.value());
 
         for (String topic : mqttResponseEntity.getTopics()) {
 
-            String sendTopic = String.format("%s/%s", prefixTopic, topic);
+            String sendTopic = annotationTopic.replace(MqttPublishBean.TOPIC_PREFIX, topic);
 
             mqttSendService.sendMessage(sendTopic, mqttResponseEntity.getBody());
         }

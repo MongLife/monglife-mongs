@@ -16,4 +16,34 @@ public class TopicUtil {
 
         return nextTopic;
     }
+
+    public static String generateTopic(String ... topics) {
+
+        if (topics == null || topics.length == 0) return "";
+
+        StringBuilder generateTopic = new StringBuilder(topics[0]);
+
+        for (int index = 1; index < topics.length; index++) {
+            String topic = topics[index];
+
+            if (topic.isBlank()) continue;
+
+            generateTopic.append("/").append(topic);
+        }
+
+        return generateTopic.toString();
+    }
+
+    public static Integer countTopicPrefix(String topic, String topicPrefix) {
+
+        int count = 0;
+        int index = 0;
+
+        while ((index = topic.indexOf(topicPrefix, index)) != -1) {
+            count++;
+            index += topicPrefix.length();
+        }
+
+        return count;
+    }
 }

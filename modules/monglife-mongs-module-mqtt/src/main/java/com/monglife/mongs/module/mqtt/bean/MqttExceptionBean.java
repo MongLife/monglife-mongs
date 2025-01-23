@@ -1,6 +1,7 @@
-package com.monglife.mongs.module.mqtt.handler;
+package com.monglife.mongs.module.mqtt.bean;
 
 import com.monglife.mongs.module.mqtt.annotation.MqttConsumerAdvice;
+import com.monglife.mongs.module.mqtt.annotation.MqttExceptionHandler;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.aop.framework.AopProxyUtils;
@@ -18,14 +19,14 @@ import java.util.Map;
 @Slf4j
 @Component
 @RequiredArgsConstructor
-public class MqttExceptionHandler implements InitializingBean {
+public class MqttExceptionBean implements InitializingBean {
 
     private final ApplicationContext applicationContext;
 
     private final Map<Class<? extends Throwable>, Method> mqttExceptionHandlerMapping;
 
     @Autowired
-    public MqttExceptionHandler(ApplicationContext applicationContext) {
+    public MqttExceptionBean(ApplicationContext applicationContext) {
         this.applicationContext = applicationContext;
         this.mqttExceptionHandlerMapping = new HashMap<>();
     }
@@ -47,9 +48,9 @@ public class MqttExceptionHandler implements InitializingBean {
                 if (method.getReturnType() != void.class) continue;
 
                 // MqttExceptionHandler Annotation 을 가진 메서드
-                if (method.isAnnotationPresent(com.monglife.mongs.module.mqtt.annotation.MqttExceptionHandler.class)) {
-                    com.monglife.mongs.module.mqtt.annotation.MqttExceptionHandler mqttExceptionHandler = method.getAnnotation(com.monglife.mongs.module.mqtt.annotation.MqttExceptionHandler.class);
-                    Class<? extends Throwable>[] exceptions = mqttExceptionHandler.value();
+                if (method.isAnnotationPresent(MqttExceptionHandler.class)) {
+                    MqttExceptionHandler mqttExceptionBean = method.getAnnotation(MqttExceptionHandler.class);
+                    Class<? extends Throwable>[] exceptions = mqttExceptionBean.value();
 
                     for (Class<? extends Throwable> exception : exceptions) {
                         mqttExceptionHandlerMapping.put(exception, method);
@@ -57,12 +58,6 @@ public class MqttExceptionHandler implements InitializingBean {
                 }
             }
         }
-
-        // TODO: for logging
-        log.info("\n#########################################################################################################\n" +
-                "mqttExceptionHandlerMapping: {}\n" +
-                "#########################################################################################################"
-                , mqttExceptionHandlerMapping.keySet());
     }
 
     /**
@@ -81,12 +76,14 @@ public class MqttExceptionHandler implements InitializingBean {
                     method.setAccessible(true);
                     method.invoke(exceptionHandlerClazzBean, Collections.singletonList(throwable).toArray());
                 } catch (IllegalAccessException | InvocationTargetException e) {
-                    log.error("invoke mqtt exception handler method error.");
+                    log.error("invoke mqtt exception bean method error.");
                 }
+
                 return;
             }
         }
-        // 예외 클래스에서 처리 못하는 경우
+
+        // 예외 클래스에서 처리 못하는 경우 throw
         throw new Exception(throwable);
     }
 }

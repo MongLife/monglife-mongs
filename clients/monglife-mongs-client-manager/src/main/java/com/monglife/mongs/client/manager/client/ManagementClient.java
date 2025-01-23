@@ -7,15 +7,12 @@ import com.monglife.mongs.client.manager.dto.response.GetMinimalMongResponseDto;
 import com.monglife.mongs.module.feign.config.FeignClientConfig;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.*;
 
 @FeignClient(name = "MONGS-MANAGER", path = "/manager", configuration = FeignClientConfig.class)
 public interface ManagementClient {
 
-    @PostMapping("/internal/management/payPoint/{mongId}")
+    @PatchMapping("/internal/management/payPoint/{mongId}")
     ResponseEntity<ResponseDto<?>> chargePayPoint(@PathVariable("mongId") Long mongId, @RequestBody ChargePayPointRequestDto chargePayPointRequestDto);
 
     @PostMapping("/internal/management/{mongId}")

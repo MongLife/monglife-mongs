@@ -33,6 +33,7 @@ public class BattleService {
     private final MatchService matchService;
 
     private final MatchingService matchingService;
+
     private final ManagementService managementService;
 
     /**

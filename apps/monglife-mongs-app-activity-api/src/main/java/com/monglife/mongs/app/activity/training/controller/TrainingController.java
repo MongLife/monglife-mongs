@@ -2,6 +2,7 @@ package com.monglife.mongs.app.activity.training.controller;
 
 import com.monglife.core.dto.response.ResponseDto;
 import com.monglife.mongs.app.activity.training.dto.request.TrainingRunnerRequestDto;
+import com.monglife.mongs.app.activity.training.dto.response.GetTrainingRunnerResponseDto;
 import com.monglife.mongs.app.activity.training.enums.TrainingResponse;
 import com.monglife.mongs.app.activity.training.service.TrainingService;
 import com.monglife.mongs.module.security.global.principal.Passport;
@@ -18,6 +19,22 @@ public class TrainingController {
     private final TrainingService trainingService;
 
     /**
+     * 훈련 달리기 정보 조회
+     * @return 훈련 달리기 정보
+     */
+    @GetMapping("/runner")
+    public ResponseEntity<ResponseDto<GetTrainingRunnerResponseDto>> getTrainingRunner() {
+
+        Integer payPoint = trainingService.getTrainingRunnerPayPoint();
+
+        GetTrainingRunnerResponseDto getTrainingRunnerResponseDto = GetTrainingRunnerResponseDto.builder()
+                .payPoint(payPoint)
+                .build();
+
+        return ResponseEntity.ok(TrainingResponse.APP_ACTIVITY_GET_TRAINING_RUNNER.toResponseDto(getTrainingRunnerResponseDto));
+    }
+
+    /**
      * 훈련 달리기 완료
      * @param passport 패스 포트
      * @param mongId 몽 ID
@@ -32,6 +49,6 @@ public class TrainingController {
 
         trainingService.trainingRunner(accountId, mongId, score);
 
-        return ResponseEntity.ok(TrainingResponse.APP_ACTIVITY_TRAINING_END_RUNNER.toResponseDto());
+        return ResponseEntity.ok(TrainingResponse.APP_ACTIVITY_TRAINING_RUNNER.toResponseDto());
     }
 }

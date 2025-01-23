@@ -23,7 +23,7 @@ import java.util.Set;
 public class ManagerExceptionHandler {
 
     /**
-     * exception handler
+     * exception bean
      * @param e 예외 객체
      * @return 에러 응답 객체
      */

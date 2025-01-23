@@ -1,10 +1,11 @@
-package com.monglife.mongs.module.mqtt.handler;
+package com.monglife.mongs.module.mqtt.bean;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.monglife.mongs.module.mqtt.annotation.MqttConsumer;
 import com.monglife.mongs.module.mqtt.annotation.MqttMapping;
 import com.monglife.mongs.module.mqtt.annotation.MqttPayload;
+import com.monglife.mongs.module.mqtt.config.MqttConfigProperties;
 import com.monglife.mongs.module.mqtt.utils.TopicUtil;
 import lombok.Builder;
 import lombok.Getter;
@@ -24,7 +25,7 @@ import java.util.*;
 
 @Slf4j
 @Component
-public class MqttMappingHandler implements InitializingBean {
+public class MqttMappingBean implements InitializingBean {
 
     private static final String WILD_CARD_WORD = "+";
 
@@ -34,14 +35,18 @@ public class MqttMappingHandler implements InitializingBean {
 
     private final ObjectMapper objectMapper;
 
+    private final MqttConfigProperties mqttConfigProperties;
+
     @Autowired
-    public MqttMappingHandler(
+    public MqttMappingBean(
             ApplicationContext applicationContext,
+            MqttConfigProperties mqttConfigProperties,
             @Qualifier("moduleMqttObjectMapper") ObjectMapper objectMapper
     ) {
         this.applicationContext = applicationContext;
         this.mqttMethodMapping = new HashMap<>();
         this.objectMapper = objectMapper;
+        this.mqttConfigProperties = mqttConfigProperties;
     }
 
     /**
@@ -56,28 +61,37 @@ public class MqttMappingHandler implements InitializingBean {
             Object bean = applicationContext.getBean(beanName);
             Class<?> beanClass = AopProxyUtils.ultimateTargetClass(bean);
 
-            MqttMapping mqttMapping = beanClass.getAnnotation(MqttMapping.class);
+            MqttMapping clazzMqttMapping = beanClass.getAnnotation(MqttMapping.class);
 
-            String clazzTopic = mqttMapping == null ? "" : TopicUtil.preProcessTopic(mqttMapping.value());
+            String clazzTopic = clazzMqttMapping == null ? "" : TopicUtil.preProcessTopic(clazzMqttMapping.value());
 
             for (Method method : beanClass.getDeclaredMethods()) {
                 // 메서드 파라미터에서 MqttPayload 가 다건인지 확인
-                if (Arrays.stream(method.getParameters()).filter(parameter -> parameter.isAnnotationPresent(MqttPayload.class)).toList().size() > 1) {
-                    throw new RuntimeException(beanClass.getName() + "#" + method.getName() + " : Too many @MqttPayload");
+
+                int mqttPayloadCount = Arrays.stream(method.getParameters())
+                        .filter(parameter -> parameter.isAnnotationPresent(MqttPayload.class))
+                        .toList()
+                        .size();
+
+                if (mqttPayloadCount > 1) {
+                    throw new RuntimeException(beanClass.getName() + "#" + method.getName() + " : too many @MqttPayload parameters.");
                 }
 
                 if (method.isAnnotationPresent(MqttMapping.class)) {
 
-                    mqttMapping = method.getAnnotation(MqttMapping.class);
+                    MqttMapping methodMqttMapping = method.getAnnotation(MqttMapping.class);
 
-                    String methodTopic = TopicUtil.preProcessTopic(mqttMapping.value());
+                    String methodTopic = TopicUtil.preProcessTopic(methodMqttMapping.value());
 
-                    String topic = TopicUtil.preProcessTopic(String.format("%s/%s", clazzTopic, methodTopic));
+                    String baseTopic = TopicUtil.preProcessTopic(mqttConfigProperties.consumer.baseTopic);
+
+                    String topic = TopicUtil.generateTopic(baseTopic, clazzTopic, methodTopic);
+
                     // 파라미터 ( {%} ) 을 WILD_CARD_WORD 로 대치 후 key 값으로 사용
                     String key = topic.replaceAll("\\{[a-zA-Z0-9]+}", WILD_CARD_WORD);
 
                     if (mqttMethodMapping.containsKey(key)) {
-                        throw new RuntimeException(beanClass.getName() + "#" + method.getName() + " : Duplicate mapping methods");
+                        throw new RuntimeException(beanClass.getName() + "#" + method.getName() + " : duplicate mapping methods.");
                     } else {
                         mqttMethodMapping.put(key, TopicMethod.builder()
                                 .method(method)
@@ -88,12 +102,6 @@ public class MqttMappingHandler implements InitializingBean {
                 }
             }
         }
-
-        // TODO: for logging
-        log.info("\n#########################################################################################################\n" +
-                "mappingMathod: {}\n" +
-                "#########################################################################################################"
-        , mqttMethodMapping.keySet());
     }
 
     /**

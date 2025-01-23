@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.monglife.mongs.module.mqtt.client.MqttOutBoundClient;
 import com.monglife.mongs.module.mqtt.config.MqttConfigProperties;
+import com.monglife.mongs.module.mqtt.utils.TopicUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -13,20 +14,20 @@ import org.springframework.stereotype.Service;
 @Service
 public class MqttSendService {
 
+    private final MqttConfigProperties mqttConfigProperties;
+
     private final MqttOutBoundClient mqttOutBoundClient;
 
     private final ObjectMapper objectMapper;
 
-    private final MqttConfigProperties mqttConfigProperties;
-
     public MqttSendService(
-            @Autowired MqttOutBoundClient mqttOutBoundClient,
             @Autowired MqttConfigProperties mqttConfigProperties,
+            @Autowired MqttOutBoundClient mqttOutBoundClient,
             @Qualifier("moduleMqttObjectMapper") ObjectMapper objectMapper
     ) {
+        this.mqttConfigProperties = mqttConfigProperties;
         this.mqttOutBoundClient = mqttOutBoundClient;
         this.objectMapper = objectMapper;
-        this.mqttConfigProperties = mqttConfigProperties;
     }
 
     public <T> void sendMessage(String topic, T responseDto) {
@@ -45,22 +46,10 @@ public class MqttSendService {
      */
     private void sendMessage(String topic, String payload) {
 
-        while (topic.startsWith("/")) {
-            topic = topic.substring(1);
-        }
+        String baseTopic = TopicUtil.preProcessTopic(mqttConfigProperties.publisher.baseTopic);
 
-        while (topic.endsWith("/")) {
-            topic = topic.substring(0, topic.length() - 1);
-        }
+        String sendTopic = TopicUtil.generateTopic(baseTopic, topic);
 
-        String sendTopic;
-
-        if (topic.isBlank()) {
-            sendTopic = mqttConfigProperties.publisher.baseTopic;
-        } else {
-            sendTopic = String.format("%s/%s", mqttConfigProperties.publisher.baseTopic, topic);
-        }
-
-        mqttOutBoundClient.send(sendTopic, payload);
+        mqttOutBoundClient.send(TopicUtil.preProcessTopic(sendTopic), payload);
     }
 }

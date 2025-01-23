@@ -1,7 +1,6 @@
 package com.monglife.mongs.module.feign.exception;
 
 import com.monglife.core.dto.response.ResponseDto;
-import feign.RetryableException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -14,7 +13,7 @@ import java.util.Map;
 public class FeignExceptionHandler {
 
     /**
-     * exception handler
+     * exception bean
      * @param e 예외 객체
      * @return 에러 응답 객체
      */

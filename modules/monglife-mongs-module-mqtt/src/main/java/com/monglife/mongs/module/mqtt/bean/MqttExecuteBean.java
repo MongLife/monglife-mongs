@@ -1,4 +1,4 @@
-package com.monglife.mongs.module.mqtt.handler;
+package com.monglife.mongs.module.mqtt.bean;
 
 import com.monglife.mongs.module.mqtt.utils.TopicUtil;
 import lombok.RequiredArgsConstructor;
@@ -10,11 +10,11 @@ import java.util.List;
 @Slf4j
 @Component
 @RequiredArgsConstructor
-public class MqttExecuteHandler {
+public class MqttExecuteBean {
 
-    private final MqttMappingHandler mqttMappingHandler;
+    private final MqttMappingBean mqttMappingBean;
 
-    private final MqttExceptionHandler mqttExceptionHandler;
+    private final MqttExceptionBean mqttExceptionBean;
 
     /**
      * 매서드 매핑 및 실행
@@ -25,16 +25,16 @@ public class MqttExecuteHandler {
 
         topic = TopicUtil.preProcessTopic(topic);
 
-        List<MqttMappingHandler.TopicMethod> topicMappingMethods = mqttMappingHandler.getTopicMappingMethods(topic);
+        List<MqttMappingBean.TopicMethod> topicMappingMethods = mqttMappingBean.getTopicMappingMethods(topic);
 
         // topic 과 매칭되는 메서드가 1개인 경우
         if (topicMappingMethods.size() == 1) {
             try {
                 // 매칭 메서드 실행
-                mqttMappingHandler.invoke(topic, payload, topicMappingMethods.get(0));
+                mqttMappingBean.invoke(topic, payload, topicMappingMethods.get(0));
             } catch (Throwable throwable) {
                 // 예외 처리 메서드 실행
-                mqttExceptionHandler.invoke(throwable);
+                mqttExceptionBean.invoke(throwable);
             }
         }
         // topic 과 매칭되는 메서드가 없는 경우
