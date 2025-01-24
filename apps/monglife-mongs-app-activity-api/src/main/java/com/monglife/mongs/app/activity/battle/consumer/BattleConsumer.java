@@ -1,6 +1,5 @@
 package com.monglife.mongs.app.activity.battle.consumer;
 
-import com.monglife.core.dto.response.ResponseDto;
 import com.monglife.mongs.app.activity.battle.dto.etc.FightBattleDto;
 import com.monglife.mongs.app.activity.battle.dto.etc.OverBattleDto;
 import com.monglife.mongs.app.activity.battle.dto.request.EnterBattleRequestDto;
@@ -8,15 +7,12 @@ import com.monglife.mongs.app.activity.battle.dto.request.ExitBattleRequestDto;
 import com.monglife.mongs.app.activity.battle.dto.request.PickBattleRequestDto;
 import com.monglife.mongs.app.activity.battle.dto.response.FightBattleResponseDto;
 import com.monglife.mongs.app.activity.battle.dto.response.OverBattleResponseDto;
-import com.monglife.mongs.app.activity.battle.enums.BattleResponse;
 import com.monglife.mongs.app.activity.battle.publisher.BattlePublisher;
 import com.monglife.mongs.app.activity.battle.service.BattleService;
 import com.monglife.mongs.domain.match.enums.MatchRoundCode;
 import com.monglife.mongs.module.mqtt.annotation.MqttConsumer;
 import com.monglife.mongs.module.mqtt.annotation.MqttMapping;
 import com.monglife.mongs.module.mqtt.annotation.MqttPayload;
-import com.monglife.mongs.module.mqtt.annotation.MqttPublish;
-import com.monglife.mongs.module.mqtt.dto.MqttResponseEntity;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.PathVariable;
 
@@ -40,7 +36,7 @@ public class BattleConsumer {
         FightBattleDto fightBattleDto = battleService.enterBattle(roomId, playerId);
 
         if (fightBattleDto != null) {
-            battlePublisher.enterBattle(roomId, FightBattleResponseDto.builder()
+            battlePublisher.enterBattlePublish(roomId, FightBattleResponseDto.builder()
                     .roomId(fightBattleDto.getRoomId())
                     .round(fightBattleDto.getRound())
                     .isLastRound(fightBattleDto.getIsLastRound())
@@ -62,7 +58,7 @@ public class BattleConsumer {
         OverBattleDto overBattleDto = battleService.exitBattle(roomId, playerId);
 
         if (overBattleDto != null) {
-            battlePublisher.exitBattle(roomId, OverBattleResponseDto.builder()
+            battlePublisher.exitBattlePublish(roomId, OverBattleResponseDto.builder()
                     .roomId(overBattleDto.getRoomId())
                     .winPlayerId(overBattleDto.getWinPlayerId())
                     .winMongTypeCode(overBattleDto.getWinMongTypeCode())
@@ -85,7 +81,7 @@ public class BattleConsumer {
         FightBattleDto fightBattleDto = battleService.pickBattle(roomId, playerId, targetPlayerId, matchRoundCode);
 
         if (fightBattleDto != null) {
-            battlePublisher.pickBattle(roomId, FightBattleResponseDto.builder()
+            battlePublisher.pickBattlePublish(roomId, FightBattleResponseDto.builder()
                     .roomId(roomId)
                     .round(fightBattleDto.getRound())
                     .battlePlayers(fightBattleDto.getBattlePlayers())

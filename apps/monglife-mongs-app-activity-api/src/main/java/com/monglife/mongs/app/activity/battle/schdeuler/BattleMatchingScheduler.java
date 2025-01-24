@@ -1,18 +1,13 @@
 package com.monglife.mongs.app.activity.battle.schdeuler;
 
-import com.monglife.core.dto.response.ResponseDto;
 import com.monglife.mongs.app.activity.battle.dto.etc.CreateBattleDto;
-import com.monglife.mongs.app.activity.battle.dto.request.CreateBattleRequestDto;
 import com.monglife.mongs.app.activity.battle.dto.response.CreateBattleResponseDto;
-import com.monglife.mongs.app.activity.battle.enums.BattleResponse;
 import com.monglife.mongs.app.activity.battle.publisher.BattlePublisher;
 import com.monglife.mongs.app.activity.battle.service.BattleService;
 import com.monglife.mongs.app.activity.battle.vo.CreateBattleVo;
 import com.monglife.mongs.domain.match.service.MatchingService;
 import com.monglife.mongs.domain.match.vo.FindMatchingVo;
 import com.monglife.mongs.domain.match.vo.MatchPlayerVo;
-import com.monglife.mongs.module.mqtt.annotation.MqttPublish;
-import com.monglife.mongs.module.mqtt.dto.MqttResponseEntity;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -65,7 +60,7 @@ public class BattleMatchingScheduler {
             Set<MatchPlayerVo> battlePlayers = createBattleDto.getBattlePlayers();
 
             // 배틀룸 생성
-            battlePublisher.createBattle(deviceIds, CreateBattleResponseDto.builder()
+            battlePublisher.createBattlePublish(deviceIds, CreateBattleResponseDto.builder()
                     .roomId(roomId)
                     .battlePlayers(battlePlayers)
                     .build());

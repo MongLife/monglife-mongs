@@ -4,15 +4,13 @@ import com.monglife.mongs.app.manager.global.config.TaskScheduleProperties;
 import com.monglife.mongs.app.manager.management.dto.etc.MongBasicDto;
 import com.monglife.mongs.app.manager.management.dto.etc.MongStateDto;
 import com.monglife.mongs.app.manager.management.dto.etc.MongStatusDto;
-import com.monglife.mongs.app.manager.management.enums.ManagementResponse;
-import com.monglife.mongs.client.fcm.service.FcmService;
+import com.monglife.mongs.app.manager.management.publisher.ManagementPublisher;
 import com.monglife.mongs.domain.mong.dto.event.*;
 import com.monglife.mongs.domain.mong.entity.MongStateHistoryEntity;
 import com.monglife.mongs.domain.mong.entity.MongStatusHistoryEntity;
 import com.monglife.mongs.domain.mong.enums.MongStateCode;
 import com.monglife.mongs.domain.task.enums.TaskStatusCode;
 import com.monglife.mongs.domain.task.service.TaskService;
-import com.monglife.mongs.module.mqtt.service.MqttSendService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -28,15 +26,11 @@ public class MongObserveEventListener {
     @Value("${application.app-package-name}")
     private String APP_PACKAGE_NAME;
 
-    private static final String SERVICE_DOMAIN = "management";
-
     private final TaskScheduleProperties properties;
-
-    private final MqttSendService mqttSendService;
 
     private final TaskService taskService;
 
-    private final FcmService fcmService;
+    private final ManagementPublisher managementPublisher;
 
     /**
      * 몽 기본 정보 변경 이벤트 리스너
@@ -46,17 +40,14 @@ public class MongObserveEventListener {
     @Transactional(propagation = Propagation.REQUIRES_NEW)
     public void mongBasicObserveEventListener(MongBasicObserveEvent event) {
 
-        String topic = String.format("%s/%d", SERVICE_DOMAIN, event.getMongId());
-
-        mqttSendService.sendMessage(topic, ManagementResponse.APP_MANAGER_MANAGEMENT_OBSERVE_MONG_BASIC
-                .toResponseDto(MongBasicDto.builder()
-                        .mongId(event.getMongId())
-                        .mongName(event.getMongName())
-                        .mongTypeCode(event.getMongTypeCode())
-                        .payPoint(event.getPayPoint())
-                        .createdAt(event.getCreatedAt())
-                        .updatedAt(event.getUpdatedAt())
-                        .build()));
+        managementPublisher.mongBasicObservePublish(event.getMongId(), MongBasicDto.builder()
+                .mongId(event.getMongId())
+                .mongName(event.getMongName())
+                .mongTypeCode(event.getMongTypeCode())
+                .payPoint(event.getPayPoint())
+                .createdAt(event.getCreatedAt())
+                .updatedAt(event.getUpdatedAt())
+                .build());
     }
 
     /**
@@ -66,21 +57,18 @@ public class MongObserveEventListener {
     @Transactional(propagation = Propagation.REQUIRES_NEW)
     public void mongStateObserveEventListener(MongStateObserveEvent event) {
 
-        String topic = String.format("%s/%d", SERVICE_DOMAIN, event.getMongId());
         String taskOwnerId = String.valueOf(event.getMongId());
 
         if (MongStateCode.DEAD.equals(event.getStateCode()) || MongStateCode.GRADUATE_READY.equals(event.getStateCode())) {
             taskService.deleteAllTasks(APP_PACKAGE_NAME, taskOwnerId);
         }
 
-        // mqtt 전송
-        mqttSendService.sendMessage(topic, ManagementResponse.APP_MANAGER_MANAGEMENT_OBSERVE_MONG_STATE
-                .toResponseDto(MongStateDto.builder()
-                        .mongId(event.getMongId())
-                        .stateCode(event.getStateCode())
-                        .isSleep(event.getIsSleep())
-                        .updatedAt(event.getUpdatedAt())
-                        .build()));
+        managementPublisher.mongStateObservePublish(event.getMongId(), MongStateDto.builder()
+                .mongId(event.getMongId())
+                .stateCode(event.getStateCode())
+                .isSleep(event.getIsSleep())
+                .updatedAt(event.getUpdatedAt())
+                .build());
     }
 
     /**
@@ -115,7 +103,7 @@ public class MongObserveEventListener {
             }
 
             if (!title.isBlank() && !body.isBlank()) {
-                fcmService.sendPush(accountId, title, body);
+                managementPublisher.mongStateHistoryPublish(accountId, title, body);
             }
         }
     }
@@ -127,7 +115,6 @@ public class MongObserveEventListener {
     @Transactional(propagation = Propagation.REQUIRES_NEW)
     public void mongStatusObserveEventListener(MongStatusObserveEvent event) {
 
-        String topic = String.format("%s/%d", SERVICE_DOMAIN, event.getMongId());
         String taskOwnerId = String.valueOf(event.getMongId());
 
         boolean isDeadStatus = event.getSatietyRatio() <= properties.dead.satietyRatio || event.getHealthyRatio() <= properties.dead.healthyRatio;
@@ -151,20 +138,18 @@ public class MongObserveEventListener {
             }
         }
 
-        // mqtt 전송
-        mqttSendService.sendMessage(topic, ManagementResponse.APP_MANAGER_MANAGEMENT_OBSERVE_MONG_STATUS
-                .toResponseDto(MongStatusDto.builder()
-                        .mongId(event.getMongId())
-                        .statusCode(event.getStatusCode())
-                        .expRatio(event.getExpRatio())
-                        .weight(event.getWeight())
-                        .strengthRatio(event.getStrengthRatio())
-                        .satietyRatio(event.getSatietyRatio())
-                        .healthyRatio(event.getHealthyRatio())
-                        .fatigueRatio(event.getFatigueRatio())
-                        .poopCount(event.getPoopCount())
-                        .updatedAt(event.getUpdatedAt())
-                        .build()));
+        managementPublisher.mongStatusObservePublish(event.getMongId(), MongStatusDto.builder()
+                .mongId(event.getMongId())
+                .statusCode(event.getStatusCode())
+                .expRatio(event.getExpRatio())
+                .weight(event.getWeight())
+                .strengthRatio(event.getStrengthRatio())
+                .satietyRatio(event.getSatietyRatio())
+                .healthyRatio(event.getHealthyRatio())
+                .fatigueRatio(event.getFatigueRatio())
+                .poopCount(event.getPoopCount())
+                .updatedAt(event.getUpdatedAt())
+                .build());
     }
 
     /**
@@ -198,7 +183,7 @@ public class MongObserveEventListener {
             }
 
             if (!title.isBlank() && !body.isBlank()) {
-                fcmService.sendPush(accountId, title, body);
+                managementPublisher.mongStatusHistoryPublish(accountId, title, body);
             }
         }
     }
