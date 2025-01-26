@@ -32,7 +32,7 @@ public class MatchPlayerVo {
                 .playerId(matchPlayerEntity.getPlayerId())
                 .deviceId(matchPlayerEntity.getDeviceId())
                 .mongTypeCode(matchPlayerEntity.getMongTypeCode())
-                .hp(matchPlayerEntity.getHp())
+                .hp(matchPlayerEntity.getHp() / MatchPlayerEntity.MAX_HP * 100)
                 .roundCode(roundCode)
                 .build();
     }

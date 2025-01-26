@@ -383,7 +383,7 @@ public class MatchService {
      * @param roomId 배틀룸 ID
      * @return 등수별 정렬한 OverMatchDto 목록
      */
-    @Transactional
+    @Transactional(readOnly = true)
     public List<OverMatchVo> findOverMatch(Long roomId) {
 
         MatchRoomEntity matchRoomEntity = matchRoomRepository.findByRoomIdAndIsActiveFalse(roomId)

@@ -2,6 +2,7 @@ package com.monglife.mongs.app.activity.battle.controller;
 
 import com.monglife.core.dto.response.ResponseDto;
 import com.monglife.mongs.app.activity.battle.dto.etc.OverBattleDto;
+import com.monglife.mongs.app.activity.battle.dto.response.GetBattleResponseDto;
 import com.monglife.mongs.app.activity.battle.dto.response.OverBattleResponseDto;
 import com.monglife.mongs.app.activity.battle.enums.BattleResponse;
 import com.monglife.mongs.app.activity.battle.service.BattleService;
@@ -23,6 +24,18 @@ import java.util.Map;
 public class BattleController {
 
     private final BattleService battleService;
+
+    @GetMapping("")
+    public ResponseEntity<ResponseDto<GetBattleResponseDto>> getBattle() {
+
+        Integer payPoint = battleService.getBattlePayPoint();
+
+        GetBattleResponseDto getBattleResponseDto = GetBattleResponseDto.builder()
+                .payPoint(payPoint)
+                .build();
+
+        return ResponseEntity.ok(BattleResponse.APP_ACTIVITY_BATTLE_GET_BATTLE.toResponseDto(getBattleResponseDto));
+    }
 
     /**
      * 매칭 대기열 등록

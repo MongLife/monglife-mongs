@@ -1,6 +1,7 @@
 package com.monglife.mongs.domain.match.vo;
 
-import lombok.*;
+import lombok.Builder;
+import lombok.Getter;
 
 @Getter
 public class OverMatchVo {
