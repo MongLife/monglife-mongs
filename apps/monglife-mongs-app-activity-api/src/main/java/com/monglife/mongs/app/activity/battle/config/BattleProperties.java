@@ -11,5 +11,7 @@ import org.springframework.stereotype.Component;
 @ConfigurationProperties(prefix = "application.service.battle")
 public class BattleProperties {
 
+    public Double exp;
+
     public Integer payPoint;
 }

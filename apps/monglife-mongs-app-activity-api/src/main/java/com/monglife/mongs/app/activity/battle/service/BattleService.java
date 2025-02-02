@@ -2,8 +2,8 @@ package com.monglife.mongs.app.activity.battle.service;
 
 import com.monglife.core.utils.CommonUtil;
 import com.monglife.mongs.app.activity.battle.config.BattleProperties;
+import com.monglife.mongs.app.activity.battle.dto.etc.BattleDto;
 import com.monglife.mongs.app.activity.battle.dto.etc.CreateBattleDto;
-import com.monglife.mongs.app.activity.battle.dto.etc.FightBattleDto;
 import com.monglife.mongs.app.activity.battle.dto.etc.OverBattleDto;
 import com.monglife.mongs.app.activity.battle.exception.NotExistsMatchException;
 import com.monglife.mongs.app.activity.battle.exception.NotExistsMongException;
@@ -11,14 +11,13 @@ import com.monglife.mongs.app.activity.battle.vo.CreateBattleVo;
 import com.monglife.mongs.client.manager.service.ManagementService;
 import com.monglife.mongs.client.manager.vo.MongVo;
 import com.monglife.mongs.domain.match.dto.etc.CreateMatchDto;
-import com.monglife.mongs.domain.match.dto.etc.EnterMatchDto;
 import com.monglife.mongs.domain.match.dto.etc.ExitMatchDto;
 import com.monglife.mongs.domain.match.dto.etc.PickMatchDto;
 import com.monglife.mongs.domain.match.enums.MatchRoundCode;
 import com.monglife.mongs.domain.match.service.MatchService;
 import com.monglife.mongs.domain.match.service.MatchingService;
 import com.monglife.mongs.domain.match.vo.CreateMatchVo;
-import com.monglife.mongs.domain.match.vo.FightMatchVo;
+import com.monglife.mongs.domain.match.vo.MatchVo;
 import com.monglife.mongs.domain.match.vo.OverMatchVo;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -40,11 +39,24 @@ public class BattleService {
     private final BattleProperties battleProperties;
 
     /**
+     * 배틀 정보 조회
+     * @param roomId 배틀룸 ID
+     * @return 배틀룸 정보 Dto
+     */
+    @Transactional
+    public BattleDto getBattle(Long roomId) {
+
+        MatchVo matchVo = matchService.getMatch(roomId);
+
+
+    }
+
+    /**
      * 배틀 매치 보상 페이 포인트 조회
      * @return 승자 페이 포인트
      */
     @Transactional
-    public Integer getBattlePayPoint() {
+    public Integer getBattleRewardPayPoint() {
         return battleProperties.payPoint;
     }
 
@@ -87,6 +99,7 @@ public class BattleService {
 
             // manager-management 조회 요청 (feign)
             Long mongId = createBattleVo.getMongId();
+
             Optional<MongVo> optionalMongVo = managementService.getMong(mongId);
 
             if (optionalMongVo.isPresent()) {
@@ -151,28 +164,11 @@ public class BattleService {
      * 매치 입장
      * @param roomId 배틀룸 ID
      * @param playerId 플레이어 ID
-     * @return 매치 입장 정보 Dto
      */
     @Transactional
-    public FightBattleDto enterBattle(Long roomId, String playerId) {
+    public void enterBattle(Long roomId, String playerId) {
 
-        EnterMatchDto enterMatchDto = matchService.enterMatch(roomId, playerId);
-
-        Boolean isEnterAll = enterMatchDto.getIsEnterAll();
-        FightMatchVo fightMatchVo = enterMatchDto.getFightMatchVo();
-
-        FightBattleDto fightBattleDto = null;
-
-        if (isEnterAll && fightMatchVo != null) {
-            fightBattleDto = FightBattleDto.builder()
-                    .roomId(roomId)
-                    .round(fightMatchVo.getRound())
-                    .isLastRound(fightMatchVo.getIsLastRound())
-                    .battlePlayers(fightMatchVo.getMatchPlayers())
-                    .build();
-        }
-
-        return fightBattleDto;
+        matchService.enterMatch(roomId, playerId);
     }
 
     /**
@@ -184,7 +180,7 @@ public class BattleService {
     @Transactional
     public OverBattleDto exitBattle(Long roomId, String playerId) {
 
-        ExitMatchDto exitMatchDto = matchService.exitMatch(roomId, playerId);
+        matchService.exitMatch(roomId, playerId);
 
         Boolean isExitAll = exitMatchDto.getIsExitAll();
         List<OverMatchVo> overMatchVos = exitMatchDto.getOverMatchVos();
@@ -205,7 +201,13 @@ public class BattleService {
                     .build();
 
             // 페이 포인트 보상
-            managementService.chargePayPoint(overMatchVo.getMongId(), battleProperties.payPoint);
+            if (!overMatchVo.getIsBot()) {
+                managementService.patchMongAfterBattle(
+                        overMatchVo.getMongId(),
+                        battleProperties.exp,
+                        battleProperties.payPoint
+                );
+            }
         }
 
         return overBattleDto;
@@ -220,38 +222,44 @@ public class BattleService {
      * @return 매치 라운드 종료 정보 Dto
      */
     @Transactional
-    public FightBattleDto pickBattle(Long roomId, String playerId, String targetPlayerId, MatchRoundCode matchRoundCode) {
+    public BattleDto pickBattle(Long roomId, String playerId, String targetPlayerId, MatchRoundCode matchRoundCode) {
 
         PickMatchDto pickMatchDto = matchService.pickMatch(roomId, playerId, targetPlayerId, matchRoundCode);
 
         Boolean isPickAll = pickMatchDto.getIsPickAll();
-        FightMatchVo fightMatchVo = pickMatchDto.getFightMatchVo();
+        MatchVo matchVo = pickMatchDto.getMatchVo();
 
-        FightBattleDto fightBattleDto = null;
+        BattleDto battleDto = null;
 
-        if (isPickAll && fightMatchVo != null) {
+        if (isPickAll && matchVo != null) {
             // 마지막 라운드 인 경우 배틀 종료 처리
-            if (fightMatchVo.getIsLastRound()) {
+            if (matchVo.getIsLastRound()) {
                 matchService.overMatch(roomId);
 
                 // 페이 포인트 보상
-                List<OverMatchVo> overMatchVos = matchService.findOverMatch(roomId);
+                List<OverMatchVo> overMatchVos = matchService.getOverMatch(roomId);
 
                 OverMatchVo overMatchVo = overMatchVos.stream().findFirst()
                         .orElseThrow(() -> new NotExistsMatchException(roomId));
 
-                managementService.chargePayPoint(overMatchVo.getMongId(), battleProperties.payPoint);
+                if (!overMatchVo.getIsBot()) {
+                    managementService.patchMongAfterBattle(
+                            overMatchVo.getMongId(),
+                            battleProperties.exp,
+                            battleProperties.payPoint
+                    );
+                }
             }
 
-            fightBattleDto = FightBattleDto.builder()
+            battleDto = BattleDto.builder()
                     .roomId(roomId)
-                    .round(fightMatchVo.getRound())
-                    .battlePlayers(fightMatchVo.getMatchPlayers())
-                    .isLastRound(fightMatchVo.getIsLastRound())
+                    .round(matchVo.getRound())
+                    .battlePlayers(matchVo.getMatchPlayers())
+                    .isLastRound(matchVo.getIsLastRound())
                     .build();
         }
 
-        return fightBattleDto;
+        return battleDto;
     }
 
     /**
@@ -259,10 +267,10 @@ public class BattleService {
      * @param roomId 배틀룸 ID
      * @return 매치 종료 정보 Dto
      */
-    @Transactional(readOnly = true)
+    @Transactional
     public OverBattleDto findOverBattle(Long roomId) {
 
-        List<OverMatchVo> overMatchVos = matchService.findOverMatch(roomId);
+        List<OverMatchVo> overMatchVos = matchService.getOverMatch(roomId);
 
         OverMatchVo overMatchVo = overMatchVos.stream().findFirst()
                 .orElseThrow(() -> new NotExistsMatchException(roomId));

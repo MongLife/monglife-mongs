@@ -6,7 +6,7 @@ import lombok.Getter;
 import java.util.Set;
 
 @Getter
-public class FightMatchVo {
+public class MatchVo {
 
     private final Integer round;
 
@@ -15,7 +15,7 @@ public class FightMatchVo {
     private final Boolean isLastRound;
 
     @Builder
-    public FightMatchVo(Integer round, Set<MatchPlayerVo> matchPlayers, Boolean isLastRound) {
+    public MatchVo(Integer round, Set<MatchPlayerVo> matchPlayers, Boolean isLastRound) {
         this.round = round;
         this.matchPlayers = matchPlayers;
         this.isLastRound = isLastRound;

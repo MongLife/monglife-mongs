@@ -17,7 +17,6 @@ public class HibernateConfig {
     public Properties jpaProperties(ConfigurableListableBeanFactory beanFactory) {
         Properties properties = new Properties();
         properties.put(AvailableSettings.PHYSICAL_NAMING_STRATEGY, "com.monglife.mongs.module.jpa.config.ImprovedNamingStrategy");
-        properties.put(AvailableSettings.FORMAT_SQL, true);
         properties.put(AvailableSettings.BEAN_CONTAINER, new SpringBeanContainer(beanFactory));
         return properties;
     }

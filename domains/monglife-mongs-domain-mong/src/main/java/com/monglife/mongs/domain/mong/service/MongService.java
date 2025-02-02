@@ -319,6 +319,21 @@ public class MongService {
     }
 
     /**
+     * 몽 배틀
+     * @param mongId 몽 ID
+     * @param exp 증가 경험치
+     * @param payPoint 증가 페이 포인트
+     */
+    @Transactional
+    public void battleMong(Long mongId, Double exp, Integer payPoint) {
+
+        MongEntity mongEntity = lockMongRepository.findByMongIdAndMetaIsActiveIsTrue(mongId)
+                .orElseThrow(() -> new NotExistsMongException(mongId));
+
+        mongEntity.battle(exp, payPoint);
+    }
+
+    /**
      * 몽 진화 준비
      * @param mongId 몽 ID
      */

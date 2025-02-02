@@ -8,7 +8,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @NoArgsConstructor
-public class PatchMongAfterTrainingRequestDto {
+public class PatchMongRequestDto {
 
     private Double exp;
 
@@ -27,7 +27,7 @@ public class PatchMongAfterTrainingRequestDto {
     private Integer payPoint;
 
     @Builder
-    public PatchMongAfterTrainingRequestDto(Double exp, Double weight, Double strength, Double satiety, Double healthy, Double fatigue, Integer poopCount, Integer payPoint) {
+    public PatchMongRequestDto(Double exp, Double weight, Double strength, Double satiety, Double healthy, Double fatigue, Integer poopCount, Integer payPoint) {
         this.exp = exp;
         this.weight = weight;
         this.strength = strength;

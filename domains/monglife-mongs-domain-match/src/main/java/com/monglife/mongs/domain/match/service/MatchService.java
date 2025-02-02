@@ -1,9 +1,9 @@
 package com.monglife.mongs.domain.match.service;
 
 import com.monglife.mongs.domain.match.dto.etc.CreateMatchDto;
-import com.monglife.mongs.domain.match.dto.etc.EnterMatchDto;
-import com.monglife.mongs.domain.match.dto.etc.ExitMatchDto;
 import com.monglife.mongs.domain.match.dto.etc.PickMatchDto;
+import com.monglife.mongs.domain.match.dto.event.EnterMatchEvent;
+import com.monglife.mongs.domain.match.dto.event.OverMatchEvent;
 import com.monglife.mongs.domain.match.entity.MatchPlayerEntity;
 import com.monglife.mongs.domain.match.entity.MatchRoomEntity;
 import com.monglife.mongs.domain.match.entity.MatchRoundEntity;
@@ -11,12 +11,14 @@ import com.monglife.mongs.domain.match.enums.MatchRoundCode;
 import com.monglife.mongs.domain.match.exception.*;
 import com.monglife.mongs.domain.match.repository.ComnCodeRepository;
 import com.monglife.mongs.domain.match.repository.MatchRoomRepository;
+import com.monglife.mongs.domain.match.utils.MatchUtil;
 import com.monglife.mongs.domain.match.vo.CreateMatchVo;
-import com.monglife.mongs.domain.match.vo.FightMatchVo;
 import com.monglife.mongs.domain.match.vo.MatchPlayerVo;
+import com.monglife.mongs.domain.match.vo.MatchVo;
 import com.monglife.mongs.domain.match.vo.OverMatchVo;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -31,6 +33,8 @@ import java.util.stream.Collectors;
 public class MatchService {
 
     private static final Random random = new Random();
+
+    private final ApplicationEventPublisher applicationEventPublisher;
 
     // 봇 몽 그룹 코드
     @Value("${application.service.match.bot-mong-type-group-code}")
@@ -51,6 +55,39 @@ public class MatchService {
     private final MatchRoomRepository matchRoomRepository;
 
     private final ComnCodeRepository comnCodeRepository;
+
+    @Transactional(readOnly = true)
+    public MatchVo getMatch(Long roomId) {
+
+        MatchRoomEntity matchRoomEntity = matchRoomRepository.findByRoomIdAndIsActiveTrue(roomId)
+                .orElseThrow(() -> new NotExistsRoomIdException(roomId));
+
+        Set<MatchPlayerEntity> matchPlayerEntities = matchRoomEntity.getMatchPlayerSet();
+
+        return MatchVo.builder()
+
+                .build();
+    }
+
+    /**
+     * 종료 된 배틀 결과 조회
+     * @param roomId 배틀룸 ID
+     * @return 등수별 정렬한 OverMatchDto 목록
+     */
+    @Transactional
+    public List<OverMatchVo> getOverMatch(Long roomId) {
+
+        MatchRoomEntity matchRoomEntity = matchRoomRepository.findByRoomIdAndIsActiveFalse(roomId)
+                .orElseThrow(() -> new NotExistsRoomIdException(roomId));
+
+        Set<MatchPlayerEntity> matchPlayerEntities =  matchRoomEntity.getMatchPlayerSet();
+
+        List<MatchPlayerEntity> rankMatchPlayerEntities = MatchUtil.rankMatchPlayer(matchPlayerEntities);
+
+        return rankMatchPlayerEntities.stream()
+                .map(OverMatchVo::of)
+                .toList();
+    }
 
     /**
      * 배틀 생성
@@ -183,10 +220,9 @@ public class MatchService {
      * 배틀 입장
      * @param roomId 배틀룸 ID
      * @param playerId 배틀 플레이어 ID
-     * @return 배틀 시작 라운드 정보
      */
     @Transactional
-    public EnterMatchDto enterMatch(Long roomId, String playerId) {
+    public void enterMatch(Long roomId, String playerId) {
 
         MatchRoomEntity matchRoomEntity = matchRoomRepository.findByRoomIdAndIsActiveFalseAndRound(roomId, 0)
                 .orElseThrow(() -> new NotExistsRoomIdException(roomId));
@@ -197,30 +233,12 @@ public class MatchService {
         // 입장 처리
         matchRoomEntity.enterMatchPlayer(playerId);
 
-        FightMatchVo fightMatchVo = null;
-        Boolean isEnterAll = matchRoomEntity.isMatchPlayerEnterAll();
-
-        if (isEnterAll) {
-            Set<MatchPlayerVo> matchPlayers = matchRoomEntity.getMatchPlayerSet().stream()
-                    .map(matchPlayerEntity -> MatchPlayerVo.of(matchPlayerEntity, MatchRoundCode.NONE))
-                    .collect(Collectors.toSet());
-
-            Integer round = matchRoomEntity.getRound();
-            Boolean isLastRound = matchRoomEntity.isLastRound();
-
-            fightMatchVo = FightMatchVo.builder()
-                    .round(round)
-                    .matchPlayers(matchPlayers)
-                    .isLastRound(isLastRound)
-                    .build();
-
+        if (matchRoomEntity.isPlayerEnterAll()) {
+            // 입장 완료
+            applicationEventPublisher.publishEvent(EnterMatchEvent.of(matchRoomEntity));
+            // 매치 시작
             matchRoomEntity.start();
         }
-
-        return EnterMatchDto.builder()
-                .isEnterAll(isEnterAll)
-                .fightMatchVo(fightMatchVo)
-                .build();
     }
 
     /**
@@ -229,7 +247,7 @@ public class MatchService {
      * @param playerId 배틀 플레이어 ID
      */
     @Transactional
-    public ExitMatchDto exitMatch(Long roomId, String playerId) {
+    public void exitMatch(Long roomId, String playerId) {
 
         MatchRoomEntity matchRoomEntity = matchRoomRepository.findByRoomIdAndIsActiveTrue(roomId)
                 .orElseThrow(() -> new NotExistsRoomIdException(roomId));
@@ -240,22 +258,22 @@ public class MatchService {
         // 퇴장 처리
         matchRoomEntity.excludeMatchPlayer(playerId);
 
-        List<OverMatchVo> overMatchVos = null;
-        Boolean isExitAll = matchRoomEntity.isMatchPlayerExitAll();
+        // 모든 플레이어가 퇴장하지 않은 상태
+        if (matchRoomEntity.isPlayerExitAll()) {
 
-        if (isExitAll) {
+            matchRoomEntity.over();
+
+            // 퇴장 완료
             Set<MatchPlayerEntity> matchPlayerEntities =  matchRoomEntity.getMatchPlayerSet();
 
-            List<MatchPlayerEntity> rankMatchPlayerEntities = rankMatchPlayer(matchPlayerEntities);
+            List<MatchPlayerEntity> rankMatchPlayerEntities = MatchUtil.rankMatchPlayer(matchPlayerEntities);
 
-            overMatchVos = rankMatchPlayerEntities.stream()
-                    .map(matchPlayerEntity -> OverMatchVo.builder()
-                                .playerId(matchPlayerEntity.getPlayerId())
-                                .mongId(matchPlayerEntity.getMongId())
-                                .mongTypeCode(matchPlayerEntity.getMongTypeCode())
-                                .build())
-                    .toList();
+            rankMatchPlayerEntities.stream().findFirst()
+                    .ifPresent(matchPlayerEntity ->
+                            applicationEventPublisher.publishEvent(OverMatchEvent.of(matchRoomEntity, matchPlayerEntity)));
+
         } else {
+            // 퇴장한 플레이어 라운드 생성
             Integer round = matchRoomEntity.getRound();
 
             // 현재 라운드 선택한 경우
@@ -280,21 +298,15 @@ public class MatchService {
                 round++;
             }
         }
-
-        return ExitMatchDto.builder()
-                .isExitAll(isExitAll)
-                .overMatchVos(overMatchVos)
-                .build();
     }
 
     /**
      * 배틀 선택
      * @param roomId 배틀룸 ID
      * @param playerId 배틀 플레이어 ID
-     * @return  모든 플레이어 선택 완료 여부
      */
     @Transactional
-    public PickMatchDto pickMatch(Long roomId, String playerId, String targetPlayerId, MatchRoundCode matchRoundCode) {
+    public void pickMatch(Long roomId, String playerId, String targetPlayerId, MatchRoundCode matchRoundCode) {
 
         MatchRoomEntity matchRoomEntity = matchRoomRepository.findByRoomIdAndIsActiveTrue(roomId)
                 .orElseThrow(() -> new NotExistsRoomIdException(roomId));
@@ -342,27 +354,22 @@ public class MatchService {
         // 라운드 등록
         matchRoomEntity.joinMatchRound(matchRoundEntity);
 
-        Boolean isPickAll = matchRoomEntity.isMatchRoundPickAll();
-        FightMatchVo fightMatchVo = null;
+        Boolean isPickAll = matchRoomEntity.isRoundPickAll();
+        MatchVo matchVo = null;
 
         // 전체 선택 여부 확인
         if (isPickAll) {
 
             Set<MatchPlayerVo> matchPlayers = matchRoomEntity.nextRound();
 
-            Boolean isLastRound = matchRoomEntity.isLastRound() || matchRoomEntity.isMatchPlayerDeadAll();
+            Boolean isLastRound = matchRoomEntity.isLastRound() || matchRoomEntity.isPlayerDeadAll();
 
-            fightMatchVo = FightMatchVo.builder()
+            matchVo = MatchVo.builder()
                     .round(round)
                     .matchPlayers(matchPlayers)
                     .isLastRound(isLastRound)
                     .build();
         }
-
-        return PickMatchDto.builder()
-                .isPickAll(isPickAll)
-                .fightMatchVo(fightMatchVo)
-                .build();
     }
 
     /**
@@ -376,63 +383,5 @@ public class MatchService {
                 .orElseThrow(() -> new NotExistsRoomIdException(roomId));
 
         matchRoomEntity.over();
-    }
-
-    /**
-     * 종료 된 배틀 결과 조회
-     * @param roomId 배틀룸 ID
-     * @return 등수별 정렬한 OverMatchDto 목록
-     */
-    @Transactional(readOnly = true)
-    public List<OverMatchVo> findOverMatch(Long roomId) {
-
-        MatchRoomEntity matchRoomEntity = matchRoomRepository.findByRoomIdAndIsActiveFalse(roomId)
-                .orElseThrow(() -> new NotExistsRoomIdException(roomId));
-
-        Set<MatchPlayerEntity> matchPlayerEntities =  matchRoomEntity.getMatchPlayerSet();
-
-        List<MatchPlayerEntity> rankMatchPlayerEntities = rankMatchPlayer(matchPlayerEntities);
-
-        return rankMatchPlayerEntities.stream()
-                .map(matchPlayerEntity -> OverMatchVo.builder()
-                            .playerId(matchPlayerEntity.getPlayerId())
-                            .mongId(matchPlayerEntity.getMongId())
-                            .mongTypeCode(matchPlayerEntity.getMongTypeCode())
-                            .build())
-                .toList();
-    }
-
-    /**
-     * 배틀 플레이어 랭킹
-     * @param matchPlayerEntities 배틀 플레이어 엔티티 목록
-     * @return 배틀 플레이어 엔티티 등수 기준 정렬 리스트
-     */
-    private static List<MatchPlayerEntity> rankMatchPlayer(Set<MatchPlayerEntity> matchPlayerEntities) {
-
-        // 나간 배틀 플레이어
-        List<MatchPlayerEntity> rankMatchPlayerEntities = matchPlayerEntities.stream()
-                .filter(matchPlayerEntity -> !matchPlayerEntity.getIsEnter())
-                .sorted((bp1, bp2) -> {
-                    if (bp1.getHp().equals(bp2.getHp())) {
-                        return bp1.getExitDt().compareTo(bp2.getExitDt());
-                    }
-                    return bp2.getHp().compareTo(bp1.getHp());
-                })
-                .collect(Collectors.toList());
-
-        // 나가지 않은 배틀 플레이어
-        matchPlayerEntities.stream()
-                .filter(MatchPlayerEntity::getIsEnter)
-                // 역순 정렬
-                .sorted((bp1, bp2) -> {
-                    if (bp1.getHp().equals(bp2.getHp())) {
-                        return bp2.getEnterDt().compareTo(bp1.getEnterDt());
-                    }
-                    return bp1.getHp().compareTo(bp2.getHp());
-                })
-                // 순위 리스트 앞에서 부터 삽입 (하위 등수 부터 저장)
-                .forEachOrdered(matchPlayerEntity -> rankMatchPlayerEntities.add(0, matchPlayerEntity));
-
-        return rankMatchPlayerEntities;
     }
 }

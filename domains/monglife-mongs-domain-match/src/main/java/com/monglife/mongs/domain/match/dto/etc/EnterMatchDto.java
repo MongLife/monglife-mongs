@@ -1,6 +1,6 @@
 package com.monglife.mongs.domain.match.dto.etc;
 
-import com.monglife.mongs.domain.match.vo.FightMatchVo;
+import com.monglife.mongs.domain.match.vo.MatchVo;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -13,11 +13,11 @@ public class EnterMatchDto {
 
     private Boolean isEnterAll;
 
-    private FightMatchVo fightMatchVo;
+    private MatchVo matchVo;
 
     @Builder
-    public EnterMatchDto(Boolean isEnterAll, FightMatchVo fightMatchVo) {
+    public EnterMatchDto(Boolean isEnterAll, MatchVo matchVo) {
         this.isEnterAll = isEnterAll;
-        this.fightMatchVo = fightMatchVo;
+        this.matchVo = matchVo;
     }
 }

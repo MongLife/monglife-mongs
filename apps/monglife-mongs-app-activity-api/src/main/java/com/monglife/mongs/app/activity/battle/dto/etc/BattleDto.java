@@ -11,7 +11,7 @@ import java.util.Set;
 @Getter
 @Setter
 @NoArgsConstructor
-public class FightBattleDto {
+public class BattleDto {
 
     private Long roomId;
 
@@ -22,7 +22,7 @@ public class FightBattleDto {
     private Set<MatchPlayerVo> battlePlayers;
 
     @Builder
-    public FightBattleDto(Long roomId, Integer round, Boolean isLastRound, Set<MatchPlayerVo> battlePlayers) {
+    public BattleDto(Long roomId, Integer round, Boolean isLastRound, Set<MatchPlayerVo> battlePlayers) {
         this.roomId = roomId;
         this.round = round;
         this.isLastRound = isLastRound;

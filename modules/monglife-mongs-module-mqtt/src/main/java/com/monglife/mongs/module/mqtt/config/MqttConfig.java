@@ -104,8 +104,18 @@ public class MqttConfig {
         adapter.setQos(2);
         adapter.setOutputChannel(mqttInboundChannel);
 
+
+        String baseTopic = TopicUtil.preProcessTopic(mqttConfigProperties.consumer.baseTopic);
+
         // 구독 토픽 추가
-        mqttConfigProperties.consumer.topics.forEach(adapter::addTopic);
+        mqttConfigProperties.consumer.topics.forEach(topic -> {
+
+            topic = TopicUtil.preProcessTopic(topic);
+
+            String consumeTopic = TopicUtil.generateTopic(baseTopic, topic);
+
+            adapter.addTopic(consumeTopic);
+        });
 
         return adapter;
     }

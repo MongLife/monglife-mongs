@@ -136,7 +136,7 @@ public class MongVo {
                 .healthyRatio(mongEntity.getStatus().getHealthyRatio())
                 .fatigueRatio(mongEntity.getStatus().getFatigueRatio())
                 .poopCount(mongEntity.getStatus().getPoopCount())
-                .statusUpdatedAt(mongEntity.getState().getUpdatedAt())
+                .statusUpdatedAt(mongEntity.getStatus().getUpdatedAt())
                 .build();
     }
 }

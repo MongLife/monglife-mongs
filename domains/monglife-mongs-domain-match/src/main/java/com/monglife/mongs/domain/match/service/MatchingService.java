@@ -4,6 +4,7 @@ import com.monglife.core.utils.CommonUtil;
 import com.monglife.mongs.domain.match.entity.MatchingEntity;
 import com.monglife.mongs.domain.match.vo.FindMatchingVo;
 import com.monglife.mongs.module.logging.annotation.NotInvokeLog;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -16,6 +17,7 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+@Slf4j
 @Service
 public class MatchingService {
 

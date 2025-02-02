@@ -1,6 +1,6 @@
 package com.monglife.mongs.domain.match.dto.etc;
 
-import com.monglife.mongs.domain.match.vo.FightMatchVo;
+import com.monglife.mongs.domain.match.vo.MatchVo;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -13,11 +13,11 @@ public class PickMatchDto {
 
     private Boolean isPickAll;
 
-    private FightMatchVo fightMatchVo;
+    private MatchVo matchVo;
 
     @Builder
-    public PickMatchDto(Boolean isPickAll, FightMatchVo fightMatchVo) {
+    public PickMatchDto(Boolean isPickAll, MatchVo matchVo) {
         this.isPickAll = isPickAll;
-        this.fightMatchVo = fightMatchVo;
+        this.matchVo = matchVo;
     }
 }

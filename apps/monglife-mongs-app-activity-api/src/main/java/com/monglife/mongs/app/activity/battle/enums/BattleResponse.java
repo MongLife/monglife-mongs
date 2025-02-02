@@ -16,9 +16,10 @@ public enum BattleResponse implements Response {
     /**
      * 성공 응답
      */
-    APP_ACTIVITY_BATTLE_CREATE_WAIT_MATCHING(HttpStatus.OK.value(), "ACTIVITY-BATTLE-000", "배틀 매칭 대기열에 등록되었습니다."),
-    APP_ACTIVITY_BATTLE_DELETE_WAIT_MATCHING(HttpStatus.OK.value(), "ACTIVITY-BATTLE-001", "배틀 매칭 대기열에서 삭제되었습니다."),
-    APP_ACTIVITY_BATTLE_GET_BATTLE(HttpStatus.OK.value(), "ACTIVITY-BATTLE-002", "배틀 매칭 정보 조회에 성공했습니다."),
+    APP_ACTIVITY_BATTLE_GET_BATTLE(HttpStatus.OK.value(), "ACTIVITY-BATTLE-000", "배틀 정보 조회에 성공했습니다."),
+    APP_ACTIVITY_BATTLE_GET_BATTLE_REWARD(HttpStatus.OK.value(), "ACTIVITY-BATTLE-001", "배틀 보상 정보 조회에 성공했습니다."),
+    APP_ACTIVITY_BATTLE_CREATE_WAIT_MATCHING(HttpStatus.OK.value(), "ACTIVITY-BATTLE-002", "배틀 매칭 대기열에 등록되었습니다."),
+    APP_ACTIVITY_BATTLE_DELETE_WAIT_MATCHING(HttpStatus.OK.value(), "ACTIVITY-BATTLE-003", "배틀 매칭 대기열에서 삭제되었습니다."),
 
     APP_ACTIVITY_BATTLE_FIND_MATCHING(HttpStatus.OK.value(), "ACTIVITY-BATTLE-200", "배틀 매칭에 성공했습니다."),
     APP_ACTIVITY_BATTLE_ENTER_ALL_BATTLE_PLAYER(HttpStatus.OK.value(), "ACTIVITY-BATTLE-201", "모든 플레이어가 입장했습니다."),

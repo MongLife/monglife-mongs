@@ -27,7 +27,8 @@ public class MqttConsumer implements MessageHandler {
         try {
             mqttExecuteBean.invoke(topic == null ? "" : topic, payload);
         } catch (Exception e) {
-            throw new MessagingException(message, e);
+//            throw new MessagingException(message, e);
+            log.error(e.getMessage());
         }
     }
 }

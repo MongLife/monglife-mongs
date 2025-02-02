@@ -3,7 +3,9 @@ package com.monglife.mongs.domain.match.entity;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 
+@ToString
 @Getter
 @NoArgsConstructor
 public class MatchingEntity {

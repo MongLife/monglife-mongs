@@ -25,12 +25,11 @@ public class TrainingService {
     /**
      * 훈련 달리기 처리
      * 불가능 상태 : 죽음, 알
-     * @param accountId 계정 ID
      * @param mongId 몽 ID
      * @param score 점수
      */
     @Transactional
-    public void trainingRunner(Long accountId, Long mongId, Integer score) {
+    public void trainingRunner(Long mongId, Integer score) {
 
         managementService.patchMongAfterTraining(
                 mongId,

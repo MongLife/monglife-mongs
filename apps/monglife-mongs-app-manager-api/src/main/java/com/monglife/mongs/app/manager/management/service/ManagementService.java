@@ -7,6 +7,7 @@ import com.monglife.mongs.client.user.vo.CollectionMongVo;
 import com.monglife.mongs.domain.mong.annotation.AllowMongState;
 import com.monglife.mongs.domain.mong.annotation.DenyMongState;
 import com.monglife.mongs.domain.mong.annotation.VerifyMongAccount;
+import com.monglife.mongs.domain.mong.dto.etc.IncreaseMongStatusDto;
 import com.monglife.mongs.domain.mong.dto.etc.PatchMongDto;
 import com.monglife.mongs.domain.mong.enums.MongStateCode;
 import com.monglife.mongs.domain.mong.service.MongService;
@@ -248,17 +249,16 @@ public class ManagementService {
 
     /**
      * 몽 페이 포인트 증가
-     * @param accountId 계정 ID
      * @param mongId 몽 ID
      * @param payPoint 페이 포인트
      */
     @Transactional
-    @VerifyMongAccount
-    public void chargePayPoint(Long accountId, Long mongId, Integer payPoint) {
+    public void chargePayPoint(Long mongId, Integer payPoint) {
         mongService.increasePayPoint(mongId, payPoint);
     }
 
     /**
+     * TODO: 삭제
      * 몽 훈련 이후 갱신
      * @param accountId 계정 ID
      * @param mongId 몽 ID
@@ -269,5 +269,18 @@ public class ManagementService {
     @DenyMongState(stateCodes = { MongStateCode.DEAD }, egg = true)
     public void trainingMong(Long accountId, Long mongId, PatchMongDto patchMongDto) {
         mongService.trainingMong(mongId, patchMongDto);
+    }
+
+    /**
+     * TODO: 삭제
+     * 배틀 이후 갱신
+     * @param mongId
+     * @param exp
+     * @param payPoint
+     */
+    @Transactional
+    @DenyMongState(stateCodes = { MongStateCode.DEAD }, egg = true)
+    public void battleMong(Long mongId, Double exp, Integer payPoint) {
+        mongService.battleMong(mongId, exp, payPoint);
     }
 }

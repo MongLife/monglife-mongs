@@ -51,6 +51,7 @@ public class MatchRoomEntity extends BaseTimeEntity {
      * 배틀 시작
      */
     public void start() {
+
         this.round = 1;
         this.isActive = Boolean.TRUE;
     }
@@ -59,6 +60,7 @@ public class MatchRoomEntity extends BaseTimeEntity {
      * 배틀 종료
      */
     public void over() {
+
         this.isActive = Boolean.FALSE;
 
         for (MatchPlayerEntity matchPlayerEntity : this.matchPlayerSet) {
@@ -85,7 +87,7 @@ public class MatchRoomEntity extends BaseTimeEntity {
      * 모든 배틀 플레이어 입장 여부 확인
      * @return 모든 배틀 플레이어 입장 여부
      */
-    public Boolean isMatchPlayerEnterAll() {
+    public Boolean isPlayerEnterAll() {
         for (MatchPlayerEntity matchPlayerEntity : this.matchPlayerSet) {
             if (!matchPlayerEntity.getIsEnter()) {
                 return false;
@@ -98,7 +100,7 @@ public class MatchRoomEntity extends BaseTimeEntity {
      * 모든 배틀 플레이어 퇴장 여부 확인
      * @return 모든 배틀 플레이어가 나가거나 한명만 남았을 경우 true
      */
-    public Boolean isMatchPlayerExitAll() {
+    public Boolean isPlayerExitAll() {
         int matchPlayerCount = this.matchPlayerSet.size();
         for (MatchPlayerEntity matchPlayerEntity : this.matchPlayerSet) {
             if (!matchPlayerEntity.getIsEnter()) {
@@ -112,7 +114,7 @@ public class MatchRoomEntity extends BaseTimeEntity {
      * 현재 라운드에서 플레이어의 선택 완료 여부
      * @return 현재 라운드에서 모든 플레이어의 선택 완료 여부
      */
-    public Boolean isMatchRoundPickAll() {
+    public Boolean isRoundPickAll() {
 
         Set<String> matchPlayerIds = this.matchPlayerSet.stream()
                 .map(MatchPlayerEntity::getPlayerId)
@@ -131,7 +133,7 @@ public class MatchRoomEntity extends BaseTimeEntity {
      * 모든 플레이어 사망 여부 확인
      * @return 0 ~ 1명의 플레이어 생존 여부
      */
-    public Boolean isMatchPlayerDeadAll() {
+    public Boolean isPlayerDeadAll() {
         int deadPlayerCount = this.matchPlayerSet.size();
         for (MatchPlayerEntity matchPlayerEntity : this.matchPlayerSet) {
             if (matchPlayerEntity.getHp() == 0) {

@@ -3,6 +3,7 @@ package com.monglife.mongs.app.activity.battle.controller;
 import com.monglife.core.dto.response.ResponseDto;
 import com.monglife.mongs.app.activity.battle.dto.etc.OverBattleDto;
 import com.monglife.mongs.app.activity.battle.dto.response.GetBattleResponseDto;
+import com.monglife.mongs.app.activity.battle.dto.response.GetBattleRewardResponseDto;
 import com.monglife.mongs.app.activity.battle.dto.response.OverBattleResponseDto;
 import com.monglife.mongs.app.activity.battle.enums.BattleResponse;
 import com.monglife.mongs.app.activity.battle.service.BattleService;
@@ -25,14 +26,31 @@ public class BattleController {
 
     private final BattleService battleService;
 
+    /**
+     * 매칭 보상 정보 조회
+     * @return 성공 응답
+     */
     @GetMapping("")
-    public ResponseEntity<ResponseDto<GetBattleResponseDto>> getBattle() {
+    public ResponseEntity<ResponseDto<GetBattleRewardResponseDto>> getBattleReward() {
 
-        Integer payPoint = battleService.getBattlePayPoint();
+        Integer payPoint = battleService.getBattleRewardPayPoint();
 
-        GetBattleResponseDto getBattleResponseDto = GetBattleResponseDto.builder()
+        GetBattleRewardResponseDto getBattleRewardResponseDto = GetBattleRewardResponseDto.builder()
                 .payPoint(payPoint)
                 .build();
+
+        return ResponseEntity.ok(BattleResponse.APP_ACTIVITY_BATTLE_GET_BATTLE_REWARD.toResponseDto(getBattleRewardResponseDto));
+    }
+
+    /**
+     * 매칭 정보 조회
+     * @param roomId 배틀룸 ID
+     * @return 성공 응답
+     */
+    @GetMapping("/{roomId}")
+    public ResponseEntity<ResponseDto<GetBattleResponseDto>> getBattle(@PathVariable("roomId") @NotNull @Min(1) Long roomId) {
+
+        GetBattleResponseDto getBattleResponseDto = null;
 
         return ResponseEntity.ok(BattleResponse.APP_ACTIVITY_BATTLE_GET_BATTLE.toResponseDto(getBattleResponseDto));
     }
@@ -82,7 +100,7 @@ public class BattleController {
      * @param roomId 배틀 ID
      * @return 배틀 결과 응답
      */
-    @GetMapping("/{roomId}")
+    @GetMapping("/over/{roomId}")
     public ResponseEntity<ResponseDto<OverBattleResponseDto>> findOverBattle(@PathVariable("roomId") @NotNull @Min(1) Long roomId) {
 
         OverBattleDto overBattleDto = battleService.findOverBattle(roomId);

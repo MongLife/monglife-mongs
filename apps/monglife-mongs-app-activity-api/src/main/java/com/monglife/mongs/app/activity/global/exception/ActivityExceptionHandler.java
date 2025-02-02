@@ -4,6 +4,7 @@ import com.monglife.core.dto.response.ResponseDto;
 import com.monglife.core.enums.response.GlobalResponse;
 import com.monglife.core.exception.ErrorException;
 import com.monglife.mongs.module.mqtt.annotation.MqttConsumerAdvice;
+import com.monglife.mongs.module.mqtt.annotation.MqttExceptionHandler;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.ConstraintViolationException;
 import lombok.extern.slf4j.Slf4j;
@@ -24,6 +25,11 @@ import java.util.Set;
 @MqttConsumerAdvice
 @RestControllerAdvice
 public class ActivityExceptionHandler {
+
+    @MqttExceptionHandler(ErrorException.class)
+    public void handleException(ErrorException e) {
+        log.error(e.getMessage());
+    }
 
     /**
      * exception bean

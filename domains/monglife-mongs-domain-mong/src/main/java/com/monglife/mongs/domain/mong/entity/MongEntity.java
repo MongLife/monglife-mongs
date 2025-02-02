@@ -205,6 +205,14 @@ public class MongEntity extends BaseTimeEntity {
     }
 
     /**
+     * 몽 훈련
+     */
+    public void battle(Double exp, Integer paypoint) {
+        this.payPoint = Math.max(0, this.payPoint + paypoint);
+        this.status.increaseExp(exp);
+    }
+
+    /**
      * 몽 진화 준비
      */
     public void evolutionReady() {

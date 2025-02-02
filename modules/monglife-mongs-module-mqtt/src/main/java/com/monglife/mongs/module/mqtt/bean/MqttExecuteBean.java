@@ -39,7 +39,7 @@ public class MqttExecuteBean {
         }
         // topic 과 매칭되는 메서드가 없는 경우
         else if(topicMappingMethods.isEmpty()) {
-            log.debug("{} : not match method", topic);
+            log.error("{} : not match method", topic);
         }
         // topic 과 매칭되는 메서드가 다수인 경우
         else {

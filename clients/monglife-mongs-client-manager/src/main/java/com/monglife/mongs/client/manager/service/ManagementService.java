@@ -2,7 +2,7 @@ package com.monglife.mongs.client.manager.service;
 
 import com.monglife.mongs.client.manager.client.ManagementClient;
 import com.monglife.mongs.client.manager.dto.request.ChargePayPointRequestDto;
-import com.monglife.mongs.client.manager.dto.request.PatchMongAfterTrainingRequestDto;
+import com.monglife.mongs.client.manager.dto.request.PatchMongRequestDto;
 import com.monglife.mongs.client.manager.exception.ChargePayPointException;
 import com.monglife.mongs.client.manager.exception.GetMinimalMongException;
 import com.monglife.mongs.client.manager.exception.PatchMongAfterTrainingException;
@@ -54,7 +54,7 @@ public class ManagementService {
     public void patchMongAfterTraining(Long mongId, Double exp, Double weight, Double strength, Double satiety, Double healthy, Double fatigue, Integer poopCount, Integer payPoint) {
 
         try {
-            PatchMongAfterTrainingRequestDto patchMongAfterTrainingRequestDto = PatchMongAfterTrainingRequestDto.builder()
+            PatchMongRequestDto patchMongRequestDto = PatchMongRequestDto.builder()
                     .exp(exp)
                     .weight(weight)
                     .strength(strength)
@@ -65,7 +65,28 @@ public class ManagementService {
                     .payPoint(payPoint)
                     .build();
 
-            managementClient.patchMongAfterTraining(mongId, patchMongAfterTrainingRequestDto);
+            managementClient.patchMongAfterTraining(mongId, patchMongRequestDto);
+
+        } catch (Exception e) {
+            throw new PatchMongAfterTrainingException(mongId);
+        }
+    }
+
+    /**
+     * 배틀 이후 몽 정보 갱신
+     * @param mongId 몽 ID
+     * @param exp 경험치
+     * @param payPoint 페이 포인트
+     */
+    public void patchMongAfterBattle(Long mongId, Double exp, Integer payPoint) {
+
+        try {
+            PatchMongRequestDto patchMongRequestDto = PatchMongRequestDto.builder()
+                    .exp(exp)
+                    .payPoint(payPoint)
+                    .build();
+
+            managementClient.patchMongAfterBattle(mongId, patchMongRequestDto);
 
         } catch (Exception e) {
             throw new PatchMongAfterTrainingException(mongId);
