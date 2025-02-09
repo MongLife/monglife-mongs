@@ -2,8 +2,10 @@ package com.monglife.mongs.client.manager.service;
 
 import com.monglife.mongs.client.manager.client.ManagementClient;
 import com.monglife.mongs.client.manager.dto.request.ChargePayPointRequestDto;
+import com.monglife.mongs.client.manager.dto.request.ConsumePayPointRequestDto;
 import com.monglife.mongs.client.manager.dto.request.PatchMongRequestDto;
 import com.monglife.mongs.client.manager.exception.ChargePayPointException;
+import com.monglife.mongs.client.manager.exception.ConsumePayPointException;
 import com.monglife.mongs.client.manager.exception.GetMinimalMongException;
 import com.monglife.mongs.client.manager.exception.PatchMongAfterTrainingException;
 import com.monglife.mongs.client.manager.vo.MongVo;
@@ -36,6 +38,25 @@ public class ManagementService {
 
         } catch (Exception e) {
             throw new ChargePayPointException(mongId);
+        }
+    }
+
+    /**
+     * 페이 포인트 소비
+     * @param mongId 몽 ID
+     * @param payPoint 증가할 페이 포인트
+     */
+    public void consumePayPoint(Long mongId, Integer payPoint) {
+
+        try {
+            ConsumePayPointRequestDto consumePayPointRequestDto = ConsumePayPointRequestDto.builder()
+                    .payPoint(payPoint)
+                    .build();
+
+            managementClient.consumePayPoint(mongId, consumePayPointRequestDto);
+
+        } catch (Exception e) {
+            throw new ConsumePayPointException(mongId);
         }
     }
 

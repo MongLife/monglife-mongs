@@ -1,8 +1,8 @@
 package com.monglife.mongs.domain.match.service;
 
-import com.monglife.mongs.domain.match.dto.etc.CreateMatchDto;
-import com.monglife.mongs.domain.match.dto.etc.PickMatchDto;
 import com.monglife.mongs.domain.match.dto.event.EnterMatchEvent;
+import com.monglife.mongs.domain.match.dto.event.ExitMatchEvent;
+import com.monglife.mongs.domain.match.dto.event.NextRoundEvent;
 import com.monglife.mongs.domain.match.dto.event.OverMatchEvent;
 import com.monglife.mongs.domain.match.entity.MatchPlayerEntity;
 import com.monglife.mongs.domain.match.entity.MatchRoomEntity;
@@ -12,10 +12,9 @@ import com.monglife.mongs.domain.match.exception.*;
 import com.monglife.mongs.domain.match.repository.ComnCodeRepository;
 import com.monglife.mongs.domain.match.repository.MatchRoomRepository;
 import com.monglife.mongs.domain.match.utils.MatchUtil;
-import com.monglife.mongs.domain.match.vo.CreateMatchVo;
 import com.monglife.mongs.domain.match.vo.MatchPlayerVo;
 import com.monglife.mongs.domain.match.vo.MatchVo;
-import com.monglife.mongs.domain.match.vo.OverMatchVo;
+import com.monglife.mongs.domain.match.vo.MatchingPlayerVo;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationEventPublisher;
@@ -56,26 +55,27 @@ public class MatchService {
 
     private final ComnCodeRepository comnCodeRepository;
 
+    /**
+     * 매치 정보 조회
+     * @param roomId 배틀룸 ID
+     * @return 매치 정보 Vo
+     */
     @Transactional(readOnly = true)
     public MatchVo getMatch(Long roomId) {
 
         MatchRoomEntity matchRoomEntity = matchRoomRepository.findByRoomIdAndIsActiveTrue(roomId)
                 .orElseThrow(() -> new NotExistsRoomIdException(roomId));
 
-        Set<MatchPlayerEntity> matchPlayerEntities = matchRoomEntity.getMatchPlayerSet();
-
-        return MatchVo.builder()
-
-                .build();
+        return MatchVo.of(matchRoomEntity);
     }
 
     /**
-     * 종료 된 배틀 결과 조회
+     * 승리한 플레이어 조회
      * @param roomId 배틀룸 ID
-     * @return 등수별 정렬한 OverMatchDto 목록
+     * @return 승리한 플레이어 정보 Vo
      */
     @Transactional
-    public List<OverMatchVo> getOverMatch(Long roomId) {
+    public MatchPlayerVo getWinMatchPlayer(Long roomId) {
 
         MatchRoomEntity matchRoomEntity = matchRoomRepository.findByRoomIdAndIsActiveFalse(roomId)
                 .orElseThrow(() -> new NotExistsRoomIdException(roomId));
@@ -84,17 +84,18 @@ public class MatchService {
 
         List<MatchPlayerEntity> rankMatchPlayerEntities = MatchUtil.rankMatchPlayer(matchPlayerEntities);
 
-        return rankMatchPlayerEntities.stream()
-                .map(OverMatchVo::of)
-                .toList();
+        MatchPlayerEntity matchPlayerEntity = rankMatchPlayerEntities.stream().findFirst()
+                .orElseThrow(NotExistsPlayerException::new);
+
+        return MatchPlayerVo.of(matchPlayerEntity);
     }
 
     /**
      * 배틀 생성
-     * @param createMatchVoSet 매칭 플레이어 Set
+     * @param matchingPlayerVoSet 매칭 플레이어 Set
      */
     @Transactional
-    public CreateMatchDto createMatch(Set<CreateMatchVo> createMatchVoSet) {
+    public MatchVo createMatch(Set<MatchingPlayerVo> matchingPlayerVoSet) {
 
         // 배틀 룸 엔티티 생성
         MatchRoomEntity matchRoomEntity = MatchRoomEntity.builder()
@@ -102,19 +103,19 @@ public class MatchService {
                 .build();
 
         // 배틀 플레이어 엔티티 생성
-        List<MatchPlayerEntity> matchPlayerEntities = createMatchVoSet.stream()
-                .map(createMatchVo -> {
+        List<MatchPlayerEntity> matchPlayerEntities = matchingPlayerVoSet.stream()
+                .map(matchingPlayerVo -> {
                     double attackValue;
                     double healValue;
                     double defenceValue;
                     String mongTypeCode;
 
-                    if (!createMatchVo.getIsBot()) {
+                    if (!matchingPlayerVo.getIsBot()) {
                         // 봇이 아닌 경우
-                        attackValue = MatchPlayerEntity.DEFAULT_ATTACK_VALUE + createMatchVo.getStrength();
-                        healValue = MatchPlayerEntity.DEFAULT_HEAL_VALUE + createMatchVo.getFatigue();
-                        defenceValue = MatchPlayerEntity.DEFAULT_DEFENCE_VALUE + createMatchVo.getWeight();
-                        mongTypeCode = createMatchVo.getMongTypeCode();
+                        attackValue = MatchPlayerEntity.DEFAULT_ATTACK_VALUE + matchingPlayerVo.getStrength();
+                        healValue = MatchPlayerEntity.DEFAULT_HEAL_VALUE + matchingPlayerVo.getFatigue();
+                        defenceValue = MatchPlayerEntity.DEFAULT_DEFENCE_VALUE + matchingPlayerVo.getWeight();
+                        mongTypeCode = matchingPlayerVo.getMongTypeCode();
                     } else {
                         // 봇인 경우
                         attackValue = MatchPlayerEntity.DEFAULT_ATTACK_VALUE;
@@ -127,15 +128,15 @@ public class MatchService {
                     }
 
                     return MatchPlayerEntity.builder()
-                            .playerId(createMatchVo.getPlayerId())
-                            .deviceId(createMatchVo.getDeviceId())
-                            .accountId(createMatchVo.getAccountId())
-                            .mongId(createMatchVo.getMongId())
+                            .playerId(matchingPlayerVo.getPlayerId())
+                            .deviceId(matchingPlayerVo.getDeviceId())
+                            .accountId(matchingPlayerVo.getAccountId())
+                            .mongId(matchingPlayerVo.getMongId())
                             .mongTypeCode(mongTypeCode)
                             .defenceValue(defenceValue * random.nextDouble(MAX_RANDOM_ORIGIN, MAX_RANDOM_BOUND))
                             .attackValue(attackValue * random.nextDouble(MAX_RANDOM_ORIGIN, MAX_RANDOM_BOUND))
                             .healValue(healValue * random.nextDouble(MAX_RANDOM_ORIGIN, MAX_RANDOM_BOUND))
-                            .isBot(createMatchVo.getIsBot())
+                            .isBot(matchingPlayerVo.getIsBot())
                             .build();
                 })
                 .toList();
@@ -143,9 +144,9 @@ public class MatchService {
         matchRoomEntity.joinMatchPlayer(matchPlayerEntities);
 
         // 실제 플레이어 필터링
-        Set<String> playerIdSet = createMatchVoSet.stream()
+        Set<String> playerIdSet = matchingPlayerVoSet.stream()
                 .filter(matchPlayerEntity -> !matchPlayerEntity.getIsBot())
-                .map(CreateMatchVo::getPlayerId)
+                .map(MatchingPlayerVo::getPlayerId)
                 .collect(Collectors.toSet());
 
         // 봇인 경우 MAX_ROUND 만큼의 round 미리 생성
@@ -154,7 +155,7 @@ public class MatchService {
             if (matchPlayerEntity.getIsBot()) {
                 List<MatchRoundEntity> matchRoundEntities = new ArrayList<>();
 
-                for (int round = 1; round <= matchRoomEntity.getMaxRound(); round++) {
+                for (int round = matchRoomEntity.getPickRound(); round <= matchRoomEntity.getMaxRound(); round++) {
 
                     // 선택 코드
                     List<MatchRoundCode> matchRoundCodes
@@ -206,14 +207,7 @@ public class MatchService {
 
         matchRoomRepository.save(matchRoomEntity);
 
-        Set<MatchPlayerVo> matchPlayers = matchPlayerEntities.stream()
-                .map(matchPlayerEntity -> MatchPlayerVo.of(matchPlayerEntity, MatchRoundCode.NONE))
-                .collect(Collectors.toSet());
-
-        return CreateMatchDto.builder()
-                .roomId(matchRoomEntity.getRoomId())
-                .matchPlayers(matchPlayers)
-                .build();
+        return MatchVo.of(matchRoomEntity);
     }
 
     /**
@@ -224,14 +218,14 @@ public class MatchService {
     @Transactional
     public void enterMatch(Long roomId, String playerId) {
 
-        MatchRoomEntity matchRoomEntity = matchRoomRepository.findByRoomIdAndIsActiveFalseAndRound(roomId, 0)
+        MatchRoomEntity matchRoomEntity = matchRoomRepository.findByRoomIdAndIsActiveFalseAndRound(roomId, 1)
                 .orElseThrow(() -> new NotExistsRoomIdException(roomId));
 
-        matchRoomEntity.getMatchPlayer(playerId)
+        MatchPlayerEntity matchPlayerEntity = matchRoomEntity.getMatchPlayer(playerId)
                 .orElseThrow(() -> new NotExistsPlayerIdException(playerId));
 
         // 입장 처리
-        matchRoomEntity.enterMatchPlayer(playerId);
+        matchPlayerEntity.enter();
 
         if (matchRoomEntity.isPlayerEnterAll()) {
             // 입장 완료
@@ -252,29 +246,27 @@ public class MatchService {
         MatchRoomEntity matchRoomEntity = matchRoomRepository.findByRoomIdAndIsActiveTrue(roomId)
                 .orElseThrow(() -> new NotExistsRoomIdException(roomId));
 
-        matchRoomEntity.getMatchPlayer(playerId)
+        MatchPlayerEntity matchPlayerEntity = matchRoomEntity.getMatchPlayer(playerId)
                 .orElseThrow(() -> new NotExistsPlayerIdException(playerId));
 
         // 퇴장 처리
-        matchRoomEntity.excludeMatchPlayer(playerId);
+        matchPlayerEntity.duringRoundExit();
 
-        // 모든 플레이어가 퇴장하지 않은 상태
+        // 모든 플레이어 퇴장
         if (matchRoomEntity.isPlayerExitAll()) {
 
             matchRoomEntity.over();
 
             // 퇴장 완료
-            Set<MatchPlayerEntity> matchPlayerEntities =  matchRoomEntity.getMatchPlayerSet();
-
-            List<MatchPlayerEntity> rankMatchPlayerEntities = MatchUtil.rankMatchPlayer(matchPlayerEntities);
+            List<MatchPlayerEntity> rankMatchPlayerEntities = MatchUtil.rankMatchPlayer(matchRoomEntity.getMatchPlayerSet());
 
             rankMatchPlayerEntities.stream().findFirst()
-                    .ifPresent(matchPlayerEntity ->
-                            applicationEventPublisher.publishEvent(OverMatchEvent.of(matchRoomEntity, matchPlayerEntity)));
+                    .ifPresent(winMatchPlayerEntity ->
+                            applicationEventPublisher.publishEvent(ExitMatchEvent.of(matchRoomEntity.getRoomId(), winMatchPlayerEntity)));
 
         } else {
             // 퇴장한 플레이어 라운드 생성
-            Integer round = matchRoomEntity.getRound();
+            Integer round = matchRoomEntity.getPickRound();
 
             // 현재 라운드 선택한 경우
             if (matchRoomEntity.getCurrentMatchRound(playerId).isPresent()) {
@@ -311,40 +303,34 @@ public class MatchService {
         MatchRoomEntity matchRoomEntity = matchRoomRepository.findByRoomIdAndIsActiveTrue(roomId)
                 .orElseThrow(() -> new NotExistsRoomIdException(roomId));
 
-        Integer round = matchRoomEntity.getRound();
-
-        // 선택 여부 확인
-        matchRoomEntity.getCurrentMatchRound(playerId)
-                .ifPresent(matchRoundEntity -> {
-                    throw new AlreadyExistsRoundException(round, playerId);
-                });
+        Integer round = matchRoomEntity.getPickRound();
 
         // 현재 플레이어
         MatchPlayerEntity matchPlayerEntity = matchRoomEntity.getMatchPlayer(playerId)
                 .orElseThrow(() -> new NotExistsPlayerIdException(playerId));
 
         // 타켓 플레이어 존재 확인
-        matchRoomEntity.getMatchPlayer(targetPlayerId)
+        MatchPlayerEntity targetMatchPlayerEntity = matchRoomEntity.getMatchPlayer(targetPlayerId)
                 .orElseThrow(() -> new NotExistsPlayerIdException(targetPlayerId));
 
         MatchRoundEntity matchRoundEntity = switch (matchRoundCode) {
             case MATCH_PICK_DEFENCE -> MatchRoundEntity.builder()
-                    .playerId(playerId)
-                    .targetPlayerId(targetPlayerId)
+                    .playerId(matchPlayerEntity.getPlayerId())
+                    .targetPlayerId(targetMatchPlayerEntity.getPlayerId())
                     .round(round)
                     .roundCode(matchRoundCode)
                     .roundValue(matchPlayerEntity.getDefenceValue())
                     .build();
             case MATCH_PICK_HEAL -> MatchRoundEntity.builder()
-                    .playerId(playerId)
-                    .targetPlayerId(targetPlayerId)
+                    .playerId(matchPlayerEntity.getPlayerId())
+                    .targetPlayerId(targetMatchPlayerEntity.getPlayerId())
                     .round(round)
                     .roundCode(matchRoundCode)
                     .roundValue(matchPlayerEntity.getHealValue())
                     .build();
             default -> MatchRoundEntity.builder()
-                    .playerId(playerId)
-                    .targetPlayerId(targetPlayerId)
+                    .playerId(matchPlayerEntity.getPlayerId())
+                    .targetPlayerId(targetMatchPlayerEntity.getPlayerId())
                     .round(round)
                     .roundCode(matchRoundCode)
                     .roundValue(matchPlayerEntity.getAttackValue())
@@ -354,34 +340,19 @@ public class MatchService {
         // 라운드 등록
         matchRoomEntity.joinMatchRound(matchRoundEntity);
 
-        Boolean isPickAll = matchRoomEntity.isRoundPickAll();
-        MatchVo matchVo = null;
-
         // 전체 선택 여부 확인
-        if (isPickAll) {
+        if (matchRoomEntity.isRoundPickAll()) {
+            matchRoomEntity.nextRound();
 
-            Set<MatchPlayerVo> matchPlayers = matchRoomEntity.nextRound();
+            if (matchRoomEntity.isLastRound()) {
+                matchRoomEntity.over();
 
-            Boolean isLastRound = matchRoomEntity.isLastRound() || matchRoomEntity.isPlayerDeadAll();
+                MatchUtil.rankMatchPlayer(matchRoomEntity.getMatchPlayerSet()).stream().findFirst()
+                        .ifPresent(winMatchPlayerEntity ->
+                                applicationEventPublisher.publishEvent(OverMatchEvent.of(matchRoomEntity.getRoomId(), winMatchPlayerEntity)));
+            }
 
-            matchVo = MatchVo.builder()
-                    .round(round)
-                    .matchPlayers(matchPlayers)
-                    .isLastRound(isLastRound)
-                    .build();
+            applicationEventPublisher.publishEvent(NextRoundEvent.of(matchRoomEntity));
         }
-    }
-
-    /**
-     * 배틀 종료
-     * @param roomId 배틀룸 ID
-     */
-    @Transactional
-    public void overMatch(Long roomId) {
-
-        MatchRoomEntity matchRoomEntity = matchRoomRepository.findByRoomIdAndIsActiveTrue(roomId)
-                .orElseThrow(() -> new NotExistsRoomIdException(roomId));
-
-        matchRoomEntity.over();
     }
 }

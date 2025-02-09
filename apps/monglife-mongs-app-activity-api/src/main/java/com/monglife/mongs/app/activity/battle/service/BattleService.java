@@ -3,29 +3,29 @@ package com.monglife.mongs.app.activity.battle.service;
 import com.monglife.core.utils.CommonUtil;
 import com.monglife.mongs.app.activity.battle.config.BattleProperties;
 import com.monglife.mongs.app.activity.battle.dto.etc.BattleDto;
-import com.monglife.mongs.app.activity.battle.dto.etc.CreateBattleDto;
 import com.monglife.mongs.app.activity.battle.dto.etc.OverBattleDto;
-import com.monglife.mongs.app.activity.battle.exception.NotExistsMatchException;
-import com.monglife.mongs.app.activity.battle.exception.NotExistsMongException;
-import com.monglife.mongs.app.activity.battle.vo.CreateBattleVo;
 import com.monglife.mongs.client.manager.service.ManagementService;
 import com.monglife.mongs.client.manager.vo.MongVo;
-import com.monglife.mongs.domain.match.dto.etc.CreateMatchDto;
-import com.monglife.mongs.domain.match.dto.etc.ExitMatchDto;
-import com.monglife.mongs.domain.match.dto.etc.PickMatchDto;
+import com.monglife.mongs.app.activity.battle.dto.etc.CreateBattleDto;
 import com.monglife.mongs.domain.match.enums.MatchRoundCode;
 import com.monglife.mongs.domain.match.service.MatchService;
 import com.monglife.mongs.domain.match.service.MatchingService;
-import com.monglife.mongs.domain.match.vo.CreateMatchVo;
+import com.monglife.mongs.domain.match.vo.MatchPlayerVo;
 import com.monglife.mongs.domain.match.vo.MatchVo;
-import com.monglife.mongs.domain.match.vo.OverMatchVo;
+import com.monglife.mongs.domain.match.vo.MatchingPlayerVo;
+import com.monglife.mongs.domain.match.vo.MatchingVo;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class BattleService {
@@ -48,7 +48,24 @@ public class BattleService {
 
         MatchVo matchVo = matchService.getMatch(roomId);
 
+        return BattleDto.of(matchVo);
+    }
 
+    /**
+     * 매치 종료 정보 조회
+     * @param roomId 배틀룸 ID
+     * @return 매치 종료 정보 Dto
+     */
+    @Transactional
+    public OverBattleDto getOverBattle(Long roomId) {
+
+        MatchPlayerVo matchPlayerVo = matchService.getWinMatchPlayer(roomId);
+
+        return OverBattleDto.builder()
+                .roomId(roomId)
+                .winPlayerId(matchPlayerVo.getPlayerId())
+                .winMongTypeCode(matchPlayerVo.getMongTypeCode())
+                .build();
     }
 
     /**
@@ -57,7 +74,16 @@ public class BattleService {
      */
     @Transactional
     public Integer getBattleRewardPayPoint() {
-        return battleProperties.payPoint;
+        return battleProperties.rewardPayPoint;
+    }
+
+    /**
+     * 배틀 매치 배팅 페이 포인트 조회
+     * @return 배팅 페이 포인트
+     */
+    @Transactional
+    public Integer getBattleBettingPayPoint() {
+        return battleProperties.bettingPayPoint;
     }
 
     /**
@@ -84,21 +110,20 @@ public class BattleService {
 
     /**
      * 배틀 생성
-     * @param createBattleVoSet 배틀 생성 정보 Dto
-     * @return 배틀 생성 완료 Dto
+     * @param matchingVoSet 배틀 생성 정보 Dto
      */
     @Transactional
-    public CreateBattleDto createBattle(Set<CreateBattleVo> createBattleVoSet) {
+    public CreateBattleDto createBattle(Set<MatchingVo> matchingVoSet) {
 
         Map<Long, MongVo> mongVoMap = new HashMap<>();
 
         // 봇이 아닌 플레이어 몽 정보 조회
-        for (CreateBattleVo createBattleVo : createBattleVoSet) {
+        for (MatchingVo matchingVo : matchingVoSet) {
             // 봇인 경우 패스
-            if (createBattleVo.getIsBot()) continue;
+            if (matchingVo.getIsBot()) continue;
 
             // manager-management 조회 요청 (feign)
-            Long mongId = createBattleVo.getMongId();
+            Long mongId = matchingVo.getMongId();
 
             Optional<MongVo> optionalMongVo = managementService.getMong(mongId);
 
@@ -106,18 +131,22 @@ public class BattleService {
                 // 몽 정보가 있는 경우
                 MongVo mongVo = optionalMongVo.get();
                 mongVoMap.put(mongVo.getMongId(), mongVo);
+
+                // 배팅 포인트 소비
+                managementService.consumePayPoint(mongVo.getMongId(), battleProperties.bettingPayPoint);
+
             } else {
                 // 몽 정보가 없는 경우
-                createBattleVoSet.stream()
+                matchingVoSet.stream()
                         // 조회 실패 몽과 봇을 제외한 모든 플레이어 매칭 대기열 복귀
-                        .filter(vo -> !vo.getMongId().equals(mongId) && !createBattleVo.getIsBot())
+                        .filter(vo -> !vo.getMongId().equals(mongId) && !matchingVo.getIsBot())
                         .forEach(vo -> matchingService.createWaitMatching(vo.getAccountId(), vo.getDeviceId(), vo.getMongId()));
 
-                throw new NotExistsMongException(mongId);
+                return null;
             }
         }
 
-        Set<CreateMatchVo> createMatchVoSet = createBattleVoSet.stream()
+        Set<MatchingPlayerVo> matchingPlayerVoSet = matchingVoSet.stream()
                 .map(createBattleVo -> {
 
                     String playerId = CommonUtil.randomId();
@@ -136,7 +165,7 @@ public class BattleService {
                         mongTypeCode = mongVo.getMongTypeCode();
                     }
 
-                    return CreateMatchVo.builder()
+                    return MatchingPlayerVo.builder()
                             .playerId(playerId)
                             .deviceId(createBattleVo.getDeviceId())
                             .accountId(createBattleVo.getAccountId())
@@ -152,12 +181,9 @@ public class BattleService {
                 .collect(Collectors.toSet());
 
         // 새로운 매치 생성
-        CreateMatchDto createMatchDto = matchService.createMatch(createMatchVoSet);
+        MatchVo matchVo = matchService.createMatch(matchingPlayerVoSet);
 
-        return CreateBattleDto.builder()
-                .roomId(createMatchDto.getRoomId())
-                .battlePlayers(createMatchDto.getMatchPlayers())
-                .build();
+        return CreateBattleDto.of(matchVo);
     }
 
     /**
@@ -167,7 +193,6 @@ public class BattleService {
      */
     @Transactional
     public void enterBattle(Long roomId, String playerId) {
-
         matchService.enterMatch(roomId, playerId);
     }
 
@@ -175,42 +200,10 @@ public class BattleService {
      * 매치 퇴장
      * @param roomId 배틀룸 ID
      * @param playerId 플레이어 ID
-     * @return 매치 종료 정보 Dto
      */
     @Transactional
-    public OverBattleDto exitBattle(Long roomId, String playerId) {
-
+    public void exitBattle(Long roomId, String playerId) {
         matchService.exitMatch(roomId, playerId);
-
-        Boolean isExitAll = exitMatchDto.getIsExitAll();
-        List<OverMatchVo> overMatchVos = exitMatchDto.getOverMatchVos();
-
-        OverBattleDto overBattleDto = null;
-
-        if (isExitAll && !overMatchVos.isEmpty()) {
-            // 남은 플레이어 1명 승리로 처리
-            matchService.overMatch(roomId);
-
-            OverMatchVo overMatchVo = overMatchVos.stream().findFirst()
-                    .orElseThrow(() -> new NotExistsMatchException(roomId));
-
-            overBattleDto = OverBattleDto.builder()
-                    .roomId(roomId)
-                    .winPlayerId(overMatchVo.getPlayerId())
-                    .winMongTypeCode(overMatchVo.getMongTypeCode())
-                    .build();
-
-            // 페이 포인트 보상
-            if (!overMatchVo.getIsBot()) {
-                managementService.patchMongAfterBattle(
-                        overMatchVo.getMongId(),
-                        battleProperties.exp,
-                        battleProperties.payPoint
-                );
-            }
-        }
-
-        return overBattleDto;
     }
 
     /**
@@ -219,66 +212,9 @@ public class BattleService {
      * @param playerId 플레이어 ID
      * @param targetPlayerId 상대 플레이어 ID
      * @param matchRoundCode 매치 선택 코드
-     * @return 매치 라운드 종료 정보 Dto
      */
     @Transactional
-    public BattleDto pickBattle(Long roomId, String playerId, String targetPlayerId, MatchRoundCode matchRoundCode) {
-
-        PickMatchDto pickMatchDto = matchService.pickMatch(roomId, playerId, targetPlayerId, matchRoundCode);
-
-        Boolean isPickAll = pickMatchDto.getIsPickAll();
-        MatchVo matchVo = pickMatchDto.getMatchVo();
-
-        BattleDto battleDto = null;
-
-        if (isPickAll && matchVo != null) {
-            // 마지막 라운드 인 경우 배틀 종료 처리
-            if (matchVo.getIsLastRound()) {
-                matchService.overMatch(roomId);
-
-                // 페이 포인트 보상
-                List<OverMatchVo> overMatchVos = matchService.getOverMatch(roomId);
-
-                OverMatchVo overMatchVo = overMatchVos.stream().findFirst()
-                        .orElseThrow(() -> new NotExistsMatchException(roomId));
-
-                if (!overMatchVo.getIsBot()) {
-                    managementService.patchMongAfterBattle(
-                            overMatchVo.getMongId(),
-                            battleProperties.exp,
-                            battleProperties.payPoint
-                    );
-                }
-            }
-
-            battleDto = BattleDto.builder()
-                    .roomId(roomId)
-                    .round(matchVo.getRound())
-                    .battlePlayers(matchVo.getMatchPlayers())
-                    .isLastRound(matchVo.getIsLastRound())
-                    .build();
-        }
-
-        return battleDto;
-    }
-
-    /**
-     * 매치 종료 정보 조회
-     * @param roomId 배틀룸 ID
-     * @return 매치 종료 정보 Dto
-     */
-    @Transactional
-    public OverBattleDto findOverBattle(Long roomId) {
-
-        List<OverMatchVo> overMatchVos = matchService.getOverMatch(roomId);
-
-        OverMatchVo overMatchVo = overMatchVos.stream().findFirst()
-                .orElseThrow(() -> new NotExistsMatchException(roomId));
-
-        return OverBattleDto.builder()
-                .roomId(roomId)
-                .winPlayerId(overMatchVo.getPlayerId())
-                .winMongTypeCode(overMatchVo.getMongTypeCode())
-                .build();
+    public void pickBattle(Long roomId, String playerId, String targetPlayerId, MatchRoundCode matchRoundCode) {
+        matchService.pickMatch(roomId, playerId, targetPlayerId, matchRoundCode);
     }
 }

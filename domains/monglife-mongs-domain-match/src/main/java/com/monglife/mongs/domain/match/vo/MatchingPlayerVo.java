@@ -2,10 +2,9 @@ package com.monglife.mongs.domain.match.vo;
 
 import lombok.Builder;
 import lombok.Getter;
-import lombok.Setter;
 
 @Getter
-public class CreateMatchVo {
+public class MatchingPlayerVo {
 
     private final String playerId;
 
@@ -26,7 +25,7 @@ public class CreateMatchVo {
     private final Boolean isBot;
 
     @Builder
-    public CreateMatchVo(String playerId, String deviceId, Long accountId, Long mongId, String mongTypeCode, Double weight, Double strength, Double fatigue, Boolean isBot) {
+    public MatchingPlayerVo(String playerId, String deviceId, Long accountId, Long mongId, String mongTypeCode, Double weight, Double strength, Double fatigue, Boolean isBot) {
         this.playerId = playerId;
         this.deviceId = deviceId;
         this.accountId = accountId;

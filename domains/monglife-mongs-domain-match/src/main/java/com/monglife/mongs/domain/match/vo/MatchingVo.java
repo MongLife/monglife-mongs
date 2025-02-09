@@ -3,8 +3,9 @@ package com.monglife.mongs.domain.match.vo;
 import com.monglife.mongs.domain.match.entity.MatchingEntity;
 import lombok.*;
 
+@ToString
 @Getter
-public class FindMatchingVo {
+public class MatchingVo {
 
     private final Long mongId;
 
@@ -15,15 +16,15 @@ public class FindMatchingVo {
     private final Boolean isBot;
 
     @Builder
-    public FindMatchingVo(Long mongId, String deviceId, Long accountId, Boolean isBot) {
+    public MatchingVo(Long mongId, String deviceId, Long accountId, Boolean isBot) {
         this.mongId = mongId;
         this.deviceId = deviceId;
         this.accountId = accountId;
         this.isBot = isBot;
     }
 
-    public static FindMatchingVo of(MatchingEntity matchingEntity) {
-        return FindMatchingVo.builder()
+    public static MatchingVo of(MatchingEntity matchingEntity) {
+        return MatchingVo.builder()
                 .mongId(matchingEntity.getMongId())
                 .deviceId(matchingEntity.getDeviceId())
                 .accountId(matchingEntity.getAccountId())

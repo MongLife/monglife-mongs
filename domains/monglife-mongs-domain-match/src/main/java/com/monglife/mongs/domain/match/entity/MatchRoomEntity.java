@@ -1,7 +1,6 @@
 package com.monglife.mongs.domain.match.entity;
 
 import com.monglife.mongs.domain.match.enums.MatchRoundCode;
-import com.monglife.mongs.domain.match.vo.MatchPlayerVo;
 import com.monglife.mongs.module.jpa.entity.BaseTimeEntity;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
@@ -26,13 +25,13 @@ public class MatchRoomEntity extends BaseTimeEntity {
     private Long roomId;
 
     @Column(name = "round")
-    private Integer round = 0;
+    private Integer round;
 
     @Column(name = "max_round")
     private Integer maxRound;
 
     @Column(name = "is_active")
-    private Boolean isActive = Boolean.FALSE;
+    private Boolean isActive;
 
     @OneToMany(cascade = CascadeType.ALL)
     @JoinColumn(name = "room_id")
@@ -44,15 +43,23 @@ public class MatchRoomEntity extends BaseTimeEntity {
 
     @Builder
     public MatchRoomEntity(Integer maxRound) {
+        this.round = 1;
         this.maxRound = maxRound;
+        this.isActive = Boolean.FALSE;
+    }
+
+    public Integer getRound() {
+        return this.round - 1;
+    }
+
+    public Integer getPickRound() {
+        return this.round;
     }
 
     /**
      * 배틀 시작
      */
     public void start() {
-
-        this.round = 1;
         this.isActive = Boolean.TRUE;
     }
 
@@ -73,14 +80,7 @@ public class MatchRoomEntity extends BaseTimeEntity {
      * @return 마지막 라운드 여부
      */
     public Boolean isLastRound() {
-
-        boolean isLastRound = this.round.equals(this.maxRound + 1);
-
-        if (isLastRound) {
-            this.round = this.round - 1;
-        }
-
-        return isLastRound;
+        return this.round > this.maxRound || this.isPlayerDeadAll();
     }
 
     /**
@@ -164,7 +164,7 @@ public class MatchRoomEntity extends BaseTimeEntity {
      */
     public Optional<MatchRoundEntity> getCurrentMatchRound(String playerId) {
         for (MatchRoundEntity matchRoundEntity : this.matchRoundSet) {
-            if (matchRoundEntity.getPlayerId().equals(playerId) && matchRoundEntity.getRound().equals(this.round)) {
+            if (matchRoundEntity.getPlayerId().equals(playerId) && this.round.equals(matchRoundEntity.getRound())) {
                 return Optional.of(matchRoundEntity);
             }
         }
@@ -180,36 +180,14 @@ public class MatchRoomEntity extends BaseTimeEntity {
     }
 
     /**
-     * 플레이어 입장
-     * @param playerId 플레이어 ID
-     */
-    public void enterMatchPlayer(String playerId) {
-        for (MatchPlayerEntity matchPlayerEntity : this.matchPlayerSet) {
-            if (matchPlayerEntity.getPlayerId().equals(playerId)) {
-                matchPlayerEntity.enter();
-                break;
-            }
-        }
-    }
-
-    /**
-     * 플레이어 중도 퇴장
-     * @param playerId 퇴장할 플레이어 ID
-     */
-    public void excludeMatchPlayer(String playerId) {
-        for (MatchPlayerEntity matchPlayerEntity : this.matchPlayerSet) {
-            if (matchPlayerEntity.getPlayerId().equals(playerId)) {
-                matchPlayerEntity.duringRoundExit();
-                break;
-            }
-        }
-    }
-
-    /**
      * 라운드 단건 등록
      * @param matchRoundEntity 라운드 엔티티
      */
     public void joinMatchRound(MatchRoundEntity matchRoundEntity) {
+
+        this.getCurrentMatchRound(matchRoundEntity.getPlayerId())
+                .ifPresent(existsMatchRoundEntity -> this.matchRoundSet.remove(existsMatchRoundEntity));
+
         this.matchRoundSet.add(matchRoundEntity);
     }
 
@@ -224,13 +202,13 @@ public class MatchRoomEntity extends BaseTimeEntity {
     /**
      * 다음 라운드로 진행
      */
-    public Set<MatchPlayerVo> nextRound() {
+    public void nextRound() {
 
         Map<String, MatchPlayerEntity> matchPlayerEntityMap = this.matchPlayerSet.stream()
                 .collect(Collectors.toMap(MatchPlayerEntity::getPlayerId, matchPlayerEntity -> matchPlayerEntity));
 
         this.matchRoundSet.stream()
-                .filter(matchRoundEntity -> matchRoundEntity.getRound().equals(this.round))
+                .filter(matchRoundEntity -> this.round.equals(matchRoundEntity.getRound()))
                 .forEach(matchRoundEntity -> {
 
                     String targetPlayerId = matchRoundEntity.getTargetPlayerId();
@@ -248,8 +226,6 @@ public class MatchRoomEntity extends BaseTimeEntity {
 
         this.round = this.round + 1;
 
-        return this.matchPlayerSet.stream()
-                .map(matchPlayerEntity -> MatchPlayerVo.of(matchPlayerEntity, matchPlayerEntity.hpCalculation()))
-                .collect(Collectors.toSet());
+        this.matchPlayerSet.forEach(MatchPlayerEntity::next);
     }
 }

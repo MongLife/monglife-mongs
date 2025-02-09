@@ -258,6 +258,16 @@ public class ManagementService {
     }
 
     /**
+     * 몽 페이 포인트 소비
+     * @param mongId 몽 ID
+     * @param payPoint 페이 포인트
+     */
+    @Transactional
+    public void consumePayPoint(Long mongId, Integer payPoint) {
+        mongService.decreasePayPoint(mongId, payPoint);
+    }
+
+    /**
      * TODO: 삭제
      * 몽 훈련 이후 갱신
      * @param accountId 계정 ID

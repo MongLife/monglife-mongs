@@ -1,7 +1,6 @@
 package com.monglife.mongs.app.user.store.service;
 
 import com.monglife.mongs.app.user.store.dto.etc.GetProductDto;
-import com.monglife.mongs.app.user.store.exception.AlreadyConsumeOrderException;
 import com.monglife.mongs.app.user.store.exception.InvalidConsumeOrderException;
 import com.monglife.mongs.client.google.service.GoogleService;
 import com.monglife.mongs.client.google.vo.InAppOrderVo;
@@ -66,24 +65,20 @@ public class StoreService {
             throw new InvalidConsumeOrderException(productOrderId, purchaseToken);
         }
 
-        // 소비 완료
-        if (inAppOrderVo.getIsConsume()) {
-            throw new AlreadyConsumeOrderException(productOrderId, purchaseToken);
-        }
-
         // 주문 소비 실행
+        if (!inAppOrderVo.getIsConsume()) {
+            switch (productId) {
+                case "PRDT000" -> memberService.increaseStarPoint(accountId, 5);
+                case "PRDT001" -> memberService.increaseStarPoint(accountId, 10);
+                case "PRDT002" -> memberService.increaseStarPoint(accountId, 20);
+            }
 
-        switch (productId) {
-            case "PRDT000" -> memberService.increaseStarPoint(accountId, 5);
-            case "PRDT001" -> memberService.increaseStarPoint(accountId, 10);
-            case "PRDT002" -> memberService.increaseStarPoint(accountId, 20);
+            // 구글 소비 처리
+            googleService.consumeOrder(productId, purchaseToken);
         }
 
         // 소비 처리
         productOrderService.consumeProductOrder(productOrderId);
-
-        // 구글 소비 처리
-        googleService.consumeOrder(productId, purchaseToken);
     }
 
     @Transactional

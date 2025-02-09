@@ -13,5 +13,7 @@ public class BattleProperties {
 
     public Double exp;
 
-    public Integer payPoint;
+    public Integer rewardPayPoint;
+
+    public Integer bettingPayPoint;
 }

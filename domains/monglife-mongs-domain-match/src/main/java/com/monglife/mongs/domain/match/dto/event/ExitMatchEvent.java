@@ -7,7 +7,7 @@ import lombok.NoArgsConstructor;
 
 @Getter
 @NoArgsConstructor
-public class OverMatchEvent {
+public class ExitMatchEvent {
 
     private Long roomId;
 
@@ -20,7 +20,7 @@ public class OverMatchEvent {
     private Boolean isBot;
 
     @Builder
-    public OverMatchEvent(Long roomId, Long winMongId, String winPlayerId, String winMongTypeCode, Boolean isBot) {
+    public ExitMatchEvent(Long roomId, Long winMongId, String winPlayerId, String winMongTypeCode, Boolean isBot) {
         this.roomId = roomId;
         this.winMongId = winMongId;
         this.winPlayerId = winPlayerId;
@@ -28,8 +28,8 @@ public class OverMatchEvent {
         this.isBot = isBot;
     }
 
-    public static OverMatchEvent of(Long roomId, MatchPlayerEntity winMatchPlayerEntity) {
-        return OverMatchEvent.builder()
+    public static ExitMatchEvent of(Long roomId, MatchPlayerEntity winMatchPlayerEntity) {
+        return ExitMatchEvent.builder()
                 .roomId(roomId)
                 .winMongId(winMatchPlayerEntity.getMongId())
                 .winPlayerId(winMatchPlayerEntity.getPlayerId())

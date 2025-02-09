@@ -1,39 +1,30 @@
 package com.monglife.mongs.app.activity.battle.listener;
 
-import com.monglife.mongs.app.activity.battle.dto.response.CreateBattleResponseDto;
+import com.monglife.mongs.app.activity.battle.config.BattleProperties;
 import com.monglife.mongs.app.activity.battle.dto.response.GetBattleResponseDto;
 import com.monglife.mongs.app.activity.battle.dto.response.OverBattleResponseDto;
 import com.monglife.mongs.app.activity.battle.publisher.BattlePublisher;
-import com.monglife.mongs.domain.match.dto.event.CreateMatchEvent;
+import com.monglife.mongs.client.manager.service.ManagementService;
 import com.monglife.mongs.domain.match.dto.event.EnterMatchEvent;
-import com.monglife.mongs.domain.match.dto.event.MatchObserveEvent;
+import com.monglife.mongs.domain.match.dto.event.ExitMatchEvent;
+import com.monglife.mongs.domain.match.dto.event.NextRoundEvent;
 import com.monglife.mongs.domain.match.dto.event.OverMatchEvent;
-import com.monglife.mongs.domain.match.vo.MatchPlayerVo;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.event.TransactionPhase;
 import org.springframework.transaction.event.TransactionalEventListener;
 
-import java.util.List;
-
+@Slf4j
 @Component
 @RequiredArgsConstructor
 public class MatchEventListener {
 
     private final BattlePublisher battlePublisher;
 
-    @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
-    public void createMatchEventListener(CreateMatchEvent event) {
+    private final ManagementService managementService;
 
-        List<String> deviceIds = event.getMatchPlayers().stream()
-                        .map(MatchPlayerVo::getDeviceId)
-                        .toList();
-
-        battlePublisher.createBattlePublish(deviceIds, CreateBattleResponseDto.builder()
-                .roomId(event.getRoomId())
-                .battlePlayers(event.getMatchPlayers())
-                .build());
-    }
+    private final BattleProperties battleProperties;
 
     @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
     public void enterMatchEventListener(EnterMatchEvent event) {
@@ -47,18 +38,37 @@ public class MatchEventListener {
     }
 
     @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
-    public void matchObserveEventListener(MatchObserveEvent event) {
+    public void nextRoundEventListener(NextRoundEvent event) {
 
+        battlePublisher.nextRoundPublish(event.getRoomId(), GetBattleResponseDto.builder()
+                .roomId(event.getRoomId())
+                .round(event.getRound())
+                .isLastRound(event.getIsLastRound())
+                .battlePlayers(event.getBattlePlayers())
+                .build());
+    }
 
+    @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
+    public void exitMatchEventListener(ExitMatchEvent event) {
+
+        if (!event.getIsBot()) {
+            managementService.patchMongAfterBattle(
+                    event.getWinMongId(), battleProperties.exp, battleProperties.rewardPayPoint);
+        }
+
+        battlePublisher.exitBattlePublish(event.getRoomId(), OverBattleResponseDto.builder()
+                .roomId(event.getRoomId())
+                .winPlayerId(event.getWinPlayerId())
+                .winMongTypeCode(event.getWinMongTypeCode())
+                .build());
     }
 
     @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
     public void overMatchEventListener(OverMatchEvent event) {
 
-        battlePublisher.overBattlePublish(event.getRoomId(), OverBattleResponseDto.builder()
-                .roomId(event.getRoomId())
-                .winPlayerId(event.getWinPlayerId())
-                .winMongTypeCode(event.getWinMongTypeCode())
-                .build());
+        if (!event.getIsBot()) {
+            managementService.patchMongAfterBattle(
+                    event.getWinMongId(), battleProperties.exp, battleProperties.rewardPayPoint);
+        }
     }
 }

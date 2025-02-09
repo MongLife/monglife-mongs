@@ -5,7 +5,6 @@ import com.monglife.mongs.app.activity.battle.dto.response.CreateBattleResponseD
 import com.monglife.mongs.app.activity.battle.dto.response.GetBattleResponseDto;
 import com.monglife.mongs.app.activity.battle.dto.response.OverBattleResponseDto;
 import com.monglife.mongs.app.activity.battle.enums.BattleResponse;
-import com.monglife.mongs.app.activity.battle.service.BattleService;
 import com.monglife.mongs.module.mqtt.annotation.MqttPublish;
 import com.monglife.mongs.module.mqtt.dto.MqttResponseEntity;
 import lombok.RequiredArgsConstructor;
@@ -16,8 +15,6 @@ import java.util.List;
 @Component
 @RequiredArgsConstructor
 public class BattlePublisher {
-
-    private final BattleService battleService;
 
     /**
      * 배틀룸 생성
@@ -53,7 +50,7 @@ public class BattlePublisher {
      * @return 모든 플레이어 퇴장 시, 비동기 응답
      */
     @MqttPublish("/battle/match/{topic}")
-    public MqttResponseEntity<ResponseDto<OverBattleResponseDto>> overBattlePublish(Long roomId, OverBattleResponseDto overBattleResponseDto) {
+    public MqttResponseEntity<ResponseDto<OverBattleResponseDto>> exitBattlePublish(Long roomId, OverBattleResponseDto overBattleResponseDto) {
 
         return MqttResponseEntity
                 .body(BattleResponse.APP_ACTIVITY_BATTLE_OVER_BATTLE.toResponseDto(overBattleResponseDto))
@@ -67,7 +64,7 @@ public class BattlePublisher {
      * @return 모든 플레이어 라운드 선택 완료 시, 비동기 응답
      */
     @MqttPublish("/battle/match/{topic}")
-    public MqttResponseEntity<ResponseDto<GetBattleResponseDto>> pickBattlePublish(Long roomId, GetBattleResponseDto getBattleResponseDto) {
+    public MqttResponseEntity<ResponseDto<GetBattleResponseDto>> nextRoundPublish(Long roomId, GetBattleResponseDto getBattleResponseDto) {
 
         return MqttResponseEntity
                 .body(BattleResponse.APP_ACTIVITY_BATTLE_FIGHT_BATTLE.toResponseDto(getBattleResponseDto))

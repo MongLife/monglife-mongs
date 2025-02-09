@@ -4,18 +4,17 @@ import com.monglife.mongs.app.activity.battle.dto.etc.CreateBattleDto;
 import com.monglife.mongs.app.activity.battle.dto.response.CreateBattleResponseDto;
 import com.monglife.mongs.app.activity.battle.publisher.BattlePublisher;
 import com.monglife.mongs.app.activity.battle.service.BattleService;
-import com.monglife.mongs.app.activity.battle.vo.CreateBattleVo;
 import com.monglife.mongs.domain.match.service.MatchingService;
-import com.monglife.mongs.domain.match.vo.FindMatchingVo;
 import com.monglife.mongs.domain.match.vo.MatchPlayerVo;
+import com.monglife.mongs.domain.match.vo.MatchingVo;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 @Slf4j
 @Component
@@ -24,9 +23,9 @@ public class BattleMatchingScheduler {
 
     private final MatchingService matchingService;
 
-    private final BattlePublisher battlePublisher;
-
     private final BattleService battleService;
+
+    private final BattlePublisher battlePublisher;
 
     /**
      * 배틀 매칭 스케줄러
@@ -35,34 +34,19 @@ public class BattleMatchingScheduler {
     public void matchingSchedule() {
 
         while (true) {
-            Set<FindMatchingVo> findMatchingVoSet = matchingService.findWaitMatching();
+            Set<MatchingVo> matchingVoSet = matchingService.getWaitMatching();
 
-            if (findMatchingVoSet.isEmpty()) break;
+            if (matchingVoSet.isEmpty()) break;
 
-            // 매칭 예정 플레이어 Set
-            Set<CreateBattleVo> createBattleVoSet = findMatchingVoSet.stream()
-                    .map(findMatchingVo -> CreateBattleVo.builder()
-                            .deviceId(findMatchingVo.getDeviceId())
-                            .accountId(findMatchingVo.getAccountId())
-                            .mongId(findMatchingVo.getMongId())
-                            .isBot(findMatchingVo.getIsBot())
-                            .build())
-                    .collect(Collectors.toSet());
+            CreateBattleDto createBattleDto = battleService.createBattle(matchingVoSet);
 
-            CreateBattleDto createBattleDto = battleService.createBattle(createBattleVoSet);
-
-            List<String> deviceIds = createBattleVoSet.stream()
-                    .filter(createBattleVo -> !createBattleVo.getIsBot())
-                    .map(CreateBattleVo::getDeviceId)
+            List<String> deviceIds = createBattleDto.getMatchPlayers().stream()
+                    .map(MatchPlayerVo::getDeviceId)
                     .toList();
 
-            Long roomId = createBattleDto.getRoomId();
-            Set<MatchPlayerVo> battlePlayers = createBattleDto.getBattlePlayers();
-
-            // 배틀룸 생성
             battlePublisher.createBattlePublish(deviceIds, CreateBattleResponseDto.builder()
-                    .roomId(roomId)
-                    .battlePlayers(battlePlayers)
+                    .roomId(createBattleDto.getRoomId())
+                    .battlePlayers(createBattleDto.getMatchPlayers())
                     .build());
         }
     }

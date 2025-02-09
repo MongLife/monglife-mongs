@@ -39,11 +39,11 @@ public class TrainingController {
      * @return 성공 응답
      */
     @PostMapping("/runner/{mongId}")
-    public ResponseEntity<ResponseDto<?>> trainingRunner(@PathVariable("mongId") Long mongId, @RequestBody TrainingRunnerRequestDto trainingRunnerRequestDto) {
+    public ResponseEntity<ResponseDto<?>> trainingRunnerEnd(@PathVariable("mongId") Long mongId, @RequestBody TrainingRunnerRequestDto trainingRunnerRequestDto) {
 
         Integer score = trainingRunnerRequestDto.getScore();
 
-        trainingService.trainingRunner(mongId, score);
+        trainingService.trainingRunnerEnd(mongId, score);
 
         return ResponseEntity.ok(TrainingResponse.APP_ACTIVITY_TRAINING_RUNNER.toResponseDto());
     }

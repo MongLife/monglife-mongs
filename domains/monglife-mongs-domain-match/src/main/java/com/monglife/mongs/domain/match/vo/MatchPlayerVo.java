@@ -27,13 +27,13 @@ public class MatchPlayerVo {
         this.roundCode = roundCode;
     }
 
-    public static MatchPlayerVo of(MatchPlayerEntity matchPlayerEntity, MatchRoundCode roundCode) {
+    public static MatchPlayerVo of(MatchPlayerEntity matchPlayerEntity) {
         return MatchPlayerVo.builder()
                 .playerId(matchPlayerEntity.getPlayerId())
                 .deviceId(matchPlayerEntity.getDeviceId())
                 .mongTypeCode(matchPlayerEntity.getMongTypeCode())
                 .hp(matchPlayerEntity.getHp() / MatchPlayerEntity.MAX_HP * 100)
-                .roundCode(roundCode)
+                .roundCode(matchPlayerEntity.getRoundCode())
                 .build();
     }
 }

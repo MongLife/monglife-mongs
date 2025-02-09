@@ -9,8 +9,6 @@ public interface MatchRoomRepository extends JpaRepository<MatchRoomEntity, Long
 
     Optional<MatchRoomEntity> findByRoomIdAndIsActiveTrue(Long roomId);
 
-    Optional<MatchRoomEntity> findByRoomIdAndIsActiveTrueAndRound(Long roomId, Integer round);
-
     Optional<MatchRoomEntity> findByRoomIdAndIsActiveFalse(Long roomId);
 
     Optional<MatchRoomEntity> findByRoomIdAndIsActiveFalseAndRound(Long roomId, Integer round);

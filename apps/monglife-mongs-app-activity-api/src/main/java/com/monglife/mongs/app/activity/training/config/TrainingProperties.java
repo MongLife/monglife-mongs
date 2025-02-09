@@ -30,6 +30,6 @@ public class TrainingProperties {
 
         public Integer poopCount;
 
-        public Integer payPoint;
+        public Integer rewardPayPoint;
     }
 }

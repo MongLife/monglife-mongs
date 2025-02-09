@@ -129,6 +129,8 @@ public class ProductOrderService {
         ProductOrderEntity productOrderEntity = lockProductOrderRepository.findByProductOrderId(productOrderId)
                 .orElseThrow(() -> new NotExistsProductOrderException(productOrderId));
 
-        productOrderEntity.consume();
+        if (!productOrderEntity.isConsumed()) {
+            productOrderEntity.consume();
+        }
     }
 }

@@ -2,7 +2,7 @@ package com.monglife.mongs.domain.match.service;
 
 import com.monglife.core.utils.CommonUtil;
 import com.monglife.mongs.domain.match.entity.MatchingEntity;
-import com.monglife.mongs.domain.match.vo.FindMatchingVo;
+import com.monglife.mongs.domain.match.vo.MatchingVo;
 import com.monglife.mongs.module.logging.annotation.NotInvokeLog;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -83,13 +83,13 @@ public class MatchingService {
      * @return 매칭 성사 된 대기열 Dto 목록
      */
     @NotInvokeLog
-    public Set<FindMatchingVo> findWaitMatching() {
+    public Set<MatchingVo> getWaitMatching() {
 
         // 대기열 최근 순 MAX_PLAYER 명까지 조회
         Set<MatchingEntity> matchingEntitySet = redisTemplate.opsForZSet().range(MATCHING_ENTITY_KEY, 0, MAX_PLAYER);
 
         // 생성된 매칭 플레이어 저장 Set
-        Set<FindMatchingVo> findWaitMatchingDtoSet = new HashSet<>();
+        Set<MatchingVo> matchingVoSet = new HashSet<>();
 
         if (matchingEntitySet != null && !matchingEntitySet.isEmpty()) {
             if (matchingEntitySet.size() == 1) {
@@ -103,32 +103,32 @@ public class MatchingService {
                 // 대기 시간 초과인 경우
                 if (createdScore <= expiredScore) {
                     // 플레이어 생성
-                    FindMatchingVo playerFindMatchingVo = FindMatchingVo.of(matchingEntity);
-                    findWaitMatchingDtoSet.add(playerFindMatchingVo);
-                    redisTemplate.opsForZSet().remove(MATCHING_ENTITY_KEY, playerFindMatchingVo);
+                    MatchingVo playerMatchingVo = MatchingVo.of(matchingEntity);
+                    matchingVoSet.add(playerMatchingVo);
+                    redisTemplate.opsForZSet().remove(MATCHING_ENTITY_KEY, playerMatchingVo);
                 }
             } else {
                 // 매칭 대기열 -> 2명 이상인 경우
-                findWaitMatchingDtoSet = matchingEntitySet.stream()
+                matchingVoSet = matchingEntitySet.stream()
                         .peek(matchingEntity -> redisTemplate.opsForZSet().remove(MATCHING_ENTITY_KEY, matchingEntity))
-                        .map(FindMatchingVo::of)
+                        .map(MatchingVo::of)
                         .collect(Collectors.toSet());
             }
         }
 
-        if (!findWaitMatchingDtoSet.isEmpty()) {
+        if (!matchingVoSet.isEmpty()) {
             // 봇 플레이어 생성
-            for (int index = findWaitMatchingDtoSet.size(); index < MAX_PLAYER; index++) {
-                FindMatchingVo botFindMatchingVo = FindMatchingVo.builder()
+            for (int index = matchingVoSet.size(); index < MAX_PLAYER; index++) {
+                MatchingVo botMatchingVo = MatchingVo.builder()
                         .mongId(0L)
                         .deviceId(CommonUtil.randomId())
                         .accountId(0L)
                         .isBot(Boolean.TRUE)
                         .build();
-                findWaitMatchingDtoSet.add(botFindMatchingVo);
+                matchingVoSet.add(botMatchingVo);
             }
         }
 
-        return findWaitMatchingDtoSet;
+        return matchingVoSet;
     }
 }

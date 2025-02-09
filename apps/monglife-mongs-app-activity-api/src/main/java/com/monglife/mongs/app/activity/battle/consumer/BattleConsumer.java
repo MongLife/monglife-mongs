@@ -1,13 +1,8 @@
 package com.monglife.mongs.app.activity.battle.consumer;
 
-import com.monglife.mongs.app.activity.battle.dto.etc.BattleDto;
-import com.monglife.mongs.app.activity.battle.dto.etc.OverBattleDto;
 import com.monglife.mongs.app.activity.battle.dto.request.EnterBattleRequestDto;
 import com.monglife.mongs.app.activity.battle.dto.request.ExitBattleRequestDto;
 import com.monglife.mongs.app.activity.battle.dto.request.PickBattleRequestDto;
-import com.monglife.mongs.app.activity.battle.dto.response.GetBattleResponseDto;
-import com.monglife.mongs.app.activity.battle.dto.response.OverBattleResponseDto;
-import com.monglife.mongs.app.activity.battle.publisher.BattlePublisher;
 import com.monglife.mongs.app.activity.battle.service.BattleService;
 import com.monglife.mongs.domain.match.enums.MatchRoundCode;
 import com.monglife.mongs.module.mqtt.annotation.MqttConsumer;
@@ -19,8 +14,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 @MqttConsumer
 @RequiredArgsConstructor
 public class BattleConsumer {
-
-    private final BattlePublisher battlePublisher;
 
     private final BattleService battleService;
 
@@ -47,10 +40,7 @@ public class BattleConsumer {
 
         String playerId = exitBattleRequestDto.getPlayerId();
 
-        OverBattleDto overBattleDto = battleService.exitBattle(roomId, playerId);
-
-        if (overBattleDto != null) {
-        }
+        battleService.exitBattle(roomId, playerId);
     }
 
     /**
@@ -65,15 +55,6 @@ public class BattleConsumer {
         String targetPlayerId = pickBattleRequestDto.getTargetPlayerId();
         MatchRoundCode matchRoundCode = pickBattleRequestDto.getPickCode();
 
-        BattleDto battleDto = battleService.pickBattle(roomId, playerId, targetPlayerId, matchRoundCode);
-
-        if (battleDto != null) {
-            battlePublisher.pickBattlePublish(roomId, GetBattleResponseDto.builder()
-                    .roomId(roomId)
-                    .round(battleDto.getRound())
-                    .battlePlayers(battleDto.getBattlePlayers())
-                    .isLastRound(battleDto.getIsLastRound())
-                    .build());
-        }
+        battleService.pickBattle(roomId, playerId, targetPlayerId, matchRoundCode);
     }
 }

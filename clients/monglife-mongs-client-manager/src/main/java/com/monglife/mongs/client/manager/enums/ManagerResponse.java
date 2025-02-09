@@ -17,8 +17,9 @@ public enum ManagerResponse implements Response {
      * 실패 응답
      */
     CLIENT_MANAGER_CHARGE_PAY_POINT_FAIL(HttpStatus.INTERNAL_SERVER_ERROR.value(), "CLIENT-MANAGER-100", "페이 포인트 증가에 실패했습니다."),
-    CLIENT_MANAGER_PATCH_MONG_AFTER_TRAINING_FAIL(HttpStatus.INTERNAL_SERVER_ERROR.value(), "CLIENT-MANAGER-101", "훈련 후 몽 정보 갱신에 실패했습니다."),
-    CLIENT_MANAGER_GET_MINIMAL_MONG_FAIL(HttpStatus.INTERNAL_SERVER_ERROR.value(), "CLIENT-MANAGER-102", "몽 정보 조회에 실패했습니다."),
+    CLIENT_MANAGER_CONSUME_PAY_POINT_FAIL(HttpStatus.INTERNAL_SERVER_ERROR.value(), "CLIENT-MANAGER-101", "페이 포인트 소비에 실패했습니다."),
+    CLIENT_MANAGER_PATCH_MONG_AFTER_TRAINING_FAIL(HttpStatus.INTERNAL_SERVER_ERROR.value(), "CLIENT-MANAGER-102", "훈련 후 몽 정보 갱신에 실패했습니다."),
+    CLIENT_MANAGER_GET_MINIMAL_MONG_FAIL(HttpStatus.INTERNAL_SERVER_ERROR.value(), "CLIENT-MANAGER-103", "몽 정보 조회에 실패했습니다."),
     ;
 
     private final Integer httpStatus;

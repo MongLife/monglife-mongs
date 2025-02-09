@@ -27,7 +27,8 @@ public enum ManagementResponse implements Response {
     APP_MANAGER_MANAGEMENT_EVOLUTION_MONG(HttpStatus.OK.value(), "MANAGER-MANAGEMENT-008", "몽 진화에 성공했습니다."),
     APP_MANAGER_MANAGEMENT_GRADUATE_MONG(HttpStatus.OK.value(), "MANAGER-MANAGEMENT-009", "몽 졸업에 성공했습니다."),
     APP_MANAGER_MANAGEMENT_CHARGE_PAY_POINT(HttpStatus.OK.value(), "MANAGER-MANAGEMENT-010", "페이 포인트 충전에 성공했습니다."),
-    APP_MANAGER_MANAGEMENT_PATCH_MONG_AFTER_TRAINING(HttpStatus.OK.value(), "MANAGER-MANAGEMENT-011", "훈련 후 몽 정보 갱신에 성공했습니다."),
+    APP_MANAGER_MANAGEMENT_CONSUME_PAY_POINT(HttpStatus.OK.value(), "MANAGER-MANAGEMENT-011", "페이 포인트 소비에 성공했습니다."),
+    APP_MANAGER_MANAGEMENT_PATCH_MONG_AFTER_TRAINING(HttpStatus.OK.value(), "MANAGER-MANAGEMENT-012", "훈련 후 몽 정보 갱신에 성공했습니다."),
 
     APP_MANAGER_MANAGEMENT_OBSERVE_MONG_BASIC(HttpStatus.OK.value(), "MANAGER-MANAGEMENT-200", "몽 기본 정보에 변동이 있습니다."),
     APP_MANAGER_MANAGEMENT_OBSERVE_MONG_STATE(HttpStatus.OK.value(), "MANAGER-MANAGEMENT-201", "몽 상태 정보에 변동이 있습니다."),

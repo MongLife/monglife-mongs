@@ -25,12 +25,6 @@ public enum BattleResponse implements Response {
     APP_ACTIVITY_BATTLE_ENTER_ALL_BATTLE_PLAYER(HttpStatus.OK.value(), "ACTIVITY-BATTLE-201", "모든 플레이어가 입장했습니다."),
     APP_ACTIVITY_BATTLE_OVER_BATTLE(HttpStatus.OK.value(), "ACTIVITY-BATTLE-202", "배틀이 종료되었습니다."),
     APP_ACTIVITY_BATTLE_FIGHT_BATTLE(HttpStatus.OK.value(), "ACTIVITY-BATTLE-203", "라운드가 종료되었습니다."),
-
-    /**
-     * 실패 응답
-     */
-    APP_ACTIVITY_BATTLE_NOT_EXISTS_OVER_MATCH(HttpStatus.BAD_REQUEST.value(), "ACTIVITY-BATTLE-100", "완료된 매치를 찾을 수 없습니다."),
-    APP_ACTIVITY_BATTLE_NOT_EXISTS_MONG(HttpStatus.BAD_REQUEST.value(), "ACTIVITY-BATTLE-101", "몽 정보를 찾을 수 없습니다."),
     ;
 
 

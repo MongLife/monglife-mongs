@@ -340,6 +340,19 @@ public class MongEntity extends BaseTimeEntity {
         this.addHistory(MongHistoryEntity.MongHistoryType.INCREASE_PAY_POINT);
     }
 
+    /**
+     * 페이 포인트 감소
+     * @param payPoint 증가할 페이 포인트
+     */
+    public void decreasePayPoint(Integer payPoint) {
+
+        if (this.payPoint - payPoint < 0) return;
+
+        this.payPoint = Math.max(0, this.payPoint - payPoint);
+
+        this.addHistory(MongHistoryEntity.MongHistoryType.DECREASE_PAY_POINT);
+    }
+
     private void addHistory(MongHistoryEntity.MongHistoryType mongHistoryType) {
 
         this.history.add(MongHistoryEntity.builder()

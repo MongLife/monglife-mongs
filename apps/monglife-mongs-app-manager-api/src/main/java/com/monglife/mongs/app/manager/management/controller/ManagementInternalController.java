@@ -2,6 +2,7 @@ package com.monglife.mongs.app.manager.management.controller;
 
 import com.monglife.core.dto.response.ResponseDto;
 import com.monglife.mongs.app.manager.management.dto.request.ChargePayPointRequestDto;
+import com.monglife.mongs.app.manager.management.dto.request.ConsumePayPointRequestDto;
 import com.monglife.mongs.app.manager.management.dto.request.PatchMongRequestDto;
 import com.monglife.mongs.app.manager.management.dto.response.GetMinimalMongResponseDto;
 import com.monglife.mongs.app.manager.management.enums.ManagementResponse;
@@ -43,7 +44,7 @@ public class ManagementInternalController {
      * @param chargePayPointRequestDto 증가 정보
      * @return 성공 응답
      */
-    @PatchMapping("/payPoint/{mongId}")
+    @PatchMapping("/payPoint/charge/{mongId}")
     public ResponseEntity<ResponseDto<?>> chargePayPoint(@PathVariable("mongId") Long mongId, @RequestBody ChargePayPointRequestDto chargePayPointRequestDto) {
 
         Integer payPoint = chargePayPointRequestDto.getPayPoint();
@@ -51,6 +52,21 @@ public class ManagementInternalController {
         managementService.chargePayPoint(mongId, payPoint);
 
         return ResponseEntity.ok(ManagementResponse.APP_MANAGER_MANAGEMENT_CHARGE_PAY_POINT.toResponseDto());
+    }
+
+    /**
+     * 몽 페이 포인트 소비
+     * @param consumePayPointRequestDto 소비 정보
+     * @return 성공 응답
+     */
+    @PatchMapping("/payPoint/consume/{mongId}")
+    public ResponseEntity<ResponseDto<?>> consumePayPoint(@PathVariable("mongId") Long mongId, @RequestBody ConsumePayPointRequestDto consumePayPointRequestDto) {
+
+        Integer payPoint = consumePayPointRequestDto.getPayPoint();
+
+        managementService.consumePayPoint(mongId, payPoint);
+
+        return ResponseEntity.ok(ManagementResponse.APP_MANAGER_MANAGEMENT_CONSUME_PAY_POINT.toResponseDto());
     }
 
     /**

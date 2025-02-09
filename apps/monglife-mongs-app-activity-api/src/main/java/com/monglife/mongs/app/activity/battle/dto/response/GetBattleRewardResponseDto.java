@@ -10,10 +10,13 @@ import lombok.Setter;
 @NoArgsConstructor
 public class GetBattleRewardResponseDto {
 
-    private Integer payPoint;
+    private Integer rewardPayPoint;
+
+    private Integer bettingPayPoint;
 
     @Builder
-    public GetBattleRewardResponseDto(Integer payPoint) {
-        this.payPoint = payPoint;
+    public GetBattleRewardResponseDto(Integer rewardPayPoint, Integer bettingPayPoint) {
+        this.rewardPayPoint = rewardPayPoint;
+        this.bettingPayPoint = bettingPayPoint;
     }
 }

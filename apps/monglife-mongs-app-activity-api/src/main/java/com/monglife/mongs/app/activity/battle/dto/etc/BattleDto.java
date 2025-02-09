@@ -1,6 +1,7 @@
 package com.monglife.mongs.app.activity.battle.dto.etc;
 
 import com.monglife.mongs.domain.match.vo.MatchPlayerVo;
+import com.monglife.mongs.domain.match.vo.MatchVo;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -27,5 +28,14 @@ public class BattleDto {
         this.round = round;
         this.isLastRound = isLastRound;
         this.battlePlayers = battlePlayers;
+    }
+
+    public static BattleDto of(MatchVo matchVo) {
+        return BattleDto.builder()
+                .roomId(matchVo.getRoomId())
+                .round(matchVo.getRound())
+                .isLastRound(matchVo.getIsLastRound())
+                .battlePlayers(matchVo.getMatchPlayers())
+                .build();
     }
 }

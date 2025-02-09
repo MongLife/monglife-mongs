@@ -1,6 +1,7 @@
 package com.monglife.mongs.app.activity.battle.controller;
 
 import com.monglife.core.dto.response.ResponseDto;
+import com.monglife.mongs.app.activity.battle.dto.etc.BattleDto;
 import com.monglife.mongs.app.activity.battle.dto.etc.OverBattleDto;
 import com.monglife.mongs.app.activity.battle.dto.response.GetBattleResponseDto;
 import com.monglife.mongs.app.activity.battle.dto.response.GetBattleRewardResponseDto;
@@ -27,22 +28,6 @@ public class BattleController {
     private final BattleService battleService;
 
     /**
-     * 매칭 보상 정보 조회
-     * @return 성공 응답
-     */
-    @GetMapping("")
-    public ResponseEntity<ResponseDto<GetBattleRewardResponseDto>> getBattleReward() {
-
-        Integer payPoint = battleService.getBattleRewardPayPoint();
-
-        GetBattleRewardResponseDto getBattleRewardResponseDto = GetBattleRewardResponseDto.builder()
-                .payPoint(payPoint)
-                .build();
-
-        return ResponseEntity.ok(BattleResponse.APP_ACTIVITY_BATTLE_GET_BATTLE_REWARD.toResponseDto(getBattleRewardResponseDto));
-    }
-
-    /**
      * 매칭 정보 조회
      * @param roomId 배틀룸 ID
      * @return 성공 응답
@@ -50,9 +35,53 @@ public class BattleController {
     @GetMapping("/{roomId}")
     public ResponseEntity<ResponseDto<GetBattleResponseDto>> getBattle(@PathVariable("roomId") @NotNull @Min(1) Long roomId) {
 
-        GetBattleResponseDto getBattleResponseDto = null;
+        BattleDto battleDto = battleService.getBattle(roomId);
+
+        GetBattleResponseDto getBattleResponseDto = GetBattleResponseDto.builder()
+                .roomId(battleDto.getRoomId())
+                .round(battleDto.getRound())
+                .isLastRound(battleDto.getIsLastRound())
+                .battlePlayers(battleDto.getBattlePlayers())
+                .build();
 
         return ResponseEntity.ok(BattleResponse.APP_ACTIVITY_BATTLE_GET_BATTLE.toResponseDto(getBattleResponseDto));
+    }
+    /**
+     * 끝난 배틀 결과 조회
+     * @param roomId 배틀 ID
+     * @return 배틀 결과 응답
+     */
+    @GetMapping("/over/{roomId}")
+    public ResponseEntity<ResponseDto<OverBattleResponseDto>> getOverBattle(@PathVariable("roomId") @NotNull @Min(1) Long roomId) {
+
+        OverBattleDto overBattleDto = battleService.getOverBattle(roomId);
+
+        OverBattleResponseDto overBattleResponseDto = OverBattleResponseDto.builder()
+                .roomId(roomId)
+                .winPlayerId(overBattleDto.getWinPlayerId())
+                .winMongTypeCode(overBattleDto.getWinMongTypeCode())
+                .build();
+
+        return ResponseEntity.ok(BattleResponse.APP_ACTIVITY_BATTLE_OVER_BATTLE.toResponseDto(overBattleResponseDto));
+    }
+
+    /**
+     * 매칭 보상 정보 조회
+     * @return 성공 응답
+     */
+    @GetMapping("")
+    public ResponseEntity<ResponseDto<GetBattleRewardResponseDto>> getBattleReward() {
+
+        Integer rewardPayPoint = battleService.getBattleRewardPayPoint();
+
+        Integer bettingPayPoint = battleService.getBattleBettingPayPoint();
+
+        GetBattleRewardResponseDto getBattleRewardResponseDto = GetBattleRewardResponseDto.builder()
+                .rewardPayPoint(rewardPayPoint)
+                .bettingPayPoint(bettingPayPoint)
+                .build();
+
+        return ResponseEntity.ok(BattleResponse.APP_ACTIVITY_BATTLE_GET_BATTLE_REWARD.toResponseDto(getBattleRewardResponseDto));
     }
 
     /**
@@ -93,24 +122,5 @@ public class BattleController {
         battleService.deleteWaitMatching(accountId, mongId, deviceId);
 
         return ResponseEntity.ok().body(BattleResponse.APP_ACTIVITY_BATTLE_DELETE_WAIT_MATCHING.toResponseDto());
-    }
-
-    /**
-     * 끝난 배틀 결과 조회
-     * @param roomId 배틀 ID
-     * @return 배틀 결과 응답
-     */
-    @GetMapping("/over/{roomId}")
-    public ResponseEntity<ResponseDto<OverBattleResponseDto>> findOverBattle(@PathVariable("roomId") @NotNull @Min(1) Long roomId) {
-
-        OverBattleDto overBattleDto = battleService.findOverBattle(roomId);
-
-        OverBattleResponseDto overBattleResponseDto = OverBattleResponseDto.builder()
-                .roomId(roomId)
-                .winPlayerId(overBattleDto.getWinPlayerId())
-                .winMongTypeCode(overBattleDto.getWinMongTypeCode())
-                .build();
-
-        return ResponseEntity.ok(BattleResponse.APP_ACTIVITY_BATTLE_OVER_BATTLE.toResponseDto(overBattleResponseDto));
     }
 }

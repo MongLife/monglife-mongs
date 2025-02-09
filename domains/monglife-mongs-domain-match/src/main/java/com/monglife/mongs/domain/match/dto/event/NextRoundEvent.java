@@ -1,7 +1,6 @@
 package com.monglife.mongs.domain.match.dto.event;
 
 import com.monglife.mongs.domain.match.entity.MatchRoomEntity;
-import com.monglife.mongs.domain.match.enums.MatchRoundCode;
 import com.monglife.mongs.domain.match.vo.MatchPlayerVo;
 import lombok.Builder;
 import lombok.Getter;
@@ -12,7 +11,7 @@ import java.util.stream.Collectors;
 
 @Getter
 @NoArgsConstructor
-public class EnterMatchEvent {
+public class NextRoundEvent {
 
     private Long roomId;
 
@@ -23,15 +22,15 @@ public class EnterMatchEvent {
     private Set<MatchPlayerVo> battlePlayers;
 
     @Builder
-    public EnterMatchEvent(Long roomId, Integer round, Boolean isLastRound, Set<MatchPlayerVo> battlePlayers) {
+    public NextRoundEvent(Long roomId, Integer round, Boolean isLastRound, Set<MatchPlayerVo> battlePlayers) {
         this.roomId = roomId;
         this.round = round;
         this.isLastRound = isLastRound;
         this.battlePlayers = battlePlayers;
     }
 
-    public static EnterMatchEvent of (MatchRoomEntity matchRoomEntity) {
-        return EnterMatchEvent.builder()
+    public static NextRoundEvent of (MatchRoomEntity matchRoomEntity) {
+        return NextRoundEvent.builder()
                 .roomId(matchRoomEntity.getRoomId())
                 .round(matchRoomEntity.getRound())
                 .isLastRound(matchRoomEntity.isLastRound())

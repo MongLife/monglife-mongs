@@ -523,4 +523,18 @@ public class MongService {
 
         mongEntity.increasePayPoint(payPoint);
     }
+
+    /**
+     * 페이 포인트 감소
+     * @param mongId 몽 ID
+     * @param payPoint 감소할 페이 포인트
+     */
+    @Transactional
+    public void decreasePayPoint(Long mongId, Integer payPoint) {
+
+        MongEntity mongEntity = lockMongRepository.findByMongIdAndMetaIsActiveIsTrue(mongId)
+                .orElseThrow(() -> new NotExistsMongException(mongId));
+
+        mongEntity.decreasePayPoint(payPoint);
+    }
 }

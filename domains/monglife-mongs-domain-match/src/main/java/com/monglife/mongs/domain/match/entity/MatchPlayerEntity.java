@@ -79,6 +79,9 @@ public class MatchPlayerEntity {
     @Transient
     private Set<MatchRoundCode> roundHistory = new HashSet<>();
 
+    @Transient
+    private MatchRoundCode roundCode = MatchRoundCode.NONE;
+
 
     @Builder
     public MatchPlayerEntity(String playerId, String deviceId, Long accountId, Long mongId, String mongTypeCode, Double attackValue, Double healValue, Double defenceValue, Boolean isBot) {
@@ -150,26 +153,25 @@ public class MatchPlayerEntity {
 
     /**
      * 피해 & 회복 & 방어 수치 계산 및 라운드 상태 반환
-     * @return 라운드 상태
      */
-    public MatchRoundCode hpCalculation() {
+    public void next() {
 
         double totalAttackedValue = Math.max(0, this.attackedValue - this.defencedValue);
         double newHp = this.hp - totalAttackedValue + this.healedValue;
         this.hp = Math.max(0, Math.min(newHp, MAX_HP));
 
         if (roundHistory.contains(MatchRoundCode.MATCH_HISTORY_DEFENCED)) {
-            return MatchRoundCode.MATCH_DEFENCE;
+            roundCode = MatchRoundCode.MATCH_DEFENCE;
         } else if (roundHistory.contains(MatchRoundCode.MATCH_HISTORY_ATTACKED)) {
             if (roundHistory.contains(MatchRoundCode.MATCH_HISTORY_HEALED)) {
-                return MatchRoundCode.MATCH_ATTACKED_HEAL;
+                roundCode = MatchRoundCode.MATCH_ATTACKED_HEAL;
             } else {
-                return MatchRoundCode.MATCH_ATTACKED;
+                roundCode = MatchRoundCode.MATCH_ATTACKED;
             }
         } else if (roundHistory.contains(MatchRoundCode.MATCH_HISTORY_HEALED)) {
-            return MatchRoundCode.MATCH_HEAL;
+            roundCode = MatchRoundCode.MATCH_HEAL;
         } else {
-            return MatchRoundCode.NONE;
+            roundCode = MatchRoundCode.NONE;
         }
     }
 }

@@ -1,6 +1,7 @@
 package com.monglife.mongs.app.user.collection.dto.request;
 
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -11,11 +12,15 @@ import lombok.Setter;
 @NoArgsConstructor
 public class CreateCollectionMapRequestDto {
 
-    @NotBlank
-    private String mapTypeCode;
+    @NotNull
+    private Double latitude;
+
+    @NotNull
+    private Double longitude;
 
     @Builder
-    public CreateCollectionMapRequestDto(String mapTypeCode) {
-        this.mapTypeCode = mapTypeCode;
+    public CreateCollectionMapRequestDto(Double latitude, Double longitude) {
+        this.latitude = latitude;
+        this.longitude = longitude;
     }
 }

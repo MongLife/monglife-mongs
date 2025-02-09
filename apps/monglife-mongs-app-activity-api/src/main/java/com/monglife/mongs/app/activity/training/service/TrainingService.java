@@ -19,17 +19,17 @@ public class TrainingService {
      * @return 스코어 당 페이 포인트
      */
     public Integer getTrainingRunnerPayPoint() {
-        return trainingProperties.runner.payPoint;
+        return trainingProperties.runner.rewardPayPoint;
     }
 
     /**
-     * 훈련 달리기 처리
+     * 훈련 달리기 완료
      * 불가능 상태 : 죽음, 알
      * @param mongId 몽 ID
      * @param score 점수
      */
     @Transactional
-    public void trainingRunner(Long mongId, Integer score) {
+    public void trainingRunnerEnd(Long mongId, Integer score) {
 
         managementService.patchMongAfterTraining(
                 mongId,
@@ -40,7 +40,7 @@ public class TrainingService {
                 trainingProperties.runner.healthy,
                 trainingProperties.runner.fatigue,
                 trainingProperties.runner.poopCount,
-                trainingProperties.runner.payPoint * score
+                trainingProperties.runner.rewardPayPoint * score
         );
     }
 }

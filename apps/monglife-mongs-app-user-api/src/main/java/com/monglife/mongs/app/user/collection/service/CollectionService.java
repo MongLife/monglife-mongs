@@ -16,12 +16,14 @@ public class CollectionService {
     private final MemberService memberService;
 
     @Transactional
-    public void createCollectionMap(Long accountId, String mapTypeCode) {
+    public void createCollectionMap(Long accountId, Double latitude, Double longitude) {
 
-        // TODO: 맵 주소 엔티티
+        // TODO: 위도, 경도 기준 근방 300m 내 가게 목록 조회
         Long mapPositionId = 1L;
+        String mapTypeCode = "";
 
-        memberService.createCollectionMap(accountId, mapTypeCode, mapPositionId);
+        // 맵 컬렉션 등록
+//        memberService.createCollectionMap(accountId, mapTypeCode, mapPositionId);
     }
 
     @Transactional(readOnly = true)
