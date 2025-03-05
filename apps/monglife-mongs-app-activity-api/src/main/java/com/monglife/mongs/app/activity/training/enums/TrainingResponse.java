@@ -16,8 +16,9 @@ public enum TrainingResponse implements Response {
     /**
      * 성공 응답
      */
-    APP_ACTIVITY_GET_TRAINING_RUNNER(HttpStatus.OK.value(), "ACTIVITY-TRAINING-000", "훈련 RUNNER 조회에 성공했습니다."),
+    APP_ACTIVITY_GET_TRAINING(HttpStatus.OK.value(), "ACTIVITY-TRAINING-000", "훈련 정보 조회에 성공했습니다."),
     APP_ACTIVITY_TRAINING_RUNNER(HttpStatus.OK.value(), "ACTIVITY-TRAINING-001", "훈련 RUNNER 완료했습니다."),
+    APP_ACTIVITY_TRAINING_BASKETBALL(HttpStatus.OK.value(), "ACTIVITY-TRAINING-002", "훈련 BASKETBALL 완료했습니다."),
     ;
 
     private final Integer httpStatus;

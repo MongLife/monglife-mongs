@@ -8,14 +8,14 @@ import lombok.Setter;
 @Getter
 @Setter
 @NoArgsConstructor
-public class TrainingRunnerRequestDto {
+public class TrainingBasketballRequestDto {
 
     private Long mongId;
 
     private Integer score;
 
     @Builder
-    public TrainingRunnerRequestDto(Long mongId, Integer score) {
+    public TrainingBasketballRequestDto(Long mongId, Integer score) {
         this.mongId = mongId;
         this.score = score;
     }

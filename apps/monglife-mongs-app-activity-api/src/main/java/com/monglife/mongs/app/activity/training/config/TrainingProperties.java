@@ -13,6 +13,8 @@ public class TrainingProperties {
 
     public Property runner;
 
+    public Property basketball;
+
     @Setter
     public static class Property {
 
@@ -31,5 +33,9 @@ public class TrainingProperties {
         public Integer poopCount;
 
         public Integer rewardPayPoint;
+
+        public Integer score;
+
+        public Integer timeout;
     }
 }
