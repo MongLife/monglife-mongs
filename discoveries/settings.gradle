@@ -1,4 +1,0 @@
-rootProject.name = 'discoveries'
-
-include 'play-eureka-discovery'
-include 'play-gateway-discovery'
