@@ -1,5 +1,6 @@
 package com.monglife.mongs.domain.mong.entity;
 
+import com.monglife.mongs.domain.mong.enums.MongMetaHistoryType;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -62,7 +63,7 @@ public class MongMetaEntity {
 
         this.strokeCount = this.strokeCount + 1;
 
-        this.addHistory(MongMetaHistoryEntity.MongMetaHistoryType.INCREASE_STROKE_COUNT);
+        this.addHistory(MongMetaHistoryType.INCREASE_STROKE_COUNT);
     }
 
     /**
@@ -74,7 +75,7 @@ public class MongMetaEntity {
 
         this.strokeCount = 0;
 
-        this.addHistory(MongMetaHistoryEntity.MongMetaHistoryType.RESET_STROKE_COUNT);
+        this.addHistory(MongMetaHistoryType.RESET_STROKE_COUNT);
     }
 
     /**
@@ -84,7 +85,7 @@ public class MongMetaEntity {
 
         this.trainingCount = this.trainingCount + 1;
 
-        this.addHistory(MongMetaHistoryEntity.MongMetaHistoryType.INCREASE_TRAINING_COUNT);
+        this.addHistory(MongMetaHistoryType.INCREASE_TRAINING_COUNT);
     }
 
     /**
@@ -96,7 +97,7 @@ public class MongMetaEntity {
 
         this.trainingCount = 0;
 
-        this.addHistory(MongMetaHistoryEntity.MongMetaHistoryType.RESET_TRAINING_COUNT);
+        this.addHistory(MongMetaHistoryType.RESET_TRAINING_COUNT);
     }
 
     /**
@@ -106,7 +107,7 @@ public class MongMetaEntity {
 
         this.penalty = this.penalty + DEFAULT_PENALTY;
 
-        this.addHistory(MongMetaHistoryEntity.MongMetaHistoryType.INCREASE_PENALTY);
+        this.addHistory(MongMetaHistoryType.INCREASE_PENALTY);
     }
 
     /**
@@ -118,7 +119,7 @@ public class MongMetaEntity {
 
         this.penalty = 0D;
 
-        this.addHistory(MongMetaHistoryEntity.MongMetaHistoryType.RESET_PENALTY);
+        this.addHistory(MongMetaHistoryType.RESET_PENALTY);
     }
 
     /**
@@ -131,7 +132,7 @@ public class MongMetaEntity {
 
         this.reward = reward;
 
-        this.addHistory(MongMetaHistoryEntity.MongMetaHistoryType.SET_REWARD);
+        this.addHistory(MongMetaHistoryType.SET_REWARD);
     }
 
     /**
@@ -143,10 +144,10 @@ public class MongMetaEntity {
 
         this.isActive = Boolean.FALSE;
 
-        this.addHistory(MongMetaHistoryEntity.MongMetaHistoryType.DEACTIVATE);
+        this.addHistory(MongMetaHistoryType.DEACTIVATE);
     }
 
-    private void addHistory(MongMetaHistoryEntity.MongMetaHistoryType mongMetaHistoryType) {
+    private void addHistory(MongMetaHistoryType mongMetaHistoryType) {
 
         this.history.add(MongMetaHistoryEntity.builder()
                 .mongId(this.mong.getMongId())

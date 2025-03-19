@@ -1,8 +1,9 @@
 package com.monglife.mongs.domain.mong.entity;
 
+import com.monglife.module.common.jpa.entity.BaseTimeEntity;
 import com.monglife.mongs.domain.mong.enums.MongStateCode;
+import com.monglife.mongs.domain.mong.enums.MongStateHistoryType;
 import com.monglife.mongs.domain.mong.listener.MongStateHistoryEntityListener;
-import com.monglife.mongs.module.jpa.entity.BaseTimeEntity;
 import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
@@ -48,17 +49,5 @@ public class MongStateHistoryEntity extends BaseTimeEntity {
         this.mongStateHistoryType = mongStateHistoryType;
         this.code = code;
         this.isSleep = isSleep;
-    }
-
-    @Getter
-    @AllArgsConstructor
-    public enum MongStateHistoryType {
-
-        SET_SLEEP("수면 상태로 변경"),
-        SET_WAKEUP("수면 상태로 변경"),
-        SET_CODE("상태 코드 변경"),
-        ;
-
-        public final String name;
     }
 }

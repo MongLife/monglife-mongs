@@ -1,8 +1,9 @@
 package com.monglife.mongs.domain.mong.entity;
 
+import com.monglife.module.common.jpa.entity.BaseTimeEntity;
 import com.monglife.mongs.domain.mong.enums.MongStateCode;
+import com.monglife.mongs.domain.mong.enums.MongStateHistoryType;
 import com.monglife.mongs.domain.mong.listener.MongStateEntityListener;
-import com.monglife.mongs.module.jpa.entity.BaseTimeEntity;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.ToString;
@@ -51,7 +52,7 @@ public class MongStateEntity extends BaseTimeEntity {
 
         this.isSleep = Boolean.TRUE;
 
-        this.addHistory(MongStateHistoryEntity.MongStateHistoryType.SET_SLEEP);
+        this.addHistory(MongStateHistoryType.SET_SLEEP);
     }
 
     /**
@@ -63,7 +64,7 @@ public class MongStateEntity extends BaseTimeEntity {
 
         this.isSleep = Boolean.FALSE;
 
-        this.addHistory(MongStateHistoryEntity.MongStateHistoryType.SET_WAKEUP);
+        this.addHistory(MongStateHistoryType.SET_WAKEUP);
     }
 
     /**
@@ -76,10 +77,10 @@ public class MongStateEntity extends BaseTimeEntity {
 
         this.code = code;
 
-        this.addHistory(MongStateHistoryEntity.MongStateHistoryType.SET_CODE);
+        this.addHistory(MongStateHistoryType.SET_CODE);
     }
 
-    private void addHistory(MongStateHistoryEntity.MongStateHistoryType mongStateHistoryType) {
+    private void addHistory(MongStateHistoryType mongStateHistoryType) {
 
         this.history.add(MongStateHistoryEntity.builder()
                 .mongId(this.mong.getMongId())

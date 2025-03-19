@@ -1,14 +1,14 @@
 package com.monglife.mongs.domain.mong.dto.event;
 
-import com.monglife.mongs.domain.mong.entity.MongStatusHistoryEntity;
 import com.monglife.mongs.domain.mong.enums.MongStatusCode;
+import com.monglife.mongs.domain.mong.enums.MongStatusHistoryType;
 import lombok.Builder;
 import lombok.Getter;
 
 @Getter
 public class MongStatusHistoryEvent {
 
-    private final MongStatusHistoryEntity.MongStatusHistoryType type;
+    private final MongStatusHistoryType type;
 
     private final MongStatusCode code;
 
@@ -17,7 +17,7 @@ public class MongStatusHistoryEvent {
     private final String mongName;
 
     @Builder
-    public MongStatusHistoryEvent(MongStatusHistoryEntity.MongStatusHistoryType type, MongStatusCode code, Long accountId, String mongName) {
+    public MongStatusHistoryEvent(MongStatusHistoryType type, MongStatusCode code, Long accountId, String mongName) {
         this.type = type;
         this.code = code;
         this.accountId = accountId;

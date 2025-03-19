@@ -1,6 +1,6 @@
 dependencies {
-    // modules
-    api project(':modules:monglife-mongs-module-feign')
+    // monglife-feign
+    implementation 'com.github.monglife.monglife-module-common:monglife-module-common-feign:1.0.5'
 }
 
 tasks.register('copyPrivate', Copy) {

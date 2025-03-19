@@ -1,6 +1,6 @@
 package com.monglife.mongs.domain.member.service;
 
-import com.monglife.mongs.domain.member.vo.ProductOrderVo;
+import com.monglife.module.common.jpa.entity.ComnCodeEntity;
 import com.monglife.mongs.domain.member.entity.MemberEntity;
 import com.monglife.mongs.domain.member.entity.ProductOrderEntity;
 import com.monglife.mongs.domain.member.exception.NotExistsMemberException;
@@ -10,7 +10,7 @@ import com.monglife.mongs.domain.member.repository.ComnCodeRepository;
 import com.monglife.mongs.domain.member.repository.LockProductOrderRepository;
 import com.monglife.mongs.domain.member.repository.MemberRepository;
 import com.monglife.mongs.domain.member.repository.ProductOrderRepository;
-import com.monglife.mongs.module.jpa.entity.ComnCodeEntity;
+import com.monglife.mongs.domain.member.vo.ProductOrderVo;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;

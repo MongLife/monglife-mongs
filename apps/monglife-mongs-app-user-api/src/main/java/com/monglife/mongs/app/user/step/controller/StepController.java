@@ -1,5 +1,6 @@
 package com.monglife.mongs.app.user.step.controller;
 
+import com.monglife.module.common.security.principal.Passport;
 import com.monglife.core.dto.response.ResponseDto;
 import com.monglife.mongs.app.user.player.vo.PlayerStepVo;
 import com.monglife.mongs.app.user.step.dto.request.ExchangeWalkingCountRequestDto;
@@ -8,7 +9,6 @@ import com.monglife.mongs.app.user.step.dto.response.ExchangeWalkingCountRespons
 import com.monglife.mongs.app.user.step.dto.response.UpdateWalkingCountResponseDto;
 import com.monglife.mongs.app.user.step.enums.StepResponse;
 import com.monglife.mongs.app.user.step.service.StepService;
-import com.monglife.mongs.module.security.global.principal.Passport;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;

@@ -1,21 +1,27 @@
 dependencies {
+    // monglife-security
+    implementation 'com.github.monglife.monglife-module-common:monglife-module-common-security:1.0.5'
+
+    // monglife-mqtt
+    implementation 'com.github.monglife:monglife-module-mqtt:1.0.0'
+
+    // clients
+    implementation project(':clients:monglife-mongs-client-user')
+
     // domains
     implementation project(':domains:monglife-mongs-domain-mong')
     implementation project(':domains:monglife-mongs-domain-task')
-
-    // clients
-    implementation project(':clients:monglife-mongs-client-fcm')
-    implementation project(':clients:monglife-mongs-client-user')
-
-    // modules
-    implementation project(':modules:monglife-mongs-module-security')
-    implementation project(':modules:monglife-mongs-module-mqtt')
 }
 
 tasks.register('copyPrivate', Copy) {
     copy {
         from '../../configs/apps/monglife-mongs-app-manager-api/'
         include 'application*.yml'
+        into 'src/main/resources'
+    }
+    copy {
+        from '../../configs/common/'
+        include 'common*.yml'
         into 'src/main/resources'
     }
 }

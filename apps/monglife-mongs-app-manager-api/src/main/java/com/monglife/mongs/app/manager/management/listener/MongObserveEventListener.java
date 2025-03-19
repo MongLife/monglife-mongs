@@ -6,9 +6,10 @@ import com.monglife.mongs.app.manager.management.dto.etc.MongStateDto;
 import com.monglife.mongs.app.manager.management.dto.etc.MongStatusDto;
 import com.monglife.mongs.app.manager.management.publisher.ManagementPublisher;
 import com.monglife.mongs.domain.mong.dto.event.*;
-import com.monglife.mongs.domain.mong.entity.MongStateHistoryEntity;
-import com.monglife.mongs.domain.mong.entity.MongStatusHistoryEntity;
 import com.monglife.mongs.domain.mong.enums.MongStateCode;
+import com.monglife.mongs.domain.mong.enums.MongStateHistoryType;
+import com.monglife.mongs.domain.mong.enums.MongStatusCode;
+import com.monglife.mongs.domain.mong.enums.MongStatusHistoryType;
 import com.monglife.mongs.domain.task.enums.TaskStatusCode;
 import com.monglife.mongs.domain.task.service.TaskService;
 import lombok.RequiredArgsConstructor;
@@ -78,33 +79,13 @@ public class MongObserveEventListener {
     @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
     public void mongStateHistoryEventListener(MongStateHistoryEvent event) {
 
-        if (MongStateHistoryEntity.MongStateHistoryType.SET_CODE.equals(event.getType())) {
+        if (MongStateHistoryType.SET_CODE.equals(event.getType())) {
 
-            String title = "";
-            String body = "";
             Long accountId = event.getAccountId();
             String mongName = event.getMongName();
+            MongStateCode stateCode = event.getCode();
 
-            switch (event.getCode()) {
-                case DEAD -> {
-                    title = "죽은 몽이 있어요";
-                    body = mongName + "(이)가 죽었어요...";
-                }
-
-                case EVOLUTION_READY -> {
-                    title = "진화 준비가 되었어요";
-                    body = mongName + "(을)를 새로운 몽으로 진화시켜 주세요";
-                }
-
-                case GRADUATE_READY -> {
-                    title = "졸업 준비가 되었어요";
-                    body = mongName + "(을)를 졸업 시켜 주세요";
-                }
-            }
-
-            if (!title.isBlank() && !body.isBlank()) {
-                managementPublisher.mongStateHistoryPublish(accountId, title, body);
-            }
+            managementPublisher.mongStateHistoryPublish(accountId, mongName, stateCode);
         }
     }
 
@@ -159,32 +140,13 @@ public class MongObserveEventListener {
     @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
     public void mongStatusHistoryEventListener(MongStatusHistoryEvent event) {
 
-        if (MongStatusHistoryEntity.MongStatusHistoryType.SET_CODE.equals(event.getType())) {
+        if (MongStatusHistoryType.SET_CODE.equals(event.getType())) {
 
-            String title = "";
-            String body = "";
             Long accountId = event.getAccountId();
             String mongName = event.getMongName();
+            MongStatusCode statusCode = event.getCode();
 
-            switch (event.getCode()) {
-                case SOMNOLENCE -> {
-                    title = "졸린 몽이 있어요";
-                    body = mongName + "(을)를 재워야 해요";
-                }
-                case HUNGRY -> {
-                    title = "배고픈 몽이 있어요";
-                    body = mongName + "에게 밥을 줘야 해요";
-
-                }
-                case SICK -> {
-                    title = "아픈 몽이 있어요";
-                    body = mongName + "의 체력을 채워야 해요";
-                }
-            }
-
-            if (!title.isBlank() && !body.isBlank()) {
-                managementPublisher.mongStatusHistoryPublish(accountId, title, body);
-            }
+            managementPublisher.mongStatusHistoryPublish(accountId, mongName, statusCode);
         }
     }
 }

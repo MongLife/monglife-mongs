@@ -15,7 +15,7 @@ public class QueryDSLConfig {
         this.entityManager = entityManager;
     }
 
-    @Bean
+    @Bean(name = "mongJpaQueryFactory")
     public JPAQueryFactory jpaQueryFactory(){
         return new JPAQueryFactory(entityManager);
     }

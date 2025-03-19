@@ -1,10 +1,10 @@
 package com.monglife.mongs.domain.task.entity;
 
+import com.monglife.module.common.jpa.entity.BaseTimeEntity;
+import com.monglife.module.common.jpa.entity.ComnCodeEntity;
 import com.monglife.mongs.domain.task.enums.TaskStateCode;
 import com.monglife.mongs.domain.task.enums.TaskStatusCode;
 import com.monglife.mongs.domain.task.listener.TaskEntityListener;
-import com.monglife.mongs.module.jpa.entity.BaseTimeEntity;
-import com.monglife.mongs.module.jpa.entity.ComnCodeEntity;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;

@@ -1,11 +1,10 @@
 package com.monglife.mongs.app.user.collection.controller;
 
 import com.monglife.core.dto.response.ResponseDto;
-import com.monglife.mongs.app.user.collection.dto.request.CreateCollectionMapRequestDto;
+import com.monglife.module.common.security.principal.Passport;
 import com.monglife.mongs.app.user.collection.dto.request.CreateCollectionMongRequestDto;
 import com.monglife.mongs.app.user.collection.enums.CollectionResponse;
 import com.monglife.mongs.app.user.collection.service.CollectionService;
-import com.monglife.mongs.module.security.global.principal.Passport;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;

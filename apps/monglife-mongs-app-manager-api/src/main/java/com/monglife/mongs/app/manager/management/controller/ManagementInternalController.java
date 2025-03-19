@@ -1,5 +1,6 @@
 package com.monglife.mongs.app.manager.management.controller;
 
+import com.monglife.module.common.security.principal.Passport;
 import com.monglife.core.dto.response.ResponseDto;
 import com.monglife.mongs.app.manager.management.dto.request.ChargePayPointRequestDto;
 import com.monglife.mongs.app.manager.management.dto.request.ConsumePayPointRequestDto;
@@ -9,7 +10,6 @@ import com.monglife.mongs.app.manager.management.enums.ManagementResponse;
 import com.monglife.mongs.app.manager.management.service.ManagementService;
 import com.monglife.mongs.domain.mong.dto.etc.PatchMongDto;
 import com.monglife.mongs.domain.mong.vo.MongVo;
-import com.monglife.mongs.module.security.global.principal.Passport;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;

@@ -1,9 +1,9 @@
 package com.monglife.mongs.domain.mong.entity;
 
+import com.monglife.module.common.jpa.entity.BaseTimeEntity;
 import com.monglife.mongs.domain.mong.enums.MongStatusCode;
-import com.monglife.mongs.domain.mong.listener.MongStateEntityListener;
+import com.monglife.mongs.domain.mong.enums.MongStatusHistoryType;
 import com.monglife.mongs.domain.mong.listener.MongStatusEntityListener;
-import com.monglife.mongs.module.jpa.entity.BaseTimeEntity;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -134,7 +134,7 @@ public class MongStatusEntity extends BaseTimeEntity {
         this.expRatio = this.exp / this.maxStatus * 100;
         this.syncStatusValueToStatusRatio();
 
-        this.addHistory(MongStatusHistoryEntity.MongStatusHistoryType.PATCH_STATUS);
+        this.addHistory(MongStatusHistoryType.PATCH_STATUS);
     }
 
     /**
@@ -150,7 +150,7 @@ public class MongStatusEntity extends BaseTimeEntity {
         this.exp = Math.max(0D, Math.min(this.exp, this.maxStatus));
         this.expRatio = this.exp / this.maxStatus * 100;
 
-        this.addHistory(MongStatusHistoryEntity.MongStatusHistoryType.INCREASE_EXP);
+        this.addHistory(MongStatusHistoryType.INCREASE_EXP);
     }
 
     /**
@@ -166,7 +166,7 @@ public class MongStatusEntity extends BaseTimeEntity {
         this.exp = Math.max(0D, Math.min(this.exp, this.maxStatus));
         this.expRatio = this.exp / this.maxStatus * 100;
 
-        this.addHistory(MongStatusHistoryEntity.MongStatusHistoryType.DECREASE_EXP);
+        this.addHistory(MongStatusHistoryType.DECREASE_EXP);
     }
 
     /**
@@ -181,7 +181,7 @@ public class MongStatusEntity extends BaseTimeEntity {
         this.exp = Math.max(0D, Math.min(this.exp, this.maxStatus));
         this.expRatio = this.exp / this.maxStatus * 100;
 
-        this.addHistory(MongStatusHistoryEntity.MongStatusHistoryType.RESET_EXP);
+        this.addHistory(MongStatusHistoryType.RESET_EXP);
     }
 
     /**
@@ -196,7 +196,7 @@ public class MongStatusEntity extends BaseTimeEntity {
 
         this.poopCount = Math.max(0, Math.min(this.poopCount, MAX_POOP_COUNT));
 
-        this.addHistory(MongStatusHistoryEntity.MongStatusHistoryType.INCREASE_POOP_COUNT);
+        this.addHistory(MongStatusHistoryType.INCREASE_POOP_COUNT);
     }
 
     /**
@@ -211,7 +211,7 @@ public class MongStatusEntity extends BaseTimeEntity {
 
         this.poopCount = Math.max(0, Math.min(this.poopCount, MAX_POOP_COUNT));
 
-        this.addHistory(MongStatusHistoryEntity.MongStatusHistoryType.DECREASE_POOP_COUNT);
+        this.addHistory(MongStatusHistoryType.DECREASE_POOP_COUNT);
     }
 
     /**
@@ -223,7 +223,7 @@ public class MongStatusEntity extends BaseTimeEntity {
 
         this.poopCount = 0;
 
-        this.addHistory(MongStatusHistoryEntity.MongStatusHistoryType.RESET_POOP_COUNT);
+        this.addHistory(MongStatusHistoryType.RESET_POOP_COUNT);
     }
 
     /**
@@ -238,7 +238,7 @@ public class MongStatusEntity extends BaseTimeEntity {
 
         this.weight = Math.max(0D, this.weight);
 
-        this.addHistory(MongStatusHistoryEntity.MongStatusHistoryType.INCREASE_WEIGHT);
+        this.addHistory(MongStatusHistoryType.INCREASE_WEIGHT);
     }
 
     /**
@@ -253,7 +253,7 @@ public class MongStatusEntity extends BaseTimeEntity {
 
         this.weight = Math.max(0D, this.weight);
 
-        this.addHistory(MongStatusHistoryEntity.MongStatusHistoryType.DECREASE_WEIGHT);
+        this.addHistory(MongStatusHistoryType.DECREASE_WEIGHT);
     }
 
     /**
@@ -275,7 +275,7 @@ public class MongStatusEntity extends BaseTimeEntity {
         this.fatigue = this.fatigue + fatigue;
         this.syncStatusValueToStatusRatio();
 
-        this.addHistory(MongStatusHistoryEntity.MongStatusHistoryType.INCREASE_STATUS);
+        this.addHistory(MongStatusHistoryType.INCREASE_STATUS);
     }
 
     /**
@@ -297,7 +297,7 @@ public class MongStatusEntity extends BaseTimeEntity {
         this.fatigue = this.fatigue - fatigue;
         this.syncStatusValueToStatusRatio();
 
-        this.addHistory(MongStatusHistoryEntity.MongStatusHistoryType.DECREASE_STATUS);
+        this.addHistory(MongStatusHistoryType.DECREASE_STATUS);
     }
 
     /**
@@ -319,7 +319,7 @@ public class MongStatusEntity extends BaseTimeEntity {
         this.fatigueRatio = this.fatigueRatio + fatigueRatio;
         this.syncStatusRatioToStatusValue();
 
-        this.addHistory(MongStatusHistoryEntity.MongStatusHistoryType.INCREASE_STATUS_RATIO);
+        this.addHistory(MongStatusHistoryType.INCREASE_STATUS_RATIO);
     }
 
     /**
@@ -341,7 +341,7 @@ public class MongStatusEntity extends BaseTimeEntity {
         this.fatigueRatio = this.fatigueRatio - fatigueRatio;
         this.syncStatusRatioToStatusValue();
 
-        this.addHistory(MongStatusHistoryEntity.MongStatusHistoryType.DECREASE_STATUS_RATIO);
+        this.addHistory(MongStatusHistoryType.DECREASE_STATUS_RATIO);
     }
 
     /**
@@ -363,7 +363,7 @@ public class MongStatusEntity extends BaseTimeEntity {
         this.exp = Math.max(0D, Math.min(this.exp, this.maxStatus));
         this.expRatio = this.exp / this.maxStatus * 100;
 
-        this.addHistory(MongStatusHistoryEntity.MongStatusHistoryType.SET_MAX_STATUS);
+        this.addHistory(MongStatusHistoryType.SET_MAX_STATUS);
     }
 
     /**
@@ -376,7 +376,7 @@ public class MongStatusEntity extends BaseTimeEntity {
 
         this.code = code;
 
-        this.addHistory(MongStatusHistoryEntity.MongStatusHistoryType.SET_CODE);
+        this.addHistory(MongStatusHistoryType.SET_CODE);
     }
 
     /**
@@ -431,7 +431,7 @@ public class MongStatusEntity extends BaseTimeEntity {
         }
     }
 
-    private void addHistory(MongStatusHistoryEntity.MongStatusHistoryType mongStatusHistoryType) {
+    private void addHistory(MongStatusHistoryType mongStatusHistoryType) {
 
         this.history.add(MongStatusHistoryEntity.builder()
                 .mongId(this.mong.getMongId())

@@ -1,5 +1,6 @@
 package com.monglife.mongs.domain.task.service;
 
+import com.monglife.module.common.jpa.entity.ComnCodeEntity;
 import com.monglife.mongs.domain.task.entity.TaskEntity;
 import com.monglife.mongs.domain.task.enums.TaskStateCode;
 import com.monglife.mongs.domain.task.enums.TaskStatusCode;
@@ -9,7 +10,6 @@ import com.monglife.mongs.domain.task.repository.ComnCodeRepository;
 import com.monglife.mongs.domain.task.repository.LockTaskRepository;
 import com.monglife.mongs.domain.task.repository.TaskRepository;
 import com.monglife.mongs.domain.task.vo.TaskVo;
-import com.monglife.mongs.module.jpa.entity.ComnCodeEntity;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;

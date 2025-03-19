@@ -1,5 +1,6 @@
 package com.monglife.mongs.domain.member.service;
 
+import com.monglife.module.common.jpa.entity.ComnCodeEntity;
 import com.monglife.mongs.domain.member.entity.*;
 import com.monglife.mongs.domain.member.exception.*;
 import com.monglife.mongs.domain.member.repository.ComnCodeRepository;
@@ -8,7 +9,6 @@ import com.monglife.mongs.domain.member.repository.MemberRepository;
 import com.monglife.mongs.domain.member.vo.CollectionMapVo;
 import com.monglife.mongs.domain.member.vo.CollectionMongVo;
 import com.monglife.mongs.domain.member.vo.MemberVo;
-import com.monglife.mongs.module.jpa.entity.ComnCodeEntity;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;

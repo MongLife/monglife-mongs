@@ -3,7 +3,7 @@ package com.monglife.mongs.domain.mong.repositoryCustom;
 import com.monglife.mongs.domain.mong.entity.MongEntity;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import jakarta.persistence.LockModeType;
-import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Repository;
 
 import java.util.Optional;
@@ -14,10 +14,13 @@ import static com.monglife.mongs.domain.mong.entity.QMongStateEntity.mongStateEn
 import static com.monglife.mongs.domain.mong.entity.QMongStatusEntity.mongStatusEntity;
 
 @Repository
-@RequiredArgsConstructor
 public class LockMongDslRepositoryImpl implements LockMongDslRepository {
 
     private final JPAQueryFactory jpaQueryFactory;
+
+    public LockMongDslRepositoryImpl(@Qualifier("mongJpaQueryFactory") JPAQueryFactory jpaQueryFactory) {
+        this.jpaQueryFactory = jpaQueryFactory;
+    }
 
     @Override
     public Optional<MongEntity> findByMongIdAndMetaIsActiveIsTrue(Long mongId) {

@@ -1,18 +1,11 @@
-
 plugins {
     id 'java-library'
-    id 'org.springframework.boot' version '3.1.1'
-    id 'io.spring.dependency-management' version '1.1.4'
+    id 'org.springframework.boot'
+    id 'io.spring.dependency-management'
 }
 
-allprojects {
-    repositories {
-        mavenCentral()
-    }
-
-    bootJar {
-        enabled(false)
-    }
+bootJar {
+    enabled(false)
 }
 
 subprojects {
@@ -20,23 +13,13 @@ subprojects {
     apply plugin: 'org.springframework.boot'
     apply plugin: 'io.spring.dependency-management'
 
-    sourceCompatibility = '17'
+    jar {
+        enabled(false)
+    }
 
-    dependencies {
-        implementation project(':core')
-        implementation project(':modules:monglife-mongs-module-logging')
-
-        compileOnly 'org.projectlombok:lombok'
-        annotationProcessor 'org.projectlombok:lombok'
-
-        implementation 'org.springframework.cloud:spring-cloud-starter-netflix-eureka-client'
-
-        implementation 'org.springframework.boot:spring-boot-starter-web'
-        developmentOnly 'org.springframework.boot:spring-boot-devtools'
-        implementation 'org.springframework.boot:spring-boot-starter-validation'
-
-        implementation 'org.springframework.boot:spring-boot-starter-actuator:3.2.1'
-        runtimeOnly 'io.micrometer:micrometer-registry-prometheus'
+    bootJar {
+        duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+        enabled(true)
     }
 
     dependencyManagement {
@@ -45,11 +28,28 @@ subprojects {
         }
     }
 
-    bootJar {
-        enabled(true)
-    }
+    dependencies {
+        // monglife-core
+        implementation 'com.github.monglife:monglife-core:2.0.7'
 
-    jar {
-        enabled(false)
+        // monglife-logging
+        implementation 'com.github.monglife.monglife-module-common:monglife-module-common-logging:1.0.5'
+
+        // monglife-kafka
+        implementation 'com.github.monglife.monglife-module-common:monglife-module-common-kafka:1.0.5'
+
+        // spring
+        implementation 'org.springframework.cloud:spring-cloud-starter-netflix-eureka-client'
+        implementation 'org.springframework.boot:spring-boot-starter-web'
+        developmentOnly 'org.springframework.boot:spring-boot-devtools'
+        implementation 'org.springframework.boot:spring-boot-starter-validation'
+
+        // lombok
+        compileOnly 'org.projectlombok:lombok'
+        annotationProcessor 'org.projectlombok:lombok'
+
+        // prometheus
+        implementation 'org.springframework.boot:spring-boot-starter-actuator:3.2.1'
+        runtimeOnly 'io.micrometer:micrometer-registry-prometheus'
     }
 }

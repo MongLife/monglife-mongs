@@ -8,15 +8,12 @@ import com.monglife.mongs.domain.match.service.MatchingService;
 import com.monglife.mongs.domain.match.vo.MatchPlayerVo;
 import com.monglife.mongs.domain.match.vo.MatchingVo;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Set;
 
-@Slf4j
 @Component
 @RequiredArgsConstructor
 public class BattleMatchingScheduler {

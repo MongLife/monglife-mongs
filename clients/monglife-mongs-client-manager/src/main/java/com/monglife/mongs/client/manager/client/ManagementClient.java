@@ -1,16 +1,16 @@
 package com.monglife.mongs.client.manager.client;
 
 import com.monglife.core.dto.response.ResponseDto;
+import com.monglife.module.common.feign.config.FeignClientAutoConfig;
 import com.monglife.mongs.client.manager.dto.request.ChargePayPointRequestDto;
 import com.monglife.mongs.client.manager.dto.request.ConsumePayPointRequestDto;
 import com.monglife.mongs.client.manager.dto.request.PatchMongRequestDto;
 import com.monglife.mongs.client.manager.dto.response.GetMinimalMongResponseDto;
-import com.monglife.mongs.module.feign.config.FeignClientConfig;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-@FeignClient(name = "MONGS-MANAGER", path = "/manager", configuration = FeignClientConfig.class)
+@FeignClient(name = "MONGS-MANAGER", path = "/manager", configuration = FeignClientAutoConfig.class)
 public interface ManagementClient {
 
     @PatchMapping("/internal/management/payPoint/charge/{mongId}")

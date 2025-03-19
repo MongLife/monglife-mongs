@@ -1,5 +1,6 @@
 package com.monglife.mongs.app.activity.battle.controller;
 
+import com.monglife.module.common.security.principal.Passport;
 import com.monglife.core.dto.response.ResponseDto;
 import com.monglife.mongs.app.activity.battle.dto.etc.BattleDto;
 import com.monglife.mongs.app.activity.battle.dto.etc.OverBattleDto;
@@ -8,7 +9,6 @@ import com.monglife.mongs.app.activity.battle.dto.response.GetBattleRewardRespon
 import com.monglife.mongs.app.activity.battle.dto.response.OverBattleResponseDto;
 import com.monglife.mongs.app.activity.battle.enums.BattleResponse;
 import com.monglife.mongs.app.activity.battle.service.BattleService;
-import com.monglife.mongs.module.security.global.principal.Passport;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;

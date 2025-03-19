@@ -1,9 +1,9 @@
 package com.monglife.mongs.domain.match.service;
 
+import com.monglife.module.common.logging.annotation.DisableLogging;
 import com.monglife.core.utils.CommonUtil;
 import com.monglife.mongs.domain.match.entity.MatchingEntity;
 import com.monglife.mongs.domain.match.vo.MatchingVo;
-import com.monglife.mongs.module.logging.annotation.NotInvokeLog;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
@@ -82,7 +82,7 @@ public class MatchingService {
      * 대기열 조회 후 매칭 생성
      * @return 매칭 성사 된 대기열 Dto 목록
      */
-    @NotInvokeLog
+    @DisableLogging
     public Set<MatchingVo> getWaitMatching() {
 
         // 대기열 최근 순 MAX_PLAYER 명까지 조회

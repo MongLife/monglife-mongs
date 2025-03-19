@@ -1,7 +1,7 @@
 package com.monglife.mongs.domain.member.entity;
 
+import com.monglife.module.common.jpa.entity.BaseTimeEntity;
 import com.monglife.mongs.domain.member.listener.MemberEntityListener;
-import com.monglife.mongs.module.jpa.entity.BaseTimeEntity;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;

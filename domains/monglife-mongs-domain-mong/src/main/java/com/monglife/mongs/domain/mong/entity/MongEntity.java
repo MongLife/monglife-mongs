@@ -1,13 +1,14 @@
 package com.monglife.mongs.domain.mong.entity;
 
+import com.monglife.module.common.jpa.entity.BaseTimeEntity;
 import com.monglife.mongs.domain.mong.dto.etc.DecreaseMongStatusRatioDto;
 import com.monglife.mongs.domain.mong.dto.etc.IncreaseMongStatusDto;
 import com.monglife.mongs.domain.mong.dto.etc.IncreaseMongStatusRatioDto;
 import com.monglife.mongs.domain.mong.dto.etc.PatchMongDto;
+import com.monglife.mongs.domain.mong.enums.MongHistoryType;
 import com.monglife.mongs.domain.mong.enums.MongStateCode;
 import com.monglife.mongs.domain.mong.enums.MongStatusCode;
 import com.monglife.mongs.domain.mong.listener.MongEntityListener;
-import com.monglife.mongs.module.jpa.entity.BaseTimeEntity;
 import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
@@ -118,7 +119,7 @@ public class MongEntity extends BaseTimeEntity {
         this.state.setCode(MongStateCode.DELETE);
         this.meta.deActivate();
 
-        this.addHistory(MongHistoryEntity.MongHistoryType.DELETE);
+        this.addHistory(MongHistoryType.DELETE);
     }
 
     /**
@@ -130,7 +131,7 @@ public class MongEntity extends BaseTimeEntity {
         this.status.increaseExp(exp);
         this.meta.increaseStrokeCount();
 
-        this.addHistory(MongHistoryEntity.MongHistoryType.STROKE);
+        this.addHistory(MongHistoryType.STROKE);
     }
 
     /**
@@ -140,7 +141,7 @@ public class MongEntity extends BaseTimeEntity {
 
         this.state.setSleep();
 
-        this.addHistory(MongHistoryEntity.MongHistoryType.SLEEP);
+        this.addHistory(MongHistoryType.SLEEP);
     }
 
     /**
@@ -150,7 +151,7 @@ public class MongEntity extends BaseTimeEntity {
 
         this.state.setWakeup();
 
-        this.addHistory(MongHistoryEntity.MongHistoryType.WAKEUP);
+        this.addHistory(MongHistoryType.WAKEUP);
     }
 
     /**
@@ -161,7 +162,7 @@ public class MongEntity extends BaseTimeEntity {
         this.status.increaseExp(this.status.getPoopCount() * exp);
         this.status.resetPoopCount();
 
-        this.addHistory(MongHistoryEntity.MongHistoryType.POOP_CLEAN);
+        this.addHistory(MongHistoryType.POOP_CLEAN);
     }
 
     /**
@@ -180,7 +181,7 @@ public class MongEntity extends BaseTimeEntity {
 
         this.payPoint = Math.max(0, this.payPoint - foodPrice);
 
-        this.addHistory(MongHistoryEntity.MongHistoryType.FEED);
+        this.addHistory(MongHistoryType.FEED);
     }
 
     /**
@@ -201,7 +202,7 @@ public class MongEntity extends BaseTimeEntity {
         );
         this.meta.increaseTrainingCount();
 
-        this.addHistory(MongHistoryEntity.MongHistoryType.TRAINING);
+        this.addHistory(MongHistoryType.TRAINING);
     }
 
     /**
@@ -219,7 +220,7 @@ public class MongEntity extends BaseTimeEntity {
 
         this.state.setCode(MongStateCode.EVOLUTION_READY);
 
-        this.addHistory(MongHistoryEntity.MongHistoryType.EVOLUTION_READY);
+        this.addHistory(MongHistoryType.EVOLUTION_READY);
     }
 
     /**
@@ -237,7 +238,7 @@ public class MongEntity extends BaseTimeEntity {
         this.meta.resetPenalty();
         this.type = nextMongType;
 
-        this.addHistory(MongHistoryEntity.MongHistoryType.EVOLUTION);
+        this.addHistory(MongHistoryType.EVOLUTION);
     }
 
     /**
@@ -250,7 +251,7 @@ public class MongEntity extends BaseTimeEntity {
         this.status.setCode(MongStatusCode.NORMAL);
         this.status.resetExp();
 
-        this.addHistory(MongHistoryEntity.MongHistoryType.GRADUATE_READY);
+        this.addHistory(MongHistoryType.GRADUATE_READY);
     }
 
     /**
@@ -262,7 +263,7 @@ public class MongEntity extends BaseTimeEntity {
         this.status.setCode(MongStatusCode.NORMAL);
         this.meta.deActivate();
 
-        this.addHistory(MongHistoryEntity.MongHistoryType.GRADUATE);
+        this.addHistory(MongHistoryType.GRADUATE);
     }
 
     /**
@@ -272,7 +273,7 @@ public class MongEntity extends BaseTimeEntity {
 
         this.state.setCode(MongStateCode.DEAD);
 
-        this.addHistory(MongHistoryEntity.MongHistoryType.DEAD);
+        this.addHistory(MongHistoryType.DEAD);
     }
 
     /**
@@ -337,7 +338,7 @@ public class MongEntity extends BaseTimeEntity {
 
         this.payPoint = Math.min(this.payPoint + payPoint, Integer.MAX_VALUE);
 
-        this.addHistory(MongHistoryEntity.MongHistoryType.INCREASE_PAY_POINT);
+        this.addHistory(MongHistoryType.INCREASE_PAY_POINT);
     }
 
     /**
@@ -350,10 +351,10 @@ public class MongEntity extends BaseTimeEntity {
 
         this.payPoint = Math.max(0, this.payPoint - payPoint);
 
-        this.addHistory(MongHistoryEntity.MongHistoryType.DECREASE_PAY_POINT);
+        this.addHistory(MongHistoryType.DECREASE_PAY_POINT);
     }
 
-    private void addHistory(MongHistoryEntity.MongHistoryType mongHistoryType) {
+    private void addHistory(MongHistoryType mongHistoryType) {
 
         this.history.add(MongHistoryEntity.builder()
                 .mongHistoryType(mongHistoryType)

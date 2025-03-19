@@ -1,18 +1,11 @@
-
 plugins {
     id 'java-library'
-    id 'org.springframework.boot' version '3.1.1'
-    id 'io.spring.dependency-management' version '1.1.4'
+    id 'org.springframework.boot'
+    id 'io.spring.dependency-management'
 }
 
-allprojects {
-    repositories {
-        mavenCentral()
-    }
-
-    bootJar {
-        enabled(false)
-    }
+bootJar {
+    enabled(false)
 }
 
 subprojects {
@@ -20,17 +13,12 @@ subprojects {
     apply plugin: 'org.springframework.boot'
     apply plugin: 'io.spring.dependency-management'
 
-    sourceCompatibility = '17'
+    jar {
+        enabled(true)
+    }
 
-    dependencies {
-        implementation project(':core')
-        implementation project(':modules:monglife-mongs-module-logging')
-
-        compileOnly 'org.projectlombok:lombok'
-        annotationProcessor 'org.projectlombok:lombok'
-
-        implementation 'org.springframework.boot:spring-boot-starter-web'
-        developmentOnly 'org.springframework.boot:spring-boot-devtools'
+    bootJar {
+        enabled(false)
     }
 
     dependencyManagement {
@@ -39,11 +27,19 @@ subprojects {
         }
     }
 
-    bootJar {
-        enabled(false)
-    }
+    dependencies {
+        // monglife-core
+        implementation 'com.github.monglife:monglife-core:2.0.7'
 
-    jar {
-        enabled(true)
+        // monglife-logging
+        implementation 'com.github.monglife.monglife-module-common:monglife-module-common-logging:1.0.5'
+
+        // spring
+        implementation 'org.springframework.boot:spring-boot-starter-web'
+        developmentOnly 'org.springframework.boot:spring-boot-devtools'
+
+        // lombok
+        compileOnly 'org.projectlombok:lombok'
+        annotationProcessor 'org.projectlombok:lombok'
     }
 }
