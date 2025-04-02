@@ -1,8 +1,0 @@
-dependencies {
-    // spring
-    implementation 'org.springframework.boot:spring-boot-starter-web'
-}
-
-tasks.named('jar') {
-    enabled = true
-}
