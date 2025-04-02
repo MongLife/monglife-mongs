@@ -1,0 +1,11 @@
+dependencies {
+    implementation project(':domains:play-code-domain')
+}
+
+tasks.register('copyPrivate', Copy) {
+    copy {
+        from '../../spring_backend_sub/apps/play-common-app-api/'
+        include 'application*.yml'
+        into 'src/main/resources'
+    }
+}
