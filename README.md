@@ -1,4 +1,4 @@
-# 🚀 Monglife Discovery
+# 🚀 Monglife Mongs
 
 [Mongs : 걸음 수로 키우는 다마고치](https://play.google.com/store/apps/details?id=com.mongs.wear) 서비스를 위한 기능들을 구현한 프로젝트 입니다.
 
