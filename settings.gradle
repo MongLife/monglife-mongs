@@ -16,3 +16,21 @@ include 'domains:monglife-mongs-domain-match'
 include 'domains:monglife-mongs-domain-member'
 include 'domains:monglife-mongs-domain-mong'
 include 'domains:monglife-mongs-domain-task'
+
+
+include 'bootstrap'
+include 'bootstrap:user-bootstrap-api'
+
+include 'adapter-in'
+include 'adapter-in:device-adapter-in'
+include 'adapter-in:member-adapter-in'
+
+include 'application'
+include 'application:device-application'
+include 'application:member-application'
+
+include 'adapter-out'
+include 'adapter-out:device-persistence-adapter-out'
+include 'adapter-out:google-payment-adapter-out'
+include 'adapter-out:member-persistence-adapter-out'
+include 'adapter-out:member-publish-adapter-out'

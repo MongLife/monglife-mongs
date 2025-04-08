@@ -1,0 +1,7 @@
+dependencies {
+    implementation project(':adapter-in:device-adapter-in')
+    implementation project(':adapter-in:member-adapter-in')
+}
+
+tasks.register('copyPrivate', Copy) {
+}

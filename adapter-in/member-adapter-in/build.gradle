@@ -1,0 +1,5 @@
+dependencies {
+}
+
+tasks.register('copyPrivate', Copy) {
+}
