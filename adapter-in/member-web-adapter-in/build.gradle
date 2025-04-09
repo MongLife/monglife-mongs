@@ -1,0 +1,11 @@
+dependencies {
+    implementation project(':application:member-application')
+}
+
+tasks.register('copyPrivate', Copy) {
+    copy {
+        from '../../configs/adapter-in/member-web-adapter-in/'
+        include '*.yml'
+        into 'src/main/resources'
+    }
+}

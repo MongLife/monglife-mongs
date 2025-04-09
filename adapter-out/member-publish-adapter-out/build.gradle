@@ -1,0 +1,11 @@
+dependencies {
+    implementation project(':application:member-application')
+}
+
+tasks.register('copyPrivate', Copy) {
+    copy {
+        from '../../configs/adapter-out/member-publish-adapter-out/'
+        include '*.yml'
+        into 'src/main/resources'
+    }
+}

@@ -1,6 +1,14 @@
 dependencies {
-    implementation project(':adapter-in:device-adapter-in')
-    implementation project(':adapter-in:member-adapter-in')
+    implementation project(':adapter-in:device-web-adapter-in')
+    implementation project(':adapter-in:member-web-adapter-in')
+
+    implementation project(':adapter-out:device-event-adapter-out')
+    implementation project(':adapter-out:device-persistence-adapter-out')
+    implementation project(':adapter-out:device-publish-adapter-out')
+    implementation project(':adapter-out:google-payment-adapter-out')
+    implementation project(':adapter-out:member-event-adapter-out')
+    implementation project(':adapter-out:member-persistence-adapter-out')
+    implementation project(':adapter-out:member-publish-adapter-out')
 }
 
 tasks.register('copyPrivate', Copy) {

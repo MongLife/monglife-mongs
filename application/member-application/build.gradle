@@ -1,0 +1,10 @@
+dependencies {
+}
+
+tasks.register('copyPrivate', Copy) {
+    copy {
+        from '../../configs/application/member-application/'
+        include '*.yml'
+        into 'src/main/resources'
+    }
+}

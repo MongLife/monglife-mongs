@@ -1,0 +1,11 @@
+dependencies {
+    implementation project(':application:device-application')
+}
+
+tasks.register('copyPrivate', Copy) {
+    copy {
+        from '../../configs/adapter-in/device-sub-adapter-in/'
+        include '*.yml'
+        into 'src/main/resources'
+    }
+}
