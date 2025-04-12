@@ -1,8 +1,8 @@
 package com.monglife.mongs.application.device.port.out;
 
-import com.monglife.mongs.application.device.domain.Step;
+import com.monglife.mongs.domain.model.Step;
 
 public interface DevicePublishPort {
 
-    void publishStepWalkingCountPort(Step step);
+    void publishWalkingCountPort(Step step);
 }

@@ -1,0 +1,298 @@
+package com.monglife.mongs.application.device.port.in;
+
+import com.monglife.mongs.application.device.port.in.command.ExchangeCurrentWalkingCountCommand;
+import com.monglife.mongs.application.device.port.in.command.IncreaseCurrentWalkingCountCommand;
+import com.monglife.mongs.application.device.port.in.command.UpdateTotalWalkingCountCommand;
+import com.monglife.mongs.application.device.port.in.service.StepService;
+import com.monglife.mongs.application.device.port.out.DeviceEventPort;
+import com.monglife.mongs.application.device.port.out.DevicePersistencePort;
+import com.monglife.mongs.application.device.port.out.DevicePublishPort;
+import com.monglife.mongs.domain.model.Step;
+import com.monglife.mongs.global.exception.NotEnoughCurrentWalkingCountException;
+import com.monglife.mongs.global.exception.NotExistStepException;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Nested;
+import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
+
+import java.time.LocalDateTime;
+import java.util.Optional;
+
+import static org.junit.jupiter.api.Assertions.*;
+
+class StepUseCaseTest {
+
+    private final DevicePersistencePort devicePersistencePort;
+
+    private final StepService stepService;
+
+    public StepUseCaseTest() {
+        DeviceEventPort deviceEventPort = Mockito.mock(DeviceEventPort.class);
+        DevicePublishPort devicePublishPort = Mockito.mock(DevicePublishPort.class);
+        this.devicePersistencePort = Mockito.mock(DevicePersistencePort.class);
+        this.stepService = new StepService(deviceEventPort, devicePersistencePort, devicePublishPort);
+    }
+
+    private static final String deviceId = "TEST-DEVICE-ID";
+    private static final int totalWalkingCount = 100;
+    private static final LocalDateTime deviceBootedDt = LocalDateTime.of(2025, 1, 1, 0, 0);
+
+    @Nested
+    @DisplayName("보유 걸음 수 페이 포인트 환전 단위 테스트")
+    class ExchangeCurrentWalkingCountUseCase {
+
+        @Test
+        @DisplayName("보유 걸음 수를 보유한 경우 페이 포인트로 환전한다.")
+        void enoughCurrentWalkingCount() {
+            // arrange
+            final Step step = Step.builder()
+                    .deviceId(deviceId)
+                    .walkingCount(0)
+                    .consumeWalkingCount(0)
+                    .totalWalkingCount(totalWalkingCount)
+                    .deviceBootedDt(deviceBootedDt)
+                    .build();
+
+            Mockito.when(devicePersistencePort.getStepPort(deviceId)).thenReturn(Optional.of(step));
+
+            // act
+            stepService.exchangeCurrentWalkingCountUseCase(ExchangeCurrentWalkingCountCommand.builder()
+                    .deviceId(deviceId)
+                    .mongId(1L)
+                    .walkingCount(totalWalkingCount)
+                    .totalWalkingCount(totalWalkingCount)
+                    .deviceBootedDt(LocalDateTime.of(2025, 1, 1, 0, 0))
+                    .build());
+
+            // assert
+            assertEquals(0, step.getCurrentWalkingCount());
+        }
+
+        @Test
+        @DisplayName("총 걸음 수를 동기화하고 페이 포인트로 환전한다.")
+        void updateTotalWalkingCountAndExchangeCurrentWalkingCount() {
+            // arrange
+            int walkingCount = 50;
+            int newTotalWalkingCount = totalWalkingCount + walkingCount;
+            final Step step = Step.builder()
+                    .deviceId(deviceId)
+                    .walkingCount(0)
+                    .consumeWalkingCount(0)
+                    .totalWalkingCount(totalWalkingCount)
+                    .deviceBootedDt(deviceBootedDt)
+                    .build();
+
+            Mockito.when(devicePersistencePort.getStepPort(deviceId)).thenReturn(Optional.of(step));
+
+            // act
+            stepService.exchangeCurrentWalkingCountUseCase(ExchangeCurrentWalkingCountCommand.builder()
+                    .deviceId(deviceId)
+                    .mongId(1L)
+                    .walkingCount(totalWalkingCount)
+                    .totalWalkingCount(newTotalWalkingCount)
+                    .deviceBootedDt(deviceBootedDt)
+                    .build());
+
+            // assert
+            assertEquals(walkingCount, step.getCurrentWalkingCount());
+        }
+
+        @Test
+        @DisplayName("총 걸음 수를 초기화하고 페이 포인트로 환전한다.")
+        void resetStepAndExchangeCurrentWalkingCount() {
+            // arrange
+            int newTotalWalkingCount = 50;
+            LocalDateTime newDeviceBootedDt = LocalDateTime.of(2025, 1, 2, 0, 0);
+            final Step step = Step.builder()
+                    .deviceId(deviceId)
+                    .walkingCount(0)
+                    .consumeWalkingCount(0)
+                    .totalWalkingCount(totalWalkingCount)
+                    .deviceBootedDt(deviceBootedDt)
+                    .build();
+
+            Mockito.when(devicePersistencePort.getStepPort(deviceId)).thenReturn(Optional.of(step));
+
+            // act
+            stepService.exchangeCurrentWalkingCountUseCase(ExchangeCurrentWalkingCountCommand.builder()
+                    .deviceId(deviceId)
+                    .mongId(1L)
+                    .walkingCount(totalWalkingCount)
+                    .totalWalkingCount(newTotalWalkingCount)
+                    .deviceBootedDt(newDeviceBootedDt)
+                    .build());
+
+            // assert
+            assertEquals(newDeviceBootedDt, step.getDeviceBootedDt());
+            assertEquals(newTotalWalkingCount, step.getCurrentWalkingCount());
+        }
+
+        @Test
+        @DisplayName("보유 걸음 수가 부족한 경우 예외가 발생한다.")
+        void notEnoughCurrentWalkingCount() {
+            // arrange
+            final Step step = Step.builder()
+                    .deviceId(deviceId)
+                    .walkingCount(0)
+                    .consumeWalkingCount(0)
+                    .totalWalkingCount(totalWalkingCount)
+                    .deviceBootedDt(deviceBootedDt)
+                    .build();
+
+            Mockito.when(devicePersistencePort.getStepPort(deviceId)).thenReturn(Optional.of(step));
+
+            // act & assert
+            assertThrows(NotEnoughCurrentWalkingCountException.class, () -> stepService.exchangeCurrentWalkingCountUseCase(ExchangeCurrentWalkingCountCommand.builder()
+                    .deviceId(deviceId)
+                    .mongId(1L)
+                    .walkingCount(Integer.MAX_VALUE)
+                    .totalWalkingCount(200)
+                    .deviceBootedDt(LocalDateTime.of(2025, 1, 1, 0, 0))
+                    .build()));
+        }
+
+        @Test
+        @DisplayName("걸음 수가 없는 경우 예외가 발생한다.")
+        void notExistsStep() {
+            // arrange
+            Mockito.when(devicePersistencePort.getStepPort(deviceId)).thenReturn(Optional.empty());
+
+            // act & assert
+            assertThrows(NotExistStepException.class, () -> stepService.exchangeCurrentWalkingCountUseCase(ExchangeCurrentWalkingCountCommand.builder()
+                    .deviceId(deviceId)
+                    .mongId(1L)
+                    .walkingCount(0)
+                    .totalWalkingCount(totalWalkingCount)
+                    .deviceBootedDt(deviceBootedDt)
+                    .build()));
+        }
+    }
+
+    @Nested
+    @DisplayName("총 걸음 수 동기화 단위 테스트 ")
+    class UpdateTotalWalkingCountUseCase {
+
+        @Test
+        @DisplayName("걸음 수가 없는 경우 새로운 걸음 수를 등록한다.")
+        void createStepWhenNotExistsStep() {
+            // arrange
+            final Step step = Step.builder()
+                    .deviceId(deviceId)
+                    .walkingCount(0)
+                    .consumeWalkingCount(0)
+                    .totalWalkingCount(totalWalkingCount)
+                    .deviceBootedDt(deviceBootedDt)
+                    .build();
+
+            Mockito.when(devicePersistencePort.getStepPort(deviceId)).thenReturn(Optional.empty());
+            Mockito.when(devicePersistencePort.createStepPort(Mockito.any())).thenReturn(step);
+
+            // act & assert
+            assertDoesNotThrow(() -> stepService.updateTotalWalkingCountUseCase(UpdateTotalWalkingCountCommand.builder()
+                            .deviceId(deviceId)
+                            .totalWalkingCount(totalWalkingCount)
+                            .deviceBootedDt(deviceBootedDt)
+                    .build()));
+        }
+
+        @Test
+        @DisplayName("부팅 시간이 동일한 경우 걸음 수를 동기화 한다.")
+        void updateTotalWalkingCount() {
+            // arrange
+            int walkingCount = 50;
+            int newTotalWalkingCount = totalWalkingCount + walkingCount;
+            final Step step = Step.builder()
+                    .deviceId(deviceId)
+                    .walkingCount(0)
+                    .consumeWalkingCount(0)
+                    .totalWalkingCount(totalWalkingCount)
+                    .deviceBootedDt(deviceBootedDt)
+                    .build();
+
+            Mockito.when(devicePersistencePort.getStepPort(deviceId)).thenReturn(Optional.empty());
+            Mockito.when(devicePersistencePort.createStepPort(Mockito.any())).thenReturn(step);
+
+            // act
+            stepService.updateTotalWalkingCountUseCase(UpdateTotalWalkingCountCommand.builder()
+                    .deviceId(deviceId)
+                    .totalWalkingCount(newTotalWalkingCount)
+                    .deviceBootedDt(deviceBootedDt)
+                    .build());
+
+            // assert
+            assertEquals(newTotalWalkingCount, step.getCurrentWalkingCount());
+        }
+
+        @Test
+        @DisplayName("부팅 시간이 지난 경우 총 걸음 수를 초기화 한다.")
+        void resetStep() {
+            // arrange
+            int newTotalWalkingCount = 50;
+            LocalDateTime newDeviceBootedDt = LocalDateTime.of(2025, 1, 2, 0, 0);
+            final Step step = Step.builder()
+                    .deviceId(deviceId)
+                    .walkingCount(0)
+                    .consumeWalkingCount(0)
+                    .totalWalkingCount(totalWalkingCount)
+                    .deviceBootedDt(deviceBootedDt)
+                    .build();
+
+            Mockito.when(devicePersistencePort.getStepPort(deviceId)).thenReturn(Optional.of(step));
+
+            // act
+            stepService.updateTotalWalkingCountUseCase(UpdateTotalWalkingCountCommand.builder()
+                    .deviceId(deviceId)
+                    .totalWalkingCount(newTotalWalkingCount)
+                    .deviceBootedDt(newDeviceBootedDt)
+                    .build());
+
+            // assert
+            assertEquals(newDeviceBootedDt, step.getDeviceBootedDt());
+            assertEquals(totalWalkingCount + newTotalWalkingCount, step.getCurrentWalkingCount());
+        }
+
+    }
+
+    @Nested
+    @DisplayName("총 걸음 수 증가 단위 테스트")
+    class IncreaseCurrentWalkingCountUseCase {
+
+        @Test
+        @DisplayName("총 걸음 수를 증가 시킨다.")
+        void increaseCurrentWalkingCount() {
+            // arrange
+            int increaseWalkingCount = 1000;
+            final Step step = Step.builder()
+                    .deviceId(deviceId)
+                    .walkingCount(0)
+                    .consumeWalkingCount(0)
+                    .totalWalkingCount(totalWalkingCount)
+                    .deviceBootedDt(deviceBootedDt)
+                    .build();
+
+            Mockito.when(devicePersistencePort.getStepPort(deviceId)).thenReturn(Optional.of(step));
+
+            // act
+            stepService.increaseCurrentWalkingCountUseCase(IncreaseCurrentWalkingCountCommand.builder()
+                    .deviceId(deviceId)
+                    .walkingCount(increaseWalkingCount)
+                    .build());
+
+            // assert
+            assertEquals(totalWalkingCount + increaseWalkingCount, step.getCurrentWalkingCount());
+        }
+
+        @Test
+        @DisplayName("걸음 수가 없는 경우 예외가 발생한다.")
+        void notExistsStep() {
+            // arrange
+            Mockito.when(devicePersistencePort.getStepPort(deviceId)).thenReturn(Optional.empty());
+
+            // act & assert
+            assertThrows(NotExistStepException.class, () -> stepService.increaseCurrentWalkingCountUseCase(IncreaseCurrentWalkingCountCommand.builder()
+                        .deviceId(deviceId)
+                        .walkingCount(100)
+                        .build()));
+        }
+    }
+}

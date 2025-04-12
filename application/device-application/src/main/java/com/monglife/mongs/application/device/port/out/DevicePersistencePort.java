@@ -1,15 +1,15 @@
 package com.monglife.mongs.application.device.port.out;
 
-import com.monglife.mongs.application.device.domain.Step;
-import com.monglife.mongs.application.device.port.vo.CreateStepVo;
+import com.monglife.mongs.domain.model.Step;
+import com.monglife.mongs.application.device.port.out.vo.CreateStepVo;
+
+import java.util.Optional;
 
 public interface DevicePersistencePort {
 
-    void createStepPort(CreateStepVo createStepVo);
+    Step createStepPort(CreateStepVo createStepVo);
 
-    void decreaseWalkingCountPort(Long deviceId, Integer decreaseWalkingCount);
+    void saveStepPort(Step step);
 
-    void updateWalkingCountPort(Step step);
-
-    void increaseWalkingCountPort(Long deviceId, Integer increaseWalkingCount);
+    Optional<Step> getStepPort(String deviceId);
 }
