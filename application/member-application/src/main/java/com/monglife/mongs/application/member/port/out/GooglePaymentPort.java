@@ -1,20 +1,19 @@
 package com.monglife.mongs.application.member.port.out;
 
-import com.monglife.mongs.application.member.domain.Order;
-import com.monglife.mongs.application.member.domain.Product;
-import com.monglife.mongs.application.member.port.vo.CreateOrderVo;
+import com.monglife.mongs.domain.model.InAppOrder;
+import com.monglife.mongs.domain.model.Order;
+import com.monglife.mongs.domain.model.InAppProduct;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface GooglePaymentPort {
 
-    void consumeOrderPort(Long orderId);
+    Optional<InAppOrder> getInAppOrderPort(Order order);
 
-    void createOrderPort(CreateOrderVo createOrderVo);
+    void consumeInAppOrderPort(Order order);
 
-    List<Order> getConsumedOrdersPort();
+    Optional<InAppProduct> getInAppProductPort(String productId);
 
-    List<Product> getProductsPort();
-
-    Order getOrderPort(Long orderId);
+    List<InAppProduct> getInAppProductsPort(List<String> productIds);
 }

@@ -1,18 +1,20 @@
 package com.monglife.mongs.application.member.port.in;
 
-import com.monglife.mongs.application.member.domain.Order;
-import com.monglife.mongs.application.member.domain.Product;
-import com.monglife.mongs.application.member.port.command.*;
+import com.monglife.mongs.application.member.port.in.command.ConsumeOrderCommand;
+import com.monglife.mongs.application.member.port.in.command.CreateOrderCommand;
+import com.monglife.mongs.application.member.port.in.command.GetConsumedOrderCommand;
+import com.monglife.mongs.domain.model.Order;
+import com.monglife.mongs.domain.model.InAppProduct;
 
 import java.util.List;
 
 public interface StoreUseCase {
 
-    void buyProductUseCase(BuyProductCommand buyProductCommand);
+    void createOrderUseCase(CreateOrderCommand command);
 
-    List<Product> getProductsUseCase(GetProductsCommand getProductsCommand);
+    void consumeOrderUseCase(ConsumeOrderCommand command);
 
-    void consumeOrderUseCase(ConsumeOrderCommand consumeOrderCommand);
+    List<InAppProduct> getProductsUseCase();
 
-    List<Order> getConsumedOrderUseCase(GetConsumedOrderCommand getConsumedOrderCommand);
+    List<Order> getConsumedOrderUseCase(GetConsumedOrderCommand command);
 }

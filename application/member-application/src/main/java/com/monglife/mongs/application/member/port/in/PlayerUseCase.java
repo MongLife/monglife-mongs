@@ -1,17 +1,17 @@
 package com.monglife.mongs.application.member.port.in;
 
-import com.monglife.mongs.application.member.domain.Player;
-import com.monglife.mongs.application.member.port.command.*;
+import com.monglife.mongs.application.member.port.in.command.*;
+import com.monglife.mongs.domain.model.Player;
 
 public interface PlayerUseCase {
 
-    void createPlayerUseCase(CreatePlayerCommand createPlayerCommand);
+    void createPlayerUseCase(CreatePlayerCommand command);
 
-    Player getPlayerUseCase(GetPlayerCommand getPlayerCommand);
+    Player getPlayerUseCase(GetPlayerCommand command);
 
-    void buySlotUseCase(BuySlotCommand buySlotCommand);
+    void buySlotUseCase(BuySlotCommand command);
 
-    void exchangeStarPointUseCase(ExchangeStarPointCommand exchangeStarPointCommand);
+    void exchangeStarPointUseCase(ExchangeStarPointCommand command);
 
-    void increaseStarPointUseCase(IncreaseStarPointCommand increaseStarPointCommand);
+    void increaseStarPointUseCase(IncreaseStarPointCommand command);
 }

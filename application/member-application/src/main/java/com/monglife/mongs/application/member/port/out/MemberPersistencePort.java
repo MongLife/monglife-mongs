@@ -1,34 +1,46 @@
 package com.monglife.mongs.application.member.port.out;
 
-import com.monglife.mongs.application.member.domain.CollectionMap;
-import com.monglife.mongs.application.member.domain.CollectionMong;
-import com.monglife.mongs.application.member.domain.Player;
-import com.monglife.mongs.application.member.port.vo.CreateCollectionMapVo;
-import com.monglife.mongs.application.member.port.vo.CreateCollectionMongVo;
-import com.monglife.mongs.application.member.port.vo.CreateFeedbackVo;
-import com.monglife.mongs.application.member.port.vo.CreatePlayerVo;
+import com.monglife.mongs.application.member.port.out.vo.*;
+import com.monglife.mongs.domain.model.*;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface MemberPersistencePort {
 
-    void createCollectionMapPort(CreateCollectionMapVo createCollectionMapVo);
+    CollectionMap createCollectionMapPort(CreateCollectionMapVo createCollectionMapVo);
 
-    void createCollectionMongPort(CreateCollectionMongVo createCollectionMongVo);
+    CollectionMong createCollectionMongPort(CreateCollectionMongVo createCollectionMongVo);
+
+    Boolean isExistsCollectionMap(Long accountId, String mapTypeCode);
+
+    Boolean isExistsCollectionMong(Long accountId, String mongTypeCode);
 
     List<CollectionMap> getCollectionMapsPort(Long accountId);
 
     List<CollectionMong> getCollectionMongsPort(Long accountId);
 
-    void createFeedback(CreateFeedbackVo createFeedbackVo);
+    Feedback createFeedback(CreateFeedbackVo createFeedbackVo);
 
-    void createPlayerPort(CreatePlayerVo createPlayerVo);
+    Player createPlayerPort(CreatePlayerVo createPlayerVo);
 
-    Player getPlayerPort(Long accountId);
+    Boolean isExistsPlayerPort(Long accountId);
 
-    void increaseSlotCountPort(Long accountId, Integer increaseSlotCount);
+    Optional<Player> getPlayerPort(Long accountId);
 
-    void increaseStarPointPort(Long accountId, Integer increaseStarPoint);
+    void savePlayerPort(Player player);
 
-    void decreaseStarPointPort(Long accountId, Integer decreaseStarPoint);
+    List<String> getProductIdsPort();
+
+    Optional<ExchangeStarPointProduct> getExchangeStarPointProductPort(String productId);
+
+    Order createOrderPort(CreateOrderVo createOrderVo);
+
+    void saveOrderPort(Order order);
+
+    List<Order> getConsumedOrdersPort(Long accountId);
+
+    Optional<Order> getOrderPort(Long orderId);
+
+    Optional<Order> getOrderBySocialOrderIdPort(String socialOrderId);
 }
