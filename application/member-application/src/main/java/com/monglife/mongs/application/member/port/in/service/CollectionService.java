@@ -29,7 +29,7 @@ public class CollectionService implements CollectionUseCase {
     @Transactional
     public void createCollectionMapUseCase(CreateCollectionMapCommand command) {
 
-        if (!memberPersistencePort.isExistsCollectionMap(command.getAccountId(), command.getMapTypeCode())) {
+        if (!memberPersistencePort.isExistsCollectionMapPort(command.getAccountId(), command.getMapTypeCode())) {
             memberPersistencePort.createCollectionMapPort(CreateCollectionMapVo.builder()
                     .accountId(command.getAccountId())
                     .mapTypeCode(command.getMapTypeCode())
@@ -44,7 +44,7 @@ public class CollectionService implements CollectionUseCase {
     @Transactional
     public void createCollectionMongUseCase(CreateCollectionMongCommand command) {
 
-        if (!memberPersistencePort.isExistsCollectionMong(command.getAccountId(), command.getMongTypeCode())) {
+        if (!memberPersistencePort.isExistsCollectionMongPort(command.getAccountId(), command.getMongTypeCode())) {
             memberPersistencePort.createCollectionMongPort(CreateCollectionMongVo.builder()
                     .accountId(command.getAccountId())
                     .mongTypeCode(command.getMongTypeCode())

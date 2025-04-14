@@ -53,17 +53,21 @@ public class StoreService implements StoreUseCase {
     @Transactional
     public void consumeOrderUseCase(ConsumeOrderCommand command) {
 
+        // 주문 정보 조회
         Order order = memberPersistencePort.getOrderBySocialOrderIdPort(command.getSocialOrderId())
                 .orElseThrow(NotExistsOrderException::new);
 
-        InAppOrder inAppOrder = googlePaymentPort.getInAppOrderPort(order)
-                .orElseThrow(NotExistsInAppOrderException::new);
+        // 환전 상품 정보 조회
+        ExchangeStarPointProduct product = memberPersistencePort.getExchangeStarPointProductPort(order.getProductId())
+                .orElseThrow(NotExistsExchangeStarPointProductException::new);
 
+        // 플레이어 정보 조회
         Player player = memberPersistencePort.getPlayerPort(order.getAccountId())
                 .orElseThrow(NotExistsPlayerException::new);
 
-        ExchangeStarPointProduct product = memberPersistencePort.getExchangeStarPointProductPort(inAppOrder.getProductId())
-                .orElseThrow(NotExistsExchangeStarPointProductException::new);
+        // 인앱 상품 주문 조회
+        InAppOrder inAppOrder = googlePaymentPort.getInAppOrderPort(order.getProductId(), order.getSocialOrderId(), order.getPurchaseToken())
+                .orElseThrow(NotExistsInAppOrderException::new);
 
         // 스타 포인트 증가
         player.increaseStarPoint(product.getStarPoint());
@@ -75,7 +79,7 @@ public class StoreService implements StoreUseCase {
 
         // 인앱 상품 주문 소비
         inAppOrder.consume();
-        googlePaymentPort.consumeInAppOrderPort(order);
+        googlePaymentPort.consumeInAppOrderPort(inAppOrder);
 
         // 스타 포인트 비동기 응답
         memberPublishPort.publishStarPointPort(player);

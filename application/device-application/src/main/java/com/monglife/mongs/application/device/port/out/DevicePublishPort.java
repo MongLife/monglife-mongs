@@ -4,5 +4,5 @@ import com.monglife.mongs.domain.model.Step;
 
 public interface DevicePublishPort {
 
-    void publishWalkingCountPort(Step step);
+    void publishCurrentWalkingCountPort(Step step);
 }

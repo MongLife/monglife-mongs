@@ -1,6 +1,9 @@
 package com.monglife.mongs.domain.model;
 
-import com.monglife.mongs.domain.exception.AlreadyConsumeInAppOrderException;
+import com.monglife.mongs.domain.enums.OrderPurchaseTypeCode;
+import com.monglife.mongs.domain.enums.OrderTypeCode;
+import com.monglife.mongs.domain.exception.AlreadyConsumedInAppOrderException;
+import com.monglife.mongs.domain.exception.PaymentNotCompletedInAppOrderException;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.ToString;
@@ -11,25 +14,25 @@ import java.time.LocalDateTime;
 @ToString
 public class InAppOrder {
 
-    private String orderId;
+    private String socialOrderId;
 
     private String productId;
 
     private String purchaseToken;
 
-    private Boolean isPurchase;
+    private OrderPurchaseTypeCode orderPurchaseTypeCode;
 
-    private Boolean isConsumed;
+    private OrderTypeCode orderTypeCode;
 
     private LocalDateTime purchasedAt;
 
     @Builder
-    public InAppOrder(String orderId, String productId, String purchaseToken, Boolean isPurchase, Boolean isConsumed, LocalDateTime purchasedAt) {
-        this.orderId = orderId;
+    public InAppOrder(String socialOrderId, String productId, String purchaseToken, OrderPurchaseTypeCode orderPurchaseTypeCode, OrderTypeCode orderTypeCode, LocalDateTime purchasedAt) {
+        this.socialOrderId = socialOrderId;
         this.productId = productId;
         this.purchaseToken = purchaseToken;
-        this.isPurchase = isPurchase;
-        this.isConsumed = isConsumed;
+        this.orderPurchaseTypeCode = orderPurchaseTypeCode;
+        this.orderTypeCode = orderTypeCode;
         this.purchasedAt = purchasedAt;
     }
 
@@ -38,11 +41,12 @@ public class InAppOrder {
      */
     public void consume() {
 
-        if (!this.isPurchase || this.isConsumed) {
-            throw new AlreadyConsumeInAppOrderException();
+        if (!OrderPurchaseTypeCode.PAYED.equals(this.orderPurchaseTypeCode)) {
+            throw new PaymentNotCompletedInAppOrderException();
+        } else if (OrderTypeCode.CONSUMED.equals(this.orderTypeCode)) {
+            throw new AlreadyConsumedInAppOrderException();
         }
 
-        this.isPurchase = true;
-        this.isConsumed = true;
+        this.orderTypeCode = OrderTypeCode.CONSUMED;
     }
 }

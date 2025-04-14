@@ -1,7 +1,7 @@
-package com.monglife.mongs.global.exception;
+package com.monglife.mongs.application.device.port.exception;
 
 import com.monglife.core.exception.ErrorException;
-import com.monglife.mongs.global.errorCode.ApplicationDeviceErrorCode;
+import com.monglife.mongs.application.device.port.errorCode.ApplicationDeviceErrorCode;
 import lombok.Getter;
 
 import java.util.Collections;

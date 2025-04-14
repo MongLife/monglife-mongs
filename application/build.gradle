@@ -33,14 +33,18 @@ subprojects {
         // monglife-logging
         implementation 'com.github.monglife.monglife-module-common:monglife-module-common-logging:1.0.5'
         // spring
-        implementation 'org.springframework.boot:spring-boot-starter-web'
+        implementation 'org.springframework:spring-context'
         implementation 'org.springframework:spring-tx'
         // lombok
         compileOnly 'org.projectlombok:lombok'
         annotationProcessor 'org.projectlombok:lombok'
-        // spring-test
-        testImplementation 'org.springframework.boot:spring-boot-starter-test'
-        testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+        // JUnit 5
+        testImplementation 'org.junit.jupiter:junit-jupiter-api'
+        testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine'
+        // mock
+        testImplementation 'org.mockito:mockito-core'
+        testImplementation 'org.mockito:mockito-junit-jupiter'
+        // AssertJ
         testImplementation 'org.assertj:assertj-core'
     }
 

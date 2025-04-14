@@ -1,4 +1,4 @@
-package com.monglife.mongs.global.errorCode;
+package com.monglife.mongs.application.device.port.errorCode;
 
 import com.monglife.core.dto.response.ResponseDto;
 import com.monglife.core.enums.error.ErrorCode;

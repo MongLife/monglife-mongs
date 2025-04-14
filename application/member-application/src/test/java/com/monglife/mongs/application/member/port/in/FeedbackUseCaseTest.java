@@ -44,7 +44,7 @@ class FeedbackUseCaseTest {
                     .content(content)
                     .build();
 
-            Mockito.when(memberPersistencePort.createFeedback(Mockito.any())).thenReturn(feedback);
+            Mockito.when(memberPersistencePort.createFeedbackPort(Mockito.any())).thenReturn(feedback);
 
             // act
             feedbackService.createFeedbackUseCase(CreateFeedbackCommand.builder()
@@ -56,7 +56,7 @@ class FeedbackUseCaseTest {
                     .build());
 
             // assert
-            Mockito.verify(memberPersistencePort).createFeedback(Mockito.any());
+            Mockito.verify(memberPersistencePort).createFeedbackPort(Mockito.any());
         }
     }
 }

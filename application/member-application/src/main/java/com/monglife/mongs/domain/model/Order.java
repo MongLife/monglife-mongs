@@ -1,7 +1,7 @@
 package com.monglife.mongs.domain.model;
 
 import com.monglife.mongs.domain.enums.OrderTypeCode;
-import com.monglife.mongs.domain.exception.AlreadyConsumeOrderException;
+import com.monglife.mongs.domain.exception.AlreadyConsumedOrderException;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.ToString;
@@ -40,10 +40,10 @@ public class Order {
      */
     public void consume() {
 
-        if (OrderTypeCode.CONSUME.equals(this.orderTypeCode)) {
-            throw new AlreadyConsumeOrderException();
+        if (OrderTypeCode.CONSUMED.equals(this.orderTypeCode)) {
+            throw new AlreadyConsumedOrderException();
         }
 
-        this.orderTypeCode = OrderTypeCode.CONSUME;
+        this.orderTypeCode = OrderTypeCode.CONSUMED;
     }
 }

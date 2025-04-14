@@ -12,15 +12,15 @@ public interface MemberPersistencePort {
 
     CollectionMong createCollectionMongPort(CreateCollectionMongVo createCollectionMongVo);
 
-    Boolean isExistsCollectionMap(Long accountId, String mapTypeCode);
+    Boolean isExistsCollectionMapPort(Long accountId, String mapTypeCode);
 
-    Boolean isExistsCollectionMong(Long accountId, String mongTypeCode);
+    Boolean isExistsCollectionMongPort(Long accountId, String mongTypeCode);
 
     List<CollectionMap> getCollectionMapsPort(Long accountId);
 
     List<CollectionMong> getCollectionMongsPort(Long accountId);
 
-    Feedback createFeedback(CreateFeedbackVo createFeedbackVo);
+    Feedback createFeedbackPort(CreateFeedbackVo createFeedbackVo);
 
     Player createPlayerPort(CreatePlayerVo createPlayerVo);
 
@@ -39,8 +39,6 @@ public interface MemberPersistencePort {
     void saveOrderPort(Order order);
 
     List<Order> getConsumedOrdersPort(Long accountId);
-
-    Optional<Order> getOrderPort(Long orderId);
 
     Optional<Order> getOrderBySocialOrderIdPort(String socialOrderId);
 }

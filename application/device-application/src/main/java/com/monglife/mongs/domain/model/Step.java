@@ -10,7 +10,7 @@ import java.time.LocalDateTime;
 @ToString
 public class Step {
 
-    private final String deviceId;
+    private String deviceId;
 
     private Integer walkingCount;
 

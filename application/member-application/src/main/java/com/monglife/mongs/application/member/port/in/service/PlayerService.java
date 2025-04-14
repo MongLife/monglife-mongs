@@ -57,7 +57,7 @@ public class PlayerService implements PlayerUseCase {
     @Transactional
     public void buySlotUseCase(BuySlotCommand command) {
 
-        Player player =  memberPersistencePort.getPlayerPort(command.getAccountId())
+        Player player = memberPersistencePort.getPlayerPort(command.getAccountId())
                 .orElseThrow(NotExistsPlayerException::new);
 
         // 플레이어 슬롯 구매

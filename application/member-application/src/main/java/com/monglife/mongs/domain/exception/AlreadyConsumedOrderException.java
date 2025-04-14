@@ -7,10 +7,10 @@ import lombok.Getter;
 import java.util.Collections;
 
 @Getter
-public class AlreadyConsumeOrderException extends ErrorException {
+public class AlreadyConsumedOrderException extends ErrorException {
 
-    public AlreadyConsumeOrderException() {
-        this.errorCode = DomainMemberErrorCode.ALREADY_CONSUME_ORDER;
+    public AlreadyConsumedOrderException() {
+        this.errorCode = DomainMemberErrorCode.ALREADY_CONSUMED_ORDER;
         this.result = Collections.emptyMap();
     }
 }

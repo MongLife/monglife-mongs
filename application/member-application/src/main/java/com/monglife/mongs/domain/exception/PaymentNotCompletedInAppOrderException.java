@@ -7,10 +7,10 @@ import lombok.Getter;
 import java.util.Collections;
 
 @Getter
-public class AlreadyConsumeInAppOrderException extends ErrorException {
+public class PaymentNotCompletedInAppOrderException extends ErrorException {
 
-    public AlreadyConsumeInAppOrderException() {
-        this.errorCode = DomainMemberErrorCode.INVALID_CONSUME;
+    public PaymentNotCompletedInAppOrderException() {
+        this.errorCode = DomainMemberErrorCode.PAYMENT_NOT_COMPLETED;
         this.result = Collections.emptyMap();
     }
 }

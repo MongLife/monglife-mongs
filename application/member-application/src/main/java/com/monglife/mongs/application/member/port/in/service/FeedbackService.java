@@ -21,7 +21,7 @@ public class FeedbackService implements FeedbackUseCase {
     @Transactional
     public void createFeedbackUseCase(CreateFeedbackCommand command) {
 
-        memberPersistencePort.createFeedback(CreateFeedbackVo.builder()
+        memberPersistencePort.createFeedbackPort(CreateFeedbackVo.builder()
                         .accountId(command.getAccountId())
                         .deviceId(command.getDeviceId())
                         .deviceName(command.getDeviceName())

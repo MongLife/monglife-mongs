@@ -9,14 +9,12 @@ import com.monglife.mongs.application.device.port.out.DevicePersistencePort;
 import com.monglife.mongs.application.device.port.out.DevicePublishPort;
 import com.monglife.mongs.application.device.port.out.vo.CreateStepVo;
 import com.monglife.mongs.domain.model.Step;
-import com.monglife.mongs.global.exception.NotEnoughCurrentWalkingCountException;
-import com.monglife.mongs.global.exception.NotExistStepException;
+import com.monglife.mongs.application.device.port.exception.NotEnoughCurrentWalkingCountException;
+import com.monglife.mongs.application.device.port.exception.NotExistStepException;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-@Slf4j
 @Service
 @RequiredArgsConstructor
 public class StepService implements StepUseCase {
@@ -28,7 +26,7 @@ public class StepService implements StepUseCase {
     private final DevicePublishPort devicePublishPort;
 
     /**
-     * 걸음 수 환전
+     * 보유 걸음 수 환전
      */
     @Override
     @Transactional
@@ -60,7 +58,7 @@ public class StepService implements StepUseCase {
         devicePersistencePort.saveStepPort(step);
 
         // 보유 걸음 수 비동기 응답
-        devicePublishPort.publishWalkingCountPort(step);
+        devicePublishPort.publishCurrentWalkingCountPort(step);
     }
 
     /**
@@ -109,6 +107,6 @@ public class StepService implements StepUseCase {
         devicePersistencePort.saveStepPort(step);
 
         // 보유 걸음 수 비동기 응답
-        devicePublishPort.publishWalkingCountPort(step);
+        devicePublishPort.publishCurrentWalkingCountPort(step);
     }
 }
