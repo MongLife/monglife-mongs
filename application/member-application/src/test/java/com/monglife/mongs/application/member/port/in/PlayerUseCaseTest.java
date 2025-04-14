@@ -105,7 +105,7 @@ class PlayerUseCaseTest {
                     .starPoint(0)
                     .build();
 
-            Mockito.when(memberPersistencePort.getPlayerPort(accountId)).thenReturn(Optional.ofNullable(player));
+            Mockito.when(memberPersistencePort.getPlayerPort(accountId)).thenReturn(Optional.of(player));
 
             // act
             GetPlayerCommand command = GetPlayerCommand.builder()
@@ -151,6 +151,7 @@ class PlayerUseCaseTest {
                     .build();
 
             Mockito.when(memberPersistencePort.getPlayerPort(accountId)).thenReturn(Optional.of(player));
+            Mockito.when(memberPersistencePort.savePlayerPort(Mockito.any())).thenReturn(Optional.of(player));
 
             // act
             BuySlotCommand command = BuySlotCommand.builder()
@@ -184,6 +185,30 @@ class PlayerUseCaseTest {
         }
 
         @Test
+        @DisplayName("플레이어를 수정할 때 플레이어가 존재하지 않는 경우 예외가 발생 한다.")
+        void notExistsPlayerWhenSavePlayer() {
+            // arrange
+            int starPoint = 100;
+            Player player = Player.builder()
+                    .accountId(accountId)
+                    .slotCount(1)
+                    .starPoint(starPoint)
+                    .build();
+
+            Mockito.when(memberPersistencePort.getPlayerPort(accountId)).thenReturn(Optional.of(player));
+            Mockito.when(memberPersistencePort.savePlayerPort(Mockito.any())).thenReturn(Optional.empty());
+
+            // act & assert
+            BuySlotCommand command = BuySlotCommand.builder()
+                    .accountId(accountId)
+                    .build();
+
+            assertThrows(NotExistsPlayerException.class, () -> playerService.buySlotUseCase(command));
+            Mockito.verify(memberPersistencePort).getPlayerPort(command.getAccountId());
+            Mockito.verify(memberPersistencePort).savePlayerPort(Mockito.any());
+        }
+
+        @Test
         @DisplayName("스타 포인트가 부족한 경우 예외가 발생 한다.")
         void notEnoughStarPoint() {
             // arrange
@@ -193,7 +218,9 @@ class PlayerUseCaseTest {
                     .starPoint(0)
                     .build();
 
-            Mockito.when(memberPersistencePort.getPlayerPort(accountId)).thenReturn(Optional.ofNullable(player));
+            Mockito.when(memberPersistencePort.getPlayerPort(accountId)).thenReturn(Optional.of(player));
+            Mockito.when(memberPersistencePort.savePlayerPort(Mockito.any())).thenReturn(Optional.of(player));
+
 
             // act & assert
             BuySlotCommand command = BuySlotCommand.builder()
@@ -226,6 +253,7 @@ class PlayerUseCaseTest {
                     .build();
 
             Mockito.when(memberPersistencePort.getPlayerPort(accountId)).thenReturn(Optional.of(player));
+            Mockito.when(memberPersistencePort.savePlayerPort(Mockito.any())).thenReturn(Optional.of(player));
 
             // act
             ExchangeStarPointCommand command = ExchangeStarPointCommand.builder()
@@ -265,6 +293,34 @@ class PlayerUseCaseTest {
         }
 
         @Test
+        @DisplayName("플레이어를 수정할 때 플레이어가 존재하지 않는 경우 예외가 발생 한다.")
+        void notExistsPlayerWhenSavePlayer() {
+            // arrange
+            long mongId = 1L;
+            int slotCount = 1;
+            int starPoint = 100;
+            Player player = Player.builder()
+                    .accountId(accountId)
+                    .slotCount(slotCount)
+                    .starPoint(starPoint)
+                    .build();
+
+            Mockito.when(memberPersistencePort.getPlayerPort(accountId)).thenReturn(Optional.of(player));
+            Mockito.when(memberPersistencePort.savePlayerPort(Mockito.any())).thenReturn(Optional.empty());
+
+            // act & assert
+            ExchangeStarPointCommand command = ExchangeStarPointCommand.builder()
+                    .accountId(accountId)
+                    .mongId(mongId)
+                    .starPoint(starPoint)
+                    .build();
+
+            assertThrows(NotExistsPlayerException.class, () -> playerService.exchangeStarPointUseCase(command));
+            Mockito.verify(memberPersistencePort).getPlayerPort(command.getAccountId());
+            Mockito.verify(memberPersistencePort).savePlayerPort(Mockito.any());
+        }
+
+        @Test
         @DisplayName("스타 포인트가 부족한 경우 예외가 발생 한다.")
         void notEnoughStarPoint() {
             // arrange
@@ -274,7 +330,8 @@ class PlayerUseCaseTest {
                     .starPoint(0)
                     .build();
 
-            Mockito.when(memberPersistencePort.getPlayerPort(accountId)).thenReturn(Optional.ofNullable(player));
+            Mockito.when(memberPersistencePort.getPlayerPort(accountId)).thenReturn(Optional.of(player));
+            Mockito.when(memberPersistencePort.savePlayerPort(Mockito.any())).thenReturn(Optional.of(player));
 
             // act & assert
             ExchangeStarPointCommand command = ExchangeStarPointCommand.builder()
@@ -307,6 +364,7 @@ class PlayerUseCaseTest {
                     .build();
 
             Mockito.when(memberPersistencePort.getPlayerPort(accountId)).thenReturn(Optional.of(player));
+            Mockito.when(memberPersistencePort.savePlayerPort(Mockito.any())).thenReturn(Optional.of(player));
 
             // act
             IncreaseStarPointCommand command = IncreaseStarPointCommand.builder()
@@ -339,6 +397,33 @@ class PlayerUseCaseTest {
 
             assertThrows(NotExistsPlayerException.class, () -> playerService.increaseStarPointUseCase(command));
             Mockito.verify(memberPersistencePort).getPlayerPort(command.getAccountId());
+        }
+
+        @Test
+        @DisplayName("플레이어를 수정할 때 플레이어가 존재하지 않는 경우 예외가 발생 한다.")
+        void notExistsPlayerWhenSavePlayer() {
+            // arrange
+            int starPoint = 100;
+            Player player = Player.builder()
+                    .accountId(accountId)
+                    .slotCount(1)
+                    .starPoint(0)
+                    .build();
+
+            Mockito.when(memberPersistencePort.getPlayerPort(accountId)).thenReturn(Optional.of(player));
+            Mockito.when(memberPersistencePort.savePlayerPort(Mockito.any())).thenReturn(Optional.empty());
+
+            // act & assert
+            IncreaseStarPointCommand command = IncreaseStarPointCommand.builder()
+                    .accountId(accountId)
+                    .starPoint(starPoint)
+                    .build();
+
+            assertThrows(NotExistsPlayerException.class, () -> playerService.increaseStarPointUseCase(command));
+            assertEquals(starPoint, player.getStarPoint());
+            Mockito.verify(memberPersistencePort).getPlayerPort(command.getAccountId());
+            Mockito.verify(memberPersistencePort).savePlayerPort(player);
+            Mockito.verify(memberPublishPort, Mockito.never()).publishStarPointPort(player);
         }
     }
 }

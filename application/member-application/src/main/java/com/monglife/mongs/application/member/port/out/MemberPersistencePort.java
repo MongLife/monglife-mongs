@@ -28,7 +28,7 @@ public interface MemberPersistencePort {
 
     Optional<Player> getPlayerPort(Long accountId);
 
-    void savePlayerPort(Player player);
+    Optional<Player> savePlayerPort(Player player);
 
     List<String> getProductIdsPort();
 
@@ -36,7 +36,7 @@ public interface MemberPersistencePort {
 
     Order createOrderPort(CreateOrderVo createOrderVo);
 
-    void saveOrderPort(Order order);
+    Optional<Order> saveOrderPort(Order order);
 
     List<Order> getConsumedOrdersPort(Long accountId);
 

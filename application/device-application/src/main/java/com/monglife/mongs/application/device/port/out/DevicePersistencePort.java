@@ -9,7 +9,7 @@ public interface DevicePersistencePort {
 
     Step createStepPort(CreateStepVo createStepVo);
 
-    void saveStepPort(Step step);
+    Optional<Step> saveStepPort(Step step);
 
     Optional<Step> getStepPort(String deviceId);
 }

@@ -71,11 +71,13 @@ public class StoreService implements StoreUseCase {
 
         // 스타 포인트 증가
         player.increaseStarPoint(product.getStarPoint());
-        memberPersistencePort.savePlayerPort(player);
+        memberPersistencePort.savePlayerPort(player)
+                .orElseThrow(NotExistsPlayerException::new);
 
         // 주문 소비
         order.consume();
-        memberPersistencePort.saveOrderPort(order);
+        memberPersistencePort.saveOrderPort(order)
+                .orElseThrow(NotExistsOrderException::new);
 
         // 인앱 상품 주문 소비
         inAppOrder.consume();

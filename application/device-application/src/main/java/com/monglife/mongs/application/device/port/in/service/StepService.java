@@ -55,7 +55,8 @@ public class StepService implements StepUseCase {
         deviceEventPort.exchangeCurrentWalkingCountEventPort(step);
 
         // 걸음 수 수정
-        devicePersistencePort.saveStepPort(step);
+        devicePersistencePort.saveStepPort(step)
+                .orElseThrow(NotExistStepException::new);
 
         // 보유 걸음 수 비동기 응답
         devicePublishPort.publishCurrentWalkingCountPort(step);
@@ -87,7 +88,8 @@ public class StepService implements StepUseCase {
         }
 
         // 걸음 수 수정
-        devicePersistencePort.saveStepPort(step);
+        devicePersistencePort.saveStepPort(step)
+                .orElseThrow(NotExistStepException::new);;
     }
 
     /**
@@ -104,7 +106,8 @@ public class StepService implements StepUseCase {
         step.increaseCurrentWalkingCount(command.getWalkingCount());
 
         // 걸음 수 수정
-        devicePersistencePort.saveStepPort(step);
+        devicePersistencePort.saveStepPort(step)
+                .orElseThrow(NotExistStepException::new);;
 
         // 보유 걸음 수 비동기 응답
         devicePublishPort.publishCurrentWalkingCountPort(step);

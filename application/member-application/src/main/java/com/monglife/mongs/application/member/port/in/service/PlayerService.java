@@ -64,7 +64,8 @@ public class PlayerService implements PlayerUseCase {
         player.buySlot();
 
         // 플레이어 수정
-        memberPersistencePort.savePlayerPort(player);
+        memberPersistencePort.savePlayerPort(player)
+                .orElseThrow(NotExistsPlayerException::new);
 
         // 스타 포인트 비동기 응답
         memberPublishPort.publishStarPointPort(player);
@@ -87,7 +88,8 @@ public class PlayerService implements PlayerUseCase {
         player.decreaseStarPoint(command.getStarPoint());
 
         // 플레이어 수정
-        memberPersistencePort.savePlayerPort(player);
+        memberPersistencePort.savePlayerPort(player)
+                .orElseThrow(NotExistsPlayerException::new);
 
         // 스타 포인트 환전 이벤트 발생
         memberEventPort.exchangeStarPointEventPort(player);
@@ -110,7 +112,8 @@ public class PlayerService implements PlayerUseCase {
         player.increaseStarPoint(command.getStarPoint());
 
         // 플레이어 수정
-        memberPersistencePort.savePlayerPort(player);
+        memberPersistencePort.savePlayerPort(player)
+                .orElseThrow(NotExistsPlayerException::new);
 
         // 스타 포인트 비동기 응답
         memberPublishPort.publishStarPointPort(player);
