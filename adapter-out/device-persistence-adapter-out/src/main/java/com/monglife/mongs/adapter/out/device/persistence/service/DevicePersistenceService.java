@@ -1,30 +1,71 @@
 package com.monglife.mongs.adapter.out.device.persistence.service;
 
-import com.monglife.mongs.application.device.domain.Step;
+import com.monglife.mongs.adapter.out.device.persistence.entity.DeviceEntity;
+import com.monglife.mongs.adapter.out.device.persistence.repository.DeviceRepository;
 import com.monglife.mongs.application.device.port.out.DevicePersistencePort;
-import com.monglife.mongs.application.device.port.vo.CreateStepVo;
-import org.springframework.stereotype.Component;
+import com.monglife.mongs.application.device.port.out.vo.CreateStepVo;
+import com.monglife.mongs.domain.model.Step;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-@Component
+import java.util.Optional;
+
+@Service
+@RequiredArgsConstructor
 public class DevicePersistenceService implements DevicePersistencePort {
 
-    @Override
-    public void createStepPort(CreateStepVo createStepVo) {
+    private final DeviceRepository deviceRepository;
 
+    /**
+     * 걸음 수 등록
+     * @param createStepVo 등록할 걸음 수 정보 Vo
+     * @return 등록한 걸음 수 도메인 객체
+     */
+    @Override
+    @Transactional
+    public Step createStepPort(CreateStepVo createStepVo) {
+
+        DeviceEntity deviceEntity = DeviceEntity.builder()
+                .deviceId(createStepVo.getDeviceId())
+                .walkingCount(createStepVo.getWalkingCount())
+                .totalWalkingCount(createStepVo.getTotalWalkingCount())
+                .consumeWalkingCount(createStepVo.getConsumeWalkingCount())
+                .deviceBootedDt(createStepVo.getDeviceBootedDt())
+                .build();
+
+        return deviceRepository.save(deviceEntity).toDomain();
     }
 
+    /**
+     * 걸음 수 수정
+     * @param step 수정할 걸음 수 도메인 객체
+     */
     @Override
-    public void decreaseWalkingCountPort(Long deviceId, Integer decreaseWalkingCount) {
+    @Transactional
+    public Optional<Step> saveStepPort(Step step) {
 
+        Optional<DeviceEntity> deviceEntityOptional = deviceRepository.findByDeviceId(step.getDeviceId());
+
+        if (deviceEntityOptional.isPresent()) {
+            deviceEntityOptional.get().update(step);
+            return Optional.of(step);
+        } else {
+            return Optional.empty();
+        }
     }
 
+    /**
+     * 걸음 수 조회
+     * @param deviceId 기기 ID
+     * @return 걸음 수 도메인 옵셔널 객체
+     */
     @Override
-    public void updateWalkingCountPort(Step step) {
+    @Transactional
+    public Optional<Step> getStepPort(String deviceId) {
 
-    }
+        Optional<DeviceEntity> deviceEntityOptional = deviceRepository.findByDeviceId(deviceId);
 
-    @Override
-    public void increaseWalkingCountPort(Long deviceId, Integer increaseWalkingCount) {
-
+        return deviceEntityOptional.map(DeviceEntity::toDomain);
     }
 }
