@@ -21,11 +21,11 @@ class CollectionUseCaseTest {
 
     private final MemberPersistencePort memberPersistencePort;
 
-    private final CollectionService collectionService;
+    private final CollectionUseCase collectionUseCase;
 
     public CollectionUseCaseTest() {
         this.memberPersistencePort = Mockito.mock(MemberPersistencePort.class);
-        this.collectionService = new CollectionService(memberPersistencePort);
+        this.collectionUseCase = new CollectionService(memberPersistencePort);
     }
 
     private static final Long accountId = 1L;
@@ -54,7 +54,7 @@ class CollectionUseCaseTest {
                     .mapTypeCode(mapTypeCode)
                     .build();
 
-            collectionService.createCollectionMapUseCase(command);
+            collectionUseCase.createCollectionMapUseCase(command);
 
             // assert
             Mockito.verify(memberPersistencePort).isExistsCollectionMapPort(command.getAccountId(), command.getMapTypeCode());
@@ -81,7 +81,7 @@ class CollectionUseCaseTest {
                     .mapTypeCode(mapTypeCode)
                     .build();
 
-            collectionService.createCollectionMapUseCase(command);
+            collectionUseCase.createCollectionMapUseCase(command);
 
             // assert
             Mockito.verify(memberPersistencePort).isExistsCollectionMapPort(command.getAccountId(), command.getMapTypeCode());
@@ -113,7 +113,7 @@ class CollectionUseCaseTest {
                     .mongTypeCode(mongTypeCode)
                     .build();
 
-            collectionService.createCollectionMongUseCase(command);
+            collectionUseCase.createCollectionMongUseCase(command);
 
             // assert
             Mockito.verify(memberPersistencePort).isExistsCollectionMongPort(command.getAccountId(), command.getMongTypeCode());
@@ -140,7 +140,7 @@ class CollectionUseCaseTest {
                     .mongTypeCode(mongTypeCode)
                     .build();
 
-            collectionService.createCollectionMongUseCase(command);
+            collectionUseCase.createCollectionMongUseCase(command);
 
             // assert
             Mockito.verify(memberPersistencePort).isExistsCollectionMongPort(command.getAccountId(), command.getMongTypeCode());
@@ -180,7 +180,7 @@ class CollectionUseCaseTest {
                     .accountId(accountId)
                     .build();
 
-            List<CollectionMap> expected = collectionService.getCollectionMapsUseCase(command);
+            List<CollectionMap> expected = collectionUseCase.getCollectionMapsUseCase(command);
 
             // assert
             assertEquals(collectionMaps, expected);
@@ -220,7 +220,7 @@ class CollectionUseCaseTest {
                     .accountId(accountId)
                     .build();
 
-            List<CollectionMong> expected = collectionService.getCollectionMongsUseCase(command);
+            List<CollectionMong> expected = collectionUseCase.getCollectionMongsUseCase(command);
 
             // assert
             assertEquals(collectionMongs, expected);

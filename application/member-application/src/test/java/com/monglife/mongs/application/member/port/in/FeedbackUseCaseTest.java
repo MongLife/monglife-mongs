@@ -13,11 +13,11 @@ class FeedbackUseCaseTest {
 
     private final MemberPersistencePort memberPersistencePort;
 
-    private final FeedbackService feedbackService;
+    private final FeedbackUseCase feedbackUseCase;
 
     public FeedbackUseCaseTest() {
         this.memberPersistencePort = Mockito.mock(MemberPersistencePort.class);
-        this.feedbackService = new FeedbackService(memberPersistencePort);
+        this.feedbackUseCase = new FeedbackService(memberPersistencePort);
     }
 
     private static final Long accountId = 1L;
@@ -47,7 +47,7 @@ class FeedbackUseCaseTest {
             Mockito.when(memberPersistencePort.createFeedbackPort(Mockito.any())).thenReturn(feedback);
 
             // act
-            feedbackService.createFeedbackUseCase(CreateFeedbackCommand.builder()
+            feedbackUseCase.createFeedbackUseCase(CreateFeedbackCommand.builder()
                             .accountId(accountId)
                             .deviceId(deviceId)
                             .deviceName(deviceName)

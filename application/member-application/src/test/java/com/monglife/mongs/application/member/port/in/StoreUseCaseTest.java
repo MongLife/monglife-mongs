@@ -34,13 +34,13 @@ class StoreUseCaseTest {
 
     private final GooglePaymentPort googlePaymentPort;
 
-    private final StoreService storeService;
+    private final StoreUseCase storeUseCase;
 
     public StoreUseCaseTest() {
         this.memberPersistencePort = Mockito.mock(MemberPersistencePort.class);
         this.memberPublishPort = Mockito.mock(MemberPublishPort.class);
         this.googlePaymentPort = Mockito.mock(GooglePaymentPort.class);
-        this.storeService = new StoreService(memberPersistencePort, memberPublishPort, googlePaymentPort);
+        this.storeUseCase = new StoreService(memberPersistencePort, memberPublishPort, googlePaymentPort);
     }
 
     private static final Long accountId = 1L;
@@ -74,7 +74,7 @@ class StoreUseCaseTest {
                     .purchaseToken(purchaseToken)
                     .build();
 
-            assertDoesNotThrow(() -> storeService.createOrderUseCase(command));
+            assertDoesNotThrow(() -> storeUseCase.createOrderUseCase(command));
             Mockito.verify(memberPersistencePort).createOrderPort(Mockito.any());
         }
 
@@ -96,7 +96,7 @@ class StoreUseCaseTest {
                     .purchaseToken(purchaseToken)
                     .build();
 
-            assertThrows(NotExistsInAppProductException.class, () -> storeService.createOrderUseCase(command));
+            assertThrows(NotExistsInAppProductException.class, () -> storeUseCase.createOrderUseCase(command));
             Mockito.verify(memberPersistencePort, Mockito.never()).createOrderPort(Mockito.any());
         }
     }
@@ -158,7 +158,7 @@ class StoreUseCaseTest {
                     .socialOrderId(socialOrderId)
                     .build();
 
-            storeService.consumeOrderUseCase(command);
+            storeUseCase.consumeOrderUseCase(command);
 
             // assert
             assertEquals(starPoint, player.getStarPoint());
@@ -213,7 +213,7 @@ class StoreUseCaseTest {
                     .socialOrderId(socialOrderId)
                     .build();
 
-            assertThrows(NotExistsOrderException.class, () -> storeService.consumeOrderUseCase(command));
+            assertThrows(NotExistsOrderException.class, () -> storeUseCase.consumeOrderUseCase(command));
 
             Mockito.verify(memberPersistencePort).getOrderBySocialOrderIdPort(socialOrderId);
             Mockito.verify(memberPersistencePort, Mockito.never()).getExchangeStarPointProductPort(productId);
@@ -273,7 +273,7 @@ class StoreUseCaseTest {
                     .socialOrderId(socialOrderId)
                     .build();
 
-            assertThrows(NotExistsOrderException.class, () -> storeService.consumeOrderUseCase(command));
+            assertThrows(NotExistsOrderException.class, () -> storeUseCase.consumeOrderUseCase(command));
 
             Mockito.verify(memberPersistencePort).getOrderBySocialOrderIdPort(socialOrderId);
             Mockito.verify(memberPersistencePort).getExchangeStarPointProductPort(productId);
@@ -327,7 +327,7 @@ class StoreUseCaseTest {
                     .socialOrderId(socialOrderId)
                     .build();
 
-            assertThrows(NotExistsExchangeStarPointProductException.class, () -> storeService.consumeOrderUseCase(command));
+            assertThrows(NotExistsExchangeStarPointProductException.class, () -> storeUseCase.consumeOrderUseCase(command));
 
             Mockito.verify(memberPersistencePort).getOrderBySocialOrderIdPort(socialOrderId);
             Mockito.verify(memberPersistencePort).getExchangeStarPointProductPort(productId);
@@ -381,7 +381,7 @@ class StoreUseCaseTest {
                     .socialOrderId(socialOrderId)
                     .build();
 
-            assertThrows(NotExistsPlayerException.class, () -> storeService.consumeOrderUseCase(command));
+            assertThrows(NotExistsPlayerException.class, () -> storeUseCase.consumeOrderUseCase(command));
 
             Mockito.verify(memberPersistencePort).getOrderBySocialOrderIdPort(socialOrderId);
             Mockito.verify(memberPersistencePort).getExchangeStarPointProductPort(productId);
@@ -441,7 +441,7 @@ class StoreUseCaseTest {
                     .socialOrderId(socialOrderId)
                     .build();
 
-            assertThrows(NotExistsPlayerException.class, () -> storeService.consumeOrderUseCase(command));
+            assertThrows(NotExistsPlayerException.class, () -> storeUseCase.consumeOrderUseCase(command));
 
             Mockito.verify(memberPersistencePort).getOrderBySocialOrderIdPort(socialOrderId);
             Mockito.verify(memberPersistencePort).getExchangeStarPointProductPort(productId);
@@ -491,7 +491,7 @@ class StoreUseCaseTest {
                     .socialOrderId(socialOrderId)
                     .build();
 
-            assertThrows(NotExistsInAppOrderException.class, () -> storeService.consumeOrderUseCase(command));
+            assertThrows(NotExistsInAppOrderException.class, () -> storeUseCase.consumeOrderUseCase(command));
 
             Mockito.verify(memberPersistencePort).getOrderBySocialOrderIdPort(socialOrderId);
             Mockito.verify(memberPersistencePort).getExchangeStarPointProductPort(productId);
@@ -551,7 +551,7 @@ class StoreUseCaseTest {
                     .socialOrderId(socialOrderId)
                     .build();
 
-            assertThrows(AlreadyConsumedOrderException.class, () -> storeService.consumeOrderUseCase(command));
+            assertThrows(AlreadyConsumedOrderException.class, () -> storeUseCase.consumeOrderUseCase(command));
 
             Mockito.verify(memberPersistencePort).getOrderBySocialOrderIdPort(socialOrderId);
             Mockito.verify(memberPersistencePort).getExchangeStarPointProductPort(productId);
@@ -612,7 +612,7 @@ class StoreUseCaseTest {
                     .socialOrderId(socialOrderId)
                     .build();
 
-            assertThrows(PaymentNotCompletedInAppOrderException.class, () -> storeService.consumeOrderUseCase(command));
+            assertThrows(PaymentNotCompletedInAppOrderException.class, () -> storeUseCase.consumeOrderUseCase(command));
 
             Mockito.verify(memberPersistencePort).getOrderBySocialOrderIdPort(socialOrderId);
             Mockito.verify(memberPersistencePort).getExchangeStarPointProductPort(productId);
@@ -672,7 +672,7 @@ class StoreUseCaseTest {
                     .socialOrderId(socialOrderId)
                     .build();
 
-            assertThrows(PaymentNotCompletedInAppOrderException.class, () -> storeService.consumeOrderUseCase(command));
+            assertThrows(PaymentNotCompletedInAppOrderException.class, () -> storeUseCase.consumeOrderUseCase(command));
 
             Mockito.verify(memberPersistencePort).getOrderBySocialOrderIdPort(socialOrderId);
             Mockito.verify(memberPersistencePort).getExchangeStarPointProductPort(productId);
@@ -732,7 +732,7 @@ class StoreUseCaseTest {
                     .socialOrderId(socialOrderId)
                     .build();
 
-            assertThrows(AlreadyConsumedInAppOrderException.class, () -> storeService.consumeOrderUseCase(command));
+            assertThrows(AlreadyConsumedInAppOrderException.class, () -> storeUseCase.consumeOrderUseCase(command));
 
             Mockito.verify(memberPersistencePort).getOrderBySocialOrderIdPort(socialOrderId);
             Mockito.verify(memberPersistencePort).getExchangeStarPointProductPort(productId);
@@ -775,7 +775,7 @@ class StoreUseCaseTest {
             Mockito.when(googlePaymentPort.getInAppProductsPort(productIds)).thenReturn(inAppProducts);
 
             // act
-            List<InAppProduct> expected = storeService.getProductsUseCase();
+            List<InAppProduct> expected = storeUseCase.getProductsUseCase();
 
             // assert
             assertEquals(expected, inAppProducts);
@@ -828,7 +828,7 @@ class StoreUseCaseTest {
                     .accountId(accountId)
                     .build();
 
-            List<Order> expected = storeService.getConsumedOrderUseCase(command);
+            List<Order> expected = storeUseCase.getConsumedOrderUseCase(command);
 
             // assert
             assertEquals(expected, orders);
