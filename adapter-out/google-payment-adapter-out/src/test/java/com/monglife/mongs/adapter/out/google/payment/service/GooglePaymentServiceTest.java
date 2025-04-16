@@ -99,7 +99,7 @@ class GooglePaymentServiceTest {
 
     @Nested
     @DisplayName("인앱 상품 조회 단위 테스트")
-    class getInAppProductPort {
+    class GetInAppProductPort {
 
         @Test
         @DisplayName("구글 플레이 API 를 호출하여 인앱 상품을 조회 한다.")
@@ -118,7 +118,7 @@ class GooglePaymentServiceTest {
 
     @Nested
     @DisplayName("인앱 상품 목록 조회 단위 테스트")
-    class getInAppProductsPort {
+    class GetInAppProductsPort {
 
         @Test
         @DisplayName("구글 플레이 API 를 호출하여 인앱 상품 목록을 조회 한다.")

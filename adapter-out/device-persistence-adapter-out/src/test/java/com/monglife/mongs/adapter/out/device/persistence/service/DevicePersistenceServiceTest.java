@@ -47,7 +47,7 @@ class DevicePersistenceServiceTest {
 
     @Nested
     @DisplayName("걸음 수 등록 단위 테스트")
-    class createStepPort {
+    class CreateStepPort {
 
         @Test
         @DisplayName("걸음 수를 등록하고 등록된 걸음 수 도메인 객체를 반환 한다.")
@@ -85,7 +85,7 @@ class DevicePersistenceServiceTest {
 
     @Nested
     @DisplayName("걸음 수 수정 단위 테스트")
-    class saveStepPort {
+    class SaveStepPort {
 
         @BeforeEach
         void beforeEach() {
@@ -148,7 +148,7 @@ class DevicePersistenceServiceTest {
 
     @Nested
     @DisplayName("걸음 수 조회 단위 테스트")
-    class getStepPort {
+    class GetStepPort {
 
         @BeforeEach
         void beforeEach() {

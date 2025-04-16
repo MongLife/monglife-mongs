@@ -39,7 +39,7 @@ class DeviceEventServiceTest {
 
     @Nested
     @DisplayName("보유 걸음 수 환전 분산 트랜잭션 이벤트 발생 단위 테스트")
-    class exchangeCurrentWalkingCountEventPort {
+    class ExchangeCurrentWalkingCountEventPort {
 
         @Test
         @DisplayName("환전할 걸음 수, 환전할 페이 포인트 정보를 담아 걸음 수 환전 이벤트를 발생 한다.")
