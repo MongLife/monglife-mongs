@@ -1,5 +1,6 @@
 package com.monglife.mongs.application.member.port.in;
 
+import com.monglife.core.utils.CommonUtil;
 import com.monglife.mongs.application.member.port.exception.*;
 import com.monglife.mongs.application.member.port.in.command.ConsumeOrderCommand;
 import com.monglife.mongs.application.member.port.in.command.CreateOrderCommand;
@@ -22,7 +23,6 @@ import org.mockito.Mockito;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
-import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -57,7 +57,7 @@ class StoreUseCaseTest {
             String productName = "TEST-PRODUCT-NAME";
             Double price = 1000D;
             String socialOrderId = "TEST-SOCIAL_ORDER-ID";
-            String purchaseToken = UUID.randomUUID().toString().replace("-", "");
+            String purchaseToken = CommonUtil.randomId();
             InAppProduct inAppProduct = InAppProduct.builder()
                     .productId(productId)
                     .productName(productName)
@@ -84,7 +84,7 @@ class StoreUseCaseTest {
             // arrange
             String productId = "PRDT000";
             String socialOrderId = "TEST-SOCIAL_ORDER-ID";
-            String purchaseToken = UUID.randomUUID().toString().replace("-", "");
+            String purchaseToken = CommonUtil.randomId();
 
             Mockito.when(googlePaymentPort.getInAppProductPort(Mockito.any())).thenReturn(Optional.empty());
 
@@ -107,8 +107,8 @@ class StoreUseCaseTest {
 
         private final String productId = "PRDT000";
         private final Double price = 1000D;
-        private final String socialOrderId = UUID.randomUUID().toString().replace("-", "");
-        private final String purchaseToken = UUID.randomUUID().toString().replace("-", "");
+        private final String socialOrderId = CommonUtil.randomId();
+        private final String purchaseToken = CommonUtil.randomId();
 
         @Test
         @DisplayName("등록된 주문을 소비 처리 한다.")
@@ -799,8 +799,8 @@ class StoreUseCaseTest {
                             .productId("PRDT000")
                             .orderTypeCode(OrderTypeCode.CONSUMED)
                             .price(1000D)
-                            .socialOrderId(UUID.randomUUID().toString().replace("-", ""))
-                            .purchaseToken(UUID.randomUUID().toString().replace("-", ""))
+                            .socialOrderId(CommonUtil.randomId())
+                            .purchaseToken(CommonUtil.randomId())
                             .build(),
                     Order.builder()
                             .orderId(2L)
@@ -808,8 +808,8 @@ class StoreUseCaseTest {
                             .productId("PRDT001")
                             .orderTypeCode(OrderTypeCode.CONSUMED)
                             .price(2000D)
-                            .socialOrderId(UUID.randomUUID().toString().replace("-", ""))
-                            .purchaseToken(UUID.randomUUID().toString().replace("-", ""))
+                            .socialOrderId(CommonUtil.randomId())
+                            .purchaseToken(CommonUtil.randomId())
                             .build(),
                     Order.builder()
                             .orderId(1L)
@@ -817,8 +817,8 @@ class StoreUseCaseTest {
                             .productId("PRDT002")
                             .orderTypeCode(OrderTypeCode.CONSUMED)
                             .price(3000D)
-                            .socialOrderId(UUID.randomUUID().toString().replace("-", ""))
-                            .purchaseToken(UUID.randomUUID().toString().replace("-", ""))
+                            .socialOrderId(CommonUtil.randomId())
+                            .purchaseToken(CommonUtil.randomId())
                             .build());
 
             Mockito.when(memberPersistencePort.getConsumedOrdersPort(Mockito.any())).thenReturn(orders);
