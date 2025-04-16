@@ -2,7 +2,7 @@ package com.monglife.mongs.adapter.out.device.event.service;
 
 import com.monglife.module.common.kafka.config.KafkaAutoConfig;
 import com.monglife.mongs.adapter.out.device.event.config.AdapterOutDeviceEventConfig;
-import com.monglife.mongs.adapter.out.device.event.dto.ExchangeCurrentWalkingCountEventDto;
+import com.monglife.mongs.adapter.transaction.commit.ExchangeCurrentWalkingCountEventDto;
 import com.monglife.mongs.application.device.port.out.DeviceEventPort;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;

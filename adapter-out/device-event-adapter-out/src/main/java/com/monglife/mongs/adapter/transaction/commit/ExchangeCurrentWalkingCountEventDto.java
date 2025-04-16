@@ -1,4 +1,4 @@
-package com.monglife.mongs.adapter.out.device.event.dto;
+package com.monglife.mongs.adapter.transaction.commit;
 
 import lombok.Builder;
 import lombok.Getter;

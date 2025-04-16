@@ -1,7 +1,7 @@
 package com.monglife.mongs.adapter.out.device.event.service;
 
 import com.monglife.module.common.kafka.service.KafkaService;
-import com.monglife.mongs.adapter.out.device.event.dto.ExchangeCurrentWalkingCountEventDto;
+import com.monglife.mongs.adapter.transaction.commit.ExchangeCurrentWalkingCountEventDto;
 import com.monglife.mongs.application.device.port.out.DeviceEventPort;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
