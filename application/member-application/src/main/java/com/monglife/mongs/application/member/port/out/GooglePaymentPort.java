@@ -10,9 +10,9 @@ public interface GooglePaymentPort {
 
     Optional<InAppOrder> getInAppOrderPort(String productId, String socialOrderId, String purchaseToken);
 
-    void consumeInAppOrderPort(InAppOrder inAppOrder);
+    Optional<InAppOrder> consumeInAppOrderPort(InAppOrder inAppOrder);
 
     Optional<InAppProduct> getInAppProductPort(String productId);
 
-    List<InAppProduct> getInAppProductsPort(List<String> productIds);
+    List<InAppProduct> getInAppProductsPort();
 }

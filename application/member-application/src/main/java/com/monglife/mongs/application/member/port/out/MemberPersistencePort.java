@@ -30,8 +30,6 @@ public interface MemberPersistencePort {
 
     Optional<Player> savePlayerPort(Player player);
 
-    List<String> getProductIdsPort();
-
     Optional<ExchangeStarPointProduct> getExchangeStarPointProductPort(String productId);
 
     Order createOrderPort(CreateOrderVo createOrderVo);

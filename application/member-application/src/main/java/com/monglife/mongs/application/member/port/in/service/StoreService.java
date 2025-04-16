@@ -81,7 +81,8 @@ public class StoreService implements StoreUseCase {
 
         // 인앱 상품 주문 소비
         inAppOrder.consume();
-        googlePaymentPort.consumeInAppOrderPort(inAppOrder);
+        googlePaymentPort.consumeInAppOrderPort(inAppOrder)
+                .orElseThrow(InvalidConsumeInAppOrderException::new);
 
         // 스타 포인트 비동기 응답
         memberPublishPort.publishStarPointPort(player);
@@ -93,10 +94,7 @@ public class StoreService implements StoreUseCase {
     @Override
     @Transactional
     public List<InAppProduct> getProductsUseCase() {
-
-        List<String> productIds = memberPersistencePort.getProductIdsPort();
-
-        return googlePaymentPort.getInAppProductsPort(productIds);
+        return googlePaymentPort.getInAppProductsPort();
     }
 
     /**
