@@ -246,6 +246,7 @@ class PlayerUseCaseTest {
             long mongId = 1L;
             int slotCount = 1;
             int starPoint = 100;
+            int payPoint = 1000;
             Player player = Player.builder()
                     .accountId(accountId)
                     .slotCount(slotCount)
@@ -268,7 +269,7 @@ class PlayerUseCaseTest {
             assertTrue(player.getStarPoint() < starPoint);
             Mockito.verify(memberPersistencePort).getPlayerPort(command.getAccountId());
             Mockito.verify(memberPersistencePort).savePlayerPort(player);
-            Mockito.verify(memberEventPort).exchangeStarPointEventPort(player);
+            Mockito.verify(memberEventPort).exchangeStarPointEventPort(mongId, starPoint, payPoint);
             Mockito.verify(memberPublishPort).publishStarPointPort(player);
         }
 
@@ -324,6 +325,9 @@ class PlayerUseCaseTest {
         @DisplayName("스타 포인트가 부족한 경우 예외가 발생 한다.")
         void notEnoughStarPoint() {
             // arrange
+            long mongId = 1L;
+            int starPoint = 100;
+            int payPoint = 1000;
             Player player = Player.builder()
                     .accountId(accountId)
                     .slotCount(1)
@@ -343,7 +347,7 @@ class PlayerUseCaseTest {
             assertThrows(NotEnoughStarPointException.class, () -> playerUseCase.exchangeStarPointUseCase(command));
             Mockito.verify(memberPersistencePort).getPlayerPort(command.getAccountId());
             Mockito.verify(memberPersistencePort, Mockito.never()).savePlayerPort(player);
-            Mockito.verify(memberEventPort, Mockito.never()).exchangeStarPointEventPort(player);
+            Mockito.verify(memberEventPort, Mockito.never()).exchangeStarPointEventPort(mongId, starPoint, payPoint);
             Mockito.verify(memberPublishPort, Mockito.never()).publishStarPointPort(player);
         }
     }

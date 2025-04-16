@@ -16,6 +16,8 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 public class PlayerService implements PlayerUseCase {
 
+    private static final Integer starPointPerPayPoint = 1000;
+
     private final MemberPersistencePort memberPersistencePort;
 
     private final MemberPublishPort memberPublishPort;
@@ -92,7 +94,8 @@ public class PlayerService implements PlayerUseCase {
                 .orElseThrow(NotExistsPlayerException::new);
 
         // 스타 포인트 환전 이벤트 발생
-        memberEventPort.exchangeStarPointEventPort(player);
+        int payPoint = command.getStarPoint() * starPointPerPayPoint;
+        memberEventPort.exchangeStarPointEventPort(command.getMongId(), command.getStarPoint(), payPoint);
 
         // 스타 포인트 비동기 응답
         memberPublishPort.publishStarPointPort(player);

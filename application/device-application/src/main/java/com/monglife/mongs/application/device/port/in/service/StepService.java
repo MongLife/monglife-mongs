@@ -19,7 +19,7 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 public class StepService implements StepUseCase {
 
-    private static final Integer STEP_PER_PAY_POINT = 100;
+    private static final Integer stepPerPayPoint = 100;
 
     private final DeviceEventPort deviceEventPort;
 
@@ -54,7 +54,7 @@ public class StepService implements StepUseCase {
         step.decreaseCurrentWalkingCount(command.getWalkingCount());
 
         // 보유 걸음 수 환전 이벤트 발생
-        int payPoint = command.getWalkingCount() * STEP_PER_PAY_POINT;
+        int payPoint = command.getWalkingCount() * stepPerPayPoint;
         deviceEventPort.exchangeCurrentWalkingCountEventPort(command.getMongId(), command.getWalkingCount(), payPoint);
 
         // 걸음 수 수정
