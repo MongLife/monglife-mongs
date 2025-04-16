@@ -13,7 +13,7 @@ tasks.register('copyPrivate', Copy) {
     }
     copy {
         from '../../configs/adapter-out/device-publish-adapter-out/'
-        include 'application-test.yml'
+        include 'application.yml'
         into 'src/test/resources'
     }
 }

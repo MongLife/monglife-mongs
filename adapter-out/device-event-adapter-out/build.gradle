@@ -1,11 +1,19 @@
 dependencies {
+    // application layer
     implementation project(':application:device-application')
+    // monglife-kafka
+    implementation 'com.github.monglife.monglife-module-common:monglife-module-common-kafka:1.0.5'
 }
 
 tasks.register('copyPrivate', Copy) {
     copy {
         from '../../configs/adapter-out/device-event-adapter-out/'
-        include '*.yml'
+        include 'application.yml'
+        into 'src/main/resources'
+    }
+    copy {
+        from '../../configs/adapter-out/device-event-adapter-out/'
+        include 'application.yml'
         into 'src/main/resources'
     }
 }
