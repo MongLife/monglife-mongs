@@ -1,15 +1,15 @@
 package com.monglife.mongs.application.member.port.in.service;
 
-import com.monglife.mongs.application.member.port.out.vo.CreateCollectionMapVo;
-import com.monglife.mongs.application.member.port.out.vo.CreateCollectionMongVo;
-import com.monglife.mongs.domain.model.CollectionMap;
-import com.monglife.mongs.domain.model.CollectionMong;
+import com.monglife.mongs.application.member.port.in.CollectionUseCase;
 import com.monglife.mongs.application.member.port.in.command.CreateCollectionMapCommand;
 import com.monglife.mongs.application.member.port.in.command.CreateCollectionMongCommand;
 import com.monglife.mongs.application.member.port.in.command.GetCollectionMapsCommand;
 import com.monglife.mongs.application.member.port.in.command.GetCollectionMongsCommand;
-import com.monglife.mongs.application.member.port.in.CollectionUseCase;
-import com.monglife.mongs.application.member.port.out.MemberPersistencePort;
+import com.monglife.mongs.application.member.port.out.CollectionPersistencePort;
+import com.monglife.mongs.application.member.port.out.vo.CreateCollectionMapVo;
+import com.monglife.mongs.application.member.port.out.vo.CreateCollectionMongVo;
+import com.monglife.mongs.domain.model.CollectionMap;
+import com.monglife.mongs.domain.model.CollectionMong;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -20,7 +20,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class CollectionService implements CollectionUseCase {
 
-    private final MemberPersistencePort memberPersistencePort;
+    private final CollectionPersistencePort collectionPersistencePort;
 
     /**
      * 맵 컬렉션 등록
@@ -29,8 +29,8 @@ public class CollectionService implements CollectionUseCase {
     @Transactional
     public void createCollectionMapUseCase(CreateCollectionMapCommand command) {
 
-        if (!memberPersistencePort.isExistsCollectionMapPort(command.getAccountId(), command.getMapTypeCode())) {
-            memberPersistencePort.createCollectionMapPort(CreateCollectionMapVo.builder()
+        if (!collectionPersistencePort.isExistsCollectionMapPort(command.getAccountId(), command.getMapTypeCode())) {
+            collectionPersistencePort.createCollectionMapPort(CreateCollectionMapVo.builder()
                     .accountId(command.getAccountId())
                     .mapTypeCode(command.getMapTypeCode())
                     .build());
@@ -44,8 +44,8 @@ public class CollectionService implements CollectionUseCase {
     @Transactional
     public void createCollectionMongUseCase(CreateCollectionMongCommand command) {
 
-        if (!memberPersistencePort.isExistsCollectionMongPort(command.getAccountId(), command.getMongTypeCode())) {
-            memberPersistencePort.createCollectionMongPort(CreateCollectionMongVo.builder()
+        if (!collectionPersistencePort.isExistsCollectionMongPort(command.getAccountId(), command.getMongTypeCode())) {
+            collectionPersistencePort.createCollectionMongPort(CreateCollectionMongVo.builder()
                     .accountId(command.getAccountId())
                     .mongTypeCode(command.getMongTypeCode())
                     .build());
@@ -59,7 +59,7 @@ public class CollectionService implements CollectionUseCase {
     @Transactional
     public List<CollectionMap> getCollectionMapsUseCase(GetCollectionMapsCommand command) {
 
-        return memberPersistencePort.getCollectionMapsPort(command.getAccountId());
+        return collectionPersistencePort.getCollectionMapsPort(command.getAccountId());
     }
 
     /**
@@ -69,6 +69,6 @@ public class CollectionService implements CollectionUseCase {
     @Transactional
     public List<CollectionMong> getCollectionMongsUseCase(GetCollectionMongsCommand command) {
 
-        return memberPersistencePort.getCollectionMongsPort(command.getAccountId());
+        return collectionPersistencePort.getCollectionMongsPort(command.getAccountId());
     }
 }

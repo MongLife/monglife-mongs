@@ -63,7 +63,7 @@ public class DeviceDataSourceConfig {
      */
     @Bean(name =  DATASOURCE_PROPERTIES_NAME)
     @ConfigurationProperties(prefix = "spring.datasource." + DOMAIN_NAME + ".hikari")
-    public HikariConfig deviceDataSourceProperties() {
+    public HikariConfig dataSourceProperties() {
         return new HikariConfig();
     }
 

@@ -246,7 +246,7 @@ class PlayerUseCaseTest {
             long mongId = 1L;
             int slotCount = 1;
             int starPoint = 100;
-            int payPoint = 1000;
+            int payPoint = 100000;
             Player player = Player.builder()
                     .accountId(accountId)
                     .slotCount(slotCount)

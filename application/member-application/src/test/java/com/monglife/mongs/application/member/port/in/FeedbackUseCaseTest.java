@@ -2,7 +2,7 @@ package com.monglife.mongs.application.member.port.in;
 
 import com.monglife.mongs.application.member.port.in.command.CreateFeedbackCommand;
 import com.monglife.mongs.application.member.port.in.service.FeedbackService;
-import com.monglife.mongs.application.member.port.out.MemberPersistencePort;
+import com.monglife.mongs.application.member.port.out.FeedbackPersistencePort;
 import com.monglife.mongs.domain.model.Feedback;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -11,13 +11,13 @@ import org.mockito.Mockito;
 
 class FeedbackUseCaseTest {
 
-    private final MemberPersistencePort memberPersistencePort;
+    private final FeedbackPersistencePort feedbackPersistencePort;
 
     private final FeedbackUseCase feedbackUseCase;
 
     public FeedbackUseCaseTest() {
-        this.memberPersistencePort = Mockito.mock(MemberPersistencePort.class);
-        this.feedbackUseCase = new FeedbackService(memberPersistencePort);
+        this.feedbackPersistencePort = Mockito.mock(FeedbackPersistencePort.class);
+        this.feedbackUseCase = new FeedbackService(feedbackPersistencePort);
     }
 
     private static final Long accountId = 1L;
@@ -44,7 +44,7 @@ class FeedbackUseCaseTest {
                     .content(content)
                     .build();
 
-            Mockito.when(memberPersistencePort.createFeedbackPort(Mockito.any())).thenReturn(feedback);
+            Mockito.when(feedbackPersistencePort.createFeedbackPort(Mockito.any())).thenReturn(feedback);
 
             // act
             feedbackUseCase.createFeedbackUseCase(CreateFeedbackCommand.builder()
@@ -56,7 +56,7 @@ class FeedbackUseCaseTest {
                     .build());
 
             // assert
-            Mockito.verify(memberPersistencePort).createFeedbackPort(Mockito.any());
+            Mockito.verify(feedbackPersistencePort).createFeedbackPort(Mockito.any());
         }
     }
 }

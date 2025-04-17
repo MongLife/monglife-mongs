@@ -58,11 +58,11 @@ public class DeviceEntity extends BaseTimeEntity {
      */
     public Step toDomain() {
         return Step.builder()
-                .deviceId(this.getDeviceId())
-                .walkingCount(this.getWalkingCount())
-                .totalWalkingCount(this.getTotalWalkingCount())
-                .consumeWalkingCount(this.getConsumeWalkingCount())
-                .deviceBootedDt(this.getDeviceBootedDt())
+                .deviceId(this.deviceId)
+                .walkingCount(this.walkingCount)
+                .totalWalkingCount(this.totalWalkingCount)
+                .consumeWalkingCount(this.consumeWalkingCount)
+                .deviceBootedDt(this.deviceBootedDt)
                 .build();
     }
 }

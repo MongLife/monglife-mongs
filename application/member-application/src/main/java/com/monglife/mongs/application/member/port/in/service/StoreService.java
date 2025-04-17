@@ -8,6 +8,7 @@ import com.monglife.mongs.application.member.port.in.command.GetConsumedOrderCom
 import com.monglife.mongs.application.member.port.out.GooglePaymentPort;
 import com.monglife.mongs.application.member.port.out.MemberPersistencePort;
 import com.monglife.mongs.application.member.port.out.MemberPublishPort;
+import com.monglife.mongs.application.member.port.out.OrderPersistencePort;
 import com.monglife.mongs.application.member.port.out.vo.CreateOrderVo;
 import com.monglife.mongs.domain.model.*;
 import lombok.RequiredArgsConstructor;
@@ -21,6 +22,8 @@ import java.util.List;
 public class StoreService implements StoreUseCase {
 
     private final MemberPersistencePort memberPersistencePort;
+
+    private final OrderPersistencePort orderPersistencePort;
 
     private final MemberPublishPort memberPublishPort;
 
@@ -37,7 +40,7 @@ public class StoreService implements StoreUseCase {
                 .orElseThrow(NotExistsInAppProductException::new);
 
         // 인앱 상품 주문 등록
-        memberPersistencePort.createOrderPort(CreateOrderVo.builder()
+        orderPersistencePort.createOrderPort(CreateOrderVo.builder()
                         .accountId(command.getAccountId())
                         .productId(command.getProductId())
                         .price(inAppProduct.getPrice())
@@ -54,11 +57,11 @@ public class StoreService implements StoreUseCase {
     public void consumeOrderUseCase(ConsumeOrderCommand command) {
 
         // 주문 정보 조회
-        Order order = memberPersistencePort.getOrderBySocialOrderIdPort(command.getSocialOrderId())
+        Order order = orderPersistencePort.getOrderBySocialOrderIdPort(command.getSocialOrderId())
                 .orElseThrow(NotExistsOrderException::new);
 
         // 환전 상품 정보 조회
-        ExchangeStarPointProduct product = memberPersistencePort.getExchangeStarPointProductPort(order.getProductId())
+        ExchangeStarPointProduct product = orderPersistencePort.getExchangeStarPointProductPort(order.getProductId())
                 .orElseThrow(NotExistsExchangeStarPointProductException::new);
 
         // 플레이어 정보 조회
@@ -76,7 +79,7 @@ public class StoreService implements StoreUseCase {
 
         // 주문 소비
         order.consume();
-        memberPersistencePort.saveOrderPort(order)
+        orderPersistencePort.saveOrderPort(order)
                 .orElseThrow(NotExistsOrderException::new);
 
         // 인앱 상품 주문 소비
@@ -104,6 +107,6 @@ public class StoreService implements StoreUseCase {
     @Transactional
     public List<Order> getConsumedOrderUseCase(GetConsumedOrderCommand command) {
 
-        return memberPersistencePort.getConsumedOrdersPort(command.getAccountId());
+        return orderPersistencePort.getConsumedOrdersPort(command.getAccountId());
     }
 }
