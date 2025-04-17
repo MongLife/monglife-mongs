@@ -46,7 +46,7 @@ class DevicePublishServiceTest {
     @DisplayName("보유 걸음 수 비동기 응답 단위 테스트")
     class PublishCurrentWalkingCountPort {
 
-        protected static String deviceId;
+        private static String deviceId;
         private static final LocalDateTime deviceBootedDt = LocalDateTime.of(2025, 1, 1, 0, 0);
 
         @BeforeEach

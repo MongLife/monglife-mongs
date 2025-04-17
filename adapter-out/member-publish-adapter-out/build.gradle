@@ -1,11 +1,19 @@
 dependencies {
+    // application layer
     implementation project(':application:member-application')
+    // monglife-mqtt
+    implementation 'com.github.monglife:monglife-module-mqtt:1.0.1'
 }
 
 tasks.register('copyPrivate', Copy) {
     copy {
         from '../../configs/adapter-out/member-publish-adapter-out/'
-        include '*.yml'
+        include 'application.yml'
         into 'src/main/resources'
+    }
+    copy {
+        from '../../configs/adapter-out/member-publish-adapter-out/'
+        include 'application.yml'
+        into 'src/test/resources'
     }
 }
