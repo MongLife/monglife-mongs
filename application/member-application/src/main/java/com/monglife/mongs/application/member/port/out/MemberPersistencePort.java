@@ -7,7 +7,7 @@ import java.util.Optional;
 
 public interface MemberPersistencePort {
 
-    Player createPlayerPort(CreatePlayerVo createPlayerVo);
+    Optional<Player> createPlayerPort(CreatePlayerVo createPlayerVo);
 
     Boolean isExistsPlayerPort(Long accountId);
 

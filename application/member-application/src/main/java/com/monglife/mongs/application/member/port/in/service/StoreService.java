@@ -33,6 +33,7 @@ public class StoreService implements StoreUseCase {
      * 주문 등록
      */
     @Override
+    @Transactional
     public void createOrderUseCase(CreateOrderCommand command) {
 
         // 인앱 상품 존재 여부 확인
@@ -46,7 +47,8 @@ public class StoreService implements StoreUseCase {
                         .price(inAppProduct.getPrice())
                         .socialOrderId(command.getSocialOrderId())
                         .purchaseToken(command.getPurchaseToken())
-                .build());
+                .build())
+                .orElseThrow(InvalidCreateOrderException::new);
     }
 
     /**

@@ -1,5 +1,6 @@
 package com.monglife.mongs.application.member.port.in.service;
 
+import com.monglife.mongs.application.member.port.exception.InvalidCreatePlayerException;
 import com.monglife.mongs.application.member.port.exception.NotExistsPlayerException;
 import com.monglife.mongs.application.member.port.in.PlayerUseCase;
 import com.monglife.mongs.application.member.port.in.command.*;
@@ -37,7 +38,8 @@ public class PlayerService implements PlayerUseCase {
                     .accountId(command.getAccountId())
                     .slotCount(1)
                     .starPoint(0)
-                    .build());
+                    .build())
+                    .orElseThrow(InvalidCreatePlayerException::new);
         }
     }
 

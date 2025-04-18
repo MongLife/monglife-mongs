@@ -67,8 +67,18 @@ class StoreUseCaseTest {
                     .productName(productName)
                     .price(price)
                     .build();
+            Order order = Order.builder()
+                    .orderId(1L)
+                    .accountId(accountId)
+                    .productId(productId)
+                    .orderTypeCode(OrderTypeCode.ORDERED)
+                    .price(price)
+                    .socialOrderId(socialOrderId)
+                    .purchaseToken(purchaseToken)
+                    .build();
 
             Mockito.when(googlePaymentPort.getInAppProductPort(Mockito.any())).thenReturn(Optional.of(inAppProduct));
+            Mockito.when(orderPersistencePort.createOrderPort(Mockito.any())).thenReturn(Optional.of(order));
 
             // act & assert
             CreateOrderCommand command = CreateOrderCommand.builder()
@@ -102,6 +112,35 @@ class StoreUseCaseTest {
 
             assertThrows(NotExistsInAppProductException.class, () -> storeUseCase.createOrderUseCase(command));
             Mockito.verify(orderPersistencePort, Mockito.never()).createOrderPort(Mockito.any());
+        }
+
+        @Test
+        @DisplayName("주문 등록에 실패하는 경우 예외가 발생 한다.")
+        void createOrderFail() {
+            // arrange
+            String productId = "PRDT000";
+            String productName = "TEST-PRODUCT-NAME";
+            Double price = 1000D;
+            String socialOrderId = "TEST-SOCIAL_ORDER-ID";
+            String purchaseToken = CommonUtil.randomId();
+            InAppProduct inAppProduct = InAppProduct.builder()
+                    .productId(productId)
+                    .productName(productName)
+                    .price(price)
+                    .build();
+
+            Mockito.when(googlePaymentPort.getInAppProductPort(Mockito.any())).thenReturn(Optional.of(inAppProduct));
+            Mockito.when(orderPersistencePort.createOrderPort(Mockito.any())).thenReturn(Optional.empty());
+
+            // act & assert
+            CreateOrderCommand command = CreateOrderCommand.builder()
+                    .accountId(accountId)
+                    .productId(productId)
+                    .socialOrderId(socialOrderId)
+                    .purchaseToken(purchaseToken)
+                    .build();
+
+            assertThrows(InvalidCreateOrderException.class, () -> storeUseCase.createOrderUseCase(command));
         }
     }
 

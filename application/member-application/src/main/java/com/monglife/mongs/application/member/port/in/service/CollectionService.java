@@ -1,5 +1,7 @@
 package com.monglife.mongs.application.member.port.in.service;
 
+import com.monglife.mongs.application.member.port.exception.InvalidCreateCollectionMapException;
+import com.monglife.mongs.application.member.port.exception.InvalidCreateCollectionMongException;
 import com.monglife.mongs.application.member.port.in.CollectionUseCase;
 import com.monglife.mongs.application.member.port.in.command.CreateCollectionMapCommand;
 import com.monglife.mongs.application.member.port.in.command.CreateCollectionMongCommand;
@@ -33,7 +35,8 @@ public class CollectionService implements CollectionUseCase {
             collectionPersistencePort.createCollectionMapPort(CreateCollectionMapVo.builder()
                     .accountId(command.getAccountId())
                     .mapTypeCode(command.getMapTypeCode())
-                    .build());
+                    .build())
+                    .orElseThrow(InvalidCreateCollectionMapException::new);
         }
     }
 
@@ -48,7 +51,8 @@ public class CollectionService implements CollectionUseCase {
             collectionPersistencePort.createCollectionMongPort(CreateCollectionMongVo.builder()
                     .accountId(command.getAccountId())
                     .mongTypeCode(command.getMongTypeCode())
-                    .build());
+                    .build())
+                    .orElseThrow(InvalidCreateCollectionMongException::new);
         }
     }
 

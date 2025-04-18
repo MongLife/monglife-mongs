@@ -1,5 +1,6 @@
 package com.monglife.mongs.application.member.port.in.service;
 
+import com.monglife.mongs.application.member.port.exception.InvalidCreateFeedbackException;
 import com.monglife.mongs.application.member.port.in.FeedbackUseCase;
 import com.monglife.mongs.application.member.port.in.command.CreateFeedbackCommand;
 import com.monglife.mongs.application.member.port.out.FeedbackPersistencePort;
@@ -22,11 +23,12 @@ public class FeedbackService implements FeedbackUseCase {
     public void createFeedbackUseCase(CreateFeedbackCommand command) {
 
         feedbackPersistencePort.createFeedbackPort(CreateFeedbackVo.builder()
-                        .accountId(command.getAccountId())
-                        .deviceId(command.getDeviceId())
-                        .deviceName(command.getDeviceName())
-                        .title(command.getTitle())
-                        .content(command.getContent())
-                .build());
+                .accountId(command.getAccountId())
+                .deviceId(command.getDeviceId())
+                .deviceName(command.getDeviceName())
+                .title(command.getTitle())
+                .content(command.getContent())
+                .build())
+                .orElseThrow(InvalidCreateFeedbackException::new);
     }
 }

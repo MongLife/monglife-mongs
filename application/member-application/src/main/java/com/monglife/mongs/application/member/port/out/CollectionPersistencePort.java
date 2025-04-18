@@ -6,12 +6,13 @@ import com.monglife.mongs.domain.model.CollectionMap;
 import com.monglife.mongs.domain.model.CollectionMong;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface CollectionPersistencePort {
 
-    CollectionMap createCollectionMapPort(CreateCollectionMapVo createCollectionMapVo);
+    Optional<CollectionMap> createCollectionMapPort(CreateCollectionMapVo createCollectionMapVo);
 
-    CollectionMong createCollectionMongPort(CreateCollectionMongVo createCollectionMongVo);
+    Optional<CollectionMong> createCollectionMongPort(CreateCollectionMongVo createCollectionMongVo);
 
     Boolean isExistsCollectionMapPort(Long accountId, String mapTypeCode);
 

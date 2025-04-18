@@ -11,7 +11,7 @@ public interface OrderPersistencePort {
 
     Optional<ExchangeStarPointProduct> getExchangeStarPointProductPort(String productId);
 
-    Order createOrderPort(CreateOrderVo createOrderVo);
+    Optional<Order> createOrderPort(CreateOrderVo createOrderVo);
 
     Optional<Order> saveOrderPort(Order order);
 

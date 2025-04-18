@@ -1,5 +1,7 @@
 package com.monglife.mongs.application.member.port.in;
 
+import com.monglife.mongs.application.member.port.exception.InvalidCreateCollectionMapException;
+import com.monglife.mongs.application.member.port.exception.InvalidCreateCollectionMongException;
 import com.monglife.mongs.application.member.port.in.command.CreateCollectionMapCommand;
 import com.monglife.mongs.application.member.port.in.command.CreateCollectionMongCommand;
 import com.monglife.mongs.application.member.port.in.command.GetCollectionMapsCommand;
@@ -14,8 +16,10 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import java.util.List;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class CollectionUseCaseTest {
 
@@ -46,7 +50,7 @@ class CollectionUseCaseTest {
                     .build();
 
             Mockito.when(collectionPersistencePort.isExistsCollectionMapPort(accountId, mapTypeCode)).thenReturn(false);
-            Mockito.when(collectionPersistencePort.createCollectionMapPort(Mockito.any())).thenReturn(collectionMap);
+            Mockito.when(collectionPersistencePort.createCollectionMapPort(Mockito.any())).thenReturn(Optional.of(collectionMap));
 
             // act
             CreateCollectionMapCommand command = CreateCollectionMapCommand.builder()
@@ -62,7 +66,7 @@ class CollectionUseCaseTest {
         }
 
         @Test
-        @DisplayName("컬렉션 맵이 존재하는 경우 등록하지 않고 예외가 발생 한다.")
+        @DisplayName("컬렉션 맵이 존재하는 경우 등록하지 않는다.")
         void createCollectionMapWhenNotExistsCollectionMap() {
             // arrange
             String mapTypeCode = "MP000";
@@ -73,7 +77,7 @@ class CollectionUseCaseTest {
                     .build();
 
             Mockito.when(collectionPersistencePort.isExistsCollectionMapPort(accountId, mapTypeCode)).thenReturn(true);
-            Mockito.when(collectionPersistencePort.createCollectionMapPort(Mockito.any())).thenReturn(collectionMap);
+            Mockito.when(collectionPersistencePort.createCollectionMapPort(Mockito.any())).thenReturn(Optional.of(collectionMap));
 
             // act
             CreateCollectionMapCommand command = CreateCollectionMapCommand.builder()
@@ -86,6 +90,27 @@ class CollectionUseCaseTest {
             // assert
             Mockito.verify(collectionPersistencePort).isExistsCollectionMapPort(command.getAccountId(), command.getMapTypeCode());
             Mockito.verify(collectionPersistencePort, Mockito.never()).createCollectionMapPort(Mockito.any());
+        }
+
+        @Test
+        @DisplayName("컬렉션 맵 등록에 실패하는 경우 예외가 발생 한다.")
+        void createCollectionMapWhenNotExistsMapTypeCode() {
+            // arrange
+            String mapTypeCode = "MP___";
+
+            Mockito.when(collectionPersistencePort.isExistsCollectionMapPort(accountId, mapTypeCode)).thenReturn(false);
+            Mockito.when(collectionPersistencePort.createCollectionMapPort(Mockito.any())).thenReturn(Optional.empty());
+
+            // act & assert
+            CreateCollectionMapCommand command = CreateCollectionMapCommand.builder()
+                    .accountId(accountId)
+                    .mapTypeCode(mapTypeCode)
+                    .build();
+
+            assertThrows(InvalidCreateCollectionMapException.class, () -> collectionUseCase.createCollectionMapUseCase(command));
+
+            Mockito.verify(collectionPersistencePort).isExistsCollectionMapPort(command.getAccountId(), command.getMapTypeCode());
+            Mockito.verify(collectionPersistencePort).createCollectionMapPort(Mockito.any());
         }
     }
 
@@ -105,7 +130,7 @@ class CollectionUseCaseTest {
                     .build();
 
             Mockito.when(collectionPersistencePort.isExistsCollectionMongPort(accountId, mongTypeCode)).thenReturn(false);
-            Mockito.when(collectionPersistencePort.createCollectionMongPort(Mockito.any())).thenReturn(collectionMong);
+            Mockito.when(collectionPersistencePort.createCollectionMongPort(Mockito.any())).thenReturn(Optional.of(collectionMong));
 
             // act
             CreateCollectionMongCommand command = CreateCollectionMongCommand.builder()
@@ -121,7 +146,7 @@ class CollectionUseCaseTest {
         }
 
         @Test
-        @DisplayName("컬렉션 맵이 존재하는 경우 등록하지 않고 예외가 발생 한다.")
+        @DisplayName("컬렉션 몽이 존재하는 경우 등록하지 않는다.")
         void createCollectionMongWhenNotExistsCollectionMong() {
             // arrange
             String mongTypeCode = "CH000";
@@ -132,7 +157,7 @@ class CollectionUseCaseTest {
                     .build();
 
             Mockito.when(collectionPersistencePort.isExistsCollectionMongPort(accountId, mongTypeCode)).thenReturn(true);
-            Mockito.when(collectionPersistencePort.createCollectionMongPort(Mockito.any())).thenReturn(collectionMong);
+            Mockito.when(collectionPersistencePort.createCollectionMongPort(Mockito.any())).thenReturn(Optional.of(collectionMong));
 
             // act
             CreateCollectionMongCommand command = CreateCollectionMongCommand.builder()
@@ -145,6 +170,27 @@ class CollectionUseCaseTest {
             // assert
             Mockito.verify(collectionPersistencePort).isExistsCollectionMongPort(command.getAccountId(), command.getMongTypeCode());
             Mockito.verify(collectionPersistencePort, Mockito.never()).createCollectionMongPort(Mockito.any());
+        }
+
+        @Test
+        @DisplayName("컬렉션 몽 등록에 실패하는 경우 예외가 발생 한다.")
+        void createCollectionMongWhenNotExistsMongTypeCode() {
+            // arrange
+            String mongTypeCode = "CH___";
+
+            Mockito.when(collectionPersistencePort.isExistsCollectionMongPort(accountId, mongTypeCode)).thenReturn(false);
+            Mockito.when(collectionPersistencePort.createCollectionMongPort(Mockito.any())).thenReturn(Optional.empty());
+
+            // act & assert
+            CreateCollectionMongCommand command = CreateCollectionMongCommand.builder()
+                    .accountId(accountId)
+                    .mongTypeCode(mongTypeCode)
+                    .build();
+
+            assertThrows(InvalidCreateCollectionMongException.class, () -> collectionUseCase.createCollectionMongUseCase(command));
+
+            Mockito.verify(collectionPersistencePort).isExistsCollectionMongPort(command.getAccountId(), command.getMongTypeCode());
+            Mockito.verify(collectionPersistencePort).createCollectionMongPort(Mockito.any());
         }
     }
 

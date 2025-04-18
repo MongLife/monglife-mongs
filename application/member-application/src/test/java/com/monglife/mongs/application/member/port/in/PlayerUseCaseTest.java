@@ -1,5 +1,6 @@
 package com.monglife.mongs.application.member.port.in;
 
+import com.monglife.mongs.application.member.port.exception.InvalidCreatePlayerException;
 import com.monglife.mongs.application.member.port.exception.NotExistsPlayerException;
 import com.monglife.mongs.application.member.port.in.command.*;
 import com.monglife.mongs.application.member.port.in.service.PlayerService;
@@ -51,7 +52,7 @@ class PlayerUseCaseTest {
                     .build();
 
             Mockito.when(memberPersistencePort.isExistsPlayerPort(accountId)).thenReturn(false);
-            Mockito.when(memberPersistencePort.createPlayerPort(Mockito.any())).thenReturn(player);
+            Mockito.when(memberPersistencePort.createPlayerPort(Mockito.any())).thenReturn(Optional.of(player));
 
             // act
             CreatePlayerCommand command = CreatePlayerCommand.builder()
@@ -66,7 +67,7 @@ class PlayerUseCaseTest {
         }
 
         @Test
-        @DisplayName("플레이어가 존재하는 경우 등록하지 않고 예외가 발생 한다.")
+        @DisplayName("플레이어가 존재하는 경우 등록하지 않는다.")
         void createPlayerWhenNotExistsPlayer() {
             // arrange
             Player player = Player.builder()
@@ -76,7 +77,7 @@ class PlayerUseCaseTest {
                     .build();
 
             Mockito.when(memberPersistencePort.isExistsPlayerPort(accountId)).thenReturn(true);
-            Mockito.when(memberPersistencePort.createPlayerPort(Mockito.any())).thenReturn(player);
+            Mockito.when(memberPersistencePort.createPlayerPort(Mockito.any())).thenReturn(Optional.of(player));
 
             // act
             CreatePlayerCommand command = CreatePlayerCommand.builder()
@@ -88,6 +89,24 @@ class PlayerUseCaseTest {
             // assert
             Mockito.verify(memberPersistencePort).isExistsPlayerPort(command.getAccountId());
             Mockito.verify(memberPersistencePort, Mockito.never()).createPlayerPort(Mockito.any());
+        }
+
+        @Test
+        @DisplayName("플레이어 등록에 실패하는 경우 예외가 발생 한다.")
+        void createPlayerFail() {
+            // arrange
+            Mockito.when(memberPersistencePort.isExistsPlayerPort(accountId)).thenReturn(false);
+            Mockito.when(memberPersistencePort.createPlayerPort(Mockito.any())).thenReturn(Optional.empty());
+
+            // act
+            CreatePlayerCommand command = CreatePlayerCommand.builder()
+                    .accountId(accountId)
+                    .build();
+
+            assertThrows(InvalidCreatePlayerException.class, () -> playerUseCase.createPlayerUseCase(command));
+
+            Mockito.verify(memberPersistencePort).isExistsPlayerPort(command.getAccountId());
+            Mockito.verify(memberPersistencePort).createPlayerPort(Mockito.any());
         }
     }
 
