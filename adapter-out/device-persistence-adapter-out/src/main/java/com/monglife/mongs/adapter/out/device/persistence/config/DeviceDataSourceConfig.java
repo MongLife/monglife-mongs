@@ -47,15 +47,16 @@ public class DeviceDataSourceConfig {
     /**
      * const values for config bean name
      */
-    private static final String DOMAIN_NAME                = "device";
-    private static final String ENTITY_BASE_PACKAGES       = "com.monglife.mongs.adapter.out." + DOMAIN_NAME + ".persistence.entity";
-    private static final String REPOSITORY_BASE_PACKAGES   = "com.monglife.mongs.adapter.out." + DOMAIN_NAME + ".persistence.repository";
-    private static final String JPA_PROPERTIES_NAME        = DOMAIN_NAME + "JpaProperties";
-    private static final String DATASOURCE_PROPERTIES_NAME = DOMAIN_NAME + "DataSourceProperties";
-    private static final String DATASOURCE_NAME            = DOMAIN_NAME + "DataSource";
-    private static final String ENTITY_MANAGER_NAME        = DOMAIN_NAME + "EntityManager";
-    private static final String TRANSACTION_MANAGER_NAME   = DOMAIN_NAME + "TransactionManager";
-    private static final String JPA_REPOSITORY_CONFIG_NAME = DOMAIN_NAME + "JpaRepositoryConfig";
+    private static final String DOMAIN_NAME                 = "device";
+    private static final String COMMON_ENTITY_BASE_PACKAGES = "com.monglife.module.common.jpa.entity";
+    private static final String ENTITY_BASE_PACKAGES        = "com.monglife.mongs.adapter.out." + DOMAIN_NAME + ".persistence.entity";
+    private static final String REPOSITORY_BASE_PACKAGES    = "com.monglife.mongs.adapter.out." + DOMAIN_NAME + ".persistence.repository";
+    private static final String JPA_PROPERTIES_NAME         = DOMAIN_NAME + "JpaProperties";
+    private static final String DATASOURCE_PROPERTIES_NAME  = DOMAIN_NAME + "DataSourceProperties";
+    private static final String DATASOURCE_NAME             = DOMAIN_NAME + "DataSource";
+    private static final String ENTITY_MANAGER_NAME         = DOMAIN_NAME + "EntityManager";
+    private static final String TRANSACTION_MANAGER_NAME    = DOMAIN_NAME + "TransactionManager";
+    private static final String JPA_REPOSITORY_CONFIG_NAME  = DOMAIN_NAME + "JpaRepositoryConfig";
 
     /**
      * Hikari 속성 Bean 생성
@@ -105,7 +106,7 @@ public class DeviceDataSourceConfig {
     public LocalContainerEntityManagerFactoryBean entityManager(@Qualifier(DATASOURCE_NAME) DataSource dataSource, @Qualifier(JPA_PROPERTIES_NAME) Properties jpaProperties) {
         LocalContainerEntityManagerFactoryBean em = new LocalContainerEntityManagerFactoryBean();
         em.setDataSource(dataSource);
-        em.setPackagesToScan(ENTITY_BASE_PACKAGES);
+        em.setPackagesToScan(ENTITY_BASE_PACKAGES, COMMON_ENTITY_BASE_PACKAGES);
         em.setJpaVendorAdapter(new HibernateJpaVendorAdapter());
         em.setJpaProperties(jpaProperties);
         return em;

@@ -49,7 +49,7 @@ public class DevicePersistenceService implements DevicePersistencePort {
 
         if (deviceEntityOptional.isPresent()) {
             deviceEntityOptional.get().update(step);
-            return Optional.of(step);
+            return Optional.of(deviceEntityOptional.get().toDomain());
         } else {
             return Optional.empty();
         }
@@ -63,9 +63,6 @@ public class DevicePersistenceService implements DevicePersistencePort {
     @Override
     @Transactional
     public Optional<Step> getStepPort(String deviceId) {
-
-        Optional<DeviceEntity> deviceEntityOptional = deviceRepository.findByDeviceId(deviceId);
-
-        return deviceEntityOptional.map(DeviceEntity::toDomain);
+        return deviceRepository.findByDeviceId(deviceId).map(DeviceEntity::toDomain);
     }
 }
