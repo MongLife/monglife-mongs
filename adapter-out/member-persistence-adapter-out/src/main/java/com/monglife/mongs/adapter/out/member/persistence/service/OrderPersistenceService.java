@@ -56,6 +56,7 @@ public class OrderPersistenceService implements OrderPersistencePort {
                     .price(createOrderVo.getPrice())
                     .socialOrderId(createOrderVo.getSocialOrderId())
                     .purchaseToken(createOrderVo.getPurchaseToken())
+                    .isConsumed(false)
                     .build();
 
             return Optional.of(orderRepository.save(orderEntity).toDomain());

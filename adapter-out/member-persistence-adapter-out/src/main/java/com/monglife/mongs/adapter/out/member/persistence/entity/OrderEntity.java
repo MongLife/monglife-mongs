@@ -43,12 +43,13 @@ public class OrderEntity extends BaseTimeEntity {
     private Boolean isConsumed = false;
 
     @Builder
-    public OrderEntity(Long accountId, ComnCodeEntity productType, Double price, String socialOrderId, String purchaseToken) {
+    public OrderEntity(Long accountId, ComnCodeEntity productType, Double price, String socialOrderId, String purchaseToken, Boolean isConsumed) {
         this.accountId = accountId;
         this.productType = productType;
         this.price = price;
         this.socialOrderId = socialOrderId;
         this.purchaseToken = purchaseToken;
+        this.isConsumed = isConsumed;
     }
 
     /**

@@ -72,22 +72,27 @@ class CollectionPersistenceServiceTest {
     void beforeEach() {
         // 맵 그룹 코드 등록
         groupCodeRepository.saveAndFlush(mapGroupCodeEntity);
+
         // 몽 그룹 코드 등록
         groupCodeRepository.saveAndFlush(mongGroupCodeEntity);
+
         // 맵 공통 코드 임시 리스트 초기화
         mapTypeEntities.clear();
         comnCodeRepository.saveAndFlush(mapType);
         mapTypeEntities.add(mapType);
+
         // 몽 공통 코드 임시 리스트 초기화
         mongTypeEntities.clear();
         comnCodeRepository.saveAndFlush(mongType);
         mongTypeEntities.add(mongType);
+
         // 맵 공통 코드 등록
         for (int index = 1; index < 10; index++) {
             ComnCodeEntity comnCodeEntity = new ComnCodeEntity("MP00" + index, "맵" + index, mapGroupCodeEntity);
             mapTypeEntities.add(comnCodeEntity);
             comnCodeRepository.saveAndFlush(comnCodeEntity);
         }
+
         // 몽 공통 코드 등록
         for (int index = 1; index < 10; index++) {
             ComnCodeEntity comnCodeEntity = new ComnCodeEntity("CH00" + index, "캐릭터" + index, mongGroupCodeEntity);
