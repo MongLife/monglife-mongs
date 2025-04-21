@@ -32,7 +32,8 @@ public class CollectionMongDslRepositoryImpl implements CollectionMongDslReposit
         List<Tuple> tuples = jpaQueryFactory.select(collectionMongEntity, comnCodeEntity)
                 .from(collectionMongEntity)
                 .rightJoin(collectionMongEntity.mongType, comnCodeEntity)
-                .on(collectionMongEntity.mongType.eq(comnCodeEntity), collectionMongEntity.accountId.eq(accountId), comnCodeEntity.group.code.eq(mongGroupCode))
+                .on(collectionMongEntity.mongType.eq(comnCodeEntity), collectionMongEntity.accountId.eq(accountId))
+                .where(comnCodeEntity.group.code.eq(mongGroupCode))
                 .orderBy(collectionMongEntity.mongType.code.asc())
                 .fetch();
 

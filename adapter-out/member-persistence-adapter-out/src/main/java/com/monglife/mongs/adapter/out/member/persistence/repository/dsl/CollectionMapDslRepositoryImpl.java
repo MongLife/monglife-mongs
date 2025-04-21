@@ -30,7 +30,8 @@ public class CollectionMapDslRepositoryImpl implements CollectionMapDslRepositor
         List<Tuple> tuples = jpaQueryFactory.select(collectionMapEntity, comnCodeEntity)
                 .from(collectionMapEntity)
                 .rightJoin(collectionMapEntity.mapType, comnCodeEntity)
-                .on(collectionMapEntity.mapType.eq(comnCodeEntity), collectionMapEntity.accountId.eq(accountId), comnCodeEntity.group.code.eq(mapGroupCode))
+                .on(collectionMapEntity.mapType.eq(comnCodeEntity), collectionMapEntity.accountId.eq(accountId))
+                .where(comnCodeEntity.group.code.eq(mapGroupCode))
                 .orderBy(collectionMapEntity.mapType.code.asc())
                 .fetch();
 

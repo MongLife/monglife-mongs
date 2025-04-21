@@ -249,24 +249,27 @@ class OrderPersistenceServiceTest {
             int orderCount = 10;
             int consumedOrderCount = 5;
             List<OrderEntity> orderEntities = new ArrayList<>();
+            List<String> socialOrderIds = new ArrayList<>();
 
             for (long index = 1L; index <= orderCount; index++) {
+                String socialOrderId = CommonUtil.randomId();
                 OrderEntity orderEntity = OrderEntity.builder()
                         .accountId(accountId)
                         .productType(productType)
                         .price(0D)
-                        .socialOrderId(CommonUtil.randomId())
+                        .socialOrderId(socialOrderId)
                         .purchaseToken(CommonUtil.randomId())
                         .isConsumed(index <= consumedOrderCount)
                         .build();
 
                 orderEntities.add(orderEntity);
+                socialOrderIds.add(socialOrderId);
             }
 
             orderRepository.saveAllAndFlush(orderEntities);
 
             // act
-            List<Order> orders = orderPersistencePort.getConsumedOrdersPort(accountId);
+            List<Order> orders = orderPersistencePort.getConsumedOrdersPort(accountId, socialOrderIds);
 
             // assert
             for (long index = 1L; index <= consumedOrderCount; index++) {

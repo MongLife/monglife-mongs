@@ -15,6 +15,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -109,6 +110,7 @@ public class CollectionPersistenceService implements CollectionPersistencePort {
         List<CollectionMapEntity> collectionMapEntities = collectionMapRepository.findByAccountId(accountId);
 
         return collectionMapEntities.stream()
+                .sorted(Comparator.comparing(o -> o.getMapType().getCode()))
                 .map(CollectionMapEntity::toDomain)
                 .collect(Collectors.toList());
     }
@@ -125,6 +127,7 @@ public class CollectionPersistenceService implements CollectionPersistencePort {
         List<CollectionMongEntity> collectionMongEntities = collectionMongRepository.findByAccountId(accountId);
 
         return collectionMongEntities.stream()
+                .sorted(Comparator.comparing(o -> o.getMongType().getCode()))
                 .map(CollectionMongEntity::toDomain)
                 .collect(Collectors.toList());
     }

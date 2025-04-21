@@ -51,6 +51,7 @@ public class CollectionMongEntity extends BaseTimeEntity {
                 .collectionMongId(this.collectionMongId)
                 .accountId(this.accountId)
                 .mongTypeCode(this.mongType.getCode())
+                .mongTypeName(this.mongType.getName())
                 .isIncluded(this.isIncluded)
                 .build();
     }

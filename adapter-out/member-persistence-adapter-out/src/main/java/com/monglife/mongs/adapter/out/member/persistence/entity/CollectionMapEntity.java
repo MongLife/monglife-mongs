@@ -51,6 +51,7 @@ public class CollectionMapEntity extends BaseTimeEntity {
                 .collectionMapId(this.collectionMapId)
                 .accountId(this.accountId)
                 .mapTypeCode(this.mapType.getCode())
+                .mapTypeName(this.mapType.getName())
                 .isIncluded(this.isIncluded)
                 .build();
     }

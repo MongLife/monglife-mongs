@@ -8,7 +8,7 @@ import java.util.Optional;
 
 public interface OrderRepository extends JpaRepository<OrderEntity, Long> {
 
-    List<OrderEntity> findByIsConsumedIsTrue();
+    List<OrderEntity> findByIsConsumedIsTrueAndSocialOrderIdIn(List<String> socialOrderIds);
 
     Optional<OrderEntity> findBySocialOrderId(String socialOrderId);
 }

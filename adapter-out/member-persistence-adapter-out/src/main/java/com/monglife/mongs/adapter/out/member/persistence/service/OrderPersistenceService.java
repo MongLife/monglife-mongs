@@ -92,12 +92,13 @@ public class OrderPersistenceService implements OrderPersistencePort {
     /**
      * 소비된 주문 목록 조회
      * @param accountId 회원 ID
+     * @param socialOrderIds 인앱 주문 ID 목록
      * @return 주문 도메인 객체 목록
      */
     @Override
     @Transactional
-    public List<Order> getConsumedOrdersPort(Long accountId) {
-        return orderRepository.findByIsConsumedIsTrue()
+    public List<Order> getConsumedOrdersPort(Long accountId, List<String> socialOrderIds) {
+        return orderRepository.findByIsConsumedIsTrueAndSocialOrderIdIn(socialOrderIds)
                 .stream()
                 .map(OrderEntity::toDomain)
                 .collect(Collectors.toList());

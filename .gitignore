@@ -37,6 +37,6 @@ out/
 .vscode/
 
 ### config ###
-application.yml
-application-*.yml
-account-google.json
+*.yml
+*-*.yml
+*.json
