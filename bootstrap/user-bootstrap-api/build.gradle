@@ -1,7 +1,11 @@
 dependencies {
+    // adapter-in layer
+    implementation project(':adapter-in:device-sub-adapter-in')
     implementation project(':adapter-in:device-web-adapter-in')
+    implementation project(':adapter-in:member-sub-adapter-in')
     implementation project(':adapter-in:member-web-adapter-in')
 
+    // adapter-out layer
     implementation project(':adapter-out:device-event-adapter-out')
     implementation project(':adapter-out:device-persistence-adapter-out')
     implementation project(':adapter-out:device-publish-adapter-out')
@@ -12,4 +16,10 @@ dependencies {
 }
 
 tasks.register('copyPrivate', Copy) {
+    copy {
+        from('../../configs/bootstrap/user-bootstrap-api/') {
+            include('application.yml')
+        }
+        into('src/main/resources')
+    }
 }
