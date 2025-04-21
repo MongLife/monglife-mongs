@@ -177,7 +177,7 @@ class PlayerUseCaseTest {
                     .accountId(accountId)
                     .build();
 
-            playerUseCase.buySlotUseCase(command);
+            player = playerUseCase.buySlotUseCase(command);
 
             // assert
             assertEquals(2, player.getSlotCount());
@@ -282,7 +282,7 @@ class PlayerUseCaseTest {
                     .starPoint(starPoint)
                     .build();
 
-            playerUseCase.exchangeStarPointUseCase(command);
+            player = playerUseCase.exchangeStarPointUseCase(command);
 
             // assert
             assertTrue(player.getStarPoint() < starPoint);
@@ -395,7 +395,7 @@ class PlayerUseCaseTest {
                     .starPoint(starPoint)
                     .build();
 
-            playerUseCase.increaseStarPointUseCase(command);
+            player = playerUseCase.increaseStarPointUseCase(command);
 
             // assert
             assertEquals(starPoint, player.getStarPoint());

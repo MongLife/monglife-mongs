@@ -62,7 +62,6 @@ public class CollectionService implements CollectionUseCase {
     @Override
     @Transactional
     public List<CollectionMap> getCollectionMapsUseCase(GetCollectionMapsCommand command) {
-
         return collectionPersistencePort.getCollectionMapsPort(command.getAccountId());
     }
 
@@ -72,7 +71,6 @@ public class CollectionService implements CollectionUseCase {
     @Override
     @Transactional
     public List<CollectionMong> getCollectionMongsUseCase(GetCollectionMongsCommand command) {
-
         return collectionPersistencePort.getCollectionMongsPort(command.getAccountId());
     }
 }

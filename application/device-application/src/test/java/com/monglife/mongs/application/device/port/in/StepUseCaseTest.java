@@ -49,7 +49,7 @@ class StepUseCaseTest {
         @DisplayName("보유 걸음 수를 보유한 경우 페이 포인트로 환전 한다.")
         void enoughCurrentWalkingCount() {
             // arrange
-            final Step step = Step.builder()
+            Step step = Step.builder()
                     .deviceId(deviceId)
                     .walkingCount(0)
                     .consumeWalkingCount(0)
@@ -69,7 +69,7 @@ class StepUseCaseTest {
                     .deviceBootedDt(LocalDateTime.of(2025, 1, 1, 0, 0))
                     .build();
 
-            stepUseCase.exchangeCurrentWalkingCountUseCase(command);
+            step = stepUseCase.exchangeCurrentWalkingCountUseCase(command);
 
             // assert
             assertEquals(0, step.getCurrentWalkingCount());
@@ -85,7 +85,7 @@ class StepUseCaseTest {
             // arrange
             int walkingCount = 50;
             int newTotalWalkingCount = totalWalkingCount + walkingCount;
-            final Step step = Step.builder()
+            Step step = Step.builder()
                     .deviceId(deviceId)
                     .walkingCount(0)
                     .consumeWalkingCount(0)
@@ -105,7 +105,7 @@ class StepUseCaseTest {
                     .deviceBootedDt(deviceBootedDt)
                     .build();
 
-            stepUseCase.exchangeCurrentWalkingCountUseCase(command);
+            step = stepUseCase.exchangeCurrentWalkingCountUseCase(command);
 
             // assert
             assertEquals(walkingCount, step.getCurrentWalkingCount());
@@ -121,7 +121,7 @@ class StepUseCaseTest {
             // arrange
             int newTotalWalkingCount = 50;
             LocalDateTime newDeviceBootedDt = LocalDateTime.of(2025, 1, 2, 0, 0);
-            final Step step = Step.builder()
+            Step step = Step.builder()
                     .deviceId(deviceId)
                     .walkingCount(0)
                     .consumeWalkingCount(0)
@@ -141,7 +141,7 @@ class StepUseCaseTest {
                     .deviceBootedDt(newDeviceBootedDt)
                     .build();
 
-            stepUseCase.exchangeCurrentWalkingCountUseCase(command);
+            step = stepUseCase.exchangeCurrentWalkingCountUseCase(command);
 
             // assert
             assertEquals(newDeviceBootedDt, step.getDeviceBootedDt());
@@ -244,7 +244,7 @@ class StepUseCaseTest {
         @DisplayName("걸음 수가 없는 경우 새로운 걸음 수를 등록한다.")
         void createStepWhenNotExistsStep() {
             // arrange
-            final Step step = Step.builder()
+            Step step = Step.builder()
                     .deviceId(deviceId)
                     .walkingCount(0)
                     .consumeWalkingCount(0)
@@ -263,7 +263,9 @@ class StepUseCaseTest {
                     .deviceBootedDt(deviceBootedDt)
                     .build();
 
-            assertDoesNotThrow(() -> stepUseCase.updateTotalWalkingCountUseCase(command));
+            step = stepUseCase.updateTotalWalkingCountUseCase(command);
+
+            assertEquals(totalWalkingCount, step.getTotalWalkingCount());
             Mockito.verify(devicePersistencePort).getStepPort(deviceId);
             Mockito.verify(devicePersistencePort).createStepPort(Mockito.any());
             Mockito.verify(devicePersistencePort).saveStepPort(Mockito.any());
@@ -304,7 +306,7 @@ class StepUseCaseTest {
             // arrange
             int walkingCount = 50;
             int newTotalWalkingCount = totalWalkingCount + walkingCount;
-            final Step step = Step.builder()
+            Step step = Step.builder()
                     .deviceId(deviceId)
                     .walkingCount(0)
                     .consumeWalkingCount(0)
@@ -322,7 +324,7 @@ class StepUseCaseTest {
                     .deviceBootedDt(deviceBootedDt)
                     .build();
 
-            stepUseCase.updateTotalWalkingCountUseCase(command);
+            step = stepUseCase.updateTotalWalkingCountUseCase(command);
 
             // assert
             assertEquals(newTotalWalkingCount, step.getCurrentWalkingCount());
@@ -337,7 +339,7 @@ class StepUseCaseTest {
             // arrange
             int newTotalWalkingCount = 50;
             LocalDateTime newDeviceBootedDt = LocalDateTime.of(2025, 1, 2, 0, 0);
-            final Step step = Step.builder()
+            Step step = Step.builder()
                     .deviceId(deviceId)
                     .walkingCount(0)
                     .consumeWalkingCount(0)
@@ -355,7 +357,7 @@ class StepUseCaseTest {
                     .deviceBootedDt(newDeviceBootedDt)
                     .build();
 
-            stepUseCase.updateTotalWalkingCountUseCase(command);
+            step = stepUseCase.updateTotalWalkingCountUseCase(command);
 
             // assert
             assertEquals(newDeviceBootedDt, step.getDeviceBootedDt());
@@ -376,7 +378,7 @@ class StepUseCaseTest {
         void increaseCurrentWalkingCount() {
             // arrange
             int increaseWalkingCount = 1000;
-            final Step step = Step.builder()
+            Step step = Step.builder()
                     .deviceId(deviceId)
                     .walkingCount(0)
                     .consumeWalkingCount(0)
@@ -393,7 +395,7 @@ class StepUseCaseTest {
                     .walkingCount(increaseWalkingCount)
                     .build();
 
-            stepUseCase.increaseCurrentWalkingCountUseCase(command);
+            step = stepUseCase.increaseCurrentWalkingCountUseCase(command);
 
             // assert
             assertEquals(totalWalkingCount + increaseWalkingCount, step.getCurrentWalkingCount());

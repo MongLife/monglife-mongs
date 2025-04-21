@@ -3,12 +3,13 @@ package com.monglife.mongs.application.device.port.in;
 import com.monglife.mongs.application.device.port.in.command.ExchangeCurrentWalkingCountCommand;
 import com.monglife.mongs.application.device.port.in.command.IncreaseCurrentWalkingCountCommand;
 import com.monglife.mongs.application.device.port.in.command.UpdateTotalWalkingCountCommand;
+import com.monglife.mongs.domain.model.Step;
 
 public interface StepUseCase {
 
-    void exchangeCurrentWalkingCountUseCase(ExchangeCurrentWalkingCountCommand exchangeCurrentWalkingCountCommand);
+    Step exchangeCurrentWalkingCountUseCase(ExchangeCurrentWalkingCountCommand exchangeCurrentWalkingCountCommand);
 
-    void updateTotalWalkingCountUseCase(UpdateTotalWalkingCountCommand updateTotalWalkingCountCommand);
+    Step updateTotalWalkingCountUseCase(UpdateTotalWalkingCountCommand updateTotalWalkingCountCommand);
 
-    void increaseCurrentWalkingCountUseCase(IncreaseCurrentWalkingCountCommand increaseCurrentWalkingCountCommand);
+    Step increaseCurrentWalkingCountUseCase(IncreaseCurrentWalkingCountCommand increaseCurrentWalkingCountCommand);
 }

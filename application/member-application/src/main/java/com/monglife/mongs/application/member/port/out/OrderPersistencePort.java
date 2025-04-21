@@ -15,7 +15,7 @@ public interface OrderPersistencePort {
 
     Optional<Order> saveOrderPort(Order order);
 
-    List<Order> getConsumedOrdersPort(Long accountId);
+    List<Order> getConsumedOrdersPort(Long accountId, List<String> socialOrderIds);
 
     Optional<Order> getOrderBySocialOrderIdPort(String socialOrderId);
 }

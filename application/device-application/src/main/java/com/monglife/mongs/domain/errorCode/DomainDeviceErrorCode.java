@@ -1,4 +1,4 @@
-package com.monglife.mongs.application.device.port.errorCode;
+package com.monglife.mongs.domain.errorCode;
 
 import com.monglife.core.dto.response.ResponseDto;
 import com.monglife.core.enums.error.ErrorCode;
@@ -10,10 +10,9 @@ import java.util.Map;
 
 @Getter
 @AllArgsConstructor
-public enum ApplicationDeviceErrorCode implements ErrorCode {
+public enum DomainDeviceErrorCode implements ErrorCode {
 
-    NOT_ENOUGH_CURRENT_WALKING_COUNT("APPLICATION-DEVICE-000", "충분한 보유 걸음 수가 없습니다."),
-    NOT_EXISTS_STEP("APPLICATION-DEVICE-001", "걸음 수가 존재하지 않습니다.")
+    INVALID_TOTAL_WALKING_COUNT("DOMAIN-DEVICE-000", "총 걸음 수는 현재 총 걸음 수보다 적을 수 없습니다."),
     ;
 
     private final String code;

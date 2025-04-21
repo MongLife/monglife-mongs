@@ -221,7 +221,7 @@ class StoreUseCaseTest {
                     .socialOrderId(socialOrderId)
                     .build();
 
-            storeUseCase.consumeOrderUseCase(command);
+            order = storeUseCase.consumeOrderUseCase(command);
 
             // assert
             assertEquals(starPoint, player.getStarPoint());
@@ -1104,7 +1104,7 @@ class StoreUseCaseTest {
                             .purchaseToken(CommonUtil.randomId())
                             .build());
 
-            Mockito.when(orderPersistencePort.getConsumedOrdersPort(Mockito.any())).thenReturn(orders);
+            Mockito.when(orderPersistencePort.getConsumedOrdersPort(Mockito.any(), Mockito.any())).thenReturn(orders);
 
             // act
             GetConsumedOrderCommand command = GetConsumedOrderCommand.builder()
@@ -1115,7 +1115,7 @@ class StoreUseCaseTest {
 
             // assert
             assertEquals(expected, orders);
-            Mockito.verify(orderPersistencePort).getConsumedOrdersPort(Mockito.any());
+            Mockito.verify(orderPersistencePort).getConsumedOrdersPort(Mockito.any(), Mockito.any());
         }
     }
 }

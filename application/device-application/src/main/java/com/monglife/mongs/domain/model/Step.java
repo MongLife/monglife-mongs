@@ -1,5 +1,6 @@
 package com.monglife.mongs.domain.model;
 
+import com.monglife.mongs.domain.exception.InvalidTotalWalkingCountException;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.ToString;
@@ -58,6 +59,11 @@ public class Step {
      * @param totalWalkingCount 기기에 기록된 총 걸음 수
      */
     public void updateTotalWalkingCount(Integer totalWalkingCount) {
+
+        if (totalWalkingCount < this.totalWalkingCount) {
+            throw new InvalidTotalWalkingCountException();
+        }
+
         this.totalWalkingCount = totalWalkingCount;
     }
 

@@ -5,6 +5,7 @@ import com.monglife.mongs.application.member.port.in.command.CreateOrderCommand;
 import com.monglife.mongs.application.member.port.in.command.GetConsumedOrderCommand;
 import com.monglife.mongs.domain.model.Order;
 import com.monglife.mongs.domain.model.InAppProduct;
+import com.monglife.mongs.domain.model.Player;
 
 import java.util.List;
 
@@ -12,7 +13,7 @@ public interface StoreUseCase {
 
     void createOrderUseCase(CreateOrderCommand command);
 
-    void consumeOrderUseCase(ConsumeOrderCommand command);
+    Order consumeOrderUseCase(ConsumeOrderCommand command);
 
     List<InAppProduct> getProductsUseCase();
 

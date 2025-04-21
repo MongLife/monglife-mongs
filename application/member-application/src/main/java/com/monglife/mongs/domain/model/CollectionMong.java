@@ -14,13 +14,16 @@ public class CollectionMong {
 
     private String mongTypeCode;
 
+    private String mongTypeName;
+
     private Boolean isIncluded;
 
     @Builder
-    public CollectionMong(Long collectionMongId, Long accountId, String mongTypeCode, Boolean isIncluded) {
+    public CollectionMong(Long collectionMongId, Long accountId, String mongTypeCode, String mongTypeName, Boolean isIncluded) {
         this.collectionMongId = collectionMongId;
         this.accountId = accountId;
         this.mongTypeCode = mongTypeCode;
+        this.mongTypeName = mongTypeName;
         this.isIncluded = isIncluded;
     }
 }

@@ -1,5 +1,7 @@
 package com.monglife.mongs.application.device.port.in.service;
 
+import com.monglife.mongs.application.device.port.exception.NotEnoughCurrentWalkingCountException;
+import com.monglife.mongs.application.device.port.exception.NotExistStepException;
 import com.monglife.mongs.application.device.port.in.StepUseCase;
 import com.monglife.mongs.application.device.port.in.command.ExchangeCurrentWalkingCountCommand;
 import com.monglife.mongs.application.device.port.in.command.IncreaseCurrentWalkingCountCommand;
@@ -9,8 +11,6 @@ import com.monglife.mongs.application.device.port.out.DevicePersistencePort;
 import com.monglife.mongs.application.device.port.out.DevicePublishPort;
 import com.monglife.mongs.application.device.port.out.vo.CreateStepVo;
 import com.monglife.mongs.domain.model.Step;
-import com.monglife.mongs.application.device.port.exception.NotEnoughCurrentWalkingCountException;
-import com.monglife.mongs.application.device.port.exception.NotExistStepException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -32,7 +32,7 @@ public class StepService implements StepUseCase {
      */
     @Override
     @Transactional
-    public void exchangeCurrentWalkingCountUseCase(ExchangeCurrentWalkingCountCommand command) {
+    public Step exchangeCurrentWalkingCountUseCase(ExchangeCurrentWalkingCountCommand command) {
 
         Step step = devicePersistencePort.getStepPort(command.getDeviceId())
                 .orElseThrow(NotExistStepException::new);
@@ -63,6 +63,8 @@ public class StepService implements StepUseCase {
 
         // 보유 걸음 수 비동기 응답
         devicePublishPort.publishCurrentWalkingCountPort(step);
+
+        return step;
     }
 
     /**
@@ -70,7 +72,7 @@ public class StepService implements StepUseCase {
      */
     @Override
     @Transactional
-    public void updateTotalWalkingCountUseCase(UpdateTotalWalkingCountCommand command) {
+    public Step updateTotalWalkingCountUseCase(UpdateTotalWalkingCountCommand command) {
 
         // 걸음 수가 없는 경우 등록
         Step step = devicePersistencePort.getStepPort(command.getDeviceId())
@@ -92,7 +94,9 @@ public class StepService implements StepUseCase {
 
         // 걸음 수 수정
         devicePersistencePort.saveStepPort(step)
-                .orElseThrow(NotExistStepException::new);;
+                .orElseThrow(NotExistStepException::new);
+
+        return step;
     }
 
     /**
@@ -100,7 +104,7 @@ public class StepService implements StepUseCase {
      */
     @Override
     @Transactional
-    public void increaseCurrentWalkingCountUseCase(IncreaseCurrentWalkingCountCommand command) {
+    public Step increaseCurrentWalkingCountUseCase(IncreaseCurrentWalkingCountCommand command) {
 
         Step step = devicePersistencePort.getStepPort(command.getDeviceId())
                 .orElseThrow(NotExistStepException::new);
@@ -114,5 +118,7 @@ public class StepService implements StepUseCase {
 
         // 보유 걸음 수 비동기 응답
         devicePublishPort.publishCurrentWalkingCountPort(step);
+
+        return step;
     }
 }

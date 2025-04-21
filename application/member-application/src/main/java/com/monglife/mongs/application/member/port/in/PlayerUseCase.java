@@ -9,9 +9,9 @@ public interface PlayerUseCase {
 
     Player getPlayerUseCase(GetPlayerCommand command);
 
-    void buySlotUseCase(BuySlotCommand command);
+    Player buySlotUseCase(BuySlotCommand command);
 
-    void exchangeStarPointUseCase(ExchangeStarPointCommand command);
+    Player exchangeStarPointUseCase(ExchangeStarPointCommand command);
 
-    void increaseStarPointUseCase(IncreaseStarPointCommand command);
+    Player increaseStarPointUseCase(IncreaseStarPointCommand command);
 }

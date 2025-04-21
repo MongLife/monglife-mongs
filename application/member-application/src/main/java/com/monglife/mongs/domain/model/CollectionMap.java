@@ -14,13 +14,16 @@ public class CollectionMap {
 
     private String mapTypeCode;
 
+    private String mapTypeName;
+
     private Boolean isIncluded;
 
     @Builder
-    public CollectionMap(Long collectionMapId, Long accountId, String mapTypeCode, Boolean isIncluded) {
+    public CollectionMap(Long collectionMapId, Long accountId, String mapTypeCode, String mapTypeName, Boolean isIncluded) {
         this.collectionMapId = collectionMapId;
         this.accountId = accountId;
         this.mapTypeCode = mapTypeCode;
+        this.mapTypeName = mapTypeName;
         this.isIncluded = isIncluded;
     }
 }

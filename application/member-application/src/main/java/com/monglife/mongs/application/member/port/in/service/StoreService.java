@@ -56,7 +56,7 @@ public class StoreService implements StoreUseCase {
      */
     @Override
     @Transactional
-    public void consumeOrderUseCase(ConsumeOrderCommand command) {
+    public Order consumeOrderUseCase(ConsumeOrderCommand command) {
 
         // 주문 정보 조회
         Order order = orderPersistencePort.getOrderBySocialOrderIdPort(command.getSocialOrderId())
@@ -91,6 +91,8 @@ public class StoreService implements StoreUseCase {
 
         // 스타 포인트 비동기 응답
         memberPublishPort.publishStarPointPort(player);
+
+        return order;
     }
 
     /**
@@ -108,7 +110,6 @@ public class StoreService implements StoreUseCase {
     @Override
     @Transactional
     public List<Order> getConsumedOrderUseCase(GetConsumedOrderCommand command) {
-
-        return orderPersistencePort.getConsumedOrdersPort(command.getAccountId());
+        return orderPersistencePort.getConsumedOrdersPort(command.getAccountId(), command.getSocialOrderIds());
     }
 }

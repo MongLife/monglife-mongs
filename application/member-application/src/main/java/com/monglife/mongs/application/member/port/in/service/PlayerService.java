@@ -59,7 +59,7 @@ public class PlayerService implements PlayerUseCase {
      */
     @Override
     @Transactional
-    public void buySlotUseCase(BuySlotCommand command) {
+    public Player buySlotUseCase(BuySlotCommand command) {
 
         Player player = memberPersistencePort.getPlayerPort(command.getAccountId())
                 .orElseThrow(NotExistsPlayerException::new);
@@ -76,6 +76,8 @@ public class PlayerService implements PlayerUseCase {
 
         // 슬롯 수 비동기 응답
         memberPublishPort.publishSlotCountPort(player);
+
+        return player;
     }
 
     /**
@@ -83,7 +85,7 @@ public class PlayerService implements PlayerUseCase {
      */
     @Override
     @Transactional
-    public void exchangeStarPointUseCase(ExchangeStarPointCommand command) {
+    public Player exchangeStarPointUseCase(ExchangeStarPointCommand command) {
 
         Player player = memberPersistencePort.getPlayerPort(command.getAccountId())
                 .orElseThrow(NotExistsPlayerException::new);
@@ -101,6 +103,8 @@ public class PlayerService implements PlayerUseCase {
 
         // 스타 포인트 비동기 응답
         memberPublishPort.publishStarPointPort(player);
+
+        return player;
     }
 
     /**
@@ -108,7 +112,7 @@ public class PlayerService implements PlayerUseCase {
      */
     @Override
     @Transactional
-    public void increaseStarPointUseCase(IncreaseStarPointCommand command) {
+    public Player increaseStarPointUseCase(IncreaseStarPointCommand command) {
 
         Player player = memberPersistencePort.getPlayerPort(command.getAccountId())
                 .orElseThrow(NotExistsPlayerException::new);
@@ -122,5 +126,7 @@ public class PlayerService implements PlayerUseCase {
 
         // 스타 포인트 비동기 응답
         memberPublishPort.publishStarPointPort(player);
+
+        return player;
     }
 }
