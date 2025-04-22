@@ -1,11 +1,21 @@
 dependencies {
+    // application layer
     implementation project(':application:member-application')
+    // monglife-security
+    implementation 'com.github.monglife.monglife-module-common:monglife-module-common-security:1.0.11'
 }
 
 tasks.register('copyPrivate', Copy) {
     copy {
-        from '../../configs/adapter-in/member-web-adapter-in/'
-        include '*.yml'
-        into 'src/main/resources'
+        from('../../configs/adapter-out/member-web-adapter-in/') {
+            include('application.yml')
+            rename('application.yml', 'web-member.yml')
+        }
+        into('src/main/resources')
+    }
+    copy {
+        from('../../configs/adapter-out/member-web-adapter-in/')
+        include('application.yml')
+        into('src/test/resources')
     }
 }
