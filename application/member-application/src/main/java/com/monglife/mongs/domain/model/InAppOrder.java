@@ -36,14 +36,22 @@ public class InAppOrder {
         this.purchasedAt = purchasedAt;
     }
 
+    public Boolean isPayed() {
+        return OrderPurchaseTypeCode.PAYED.equals(this.orderPurchaseTypeCode);
+    }
+
+    public Boolean isConsumed() {
+        return OrderTypeCode.CONSUMED.equals(this.orderTypeCode);
+    }
+
     /**
      * 인앱 주문 소비
      */
     public void consume() {
 
-        if (!OrderPurchaseTypeCode.PAYED.equals(this.orderPurchaseTypeCode)) {
+        if (!this.isPayed()) {
             throw new PaymentNotCompletedInAppOrderException();
-        } else if (OrderTypeCode.CONSUMED.equals(this.orderTypeCode)) {
+        } else if (this.isConsumed()) {
             throw new AlreadyConsumedInAppOrderException();
         }
 

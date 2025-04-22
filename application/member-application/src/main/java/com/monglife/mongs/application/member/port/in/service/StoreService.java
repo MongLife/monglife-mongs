@@ -15,6 +15,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -36,19 +37,21 @@ public class StoreService implements StoreUseCase {
     @Transactional
     public void createOrderUseCase(CreateOrderCommand command) {
 
-        // 인앱 상품 존재 여부 확인
-        InAppProduct inAppProduct = googlePaymentPort.getInAppProductPort(command.getProductId())
-                .orElseThrow(NotExistsInAppProductException::new);
+        if (!orderPersistencePort.isExistsOrderByAccountIdAndSocialOrderIdPort(command.getAccountId(), command.getSocialOrderId())) {
+            // 인앱 상품 존재 여부 확인
+            InAppProduct inAppProduct = googlePaymentPort.getInAppProductPort(command.getProductId())
+                    .orElseThrow(NotExistsInAppProductException::new);
 
-        // 인앱 상품 주문 등록
-        orderPersistencePort.createOrderPort(CreateOrderVo.builder()
-                        .accountId(command.getAccountId())
-                        .productId(command.getProductId())
-                        .price(inAppProduct.getPrice())
-                        .socialOrderId(command.getSocialOrderId())
-                        .purchaseToken(command.getPurchaseToken())
-                .build())
-                .orElseThrow(InvalidCreateOrderException::new);
+            // 인앱 상품 주문 등록
+            orderPersistencePort.createOrderPort(CreateOrderVo.builder()
+                            .accountId(command.getAccountId())
+                            .productId(command.getProductId())
+                            .price(inAppProduct.getPrice())
+                            .socialOrderId(command.getSocialOrderId())
+                            .purchaseToken(command.getPurchaseToken())
+                            .build())
+                    .orElseThrow(InvalidCreateOrderException::new);
+        }
     }
 
     /**
@@ -79,11 +82,6 @@ public class StoreService implements StoreUseCase {
         memberPersistencePort.savePlayerPort(player)
                 .orElseThrow(NotExistsPlayerException::new);
 
-        // 주문 소비
-        order.consume();
-        orderPersistencePort.saveOrderPort(order)
-                .orElseThrow(NotExistsOrderException::new);
-
         // 인앱 상품 주문 소비
         inAppOrder.consume();
         googlePaymentPort.consumeInAppOrderPort(inAppOrder)
@@ -110,6 +108,19 @@ public class StoreService implements StoreUseCase {
     @Override
     @Transactional
     public List<Order> getConsumedOrderUseCase(GetConsumedOrderCommand command) {
-        return orderPersistencePort.getConsumedOrdersPort(command.getAccountId(), command.getSocialOrderIds());
+
+        List<Order> orders = new ArrayList<>();
+
+        command.getSocialOrderIds().forEach(socialOrderId ->
+            orderPersistencePort.getOrderBySocialOrderIdPort(socialOrderId).ifPresent(order ->
+                googlePaymentPort.getInAppOrderPort(order.getProductId(), order.getSocialOrderId(), order.getPurchaseToken()).ifPresent(inAppOrder -> {
+                    if (inAppOrder.isConsumed()) {
+                        orders.add(order);
+                    }
+                })
+            )
+        );
+
+        return orders;
     }
 }

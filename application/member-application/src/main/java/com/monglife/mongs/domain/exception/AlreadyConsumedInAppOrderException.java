@@ -10,7 +10,7 @@ import java.util.Collections;
 public class AlreadyConsumedInAppOrderException extends ErrorException {
 
     public AlreadyConsumedInAppOrderException() {
-        this.errorCode = DomainMemberErrorCode.ALREADY_CONSUMED_ORDER;
+        this.errorCode = DomainMemberErrorCode.ALREADY_CONSUMED_IN_APP_ORDER;
         this.result = Collections.emptyMap();
     }
 }

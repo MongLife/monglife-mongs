@@ -13,7 +13,6 @@ import com.monglife.mongs.application.member.port.out.OrderPersistencePort;
 import com.monglife.mongs.domain.enums.OrderPurchaseTypeCode;
 import com.monglife.mongs.domain.enums.OrderTypeCode;
 import com.monglife.mongs.domain.exception.AlreadyConsumedInAppOrderException;
-import com.monglife.mongs.domain.exception.AlreadyConsumedOrderException;
 import com.monglife.mongs.domain.exception.PaymentNotCompletedInAppOrderException;
 import com.monglife.mongs.domain.model.*;
 import org.junit.jupiter.api.DisplayName;
@@ -71,12 +70,12 @@ class StoreUseCaseTest {
                     .orderId(1L)
                     .accountId(accountId)
                     .productId(productId)
-                    .orderTypeCode(OrderTypeCode.ORDERED)
                     .price(price)
                     .socialOrderId(socialOrderId)
                     .purchaseToken(purchaseToken)
                     .build();
 
+            Mockito.when(orderPersistencePort.isExistsOrderByAccountIdAndSocialOrderIdPort(accountId, socialOrderId)).thenReturn(false);
             Mockito.when(googlePaymentPort.getInAppProductPort(Mockito.any())).thenReturn(Optional.of(inAppProduct));
             Mockito.when(orderPersistencePort.createOrderPort(Mockito.any())).thenReturn(Optional.of(order));
 
@@ -100,6 +99,7 @@ class StoreUseCaseTest {
             String socialOrderId = "TEST-SOCIAL_ORDER-ID";
             String purchaseToken = CommonUtil.randomId();
 
+            Mockito.when(orderPersistencePort.isExistsOrderByAccountIdAndSocialOrderIdPort(accountId, socialOrderId)).thenReturn(false);
             Mockito.when(googlePaymentPort.getInAppProductPort(Mockito.any())).thenReturn(Optional.empty());
 
             // act & assert
@@ -129,6 +129,7 @@ class StoreUseCaseTest {
                     .price(price)
                     .build();
 
+            Mockito.when(orderPersistencePort.isExistsOrderByAccountIdAndSocialOrderIdPort(accountId, socialOrderId)).thenReturn(false);
             Mockito.when(googlePaymentPort.getInAppProductPort(Mockito.any())).thenReturn(Optional.of(inAppProduct));
             Mockito.when(orderPersistencePort.createOrderPort(Mockito.any())).thenReturn(Optional.empty());
 
@@ -163,7 +164,6 @@ class StoreUseCaseTest {
                     .orderId(1L)
                     .accountId(accountId)
                     .productId(productId)
-                    .orderTypeCode(OrderTypeCode.ORDERED)
                     .price(price)
                     .socialOrderId(socialOrderId)
                     .purchaseToken(purchaseToken)
@@ -198,42 +198,29 @@ class StoreUseCaseTest {
                     .purchasedAt(LocalDateTime.now())
                     .build();
 
-            Order orderAfterConsume = Order.builder()
-                    .orderId(1L)
-                    .accountId(accountId)
-                    .productId(productId)
-                    .orderTypeCode(OrderTypeCode.CONSUMED)
-                    .price(price)
-                    .socialOrderId(socialOrderId)
-                    .purchaseToken(purchaseToken)
-                    .build();
-
             Mockito.when(orderPersistencePort.getOrderBySocialOrderIdPort(Mockito.any())).thenReturn(Optional.of(order));
             Mockito.when(orderPersistencePort.getExchangeStarPointProductPort(Mockito.any())).thenReturn(Optional.of(product));
             Mockito.when(memberPersistencePort.getPlayerPort(Mockito.any())).thenReturn(Optional.of(player));
             Mockito.when(googlePaymentPort.getInAppOrderPort(productId, socialOrderId, purchaseToken)).thenReturn(Optional.of(inAppOrder));
             Mockito.when(memberPersistencePort.savePlayerPort(Mockito.any())).thenReturn(Optional.of(player));
             Mockito.when(googlePaymentPort.consumeInAppOrderPort(inAppOrder)).thenReturn(Optional.of(inAppOrderAfterConsume));
-            Mockito.when(orderPersistencePort.saveOrderPort(Mockito.any())).thenReturn(Optional.of(orderAfterConsume));
 
             // act
             ConsumeOrderCommand command = ConsumeOrderCommand.builder()
                     .socialOrderId(socialOrderId)
                     .build();
 
-            order = storeUseCase.consumeOrderUseCase(command);
+            storeUseCase.consumeOrderUseCase(command);
 
             // assert
             assertEquals(starPoint, player.getStarPoint());
             assertEquals(OrderTypeCode.CONSUMED, inAppOrder.getOrderTypeCode());
-            assertEquals(OrderTypeCode.CONSUMED, order.getOrderTypeCode());
 
             Mockito.verify(orderPersistencePort).getOrderBySocialOrderIdPort(socialOrderId);
             Mockito.verify(orderPersistencePort).getExchangeStarPointProductPort(productId);
             Mockito.verify(memberPersistencePort).getPlayerPort(accountId);
             Mockito.verify(googlePaymentPort).getInAppOrderPort(productId, socialOrderId, purchaseToken);
             Mockito.verify(memberPersistencePort).savePlayerPort(Mockito.any());
-            Mockito.verify(orderPersistencePort).saveOrderPort(Mockito.any());
             Mockito.verify(googlePaymentPort).consumeInAppOrderPort(Mockito.any());
             Mockito.verify(memberPublishPort).publishStarPointPort(Mockito.any());
         }
@@ -279,7 +266,6 @@ class StoreUseCaseTest {
             Mockito.when(googlePaymentPort.getInAppOrderPort(productId, socialOrderId, purchaseToken)).thenReturn(Optional.of(inAppOrder));
             Mockito.when(memberPersistencePort.savePlayerPort(Mockito.any())).thenReturn(Optional.of(player));
             Mockito.when(googlePaymentPort.consumeInAppOrderPort(inAppOrder)).thenReturn(Optional.of(inAppOrderAfterConsume));
-            Mockito.when(orderPersistencePort.saveOrderPort(Mockito.any())).thenReturn(Optional.empty());
 
             // act & assert
             ConsumeOrderCommand command = ConsumeOrderCommand.builder()
@@ -293,77 +279,6 @@ class StoreUseCaseTest {
             Mockito.verify(memberPersistencePort, Mockito.never()).getPlayerPort(accountId);
             Mockito.verify(googlePaymentPort, Mockito.never()).getInAppOrderPort(productId, socialOrderId, purchaseToken);
             Mockito.verify(memberPersistencePort, Mockito.never()).savePlayerPort(Mockito.any());
-            Mockito.verify(orderPersistencePort, Mockito.never()).saveOrderPort(Mockito.any());
-            Mockito.verify(googlePaymentPort, Mockito.never()).consumeInAppOrderPort(Mockito.any());
-            Mockito.verify(memberPublishPort, Mockito.never()).publishStarPointPort(Mockito.any());
-        }
-
-        @Test
-        @DisplayName("주문을 수정할 때 주문이 없는 경우 예외가 발생 한다.")
-        void notExistsOrderWhenSaveOrder() {
-            // arrange
-            int starPoint = 100;
-            OrderPurchaseTypeCode orderPurchaseTypeCode = OrderPurchaseTypeCode.PAYED;
-            Order order = Order.builder()
-                    .orderId(1L)
-                    .accountId(accountId)
-                    .productId(productId)
-                    .orderTypeCode(OrderTypeCode.ORDERED)
-                    .price(price)
-                    .socialOrderId(socialOrderId)
-                    .purchaseToken(purchaseToken)
-                    .build();
-
-            ExchangeStarPointProduct product = ExchangeStarPointProduct.builder()
-                    .productId(productId)
-                    .starPoint(starPoint)
-                    .build();
-
-            Player player = Player.builder()
-                    .accountId(accountId)
-                    .slotCount(1)
-                    .starPoint(0)
-                    .build();
-
-            InAppOrder inAppOrder = InAppOrder.builder()
-                    .socialOrderId(socialOrderId)
-                    .productId(productId)
-                    .purchaseToken(purchaseToken)
-                    .orderPurchaseTypeCode(orderPurchaseTypeCode)
-                    .orderTypeCode(OrderTypeCode.ORDERED)
-                    .purchasedAt(LocalDateTime.now())
-                    .build();
-
-            InAppOrder inAppOrderAfterConsume = InAppOrder.builder()
-                    .socialOrderId(socialOrderId)
-                    .productId(productId)
-                    .purchaseToken(purchaseToken)
-                    .orderPurchaseTypeCode(orderPurchaseTypeCode)
-                    .orderTypeCode(OrderTypeCode.CONSUMED)
-                    .purchasedAt(LocalDateTime.now())
-                    .build();
-
-            Mockito.when(orderPersistencePort.getOrderBySocialOrderIdPort(Mockito.any())).thenReturn(Optional.of(order));
-            Mockito.when(orderPersistencePort.getExchangeStarPointProductPort(Mockito.any())).thenReturn(Optional.of(product));
-            Mockito.when(memberPersistencePort.getPlayerPort(Mockito.any())).thenReturn(Optional.of(player));
-            Mockito.when(googlePaymentPort.getInAppOrderPort(productId, socialOrderId, purchaseToken)).thenReturn(Optional.of(inAppOrder));
-            Mockito.when(memberPersistencePort.savePlayerPort(Mockito.any())).thenReturn(Optional.of(player));
-            Mockito.when(googlePaymentPort.consumeInAppOrderPort(inAppOrder)).thenReturn(Optional.of(inAppOrderAfterConsume));
-            Mockito.when(orderPersistencePort.saveOrderPort(Mockito.any())).thenReturn(Optional.empty());
-
-            // act & assert
-            ConsumeOrderCommand command = ConsumeOrderCommand.builder()
-                    .socialOrderId(socialOrderId)
-                    .build();
-
-            assertThrows(NotExistsOrderException.class, () -> storeUseCase.consumeOrderUseCase(command));
-
-            Mockito.verify(orderPersistencePort).getOrderBySocialOrderIdPort(socialOrderId);
-            Mockito.verify(orderPersistencePort).getExchangeStarPointProductPort(productId);
-            Mockito.verify(memberPersistencePort).getPlayerPort(accountId);
-            Mockito.verify(googlePaymentPort).getInAppOrderPort(productId, socialOrderId, purchaseToken);
-            Mockito.verify(memberPersistencePort).savePlayerPort(Mockito.any());
-            Mockito.verify(orderPersistencePort).saveOrderPort(Mockito.any());
             Mockito.verify(googlePaymentPort, Mockito.never()).consumeInAppOrderPort(Mockito.any());
             Mockito.verify(memberPublishPort, Mockito.never()).publishStarPointPort(Mockito.any());
         }
@@ -377,7 +292,6 @@ class StoreUseCaseTest {
                     .orderId(1L)
                     .accountId(accountId)
                     .productId(productId)
-                    .orderTypeCode(OrderTypeCode.ORDERED)
                     .price(price)
                     .socialOrderId(socialOrderId)
                     .purchaseToken(purchaseToken)
@@ -407,23 +321,12 @@ class StoreUseCaseTest {
                     .purchasedAt(LocalDateTime.now())
                     .build();
 
-            Order orderAfterConsume = Order.builder()
-                    .orderId(1L)
-                    .accountId(accountId)
-                    .productId(productId)
-                    .orderTypeCode(OrderTypeCode.CONSUMED)
-                    .price(price)
-                    .socialOrderId(socialOrderId)
-                    .purchaseToken(purchaseToken)
-                    .build();
-
             Mockito.when(orderPersistencePort.getOrderBySocialOrderIdPort(Mockito.any())).thenReturn(Optional.of(order));
             Mockito.when(orderPersistencePort.getExchangeStarPointProductPort(Mockito.any())).thenReturn(Optional.empty());
             Mockito.when(memberPersistencePort.getPlayerPort(Mockito.any())).thenReturn(Optional.of(player));
             Mockito.when(googlePaymentPort.getInAppOrderPort(productId, socialOrderId, purchaseToken)).thenReturn(Optional.of(inAppOrder));
             Mockito.when(memberPersistencePort.savePlayerPort(Mockito.any())).thenReturn(Optional.of(player));
             Mockito.when(googlePaymentPort.consumeInAppOrderPort(inAppOrder)).thenReturn(Optional.of(inAppOrderAfterConsume));
-            Mockito.when(orderPersistencePort.saveOrderPort(Mockito.any())).thenReturn(Optional.of(orderAfterConsume));
 
             // act & assert
             ConsumeOrderCommand command = ConsumeOrderCommand.builder()
@@ -437,7 +340,6 @@ class StoreUseCaseTest {
             Mockito.verify(memberPersistencePort, Mockito.never()).getPlayerPort(accountId);
             Mockito.verify(googlePaymentPort, Mockito.never()).getInAppOrderPort(productId, socialOrderId, purchaseToken);
             Mockito.verify(memberPersistencePort, Mockito.never()).savePlayerPort(Mockito.any());
-            Mockito.verify(orderPersistencePort, Mockito.never()).saveOrderPort(Mockito.any());
             Mockito.verify(googlePaymentPort, Mockito.never()).consumeInAppOrderPort(Mockito.any());
             Mockito.verify(memberPublishPort, Mockito.never()).publishStarPointPort(Mockito.any());
         }
@@ -452,7 +354,6 @@ class StoreUseCaseTest {
                     .orderId(1L)
                     .accountId(accountId)
                     .productId(productId)
-                    .orderTypeCode(OrderTypeCode.ORDERED)
                     .price(price)
                     .socialOrderId(socialOrderId)
                     .purchaseToken(purchaseToken)
@@ -481,23 +382,12 @@ class StoreUseCaseTest {
                     .purchasedAt(LocalDateTime.now())
                     .build();
 
-            Order orderAfterConsume = Order.builder()
-                    .orderId(1L)
-                    .accountId(accountId)
-                    .productId(productId)
-                    .orderTypeCode(OrderTypeCode.CONSUMED)
-                    .price(price)
-                    .socialOrderId(socialOrderId)
-                    .purchaseToken(purchaseToken)
-                    .build();
-
             Mockito.when(orderPersistencePort.getOrderBySocialOrderIdPort(Mockito.any())).thenReturn(Optional.of(order));
             Mockito.when(orderPersistencePort.getExchangeStarPointProductPort(Mockito.any())).thenReturn(Optional.of(product));
             Mockito.when(memberPersistencePort.getPlayerPort(Mockito.any())).thenReturn(Optional.empty());
             Mockito.when(googlePaymentPort.getInAppOrderPort(productId, socialOrderId, purchaseToken)).thenReturn(Optional.of(inAppOrder));
             Mockito.when(memberPersistencePort.savePlayerPort(Mockito.any())).thenReturn(Optional.empty());
             Mockito.when(googlePaymentPort.consumeInAppOrderPort(inAppOrder)).thenReturn(Optional.of(inAppOrderAfterConsume));
-            Mockito.when(orderPersistencePort.saveOrderPort(Mockito.any())).thenReturn(Optional.of(orderAfterConsume));
 
             // act & assert
             ConsumeOrderCommand command = ConsumeOrderCommand.builder()
@@ -511,7 +401,6 @@ class StoreUseCaseTest {
             Mockito.verify(memberPersistencePort).getPlayerPort(accountId);
             Mockito.verify(googlePaymentPort, Mockito.never()).getInAppOrderPort(productId, socialOrderId, purchaseToken);
             Mockito.verify(memberPersistencePort, Mockito.never()).savePlayerPort(Mockito.any());
-            Mockito.verify(orderPersistencePort, Mockito.never()).saveOrderPort(Mockito.any());
             Mockito.verify(googlePaymentPort, Mockito.never()).consumeInAppOrderPort(Mockito.any());
             Mockito.verify(memberPublishPort, Mockito.never()).publishStarPointPort(Mockito.any());
         }
@@ -526,7 +415,6 @@ class StoreUseCaseTest {
                     .orderId(1L)
                     .accountId(accountId)
                     .productId(productId)
-                    .orderTypeCode(OrderTypeCode.ORDERED)
                     .price(price)
                     .socialOrderId(socialOrderId)
                     .purchaseToken(purchaseToken)
@@ -561,23 +449,12 @@ class StoreUseCaseTest {
                     .purchasedAt(LocalDateTime.now())
                     .build();
 
-            Order orderAfterConsume = Order.builder()
-                    .orderId(1L)
-                    .accountId(accountId)
-                    .productId(productId)
-                    .orderTypeCode(OrderTypeCode.CONSUMED)
-                    .price(price)
-                    .socialOrderId(socialOrderId)
-                    .purchaseToken(purchaseToken)
-                    .build();
-
             Mockito.when(orderPersistencePort.getOrderBySocialOrderIdPort(Mockito.any())).thenReturn(Optional.of(order));
             Mockito.when(orderPersistencePort.getExchangeStarPointProductPort(Mockito.any())).thenReturn(Optional.of(product));
             Mockito.when(memberPersistencePort.getPlayerPort(Mockito.any())).thenReturn(Optional.of(player));
             Mockito.when(googlePaymentPort.getInAppOrderPort(productId, socialOrderId, purchaseToken)).thenReturn(Optional.of(inAppOrder));
             Mockito.when(memberPersistencePort.savePlayerPort(Mockito.any())).thenReturn(Optional.empty());
             Mockito.when(googlePaymentPort.consumeInAppOrderPort(inAppOrder)).thenReturn(Optional.of(inAppOrderAfterConsume));
-            Mockito.when(orderPersistencePort.saveOrderPort(Mockito.any())).thenReturn(Optional.of(orderAfterConsume));
 
             // act & assert
             ConsumeOrderCommand command = ConsumeOrderCommand.builder()
@@ -591,7 +468,6 @@ class StoreUseCaseTest {
             Mockito.verify(memberPersistencePort).getPlayerPort(accountId);
             Mockito.verify(googlePaymentPort).getInAppOrderPort(productId, socialOrderId, purchaseToken);
             Mockito.verify(memberPersistencePort).savePlayerPort(Mockito.any());
-            Mockito.verify(orderPersistencePort, Mockito.never()).saveOrderPort(Mockito.any());
             Mockito.verify(googlePaymentPort, Mockito.never()).consumeInAppOrderPort(Mockito.any());
             Mockito.verify(memberPublishPort, Mockito.never()).publishStarPointPort(Mockito.any());
         }
@@ -605,7 +481,6 @@ class StoreUseCaseTest {
                     .orderId(1L)
                     .accountId(accountId)
                     .productId(productId)
-                    .orderTypeCode(OrderTypeCode.ORDERED)
                     .price(price)
                     .socialOrderId(socialOrderId)
                     .purchaseToken(purchaseToken)
@@ -640,23 +515,12 @@ class StoreUseCaseTest {
                     .purchasedAt(LocalDateTime.now())
                     .build();
 
-            Order orderAfterConsume = Order.builder()
-                    .orderId(1L)
-                    .accountId(accountId)
-                    .productId(productId)
-                    .orderTypeCode(OrderTypeCode.CONSUMED)
-                    .price(price)
-                    .socialOrderId(socialOrderId)
-                    .purchaseToken(purchaseToken)
-                    .build();
-
             Mockito.when(orderPersistencePort.getOrderBySocialOrderIdPort(Mockito.any())).thenReturn(Optional.of(order));
             Mockito.when(orderPersistencePort.getExchangeStarPointProductPort(Mockito.any())).thenReturn(Optional.of(product));
             Mockito.when(memberPersistencePort.getPlayerPort(Mockito.any())).thenReturn(Optional.of(player));
             Mockito.when(googlePaymentPort.getInAppOrderPort(productId, socialOrderId, purchaseToken)).thenReturn(Optional.empty());
             Mockito.when(memberPersistencePort.savePlayerPort(Mockito.any())).thenReturn(Optional.of(player));
             Mockito.when(googlePaymentPort.consumeInAppOrderPort(inAppOrder)).thenReturn(Optional.of(inAppOrderAfterConsume));
-            Mockito.when(orderPersistencePort.saveOrderPort(Mockito.any())).thenReturn(Optional.of(orderAfterConsume));
 
             // act & assert
             ConsumeOrderCommand command = ConsumeOrderCommand.builder()
@@ -670,87 +534,6 @@ class StoreUseCaseTest {
             Mockito.verify(memberPersistencePort).getPlayerPort(accountId);
             Mockito.verify(googlePaymentPort).getInAppOrderPort(productId, socialOrderId, purchaseToken);
             Mockito.verify(memberPersistencePort, Mockito.never()).savePlayerPort(Mockito.any());
-            Mockito.verify(orderPersistencePort, Mockito.never()).saveOrderPort(Mockito.any());
-            Mockito.verify(googlePaymentPort, Mockito.never()).consumeInAppOrderPort(Mockito.any());
-            Mockito.verify(memberPublishPort, Mockito.never()).publishStarPointPort(Mockito.any());
-        }
-
-        @Test
-        @DisplayName("이미 소비된 주문인 경우 예외가 발생한다.")
-        void alreadyConsumedOrder() {
-            // arrange
-            int starPoint = 100;
-            OrderPurchaseTypeCode orderPurchaseTypeCode = OrderPurchaseTypeCode.PAYED;
-            Order order = Order.builder()
-                    .orderId(1L)
-                    .accountId(accountId)
-                    .productId(productId)
-                    .orderTypeCode(OrderTypeCode.CONSUMED)
-                    .price(price)
-                    .socialOrderId(socialOrderId)
-                    .purchaseToken(purchaseToken)
-                    .build();
-
-            ExchangeStarPointProduct product = ExchangeStarPointProduct.builder()
-                    .productId(productId)
-                    .starPoint(starPoint)
-                    .build();
-
-            Player player = Player.builder()
-                    .accountId(accountId)
-                    .slotCount(1)
-                    .starPoint(0)
-                    .build();
-
-            InAppOrder inAppOrder = InAppOrder.builder()
-                    .socialOrderId(socialOrderId)
-                    .productId(productId)
-                    .purchaseToken(purchaseToken)
-                    .orderPurchaseTypeCode(orderPurchaseTypeCode)
-                    .orderTypeCode(OrderTypeCode.ORDERED)
-                    .purchasedAt(LocalDateTime.now())
-                    .build();
-
-            InAppOrder inAppOrderAfterConsume = InAppOrder.builder()
-                    .socialOrderId(socialOrderId)
-                    .productId(productId)
-                    .purchaseToken(purchaseToken)
-                    .orderPurchaseTypeCode(orderPurchaseTypeCode)
-                    .orderTypeCode(OrderTypeCode.CONSUMED)
-                    .purchasedAt(LocalDateTime.now())
-                    .build();
-
-            Order orderAfterConsume = Order.builder()
-                    .orderId(1L)
-                    .accountId(accountId)
-                    .productId(productId)
-                    .orderTypeCode(OrderTypeCode.CONSUMED)
-                    .price(price)
-                    .socialOrderId(socialOrderId)
-                    .purchaseToken(purchaseToken)
-                    .build();
-
-            Mockito.when(orderPersistencePort.getOrderBySocialOrderIdPort(Mockito.any())).thenReturn(Optional.of(order));
-            Mockito.when(orderPersistencePort.getExchangeStarPointProductPort(Mockito.any())).thenReturn(Optional.of(product));
-            Mockito.when(memberPersistencePort.getPlayerPort(Mockito.any())).thenReturn(Optional.of(player));
-            Mockito.when(googlePaymentPort.getInAppOrderPort(productId, socialOrderId, purchaseToken)).thenReturn(Optional.of(inAppOrder));
-            Mockito.when(memberPersistencePort.savePlayerPort(Mockito.any())).thenReturn(Optional.of(player));
-            Mockito.when(googlePaymentPort.consumeInAppOrderPort(inAppOrder)).thenReturn(Optional.of(inAppOrderAfterConsume));
-            Mockito.when(orderPersistencePort.saveOrderPort(Mockito.any())).thenReturn(Optional.of(orderAfterConsume));
-
-            // act & assert
-            ConsumeOrderCommand command = ConsumeOrderCommand.builder()
-                    .socialOrderId(socialOrderId)
-                    .build();
-
-            assertThrows(AlreadyConsumedOrderException.class, () -> storeUseCase.consumeOrderUseCase(command));
-
-            Mockito.verify(orderPersistencePort).getOrderBySocialOrderIdPort(socialOrderId);
-            Mockito.verify(orderPersistencePort).getExchangeStarPointProductPort(productId);
-            Mockito.verify(memberPersistencePort).getPlayerPort(accountId);
-            Mockito.verify(googlePaymentPort).getInAppOrderPort(productId, socialOrderId, purchaseToken);
-            Mockito.verify(memberPersistencePort).savePlayerPort(Mockito.any());
-            Mockito.verify(orderPersistencePort, Mockito.never()).saveOrderPort(Mockito.any());
             Mockito.verify(googlePaymentPort, Mockito.never()).consumeInAppOrderPort(Mockito.any());
             Mockito.verify(memberPublishPort, Mockito.never()).publishStarPointPort(Mockito.any());
         }
@@ -765,7 +548,6 @@ class StoreUseCaseTest {
                     .orderId(1L)
                     .accountId(accountId)
                     .productId(productId)
-                    .orderTypeCode(OrderTypeCode.ORDERED)
                     .price(price)
                     .socialOrderId(socialOrderId)
                     .purchaseToken(purchaseToken)
@@ -800,23 +582,12 @@ class StoreUseCaseTest {
                     .purchasedAt(LocalDateTime.now())
                     .build();
 
-            Order orderAfterConsume = Order.builder()
-                    .orderId(1L)
-                    .accountId(accountId)
-                    .productId(productId)
-                    .orderTypeCode(OrderTypeCode.CONSUMED)
-                    .price(price)
-                    .socialOrderId(socialOrderId)
-                    .purchaseToken(purchaseToken)
-                    .build();
-
             Mockito.when(orderPersistencePort.getOrderBySocialOrderIdPort(Mockito.any())).thenReturn(Optional.of(order));
             Mockito.when(orderPersistencePort.getExchangeStarPointProductPort(Mockito.any())).thenReturn(Optional.of(product));
             Mockito.when(memberPersistencePort.getPlayerPort(Mockito.any())).thenReturn(Optional.of(player));
             Mockito.when(googlePaymentPort.getInAppOrderPort(productId, socialOrderId, purchaseToken)).thenReturn(Optional.of(inAppOrder));
             Mockito.when(memberPersistencePort.savePlayerPort(Mockito.any())).thenReturn(Optional.of(player));
             Mockito.when(googlePaymentPort.consumeInAppOrderPort(inAppOrder)).thenReturn(Optional.of(inAppOrderAfterConsume));
-            Mockito.when(orderPersistencePort.saveOrderPort(Mockito.any())).thenReturn(Optional.of(orderAfterConsume));
 
             // act & assert
             ConsumeOrderCommand command = ConsumeOrderCommand.builder()
@@ -830,7 +601,6 @@ class StoreUseCaseTest {
             Mockito.verify(memberPersistencePort).getPlayerPort(accountId);
             Mockito.verify(googlePaymentPort).getInAppOrderPort(productId, socialOrderId, purchaseToken);
             Mockito.verify(memberPersistencePort).savePlayerPort(Mockito.any());
-            Mockito.verify(orderPersistencePort).saveOrderPort(Mockito.any());
             Mockito.verify(googlePaymentPort, Mockito.never()).consumeInAppOrderPort(Mockito.any());
             Mockito.verify(memberPublishPort, Mockito.never()).publishStarPointPort(Mockito.any());
         }
@@ -845,7 +615,6 @@ class StoreUseCaseTest {
                     .orderId(1L)
                     .accountId(accountId)
                     .productId(productId)
-                    .orderTypeCode(OrderTypeCode.ORDERED)
                     .price(price)
                     .socialOrderId(socialOrderId)
                     .purchaseToken(purchaseToken)
@@ -880,23 +649,12 @@ class StoreUseCaseTest {
                     .purchasedAt(LocalDateTime.now())
                     .build();
 
-            Order orderAfterConsume = Order.builder()
-                    .orderId(1L)
-                    .accountId(accountId)
-                    .productId(productId)
-                    .orderTypeCode(OrderTypeCode.CONSUMED)
-                    .price(price)
-                    .socialOrderId(socialOrderId)
-                    .purchaseToken(purchaseToken)
-                    .build();
-
             Mockito.when(orderPersistencePort.getOrderBySocialOrderIdPort(Mockito.any())).thenReturn(Optional.of(order));
             Mockito.when(orderPersistencePort.getExchangeStarPointProductPort(Mockito.any())).thenReturn(Optional.of(product));
             Mockito.when(memberPersistencePort.getPlayerPort(Mockito.any())).thenReturn(Optional.of(player));
             Mockito.when(googlePaymentPort.getInAppOrderPort(productId, socialOrderId, purchaseToken)).thenReturn(Optional.of(inAppOrder));
             Mockito.when(memberPersistencePort.savePlayerPort(Mockito.any())).thenReturn(Optional.of(player));
             Mockito.when(googlePaymentPort.consumeInAppOrderPort(inAppOrder)).thenReturn(Optional.of(inAppOrderAfterConsume));
-            Mockito.when(orderPersistencePort.saveOrderPort(Mockito.any())).thenReturn(Optional.of(orderAfterConsume));
 
             // act & assert
             ConsumeOrderCommand command = ConsumeOrderCommand.builder()
@@ -910,7 +668,6 @@ class StoreUseCaseTest {
             Mockito.verify(memberPersistencePort).getPlayerPort(accountId);
             Mockito.verify(googlePaymentPort).getInAppOrderPort(productId, socialOrderId, purchaseToken);
             Mockito.verify(memberPersistencePort).savePlayerPort(Mockito.any());
-            Mockito.verify(orderPersistencePort).saveOrderPort(Mockito.any());
             Mockito.verify(googlePaymentPort, Mockito.never()).consumeInAppOrderPort(Mockito.any());
             Mockito.verify(memberPublishPort, Mockito.never()).publishStarPointPort(Mockito.any());
         }
@@ -925,7 +682,6 @@ class StoreUseCaseTest {
                     .orderId(1L)
                     .accountId(accountId)
                     .productId(productId)
-                    .orderTypeCode(OrderTypeCode.ORDERED)
                     .price(price)
                     .socialOrderId(socialOrderId)
                     .purchaseToken(purchaseToken)
@@ -960,23 +716,12 @@ class StoreUseCaseTest {
                     .purchasedAt(LocalDateTime.now())
                     .build();
 
-            Order orderAfterConsume = Order.builder()
-                    .orderId(1L)
-                    .accountId(accountId)
-                    .productId(productId)
-                    .orderTypeCode(OrderTypeCode.CONSUMED)
-                    .price(price)
-                    .socialOrderId(socialOrderId)
-                    .purchaseToken(purchaseToken)
-                    .build();
-
             Mockito.when(orderPersistencePort.getOrderBySocialOrderIdPort(Mockito.any())).thenReturn(Optional.of(order));
             Mockito.when(orderPersistencePort.getExchangeStarPointProductPort(Mockito.any())).thenReturn(Optional.of(product));
             Mockito.when(memberPersistencePort.getPlayerPort(Mockito.any())).thenReturn(Optional.of(player));
             Mockito.when(googlePaymentPort.getInAppOrderPort(productId, socialOrderId, purchaseToken)).thenReturn(Optional.of(inAppOrder));
             Mockito.when(memberPersistencePort.savePlayerPort(Mockito.any())).thenReturn(Optional.of(player));
             Mockito.when(googlePaymentPort.consumeInAppOrderPort(inAppOrder)).thenReturn(Optional.of(inAppOrderAfterConsume));
-            Mockito.when(orderPersistencePort.saveOrderPort(Mockito.any())).thenReturn(Optional.of(orderAfterConsume));
 
             // act & assert
             ConsumeOrderCommand command = ConsumeOrderCommand.builder()
@@ -990,7 +735,6 @@ class StoreUseCaseTest {
             Mockito.verify(memberPersistencePort).getPlayerPort(accountId);
             Mockito.verify(googlePaymentPort).getInAppOrderPort(productId, socialOrderId, purchaseToken);
             Mockito.verify(memberPersistencePort).savePlayerPort(Mockito.any());
-            Mockito.verify(orderPersistencePort).saveOrderPort(Mockito.any());
             Mockito.verify(googlePaymentPort, Mockito.never()).consumeInAppOrderPort(Mockito.any());
             Mockito.verify(memberPublishPort, Mockito.never()).publishStarPointPort(Mockito.any());
         }
@@ -1005,7 +749,6 @@ class StoreUseCaseTest {
                     .orderId(1L)
                     .accountId(accountId)
                     .productId(productId)
-                    .orderTypeCode(OrderTypeCode.ORDERED)
                     .price(price)
                     .socialOrderId(socialOrderId)
                     .purchaseToken(purchaseToken)
@@ -1031,23 +774,12 @@ class StoreUseCaseTest {
                     .purchasedAt(LocalDateTime.now())
                     .build();
 
-            Order orderAfterConsume = Order.builder()
-                    .orderId(1L)
-                    .accountId(accountId)
-                    .productId(productId)
-                    .orderTypeCode(OrderTypeCode.CONSUMED)
-                    .price(price)
-                    .socialOrderId(socialOrderId)
-                    .purchaseToken(purchaseToken)
-                    .build();
-
             Mockito.when(orderPersistencePort.getOrderBySocialOrderIdPort(Mockito.any())).thenReturn(Optional.of(order));
             Mockito.when(orderPersistencePort.getExchangeStarPointProductPort(Mockito.any())).thenReturn(Optional.of(product));
             Mockito.when(memberPersistencePort.getPlayerPort(Mockito.any())).thenReturn(Optional.of(player));
             Mockito.when(googlePaymentPort.getInAppOrderPort(productId, socialOrderId, purchaseToken)).thenReturn(Optional.of(inAppOrder));
             Mockito.when(memberPersistencePort.savePlayerPort(Mockito.any())).thenReturn(Optional.of(player));
             Mockito.when(googlePaymentPort.consumeInAppOrderPort(inAppOrder)).thenReturn(Optional.empty());
-            Mockito.when(orderPersistencePort.saveOrderPort(Mockito.any())).thenReturn(Optional.of(orderAfterConsume));
 
             // act & assert
             ConsumeOrderCommand command = ConsumeOrderCommand.builder()
@@ -1061,7 +793,6 @@ class StoreUseCaseTest {
             Mockito.verify(memberPersistencePort).getPlayerPort(accountId);
             Mockito.verify(googlePaymentPort).getInAppOrderPort(productId, socialOrderId, purchaseToken);
             Mockito.verify(memberPersistencePort).savePlayerPort(Mockito.any());
-            Mockito.verify(orderPersistencePort).saveOrderPort(Mockito.any());
             Mockito.verify(googlePaymentPort).consumeInAppOrderPort(Mockito.any());
             Mockito.verify(memberPublishPort, Mockito.never()).publishStarPointPort(Mockito.any());
         }
@@ -1075,47 +806,39 @@ class StoreUseCaseTest {
         @DisplayName("소비된 주문 목록을 조회 한다.")
         void getConsumedOrder() {
             // arrange
-            List<Order> orders = List.of(
-                    Order.builder()
+            String socialOrderId = CommonUtil.randomId();
+            String purchaseToken = CommonUtil.randomId();
+            Order order = Order.builder()
                             .orderId(1L)
                             .accountId(accountId)
                             .productId("PRDT000")
-                            .orderTypeCode(OrderTypeCode.CONSUMED)
                             .price(1000D)
-                            .socialOrderId(CommonUtil.randomId())
-                            .purchaseToken(CommonUtil.randomId())
-                            .build(),
-                    Order.builder()
-                            .orderId(2L)
-                            .accountId(accountId)
-                            .productId("PRDT001")
-                            .orderTypeCode(OrderTypeCode.CONSUMED)
-                            .price(2000D)
-                            .socialOrderId(CommonUtil.randomId())
-                            .purchaseToken(CommonUtil.randomId())
-                            .build(),
-                    Order.builder()
-                            .orderId(1L)
-                            .accountId(accountId)
-                            .productId("PRDT002")
-                            .orderTypeCode(OrderTypeCode.CONSUMED)
-                            .price(3000D)
-                            .socialOrderId(CommonUtil.randomId())
-                            .purchaseToken(CommonUtil.randomId())
-                            .build());
+                            .socialOrderId(socialOrderId)
+                            .purchaseToken(purchaseToken)
+                            .build();
+            List<Order> orders = List.of(order);
 
-            Mockito.when(orderPersistencePort.getConsumedOrdersPort(Mockito.any(), Mockito.any())).thenReturn(orders);
+            InAppOrder inAppOrder = InAppOrder.builder()
+                    .socialOrderId(socialOrderId)
+                    .productId(order.getProductId())
+                    .purchaseToken(purchaseToken)
+                    .orderPurchaseTypeCode(OrderPurchaseTypeCode.PAYED)
+                    .orderTypeCode(OrderTypeCode.CONSUMED)
+                    .purchasedAt(LocalDateTime.now())
+                    .build();
+
+            Mockito.when(orderPersistencePort.getOrderBySocialOrderIdPort(Mockito.any())).thenReturn(Optional.of(order));
+            Mockito.when(googlePaymentPort.getInAppOrderPort(Mockito.any(), Mockito.any(), Mockito.any())).thenReturn(Optional.of(inAppOrder));
 
             // act
             GetConsumedOrderCommand command = GetConsumedOrderCommand.builder()
-                    .accountId(accountId)
+                    .socialOrderIds(List.of(socialOrderId))
                     .build();
 
             List<Order> expected = storeUseCase.getConsumedOrderUseCase(command);
 
             // assert
             assertEquals(expected, orders);
-            Mockito.verify(orderPersistencePort).getConsumedOrdersPort(Mockito.any(), Mockito.any());
         }
     }
 }
