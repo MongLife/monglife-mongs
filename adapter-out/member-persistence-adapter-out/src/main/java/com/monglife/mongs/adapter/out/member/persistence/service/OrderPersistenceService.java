@@ -29,6 +29,17 @@ public class OrderPersistenceService implements OrderPersistencePort {
     private final OrderRepository orderRepository;
 
     /**
+     * 주문 존재 여부 조회
+     * @param accountId 회원 ID
+     * @param socialOrderId 인앱 주문 ID
+     * @return 주문 존재 여부
+     */
+    @Override
+    public Boolean isExistsOrderByAccountIdAndSocialOrderIdPort(Long accountId, String socialOrderId) {
+        return orderRepository.existsByAccountIdAndSocialOrderId(accountId, socialOrderId);
+    }
+
+    /**
      * 스타 포인트 환전 상품 조회
      * @param productId 인앱 상품 ID
      * @return 스타 포인트 환전 상품 도메인 옵셔널 객체
@@ -56,7 +67,6 @@ public class OrderPersistenceService implements OrderPersistencePort {
                     .price(createOrderVo.getPrice())
                     .socialOrderId(createOrderVo.getSocialOrderId())
                     .purchaseToken(createOrderVo.getPurchaseToken())
-                    .isConsumed(false)
                     .build();
 
             return Optional.of(orderRepository.save(orderEntity).toDomain());
@@ -87,21 +97,6 @@ public class OrderPersistenceService implements OrderPersistencePort {
         } else {
             return Optional.empty();
         }
-    }
-
-    /**
-     * 소비된 주문 목록 조회
-     * @param accountId 회원 ID
-     * @param socialOrderIds 인앱 주문 ID 목록
-     * @return 주문 도메인 객체 목록
-     */
-    @Override
-    @Transactional
-    public List<Order> getConsumedOrdersPort(Long accountId, List<String> socialOrderIds) {
-        return orderRepository.findByIsConsumedIsTrueAndSocialOrderIdIn(socialOrderIds)
-                .stream()
-                .map(OrderEntity::toDomain)
-                .collect(Collectors.toList());
     }
 
     /**

@@ -33,23 +33,19 @@ public class OrderEntity extends BaseTimeEntity {
     @Column(name = "price")
     private Double price;
 
-    @Column(name = "social_order_id")
+    @Column(name = "social_order_id", unique = true)
     private String socialOrderId;
 
     @Column(name = "purchase_token")
     private String purchaseToken;
 
-    @Column(name = "is_consumed")
-    private Boolean isConsumed = false;
-
     @Builder
-    public OrderEntity(Long accountId, ComnCodeEntity productType, Double price, String socialOrderId, String purchaseToken, Boolean isConsumed) {
+    public OrderEntity(Long accountId, ComnCodeEntity productType, Double price, String socialOrderId, String purchaseToken) {
         this.accountId = accountId;
         this.productType = productType;
         this.price = price;
         this.socialOrderId = socialOrderId;
         this.purchaseToken = purchaseToken;
-        this.isConsumed = isConsumed;
     }
 
     /**
@@ -63,7 +59,6 @@ public class OrderEntity extends BaseTimeEntity {
         this.price = order.getPrice();
         this.socialOrderId = order.getSocialOrderId();
         this.purchaseToken = order.getPurchaseToken();
-        this.isConsumed = order.getOrderTypeCode() == OrderTypeCode.CONSUMED;
     }
 
     /**
@@ -78,7 +73,6 @@ public class OrderEntity extends BaseTimeEntity {
                 .price(this.price)
                 .socialOrderId(this.socialOrderId)
                 .purchaseToken(this.purchaseToken)
-                .orderTypeCode(this.isConsumed ? OrderTypeCode.CONSUMED : OrderTypeCode.ORDERED)
                 .build();
     }
 }

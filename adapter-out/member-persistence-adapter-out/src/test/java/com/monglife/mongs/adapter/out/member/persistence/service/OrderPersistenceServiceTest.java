@@ -14,7 +14,6 @@ import com.monglife.mongs.adapter.out.member.persistence.repository.GroupCodeRep
 import com.monglife.mongs.adapter.out.member.persistence.repository.OrderRepository;
 import com.monglife.mongs.application.member.port.out.OrderPersistencePort;
 import com.monglife.mongs.application.member.port.out.vo.CreateOrderVo;
-import com.monglife.mongs.domain.enums.OrderTypeCode;
 import com.monglife.mongs.domain.model.ExchangeStarPointProduct;
 import com.monglife.mongs.domain.model.Order;
 import org.junit.jupiter.api.BeforeEach;
@@ -28,12 +27,9 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestPropertySource;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 @DataJpaTest
 @ActiveProfiles("test")
@@ -71,6 +67,46 @@ class OrderPersistenceServiceTest {
     void beforeEach() {
         groupCodeRepository.saveAndFlush(productGroupCodeEntity);
         comnCodeRepository.saveAndFlush(productType);
+    }
+
+    @Nested
+    @DisplayName("주문 존재 여부 확인 단위 테스트")
+    class IsExistsOrderBySocialOrderIdPort {
+
+        @Test
+        @DisplayName("주문이 존재하는 경우 true를 반환 한다.")
+        void isExistOrderBySocialOrderId() {
+            // arrange
+            String socialOrderId = CommonUtil.randomId();
+            String purchaseToken = CommonUtil.randomId();
+
+            orderRepository.saveAndFlush(OrderEntity.builder()
+                            .accountId(accountId)
+                            .productType(productType)
+                            .price(0D)
+                            .socialOrderId(socialOrderId)
+                            .purchaseToken(purchaseToken)
+                            .build());
+
+            // act
+            Boolean expected = orderPersistencePort.isExistsOrderByAccountIdAndSocialOrderIdPort(accountId, socialOrderId);
+
+            // assert
+            assertTrue(expected);
+        }
+
+        @Test
+        @DisplayName("주문이 존재하지 않는 경우 false를 반환 한다.")
+        void notExistOrderBySocialOrderId() {
+            // arrange
+            String socialOrderId = CommonUtil.randomId();
+
+            // act
+            Boolean expected = orderPersistencePort.isExistsOrderByAccountIdAndSocialOrderIdPort(accountId, socialOrderId);
+
+            // assert
+            assertFalse(expected);
+        }
     }
 
     @Nested
@@ -135,7 +171,6 @@ class OrderPersistenceServiceTest {
             assertTrue(orderOptional.isPresent());
             assertEquals(accountId, orderOptional.get().getAccountId());
             assertEquals(productId, orderOptional.get().getProductId());
-            assertEquals(OrderTypeCode.ORDERED, orderOptional.get().getOrderTypeCode());
             assertEquals(price, orderOptional.get().getPrice());
             assertEquals(socialOrderId, orderOptional.get().getSocialOrderId());
             assertEquals(purchaseToken, orderOptional.get().getPurchaseToken());
@@ -183,7 +218,6 @@ class OrderPersistenceServiceTest {
                     .price(0D)
                     .socialOrderId(socialOrderId)
                     .purchaseToken(purchaseToken)
-                    .isConsumed(false)
                     .build())
                     .getOrderId();
 
@@ -191,7 +225,6 @@ class OrderPersistenceServiceTest {
                     .orderId(orderId)
                     .accountId(accountId)
                     .productId(productId)
-                    .orderTypeCode(OrderTypeCode.ORDERED)
                     .price(price)
                     .socialOrderId(socialOrderId)
                     .purchaseToken(purchaseToken)
@@ -205,7 +238,6 @@ class OrderPersistenceServiceTest {
             assertEquals(orderId, orderOptional.get().getOrderId());
             assertEquals(accountId, orderOptional.get().getAccountId());
             assertEquals(productId, orderOptional.get().getProductId());
-            assertEquals(OrderTypeCode.ORDERED, orderOptional.get().getOrderTypeCode());
             assertEquals(price, orderOptional.get().getPrice());
             assertEquals(socialOrderId, orderOptional.get().getSocialOrderId());
             assertEquals(purchaseToken, orderOptional.get().getPurchaseToken());
@@ -227,7 +259,6 @@ class OrderPersistenceServiceTest {
                     .price(price)
                     .socialOrderId(socialOrderId)
                     .purchaseToken(purchaseToken)
-                    .orderTypeCode(OrderTypeCode.ORDERED)
                     .build();
 
             // act
@@ -235,49 +266,6 @@ class OrderPersistenceServiceTest {
 
             // assert
             assertTrue(orderOptional.isEmpty());
-        }
-    }
-
-    @Nested
-    @DisplayName("소비된 주문 목록 조회 단위 테스트")
-    class GetConsumedOrdersPort {
-
-        @Test
-        @DisplayName("소비된 주문 목록을 조회 한다.")
-        void getConsumedOrders() {
-            // arrange
-            int orderCount = 10;
-            int consumedOrderCount = 5;
-            List<OrderEntity> orderEntities = new ArrayList<>();
-            List<String> socialOrderIds = new ArrayList<>();
-
-            for (long index = 1L; index <= orderCount; index++) {
-                String socialOrderId = CommonUtil.randomId();
-                OrderEntity orderEntity = OrderEntity.builder()
-                        .accountId(accountId)
-                        .productType(productType)
-                        .price(0D)
-                        .socialOrderId(socialOrderId)
-                        .purchaseToken(CommonUtil.randomId())
-                        .isConsumed(index <= consumedOrderCount)
-                        .build();
-
-                orderEntities.add(orderEntity);
-                socialOrderIds.add(socialOrderId);
-            }
-
-            orderRepository.saveAllAndFlush(orderEntities);
-
-            // act
-            List<Order> orders = orderPersistencePort.getConsumedOrdersPort(accountId, socialOrderIds);
-
-            // assert
-            for (long index = 1L; index <= consumedOrderCount; index++) {
-                Order order = orders.get((int) index - 1);
-                assertEquals(accountId, order.getAccountId());
-                assertEquals(productId, order.getProductId());
-                assertEquals(OrderTypeCode.CONSUMED, order.getOrderTypeCode());
-            }
         }
     }
 
@@ -299,7 +287,6 @@ class OrderPersistenceServiceTest {
                     .price(price)
                     .socialOrderId(socialOrderId)
                     .purchaseToken(purchaseToken)
-                    .isConsumed(false)
                     .build())
                     .getOrderId();
 
@@ -312,7 +299,6 @@ class OrderPersistenceServiceTest {
             assertEquals(accountId, orderOptional.get().getAccountId());
             assertEquals(productId, orderOptional.get().getProductId());
             assertEquals(price, orderOptional.get().getPrice());
-            assertEquals(OrderTypeCode.ORDERED, orderOptional.get().getOrderTypeCode());
             assertEquals(socialOrderId, orderOptional.get().getSocialOrderId());
             assertEquals(purchaseToken, orderOptional.get().getPurchaseToken());
         }
