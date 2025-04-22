@@ -9,6 +9,7 @@ import com.monglife.mongs.application.device.port.in.service.StepService;
 import com.monglife.mongs.application.device.port.out.DeviceEventPort;
 import com.monglife.mongs.application.device.port.out.DevicePersistencePort;
 import com.monglife.mongs.application.device.port.out.DevicePublishPort;
+import com.monglife.mongs.domain.exception.InvalidTotalWalkingCountException;
 import com.monglife.mongs.domain.model.Step;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -331,6 +332,33 @@ class StepUseCaseTest {
             Mockito.verify(devicePersistencePort).getStepPort(deviceId);
             Mockito.verify(devicePersistencePort, Mockito.never()).createStepPort(Mockito.any());
             Mockito.verify(devicePersistencePort).saveStepPort(Mockito.any());
+        }
+
+        @Test
+        @DisplayName("부팅 시간이 동일하지만 현재 총 걸음 수보다 적은 총 걸음 수인 경우 예외가 발생 한다.")
+        void updateTotalWalkingCountWhenLeastTotalWalkingCount() {
+            // arrange
+            int walkingCount = 50;
+            int newTotalWalkingCount = 0;
+            Step step = Step.builder()
+                    .deviceId(deviceId)
+                    .walkingCount(0)
+                    .consumeWalkingCount(0)
+                    .totalWalkingCount(totalWalkingCount)
+                    .deviceBootedDt(deviceBootedDt)
+                    .build();
+
+            Mockito.when(devicePersistencePort.getStepPort(deviceId)).thenReturn(Optional.of(step));
+            Mockito.when(devicePersistencePort.saveStepPort(Mockito.any())).thenReturn(Optional.of(step));
+
+            // act & assert
+            UpdateTotalWalkingCountCommand command = UpdateTotalWalkingCountCommand.builder()
+                    .deviceId(deviceId)
+                    .totalWalkingCount(newTotalWalkingCount)
+                    .deviceBootedDt(deviceBootedDt)
+                    .build();
+
+            assertThrows(InvalidTotalWalkingCountException.class, () -> stepUseCase.updateTotalWalkingCountUseCase(command));
         }
 
         @Test
