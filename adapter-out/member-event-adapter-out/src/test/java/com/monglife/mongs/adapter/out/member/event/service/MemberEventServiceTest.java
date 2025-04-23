@@ -2,7 +2,7 @@ package com.monglife.mongs.adapter.out.member.event.service;
 
 import com.monglife.module.common.kafka.config.KafkaAutoConfig;
 import com.monglife.mongs.adapter.out.member.event.config.AdapterOutMemberEventConfig;
-import com.monglife.mongs.adapter.transaction.commit.ExchangeStarPointEventDto;
+import com.monglife.mongs.adapter.transaction.ExchangeStarPointEventDto;
 import com.monglife.mongs.application.member.port.out.MemberEventPort;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;

@@ -1,8 +1,7 @@
 package com.monglife.mongs.adapter.out.member.event.service;
 
 import com.monglife.module.common.kafka.service.KafkaService;
-import com.monglife.mongs.adapter.transaction.commit.ExchangeStarPointEventDto;
-import com.monglife.mongs.domain.model.Player;
+import com.monglife.mongs.adapter.transaction.ExchangeStarPointEventDto;
 import com.monglife.mongs.application.member.port.out.MemberEventPort;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;

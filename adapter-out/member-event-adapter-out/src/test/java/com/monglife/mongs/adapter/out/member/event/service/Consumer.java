@@ -1,7 +1,7 @@
 package com.monglife.mongs.adapter.out.member.event.service;
 
 import com.monglife.module.common.kafka.event.TransactionEvent;
-import com.monglife.mongs.adapter.transaction.commit.ExchangeStarPointEventDto;
+import com.monglife.mongs.adapter.transaction.ExchangeStarPointEventDto;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Component;
 

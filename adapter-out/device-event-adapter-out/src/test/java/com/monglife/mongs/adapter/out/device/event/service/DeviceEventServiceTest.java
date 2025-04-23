@@ -2,7 +2,7 @@ package com.monglife.mongs.adapter.out.device.event.service;
 
 import com.monglife.module.common.kafka.config.KafkaAutoConfig;
 import com.monglife.mongs.adapter.out.device.event.config.AdapterOutDeviceEventConfig;
-import com.monglife.mongs.adapter.transaction.commit.ExchangeCurrentWalkingCountEventDto;
+import com.monglife.mongs.adapter.transaction.ExchangeCurrentWalkingCountEventDto;
 import com.monglife.mongs.application.device.port.out.DeviceEventPort;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -45,6 +45,7 @@ class DeviceEventServiceTest {
         @DisplayName("환전할 걸음 수, 환전할 페이 포인트 정보를 담아 걸음 수 환전 이벤트를 발생 한다.")
         void exchangeCurrentWalkingCountEvent() throws InterruptedException {
             // arrange
+            String deviceId = "TEST-DEVICE-ID";
             long mongId = 1L;
             int walkingCount = 10;
             int payPoint = 100;
@@ -55,12 +56,13 @@ class DeviceEventServiceTest {
             consumer.reset(exchangeCurrentWalkingCountEventDto, countDownLatch);
 
             // act
-            deviceEventPort.exchangeCurrentWalkingCountEventPort(mongId, walkingCount, payPoint);
+            deviceEventPort.exchangeCurrentWalkingCountEventPort(deviceId, mongId, walkingCount, payPoint);
 
             boolean messageConsumed = countDownLatch.await(30, TimeUnit.SECONDS);
 
             // assert
             assertTrue(messageConsumed);
+            assertEquals(deviceId, exchangeCurrentWalkingCountEventDto.getDeviceId());
             assertEquals(mongId, exchangeCurrentWalkingCountEventDto.getMongId());
             assertEquals(walkingCount, exchangeCurrentWalkingCountEventDto.getWalkingCount());
             assertEquals(payPoint, exchangeCurrentWalkingCountEventDto.getPayPoint());

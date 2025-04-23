@@ -1,4 +1,4 @@
-package com.monglife.mongs.adapter.transaction.commit;
+package com.monglife.mongs.adapter.transaction;
 
 import lombok.Builder;
 import lombok.Getter;
@@ -10,6 +10,8 @@ import lombok.Setter;
 @NoArgsConstructor
 public class ExchangeCurrentWalkingCountEventDto {
 
+    private String deviceId;
+
     private Long mongId;
 
     private Integer walkingCount;
@@ -17,7 +19,8 @@ public class ExchangeCurrentWalkingCountEventDto {
     private Integer payPoint;
 
     @Builder
-    public ExchangeCurrentWalkingCountEventDto(Long mongId, Integer walkingCount, Integer payPoint) {
+    public ExchangeCurrentWalkingCountEventDto(String deviceId, Long mongId, Integer walkingCount, Integer payPoint) {
+        this.deviceId = deviceId;
         this.mongId = mongId;
         this.walkingCount = walkingCount;
         this.payPoint = payPoint;

@@ -55,7 +55,7 @@ public class StepService implements StepUseCase {
 
         // 보유 걸음 수 환전 이벤트 발생
         int payPoint = command.getWalkingCount() * stepPerPayPoint;
-        deviceEventPort.exchangeCurrentWalkingCountEventPort(command.getMongId(), command.getWalkingCount(), payPoint);
+        deviceEventPort.exchangeCurrentWalkingCountEventPort(step.getDeviceId(), command.getMongId(), command.getWalkingCount(), payPoint);
 
         // 걸음 수 수정
         devicePersistencePort.saveStepPort(step)

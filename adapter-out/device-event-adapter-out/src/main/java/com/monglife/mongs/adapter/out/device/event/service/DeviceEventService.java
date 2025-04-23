@@ -1,7 +1,7 @@
 package com.monglife.mongs.adapter.out.device.event.service;
 
 import com.monglife.module.common.kafka.service.KafkaService;
-import com.monglife.mongs.adapter.transaction.commit.ExchangeCurrentWalkingCountEventDto;
+import com.monglife.mongs.adapter.transaction.ExchangeCurrentWalkingCountEventDto;
 import com.monglife.mongs.application.device.port.out.DeviceEventPort;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -14,16 +14,18 @@ public class DeviceEventService implements DeviceEventPort {
 
     /**
      * 걸음 수 환전 분산 트랜잭션 이벤트 발생
+     * @param deviceId 기기 ID
      * @param mongId 몽 ID
      * @param walkingCount 환전할 걸음 수
      * @param payPoint 환전할 페이 포인트
      */
     @Override
-    public void exchangeCurrentWalkingCountEventPort(Long mongId, Integer walkingCount, Integer payPoint) {
+    public void exchangeCurrentWalkingCountEventPort(String deviceId, Long mongId, Integer walkingCount, Integer payPoint) {
 
         String topic = "commit.exchangeCurrentWalkingCount";
 
         ExchangeCurrentWalkingCountEventDto exchangeCurrentWalkingCountEventDto = ExchangeCurrentWalkingCountEventDto.builder()
+                .deviceId(deviceId)
                 .mongId(mongId)
                 .walkingCount(walkingCount)
                 .payPoint(payPoint)

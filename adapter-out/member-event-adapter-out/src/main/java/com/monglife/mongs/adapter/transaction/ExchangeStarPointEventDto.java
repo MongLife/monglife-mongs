@@ -1,4 +1,4 @@
-package com.monglife.mongs.adapter.transaction.commit;
+package com.monglife.mongs.adapter.transaction;
 
 import lombok.Builder;
 import lombok.Getter;
