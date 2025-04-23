@@ -16,14 +16,14 @@ dependencies {
 
 tasks.register('copyPrivate', Copy) {
     copy {
-        from('../../configs/adapter-out/member-persistence-adapter-out/') {
+        from('../../configs/adapter/persistence/member/') {
             include('application.yml')
             rename('application.yml', 'persistence-member.yml')
         }
         into('src/main/resources')
     }
     copy {
-        from('../../configs/adapter-out/member-persistence-adapter-out/')
+        from('../../configs/adapter/persistence/member/')
         include('application.yml')
         into('src/test/resources')
     }

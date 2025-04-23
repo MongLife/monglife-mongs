@@ -44,6 +44,7 @@ class MemberEventServiceTest {
         @DisplayName("환전할 스타 포인트, 환전할 페이 포인트 정보를 담아 스타 포인트 환전 이벤트를 발생 한다.")
         void exchangeStarPointEvent() throws InterruptedException {
             // arrange
+            long accountId = 1L;
             long mongId = 1L;
             int starPoint = 10;
             int payPoint = 100;
@@ -54,7 +55,7 @@ class MemberEventServiceTest {
             consumer.reset(exchangeStarPointEventDto, countDownLatch);
 
             // act
-            memberEventPort.exchangeStarPointEventPort(mongId, starPoint, payPoint);
+            memberEventPort.exchangeStarPointEventPort(accountId, mongId, starPoint, payPoint);
 
             boolean messageConsumed = countDownLatch.await(30, TimeUnit.SECONDS);
 

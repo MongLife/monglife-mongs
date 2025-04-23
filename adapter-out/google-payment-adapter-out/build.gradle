@@ -9,25 +9,25 @@ dependencies {
 
 tasks.register('copyPrivate', Copy) {
     copy {
-        from('../../configs/adapter-out/google-payment-adapter-out/') {
+        from('../../configs/adapter/payment/google/') {
             include('application.yml')
             rename('application.yml', 'payment-google.yml')
         }
         into('src/main/resources')
     }
     copy {
-        from('../../configs/adapter-out/google-payment-adapter-out/')
+        from('../../configs/adapter/payment/google/')
         include('application.yml')
         into('src/test/resources')
     }
     copy {
-        from '../../configs/adapter-out/google-payment-adapter-out/'
-        include 'account-google.json'
-        into 'src/main/resources'
+        from('../../configs/adapter/payment/google/')
+        include('account-google.json')
+        into('src/main/resources')
     }
     copy {
-        from '../../configs/adapter-out/google-payment-adapter-out/'
-        include 'account-google.json'
-        into 'src/test/resources'
+        from('../../configs/adapter/payment/google/')
+        include('account-google.json')
+        into('src/test/resources')
     }
 }

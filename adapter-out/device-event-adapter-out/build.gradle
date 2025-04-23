@@ -7,14 +7,14 @@ dependencies {
 
 tasks.register('copyPrivate', Copy) {
     copy {
-        from('../../configs/adapter-out/device-event-adapter-out/') {
+        from('../../configs/adapter/event/') {
             include('application.yml')
             rename('application.yml', 'event-device.yml')
         }
         into('src/main/resources')
     }
     copy {
-        from('../../configs/adapter-out/device-event-adapter-out/')
+        from('../../configs/adapter/event/')
         include('application.yml')
         into('src/test/resources')
     }

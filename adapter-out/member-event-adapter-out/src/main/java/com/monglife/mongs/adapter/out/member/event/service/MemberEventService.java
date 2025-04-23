@@ -20,11 +20,12 @@ public class MemberEventService implements MemberEventPort {
      * @param payPoint 환전할 페이 포인트
      */
     @Override
-    public void exchangeStarPointEventPort(Long mongId, Integer starPoint, Integer payPoint) {
+    public void exchangeStarPointEventPort(Long accountId, Long mongId, Integer starPoint, Integer payPoint) {
 
         String topic = "commit.exchangeStarPoint";
 
         ExchangeStarPointEventDto exchangeStarPointEventDto = ExchangeStarPointEventDto.builder()
+                .accountId(accountId)
                 .mongId(mongId)
                 .starPoint(starPoint)
                 .payPoint(payPoint)

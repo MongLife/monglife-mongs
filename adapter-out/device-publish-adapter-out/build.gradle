@@ -7,14 +7,14 @@ dependencies {
 
 tasks.register('copyPrivate', Copy) {
     copy {
-        from('../../configs/adapter-out/device-publish-adapter-out/') {
+        from('../../configs/adapter/publish/device/') {
             include('application.yml')
             rename('application.yml', 'publish-device.yml')
         }
         into('src/main/resources')
     }
     copy {
-        from('../../configs/adapter-out/device-publish-adapter-out/')
+        from('../../configs/adapter/publish/device/')
         include('application.yml')
         into('src/test/resources')
     }
