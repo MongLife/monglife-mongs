@@ -288,7 +288,7 @@ class PlayerUseCaseTest {
             assertTrue(player.getStarPoint() < starPoint);
             Mockito.verify(memberPersistencePort).getPlayerPort(command.getAccountId());
             Mockito.verify(memberPersistencePort).savePlayerPort(player);
-            Mockito.verify(memberEventPort).exchangeStarPointEventPort(mongId, starPoint, payPoint);
+            Mockito.verify(memberEventPort).exchangeStarPointEventPort(accountId, mongId, starPoint, payPoint);
             Mockito.verify(memberPublishPort).publishStarPointPort(player);
         }
 
@@ -366,7 +366,7 @@ class PlayerUseCaseTest {
             assertThrows(NotEnoughStarPointException.class, () -> playerUseCase.exchangeStarPointUseCase(command));
             Mockito.verify(memberPersistencePort).getPlayerPort(command.getAccountId());
             Mockito.verify(memberPersistencePort, Mockito.never()).savePlayerPort(player);
-            Mockito.verify(memberEventPort, Mockito.never()).exchangeStarPointEventPort(mongId, starPoint, payPoint);
+            Mockito.verify(memberEventPort, Mockito.never()).exchangeStarPointEventPort(accountId, mongId, starPoint, payPoint);
             Mockito.verify(memberPublishPort, Mockito.never()).publishStarPointPort(player);
         }
     }

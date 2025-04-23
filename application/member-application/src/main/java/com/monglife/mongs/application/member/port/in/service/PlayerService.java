@@ -99,7 +99,7 @@ public class PlayerService implements PlayerUseCase {
 
         // 스타 포인트 환전 이벤트 발생
         int payPoint = command.getStarPoint() * starPointPerPayPoint;
-        memberEventPort.exchangeStarPointEventPort(command.getMongId(), command.getStarPoint(), payPoint);
+        memberEventPort.exchangeStarPointEventPort(command.getAccountId(), command.getMongId(), command.getStarPoint(), payPoint);
 
         // 스타 포인트 비동기 응답
         memberPublishPort.publishStarPointPort(player);

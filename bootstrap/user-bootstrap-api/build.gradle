@@ -1,8 +1,8 @@
 dependencies {
     // adapter-in layer
-    implementation project(':adapter-in:device-sub-adapter-in')
+    implementation project(':adapter-in:device-event-adapter-in')
     implementation project(':adapter-in:device-web-adapter-in')
-    implementation project(':adapter-in:member-sub-adapter-in')
+    implementation project(':adapter-in:member-event-adapter-in')
     implementation project(':adapter-in:member-web-adapter-in')
 
     // adapter-out layer

@@ -23,9 +23,9 @@ include 'bootstrap:user-bootstrap-api'
 
 include 'adapter-in'
 include 'adapter-in:device-web-adapter-in'
-include 'adapter-in:device-sub-adapter-in'
+include 'adapter-in:device-event-adapter-in'
 include 'adapter-in:member-web-adapter-in'
-include 'adapter-in:member-sub-adapter-in'
+include 'adapter-in:member-event-adapter-in'
 
 include 'application'
 include 'application:device-application'
