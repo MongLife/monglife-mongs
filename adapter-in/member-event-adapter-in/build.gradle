@@ -1,0 +1,21 @@
+dependencies {
+    // application layer
+    implementation project(':application:member-application')
+    // monglife-kafka
+    implementation 'com.github.monglife.monglife-module-common:monglife-module-common-kafka:1.0.11'
+}
+
+tasks.register('copyPrivate', Copy) {
+    copy {
+        from('../../configs/adapter/event/') {
+            include('application.yml')
+            rename('application.yml', 'event-member.yml')
+        }
+        into('src/main/resources')
+    }
+    copy {
+        from('../../configs/adapter/event/')
+        include('application.yml')
+        into('src/test/resources')
+    }
+}
