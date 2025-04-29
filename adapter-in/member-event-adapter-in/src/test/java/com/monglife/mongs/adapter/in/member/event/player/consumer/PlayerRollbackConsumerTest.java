@@ -2,7 +2,6 @@ package com.monglife.mongs.adapter.in.member.event.player.consumer;
 
 import com.monglife.module.common.kafka.config.KafkaAutoConfig;
 import com.monglife.module.common.kafka.service.KafkaService;
-import com.monglife.mongs.adapter.in.member.event.config.AdapterInMemberEventConfig;
 import com.monglife.mongs.adapter.in.member.event.transaction.ExchangeStarPointEventDto;
 import com.monglife.mongs.application.member.port.in.PlayerUseCase;
 import com.monglife.mongs.application.member.port.in.command.IncreaseStarPointCommand;
@@ -17,13 +16,15 @@ import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.ComponentScan;
+import org.springframework.kafka.test.context.EmbeddedKafka;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestPropertySource;
 
 import java.time.Duration;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @SpringBootTest
 @EnableAutoConfiguration
@@ -31,6 +32,8 @@ import static org.junit.jupiter.api.Assertions.*;
 @TestPropertySource(locations = "classpath:application.yml")
 @ContextConfiguration(classes = { PlayerRollbackConsumer.class, KafkaAutoConfig.class })
 @ComponentScan({ "com.monglife.module.common.kafka" })
+@EmbeddedKafka(partitions = 1, brokerProperties = { "listeners=PLAINTEXT://localhost:9092", "port=9092" })
+@DirtiesContext
 class PlayerRollbackConsumerTest {
 
     @MockBean

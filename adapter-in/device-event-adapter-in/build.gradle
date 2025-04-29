@@ -3,6 +3,8 @@ dependencies {
     implementation project(':application:device-application')
     // monglife-kafka
     implementation 'com.github.monglife.monglife-module-common:monglife-module-common-kafka:1.0.11'
+    // test
+    testImplementation 'org.springframework.kafka:spring-kafka-test'
 }
 
 tasks.register('copyPrivate', Copy) {
