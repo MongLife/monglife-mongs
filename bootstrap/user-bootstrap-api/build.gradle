@@ -13,6 +13,12 @@ dependencies {
     implementation project(':adapter-out:member-event-adapter-out')
     implementation project(':adapter-out:member-persistence-adapter-out')
     implementation project(':adapter-out:member-publish-adapter-out')
+
+    // eureka
+    implementation('org.springframework.cloud:spring-cloud-starter-netflix-eureka-client') {
+        exclude group: 'com.google.guava', module: 'guava'
+    }
+    implementation 'com.google.guava:guava:32.0.1-android'
 }
 
 tasks.register('copyPrivate', Copy) {
