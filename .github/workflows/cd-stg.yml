@@ -1,0 +1,51 @@
+name: cd
+on:
+  push:
+    branches: [ stage, refac/user-api ]
+jobs:
+  # 빌드 테스트
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      # 소스 로드
+      - name: Checkout the code
+        uses: actions/checkout@v3
+        with:
+          token: ${{ secrets.ACTION_TOKEN }}
+          submodules: true
+      # Java 환경 설정
+      - name: Set up jdk
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'zulu'
+          java-version: '17'
+      # gradlew 권한 변경
+      - name: Grant execute permission for gradlew
+        run: chmod +x gradlew
+      # 환경 설정 파일 로드
+      - name: configuration set up
+        run: ./gradlew copyPrivate
+      # Bootstrap User API 빌드
+      - name: Bootstrap user API build
+        run: ./gradlew :bootstrap:user-bootstrap-api:build
+      # 배포 파일 원격 복사
+      - name: Deploy stage use SCP
+        uses: appleboy/scp-action@master
+        with:
+          host: ${{ secrets.STAGE_HOST }}
+          port: ${{ secrets.STAGE_PORT }}
+          username: ${{ secrets.STAGE_USERNAME }}
+          password: ${{ secrets.STAGE_PASSWORD }}
+          source: "./bootstrap/user-bootstrap-api/build/libs/user-bootstrap-api-*.jar"
+          target: "/home/${{ secrets.STAGE_USERNAME }}/service/stg/mongs/monglife-mongs-user-bootstrap-api"
+          strip_components: 1
+      # 배포 스크립트 실행
+#      - name: Deploy service start
+#        uses: appleboy/ssh-action@master
+#        with:
+#          host: ${{ secrets.STAGE_HOST }}
+#          port: ${{ secrets.STAGE_PORT }}
+#          username: ${{ secrets.STAGE_USERNAME }}
+#          password: ${{ secrets.STAGE_PASSWORD }}
+#          script: |
+#            echo '시스템 시작'
