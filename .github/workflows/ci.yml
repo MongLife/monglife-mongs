@@ -16,30 +16,30 @@ jobs:
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew
       - name: Application device unit test
-        run: ./gradlew :application:device-application:test
+        run: ./gradlew :application:device-application:copyPrivate :application:device-application:test
       - name: Application member unit test
-        run: ./gradlew :application:member-application:test
+        run: ./gradlew :application:member-application:copyPrivate :application:member-application:test
       - name: Adapter out event device unit test
-        run: ./gradlew :adapter-out:device-event-adapter-out:test
+        run: ./gradlew :adapter-out:device-event-adapter-out:copyPrivate :adapter-out:device-event-adapter-out:test
       - name: Adapter out persistence device unit test
-        run: ./gradlew :adapter-out:device-persistence-adapter-out:test
+        run: ./gradlew :adapter-out:device-persistence-adapter-out:copyPrivate :adapter-out:device-persistence-adapter-out:test
       - name: Adapter out publish device unit test
-        run: ./gradlew :adapter-out:device-publish-adapter-out:test
+        run: ./gradlew :adapter-out:device-publish-adapter-out:copyPrivate :adapter-out:device-publish-adapter-out:test
       - name: Adapter out google payment unit test
-        run: ./gradlew :adapter-out:google-payment-adapter-out:test
+        run: ./gradlew :adapter-out:google-payment-adapter-out:copyPrivate :adapter-out:google-payment-adapter-out:test
       - name: Adapter out event member unit test
-        run: ./gradlew :adapter-out:member-event-adapter-out:test
+        run: ./gradlew :adapter-out:member-event-adapter-out:copyPrivate :adapter-out:member-event-adapter-out:test
       - name: Adapter out persistence member unit test
-        run: ./gradlew :adapter-out:member-persistence-adapter-out:test
+        run: ./gradlew :adapter-out:member-persistence-adapter-out:copyPrivate :adapter-out:member-persistence-adapter-out:test
       - name: Adapter out publish member unit test
-        run: ./gradlew :adapter-out:member-publish-adapter-out:test
+        run: ./gradlew :adapter-out:member-publish-adapter-out:copyPrivate :adapter-out:member-publish-adapter-out:test
       - name: Adapter in event device unit test
-        run: ./gradlew :adapter-in:device-event-adapter-in:test
+        run: ./gradlew :adapter-in:device-event-adapter-in:copyPrivate :adapter-in:device-event-adapter-in:test
       - name: Adapter in web device unit test
-        run: ./gradlew :adapter-in:device-web-adapter-in:test
+        run: ./gradlew :adapter-in:device-web-adapter-in:copyPrivate :adapter-in:device-web-adapter-in:test
       - name: Adapter in event member unit test
-        run: ./gradlew :adapter-in:member-event-adapter-in:test
+        run: ./gradlew :adapter-in:member-event-adapter-in:copyPrivate :adapter-in:member-event-adapter-in:test
       - name: Adapter in web member unit test
-        run: ./gradlew :adapter-in:member-web-adapter-in:test
+        run: ./gradlew :adapter-in:member-web-adapter-in:copyPrivate :adapter-in:member-web-adapter-in:test
       - name: Build with Gradle
-        run: ./gradlew clean build
+        run: ./gradlew clean copyPrivate build
