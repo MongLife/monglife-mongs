@@ -6,6 +6,7 @@ jobs:
   # 빌드 테스트
   build:
     runs-on: ubuntu-latest
+    environment: stage
     steps:
       # 소스 로드
       - name: Checkout the code
@@ -32,10 +33,10 @@ jobs:
       - name: Deploy stage use SCP
         uses: appleboy/scp-action@master
         with:
-          host: ${{ secrets.stage.HOST }}
-          port: ${{ secrets.stage.PORT }}
-          username: ${{ secrets.stage.USERNAME }}
-          password: ${{ secrets.stage.PASSWORD }}
+          host: ${{ secrets.HOST }}
+          port: ${{ secrets.PORT }}
+          username: ${{ secrets.USERNAME }}
+          password: ${{ secrets.PASSWORD }}
           source: "./bootstrap/user-bootstrap-api/build/libs/user-bootstrap-api-*.jar"
           target: "~/service/stg/mongs/user-api"
           strip_components: 4
@@ -43,9 +44,9 @@ jobs:
       - name: Deploy service start
         uses: appleboy/ssh-action@master
         with:
-          host: ${{ secrets.stage.HOST }}
-          port: ${{ secrets.stage.PORT }}
-          username: ${{ secrets.stage.USERNAME }}
-          password: ${{ secrets.stage.PASSWORD }}
+          host: ${{ secrets.HOST }}
+          port: ${{ secrets.PORT }}
+          username: ${{ secrets.USERNAME }}
+          password: ${{ secrets.PASSWORD }}
           script: |
             echo '시스템 시작'
