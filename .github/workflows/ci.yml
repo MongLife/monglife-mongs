@@ -5,6 +5,94 @@ on:
   push:
     branches: [ refac/user-api ]
 jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-java@v3
+        with:
+          distribution: 'zulu'
+          java-version: '17'
+      - name: Grant execute permission for gradlew
+        run: chmod +x gradlew
+      - name: Application device unit test
+        run: |
+          mkdir -p ./application/device-application/src/main/resources
+          mkdir -p ./application/device-application/src/test/resources
+          ./gradlew :application:device-application:copyPrivate 
+          ./gradlew :application:device-application:test
+      - name: Application member unit test
+        run: |
+          mkdir -p ./application/member-application/src/main/resources
+          mkdir -p ./application/member-application/src/test/resources
+          ./gradlew :application:member-application:copyPrivate 
+          ./gradlew :application:member-application:test
+      - name: Adapter out event device unit test
+        run: |
+          mkdir -p ./adapter-out/device-event-adapter-out/src/main/resources
+          mkdir -p ./adapter-out/device-event-adapter-out/src/test/resources
+          ./gradlew :adapter-out:device-event-adapter-out:copyPrivate 
+          ./gradlew :adapter-out:device-event-adapter-out:test
+      - name: Adapter out persistence device unit test
+        run: |
+          mkdir -p ./adapter-out/device-persistence-adapter-out/src/main/resources
+          mkdir -p ./adapter-out/device-persistence-adapter-out/src/test/resources
+          ./gradlew :adapter-out:device-persistence-adapter-out:copyPrivate
+          ./gradlew :adapter-out:device-persistence-adapter-out:test
+      - name: Adapter out publish device unit test
+        run: |
+          mkdir -p ./adapter-out/device-publish-adapter-out/src/main/resources
+          mkdir -p ./adapter-out/device-publish-adapter-out/src/test/resources
+          ./gradlew :adapter-out:device-publish-adapter-out:copyPrivate
+          ./gradlew :adapter-out:device-publish-adapter-out:test
+      - name: Adapter out google payment unit test
+        run: |
+          mkdir -p ./adapter-out/google-payment-adapter-out/src/main/resources
+          mkdir -p ./adapter-out/google-payment-adapter-out/src/test/resources
+          ./gradlew :adapter-out:google-payment-adapter-out:copyPrivate
+          ./gradlew :adapter-out:google-payment-adapter-out:test
+      - name: Adapter out event member unit test
+        run: |
+          mkdir -p ./adapter-out/member-event-adapter-out/src/main/resources
+          mkdir -p ./adapter-out/member-event-adapter-out/src/test/resources
+          ./gradlew :adapter-out:member-event-adapter-out:copyPrivate 
+          ./gradlew :adapter-out:member-event-adapter-out:test
+      - name: Adapter out persistence member unit test
+        run: |
+          mkdir -p ./adapter-out/member-persistence-adapter-out/src/main/resources
+          mkdir -p ./adapter-out/member-persistence-adapter-out/src/test/resources
+          ./gradlew :adapter-out:member-persistence-adapter-out:copyPrivate 
+          ./gradlew :adapter-out:member-persistence-adapter-out:test
+      - name: Adapter out publish member unit test
+        run: |
+          mkdir -p ./adapter-out/member-publish-adapter-out/src/main/resources
+          mkdir -p ./adapter-out/member-publish-adapter-out/src/test/resources
+          ./gradlew :adapter-out:member-publish-adapter-out:copyPrivate 
+          ./gradlew :adapter-out:member-publish-adapter-out:test
+      - name: Adapter in event device unit test
+        run: |
+          mkdir -p ./adapter-in/device-event-adapter-in/src/main/resources
+          mkdir -p ./adapter-in/device-event-adapter-in/src/test/resources
+          ./gradlew :adapter-in:device-event-adapter-in:copyPrivate 
+          ./gradlew :adapter-in:device-event-adapter-in:test
+      - name: Adapter in web device unit test
+        run: |
+          mkdir -p ./adapter-in/device-web-adapter-in/src/main/resources
+          mkdir -p ./adapter-in/device-web-adapter-in/src/test/resources
+          ./gradlew :adapter-in:device-web-adapter-in:copyPrivate 
+          ./gradlew :adapter-in:device-web-adapter-in:test
+      - name: Adapter in event member unit test
+        run: |
+          mkdir -p ./adapter-in/member-event-adapter-in/src/main/resources
+          mkdir -p ./adapter-in/member-event-adapter-in/src/test/resources
+          ./gradlew :adapter-in:member-event-adapter-in:copyPrivate 
+          ./gradlew :adapter-in:member-event-adapter-in:test
+      - name: Adapter in web member unit test
+        run: |
+          mkdir -p ./adapter-in/member-web-adapter-in/src/main/resources
+          mkdir -p ./adapter-in/member-web-adapter-in/src/test/resources
+          ./gradlew :adapter-in:member-web-adapter-in:copyPrivate 
+          ./gradlew :adapter-in:member-web-adapter-in:test
   build:
     runs-on: ubuntu-latest
     steps:
@@ -15,33 +103,9 @@ jobs:
           java-version: '17'
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew
+      - name: Clean with gradle
+        run: ./gradlew clean
       - name: Load configuration yaml
         run: ./gradlew copyPrivate
-      - name: Application device unit test
-        run: ./gradlew :application:device-application:test
-      - name: Application member unit test
-        run: ./gradlew :application:member-application:test
-      - name: Adapter out event device unit test
-        run: ./gradlew :adapter-out:device-event-adapter-out:test
-      - name: Adapter out persistence device unit test
-        run: ./gradlew :adapter-out:device-persistence-adapter-out:test
-      - name: Adapter out publish device unit test
-        run: ./gradlew :adapter-out:device-publish-adapter-out:test
-      - name: Adapter out google payment unit test
-        run: ./gradlew :adapter-out:google-payment-adapter-out:test
-      - name: Adapter out event member unit test
-        run: ./gradlew :adapter-out:member-event-adapter-out:test
-      - name: Adapter out persistence member unit test
-        run: ./gradlew :adapter-out:member-persistence-adapter-out:test
-      - name: Adapter out publish member unit test
-        run: ./gradlew :adapter-out:member-publish-adapter-out:test
-      - name: Adapter in event device unit test
-        run: ./gradlew :adapter-in:device-event-adapter-in:test
-      - name: Adapter in web device unit test
-        run: ./gradlew :adapter-in:device-web-adapter-in:test
-      - name: Adapter in event member unit test
-        run: ./gradlew :adapter-in:member-event-adapter-in:test
-      - name: Adapter in web member unit test
-        run: ./gradlew :adapter-in:member-web-adapter-in:test
-      - name: Build with Gradle
-        run: ./gradlew clean copyPrivate build
+      - name: Build with gradle
+        run: ./gradlew build
