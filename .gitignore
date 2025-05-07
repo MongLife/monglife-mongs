@@ -37,6 +37,6 @@ out/
 .vscode/
 
 ### config ###
-*.yml
-*-*.yml
-*.json
+**/src/*/resources/*.yml
+**/src/*/resources/*-*.yml
+**/src/*/resources/*.json
