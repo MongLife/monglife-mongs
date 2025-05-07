@@ -2,6 +2,9 @@ name: cd
 on:
   push:
     branches: [ stage, refac/user-api ]
+env:
+  bootstrap-character: monglife-mongs-character-api
+  bootstrap-user: monglife-mongs-user-api
 jobs:
   # 빌드 테스트
   build:
@@ -30,6 +33,17 @@ jobs:
       - name: Bootstrap user API build
         run: ./gradlew :bootstrap:user-bootstrap-api:build
       # 배포 파일 원격 복사
+#      - name: Deploy stage use SCP
+#        uses: appleboy/scp-action@master
+#        with:
+#          host: ${{ secrets.HOST }}
+#          port: ${{ secrets.PORT }}
+#          username: ${{ secrets.USERNAME }}
+#          password: ${{ secrets.PASSWORD }}
+#          source: "./bootstrap/user-bootstrap-api/build/libs/character-bootstrap-api-*.jar"
+#          target: "~/service/stg/mongs/${{ bootstrap-character }}"
+#          strip_components: 4
+      # 배포 파일 원격 복사
       - name: Deploy stage use SCP
         uses: appleboy/scp-action@master
         with:
@@ -38,7 +52,7 @@ jobs:
           username: ${{ secrets.USERNAME }}
           password: ${{ secrets.PASSWORD }}
           source: "./bootstrap/user-bootstrap-api/build/libs/user-bootstrap-api-*.jar"
-          target: "~/service/stg/mongs/user-api"
+          target: "~/service/stg/mongs/${{ bootstrap-user }}"
           strip_components: 4
       # 배포 스크립트 실행
       - name: Deploy service start
@@ -49,4 +63,5 @@ jobs:
           username: ${{ secrets.USERNAME }}
           password: ${{ secrets.PASSWORD }}
           script: |
-            echo '시스템 시작'
+#            sh ~/service/stg/mongs/run.sh ${{ bootstrap-character }} ${{ bootstrap-character }}
+            sh ~/service/stg/mongs/run.sh ${{ bootstrap-user }} ${{ bootstrap-user }}
