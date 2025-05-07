@@ -37,7 +37,7 @@ jobs:
           username: ${{ secrets.STAGE_USERNAME }}
           password: ${{ secrets.STAGE_PASSWORD }}
           source: "./bootstrap/user-bootstrap-api/build/libs/user-bootstrap-api-*.jar"
-          target: "~/service/stg/mongs/monglife-mongs-user-bootstrap-api/"
+          target: "~/service/stg/mongs/monglife-mongs-user-bootstrap-api"
           strip_components: 4
       # 배포 스크립트 실행
 #      - name: Deploy service start
