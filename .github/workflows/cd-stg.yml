@@ -43,8 +43,8 @@ jobs:
           port: ${{ secrets.PORT }}
           username: ${{ secrets.USERNAME }}
           password: ${{ secrets.PASSWORD }}
-          source: "${{ bootstrap-user-path }}/build/libs/*.jar"
-          target: "${{ service-path }}/${{ bootstrap-user }}"
+          source: "${{ env.bootstrap-user-path }}/build/libs/*.jar"
+          target: "${{ env.service-path }}/${{ env.bootstrap-user }}"
           strip_components: 4
       # 배포 스크립트 실행
       - name: Deploy service start
@@ -55,4 +55,4 @@ jobs:
           username: ${{ secrets.USERNAME }}
           password: ${{ secrets.PASSWORD }}
           script: |
-            sh ~/service/stg/mongs/run.sh ${{ bootstrap-user }} ${{ bootstrap-user }}
+            sh ~/service/stg/mongs/run.sh ${{ env.bootstrap-user }} ${{ env.bootstrap-user }}
