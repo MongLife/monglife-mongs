@@ -5,8 +5,8 @@ on:
   push:
     branches: [ refac/user-api ]
 jobs:
-  # 사전 환경 설정
-  before:
+  # 각 모듈 별 단위 테스트
+  unit-test:
     runs-on: ubuntu-latest
     steps:
       # 소스 로드
@@ -24,89 +24,9 @@ jobs:
       # gradlew 권한 변경
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew
-      # Device Application/Domain 모듈 환경 설정
-      - name: Application device unit test
-        run: |
-          mkdir -p ./application/device-application/src/main/resources
-          mkdir -p ./application/device-application/src/test/resources
-          ./gradlew :application:device-application:copyPrivate
-      # Member Application/Domain 모듈 환경 설정
-      - name: Application member unit test
-        run: |
-          mkdir -p ./application/member-application/src/main/resources
-          mkdir -p ./application/member-application/src/test/resources
-          ./gradlew :application:member-application:copyPrivate 
-      # Device Event Adapter Out  모듈 환경 설정
-      - name: Adapter out event device unit test
-        run: |
-          mkdir -p ./adapter-out/device-event-adapter-out/src/main/resources
-          mkdir -p ./adapter-out/device-event-adapter-out/src/test/resources
-          ./gradlew :adapter-out:device-event-adapter-out:copyPrivate 
-      # Device Persistence Adapter Out 모듈 환경 설정
-      - name: Adapter out persistence device unit test
-        run: |
-          mkdir -p ./adapter-out/device-persistence-adapter-out/src/main/resources
-          mkdir -p ./adapter-out/device-persistence-adapter-out/src/test/resources
-          ./gradlew :adapter-out:device-persistence-adapter-out:copyPrivate
-      # Device Publish Adapter Out 모듈 환경 설정
-      - name: Adapter out publish device unit test
-        run: |
-          mkdir -p ./adapter-out/device-publish-adapter-out/src/main/resources
-          mkdir -p ./adapter-out/device-publish-adapter-out/src/test/resources
-          ./gradlew :adapter-out:device-publish-adapter-out:copyPrivate
-      # Google Payment Adapter Out 모듈 환경 설정
-      - name: Adapter out google payment unit test
-        run: |
-          mkdir -p ./adapter-out/google-payment-adapter-out/src/main/resources
-          mkdir -p ./adapter-out/google-payment-adapter-out/src/test/resources
-          ./gradlew :adapter-out:google-payment-adapter-out:copyPrivate
-      # Member Event Adapter Out 모듈 환경 설정
-      - name: Adapter out event member unit test
-        run: |
-          mkdir -p ./adapter-out/member-event-adapter-out/src/main/resources
-          mkdir -p ./adapter-out/member-event-adapter-out/src/test/resources
-          ./gradlew :adapter-out:member-event-adapter-out:copyPrivate 
-      # Member Persistence Adapter Out 모듈 환경 설정
-      - name: Adapter out persistence member unit test
-        run: |
-          mkdir -p ./adapter-out/member-persistence-adapter-out/src/main/resources
-          mkdir -p ./adapter-out/member-persistence-adapter-out/src/test/resources
-          ./gradlew :adapter-out:member-persistence-adapter-out:copyPrivate 
-      # member Publish Adapter Out 모듈 환경 설정
-      - name: Adapter out publish member unit test
-        run: |
-          mkdir -p ./adapter-out/member-publish-adapter-out/src/main/resources
-          mkdir -p ./adapter-out/member-publish-adapter-out/src/test/resources
-          ./gradlew :adapter-out:member-publish-adapter-out:copyPrivate 
-      # Device Event Adapter In 모듈 환경 설정
-      - name: Adapter in event device unit test
-        run: |
-          mkdir -p ./adapter-in/device-event-adapter-in/src/main/resources
-          mkdir -p ./adapter-in/device-event-adapter-in/src/test/resources
-          ./gradlew :adapter-in:device-event-adapter-in:copyPrivate 
-      # Device Web Adapter In 모듈 환경 설정
-      - name: Adapter in web device unit test
-        run: |
-          mkdir -p ./adapter-in/device-web-adapter-in/src/main/resources
-          mkdir -p ./adapter-in/device-web-adapter-in/src/test/resources
-          ./gradlew :adapter-in:device-web-adapter-in:copyPrivate 
-      # Member Event Adapter In 모듈 환경 설정
-      - name: Adapter in event member unit test
-        run: |
-          mkdir -p ./adapter-in/member-event-adapter-in/src/main/resources
-          mkdir -p ./adapter-in/member-event-adapter-in/src/test/resources
-          ./gradlew :adapter-in:member-event-adapter-in:copyPrivate 
-      # Member Web Adapter In 모듈 환경 설정
-      - name: Adapter in web member unit test
-        run: |
-          mkdir -p ./adapter-in/member-web-adapter-in/src/main/resources
-          mkdir -p ./adapter-in/member-web-adapter-in/src/test/resources
-          ./gradlew :adapter-in:member-web-adapter-in:copyPrivate
-  # 각 모듈 별 단위 테스트
-  unit-test:
-    needs: before
-    runs-on: ubuntu-latest
-    steps:
+      # 환경 설정 파일 로드
+      - name: configuration set up
+        run: ./gradlew copyPrivate
       # Device Application/Domain 모듈 단위 테스트
       - name: Application device unit test
         run: ./gradlew :application:device-application:test
@@ -148,8 +68,27 @@ jobs:
         run: ./gradlew :adapter-in:member-web-adapter-in:test
   # 빌드 테스트
   build:
-    needs: before
+    needs: unit-test
     runs-on: ubuntu-latest
     steps:
-      - name: Build with gradle
-        run: ./gradlew build
+      # 소스 로드
+      - name: Checkout the code
+        uses: actions/checkout@v3
+        with:
+          token: ${{ secrets.ACTION_TOKEN }}
+          submodules: true
+      # Java 환경 설정
+      - name: Set up jdk
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'zulu'
+          java-version: '17'
+      # gradlew 권한 변경
+      - name: Grant execute permission for gradlew
+        run: chmod +x gradlew
+      # 환경 설정 파일 로드
+      - name: configuration set up
+        run: ./gradlew copyPrivate
+      # Bootstrap User API 빌드
+      - name: Bootstrap user API build
+        run: ./gradlew :bootstrap:user-bootstrap-api:build -x test
