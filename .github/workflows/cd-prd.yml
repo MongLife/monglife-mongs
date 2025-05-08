@@ -1,7 +1,7 @@
-name: STAGE CD
+name: PRODUCT CD
 on:
   push:
-    branches: [ stage, refac/user-api ]
+    branches: [ release ]
 env:
   service-path: ~/service/mongs
   service-script: ~/service/mongs/run.sh
@@ -13,7 +13,7 @@ jobs:
   # 빌드 테스트
   build:
     runs-on: ubuntu-latest
-    environment: stage
+    environment: product
     steps:
       # 소스 로드
       - name: 소스 코드 로드
@@ -37,7 +37,7 @@ jobs:
       - name: User Bootstrap API 모듈 빌드
         run: ./gradlew :bootstrap:user-bootstrap-api:build
       # 배포 파일 원격 복사
-      - name: User Bootstrap API 배포 파일 STAGE 서버로 전송
+      - name: User Bootstrap API 배포 파일 PRODUCT 서버로 전송
         uses: appleboy/scp-action@master
         with:
           host: ${{ secrets.HOST }}

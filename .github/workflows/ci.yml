@@ -1,7 +1,7 @@
-name: ci
+name: DEVELOP CI
 on:
   pull_request:
-    branches: [ develop ]
+    branches: [ develop, refac/user-api ]
 jobs:
   # 각 모듈 별 단위 테스트
   unit-test:
