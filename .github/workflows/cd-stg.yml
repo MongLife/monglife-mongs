@@ -1,7 +1,7 @@
 name: STAGE CD
 on:
   push:
-    branches: [ stage, refac/user-api ]
+    branches: [ stage ]
 env:
   service-path: ~/service/mongs
   service-script: ~/service/mongs/run.sh
