@@ -1,7 +1,7 @@
 name: CD STAGE
 on:
   push:
-    branches: [ stage, refac/user-api ]
+    branches: [ stage ]
 env:
   service-path: ~/service/mongs
   service-script: ~/service/mongs/run.sh
@@ -72,7 +72,7 @@ jobs:
       - name: Member Web Adapter In 모듈 단위 테스트
         run: ./gradlew :adapter-in:member-web-adapter-in:test
   # User API 빌드 및 배포
-  bootstrap-user-build:
+  bootstrap-user-build-and-deploy:
     needs: unit-test
     runs-on: ubuntu-latest
     environment: stage
