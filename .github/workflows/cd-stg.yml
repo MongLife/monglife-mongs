@@ -55,4 +55,4 @@ jobs:
           username: ${{ secrets.USERNAME }}
           password: ${{ secrets.PASSWORD }}
           script: |
-            sh ~/service/stg/mongs/run.sh ${{ env.bootstrap-user }} ${{ service-path }}/${{ env.bootstrap-user }}
+            sh ~/service/stg/mongs/run.sh ${{ env.bootstrap-user }} ${{ env.service-path }}/${{ env.bootstrap-user }}
