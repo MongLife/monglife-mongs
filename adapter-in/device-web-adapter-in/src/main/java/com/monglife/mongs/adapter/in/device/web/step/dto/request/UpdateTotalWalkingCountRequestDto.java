@@ -1,0 +1,30 @@
+package com.monglife.mongs.adapter.in.device.web.step.dto.request;
+
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotNull;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import org.springframework.format.annotation.DateTimeFormat;
+
+import java.time.LocalDateTime;
+
+@Getter
+@Setter
+@NoArgsConstructor
+public class UpdateTotalWalkingCountRequestDto {
+
+    @Min(0)
+    private Integer totalWalkingCount;
+
+    @NotNull
+    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
+    private LocalDateTime deviceBootedDt;
+
+    @Builder
+    public UpdateTotalWalkingCountRequestDto(Integer totalWalkingCount, LocalDateTime deviceBootedDt) {
+        this.totalWalkingCount = totalWalkingCount;
+        this.deviceBootedDt = deviceBootedDt;
+    }
+}

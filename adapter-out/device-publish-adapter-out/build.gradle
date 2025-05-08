@@ -1,0 +1,21 @@
+dependencies {
+    // application layer
+    implementation project(':application:device-application')
+    // monglife-mqtt
+    implementation 'com.github.monglife:monglife-module-mqtt:1.0.1'
+}
+
+tasks.register('copyPrivate', Copy) {
+    copy {
+        from('../../configs/adapter/publish/device/') {
+            include('application.yml')
+            rename('application.yml', 'publish-device.yml')
+        }
+        into('src/main/resources')
+    }
+    copy {
+        from('../../configs/adapter/publish/device/')
+        include('application.yml')
+        into('src/test/resources')
+    }
+}
