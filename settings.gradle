@@ -14,6 +14,7 @@ include 'domains:monglife-mongs-domain-mong'
 include 'domains:monglife-mongs-domain-task'
 
 include 'bootstrap'
+include 'bootstrap:character-bootstrap-api'
 include 'bootstrap:user-bootstrap-api'
 
 include 'adapter-in'
@@ -23,8 +24,10 @@ include 'adapter-in:member-web-adapter-in'
 include 'adapter-in:member-event-adapter-in'
 
 include 'application'
+include 'application:battle-application'
 include 'application:device-application'
 include 'application:member-application'
+include 'application:mong-application'
 
 include 'adapter-out'
 include 'adapter-out:device-persistence-adapter-out'
