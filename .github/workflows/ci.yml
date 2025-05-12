@@ -2,6 +2,8 @@ name: CI DEVELOP
 on:
   pull_request:
     branches: [ develop ]
+  push:
+    branches: [ refac/character-api ]
 jobs:
   # 각 모듈 별 단위 테스트
   unit-test:
@@ -25,12 +27,18 @@ jobs:
       # 환경 설정 파일 로드
       - name: 환경 설정 파일 로드
         run: ./gradlew copyPrivate
+      # Battle Application/Domain 모듈 단위 테스트
+      - name: Battle Application/Domain 모듈 단위 테스트
+        run: ./gradlew :application:battle-application:test
       # Device Application/Domain 모듈 단위 테스트
       - name: Device Application/Domain 모듈 단위 테스트
         run: ./gradlew :application:device-application:test
       # Member Application/Domain 모듈 단위 테스트
       - name: Member Application/Domain 모듈 단위 테스트
         run: ./gradlew :application:member-application:test
+      # Mong Application/Domain 모듈 단위 테스트
+      - name: Mong Application/Domain 모듈 단위 테스트
+        run: ./gradlew :application:mong-application:test
       # Device Event Adapter Out  모듈 단위 테스트
       - name: Device Event Adapter Out  모듈 단위 테스트
         run: ./gradlew :adapter-out:device-event-adapter-out:test

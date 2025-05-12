@@ -11,7 +11,7 @@ public enum MongStateCode {
     EVOLUTION_READY("진화 대기"),
     GRADUATE_READY("졸업 대기"),
     DEAD("죽음"),
-    DELETE("삭제"),
+    GRADUATE("졸업")
     ;
 
     public final String stateName;

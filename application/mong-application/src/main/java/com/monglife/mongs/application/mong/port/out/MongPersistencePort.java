@@ -20,7 +20,7 @@ public interface MongPersistencePort {
      * 몽 쓰다 듬기 이력 등록
      * @param mongId 몽 ID
      */
-    void createMongStrokeHistoryPort(Long mongId, Long expirationSeconds);
+    Optional<Long> createMongStrokeHistoryPort(Long mongId, Long expirationSeconds);
 
     /**
      * 몽 타입 목록 조회
@@ -69,7 +69,7 @@ public interface MongPersistencePort {
      * 몽 삭제
      * @param mong 몽 도메인 객체
      */
-    void deleteMongPort(Mong mong);
+    Optional<Mong> deleteMongPort(Mong mong);
 
     /**
      * 음식 조회
@@ -125,7 +125,7 @@ public interface MongPersistencePort {
      * 인벤토리 아이템 삭제
      * @param inventoryItemId 인벤토리 아이템 ID
      */
-    void deleteInventoryItemPort(Long inventoryItemId);
+    Optional<InventoryItem> deleteInventoryItemPort(Long inventoryItemId);
 
     /**
      * 인벤토리 아이템 조회

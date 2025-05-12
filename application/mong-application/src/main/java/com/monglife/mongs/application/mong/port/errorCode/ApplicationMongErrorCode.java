@@ -22,6 +22,8 @@ public enum ApplicationMongErrorCode implements ErrorCode {
     INVALID_CREATE_INVENTORY_ITEM("APPLICATION-MONG-007", "인벤토리 아이템 등록에 실패했습니다."),
     INVALID_CREATE_MONG("APPLICATION-MONG-008", "몽 생성에 실패했습니다."),
     INVALID_STROKE_MONG("APPLICATION-MONG-009", "몽 쓰다듬기가 불가능한 상태입니다."),
+    INVALID_CREATE_MONG_STROKE_HISTORY("APPLICATION-MONG-010", "몽 쓰다듬기 이력 등록에 실패했습니다."),
+    INVALID_DELETE_INVENTORY_ITEM("APPLICATION-MONG-011", "인벤토리 아이템 삭제에 실패했습니다."),
     ;
 
     private final String code;

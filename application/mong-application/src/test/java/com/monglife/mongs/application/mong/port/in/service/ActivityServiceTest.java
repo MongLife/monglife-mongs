@@ -6,7 +6,6 @@ import com.monglife.mongs.application.mong.port.in.ActivityUseCase;
 import com.monglife.mongs.application.mong.port.in.command.GetTrainingTypeCommand;
 import com.monglife.mongs.application.mong.port.in.command.TrainingEndCommand;
 import com.monglife.mongs.application.mong.port.out.MongPersistencePort;
-import com.monglife.mongs.application.mong.port.out.MongPublishPort;
 import com.monglife.mongs.domain.model.Mong;
 import com.monglife.mongs.domain.model.TrainingType;
 import org.junit.jupiter.api.DisplayName;
@@ -28,8 +27,7 @@ class ActivityServiceTest {
 
     public ActivityServiceTest() {
         this.mongPersistencePort = Mockito.mock(MongPersistencePort.class);
-        MongPublishPort mongPublishPort = Mockito.mock(MongPublishPort.class);
-        this.activityUseCase = new ActivityService(mongPersistencePort, mongPublishPort);
+        this.activityUseCase = new ActivityService(mongPersistencePort);
     }
 
     @Nested

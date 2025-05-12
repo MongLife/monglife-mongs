@@ -7,11 +7,11 @@ import java.util.List;
 
 public interface ManagementUseCase {
 
-    void createMongUseCase(CreateMongCommand command);
+    Mong createMongUseCase(CreateMongCommand command);
 
-    void deleteMongUseCase(DeleteMongCommand command);
+    Mong deleteMongUseCase(DeleteMongCommand command);
 
-    void deadMongUseCase(DeadMongCommand command);
+    Mong deadMongUseCase(DeadMongCommand command);
 
     List<Mong> getMongsUseCase(GetMongsCommand command);
 
@@ -20,6 +20,8 @@ public interface ManagementUseCase {
     Mong strokeMongUseCase(StrokeMongCommand command);
 
     Mong sleepMongUseCase(SleepMongCommand command);
+
+    Mong wakeUpMongUseCase(WakeupMongCommand command);
 
     Mong poopCleanMongUseCase(PoopCleanMongCommand command);
 

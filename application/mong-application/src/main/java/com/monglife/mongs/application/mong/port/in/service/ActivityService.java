@@ -1,12 +1,12 @@
 package com.monglife.mongs.application.mong.port.in.service;
 
+import com.monglife.mongs.application.mong.port.annotation.PublishMongPort;
 import com.monglife.mongs.application.mong.port.exception.NotExistsMongException;
 import com.monglife.mongs.application.mong.port.exception.NotExistsTrainingTypeException;
 import com.monglife.mongs.application.mong.port.in.ActivityUseCase;
 import com.monglife.mongs.application.mong.port.in.command.GetTrainingTypeCommand;
 import com.monglife.mongs.application.mong.port.in.command.TrainingEndCommand;
 import com.monglife.mongs.application.mong.port.out.MongPersistencePort;
-import com.monglife.mongs.application.mong.port.out.MongPublishPort;
 import com.monglife.mongs.domain.model.Mong;
 import com.monglife.mongs.domain.model.TrainingType;
 import lombok.RequiredArgsConstructor;
@@ -20,8 +20,6 @@ import java.util.List;
 public class ActivityService  implements ActivityUseCase {
 
     private final MongPersistencePort mongPersistencePort;
-
-    private final MongPublishPort mongPublishPort;
 
     /**
      * 훈련 타입 목록 조회
@@ -47,6 +45,7 @@ public class ActivityService  implements ActivityUseCase {
      */
     @Override
     @Transactional
+    @PublishMongPort
     public Mong trainingEndUseCase(TrainingEndCommand command) {
 
         // 훈련 타입 조회
@@ -64,10 +63,10 @@ public class ActivityService  implements ActivityUseCase {
             mong.training(trainingType);
         }
 
-        // 몽 정보 비동기 응답
-        mongPublishPort.publishMongPort(mong);
-
-        return mongPersistencePort.saveMongPort(mong)
+        // 몽 정보 동기화
+        mong = mongPersistencePort.saveMongPort(mong)
                 .orElseThrow(NotExistsMongException::new);
+
+        return mong;
     }
 }

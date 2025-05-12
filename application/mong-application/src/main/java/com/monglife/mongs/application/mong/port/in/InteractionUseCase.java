@@ -17,7 +17,7 @@ public interface InteractionUseCase {
 
     List<InventoryItem> getInventoryItemsUseCase(GetInventoryItemsCommand command);
 
-    List<InventoryItem> useInventoryItemUseCase(UseInventoryItemCommand command);
+    Mong useInventoryItemUseCase(UseInventoryItemCommand command);
 
     RandomDrawItem randomDrawUseCase(RandomDrawCommand command);
 }

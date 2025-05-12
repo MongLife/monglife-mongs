@@ -46,10 +46,8 @@ public class CreateMongVo {
 
     private final Integer poopCount;
 
-    private final Integer canRandomDrawCount;
-
     @Builder
-    public CreateMongVo(Long accountId, String mongName, String mongTypeCode, MongStatusCode statusCode, MongStateCode stateCode, Integer level, Double maxStatus, LocalTime sleepAt, LocalTime wakeupAt, Integer payPoint, Boolean isSleep, Double strength, Double satiety, Double healthy, Double fatigue, Double exp, Double weight, Integer poopCount, Integer canRandomDrawCount) {
+    public CreateMongVo(Long accountId, String mongName, String mongTypeCode, MongStatusCode statusCode, MongStateCode stateCode, Integer level, Double maxStatus, LocalTime sleepAt, LocalTime wakeupAt, Integer payPoint, Boolean isSleep, Double strength, Double satiety, Double healthy, Double fatigue, Double exp, Double weight, Integer poopCount) {
         this.accountId = accountId;
         this.mongName = mongName;
         this.mongTypeCode = mongTypeCode;
@@ -68,6 +66,5 @@ public class CreateMongVo {
         this.exp = exp;
         this.weight = weight;
         this.poopCount = poopCount;
-        this.canRandomDrawCount = canRandomDrawCount;
     }
 }

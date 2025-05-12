@@ -1,11 +1,11 @@
 package com.monglife.mongs.application.mong.port.in.service;
 
+import com.monglife.mongs.application.mong.port.annotation.PublishMongPort;
 import com.monglife.mongs.application.mong.port.exception.*;
 import com.monglife.mongs.application.mong.port.in.InteractionUseCase;
 import com.monglife.mongs.application.mong.port.in.command.*;
 import com.monglife.mongs.application.mong.port.out.MongEventPort;
 import com.monglife.mongs.application.mong.port.out.MongPersistencePort;
-import com.monglife.mongs.application.mong.port.out.MongPublishPort;
 import com.monglife.mongs.application.mong.port.out.vo.CreateInventoryItemVo;
 import com.monglife.mongs.domain.exception.ForbiddenInventoryItemException;
 import com.monglife.mongs.domain.model.*;
@@ -25,8 +25,6 @@ public class InteractionService implements InteractionUseCase {
     private final MongPersistencePort mongPersistencePort;
 
     private final MongEventPort mongEventPort;
-
-    private final MongPublishPort mongPublishPort;
 
     /**
      * 음식 목록 조회
@@ -61,6 +59,7 @@ public class InteractionService implements InteractionUseCase {
      */
     @Override
     @Transactional
+    @PublishMongPort
     public Mong feedFoodUseCase(FeedFoodCommand command) {
 
         Mong mong = mongPersistencePort.getMongPort(command.getMongId())
@@ -74,11 +73,11 @@ public class InteractionService implements InteractionUseCase {
         // 음식 섭취
         mong.feedWithBuy(food);
 
-        // 몽 정보 비동기 응답
-        mongPublishPort.publishMongPort(mong);
-
-        return mongPersistencePort.saveMongPort(mong)
+        // 몽 정보 동기화
+        mong = mongPersistencePort.saveMongPort(mong)
                 .orElseThrow(NotExistsMongException::new);
+
+        return mong;
     }
 
     /**
@@ -86,6 +85,7 @@ public class InteractionService implements InteractionUseCase {
      */
     @Override
     @Transactional
+    @PublishMongPort
     public Mong feedSnackUseCase(FeedSnackCommand command) {
 
         Mong mong = mongPersistencePort.getMongPort(command.getMongId())
@@ -99,11 +99,11 @@ public class InteractionService implements InteractionUseCase {
         // 간식 섭취
         mong.feedWithBuy(snack);
 
-        // 몽 정보 비동기 응답
-        mongPublishPort.publishMongPort(mong);
-
-        return mongPersistencePort.saveMongPort(mong)
+        // 몽 정보 동기화
+        mong = mongPersistencePort.saveMongPort(mong)
                 .orElseThrow(NotExistsMongException::new);
+
+        return mong;
     }
 
     /**
@@ -125,7 +125,8 @@ public class InteractionService implements InteractionUseCase {
      */
     @Override
     @Transactional
-    public List<InventoryItem> useInventoryItemUseCase(UseInventoryItemCommand command) {
+    @PublishMongPort
+    public Mong useInventoryItemUseCase(UseInventoryItemCommand command) {
 
         Mong mong = mongPersistencePort.getMongPort(command.getMongId())
                 .orElseThrow(NotExistsMongException::new)
@@ -151,13 +152,15 @@ public class InteractionService implements InteractionUseCase {
             default -> throw new InvalidUseInventoryItemException();
         }
 
+        // 몽 정보 동기화
+        mong = mongPersistencePort.saveMongPort(mong)
+                .orElseThrow(NotExistsMongException::new);
+
         // 인벤토리 아이템 삭제
-        mongPersistencePort.deleteInventoryItemPort(inventoryItem.getInventoryItemId());
+        mongPersistencePort.deleteInventoryItemPort(inventoryItem.getInventoryItemId())
+                .orElseThrow(InvalidDeleteInventoryItemException::new);
 
-        // 몽 정보 비동기 응답
-        mongPublishPort.publishMongPort(mong);
-
-        return mongPersistencePort.getInventoryItemsPort(command.getMongId());
+        return mong;
     }
 
     /**

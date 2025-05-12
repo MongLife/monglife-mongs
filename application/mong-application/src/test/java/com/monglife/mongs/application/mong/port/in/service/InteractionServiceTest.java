@@ -6,7 +6,6 @@ import com.monglife.mongs.application.mong.port.in.InteractionUseCase;
 import com.monglife.mongs.application.mong.port.in.command.*;
 import com.monglife.mongs.application.mong.port.out.MongEventPort;
 import com.monglife.mongs.application.mong.port.out.MongPersistencePort;
-import com.monglife.mongs.application.mong.port.out.MongPublishPort;
 import com.monglife.mongs.domain.enums.InventoryItemTypeCode;
 import com.monglife.mongs.domain.exception.InvalidMongStateException;
 import com.monglife.mongs.domain.model.*;
@@ -27,15 +26,12 @@ class InteractionServiceTest {
 
     private final MongEventPort mongEventPort;
 
-    private final MongPublishPort mongPublishPort;
-
     private final InteractionUseCase interactionUseCase;
 
     public InteractionServiceTest() {
         this.mongPersistencePort = Mockito.mock(MongPersistencePort.class);
         this.mongEventPort = Mockito.mock(MongEventPort.class);
-        this.mongPublishPort = Mockito.mock(MongPublishPort.class);
-        this.interactionUseCase = new InteractionService(mongPersistencePort, mongEventPort, mongPublishPort);
+        this.interactionUseCase = new InteractionService(mongPersistencePort, mongEventPort);
     }
 
     @Nested
@@ -483,7 +479,8 @@ class InteractionServiceTest {
             Mockito.when(mongPersistencePort.getMongPort(mongId)).thenReturn(Optional.of(mong));
             Mockito.when(mongPersistencePort.getInventoryItemPort(mongId)).thenReturn(Optional.of(inventoryItem));
             Mockito.when(mongPersistencePort.getFoodPort(food.getFoodTypeCode(), mongId)).thenReturn(Optional.of(food));
-            Mockito.when(mongPersistencePort.getInventoryItemsPort(mongId)).thenReturn(Collections.emptyList());
+            Mockito.when((mongPersistencePort.saveMongPort(mong))).thenReturn(Optional.of(mong));
+            Mockito.when(mongPersistencePort.deleteInventoryItemPort(inventoryItemId)).thenReturn(Optional.of(inventoryItem));
 
             // act
             UseInventoryItemCommand command = UseInventoryItemCommand.builder()
@@ -492,16 +489,15 @@ class InteractionServiceTest {
                     .accountId(accountId)
                     .build();
 
-            List<InventoryItem> expected = interactionUseCase.useInventoryItemUseCase(command);
+            Mong expected = interactionUseCase.useInventoryItemUseCase(command);
 
             // assert
-            assertEquals(0, expected.size());
             assertEquals(payPoint, mong.getPayPoint());
-            assertEquals(status + food.getStrength(), mong.getStrength());
-            assertEquals(status + food.getSatiety(), mong.getSatiety());
-            assertEquals(status + food.getHealthy(), mong.getHealthy());
-            assertEquals(status + food.getFatigue(), mong.getFatigue());
-            assertEquals(status + food.getWeight(), mong.getWeight());
+            assertEquals(status + food.getStrength(), expected.getStrength());
+            assertEquals(status + food.getSatiety(), expected.getSatiety());
+            assertEquals(status + food.getHealthy(), expected.getHealthy());
+            assertEquals(status + food.getFatigue(), expected.getFatigue());
+            assertEquals(status + food.getWeight(), expected.getWeight());
         }
 
         @Test
@@ -531,7 +527,8 @@ class InteractionServiceTest {
             Mockito.when(mongPersistencePort.getMongPort(mongId)).thenReturn(Optional.of(mong));
             Mockito.when(mongPersistencePort.getInventoryItemPort(mongId)).thenReturn(Optional.of(inventoryItem));
             Mockito.when(mongPersistencePort.getSnackPort(snack.getSnackTypeCode(), mongId)).thenReturn(Optional.of(snack));
-            Mockito.when(mongPersistencePort.getInventoryItemsPort(mongId)).thenReturn(Collections.emptyList());
+            Mockito.when(mongPersistencePort.saveMongPort(mong)).thenReturn(Optional.of(mong));
+            Mockito.when(mongPersistencePort.deleteInventoryItemPort(inventoryItemId)).thenReturn(Optional.of(inventoryItem));
 
             // act
             UseInventoryItemCommand command = UseInventoryItemCommand.builder()
@@ -540,16 +537,15 @@ class InteractionServiceTest {
                     .accountId(accountId)
                     .build();
 
-            List<InventoryItem> expected = interactionUseCase.useInventoryItemUseCase(command);
+            Mong expected = interactionUseCase.useInventoryItemUseCase(command);
 
             // assert
-            assertEquals(0, expected.size());
             assertEquals(payPoint, mong.getPayPoint());
-            assertEquals(status + snack.getStrength(), mong.getStrength());
-            assertEquals(status + snack.getSatiety(), mong.getSatiety());
-            assertEquals(status + snack.getHealthy(), mong.getHealthy());
-            assertEquals(status + snack.getFatigue(), mong.getFatigue());
-            assertEquals(status + snack.getWeight(), mong.getWeight());
+            assertEquals(status + snack.getStrength(), expected.getStrength());
+            assertEquals(status + snack.getSatiety(), expected.getSatiety());
+            assertEquals(status + snack.getHealthy(), expected.getHealthy());
+            assertEquals(status + snack.getFatigue(), expected.getFatigue());
+            assertEquals(status + snack.getWeight(), expected.getWeight());
         }
 
         @Test
