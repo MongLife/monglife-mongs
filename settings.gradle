@@ -29,6 +29,12 @@ include 'application:device-application'
 include 'application:member-application'
 include 'application:mong-application'
 
+include 'domain'
+include 'domain:device-domain'
+include 'domain:member-domain'
+include 'domain:mong-domain'
+include 'domain:battle-domain'
+
 include 'adapter-out'
 include 'adapter-out:device-persistence-adapter-out'
 include 'adapter-out:device-publish-adapter-out'

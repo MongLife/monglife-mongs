@@ -7,8 +7,7 @@ import lombok.ToString;
 @Getter
 @ToString
 public class QueuePlayer {
-
-    // 봇 매칭까지 대기 시간 (초)
+    // 봇 매칭 대기 시간 (초)
     private static final Long EXPIRED_SECONDS = 10L;
 
     private final Long mongId;
@@ -25,8 +24,8 @@ public class QueuePlayer {
     }
 
     /**
-     * 봇 매칭까지의 대기 시간 (초)
-     * @return 봇 매칭까지 대기 시간
+     * 봇 매칭 대기 시간 (초)
+     * @return 봇 매칭 대기 시간
      */
     public static Long getExpiredSeconds() {
         return EXPIRED_SECONDS;

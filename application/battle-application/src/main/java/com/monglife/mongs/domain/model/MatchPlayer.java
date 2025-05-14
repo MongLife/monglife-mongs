@@ -2,12 +2,16 @@ package com.monglife.mongs.domain.model;
 
 import com.monglife.core.utils.CommonUtil;
 import com.monglife.mongs.domain.enums.BotMatchMongType;
+import com.monglife.mongs.domain.enums.MatchHistoryCode;
+import com.monglife.mongs.domain.enums.MatchRoundCode;
+import com.monglife.mongs.domain.exception.AlreadyEnterMatchPlayerException;
+import com.monglife.mongs.domain.exception.AlreadyExitMatchPlayerException;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.ToString;
 
 import java.time.LocalDateTime;
-import java.util.Random;
+import java.util.*;
 
 @Getter
 @ToString
@@ -20,13 +24,13 @@ public class MatchPlayer {
     private static final Double MAX_ATTACK = 1000D;
     // 최대 회복 수치
     private static final Double MAX_HEAL = 900D;
-    // 최대 수비 수치
+    // 최대 방어 수치
     private static final Double MAX_DEFENCE = 750D;
     // 기본 공격 수치
     private static final Double DEFAULT_ATTACK = 500D;
     // 기본 회복 수치
     private static final Double DEFAULT_HEAL = 400D;
-    // 기본 수비 수치
+    // 기본 방어 수치
     private static final Double DEFAULT_DEFENCE = 250D;
 
     private final String playerId;
@@ -43,8 +47,6 @@ public class MatchPlayer {
 
     private final String mongName;
 
-    private Double hp;
-
     private final Double attack;
 
     private final Double heal;
@@ -53,14 +55,24 @@ public class MatchPlayer {
 
     private final Boolean isBot;
 
+    private Double hp;
+
     private Boolean isEnter;
 
-    private LocalDateTime enteredDt;
+    private LocalDateTime enteredAt;
 
-    private LocalDateTime exitedDt;
+    private LocalDateTime exitedAt;
+
+    private Double damage;
+
+    private Double recovery;
+
+    private MatchRoundCode matchRoundCode;
+
+    private Set<MatchHistoryCode> matchHistoryCodes;
 
     @Builder
-    public MatchPlayer(String playerId, String deviceId, Long accountId, Long mongId, String mongTypeCode, String mongTypeName, String mongName, Double attack, Double heal, Double defence, Boolean isBot) {
+    public MatchPlayer(String playerId, String deviceId, Long accountId, Long mongId, String mongTypeCode, String mongTypeName, String mongName, Double attack, Double heal, Double defence, Boolean isBot, Double hp, Boolean isEnter, LocalDateTime enteredAt, LocalDateTime exitedAt, Double damage, Double recovery, MatchRoundCode matchRoundCode, Set<MatchHistoryCode> matchHistoryCodes) {
         this.playerId = playerId;
         this.deviceId = deviceId;
         this.accountId = accountId;
@@ -68,70 +80,187 @@ public class MatchPlayer {
         this.mongTypeCode = mongTypeCode;
         this.mongTypeName = mongTypeName;
         this.mongName = mongName;
-        this.hp = MAX_HP;
         this.attack = Math.min(attack, MAX_ATTACK);
         this.heal = Math.min(heal, MAX_HEAL);
         this.defence = Math.min(defence, MAX_DEFENCE);
         this.isBot = isBot;
-        this.isEnter = Boolean.FALSE;
-        this.enteredDt = null;
-        this.exitedDt = null;
+        this.hp = Math.min(hp, MAX_HP);
+        this.isEnter = isEnter;
+        this.enteredAt = enteredAt;
+        this.exitedAt = exitedAt;
+        this.damage = damage;
+        this.recovery = recovery;
+        this.matchRoundCode = matchRoundCode;
+        this.matchHistoryCodes = matchHistoryCodes == null ? new HashSet<>() : matchHistoryCodes;
     }
 
     /**
-     * 봇 매치 플레이어 생성
+     * 입장
+     */
+    public void enter() {
+        if (Boolean.TRUE.equals(this.isEnter)) {
+            throw new AlreadyEnterMatchPlayerException();
+        }
+
+        this.isEnter = Boolean.TRUE;
+        this.enteredAt = LocalDateTime.now();
+    }
+
+    /**
+     * 퇴장
+     */
+    public void exit() {
+        if (Boolean.FALSE.equals(this.isEnter)) {
+            throw new AlreadyExitMatchPlayerException();
+        }
+
+        this.isEnter = Boolean.FALSE;
+        this.exitedAt = LocalDateTime.now();
+    }
+
+    /**
+     * 방어
+     */
+    public void defence() {
+        this.damage = this.damage - this.defence;
+        matchHistoryCodes.add(MatchHistoryCode.MATCH_HISTORY_DEFENCED);
+    }
+
+    /**
+     * 피해
+     * @param damage 피해 수치
+     */
+    public void damage(Double damage) {
+        this.damage = this.damage + damage;
+        matchHistoryCodes.add(MatchHistoryCode.MATCH_HISTORY_ATTACKED);
+    }
+
+    /**
+     * 회복
+     * @param recovery 회복 수치
+     */
+    public void heal(Double recovery) {
+        this.recovery = this.recovery + recovery;
+        this.matchHistoryCodes.add(MatchHistoryCode.MATCH_HISTORY_HEALED);
+    }
+
+    /**
+     * 피해, 회복 수치 적용
+     */
+    public void applyDamageAndRecovery() {
+        // 피해 수치 적용
+        this.hp = this.hp - Math.max(0, this.damage);
+        // 회복 수치 적용
+        this.hp = this.hp + Math.max(0, this.recovery);
+        // HP 범위 체크
+        this.hp = Math.max(0, Math.min(this.hp, MAX_HP));
+
+        if (matchHistoryCodes.contains(MatchHistoryCode.MATCH_HISTORY_DEFENCED)) {
+            // 방어
+            this.matchRoundCode = MatchRoundCode.MATCH_DEFENCE;
+        } else if (matchHistoryCodes.contains(MatchHistoryCode.MATCH_HISTORY_ATTACKED)) {
+            if (matchHistoryCodes.contains(MatchHistoryCode.MATCH_HISTORY_HEALED)) {
+                // 공격 + 회복
+                this.matchRoundCode = MatchRoundCode.MATCH_ATTACKED_HEAL;
+            } else {
+                // 공격
+                this.matchRoundCode = MatchRoundCode.MATCH_ATTACKED;
+            }
+        } else if (matchHistoryCodes.contains(MatchHistoryCode.MATCH_HISTORY_HEALED)) {
+            // 회복
+            this.matchRoundCode = MatchRoundCode.MATCH_HEAL;
+        } else {
+            // 변동 없음
+            this.matchRoundCode = MatchRoundCode.NONE;
+        }
+
+        // 피해, 회복 수치 초기화
+        this.damage = 0D;
+        this.recovery = 0D;
+        this.matchHistoryCodes = new HashSet<>();
+    }
+
+    /**
+     * 매치 플레이어 사망 여부 조회
+     * @return 매치 플레이어 사망 여부
+     */
+    public Boolean isDead() {
+        return this.hp <= 0;
+    }
+
+    /**
+     * 봇 매치 플레이어 다건 생성
      * @return 봇 매치 플레이어 도메인 객체
      */
-    public static MatchPlayer generateBotMatchPlayer() {
+    public static List<MatchPlayer> generateBotMatchPlayers(Integer count) {
 
-        double attack  = DEFAULT_ATTACK  + random.nextDouble(0, 100D);
-        double heal    = DEFAULT_HEAL    + random.nextDouble(0, 100D);
-        double defence = DEFAULT_DEFENCE + random.nextDouble(0, 100D);
+        List<MatchPlayer> matchPlayers = new ArrayList<>();
 
-        int mongTypeIndex = random.nextInt(0, BotMatchMongType.values().length);
-        BotMatchMongType botMatchMongType = BotMatchMongType.values()[mongTypeIndex];
+        for (long index = 1; index <= count; index++) {
 
-        String mongName = "봇 " + botMatchMongType.getMongTypeName();
+            double attack  = DEFAULT_ATTACK  + random.nextDouble(0, 50D);
+            double heal    = DEFAULT_HEAL    + random.nextDouble(0, 50D);
+            double defence = DEFAULT_DEFENCE + random.nextDouble(0, 50D);
 
-        return MatchPlayer.builder()
-                .playerId(CommonUtil.randomId())
-                .deviceId(CommonUtil.randomId())
-                .accountId(-1L)
-                .mongId(-1L)
-                .mongTypeCode(botMatchMongType.getMongTypeCode())
-                .mongTypeName(botMatchMongType.getMongTypeName())
-                .mongName(mongName)
-                .attack(attack)
-                .heal(heal)
-                .defence(defence)
-                .isBot(Boolean.TRUE)
-                .build();
+            int mongTypeIndex = random.nextInt(0, BotMatchMongType.values().length);
+            BotMatchMongType botMatchMongType = BotMatchMongType.values()[mongTypeIndex];
+
+            String mongName = "봇 " + botMatchMongType.getMongTypeName();
+
+            MatchPlayer matchPlayer = MatchPlayer.builder()
+                    .playerId(CommonUtil.randomId())
+                    .deviceId(CommonUtil.randomId())
+                    .accountId(-index)
+                    .mongId(-index)
+                    .mongTypeCode(botMatchMongType.getMongTypeCode())
+                    .mongTypeName(botMatchMongType.getMongTypeName())
+                    .mongName(mongName)
+                    .attack(attack)
+                    .heal(heal)
+                    .defence(defence)
+                    .isBot(Boolean.TRUE)
+                    .hp(MAX_HP)
+                    .isEnter(Boolean.TRUE)
+                    .damage(0D)
+                    .recovery(0D)
+                    .matchRoundCode(MatchRoundCode.NONE)
+                    .build();
+
+            matchPlayers.add(matchPlayer);
+        }
+
+        return matchPlayers;
     }
 
     /**
      * 매치 플레이어 생성
      * @param queuePlayer 매치 대기열 도메인 객체
-     * @param matchMong 매치 몽 도메인 객체
+     * @param mong 몽 도메인 객체
      * @return 매치 플레이어 도메인 객체
      */
-    public static MatchPlayer generateMatchPlayer(QueuePlayer queuePlayer, MatchMong matchMong) {
+    public static MatchPlayer generateMatchPlayer(QueuePlayer queuePlayer, Mong mong) {
 
-        double attack  = DEFAULT_ATTACK  + matchMong.getStrength();
-        double heal    = DEFAULT_HEAL    + matchMong.getFatigue();
-        double defence = DEFAULT_DEFENCE + matchMong.getWeight();
+        double attack  = DEFAULT_ATTACK  + mong.getStrength();
+        double heal    = DEFAULT_HEAL    + mong.getFatigue();
+        double defence = DEFAULT_DEFENCE + mong.getWeight();
 
         return MatchPlayer.builder()
                 .playerId(CommonUtil.randomId())
                 .deviceId(queuePlayer.getDeviceId())
-                .accountId(matchMong.getAccountId())
-                .mongId(matchMong.getMongId())
-                .mongTypeCode(matchMong.getMongTypeCode())
-                .mongTypeName(matchMong.getMongTypeName())
-                .mongName(matchMong.getMongName())
+                .accountId(mong.getAccountId())
+                .mongId(mong.getMongId())
+                .mongTypeCode(mong.getMongTypeCode())
+                .mongTypeName(mong.getMongTypeName())
+                .mongName(mong.getMongName())
                 .attack(attack)
                 .heal(heal)
                 .defence(defence)
                 .isBot(Boolean.FALSE)
+                .hp(MAX_HP)
+                .isEnter(Boolean.FALSE)
+                .damage(0D)
+                .recovery(0D)
+                .matchRoundCode(MatchRoundCode.NONE)
                 .build();
     }
 }

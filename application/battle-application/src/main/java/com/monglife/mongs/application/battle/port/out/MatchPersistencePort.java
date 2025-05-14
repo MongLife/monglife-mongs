@@ -42,9 +42,23 @@ public interface MatchPersistencePort {
     Optional<QueuePlayer> deleteQueuePlayerPort(QueuePlayer queuePlayer);
 
     /**
+     * 매치 조회
+     * @param matchId 매치 ID
+     * @return 매치 도메인 객체
+     */
+    Optional<Match> getMatchPort(Long matchId);
+
+    /**
      * 매치 등록
      * @param createMatchVo 매치 등록 Vo
      * @return 매치 도메인 객체
      */
     Optional<Match> createMatchPort(CreateMatchVo createMatchVo);
+
+    /**
+     * 매치 동기화
+     * @param match 매치 도메인 객체
+     * @return 매치 도메인 객체
+     */
+    Optional<Match> saveMatchPort(Match match);
 }

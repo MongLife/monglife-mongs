@@ -7,15 +7,14 @@ import com.monglife.mongs.application.battle.port.in.QueueUseCase;
 import com.monglife.mongs.application.battle.port.in.command.CreateQueuePlayerCommand;
 import com.monglife.mongs.application.battle.port.in.command.DeleteQueuePlayerCommand;
 import com.monglife.mongs.application.battle.port.in.command.MatchingQueuePlayersCommand;
-import com.monglife.mongs.application.battle.port.out.MatchMongPersistencePort;
 import com.monglife.mongs.application.battle.port.out.MatchPersistencePort;
-import com.monglife.mongs.application.battle.port.out.MatchPublishPort;
+import com.monglife.mongs.application.battle.port.out.MongPersistencePort;
 import com.monglife.mongs.application.battle.port.out.QueuePublishPort;
 import com.monglife.mongs.application.battle.port.out.vo.CreateMatchVo;
 import com.monglife.mongs.application.battle.port.out.vo.CreateQueuePlayerVo;
 import com.monglife.mongs.domain.model.Match;
-import com.monglife.mongs.domain.model.MatchMong;
 import com.monglife.mongs.domain.model.MatchPlayer;
+import com.monglife.mongs.domain.model.Mong;
 import com.monglife.mongs.domain.model.QueuePlayer;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -33,9 +32,7 @@ public class QueueService implements QueueUseCase {
 
     private final MatchPersistencePort matchPersistencePort;
 
-    private final MatchMongPersistencePort matchMongPersistencePort;
-
-    private final MatchPublishPort matchPublishPort;
+    private final MongPersistencePort mongPersistencePort;
 
     private final QueuePublishPort queuePublishPort;
 
@@ -84,42 +81,44 @@ public class QueueService implements QueueUseCase {
             throw new NotExistsQueuePlayerException();
         }
 
-        // 매치 몽 정보가 없는 매치 대기열 도메인 목록
-        List<QueuePlayer> notExistsMatchMongQueuePlayer = new ArrayList<>();
+        // 몽 정보가 없는 매치 대기열 도메인 목록
+        List<QueuePlayer> notExistsMongQueuePlayer = new ArrayList<>();
         // 매칭이 완료된 매치 플레이어 목록
         List<MatchPlayer> matchPlayers = new ArrayList<>();
 
         queuePlayers.forEach(queuePlayer -> {
-            // 매치 몽 조회
-            Optional<MatchMong> matchMongOptional = matchMongPersistencePort.getMatchMongPort(queuePlayer.getMongId());
+            // 몽 조회
+            Optional<Mong> mongOptional = mongPersistencePort.getMongPort(queuePlayer.getMongId());
 
-            // 매치 몽이 존재 하지 않는 경우
-            if (matchMongOptional.isEmpty()) {
-                // 매치 몽이 존재 하지 않는 매치 대기열 저장
-                notExistsMatchMongQueuePlayer.add(queuePlayer);
+            // 몽이 존재 하지 않는 경우
+            if (mongOptional.isEmpty()) {
+                // 몽이 존재 하지 않는 매치 대기열 저장
+                notExistsMongQueuePlayer.add(queuePlayer);
             }
-            // 매치 몽이 존재 하는 경우
+            // 몽이 존재 하는 경우
             else {
-                // 매치 몽을 매치 플레이어 변환 후 저장
-                MatchMong matchMong = matchMongOptional.get();
-                matchPlayers.add(MatchPlayer.generateMatchPlayer(queuePlayer, matchMong));
+                Mong mong = mongOptional.get();
+                // 몽 배팅 페이 포인트 차감
+                mong.matchBetting(Match.getBettingPayPoint());
+                // 몽을 매치 플레이어 변환 후 저장
+                matchPlayers.add(MatchPlayer.generateMatchPlayer(queuePlayer, mong));
             }
         });
 
-        // 존재 하지 않는 매치 몽이 있는 경우, 존재 하는 매치 몽을 대기열 재등록
-        if (!notExistsMatchMongQueuePlayer.isEmpty()) {
-            Set<Long> notExistsMatchMongIds = notExistsMatchMongQueuePlayer.stream()
+        // 존재 하지 않는 몽이 있는 경우, 존재 하는 몽을 대기열 재등록
+        if (!notExistsMongQueuePlayer.isEmpty()) {
+            Set<Long> notExistsMongIds = notExistsMongQueuePlayer.stream()
                     .map(QueuePlayer::getMongId)
                     .collect(Collectors.toSet());
 
-            for (QueuePlayer queuePlayer : notExistsMatchMongQueuePlayer) {
-                if (notExistsMatchMongIds.contains(queuePlayer.getMongId())) {
-                    // 매치 몽이 존재 하지 않는 경우
-                    queuePublishPort.publishCreateQueuePlayerFail(queuePlayer);
+            for (QueuePlayer queuePlayer : notExistsMongQueuePlayer) {
+                if (notExistsMongIds.contains(queuePlayer.getMongId())) {
+                    // 몽이 존재 하지 않는 경우
+                    queuePublishPort.publishMatchingQueuePlayerFail(queuePlayer);
                     continue;
                 }
 
-                // 매치 몽이 존재 하지만, 매칭에 실패한 경우 (다른 매치 몽이 존재하지 않는 경우)
+                // 몽이 존재 하지만, 매칭에 실패한 경우 (다른 몽이 존재 하지 않는 경우)
                 Optional<QueuePlayer> queuePlayerOptional = matchPersistencePort.createQueuePlayerPort(CreateQueuePlayerVo.builder()
                         .mongId(queuePlayer.getMongId())
                         .deviceId(queuePlayer.getDeviceId())
@@ -129,20 +128,16 @@ public class QueueService implements QueueUseCase {
                 // 대기열 등록에 실패한 경우
                 if (queuePlayerOptional.isEmpty()) {
                     // 대기열 등록 실패 비동기 응답
-                    queuePublishPort.publishCreateQueuePlayerFail(queuePlayer);
+                    queuePublishPort.publishMatchingQueuePlayerFail(queuePlayer);
                 }
             }
         } else {
             // 대기열 차지 않은 경우
             int botMatchPlayerCount = Math.max(0, command.getMatchPlayerCount() - queuePlayers.size());
-            // 남은 자리 봇 매치 플레이어로 채움
-            for (int count = 0; count < botMatchPlayerCount; count++) {
-                matchPlayers.add(MatchPlayer.generateBotMatchPlayer());
-            }
+            // 봇 매치 플레이어 생성 후 등록
+            matchPlayers.addAll(MatchPlayer.generateBotMatchPlayers(botMatchPlayerCount));
 
             CreateMatchVo createMatchVo = CreateMatchVo.builder()
-                    .round(0)
-                    .maxRound(Match.getMaxRound())
                     .matchPlayers(matchPlayers)
                     .build();
 
@@ -151,7 +146,7 @@ public class QueueService implements QueueUseCase {
                     .orElseThrow(InvalidCreateMatchException::new);
 
             // 매칭 성공 비동기 응답
-            matchPublishPort.publishMatch(match);
+            queuePublishPort.publishMatchingQueuePlayer(match);
         }
     }
 }

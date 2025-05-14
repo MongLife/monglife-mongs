@@ -492,6 +492,33 @@ public class Mong {
     }
 
     /**
+     * 매치 배팅
+     * @param payPoint 배팅 페이 포인트
+     */
+    public void matchBetting(Integer payPoint) {
+        if (this.payPoint < payPoint) {
+            throw new NotEnoughPayPointException();
+        }
+
+        // 페이 포인트 감소
+        this.payPoint = this.payPoint - payPoint;
+    }
+
+    /**
+     * 매치 보상
+     * @param payPoint 보상 페이 포인트
+     * @param exp 보상 경험치
+     */
+    public void matchReward(Integer payPoint, Double exp) {
+        // 페이 포인트 증가
+        this.payPoint = this.payPoint + payPoint;
+        this.exp = Math.min(this.exp + exp, this.maxStatus);
+
+        // 몽 상태 코드 동기화
+        this.syncMongStateCode();
+    }
+
+    /**
      * 몽 상태 코드 동기화
      */
     private void syncMongStateCode() {

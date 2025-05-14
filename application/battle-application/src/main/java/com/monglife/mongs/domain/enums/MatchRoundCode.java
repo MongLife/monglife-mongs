@@ -8,20 +8,6 @@ import lombok.Getter;
 public enum MatchRoundCode {
 
     /**
-     * 선택
-     */
-    MATCH_PICK_ATTACK("배틀 공격 선택"),
-    MATCH_PICK_DEFENCE("배틀 방어 선택"),
-    MATCH_PICK_HEAL("배틀 회복 선택"),
-
-    /**
-     * 선택 완료
-     */
-    MATCH_HISTORY_DEFENCED("배틀 방어 이력"),
-    MATCH_HISTORY_ATTACKED("배틀 피해 이력"),
-    MATCH_HISTORY_HEALED("배틀 회복 이력"),
-
-    /**
      * 응답
      */
     NONE("원상태 유지"),
