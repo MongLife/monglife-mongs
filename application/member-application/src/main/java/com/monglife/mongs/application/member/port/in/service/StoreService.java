@@ -10,7 +10,7 @@ import com.monglife.mongs.application.member.port.out.MemberPersistencePort;
 import com.monglife.mongs.application.member.port.out.MemberPublishPort;
 import com.monglife.mongs.application.member.port.out.OrderPersistencePort;
 import com.monglife.mongs.application.member.port.out.vo.CreateOrderVo;
-import com.monglife.mongs.domain.model.*;
+import com.monglife.mongs.domain.member.model.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

@@ -1,4 +1,4 @@
-package com.monglife.mongs.domain.model;
+package com.monglife.mongs.domain.member.model;
 
 import lombok.Builder;
 import lombok.Getter;

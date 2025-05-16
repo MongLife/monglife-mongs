@@ -3,7 +3,7 @@ package com.monglife.mongs.application.mong.port.aspect;
 import com.monglife.mongs.application.mong.port.annotation.PublishMongPort;
 import com.monglife.mongs.application.mong.port.exception.NotExistsMongException;
 import com.monglife.mongs.application.mong.port.out.MongPublishPort;
-import com.monglife.mongs.domain.model.Mong;
+import com.monglife.mongs.domain.mong.model.Mong;
 import lombok.RequiredArgsConstructor;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.AfterReturning;

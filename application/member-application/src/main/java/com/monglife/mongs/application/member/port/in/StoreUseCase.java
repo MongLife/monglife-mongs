@@ -3,9 +3,8 @@ package com.monglife.mongs.application.member.port.in;
 import com.monglife.mongs.application.member.port.in.command.ConsumeOrderCommand;
 import com.monglife.mongs.application.member.port.in.command.CreateOrderCommand;
 import com.monglife.mongs.application.member.port.in.command.GetConsumedOrderCommand;
-import com.monglife.mongs.domain.model.Order;
-import com.monglife.mongs.domain.model.InAppProduct;
-import com.monglife.mongs.domain.model.Player;
+import com.monglife.mongs.domain.member.model.Order;
+import com.monglife.mongs.domain.member.model.InAppProduct;
 
 import java.util.List;
 

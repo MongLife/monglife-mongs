@@ -8,7 +8,7 @@ import com.monglife.mongs.application.member.port.out.MemberEventPort;
 import com.monglife.mongs.application.member.port.out.MemberPersistencePort;
 import com.monglife.mongs.application.member.port.out.MemberPublishPort;
 import com.monglife.mongs.application.member.port.out.vo.CreatePlayerVo;
-import com.monglife.mongs.domain.model.Player;
+import com.monglife.mongs.domain.member.model.Player;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

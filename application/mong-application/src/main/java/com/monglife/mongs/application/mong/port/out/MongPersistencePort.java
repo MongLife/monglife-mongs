@@ -2,7 +2,7 @@ package com.monglife.mongs.application.mong.port.out;
 
 import com.monglife.mongs.application.mong.port.out.vo.CreateInventoryItemVo;
 import com.monglife.mongs.application.mong.port.out.vo.CreateMongVo;
-import com.monglife.mongs.domain.model.*;
+import com.monglife.mongs.domain.mong.model.*;
 
 import java.util.List;
 import java.util.Optional;

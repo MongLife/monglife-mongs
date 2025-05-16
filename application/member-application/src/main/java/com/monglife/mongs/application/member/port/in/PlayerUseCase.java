@@ -1,7 +1,7 @@
 package com.monglife.mongs.application.member.port.in;
 
 import com.monglife.mongs.application.member.port.in.command.*;
-import com.monglife.mongs.domain.model.Player;
+import com.monglife.mongs.domain.member.model.Player;
 
 public interface PlayerUseCase {
 

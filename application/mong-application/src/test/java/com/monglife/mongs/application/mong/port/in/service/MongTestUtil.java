@@ -1,11 +1,11 @@
 package com.monglife.mongs.application.mong.port.in.service;
 
-import com.monglife.mongs.domain.enums.MongStateCode;
-import com.monglife.mongs.domain.enums.MongStatusCode;
-import com.monglife.mongs.domain.model.Food;
-import com.monglife.mongs.domain.model.Mong;
-import com.monglife.mongs.domain.model.MongType;
-import com.monglife.mongs.domain.model.Snack;
+import com.monglife.mongs.domain.mong.enums.MongStateCode;
+import com.monglife.mongs.domain.mong.enums.MongStatusCode;
+import com.monglife.mongs.domain.mong.model.Food;
+import com.monglife.mongs.domain.mong.model.Mong;
+import com.monglife.mongs.domain.mong.model.MongType;
+import com.monglife.mongs.domain.mong.model.Snack;
 
 import java.time.LocalDateTime;
 import java.time.LocalTime;

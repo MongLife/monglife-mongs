@@ -1,6 +1,6 @@
 package com.monglife.mongs.application.mong.port.out.vo;
 
-import com.monglife.mongs.domain.enums.InventoryItemTypeCode;
+import com.monglife.mongs.domain.mong.enums.InventoryItemTypeCode;
 import lombok.Builder;
 import lombok.Getter;
 

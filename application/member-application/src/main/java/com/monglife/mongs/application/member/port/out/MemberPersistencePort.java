@@ -1,7 +1,7 @@
 package com.monglife.mongs.application.member.port.out;
 
 import com.monglife.mongs.application.member.port.out.vo.CreatePlayerVo;
-import com.monglife.mongs.domain.model.Player;
+import com.monglife.mongs.domain.member.model.Player;
 
 import java.util.Optional;
 

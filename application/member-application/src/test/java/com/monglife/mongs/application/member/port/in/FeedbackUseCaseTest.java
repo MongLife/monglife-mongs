@@ -5,7 +5,7 @@ import com.monglife.mongs.application.member.port.exception.InvalidCreateFeedbac
 import com.monglife.mongs.application.member.port.in.command.CreateFeedbackCommand;
 import com.monglife.mongs.application.member.port.in.service.FeedbackService;
 import com.monglife.mongs.application.member.port.out.FeedbackPersistencePort;
-import com.monglife.mongs.domain.model.Feedback;
+import com.monglife.mongs.domain.member.model.Feedback;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;

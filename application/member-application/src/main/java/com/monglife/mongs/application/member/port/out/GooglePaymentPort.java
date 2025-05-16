@@ -1,7 +1,7 @@
 package com.monglife.mongs.application.member.port.out;
 
-import com.monglife.mongs.domain.model.InAppOrder;
-import com.monglife.mongs.domain.model.InAppProduct;
+import com.monglife.mongs.domain.member.model.InAppOrder;
+import com.monglife.mongs.domain.member.model.InAppProduct;
 
 import java.util.List;
 import java.util.Optional;

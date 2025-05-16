@@ -4,8 +4,8 @@ import com.monglife.mongs.application.member.port.in.command.CreateCollectionMap
 import com.monglife.mongs.application.member.port.in.command.CreateCollectionMongCommand;
 import com.monglife.mongs.application.member.port.in.command.GetCollectionMapsCommand;
 import com.monglife.mongs.application.member.port.in.command.GetCollectionMongsCommand;
-import com.monglife.mongs.domain.model.CollectionMap;
-import com.monglife.mongs.domain.model.CollectionMong;
+import com.monglife.mongs.domain.member.model.CollectionMap;
+import com.monglife.mongs.domain.member.model.CollectionMong;
 
 import java.util.List;
 

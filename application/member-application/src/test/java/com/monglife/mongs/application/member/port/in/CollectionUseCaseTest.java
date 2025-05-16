@@ -8,8 +8,8 @@ import com.monglife.mongs.application.member.port.in.command.GetCollectionMapsCo
 import com.monglife.mongs.application.member.port.in.command.GetCollectionMongsCommand;
 import com.monglife.mongs.application.member.port.in.service.CollectionService;
 import com.monglife.mongs.application.member.port.out.CollectionPersistencePort;
-import com.monglife.mongs.domain.model.CollectionMap;
-import com.monglife.mongs.domain.model.CollectionMong;
+import com.monglife.mongs.domain.member.model.CollectionMap;
+import com.monglife.mongs.domain.member.model.CollectionMong;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;

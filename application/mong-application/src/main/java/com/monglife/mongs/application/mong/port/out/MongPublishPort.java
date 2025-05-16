@@ -1,6 +1,6 @@
 package com.monglife.mongs.application.mong.port.out;
 
-import com.monglife.mongs.domain.model.Mong;
+import com.monglife.mongs.domain.mong.model.Mong;
 
 public interface MongPublishPort {
 

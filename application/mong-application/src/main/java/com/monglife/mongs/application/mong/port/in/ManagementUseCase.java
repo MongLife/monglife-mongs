@@ -1,7 +1,7 @@
 package com.monglife.mongs.application.mong.port.in;
 
 import com.monglife.mongs.application.mong.port.in.command.*;
-import com.monglife.mongs.domain.model.Mong;
+import com.monglife.mongs.domain.mong.model.Mong;
 
 import java.util.List;
 

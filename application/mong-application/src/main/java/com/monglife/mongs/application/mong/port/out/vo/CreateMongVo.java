@@ -1,7 +1,7 @@
 package com.monglife.mongs.application.mong.port.out.vo;
 
-import com.monglife.mongs.domain.enums.MongStateCode;
-import com.monglife.mongs.domain.enums.MongStatusCode;
+import com.monglife.mongs.domain.mong.enums.MongStateCode;
+import com.monglife.mongs.domain.mong.enums.MongStatusCode;
 import lombok.Builder;
 import lombok.Getter;
 
