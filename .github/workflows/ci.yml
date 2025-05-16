@@ -39,6 +39,13 @@ jobs:
       # Mong Domain 모듈 단위 테스트
       - name: Mong Domain 모듈 단위 테스트
         run: ./gradlew :domain:mong-domain:test
+      # 레포트 생성
+      - name: Publish Test Results
+        uses: EnricoMi/publish-unit-test-result-action@v2
+        if: always()
+        with:
+          junit_files: '**/build/test-results/test/TEST-*.xml'
+
   application-unit-test:
     runs-on: ubuntu-latest
     steps:
@@ -72,6 +79,13 @@ jobs:
       # Mong Application/Domain 모듈 단위 테스트
       - name: Mong Application/Domain 모듈 단위 테스트
         run: ./gradlew :application:mong-application:test
+      # 레포트 생성
+      - name: Publish Test Results
+        uses: EnricoMi/publish-unit-test-result-action@v2
+        if: always()
+        with:
+          junit_files: '**/build/test-results/test/TEST-*.xml'
+
   adapter-out-unit-test:
     runs-on: ubuntu-latest
     steps:
@@ -129,6 +143,13 @@ jobs:
       # Mong Publish Adapter Out 모듈 단위 테스트
       - name: Mong Publish Adapter Out 모듈 단위 테스트
         run: ./gradlew :adapter-out:mong-publish-adapter-out:test
+      # 레포트 생성
+      - name: Publish Test Results
+        uses: EnricoMi/publish-unit-test-result-action@v2
+        if: always()
+        with:
+          junit_files: '**/build/test-results/test/TEST-*.xml'
+
   adapter-in-unit-test:
     runs-on: ubuntu-latest
     steps:
@@ -174,6 +195,13 @@ jobs:
       # Mong Web Adapter In 모듈 단위 테스트
       - name: Mong Web Adapter In 모듈 단위 테스트
         run: ./gradlew :adapter-in:mong-web-adapter-in:test
+      # 레포트 생성
+      - name: Publish Test Results
+        uses: EnricoMi/publish-unit-test-result-action@v2
+        if: always()
+        with:
+          junit_files: '**/build/test-results/test/TEST-*.xml'
+
   # User API 빌드 테스트
   bootstrap-user-build-test:
     needs:
@@ -204,6 +232,13 @@ jobs:
       # Bootstrap User API 빌드
       - name: User Bootstrap API 모듈 빌드
         run: ./gradlew :bootstrap:user-bootstrap-api:build -x test
+      # 레포트 생성
+      - name: Publish Test Results
+        uses: EnricoMi/publish-unit-test-result-action@v2
+        if: always()
+        with:
+          junit_files: '**/build/test-results/test/TEST-*.xml'
+
   # Character API 빌드 테스트
   bootstrap-character-build-test:
     needs:
@@ -234,3 +269,9 @@ jobs:
       # Bootstrap Character API 빌드
       - name: Character Bootstrap API 모듈 빌드
         run: ./gradlew :bootstrap:character-bootstrap-api:build -x test
+      # 레포트 생성
+      - name: Publish Test Results
+        uses: EnricoMi/publish-unit-test-result-action@v2
+        if: always()
+        with:
+          junit_files: '**/build/test-results/test/TEST-*.xml'

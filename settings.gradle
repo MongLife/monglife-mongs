@@ -1,17 +1,17 @@
 rootProject.name = 'monglife-mongs'
-
-include 'apps'
-include 'apps:monglife-mongs-app-activity-api'
-include 'apps:monglife-mongs-app-manager-api'
-
-include 'clients'
-include 'clients:monglife-mongs-client-manager'
-include 'clients:monglife-mongs-client-user'
-
-include 'domains'
-include 'domains:monglife-mongs-domain-match'
-include 'domains:monglife-mongs-domain-mong'
-include 'domains:monglife-mongs-domain-task'
+//
+//include 'apps'
+//include 'apps:monglife-mongs-app-activity-api'
+//include 'apps:monglife-mongs-app-manager-api'
+//
+//include 'clients'
+//include 'clients:monglife-mongs-client-manager'
+//include 'clients:monglife-mongs-client-user'
+//
+//include 'domains'
+//include 'domains:monglife-mongs-domain-match'
+//include 'domains:monglife-mongs-domain-mong'
+//include 'domains:monglife-mongs-domain-task'
 
 include 'bootstrap'
 include 'bootstrap:character-bootstrap-api'
