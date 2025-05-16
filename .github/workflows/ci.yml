@@ -54,6 +54,9 @@ jobs:
         with:
           distribution: 'zulu'
           java-version: '17'
+      # gradlew 권한 변경
+      - name: Gradle 권한 부여
+        run: chmod +x gradlew
       # Device Event Adapter Out  모듈 단위 테스트
       - name: Device Event Adapter Out  모듈 단위 테스트
         run: ./gradlew :adapter-out:device-event-adapter-out:test
@@ -90,6 +93,9 @@ jobs:
         with:
           distribution: 'zulu'
           java-version: '17'
+      # gradlew 권한 변경
+      - name: Gradle 권한 부여
+        run: chmod +x gradlew
       # Device Event Adapter In 모듈 단위 테스트
       - name: Device Event Adapter In 모듈 단위 테스트
         run: ./gradlew :adapter-in:device-event-adapter-in:test
