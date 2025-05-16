@@ -57,6 +57,9 @@ jobs:
       # gradlew 권한 변경
       - name: Gradle 권한 부여
         run: chmod +x gradlew
+      # 환경 설정 파일 로드
+      - name: 환경 설정 파일 로드
+        run: ./gradlew copyPrivate
       # Device Event Adapter Out  모듈 단위 테스트
       - name: Device Event Adapter Out  모듈 단위 테스트
         run: ./gradlew :adapter-out:device-event-adapter-out:test
@@ -96,6 +99,9 @@ jobs:
       # gradlew 권한 변경
       - name: Gradle 권한 부여
         run: chmod +x gradlew
+      # 환경 설정 파일 로드
+      - name: 환경 설정 파일 로드
+        run: ./gradlew copyPrivate
       # Device Event Adapter In 모듈 단위 테스트
       - name: Device Event Adapter In 모듈 단위 테스트
         run: ./gradlew :adapter-in:device-event-adapter-in:test
