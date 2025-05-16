@@ -6,14 +6,14 @@ import com.monglife.mongs.application.battle.port.in.QueueUseCase;
 import com.monglife.mongs.application.battle.port.in.command.CreateQueuePlayerCommand;
 import com.monglife.mongs.application.battle.port.in.command.DeleteQueuePlayerCommand;
 import com.monglife.mongs.application.battle.port.in.command.MatchingQueuePlayersCommand;
-import com.monglife.mongs.application.battle.port.out.MatchMongPersistencePort;
 import com.monglife.mongs.application.battle.port.out.MatchPersistencePort;
-import com.monglife.mongs.application.battle.port.out.MatchPublishPort;
+import com.monglife.mongs.application.battle.port.out.MongPersistencePort;
 import com.monglife.mongs.application.battle.port.out.QueuePublishPort;
 import com.monglife.mongs.application.battle.port.out.vo.CreateMatchVo;
+import com.monglife.mongs.domain.exception.NotEnoughPayPointException;
 import com.monglife.mongs.domain.model.Match;
-import com.monglife.mongs.domain.model.MatchMong;
 import com.monglife.mongs.domain.model.MatchPlayer;
+import com.monglife.mongs.domain.model.Mong;
 import com.monglife.mongs.domain.model.QueuePlayer;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -30,9 +30,7 @@ class QueueServiceTest {
 
     private final MatchPersistencePort matchPersistencePort;
 
-    private final MatchMongPersistencePort matchMongPersistencePort;
-
-    private final MatchPublishPort matchPublishPort;
+    private final MongPersistencePort mongPersistencePort;
 
     private final QueuePublishPort queuePublishPort;
 
@@ -41,9 +39,8 @@ class QueueServiceTest {
     public QueueServiceTest() {
         this.queuePublishPort = Mockito.mock(QueuePublishPort.class);
         this.matchPersistencePort = Mockito.mock(MatchPersistencePort.class);
-        this.matchMongPersistencePort = Mockito.mock(MatchMongPersistencePort.class);
-        this.matchPublishPort = Mockito.mock(MatchPublishPort.class);
-        this.queueUseCase = new QueueService(matchPersistencePort, matchMongPersistencePort, matchPublishPort, queuePublishPort);
+        this.mongPersistencePort = Mockito.mock(MongPersistencePort.class);
+        this.queueUseCase = new QueueService(matchPersistencePort, mongPersistencePort, queuePublishPort);
     }
 
     @Nested
@@ -132,7 +129,7 @@ class QueueServiceTest {
             Mockito.when(matchPersistencePort.getQueuePlayersPort(matchPlayerCount, QueuePlayer.getExpiredSeconds())).thenReturn(queuePlayers);
             Mockito.when(matchPersistencePort.createMatchPort(Mockito.any())).thenReturn(Optional.of(match));
             for (QueuePlayer queuePlayer : queuePlayers) {
-                Mockito.when(matchMongPersistencePort.getMatchMongPort(queuePlayer.getMongId())).thenReturn(Optional.of(MatchMong.builder()
+                Mockito.when(mongPersistencePort.getMongPort(queuePlayer.getMongId())).thenReturn(Optional.of(Mong.builder()
                         .mongId(queuePlayer.getMongId())
                         .accountId(queuePlayer.getAccountId())
                         .mongName("TEST-MONG-NAME")
@@ -145,6 +142,7 @@ class QueueServiceTest {
                         .fatigue(100D)
                         .exp(0D)
                         .weight(100D)
+                        .payPoint(Match.getBettingPayPoint())
                         .build()));
             }
 
@@ -159,7 +157,7 @@ class QueueServiceTest {
             ArgumentCaptor<CreateMatchVo> captor = ArgumentCaptor.forClass(CreateMatchVo.class);
 
             Mockito.verify(matchPersistencePort).createMatchPort(captor.capture());
-            Mockito.verify(matchPublishPort).publishMatch(Mockito.any());
+            Mockito.verify(queuePublishPort).publishMatchingQueuePlayer(Mockito.any());
             for (MatchPlayer matchPlayer : captor.getValue().getMatchPlayers()) {
                 assertFalse(matchPlayer.getIsBot());
             }
@@ -180,7 +178,7 @@ class QueueServiceTest {
             Mockito.when(matchPersistencePort.getQueuePlayersPort(matchPlayerCount, QueuePlayer.getExpiredSeconds())).thenReturn(queuePlayers);
             Mockito.when(matchPersistencePort.createMatchPort(Mockito.any())).thenReturn(Optional.of(match));
             for (QueuePlayer queuePlayer : queuePlayers) {
-                Mockito.when(matchMongPersistencePort.getMatchMongPort(queuePlayer.getMongId())).thenReturn(Optional.of(MatchMong.builder()
+                Mockito.when(mongPersistencePort.getMongPort(queuePlayer.getMongId())).thenReturn(Optional.of(Mong.builder()
                         .mongId(queuePlayer.getMongId())
                         .accountId(queuePlayer.getAccountId())
                         .mongName("TEST-MONG-NAME")
@@ -193,6 +191,7 @@ class QueueServiceTest {
                         .fatigue(100D)
                         .exp(0D)
                         .weight(100D)
+                        .payPoint(Match.getBettingPayPoint())
                         .build()));
             }
 
@@ -207,7 +206,7 @@ class QueueServiceTest {
             ArgumentCaptor<CreateMatchVo> captor = ArgumentCaptor.forClass(CreateMatchVo.class);
 
             Mockito.verify(matchPersistencePort).createMatchPort(captor.capture());
-            Mockito.verify(matchPublishPort).publishMatch(Mockito.any());
+            Mockito.verify(queuePublishPort).publishMatchingQueuePlayer(Mockito.any());
             assertFalse(captor.getValue().getMatchPlayers().get(0).getIsBot());
             assertTrue(captor.getValue().getMatchPlayers().get(1).getIsBot());
         }
@@ -230,8 +229,8 @@ class QueueServiceTest {
         }
 
         @Test
-        @DisplayName("매치 몽이 없는 경우 매치 대기열을 재등록 한다.")
-        void matchingQueuePlayersWhenNotExistsMatchMong() {
+        @DisplayName("몽이 없는 경우 매치 대기열을 재등록 한다.")
+        void matchingQueuePlayersWhenNotExistsMong() {
             // arrange
             int matchPlayerCount = 2;
             List<QueuePlayer> queuePlayers = List.of(
@@ -246,8 +245,8 @@ class QueueServiceTest {
 
             Mockito.when(matchPersistencePort.getQueuePlayersPort(matchPlayerCount, QueuePlayer.getExpiredSeconds())).thenReturn(queuePlayers);
             Mockito.when(matchPersistencePort.createMatchPort(Mockito.any())).thenReturn(Optional.of(match));
-            Mockito.when(matchMongPersistencePort.getMatchMongPort(queuePlayers.get(0).getMongId())).thenReturn(Optional.empty());
-            Mockito.when(matchMongPersistencePort.getMatchMongPort(queuePlayers.get(1).getMongId())).thenReturn(Optional.of(MatchMong.builder()
+            Mockito.when(mongPersistencePort.getMongPort(queuePlayers.get(0).getMongId())).thenReturn(Optional.empty());
+            Mockito.when(mongPersistencePort.getMongPort(queuePlayers.get(1).getMongId())).thenReturn(Optional.of(Mong.builder()
                     .mongId(queuePlayers.get(1).getMongId())
                     .accountId(queuePlayers.get(1).getAccountId())
                     .mongName("TEST-MONG-NAME")
@@ -260,6 +259,7 @@ class QueueServiceTest {
                     .fatigue(100D)
                     .exp(0D)
                     .weight(100D)
+                    .payPoint(Match.getBettingPayPoint())
                     .build()));
             Mockito.when(matchPersistencePort.createQueuePlayerPort(Mockito.any())).thenReturn(Optional.of(queuePlayers.get(1)));
 
@@ -288,8 +288,8 @@ class QueueServiceTest {
 
             Mockito.when(matchPersistencePort.getQueuePlayersPort(matchPlayerCount, QueuePlayer.getExpiredSeconds())).thenReturn(queuePlayers);
             Mockito.when(matchPersistencePort.createMatchPort(Mockito.any())).thenReturn(Optional.of(match));
-            Mockito.when(matchMongPersistencePort.getMatchMongPort(queuePlayers.get(0).getMongId())).thenReturn(Optional.empty());
-            Mockito.when(matchMongPersistencePort.getMatchMongPort(queuePlayers.get(1).getMongId())).thenReturn(Optional.of(MatchMong.builder()
+            Mockito.when(mongPersistencePort.getMongPort(queuePlayers.get(0).getMongId())).thenReturn(Optional.empty());
+            Mockito.when(mongPersistencePort.getMongPort(queuePlayers.get(1).getMongId())).thenReturn(Optional.of(Mong.builder()
                     .mongId(queuePlayers.get(1).getMongId())
                     .accountId(queuePlayers.get(1).getAccountId())
                     .mongName("TEST-MONG-NAME")
@@ -302,10 +302,11 @@ class QueueServiceTest {
                     .fatigue(100D)
                     .exp(0D)
                     .weight(100D)
+                    .payPoint(Match.getBettingPayPoint())
                     .build()));
             Mockito.when(matchPersistencePort.createQueuePlayerPort(Mockito.any())).thenReturn(Optional.empty());
 
-            // act &
+            // act
             MatchingQueuePlayersCommand command = MatchingQueuePlayersCommand.builder()
                     .matchPlayerCount(matchPlayerCount)
                     .build();
@@ -313,7 +314,51 @@ class QueueServiceTest {
             queueUseCase.matchingQueuePlayersUseCase(command);
 
             // assert
-            Mockito.verify(queuePublishPort).publishCreateQueuePlayerFail(Mockito.any());
+            Mockito.verify(queuePublishPort).publishMatchingQueuePlayerFail(Mockito.any());
+        }
+
+        @Test
+        @DisplayName("배팅 페이 포인트가 부족한 경우 예외가 발생 한다.")
+        void matchingQueuePlayersWhenNotEnoughPayPoint() {
+            // arrange
+            int matchPlayerCount = 2;
+            List<QueuePlayer> queuePlayers = List.of(
+                    new QueuePlayer(1L, CommonUtil.randomId(), 1L),
+                    new QueuePlayer(2L, CommonUtil.randomId(), 2L)
+            );
+
+            Match match = Match.builder()
+                    .matchId(1L)
+                    .round(0)
+                    .build();
+
+            Mockito.when(matchPersistencePort.getQueuePlayersPort(matchPlayerCount, QueuePlayer.getExpiredSeconds())).thenReturn(queuePlayers);
+            Mockito.when(matchPersistencePort.createMatchPort(Mockito.any())).thenReturn(Optional.of(match));
+            for (QueuePlayer queuePlayer : queuePlayers) {
+                Mockito.when(mongPersistencePort.getMongPort(queuePlayer.getMongId())).thenReturn(Optional.of(Mong.builder()
+                        .mongId(queuePlayers.get(1).getMongId())
+                        .accountId(queuePlayers.get(1).getAccountId())
+                        .mongName("TEST-MONG-NAME")
+                        .mongTypeCode("TEST-MONG_TYPE-CODE")
+                        .mongTypeName("TEST-MONG_TYPE-NAME")
+                        .isSleep(Boolean.FALSE)
+                        .strength(100D)
+                        .satiety(100D)
+                        .healthy(100D)
+                        .fatigue(100D)
+                        .exp(0D)
+                        .weight(100D)
+                        .payPoint(0)
+                        .build()));
+            }
+            Mockito.when(matchPersistencePort.createQueuePlayerPort(Mockito.any())).thenReturn(Optional.empty());
+
+            // act & assert
+            MatchingQueuePlayersCommand command = MatchingQueuePlayersCommand.builder()
+                    .matchPlayerCount(matchPlayerCount)
+                    .build();
+
+            assertThrows(NotEnoughPayPointException.class, () -> queueUseCase.matchingQueuePlayersUseCase(command));
         }
     }
 }
