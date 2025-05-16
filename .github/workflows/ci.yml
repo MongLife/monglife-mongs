@@ -114,8 +114,37 @@ jobs:
       # Member Web Adapter In 모듈 단위 테스트
       - name: Member Web Adapter In 모듈 단위 테스트
         run: ./gradlew :adapter-in:member-web-adapter-in:test
-  # 빌드 테스트
+  # User API 빌드 테스트
   bootstrap-user-build-test:
+    needs:
+      - application-unit-test
+      - adapter-out-unit-test
+      - adapter-in-unit-test
+    runs-on: ubuntu-latest
+    steps:
+      # 소스 로드
+      - name: 소스 코드 로드
+        uses: actions/checkout@v3
+        with:
+          token: ${{ secrets.ACTION_TOKEN }}
+          submodules: true
+      # Java 환경 설정
+      - name: JDK 설정
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'zulu'
+          java-version: '17'
+      # gradlew 권한 변경
+      - name: Gradle 권한 부여
+        run: chmod +x gradlew
+      # 환경 설정 파일 로드
+      - name: 환경 설정 파일 로드
+        run: ./gradlew copyPrivate
+      # Bootstrap User API 빌드
+      - name: User Bootstrap API 모듈 빌드
+        run: ./gradlew :bootstrap:user-bootstrap-api:build -x test
+  # Character API 빌드 테스트
+  bootstrap-character-build-test:
     needs:
       - application-unit-test
       - adapter-out-unit-test
@@ -143,6 +172,3 @@ jobs:
       # Bootstrap Character API 빌드
       - name: Character Bootstrap API 모듈 빌드
         run: ./gradlew :bootstrap:character-bootstrap-api:build -x test
-      # Bootstrap User API 빌드
-      - name: User Bootstrap API 모듈 빌드
-        run: ./gradlew :bootstrap:user-bootstrap-api:build -x test
