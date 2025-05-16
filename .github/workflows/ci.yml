@@ -39,7 +39,7 @@ jobs:
       # Mong Application/Domain 모듈 단위 테스트
       - name: Mong Application/Domain 모듈 단위 테스트
         run: ./gradlew :application:mong-application:test
-  adapter-in-unit-test:
+  adapter-out-unit-test:
     runs-on: ubuntu-latest
     steps:
       # 소스 로드
@@ -81,7 +81,7 @@ jobs:
       # Member Publish Adapter Out 모듈 단위 테스트
       - name: Member Publish Adapter Out 모듈 단위 테스트
         run: ./gradlew :adapter-out:member-publish-adapter-out:test
-  adapter-out-unit-test:
+  adapter-in-unit-test:
     runs-on: ubuntu-latest
     steps:
       # 소스 로드
@@ -140,6 +140,9 @@ jobs:
       # 환경 설정 파일 로드
       - name: 환경 설정 파일 로드
         run: ./gradlew copyPrivate
+      # Bootstrap Character API 빌드
+      - name: Character Bootstrap API 모듈 빌드
+        run: ./gradlew :bootstrap:character-bootstrap-api:build -x test
       # Bootstrap User API 빌드
       - name: User Bootstrap API 모듈 빌드
         run: ./gradlew :bootstrap:user-bootstrap-api:build -x test
