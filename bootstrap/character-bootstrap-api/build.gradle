@@ -1,0 +1,20 @@
+dependencies {
+    // adapter-in layer
+
+    // adapter-out layer
+
+    // eureka
+    implementation('org.springframework.cloud:spring-cloud-starter-netflix-eureka-client') {
+        exclude group: 'com.google.guava', module: 'guava'
+    }
+    implementation 'com.google.guava:guava:32.0.1-android'
+}
+
+tasks.register('copyPrivate', Copy) {
+    copy {
+        from('../../configs/bootstrap/character-bootstrap-api/') {
+            include('application.yml')
+        }
+        into('src/main/resources')
+    }
+}
