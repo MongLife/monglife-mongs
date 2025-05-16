@@ -4,7 +4,7 @@ import com.monglife.mongs.adapter.out.member.persistence.entity.FeedbackEntity;
 import com.monglife.mongs.adapter.out.member.persistence.repository.FeedbackRepository;
 import com.monglife.mongs.application.member.port.out.FeedbackPersistencePort;
 import com.monglife.mongs.application.member.port.out.vo.CreateFeedbackVo;
-import com.monglife.mongs.domain.model.Feedback;
+import com.monglife.mongs.domain.member.model.Feedback;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

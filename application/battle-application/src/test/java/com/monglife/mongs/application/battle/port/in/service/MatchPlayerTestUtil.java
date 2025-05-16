@@ -1,10 +1,10 @@
 package com.monglife.mongs.application.battle.port.in.service;
 
 import com.monglife.core.utils.CommonUtil;
-import com.monglife.mongs.domain.enums.MatchRoundCode;
-import com.monglife.mongs.domain.enums.MatchStateCode;
-import com.monglife.mongs.domain.model.Match;
-import com.monglife.mongs.domain.model.MatchPlayer;
+import com.monglife.mongs.domain.battle.enums.MatchRoundCode;
+import com.monglife.mongs.domain.battle.enums.MatchStateCode;
+import com.monglife.mongs.domain.battle.model.Match;
+import com.monglife.mongs.domain.battle.model.MatchPlayer;
 
 import java.util.List;
 import java.util.Random;
@@ -36,7 +36,7 @@ public class MatchPlayerTestUtil {
         return Match.builder()
                 .matchId(matchId)
                 .round(0)
-                .maxRound(Match.getMaxRound())
+                .maxRound(Match.getInitMaxRound())
                 .matchPlayers(matchPlayers)
                 .build();
     }
@@ -64,7 +64,7 @@ public class MatchPlayerTestUtil {
         Match match = Match.builder()
                 .matchId(matchId)
                 .round(0)
-                .maxRound(Match.getMaxRound())
+                .maxRound(Match.getInitMaxRound())
                 .matchPlayers(matchPlayers)
                 .build();
 
@@ -97,8 +97,8 @@ public class MatchPlayerTestUtil {
 
         return Match.builder()
                 .matchId(matchId)
-                .round(Match.getMaxRound())
-                .maxRound(Match.getMaxRound())
+                .round(Match.getInitMaxRound())
+                .maxRound(Match.getInitMaxRound())
                 .matchPlayers(matchPlayers)
                 .matchStateCode(MatchStateCode.PROCESS)
                 .build();
@@ -127,7 +127,7 @@ public class MatchPlayerTestUtil {
         return Match.builder()
                 .matchId(matchId)
                 .round(0)
-                .maxRound(Match.getMaxRound())
+                .maxRound(Match.getInitMaxRound())
                 .matchPlayers(matchPlayers)
                 .build();
     }
@@ -155,7 +155,7 @@ public class MatchPlayerTestUtil {
         Match match = Match.builder()
                 .matchId(matchId)
                 .round(0)
-                .maxRound(Match.getMaxRound())
+                .maxRound(Match.getInitMaxRound())
                 .matchPlayers(matchPlayers)
                 .build();
 
@@ -188,7 +188,7 @@ public class MatchPlayerTestUtil {
         Match match = Match.builder()
                 .matchId(matchId)
                 .round(0)
-                .maxRound(Match.getMaxRound())
+                .maxRound(Match.getInitMaxRound())
                 .matchPlayers(matchPlayers)
                 .build();
 

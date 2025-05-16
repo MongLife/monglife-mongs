@@ -9,8 +9,8 @@ import com.monglife.mongs.adapter.out.member.persistence.repository.ComnCodeRepo
 import com.monglife.mongs.application.member.port.out.CollectionPersistencePort;
 import com.monglife.mongs.application.member.port.out.vo.CreateCollectionMapVo;
 import com.monglife.mongs.application.member.port.out.vo.CreateCollectionMongVo;
-import com.monglife.mongs.domain.model.CollectionMap;
-import com.monglife.mongs.domain.model.CollectionMong;
+import com.monglife.mongs.domain.member.model.CollectionMap;
+import com.monglife.mongs.domain.member.model.CollectionMong;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

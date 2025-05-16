@@ -2,8 +2,8 @@ package com.monglife.mongs.application.battle.port.out;
 
 import com.monglife.mongs.application.battle.port.out.vo.CreateMatchVo;
 import com.monglife.mongs.application.battle.port.out.vo.CreateQueuePlayerVo;
-import com.monglife.mongs.domain.model.Match;
-import com.monglife.mongs.domain.model.QueuePlayer;
+import com.monglife.mongs.domain.battle.model.Match;
+import com.monglife.mongs.domain.battle.model.QueuePlayer;
 
 import java.util.List;
 import java.util.Optional;
@@ -36,10 +36,10 @@ public interface MatchPersistencePort {
 
     /**
      * 매치 대기열 삭제
-     * @param queuePlayer 삭제할 매치 대기열 도메인 객체
+     * @param queuePlayerDto 삭제할 매치 대기열 도메인 객체
      * @return 매치 대기열 도메인 객체
      */
-    Optional<QueuePlayer> deleteQueuePlayerPort(QueuePlayer queuePlayer);
+    Optional<QueuePlayer> deleteQueuePlayerPort(QueuePlayer queuePlayerDto);
 
     /**
      * 매치 조회
@@ -57,8 +57,8 @@ public interface MatchPersistencePort {
 
     /**
      * 매치 동기화
-     * @param match 매치 도메인 객체
+     * @param matchDto 매치 도메인 객체
      * @return 매치 도메인 객체
      */
-    Optional<Match> saveMatchPort(Match match);
+    Optional<Match> saveMatchPort(Match matchDto);
 }

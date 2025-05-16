@@ -10,7 +10,7 @@ import com.monglife.mongs.adapter.in.device.web.step.dto.response.UpdateTotalWal
 import com.monglife.mongs.application.device.port.in.StepUseCase;
 import com.monglife.mongs.application.device.port.in.command.ExchangeCurrentWalkingCountCommand;
 import com.monglife.mongs.application.device.port.in.command.UpdateTotalWalkingCountCommand;
-import com.monglife.mongs.domain.model.Step;
+import com.monglife.mongs.domain.device.model.Step;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;

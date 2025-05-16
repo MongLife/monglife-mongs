@@ -1,6 +1,6 @@
 package com.monglife.mongs.adapter.out.member.persistence.entity;
 
-import com.monglife.mongs.domain.model.ExchangeStarPointProduct;
+import com.monglife.mongs.domain.member.model.ExchangeStarPointProduct;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;

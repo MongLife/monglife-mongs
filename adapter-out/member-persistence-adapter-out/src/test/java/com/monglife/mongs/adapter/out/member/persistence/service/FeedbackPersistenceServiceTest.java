@@ -6,7 +6,7 @@ import com.monglife.mongs.adapter.out.member.persistence.config.AdapterOutMember
 import com.monglife.mongs.adapter.out.member.persistence.config.MemberDataSourceConfig;
 import com.monglife.mongs.application.member.port.out.FeedbackPersistencePort;
 import com.monglife.mongs.application.member.port.out.vo.CreateFeedbackVo;
-import com.monglife.mongs.domain.model.Feedback;
+import com.monglife.mongs.domain.member.model.Feedback;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;

@@ -6,6 +6,39 @@ on:
     branches: [ refac/character-api ]
 jobs:
   # 각 모듈 별 단위 테스트
+  domain-unit-test:
+    runs-on: ubuntu-latest
+    steps:
+      # 소스 로드
+      - name: 소스 코드 로드
+        uses: actions/checkout@v3
+        with:
+          token: ${{ secrets.ACTION_TOKEN }}
+          submodules: true
+      # Java 환경 설정
+      - name: JDK 설정
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'zulu'
+          java-version: '17'
+      # gradlew 권한 변경
+      - name: Gradle 권한 부여
+        run: chmod +x gradlew
+      # 환경 설정 파일 로드
+      - name: 환경 설정 파일 로드
+        run: ./gradlew copyPrivate
+      # Battle Domain 모듈 단위 테스트
+      - name: Battle Domain 모듈 단위 테스트
+        run: ./gradlew :domain:battle-domain:test
+      # Device Domain 모듈 단위 테스트
+      - name: Device Domain 모듈 단위 테스트
+        run: ./gradlew :domain:device-domain:test
+      # Member Domain 모듈 단위 테스트
+      - name: Member Domain 모듈 단위 테스트
+        run: ./gradlew :domain:member-domain:test
+      # Mong Domain 모듈 단위 테스트
+      - name: Mong Domain 모듈 단위 테스트
+        run: ./gradlew :domain:mong-domain:test
   application-unit-test:
     runs-on: ubuntu-latest
     steps:
@@ -60,8 +93,17 @@ jobs:
       # 환경 설정 파일 로드
       - name: 환경 설정 파일 로드
         run: ./gradlew copyPrivate
+      # Battle Persistence Adapter Out  모듈 단위 테스트
+      - name: Battle Persistence Adapter Out 모듈 단위 테스트
+        run: ./gradlew :adapter-out:battle-persistence-adapter-out:test
+      # Battle Publish Adapter Out  모듈 단위 테스트
+      - name: Battle Publish Adapter Out 모듈 단위 테스트
+        run: ./gradlew :adapter-out:battle-publish-adapter-out:test
+      # Device Persistence Adapter Out 모듈 단위 테스트
+      - name: Device Persistence Adapter Out 모듈 단위 테스트
+        run: ./gradlew :adapter-out:device-persistence-adapter-out:test
       # Device Event Adapter Out  모듈 단위 테스트
-      - name: Device Event Adapter Out  모듈 단위 테스트
+      - name: Device Event Adapter Out 모듈 단위 테스트
         run: ./gradlew :adapter-out:device-event-adapter-out:test
       # Device Persistence Adapter Out 모듈 단위 테스트
       - name: Device Persistence Adapter Out 모듈 단위 테스트
@@ -81,6 +123,12 @@ jobs:
       # Member Publish Adapter Out 모듈 단위 테스트
       - name: Member Publish Adapter Out 모듈 단위 테스트
         run: ./gradlew :adapter-out:member-publish-adapter-out:test
+      # Mong Persistence Adapter Out 모듈 단위 테스트
+      - name: Mong Persistence Adapter Out 모듈 단위 테스트
+        run: ./gradlew :adapter-out:mong-persistence-adapter-out:test
+      # Mong Publish Adapter Out 모듈 단위 테스트
+      - name: Mong Publish Adapter Out 모듈 단위 테스트
+        run: ./gradlew :adapter-out:mong-publish-adapter-out:test
   adapter-in-unit-test:
     runs-on: ubuntu-latest
     steps:
@@ -102,6 +150,12 @@ jobs:
       # 환경 설정 파일 로드
       - name: 환경 설정 파일 로드
         run: ./gradlew copyPrivate
+      # Battle Event Adapter In 모듈 단위 테스트
+      - name: Battle Event Adapter In 모듈 단위 테스트
+        run: ./gradlew :adapter-in:battle-event-adapter-in:test
+      # Battle Web Adapter In 모듈 단위 테스트
+      - name: Battle Web Adapter In 모듈 단위 테스트
+        run: ./gradlew :adapter-in:battle-web-adapter-in:test
       # Device Event Adapter In 모듈 단위 테스트
       - name: Device Event Adapter In 모듈 단위 테스트
         run: ./gradlew :adapter-in:device-event-adapter-in:test
@@ -114,9 +168,16 @@ jobs:
       # Member Web Adapter In 모듈 단위 테스트
       - name: Member Web Adapter In 모듈 단위 테스트
         run: ./gradlew :adapter-in:member-web-adapter-in:test
+      # Mong Event Adapter In 모듈 단위 테스트
+      - name: Mong Event Adapter In 모듈 단위 테스트
+        run: ./gradlew :adapter-in:mong-event-adapter-in:test
+      # Mong Web Adapter In 모듈 단위 테스트
+      - name: Mong Web Adapter In 모듈 단위 테스트
+        run: ./gradlew :adapter-in:mong-web-adapter-in:test
   # User API 빌드 테스트
   bootstrap-user-build-test:
     needs:
+      - domain-unit-test
       - application-unit-test
       - adapter-out-unit-test
       - adapter-in-unit-test
@@ -146,6 +207,7 @@ jobs:
   # Character API 빌드 테스트
   bootstrap-character-build-test:
     needs:
+      - domain-unit-test
       - application-unit-test
       - adapter-out-unit-test
       - adapter-in-unit-test

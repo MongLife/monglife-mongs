@@ -14,9 +14,9 @@ import com.monglife.mongs.application.member.port.in.command.ConsumeOrderCommand
 import com.monglife.mongs.application.member.port.in.command.CreateOrderCommand;
 import com.monglife.mongs.application.member.port.in.command.GetConsumedOrderCommand;
 import com.monglife.mongs.application.member.port.in.command.GetPlayerCommand;
-import com.monglife.mongs.domain.model.InAppProduct;
-import com.monglife.mongs.domain.model.Order;
-import com.monglife.mongs.domain.model.Player;
+import com.monglife.mongs.domain.member.model.InAppProduct;
+import com.monglife.mongs.domain.member.model.Order;
+import com.monglife.mongs.domain.member.model.Player;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;

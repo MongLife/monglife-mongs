@@ -1,7 +1,6 @@
 package com.monglife.mongs.application.battle.port.in.service;
 
 import com.monglife.mongs.application.battle.port.annotation.EndMatch;
-import com.monglife.mongs.application.battle.port.exception.AlreadyExistsMatchPickException;
 import com.monglife.mongs.application.battle.port.exception.NotEndMatchException;
 import com.monglife.mongs.application.battle.port.exception.NotExistsMatchException;
 import com.monglife.mongs.application.battle.port.in.MatchUseCase;
@@ -9,9 +8,9 @@ import com.monglife.mongs.application.battle.port.in.command.*;
 import com.monglife.mongs.application.battle.port.in.vo.MatchOutcomeVo;
 import com.monglife.mongs.application.battle.port.out.MatchPersistencePort;
 import com.monglife.mongs.application.battle.port.out.MatchPublishPort;
-import com.monglife.mongs.domain.model.Match;
-import com.monglife.mongs.domain.model.MatchPick;
-import com.monglife.mongs.domain.model.MatchPlayer;
+import com.monglife.mongs.domain.battle.model.Match;
+import com.monglife.mongs.domain.battle.model.MatchPick;
+import com.monglife.mongs.domain.battle.model.MatchPlayer;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -42,8 +41,10 @@ public class MatchService implements MatchUseCase {
     @Override
     @Transactional
     public Match getMatchUseCase(GetMatchCommand command) {
-        return matchPersistencePort.getMatchPort(command.getMatchId())
+        Match match = matchPersistencePort.getMatchPort(command.getMatchId())
                 .orElseThrow(NotExistsMatchException::new);
+
+        return match;
     }
 
     /**
@@ -124,11 +125,6 @@ public class MatchService implements MatchUseCase {
 
         Match match = matchPersistencePort.getMatchPort(command.getMatchId())
                 .orElseThrow(NotExistsMatchException::new);
-
-        // 현재 라운드 매치 선택 여부 확인
-        if (Boolean.TRUE.equals(match.isPickedMatchPlayerInCurrentRound(command.getPlayerId()))) {
-            throw new AlreadyExistsMatchPickException();
-        }
 
         // 매치 플레이어 조회
         MatchPlayer matchPlayer = match.getMatchPlayer(command.getPlayerId());

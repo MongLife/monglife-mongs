@@ -12,11 +12,11 @@ import com.monglife.mongs.application.battle.port.out.MongPersistencePort;
 import com.monglife.mongs.application.battle.port.out.QueuePublishPort;
 import com.monglife.mongs.application.battle.port.out.vo.CreateMatchVo;
 import com.monglife.mongs.application.battle.port.out.vo.CreateQueuePlayerVo;
-import com.monglife.mongs.domain.model.Match;
-import com.monglife.mongs.domain.model.MatchPlayer;
-import com.monglife.mongs.domain.model.Mong;
-import com.monglife.mongs.domain.model.QueuePlayer;
-import com.monglife.mongs.domain.vo.GenerateMatchPlayerVo;
+import com.monglife.mongs.domain.battle.model.Match;
+import com.monglife.mongs.domain.battle.model.MatchPlayer;
+import com.monglife.mongs.domain.battle.model.QueuePlayer;
+import com.monglife.mongs.domain.battle.vo.GenerateMatchPlayerVo;
+import com.monglife.mongs.domain.mong.model.Mong;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -50,8 +50,10 @@ public class QueueService implements QueueUseCase {
                 .accountId(command.getAccountId())
                 .build();
 
-        return matchPersistencePort.createQueuePlayerPort(createQueuePlayerVo)
+        QueuePlayer queuePlayer = matchPersistencePort.createQueuePlayerPort(createQueuePlayerVo)
                 .orElseThrow(InvalidCreateQueuePlayerException::new);
+
+        return queuePlayer;
     }
 
     /**
@@ -64,8 +66,10 @@ public class QueueService implements QueueUseCase {
         QueuePlayer queuePlayer = matchPersistencePort.getQueuePlayerPort(command.getMongId(), command.getAccountId(), command.getDeviceId())
                 .orElseThrow(NotExistsQueuePlayerException::new);
 
-        return matchPersistencePort.deleteQueuePlayerPort(queuePlayer)
+        queuePlayer = matchPersistencePort.deleteQueuePlayerPort(queuePlayer)
                 .orElseThrow(NotExistsQueuePlayerException::new);
+
+        return queuePlayer;
     }
 
     /**

@@ -4,7 +4,7 @@ import com.monglife.mongs.adapter.out.member.persistence.entity.MemberEntity;
 import com.monglife.mongs.adapter.out.member.persistence.repository.MemberRepository;
 import com.monglife.mongs.application.member.port.out.MemberPersistencePort;
 import com.monglife.mongs.application.member.port.out.vo.CreatePlayerVo;
-import com.monglife.mongs.domain.model.Player;
+import com.monglife.mongs.domain.member.model.Player;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

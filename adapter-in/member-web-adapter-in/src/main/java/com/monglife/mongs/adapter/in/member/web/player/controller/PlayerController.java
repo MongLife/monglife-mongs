@@ -12,7 +12,7 @@ import com.monglife.mongs.application.member.port.in.command.BuySlotCommand;
 import com.monglife.mongs.application.member.port.in.command.CreatePlayerCommand;
 import com.monglife.mongs.application.member.port.in.command.ExchangeStarPointCommand;
 import com.monglife.mongs.application.member.port.in.command.GetPlayerCommand;
-import com.monglife.mongs.domain.model.Player;
+import com.monglife.mongs.domain.member.model.Player;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;

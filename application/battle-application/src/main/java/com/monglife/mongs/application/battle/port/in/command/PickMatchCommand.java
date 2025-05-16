@@ -1,6 +1,6 @@
 package com.monglife.mongs.application.battle.port.in.command;
 
-import com.monglife.mongs.domain.enums.MatchPickCode;
+import com.monglife.mongs.domain.battle.enums.MatchPickCode;
 import lombok.Builder;
 import lombok.Getter;
 

@@ -1,7 +1,7 @@
 package com.monglife.mongs.adapter.out.device.persistence.entity;
 
 import com.monglife.module.common.jpa.entity.BaseTimeEntity;
-import com.monglife.mongs.domain.model.Step;
+import com.monglife.mongs.domain.device.model.Step;
 import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;

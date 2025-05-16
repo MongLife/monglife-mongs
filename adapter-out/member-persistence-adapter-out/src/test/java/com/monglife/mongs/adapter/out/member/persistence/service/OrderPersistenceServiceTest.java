@@ -14,8 +14,8 @@ import com.monglife.mongs.adapter.out.member.persistence.repository.GroupCodeRep
 import com.monglife.mongs.adapter.out.member.persistence.repository.OrderRepository;
 import com.monglife.mongs.application.member.port.out.OrderPersistencePort;
 import com.monglife.mongs.application.member.port.out.vo.CreateOrderVo;
-import com.monglife.mongs.domain.model.ExchangeStarPointProduct;
-import com.monglife.mongs.domain.model.Order;
+import com.monglife.mongs.domain.member.model.ExchangeStarPointProduct;
+import com.monglife.mongs.domain.member.model.Order;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;

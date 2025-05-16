@@ -2,8 +2,8 @@ package com.monglife.mongs.application.battle.port.in;
 
 import com.monglife.mongs.application.battle.port.in.command.*;
 import com.monglife.mongs.application.battle.port.in.vo.MatchOutcomeVo;
-import com.monglife.mongs.domain.model.Match;
-import com.monglife.mongs.domain.model.MatchPlayer;
+import com.monglife.mongs.domain.battle.model.Match;
+import com.monglife.mongs.domain.battle.model.MatchPlayer;
 
 public interface MatchUseCase {
 

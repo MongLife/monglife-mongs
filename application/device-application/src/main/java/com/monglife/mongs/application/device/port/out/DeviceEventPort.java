@@ -1,6 +1,8 @@
 package com.monglife.mongs.application.device.port.out;
 
+import com.monglife.mongs.application.device.port.out.dto.StepEventDto;
+
 public interface DeviceEventPort {
 
-    void exchangeCurrentWalkingCountEventPort(String deviceId, Long mongId, Integer walkingCount, Integer payPoint);
+    void exchangeCurrentWalkingCountEventPort(StepEventDto stepEventDto);
 }

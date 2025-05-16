@@ -8,9 +8,9 @@ import com.monglife.mongs.application.device.port.in.service.StepService;
 import com.monglife.mongs.application.device.port.out.DeviceEventPort;
 import com.monglife.mongs.application.device.port.out.DevicePersistencePort;
 import com.monglife.mongs.application.device.port.out.DevicePublishPort;
-import com.monglife.mongs.domain.exception.InvalidTotalWalkingCountException;
-import com.monglife.mongs.domain.exception.NotEnoughCurrentWalkingCountException;
-import com.monglife.mongs.domain.model.Step;
+import com.monglife.mongs.domain.device.exception.InvalidTotalWalkingCountException;
+import com.monglife.mongs.domain.device.exception.NotEnoughCurrentWalkingCountException;
+import com.monglife.mongs.domain.device.model.Step;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -19,7 +19,8 @@ import org.mockito.Mockito;
 import java.time.LocalDateTime;
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class StepUseCaseTest {
 
@@ -75,7 +76,7 @@ class StepUseCaseTest {
             // assert
             assertEquals(0, step.getCurrentWalkingCount());
             Mockito.verify(devicePersistencePort).getStepPort(DEVICE_ID);
-            Mockito.verify(deviceEventPort).exchangeCurrentWalkingCountEventPort(Mockito.any(), Mockito.any(), Mockito.any(), Mockito.any());
+            Mockito.verify(deviceEventPort).exchangeCurrentWalkingCountEventPort(Mockito.any());
             Mockito.verify(devicePersistencePort).saveStepPort(Mockito.any());
             Mockito.verify(devicePublishPort).publishCurrentWalkingCountPort(Mockito.any());
         }
@@ -111,7 +112,7 @@ class StepUseCaseTest {
             // assert
             assertEquals(walkingCount, step.getCurrentWalkingCount());
             Mockito.verify(devicePersistencePort).getStepPort(DEVICE_ID);
-            Mockito.verify(deviceEventPort).exchangeCurrentWalkingCountEventPort(Mockito.any(), Mockito.any(), Mockito.any(), Mockito.any());
+            Mockito.verify(deviceEventPort).exchangeCurrentWalkingCountEventPort(Mockito.any());
             Mockito.verify(devicePersistencePort).saveStepPort(Mockito.any());
             Mockito.verify(devicePublishPort).publishCurrentWalkingCountPort(Mockito.any());
         }
@@ -148,7 +149,7 @@ class StepUseCaseTest {
             assertEquals(newDeviceBootedDt, step.getDeviceBootedDt());
             assertEquals(newTotalWalkingCount, step.getCurrentWalkingCount());
             Mockito.verify(devicePersistencePort).getStepPort(DEVICE_ID);
-            Mockito.verify(deviceEventPort).exchangeCurrentWalkingCountEventPort(Mockito.any(), Mockito.any(), Mockito.any(), Mockito.any());
+            Mockito.verify(deviceEventPort).exchangeCurrentWalkingCountEventPort(Mockito.any());
             Mockito.verify(devicePersistencePort).saveStepPort(Mockito.any());
             Mockito.verify(devicePublishPort).publishCurrentWalkingCountPort(Mockito.any());
         }
@@ -170,7 +171,7 @@ class StepUseCaseTest {
 
             assertThrows(NotExistStepException.class, () -> stepUseCase.exchangeCurrentWalkingCountUseCase(command));
             Mockito.verify(devicePersistencePort).getStepPort(DEVICE_ID);
-            Mockito.verify(deviceEventPort, Mockito.never()).exchangeCurrentWalkingCountEventPort(Mockito.any(), Mockito.any(), Mockito.any(), Mockito.any());
+            Mockito.verify(deviceEventPort, Mockito.never()).exchangeCurrentWalkingCountEventPort(Mockito.any());
             Mockito.verify(devicePersistencePort, Mockito.never()).saveStepPort(Mockito.any());
             Mockito.verify(devicePublishPort, Mockito.never()).publishCurrentWalkingCountPort(Mockito.any());
         }
@@ -200,7 +201,7 @@ class StepUseCaseTest {
                     .build();
 
             assertThrows(NotExistStepException.class, () -> stepUseCase.exchangeCurrentWalkingCountUseCase(command));
-            Mockito.verify(deviceEventPort, Mockito.never()).exchangeCurrentWalkingCountEventPort(Mockito.any(), Mockito.any(), Mockito.any(), Mockito.any());
+            Mockito.verify(deviceEventPort, Mockito.never()).exchangeCurrentWalkingCountEventPort(Mockito.any());
         }
 
         @Test
@@ -228,7 +229,7 @@ class StepUseCaseTest {
 
             assertThrows(NotEnoughCurrentWalkingCountException.class, () -> stepUseCase.exchangeCurrentWalkingCountUseCase(command));
             Mockito.verify(devicePersistencePort).getStepPort(DEVICE_ID);
-            Mockito.verify(deviceEventPort, Mockito.never()).exchangeCurrentWalkingCountEventPort(Mockito.any(), Mockito.any(), Mockito.any(), Mockito.any());
+            Mockito.verify(deviceEventPort, Mockito.never()).exchangeCurrentWalkingCountEventPort(Mockito.any());
             Mockito.verify(devicePersistencePort, Mockito.never()).saveStepPort(Mockito.any());
             Mockito.verify(devicePublishPort, Mockito.never()).publishCurrentWalkingCountPort(Mockito.any());
         }

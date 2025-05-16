@@ -4,7 +4,7 @@ import com.monglife.mongs.adapter.out.device.persistence.entity.DeviceEntity;
 import com.monglife.mongs.adapter.out.device.persistence.repository.DeviceRepository;
 import com.monglife.mongs.application.device.port.out.DevicePersistencePort;
 import com.monglife.mongs.application.device.port.out.vo.CreateStepVo;
-import com.monglife.mongs.domain.model.Step;
+import com.monglife.mongs.domain.device.model.Step;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

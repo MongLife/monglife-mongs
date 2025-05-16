@@ -3,7 +3,7 @@ package com.monglife.mongs.adapter.out.device.publish.service;
 import com.monglife.mongs.adapter.out.device.publish.client.DevicePublishClient;
 import com.monglife.mongs.adapter.out.device.publish.dto.response.DevicePublishDto;
 import com.monglife.mongs.application.device.port.out.DevicePublishPort;
-import com.monglife.mongs.domain.model.Step;
+import com.monglife.mongs.domain.device.model.Step;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 

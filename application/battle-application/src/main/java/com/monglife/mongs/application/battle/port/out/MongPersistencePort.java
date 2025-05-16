@@ -1,6 +1,6 @@
 package com.monglife.mongs.application.battle.port.out;
 
-import com.monglife.mongs.domain.model.Mong;
+import com.monglife.mongs.domain.mong.model.Mong;
 
 import java.util.Optional;
 

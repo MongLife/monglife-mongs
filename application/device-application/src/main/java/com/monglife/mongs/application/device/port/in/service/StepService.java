@@ -8,8 +8,9 @@ import com.monglife.mongs.application.device.port.in.command.UpdateTotalWalkingC
 import com.monglife.mongs.application.device.port.out.DeviceEventPort;
 import com.monglife.mongs.application.device.port.out.DevicePersistencePort;
 import com.monglife.mongs.application.device.port.out.DevicePublishPort;
+import com.monglife.mongs.application.device.port.out.dto.StepEventDto;
 import com.monglife.mongs.application.device.port.out.vo.CreateStepVo;
-import com.monglife.mongs.domain.model.Step;
+import com.monglife.mongs.domain.device.model.Step;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -45,7 +46,12 @@ public class StepService implements StepUseCase {
                 .orElseThrow(NotExistStepException::new);
 
         // 보유 걸음 수 환전 이벤트 발생
-        deviceEventPort.exchangeCurrentWalkingCountEventPort(step.getDeviceId(), command.getMongId(), command.getWalkingCount(), payPoint);
+        deviceEventPort.exchangeCurrentWalkingCountEventPort(StepEventDto.builder()
+                .deviceId(command.getDeviceId())
+                .mongId(command.getMongId())
+                .walkingCount(command.getWalkingCount())
+                .payPoint(payPoint)
+                .build());
 
         // 보유 걸음 수 비동기 응답
         devicePublishPort.publishCurrentWalkingCountPort(step);

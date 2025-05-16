@@ -2,10 +2,10 @@ package com.monglife.mongs.adapter.out.google.payment.service;
 
 import com.monglife.mongs.adapter.out.google.payment.config.AdapterOutGooglePaymentConfig;
 import com.monglife.mongs.application.member.port.out.GooglePaymentPort;
-import com.monglife.mongs.domain.enums.OrderPurchaseTypeCode;
-import com.monglife.mongs.domain.enums.OrderTypeCode;
-import com.monglife.mongs.domain.model.InAppOrder;
-import com.monglife.mongs.domain.model.InAppProduct;
+import com.monglife.mongs.domain.member.enums.OrderPurchaseTypeCode;
+import com.monglife.mongs.domain.member.enums.OrderTypeCode;
+import com.monglife.mongs.domain.member.model.InAppOrder;
+import com.monglife.mongs.domain.member.model.InAppProduct;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;

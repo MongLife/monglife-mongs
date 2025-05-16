@@ -4,7 +4,7 @@ import com.monglife.mongs.adapter.out.member.publish.client.MemberPublishClient;
 import com.monglife.mongs.adapter.out.member.publish.dto.response.MemberSlotCountPublishDto;
 import com.monglife.mongs.adapter.out.member.publish.dto.response.MemberStarPointPublishDto;
 import com.monglife.mongs.application.member.port.out.MemberPublishPort;
-import com.monglife.mongs.domain.model.Player;
+import com.monglife.mongs.domain.member.model.Player;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 

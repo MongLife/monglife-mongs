@@ -8,15 +8,13 @@ import com.monglife.mongs.adapter.out.member.persistence.repository.ExchangeStar
 import com.monglife.mongs.adapter.out.member.persistence.repository.OrderRepository;
 import com.monglife.mongs.application.member.port.out.OrderPersistencePort;
 import com.monglife.mongs.application.member.port.out.vo.CreateOrderVo;
-import com.monglife.mongs.domain.model.ExchangeStarPointProduct;
-import com.monglife.mongs.domain.model.Order;
+import com.monglife.mongs.domain.member.model.ExchangeStarPointProduct;
+import com.monglife.mongs.domain.member.model.Order;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor

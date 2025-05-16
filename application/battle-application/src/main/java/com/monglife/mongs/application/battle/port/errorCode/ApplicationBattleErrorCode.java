@@ -17,8 +17,7 @@ public enum ApplicationBattleErrorCode implements ErrorCode {
     NOT_EXISTS_QUEUE_PLAYER("APPLICATION-BATTLE-002", "매치 대기열이 존재하지 않습니다."),
     NOT_EXISTS_MATCH("APPLICATION-BATTLE-003", "매치가 존재하지 않습니다."),
     NOT_EXISTS_MONG("APPLICATION-BATTLE-004", "몽이 존재하지 않습니다."),
-    ALREADY_EXISTS_MATCH_PICK("APPLICATION-BATTLE-005", "이미 현재 라운드에 선택을 완료했습니다."),
-    NOT_END_MATCH("APPLICATION-BATTLE-006", "아직 종료되지 않은 매치 입니다."),
+    NOT_END_MATCH("APPLICATION-BATTLE-005", "아직 종료되지 않은 매치 입니다."),
     ;
 
     private final String code;

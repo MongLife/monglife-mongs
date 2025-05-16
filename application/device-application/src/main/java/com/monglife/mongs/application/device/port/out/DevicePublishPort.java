@@ -1,6 +1,6 @@
 package com.monglife.mongs.application.device.port.out;
 
-import com.monglife.mongs.domain.model.Step;
+import com.monglife.mongs.domain.device.model.Step;
 
 public interface DevicePublishPort {
 

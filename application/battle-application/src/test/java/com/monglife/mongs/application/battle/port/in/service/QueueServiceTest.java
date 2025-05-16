@@ -10,11 +10,11 @@ import com.monglife.mongs.application.battle.port.out.MatchPersistencePort;
 import com.monglife.mongs.application.battle.port.out.MongPersistencePort;
 import com.monglife.mongs.application.battle.port.out.QueuePublishPort;
 import com.monglife.mongs.application.battle.port.out.vo.CreateMatchVo;
-import com.monglife.mongs.domain.exception.NotEnoughPayPointException;
-import com.monglife.mongs.domain.model.Match;
-import com.monglife.mongs.domain.model.MatchPlayer;
-import com.monglife.mongs.domain.model.Mong;
-import com.monglife.mongs.domain.model.QueuePlayer;
+import com.monglife.mongs.domain.battle.model.Match;
+import com.monglife.mongs.domain.battle.model.MatchPlayer;
+import com.monglife.mongs.domain.battle.model.QueuePlayer;
+import com.monglife.mongs.domain.mong.exception.NotEnoughPayPointException;
+import com.monglife.mongs.domain.mong.model.Mong;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -65,13 +65,12 @@ class QueueServiceTest {
                     .deviceId(deviceId)
                     .build();
 
-            QueuePlayer expected = queueUseCase.createQueuePlayerUseCase(command);
+            var expected = queueUseCase.createQueuePlayerUseCase(command);
 
             // assert
             assertEquals(mongId, expected.getMongId());
             assertEquals(accountId, expected.getAccountId());
             assertEquals(deviceId, expected.getDeviceId());
-
         }
     }
 
@@ -98,7 +97,7 @@ class QueueServiceTest {
                     .deviceId(deviceId)
                     .build();
 
-            QueuePlayer expected = queueUseCase.deleteQueuePlayerUseCase(command);
+            var expected = queueUseCase.deleteQueuePlayerUseCase(command);
 
             // assert
             assertEquals(mongId, expected.getMongId());

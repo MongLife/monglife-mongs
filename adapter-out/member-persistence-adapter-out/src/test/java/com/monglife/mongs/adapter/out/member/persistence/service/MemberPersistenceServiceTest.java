@@ -7,7 +7,7 @@ import com.monglife.mongs.adapter.out.member.persistence.entity.MemberEntity;
 import com.monglife.mongs.adapter.out.member.persistence.repository.MemberRepository;
 import com.monglife.mongs.application.member.port.out.MemberPersistencePort;
 import com.monglife.mongs.application.member.port.out.vo.CreatePlayerVo;
-import com.monglife.mongs.domain.model.Player;
+import com.monglife.mongs.domain.member.model.Player;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;

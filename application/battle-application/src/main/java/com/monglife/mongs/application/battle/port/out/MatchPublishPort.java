@@ -1,6 +1,6 @@
 package com.monglife.mongs.application.battle.port.out;
 
-import com.monglife.mongs.domain.model.Match;
+import com.monglife.mongs.domain.battle.model.Match;
 
 public interface MatchPublishPort {
 

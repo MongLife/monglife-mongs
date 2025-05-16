@@ -4,6 +4,7 @@ import com.monglife.module.common.kafka.config.KafkaAutoConfig;
 import com.monglife.mongs.adapter.out.device.event.config.AdapterOutDeviceEventConfig;
 import com.monglife.mongs.adapter.transaction.ExchangeCurrentWalkingCountEventDto;
 import com.monglife.mongs.application.device.port.out.DeviceEventPort;
+import com.monglife.mongs.application.device.port.out.dto.StepEventDto;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -60,7 +61,12 @@ class DeviceEventServiceTest {
             consumer.reset(exchangeCurrentWalkingCountEventDto, countDownLatch);
 
             // act
-            deviceEventPort.exchangeCurrentWalkingCountEventPort(deviceId, mongId, walkingCount, payPoint);
+            deviceEventPort.exchangeCurrentWalkingCountEventPort(StepEventDto.builder()
+                    .deviceId(deviceId)
+                    .mongId(mongId)
+                    .walkingCount(walkingCount)
+                    .payPoint(payPoint)
+                    .build());
 
             boolean messageConsumed = countDownLatch.await(30, TimeUnit.SECONDS);
 
