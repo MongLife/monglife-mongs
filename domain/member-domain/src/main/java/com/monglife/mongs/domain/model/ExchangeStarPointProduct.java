@@ -8,9 +8,9 @@ import lombok.ToString;
 @ToString
 public class ExchangeStarPointProduct {
 
-    private String productId;
+    private final String productId;
 
-    private Integer starPoint;
+    private final Integer starPoint;
 
     @Builder
     public ExchangeStarPointProduct(String productId, Integer starPoint) {

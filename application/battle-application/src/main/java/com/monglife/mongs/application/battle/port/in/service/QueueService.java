@@ -16,6 +16,7 @@ import com.monglife.mongs.domain.model.Match;
 import com.monglife.mongs.domain.model.MatchPlayer;
 import com.monglife.mongs.domain.model.Mong;
 import com.monglife.mongs.domain.model.QueuePlayer;
+import com.monglife.mongs.domain.vo.GenerateMatchPlayerVo;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -95,13 +96,25 @@ public class QueueService implements QueueUseCase {
                 // 몽이 존재 하지 않는 매치 대기열 저장
                 notExistsMongQueuePlayer.add(queuePlayer);
             }
+
             // 몽이 존재 하는 경우
             else {
                 Mong mong = mongOptional.get();
                 // 몽 배팅 페이 포인트 차감
                 mong.matchBetting(Match.getBettingPayPoint());
                 // 몽을 매치 플레이어 변환 후 저장
-                matchPlayers.add(MatchPlayer.generateMatchPlayer(queuePlayer, mong));
+                GenerateMatchPlayerVo generateMatchPlayerVo = GenerateMatchPlayerVo.builder()
+                        .accountId(mong.getAccountId())
+                        .mongId(mong.getMongId())
+                        .mongTypeCode(mong.getMongTypeCode())
+                        .mongTypeName(mong.getMongTypeName())
+                        .mongName(mong.getMongName())
+                        .strength(mong.getStrength())
+                        .fatigue(mong.getFatigue())
+                        .weight(mong.getWeight())
+                        .build();
+
+                matchPlayers.add(MatchPlayer.generateMatchPlayer(queuePlayer, generateMatchPlayerVo));
             }
         });
 

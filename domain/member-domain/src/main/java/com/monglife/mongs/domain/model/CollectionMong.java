@@ -8,15 +8,15 @@ import lombok.ToString;
 @ToString
 public class CollectionMong {
 
-    private Long collectionMongId;
+    private final Long collectionMongId;
 
-    private Long accountId;
+    private final Long accountId;
 
-    private String mongTypeCode;
+    private final String mongTypeCode;
 
-    private String mongTypeName;
+    private final String mongTypeName;
 
-    private Boolean isIncluded;
+    private final Boolean isIncluded;
 
     @Builder
     public CollectionMong(Long collectionMongId, Long accountId, String mongTypeCode, String mongTypeName, Boolean isIncluded) {

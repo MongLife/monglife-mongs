@@ -14,17 +14,17 @@ import java.time.LocalDateTime;
 @ToString
 public class InAppOrder {
 
-    private String socialOrderId;
+    private final String socialOrderId;
 
-    private String productId;
+    private final String productId;
 
-    private String purchaseToken;
+    private final String purchaseToken;
 
-    private OrderPurchaseTypeCode orderPurchaseTypeCode;
+    private final OrderPurchaseTypeCode orderPurchaseTypeCode;
 
     private OrderTypeCode orderTypeCode;
 
-    private LocalDateTime purchasedAt;
+    private final LocalDateTime purchasedAt;
 
     @Builder
     public InAppOrder(String socialOrderId, String productId, String purchaseToken, OrderPurchaseTypeCode orderPurchaseTypeCode, OrderTypeCode orderTypeCode, LocalDateTime purchasedAt) {
@@ -49,9 +49,9 @@ public class InAppOrder {
      */
     public void consume() {
 
-        if (!this.isPayed()) {
+        if (Boolean.FALSE.equals(this.isPayed())) {
             throw new PaymentNotCompletedInAppOrderException();
-        } else if (this.isConsumed()) {
+        } else if (Boolean.TRUE.equals(this.isConsumed())) {
             throw new AlreadyConsumedInAppOrderException();
         }
 

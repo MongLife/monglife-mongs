@@ -112,13 +112,14 @@ class ManagementServiceTest {
             long accountId = 1L;
 
             Mockito.when(mongPersistencePort.getMongPort(mongId)).thenReturn(Optional.empty());
+
             // act & assert
-            DeadMongCommand command = DeadMongCommand.builder()
+            DeleteMongCommand command = DeleteMongCommand.builder()
                     .accountId(accountId)
                     .mongId(mongId)
                     .build();
 
-            assertThrows(NotExistsMongException.class, () -> managementUseCase.deadMongUseCase(command));
+            assertThrows(NotExistsMongException.class, () -> managementUseCase.deleteMongUseCase(command));
         }
 
         @Test
@@ -133,12 +134,12 @@ class ManagementServiceTest {
             Mockito.when(mongPersistencePort.getMongPort(mongId)).thenReturn(Optional.of(mong));
 
             // act & assert
-            DeadMongCommand command = DeadMongCommand.builder()
+            DeleteMongCommand command = DeleteMongCommand.builder()
                     .accountId(accountId + 1)
                     .mongId(mongId)
                     .build();
 
-            assertThrows(ForbiddenMongException.class, () -> managementUseCase.deadMongUseCase(command));
+            assertThrows(ForbiddenMongException.class, () -> managementUseCase.deleteMongUseCase(command));
         }
     }
 
@@ -338,12 +339,12 @@ class ManagementServiceTest {
 
             Mockito.when(mongPersistencePort.getMongPort(mongId)).thenReturn(Optional.empty());
             // act & assert
-            DeadMongCommand command = DeadMongCommand.builder()
+            GetMongCommand command = GetMongCommand.builder()
                     .accountId(accountId)
                     .mongId(mongId)
                     .build();
 
-            assertThrows(NotExistsMongException.class, () -> managementUseCase.deadMongUseCase(command));
+            assertThrows(NotExistsMongException.class, () -> managementUseCase.getMongUseCase(command));
         }
 
         @Test
@@ -358,12 +359,12 @@ class ManagementServiceTest {
             Mockito.when(mongPersistencePort.getMongPort(mongId)).thenReturn(Optional.of(mong));
 
             // act & assert
-            DeadMongCommand command = DeadMongCommand.builder()
+            GetMongCommand command = GetMongCommand.builder()
                     .accountId(accountId + 1)
                     .mongId(mongId)
                     .build();
 
-            assertThrows(ForbiddenMongException.class, () -> managementUseCase.deadMongUseCase(command));
+            assertThrows(ForbiddenMongException.class, () -> managementUseCase.getMongUseCase(command));
         }
     }
 
@@ -541,12 +542,12 @@ class ManagementServiceTest {
 
             Mockito.when(mongPersistencePort.getMongPort(mongId)).thenReturn(Optional.empty());
             // act & assert
-            DeadMongCommand command = DeadMongCommand.builder()
+            StrokeMongCommand command = StrokeMongCommand.builder()
                     .accountId(accountId)
                     .mongId(mongId)
                     .build();
 
-            assertThrows(NotExistsMongException.class, () -> managementUseCase.deadMongUseCase(command));
+            assertThrows(NotExistsMongException.class, () -> managementUseCase.strokeMongUseCase(command));
         }
 
         @Test
@@ -561,12 +562,12 @@ class ManagementServiceTest {
             Mockito.when(mongPersistencePort.getMongPort(mongId)).thenReturn(Optional.of(mong));
 
             // act & assert
-            DeadMongCommand command = DeadMongCommand.builder()
+            StrokeMongCommand command = StrokeMongCommand.builder()
                     .accountId(accountId + 1)
                     .mongId(mongId)
                     .build();
 
-            assertThrows(ForbiddenMongException.class, () -> managementUseCase.deadMongUseCase(command));
+            assertThrows(ForbiddenMongException.class, () -> managementUseCase.strokeMongUseCase(command));
         }
     }
 
@@ -691,12 +692,12 @@ class ManagementServiceTest {
 
             Mockito.when(mongPersistencePort.getMongPort(mongId)).thenReturn(Optional.empty());
             // act & assert
-            DeadMongCommand command = DeadMongCommand.builder()
+            SleepMongCommand command = SleepMongCommand.builder()
                     .accountId(accountId)
                     .mongId(mongId)
                     .build();
 
-            assertThrows(NotExistsMongException.class, () -> managementUseCase.deadMongUseCase(command));
+            assertThrows(NotExistsMongException.class, () -> managementUseCase.sleepMongUseCase(command));
         }
 
         @Test
@@ -711,12 +712,12 @@ class ManagementServiceTest {
             Mockito.when(mongPersistencePort.getMongPort(mongId)).thenReturn(Optional.of(mong));
 
             // act & assert
-            DeadMongCommand command = DeadMongCommand.builder()
+            SleepMongCommand command = SleepMongCommand.builder()
                     .accountId(accountId + 1)
                     .mongId(mongId)
                     .build();
 
-            assertThrows(ForbiddenMongException.class, () -> managementUseCase.deadMongUseCase(command));
+            assertThrows(ForbiddenMongException.class, () -> managementUseCase.sleepMongUseCase(command));
         }
     }
 
@@ -840,13 +841,14 @@ class ManagementServiceTest {
             long accountId = 1L;
 
             Mockito.when(mongPersistencePort.getMongPort(mongId)).thenReturn(Optional.empty());
+
             // act & assert
-            DeadMongCommand command = DeadMongCommand.builder()
+            WakeupMongCommand command = WakeupMongCommand.builder()
                     .accountId(accountId)
                     .mongId(mongId)
                     .build();
 
-            assertThrows(NotExistsMongException.class, () -> managementUseCase.deadMongUseCase(command));
+            assertThrows(NotExistsMongException.class, () -> managementUseCase.wakeUpMongUseCase(command));
         }
 
         @Test
@@ -861,12 +863,12 @@ class ManagementServiceTest {
             Mockito.when(mongPersistencePort.getMongPort(mongId)).thenReturn(Optional.of(mong));
 
             // act & assert
-            DeadMongCommand command = DeadMongCommand.builder()
+            WakeupMongCommand command = WakeupMongCommand.builder()
                     .accountId(accountId + 1)
                     .mongId(mongId)
                     .build();
 
-            assertThrows(ForbiddenMongException.class, () -> managementUseCase.deadMongUseCase(command));
+            assertThrows(ForbiddenMongException.class, () -> managementUseCase.wakeUpMongUseCase(command));
         }
     }
 
@@ -993,12 +995,12 @@ class ManagementServiceTest {
 
             Mockito.when(mongPersistencePort.getMongPort(mongId)).thenReturn(Optional.empty());
             // act & assert
-            DeadMongCommand command = DeadMongCommand.builder()
+            PoopCleanMongCommand command = PoopCleanMongCommand.builder()
                     .accountId(accountId)
                     .mongId(mongId)
                     .build();
 
-            assertThrows(NotExistsMongException.class, () -> managementUseCase.deadMongUseCase(command));
+            assertThrows(NotExistsMongException.class, () -> managementUseCase.poopCleanMongUseCase(command));
         }
 
         @Test
@@ -1013,12 +1015,12 @@ class ManagementServiceTest {
             Mockito.when(mongPersistencePort.getMongPort(mongId)).thenReturn(Optional.of(mong));
 
             // act & assert
-            DeadMongCommand command = DeadMongCommand.builder()
+            PoopCleanMongCommand command = PoopCleanMongCommand.builder()
                     .accountId(accountId + 1)
                     .mongId(mongId)
                     .build();
 
-            assertThrows(ForbiddenMongException.class, () -> managementUseCase.deadMongUseCase(command));
+            assertThrows(ForbiddenMongException.class, () -> managementUseCase.poopCleanMongUseCase(command));
         }
     }
 
@@ -1167,13 +1169,14 @@ class ManagementServiceTest {
             long accountId = 1L;
 
             Mockito.when(mongPersistencePort.getMongPort(mongId)).thenReturn(Optional.empty());
+
             // act & assert
-            DeadMongCommand command = DeadMongCommand.builder()
+            EvolutionMongCommand command = EvolutionMongCommand.builder()
                     .accountId(accountId)
                     .mongId(mongId)
                     .build();
 
-            assertThrows(NotExistsMongException.class, () -> managementUseCase.deadMongUseCase(command));
+            assertThrows(NotExistsMongException.class, () -> managementUseCase.evolutionMongUseCase(command));
         }
 
         @Test
@@ -1188,12 +1191,12 @@ class ManagementServiceTest {
             Mockito.when(mongPersistencePort.getMongPort(mongId)).thenReturn(Optional.of(mong));
 
             // act & assert
-            DeadMongCommand command = DeadMongCommand.builder()
+            EvolutionMongCommand command = EvolutionMongCommand.builder()
                     .accountId(accountId + 1)
                     .mongId(mongId)
                     .build();
 
-            assertThrows(ForbiddenMongException.class, () -> managementUseCase.deadMongUseCase(command));
+            assertThrows(ForbiddenMongException.class, () -> managementUseCase.evolutionMongUseCase(command));
         }
     }
 
@@ -1297,13 +1300,14 @@ class ManagementServiceTest {
             long accountId = 1L;
 
             Mockito.when(mongPersistencePort.getMongPort(mongId)).thenReturn(Optional.empty());
+
             // act & assert
-            DeadMongCommand command = DeadMongCommand.builder()
+            GraduateMongCommand command = GraduateMongCommand.builder()
                     .accountId(accountId)
                     .mongId(mongId)
                     .build();
 
-            assertThrows(NotExistsMongException.class, () -> managementUseCase.deadMongUseCase(command));
+            assertThrows(NotExistsMongException.class, () -> managementUseCase.graduateMongUseCase(command));
         }
 
         @Test
@@ -1318,12 +1322,12 @@ class ManagementServiceTest {
             Mockito.when(mongPersistencePort.getMongPort(mongId)).thenReturn(Optional.of(mong));
 
             // act & assert
-            DeadMongCommand command = DeadMongCommand.builder()
+            GraduateMongCommand command = GraduateMongCommand.builder()
                     .accountId(accountId + 1)
                     .mongId(mongId)
                     .build();
 
-            assertThrows(ForbiddenMongException.class, () -> managementUseCase.deadMongUseCase(command));
+            assertThrows(ForbiddenMongException.class, () -> managementUseCase.graduateMongUseCase(command));
         }
     }
 
@@ -1365,13 +1369,14 @@ class ManagementServiceTest {
             long accountId = 1L;
 
             Mockito.when(mongPersistencePort.getMongPort(mongId)).thenReturn(Optional.empty());
+
             // act & assert
-            DeadMongCommand command = DeadMongCommand.builder()
+            IncreaseMongPayPointCommand command = IncreaseMongPayPointCommand.builder()
                     .accountId(accountId)
                     .mongId(mongId)
                     .build();
 
-            assertThrows(NotExistsMongException.class, () -> managementUseCase.deadMongUseCase(command));
+            assertThrows(NotExistsMongException.class, () -> managementUseCase.increaseMongPayPointUseCase(command));
         }
 
         @Test
@@ -1386,12 +1391,12 @@ class ManagementServiceTest {
             Mockito.when(mongPersistencePort.getMongPort(mongId)).thenReturn(Optional.of(mong));
 
             // act & assert
-            DeadMongCommand command = DeadMongCommand.builder()
+            IncreaseMongPayPointCommand command = IncreaseMongPayPointCommand.builder()
                     .accountId(accountId + 1)
                     .mongId(mongId)
                     .build();
 
-            assertThrows(ForbiddenMongException.class, () -> managementUseCase.deadMongUseCase(command));
+            assertThrows(ForbiddenMongException.class, () -> managementUseCase.increaseMongPayPointUseCase(command));
         }
     }
 
@@ -1434,12 +1439,12 @@ class ManagementServiceTest {
 
             Mockito.when(mongPersistencePort.getMongPort(mongId)).thenReturn(Optional.empty());
             // act & assert
-            DeadMongCommand command = DeadMongCommand.builder()
+            IncreaseMongStatusCommand command = IncreaseMongStatusCommand.builder()
                     .accountId(accountId)
                     .mongId(mongId)
                     .build();
 
-            assertThrows(NotExistsMongException.class, () -> managementUseCase.deadMongUseCase(command));
+            assertThrows(NotExistsMongException.class, () -> managementUseCase.increaseMongStatusUseCase(command));
         }
 
         @Test
@@ -1454,12 +1459,12 @@ class ManagementServiceTest {
             Mockito.when(mongPersistencePort.getMongPort(mongId)).thenReturn(Optional.of(mong));
 
             // act & assert
-            DeadMongCommand command = DeadMongCommand.builder()
+            IncreaseMongStatusCommand command = IncreaseMongStatusCommand.builder()
                     .accountId(accountId + 1)
                     .mongId(mongId)
                     .build();
 
-            assertThrows(ForbiddenMongException.class, () -> managementUseCase.deadMongUseCase(command));
+            assertThrows(ForbiddenMongException.class, () -> managementUseCase.increaseMongStatusUseCase(command));
         }
     }
 
@@ -1504,12 +1509,12 @@ class ManagementServiceTest {
 
             Mockito.when(mongPersistencePort.getMongPort(mongId)).thenReturn(Optional.empty());
             // act & assert
-            DeadMongCommand command = DeadMongCommand.builder()
+            DecreaseMongStatusCommand command = DecreaseMongStatusCommand.builder()
                     .accountId(accountId)
                     .mongId(mongId)
                     .build();
 
-            assertThrows(NotExistsMongException.class, () -> managementUseCase.deadMongUseCase(command));
+            assertThrows(NotExistsMongException.class, () -> managementUseCase.decreaseMongStatusUseCase(command));
         }
 
         @Test
@@ -1524,12 +1529,12 @@ class ManagementServiceTest {
             Mockito.when(mongPersistencePort.getMongPort(mongId)).thenReturn(Optional.of(mong));
 
             // act & assert
-            DeadMongCommand command = DeadMongCommand.builder()
+            DecreaseMongStatusCommand command = DecreaseMongStatusCommand.builder()
                     .accountId(accountId + 1)
                     .mongId(mongId)
                     .build();
 
-            assertThrows(ForbiddenMongException.class, () -> managementUseCase.deadMongUseCase(command));
+            assertThrows(ForbiddenMongException.class, () -> managementUseCase.decreaseMongStatusUseCase(command));
         }
     }
 
@@ -1598,12 +1603,12 @@ class ManagementServiceTest {
 
             Mockito.when(mongPersistencePort.getMongPort(mongId)).thenReturn(Optional.empty());
             // act & assert
-            DeadMongCommand command = DeadMongCommand.builder()
+            IncreaseMongPoopCountCommand command = IncreaseMongPoopCountCommand.builder()
                     .accountId(accountId)
                     .mongId(mongId)
                     .build();
 
-            assertThrows(NotExistsMongException.class, () -> managementUseCase.deadMongUseCase(command));
+            assertThrows(NotExistsMongException.class, () -> managementUseCase.increaseMongPoopCountUseCase(command));
         }
 
         @Test
@@ -1618,12 +1623,12 @@ class ManagementServiceTest {
             Mockito.when(mongPersistencePort.getMongPort(mongId)).thenReturn(Optional.of(mong));
 
             // act & assert
-            DeadMongCommand command = DeadMongCommand.builder()
+            IncreaseMongPoopCountCommand command = IncreaseMongPoopCountCommand.builder()
                     .accountId(accountId + 1)
                     .mongId(mongId)
                     .build();
 
-            assertThrows(ForbiddenMongException.class, () -> managementUseCase.deadMongUseCase(command));
+            assertThrows(ForbiddenMongException.class, () -> managementUseCase.increaseMongPoopCountUseCase(command));
         }
     }
 }

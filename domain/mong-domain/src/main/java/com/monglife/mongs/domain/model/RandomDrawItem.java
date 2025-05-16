@@ -7,13 +7,13 @@ import lombok.Getter;
 @Getter
 public class RandomDrawItem {
 
-    private Long randomDrawItemId;
+    private final Long randomDrawItemId;
 
-    private String typeCode;
+    private final String typeCode;
 
-    private String typeName;
+    private final String typeName;
 
-    private InventoryItemTypeCode inventoryItemTypeCode;
+    private final InventoryItemTypeCode inventoryItemTypeCode;
 
     @Builder
     public RandomDrawItem(Long randomDrawItemId, String typeCode, String typeName, InventoryItemTypeCode inventoryItemTypeCode) {

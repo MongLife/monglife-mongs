@@ -8,27 +8,27 @@ import lombok.ToString;
 @ToString
 public class TrainingType {
 
-    private Long trainingTypeId;
+    private final Long trainingTypeId;
 
-    private String trainingTypeCode;
+    private final String trainingTypeCode;
 
-    private String trainingTypeName;
+    private final String trainingTypeName;
 
-    private Integer payPoint;
+    private final Integer payPoint;
 
-    private Integer score;
+    private final Integer score;
 
-    private Integer timeout;
+    private final Integer timeout;
 
-    private Double exp;
+    private final Double exp;
 
-    private Double strength;
+    private final Double strength;
 
-    private Double weight;
+    private final Double weight;
 
-    private Double satiety;
+    private final Double satiety;
 
-    private Double fatigue;
+    private final Double fatigue;
 
     @Builder
     public TrainingType(Long trainingTypeId, String trainingTypeCode, String trainingTypeName, Integer payPoint, Integer score, Integer timeout, Double exp, Double strength, Double weight, Double satiety, Double fatigue) {

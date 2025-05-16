@@ -1,7 +1,7 @@
-package com.monglife.mongs.application.device.port.exception;
+package com.monglife.mongs.domain.exception;
 
 import com.monglife.core.exception.ErrorException;
-import com.monglife.mongs.application.device.port.errorCode.ApplicationDeviceErrorCode;
+import com.monglife.mongs.domain.errorCode.DomainDeviceErrorCode;
 import lombok.Getter;
 
 import java.util.Collections;
@@ -10,7 +10,7 @@ import java.util.Collections;
 public class NotEnoughCurrentWalkingCountException extends ErrorException {
 
     public NotEnoughCurrentWalkingCountException() {
-        this.errorCode = ApplicationDeviceErrorCode.NOT_ENOUGH_CURRENT_WALKING_COUNT;
+        this.errorCode = DomainDeviceErrorCode.NOT_ENOUGH_CURRENT_WALKING_COUNT;
         this.result = Collections.emptyMap();
     }
 }

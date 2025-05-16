@@ -6,17 +6,17 @@ import lombok.Getter;
 @Getter
 public class MongType {
 
-    private Long mongTypeId;
+    private final Long mongTypeId;
 
-    private String mongTypeCode;
+    private final String mongTypeCode;
 
-    private String mongTypeName;
+    private final String mongTypeName;
 
-    private Integer level;
+    private final Integer level;
 
-    private Double evolutionScore;
+    private final Double evolutionScore;
 
-    private Double maxStatus;
+    private final Double maxStatus;
 
     @Builder
     public MongType(Long mongTypeId, String mongTypeCode, String mongTypeName, Integer level, Double evolutionScore, Double maxStatus) {

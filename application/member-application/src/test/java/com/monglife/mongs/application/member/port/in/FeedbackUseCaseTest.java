@@ -26,9 +26,9 @@ class FeedbackUseCaseTest {
         this.feedbackUseCase = new FeedbackService(feedbackPersistencePort);
     }
 
-    private static final Long accountId = 1L;
-    private static final String deviceId = CommonUtil.randomId();
-    private static final String deviceName = "TEST-DEVICE-NAME";
+    private static final Long ACCOUNT_ID = 1L;
+    private static final String DEVICE_ID = CommonUtil.randomId();
+    private static final String DEVICE_NAME = "TEST-DEVICE-NAME";
 
 
     @Nested
@@ -43,9 +43,9 @@ class FeedbackUseCaseTest {
             String content = "TEST-CONTENT";
             Feedback feedback = Feedback.builder()
                     .feedbackId(1L)
-                    .accountId(accountId)
-                    .deviceId(deviceId)
-                    .deviceName(deviceName)
+                    .accountId(ACCOUNT_ID)
+                    .deviceId(DEVICE_ID)
+                    .deviceName(DEVICE_NAME)
                     .title(title)
                     .content(content)
                     .build();
@@ -54,9 +54,9 @@ class FeedbackUseCaseTest {
 
             // act
             CreateFeedbackCommand command = CreateFeedbackCommand.builder()
-                    .accountId(accountId)
-                    .deviceId(deviceId)
-                    .deviceName(deviceName)
+                    .accountId(ACCOUNT_ID)
+                    .deviceId(DEVICE_ID)
+                    .deviceName(DEVICE_NAME)
                     .title(title)
                     .content(content)
                     .build();
@@ -78,9 +78,9 @@ class FeedbackUseCaseTest {
 
             // act & assert
             CreateFeedbackCommand command = CreateFeedbackCommand.builder()
-                    .accountId(accountId)
-                    .deviceId(deviceId)
-                    .deviceName(deviceName)
+                    .accountId(ACCOUNT_ID)
+                    .deviceId(DEVICE_ID)
+                    .deviceName(DEVICE_NAME)
                     .title(title)
                     .content(content)
                     .build();

@@ -1,6 +1,7 @@
 package com.monglife.mongs.domain.model;
 
 import com.monglife.mongs.domain.exception.InvalidTotalWalkingCountException;
+import com.monglife.mongs.domain.exception.NotEnoughCurrentWalkingCountException;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.ToString;
@@ -11,7 +12,9 @@ import java.time.LocalDateTime;
 @ToString
 public class Step {
 
-    private String deviceId;
+    private static final int PAY_POINT_PER_STEP = 100;
+
+    private final String deviceId;
 
     private Integer walkingCount;
 
@@ -28,6 +31,25 @@ public class Step {
         this.totalWalkingCount = totalWalkingCount;
         this.consumeWalkingCount = consumeWalkingCount;
         this.deviceBootedDt = deviceBootedDt;
+    }
+
+    /**
+     * 보유 걸음 수 페이 포인트 환전
+     * @param walkingCount 환전 걸음 수
+     * @return 환전 페이 포인트
+     */
+    public Integer exchangeWalkingCountToPayPoint(Integer walkingCount) {
+
+        // 보유 걸음 수가 부족한 경우 예외 발생
+        if (this.getCurrentWalkingCount() < walkingCount) {
+            throw new NotEnoughCurrentWalkingCountException();
+        }
+
+        // 보유 걸음 수 감소
+        this.decreaseCurrentWalkingCount(walkingCount);
+
+        // 환전할 페이 포인트 반환
+        return walkingCount * PAY_POINT_PER_STEP;
     }
 
     /**
@@ -58,7 +80,22 @@ public class Step {
      * 기기 총 걸음 수 동기화
      * @param totalWalkingCount 기기에 기록된 총 걸음 수
      */
-    public void updateTotalWalkingCount(Integer totalWalkingCount) {
+    public void syncTotalWalkingCount(Integer totalWalkingCount, LocalDateTime deviceBootedDt) {
+
+        if (this.getDeviceBootedDt().equals(deviceBootedDt)) {
+            // 기기 부팅 시간이 변경 되지 않은 경우, 걸음 수 동기화
+            this.updateTotalWalkingCount(totalWalkingCount);
+        } else {
+            // 기기 부팅 시간이 변경 된 경우, 걸음 수 초기화
+            this.reset(totalWalkingCount, deviceBootedDt);
+        }
+    }
+
+    /**
+     * 기기 총 걸음 수 수정
+     * @param totalWalkingCount 기기에 기록된 총 걸음 수
+     */
+    private void updateTotalWalkingCount(Integer totalWalkingCount) {
 
         if (totalWalkingCount < this.totalWalkingCount) {
             throw new InvalidTotalWalkingCountException();
@@ -72,7 +109,7 @@ public class Step {
      * @param totalWalkingCount 기기에 기록된 총 걸음 수
      * @param deviceBootedDt 기기에 기록된 부팅 시간
      */
-    public void reset(Integer totalWalkingCount, LocalDateTime deviceBootedDt) {
+    private void reset(Integer totalWalkingCount, LocalDateTime deviceBootedDt) {
         if (this.deviceBootedDt.isBefore(deviceBootedDt)) {
             this.walkingCount = this.walkingCount + this.totalWalkingCount - this.consumeWalkingCount;
             this.totalWalkingCount = totalWalkingCount;

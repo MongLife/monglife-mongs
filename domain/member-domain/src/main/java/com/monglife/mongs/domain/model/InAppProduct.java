@@ -8,11 +8,11 @@ import lombok.ToString;
 @ToString
 public class InAppProduct {
 
-    private String productId;
+    private final String productId;
 
-    private String productName;
+    private final String productName;
 
-    private Double price;
+    private final Double price;
 
     @Builder
     public InAppProduct(String productId, String productName, Double price) {

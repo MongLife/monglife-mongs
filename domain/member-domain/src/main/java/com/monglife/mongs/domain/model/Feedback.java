@@ -8,17 +8,17 @@ import lombok.ToString;
 @ToString
 public class Feedback {
 
-    private Long feedbackId;
+    private final Long feedbackId;
 
-    private Long accountId;
+    private final Long accountId;
 
-    private String deviceId;
+    private final String deviceId;
 
-    private String deviceName;
+    private final String deviceName;
 
-    private String title;
+    private final String title;
 
-    private String content;
+    private final String content;
 
     @Builder
     public Feedback(Long feedbackId, Long accountId, String deviceId, String deviceName, String title, String content) {

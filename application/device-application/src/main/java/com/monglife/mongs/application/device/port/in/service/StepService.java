@@ -1,6 +1,5 @@
 package com.monglife.mongs.application.device.port.in.service;
 
-import com.monglife.mongs.application.device.port.exception.NotEnoughCurrentWalkingCountException;
 import com.monglife.mongs.application.device.port.exception.NotExistStepException;
 import com.monglife.mongs.application.device.port.in.StepUseCase;
 import com.monglife.mongs.application.device.port.in.command.ExchangeCurrentWalkingCountCommand;
@@ -19,8 +18,6 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 public class StepService implements StepUseCase {
 
-    private static final Integer stepPerPayPoint = 100;
-
     private final DeviceEventPort deviceEventPort;
 
     private final DevicePersistencePort devicePersistencePort;
@@ -37,29 +34,18 @@ public class StepService implements StepUseCase {
         Step step = devicePersistencePort.getStepPort(command.getDeviceId())
                 .orElseThrow(NotExistStepException::new);
 
-        if (step.getDeviceBootedDt().equals(command.getDeviceBootedDt())) {
-            // 기기 부팅 시간이 변경 되지 않은 경우, 걸음 수 동기화
-            step.updateTotalWalkingCount(command.getTotalWalkingCount());
-        } else {
-            // 기기 부팅 시간이 변경 된 경우, 걸음 수 초기화
-            step.reset(command.getTotalWalkingCount(), command.getDeviceBootedDt());
-        }
+        // 걸음 수 동기화
+        step.syncTotalWalkingCount(command.getTotalWalkingCount(), command.getDeviceBootedDt());
 
-        // 보유 걸음 수가 부족한 경우 예외 발생
-        if (step.getCurrentWalkingCount() < command.getWalkingCount()) {
-            throw new NotEnoughCurrentWalkingCountException();
-        }
-
-        // 보유 걸음 수 감소
-        step.decreaseCurrentWalkingCount(command.getWalkingCount());
-
-        // 보유 걸음 수 환전 이벤트 발생
-        int payPoint = command.getWalkingCount() * stepPerPayPoint;
-        deviceEventPort.exchangeCurrentWalkingCountEventPort(step.getDeviceId(), command.getMongId(), command.getWalkingCount(), payPoint);
+        // 보유 걸음 수 환전
+        int payPoint = step.exchangeWalkingCountToPayPoint(command.getWalkingCount());
 
         // 걸음 수 수정
         devicePersistencePort.saveStepPort(step)
                 .orElseThrow(NotExistStepException::new);
+
+        // 보유 걸음 수 환전 이벤트 발생
+        deviceEventPort.exchangeCurrentWalkingCountEventPort(step.getDeviceId(), command.getMongId(), command.getWalkingCount(), payPoint);
 
         // 보유 걸음 수 비동기 응답
         devicePublishPort.publishCurrentWalkingCountPort(step);
@@ -84,13 +70,8 @@ public class StepService implements StepUseCase {
                             .deviceBootedDt(command.getDeviceBootedDt())
                             .build()));
 
-        if (step.getDeviceBootedDt().equals(command.getDeviceBootedDt())) {
-            // 기기 부팅 시간이 변경 되지 않은 경우, 걸음 수 동기화
-            step.updateTotalWalkingCount(command.getTotalWalkingCount());
-        } else {
-            // 기기 부팅 시간이 변경 된 경우, 걸음 수 초기화
-            step.reset(command.getTotalWalkingCount(), command.getDeviceBootedDt());
-        }
+        // 걸음 수 동기화
+        step.syncTotalWalkingCount(command.getTotalWalkingCount(), command.getDeviceBootedDt());
 
         // 걸음 수 수정
         devicePersistencePort.saveStepPort(step)
@@ -114,7 +95,7 @@ public class StepService implements StepUseCase {
 
         // 걸음 수 수정
         devicePersistencePort.saveStepPort(step)
-                .orElseThrow(NotExistStepException::new);;
+                .orElseThrow(NotExistStepException::new);
 
         // 보유 걸음 수 비동기 응답
         devicePublishPort.publishCurrentWalkingCountPort(step);

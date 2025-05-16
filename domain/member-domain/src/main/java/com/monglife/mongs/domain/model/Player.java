@@ -10,7 +10,9 @@ import lombok.ToString;
 @ToString
 public class Player {
 
-    private Long accountId;
+    private static final Integer PAY_POINT_PER_STAR_POINT = 1000;
+
+    private final Long accountId;
 
     private Integer slotCount;
 
@@ -44,6 +46,18 @@ public class Player {
     }
 
     /**
+     * 스타 포인트 페이 포인트 환전
+     * @param starPoint 감소할 스타 포인트
+     * @return 환전 페이 포인트
+     */
+    public Integer exchangeStarPointToPayPoint(Integer starPoint) {
+
+        this.decreaseStarPoint(starPoint);
+
+        return starPoint * PAY_POINT_PER_STAR_POINT;
+    }
+
+    /**
      * 스타 포인트 증가
      * @param starPoint 증가할 스타 포인트
      */
@@ -55,7 +69,7 @@ public class Player {
      * 스타 포인트 감소
      * @param starPoint 감소할 스타 포인트
      */
-    public void decreaseStarPoint(Integer starPoint) {
+    private void decreaseStarPoint(Integer starPoint) {
 
         if (this.starPoint < starPoint) {
             throw new NotEnoughStarPointException();

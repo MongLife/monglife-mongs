@@ -35,7 +35,7 @@ class PlayerUseCaseTest {
         this.playerUseCase = new PlayerService(memberPersistencePort, memberPublishPort, memberEventPort);
     }
 
-    private static final Long accountId = 1L;
+    private static final Long ACCOUNT_ID = 1L;
 
     @Nested
     @DisplayName("플레이어 등록 단위 테스트")
@@ -46,17 +46,17 @@ class PlayerUseCaseTest {
         void createPlayer() {
             // arrange
             Player player = Player.builder()
-                    .accountId(accountId)
+                    .accountId(ACCOUNT_ID)
                     .slotCount(1)
                     .starPoint(0)
                     .build();
 
-            Mockito.when(memberPersistencePort.isExistsPlayerPort(accountId)).thenReturn(false);
+            Mockito.when(memberPersistencePort.isExistsPlayerPort(ACCOUNT_ID)).thenReturn(false);
             Mockito.when(memberPersistencePort.createPlayerPort(Mockito.any())).thenReturn(Optional.of(player));
 
             // act
             CreatePlayerCommand command = CreatePlayerCommand.builder()
-                    .accountId(accountId)
+                    .accountId(ACCOUNT_ID)
                     .build();
 
             playerUseCase.createPlayerUseCase(command);
@@ -71,17 +71,17 @@ class PlayerUseCaseTest {
         void createPlayerWhenNotExistsPlayer() {
             // arrange
             Player player = Player.builder()
-                    .accountId(accountId)
+                    .accountId(ACCOUNT_ID)
                     .slotCount(1)
                     .starPoint(0)
                     .build();
 
-            Mockito.when(memberPersistencePort.isExistsPlayerPort(accountId)).thenReturn(true);
+            Mockito.when(memberPersistencePort.isExistsPlayerPort(ACCOUNT_ID)).thenReturn(true);
             Mockito.when(memberPersistencePort.createPlayerPort(Mockito.any())).thenReturn(Optional.of(player));
 
             // act
             CreatePlayerCommand command = CreatePlayerCommand.builder()
-                    .accountId(accountId)
+                    .accountId(ACCOUNT_ID)
                     .build();
 
             playerUseCase.createPlayerUseCase(command);
@@ -95,12 +95,12 @@ class PlayerUseCaseTest {
         @DisplayName("플레이어 등록에 실패하는 경우 예외가 발생 한다.")
         void createPlayerFail() {
             // arrange
-            Mockito.when(memberPersistencePort.isExistsPlayerPort(accountId)).thenReturn(false);
+            Mockito.when(memberPersistencePort.isExistsPlayerPort(ACCOUNT_ID)).thenReturn(false);
             Mockito.when(memberPersistencePort.createPlayerPort(Mockito.any())).thenReturn(Optional.empty());
 
             // act
             CreatePlayerCommand command = CreatePlayerCommand.builder()
-                    .accountId(accountId)
+                    .accountId(ACCOUNT_ID)
                     .build();
 
             assertThrows(InvalidCreatePlayerException.class, () -> playerUseCase.createPlayerUseCase(command));
@@ -119,16 +119,16 @@ class PlayerUseCaseTest {
         void getPlayer() {
             // arrange
             Player player = Player.builder()
-                    .accountId(accountId)
+                    .accountId(ACCOUNT_ID)
                     .slotCount(1)
                     .starPoint(0)
                     .build();
 
-            Mockito.when(memberPersistencePort.getPlayerPort(accountId)).thenReturn(Optional.of(player));
+            Mockito.when(memberPersistencePort.getPlayerPort(ACCOUNT_ID)).thenReturn(Optional.of(player));
 
             // act
             GetPlayerCommand command = GetPlayerCommand.builder()
-                    .accountId(accountId)
+                    .accountId(ACCOUNT_ID)
                     .build();
 
             Player expected = playerUseCase.getPlayerUseCase(command);
@@ -142,11 +142,11 @@ class PlayerUseCaseTest {
         @DisplayName("플레이어가 존재하지 않는 경우 예외가 발생 한다.")
         void notExistsPlayer() {
             // arrange
-            Mockito.when(memberPersistencePort.getPlayerPort(accountId)).thenReturn(Optional.empty());
+            Mockito.when(memberPersistencePort.getPlayerPort(ACCOUNT_ID)).thenReturn(Optional.empty());
 
             // act & assert
             GetPlayerCommand command = GetPlayerCommand.builder()
-                    .accountId(accountId)
+                    .accountId(ACCOUNT_ID)
                     .build();
 
             assertThrows(NotExistsPlayerException.class, () -> playerUseCase.getPlayerUseCase(command));
@@ -164,17 +164,17 @@ class PlayerUseCaseTest {
             // arrange
             int starPoint = 100;
             Player player = Player.builder()
-                    .accountId(accountId)
+                    .accountId(ACCOUNT_ID)
                     .slotCount(1)
                     .starPoint(starPoint)
                     .build();
 
-            Mockito.when(memberPersistencePort.getPlayerPort(accountId)).thenReturn(Optional.of(player));
+            Mockito.when(memberPersistencePort.getPlayerPort(ACCOUNT_ID)).thenReturn(Optional.of(player));
             Mockito.when(memberPersistencePort.savePlayerPort(Mockito.any())).thenReturn(Optional.of(player));
 
             // act
             BuySlotCommand command = BuySlotCommand.builder()
-                    .accountId(accountId)
+                    .accountId(ACCOUNT_ID)
                     .build();
 
             player = playerUseCase.buySlotUseCase(command);
@@ -192,11 +192,11 @@ class PlayerUseCaseTest {
         @DisplayName("플레이어가 존재하지 않는 경우 예외가 발생 한다.")
         void notExistsPlayer() {
             // arrange
-            Mockito.when(memberPersistencePort.getPlayerPort(accountId)).thenReturn(Optional.empty());
+            Mockito.when(memberPersistencePort.getPlayerPort(ACCOUNT_ID)).thenReturn(Optional.empty());
 
             // act & assert
             BuySlotCommand command = BuySlotCommand.builder()
-                    .accountId(accountId)
+                    .accountId(ACCOUNT_ID)
                     .build();
 
             assertThrows(NotExistsPlayerException.class, () -> playerUseCase.buySlotUseCase(command));
@@ -209,17 +209,17 @@ class PlayerUseCaseTest {
             // arrange
             int starPoint = 100;
             Player player = Player.builder()
-                    .accountId(accountId)
+                    .accountId(ACCOUNT_ID)
                     .slotCount(1)
                     .starPoint(starPoint)
                     .build();
 
-            Mockito.when(memberPersistencePort.getPlayerPort(accountId)).thenReturn(Optional.of(player));
+            Mockito.when(memberPersistencePort.getPlayerPort(ACCOUNT_ID)).thenReturn(Optional.of(player));
             Mockito.when(memberPersistencePort.savePlayerPort(Mockito.any())).thenReturn(Optional.empty());
 
             // act & assert
             BuySlotCommand command = BuySlotCommand.builder()
-                    .accountId(accountId)
+                    .accountId(ACCOUNT_ID)
                     .build();
 
             assertThrows(NotExistsPlayerException.class, () -> playerUseCase.buySlotUseCase(command));
@@ -232,18 +232,18 @@ class PlayerUseCaseTest {
         void notEnoughStarPoint() {
             // arrange
             Player player = Player.builder()
-                    .accountId(accountId)
+                    .accountId(ACCOUNT_ID)
                     .slotCount(1)
                     .starPoint(0)
                     .build();
 
-            Mockito.when(memberPersistencePort.getPlayerPort(accountId)).thenReturn(Optional.of(player));
+            Mockito.when(memberPersistencePort.getPlayerPort(ACCOUNT_ID)).thenReturn(Optional.of(player));
             Mockito.when(memberPersistencePort.savePlayerPort(Mockito.any())).thenReturn(Optional.of(player));
 
 
             // act & assert
             BuySlotCommand command = BuySlotCommand.builder()
-                    .accountId(accountId)
+                    .accountId(ACCOUNT_ID)
                     .build();
 
             assertThrows(NotEnoughStarPointException.class, () -> playerUseCase.buySlotUseCase(command));
@@ -267,17 +267,17 @@ class PlayerUseCaseTest {
             int starPoint = 100;
             int payPoint = 100000;
             Player player = Player.builder()
-                    .accountId(accountId)
+                    .accountId(ACCOUNT_ID)
                     .slotCount(slotCount)
                     .starPoint(starPoint)
                     .build();
 
-            Mockito.when(memberPersistencePort.getPlayerPort(accountId)).thenReturn(Optional.of(player));
+            Mockito.when(memberPersistencePort.getPlayerPort(ACCOUNT_ID)).thenReturn(Optional.of(player));
             Mockito.when(memberPersistencePort.savePlayerPort(Mockito.any())).thenReturn(Optional.of(player));
 
             // act
             ExchangeStarPointCommand command = ExchangeStarPointCommand.builder()
-                    .accountId(accountId)
+                    .accountId(ACCOUNT_ID)
                     .mongId(mongId)
                     .starPoint(starPoint)
                     .build();
@@ -288,7 +288,7 @@ class PlayerUseCaseTest {
             assertTrue(player.getStarPoint() < starPoint);
             Mockito.verify(memberPersistencePort).getPlayerPort(command.getAccountId());
             Mockito.verify(memberPersistencePort).savePlayerPort(player);
-            Mockito.verify(memberEventPort).exchangeStarPointEventPort(accountId, mongId, starPoint, payPoint);
+            Mockito.verify(memberEventPort).exchangeStarPointEventPort(ACCOUNT_ID, mongId, starPoint, payPoint);
             Mockito.verify(memberPublishPort).publishStarPointPort(player);
         }
 
@@ -299,11 +299,11 @@ class PlayerUseCaseTest {
             long mongId = 1L;
             int starPoint = 100;
 
-            Mockito.when(memberPersistencePort.getPlayerPort(accountId)).thenReturn(Optional.empty());
+            Mockito.when(memberPersistencePort.getPlayerPort(ACCOUNT_ID)).thenReturn(Optional.empty());
 
             // act & assert
             ExchangeStarPointCommand command = ExchangeStarPointCommand.builder()
-                    .accountId(accountId)
+                    .accountId(ACCOUNT_ID)
                     .mongId(mongId)
                     .starPoint(starPoint)
                     .build();
@@ -320,17 +320,17 @@ class PlayerUseCaseTest {
             int slotCount = 1;
             int starPoint = 100;
             Player player = Player.builder()
-                    .accountId(accountId)
+                    .accountId(ACCOUNT_ID)
                     .slotCount(slotCount)
                     .starPoint(starPoint)
                     .build();
 
-            Mockito.when(memberPersistencePort.getPlayerPort(accountId)).thenReturn(Optional.of(player));
+            Mockito.when(memberPersistencePort.getPlayerPort(ACCOUNT_ID)).thenReturn(Optional.of(player));
             Mockito.when(memberPersistencePort.savePlayerPort(Mockito.any())).thenReturn(Optional.empty());
 
             // act & assert
             ExchangeStarPointCommand command = ExchangeStarPointCommand.builder()
-                    .accountId(accountId)
+                    .accountId(ACCOUNT_ID)
                     .mongId(mongId)
                     .starPoint(starPoint)
                     .build();
@@ -348,17 +348,17 @@ class PlayerUseCaseTest {
             int starPoint = 100;
             int payPoint = 1000;
             Player player = Player.builder()
-                    .accountId(accountId)
+                    .accountId(ACCOUNT_ID)
                     .slotCount(1)
                     .starPoint(0)
                     .build();
 
-            Mockito.when(memberPersistencePort.getPlayerPort(accountId)).thenReturn(Optional.of(player));
+            Mockito.when(memberPersistencePort.getPlayerPort(ACCOUNT_ID)).thenReturn(Optional.of(player));
             Mockito.when(memberPersistencePort.savePlayerPort(Mockito.any())).thenReturn(Optional.of(player));
 
             // act & assert
             ExchangeStarPointCommand command = ExchangeStarPointCommand.builder()
-                    .accountId(accountId)
+                    .accountId(ACCOUNT_ID)
                     .mongId(1L)
                     .starPoint(100)
                     .build();
@@ -366,7 +366,7 @@ class PlayerUseCaseTest {
             assertThrows(NotEnoughStarPointException.class, () -> playerUseCase.exchangeStarPointUseCase(command));
             Mockito.verify(memberPersistencePort).getPlayerPort(command.getAccountId());
             Mockito.verify(memberPersistencePort, Mockito.never()).savePlayerPort(player);
-            Mockito.verify(memberEventPort, Mockito.never()).exchangeStarPointEventPort(accountId, mongId, starPoint, payPoint);
+            Mockito.verify(memberEventPort, Mockito.never()).exchangeStarPointEventPort(ACCOUNT_ID, mongId, starPoint, payPoint);
             Mockito.verify(memberPublishPort, Mockito.never()).publishStarPointPort(player);
         }
     }
@@ -381,17 +381,17 @@ class PlayerUseCaseTest {
             // arrange
             int starPoint = 100;
             Player player = Player.builder()
-                    .accountId(accountId)
+                    .accountId(ACCOUNT_ID)
                     .slotCount(1)
                     .starPoint(0)
                     .build();
 
-            Mockito.when(memberPersistencePort.getPlayerPort(accountId)).thenReturn(Optional.of(player));
+            Mockito.when(memberPersistencePort.getPlayerPort(ACCOUNT_ID)).thenReturn(Optional.of(player));
             Mockito.when(memberPersistencePort.savePlayerPort(Mockito.any())).thenReturn(Optional.of(player));
 
             // act
             IncreaseStarPointCommand command = IncreaseStarPointCommand.builder()
-                    .accountId(accountId)
+                    .accountId(ACCOUNT_ID)
                     .starPoint(starPoint)
                     .build();
 
@@ -410,11 +410,11 @@ class PlayerUseCaseTest {
             // arrange
             int starPoint = 100;
 
-            Mockito.when(memberPersistencePort.getPlayerPort(accountId)).thenReturn(Optional.empty());
+            Mockito.when(memberPersistencePort.getPlayerPort(ACCOUNT_ID)).thenReturn(Optional.empty());
 
             // act & assert
             IncreaseStarPointCommand command = IncreaseStarPointCommand.builder()
-                    .accountId(accountId)
+                    .accountId(ACCOUNT_ID)
                     .starPoint(starPoint)
                     .build();
 
@@ -428,17 +428,17 @@ class PlayerUseCaseTest {
             // arrange
             int starPoint = 100;
             Player player = Player.builder()
-                    .accountId(accountId)
+                    .accountId(ACCOUNT_ID)
                     .slotCount(1)
                     .starPoint(0)
                     .build();
 
-            Mockito.when(memberPersistencePort.getPlayerPort(accountId)).thenReturn(Optional.of(player));
+            Mockito.when(memberPersistencePort.getPlayerPort(ACCOUNT_ID)).thenReturn(Optional.of(player));
             Mockito.when(memberPersistencePort.savePlayerPort(Mockito.any())).thenReturn(Optional.empty());
 
             // act & assert
             IncreaseStarPointCommand command = IncreaseStarPointCommand.builder()
-                    .accountId(accountId)
+                    .accountId(ACCOUNT_ID)
                     .starPoint(starPoint)
                     .build();
 

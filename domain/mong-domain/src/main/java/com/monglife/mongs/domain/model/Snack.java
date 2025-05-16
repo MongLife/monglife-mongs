@@ -8,23 +8,23 @@ import lombok.ToString;
 @ToString
 public class Snack {
 
-    private String snackTypeCode;
+    private final String snackTypeCode;
 
-    private String snackTypeName;
+    private final String snackTypeName;
 
-    private Integer price;
+    private final Integer price;
 
-    private Boolean isCanBuy;
+    private final Boolean isCanBuy;
 
-    private Double weight;
+    private final Double weight;
 
-    private Double strength;
+    private final Double strength;
 
-    private Double satiety;
+    private final Double satiety;
 
-    private Double healthy;
+    private final Double healthy;
 
-    private Double fatigue;
+    private final Double fatigue;
 
     @Builder
     public Snack(String snackTypeCode, String snackTypeName, Integer price, Boolean isCanBuy, Double weight, Double strength, Double satiety, Double healthy, Double fatigue) {

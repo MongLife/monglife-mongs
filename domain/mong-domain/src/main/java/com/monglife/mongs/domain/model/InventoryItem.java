@@ -10,15 +10,15 @@ import lombok.ToString;
 @ToString
 public class InventoryItem {
 
-    private Long inventoryItemId;
+    private final Long inventoryItemId;
 
-    private Long mongId;
+    private final Long mongId;
 
-    private String typeCode;
+    private final String typeCode;
 
-    private String typeName;
+    private final String typeName;
 
-    private InventoryItemTypeCode inventoryItemTypeCode;
+    private final InventoryItemTypeCode inventoryItemTypeCode;
 
     @Builder
     public InventoryItem(Long inventoryItemId, Long mongId, String typeCode, String typeName, InventoryItemTypeCode inventoryItemTypeCode) {

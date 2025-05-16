@@ -6,6 +6,7 @@ import com.monglife.mongs.domain.enums.MatchHistoryCode;
 import com.monglife.mongs.domain.enums.MatchRoundCode;
 import com.monglife.mongs.domain.exception.AlreadyEnterMatchPlayerException;
 import com.monglife.mongs.domain.exception.AlreadyExitMatchPlayerException;
+import com.monglife.mongs.domain.vo.GenerateMatchPlayerVo;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.ToString;
@@ -235,23 +236,23 @@ public class MatchPlayer {
     /**
      * 매치 플레이어 생성
      * @param queuePlayer 매치 대기열 도메인 객체
-     * @param mong 몽 도메인 객체
+     * @param generateMatchPlayerVo 플레이어 생성 정보 Vo
      * @return 매치 플레이어 도메인 객체
      */
-    public static MatchPlayer generateMatchPlayer(QueuePlayer queuePlayer, Mong mong) {
+    public static MatchPlayer generateMatchPlayer(QueuePlayer queuePlayer, GenerateMatchPlayerVo generateMatchPlayerVo) {
 
-        double attack  = DEFAULT_ATTACK  + mong.getStrength();
-        double heal    = DEFAULT_HEAL    + mong.getFatigue();
-        double defence = DEFAULT_DEFENCE + mong.getWeight();
+        double attack  = DEFAULT_ATTACK  + generateMatchPlayerVo.getStrength();
+        double heal    = DEFAULT_HEAL    + generateMatchPlayerVo.getFatigue();
+        double defence = DEFAULT_DEFENCE + generateMatchPlayerVo.getWeight();
 
         return MatchPlayer.builder()
                 .playerId(CommonUtil.randomId())
                 .deviceId(queuePlayer.getDeviceId())
-                .accountId(mong.getAccountId())
-                .mongId(mong.getMongId())
-                .mongTypeCode(mong.getMongTypeCode())
-                .mongTypeName(mong.getMongTypeName())
-                .mongName(mong.getMongName())
+                .accountId(generateMatchPlayerVo.getAccountId())
+                .mongId(generateMatchPlayerVo.getMongId())
+                .mongTypeCode(generateMatchPlayerVo.getMongTypeCode())
+                .mongTypeName(generateMatchPlayerVo.getMongTypeName())
+                .mongName(generateMatchPlayerVo.getMongName())
                 .attack(attack)
                 .heal(heal)
                 .defence(defence)

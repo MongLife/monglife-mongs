@@ -398,7 +398,7 @@ public class Mong {
             throw new InvalidFeedFoodException();
         }
 
-        // 페이 포인트가 충분하지 않은 경우 예외 발생
+        // 충분한 페이 포인트 없는 경우 예외 발생
         if (this.payPoint < food.getPrice()) {
             throw new NotEnoughPayPointException();
         }
@@ -483,7 +483,7 @@ public class Mong {
             if (this.payPoint < RANDOM_DRAW_PAY_POINT) {
                 throw new NotEnoughPayPointException();
             }
-            // 페이 포인트로 뽑기 횟수 구매
+            // 뽑기 횟수 페이 포인트 구매
             this.payPoint = this.payPoint - RANDOM_DRAW_PAY_POINT;
             this.randomDrawTicketCount = this.randomDrawTicketCount + 1;
         }

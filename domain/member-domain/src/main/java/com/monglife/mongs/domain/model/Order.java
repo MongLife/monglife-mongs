@@ -8,17 +8,17 @@ import lombok.ToString;
 @ToString
 public class Order {
 
-    private Long orderId;
+    private final Long orderId;
 
-    private Long accountId;
+    private final Long accountId;
 
-    private String productId;
+    private final String productId;
 
-    private Double price;
+    private final Double price;
 
-    private String socialOrderId;
+    private final String socialOrderId;
 
-    private String purchaseToken;
+    private final String purchaseToken;
 
     @Builder
     public Order(Long orderId, Long accountId, String productId, Double price, String socialOrderId, String purchaseToken) {

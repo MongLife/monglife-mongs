@@ -136,7 +136,7 @@ public class InteractionService implements InteractionUseCase {
                 .orElseThrow(NotExistsInventoryItemException::new)
                 .verify(command.getMongId());
 
-        // 인벤토리 아이템 권한 체크
+        // 인벤 아이템 소유자 체크
         if (!mong.getMongId().equals(inventoryItem.getMongId())) {
             throw new ForbiddenInventoryItemException();
         }
@@ -156,7 +156,7 @@ public class InteractionService implements InteractionUseCase {
         mong = mongPersistencePort.saveMongPort(mong)
                 .orElseThrow(NotExistsMongException::new);
 
-        // 인벤토리 아이템 삭제
+        // 인벤 아이템 삭제
         mongPersistencePort.deleteInventoryItemPort(inventoryItem.getInventoryItemId())
                 .orElseThrow(InvalidDeleteInventoryItemException::new);
 
@@ -193,7 +193,7 @@ public class InteractionService implements InteractionUseCase {
         switch (randomDrawItem.getInventoryItemTypeCode()) {
             // 맵인 경우 컬렉션 맵 등록
             case MAP -> mongEventPort.randomDrawMapEventPort(command.getAccountId(), randomDrawItem.getTypeCode());
-            // 음식, 간식인 경우 인벤토리 등록
+            // 음식, 간식인 경우 인벤 등록
             case FOOD, SNACK ->
                     mongPersistencePort.createInventoryItemPort(CreateInventoryItemVo.builder()
                         .mongId(mong.getMongId())

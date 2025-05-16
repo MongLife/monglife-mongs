@@ -1,4 +1,6 @@
 dependencies {
+    // domain layer
+    implementation project(":domain:member-domain")
 }
 
 tasks.register('copyPrivate', Copy) {

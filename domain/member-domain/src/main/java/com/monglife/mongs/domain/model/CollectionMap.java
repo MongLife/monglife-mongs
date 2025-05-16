@@ -8,15 +8,15 @@ import lombok.ToString;
 @ToString
 public class CollectionMap {
 
-    private Long collectionMapId;
+    private final Long collectionMapId;
 
-    private Long accountId;
+    private final Long accountId;
 
-    private String mapTypeCode;
+    private final String mapTypeCode;
 
-    private String mapTypeName;
+    private final String mapTypeName;
 
-    private Boolean isIncluded;
+    private final Boolean isIncluded;
 
     @Builder
     public CollectionMap(Long collectionMapId, Long accountId, String mapTypeCode, String mapTypeName, Boolean isIncluded) {
