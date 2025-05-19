@@ -239,12 +239,6 @@ jobs:
       # Bootstrap User API 빌드
       - name: User Bootstrap API 모듈 빌드
         run: ./gradlew :bootstrap:user-bootstrap-api:build -x test
-      # 레포트 생성
-      - name: 테스트 리포트 작성
-        uses: mikepenz/action-junit-report@v5
-        if: success() || failure()
-        with:
-          report_paths: '**/build/test-results/test/TEST-*.xml'
   # Character API 빌드 테스트
   bootstrap-character-build-test:
     needs:
@@ -275,9 +269,3 @@ jobs:
       # Bootstrap Character API 빌드
       - name: Character Bootstrap API 모듈 빌드
         run: ./gradlew :bootstrap:character-bootstrap-api:build -x test
-      # 레포트 생성
-      - name: 테스트 리포트 작성
-        uses: mikepenz/action-junit-report@v5
-        if: success() || failure()
-        with:
-          report_paths: '**/build/test-results/test/TEST-*.xml'
