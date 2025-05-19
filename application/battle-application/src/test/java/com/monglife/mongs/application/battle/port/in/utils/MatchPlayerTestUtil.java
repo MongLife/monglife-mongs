@@ -1,4 +1,4 @@
-package com.monglife.mongs.application.battle.port.in.service;
+package com.monglife.mongs.application.battle.port.in.utils;
 
 import com.monglife.core.utils.CommonUtil;
 import com.monglife.mongs.domain.battle.enums.MatchRoundCode;

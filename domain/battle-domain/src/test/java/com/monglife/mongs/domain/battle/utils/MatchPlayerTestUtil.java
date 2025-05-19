@@ -1,8 +1,10 @@
-package com.monglife.mongs.domain.battle.model;
+package com.monglife.mongs.domain.battle.utils;
 
 import com.monglife.core.utils.CommonUtil;
 import com.monglife.mongs.domain.battle.enums.MatchRoundCode;
 import com.monglife.mongs.domain.battle.enums.MatchStateCode;
+import com.monglife.mongs.domain.battle.model.Match;
+import com.monglife.mongs.domain.battle.model.MatchPlayer;
 
 import java.time.LocalDateTime;
 import java.util.List;

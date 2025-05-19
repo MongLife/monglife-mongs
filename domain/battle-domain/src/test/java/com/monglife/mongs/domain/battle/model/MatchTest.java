@@ -4,6 +4,7 @@ import com.monglife.core.utils.CommonUtil;
 import com.monglife.mongs.domain.battle.enums.MatchPickCode;
 import com.monglife.mongs.domain.battle.enums.MatchRoundCode;
 import com.monglife.mongs.domain.battle.exception.AlreadyExistsMatchPickException;
+import com.monglife.mongs.domain.battle.utils.MatchPlayerTestUtil;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
