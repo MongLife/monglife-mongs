@@ -2,18 +2,3 @@ dependencies {
     // domain layer
     api project(":domain:member-domain")
 }
-
-tasks.register('copyPrivate', Copy) {
-    copy {
-        from('../../configs/application/member-application/') {
-            include('application.yml')
-            rename('application.yml', 'application-member.yml')
-        }
-        into('src/main/resources')
-    }
-    copy {
-        from('../../configs/application/member-application/')
-        include('application.yml')
-        into('src/test/resources')
-    }
-}

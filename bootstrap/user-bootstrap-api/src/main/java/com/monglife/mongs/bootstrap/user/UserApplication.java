@@ -10,7 +10,7 @@ public class UserApplication {
 
     public static void main(String[] args) {
 
-        System.setProperty("spring.config.name", "application,event,persistence,publish,payment");
+        System.setProperty("spring.config.name", "application,subscribe,web,event,persistence,publish,payment,schedule");
 
         SpringApplication.run(UserApplication.class, args);
     }

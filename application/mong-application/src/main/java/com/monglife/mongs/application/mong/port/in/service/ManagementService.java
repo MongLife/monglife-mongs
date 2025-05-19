@@ -42,7 +42,7 @@ public class ManagementService implements ManagementUseCase {
     @CreateScheduleTaskPort({ MongSchedulerTypeCode.EGG_EVOLUTION })
     public Mong createMongUseCase(CreateMongCommand command) {
         // 0 레벨의 몽 타입 목록 조회
-        List<MongType> mongTypes = mongPersistencePort.getMongTypes(0);
+        List<MongType> mongTypes = mongPersistencePort.getMongTypesPort(0);
 
         // 몽 타입이 없는 경우 예외
         if (mongTypes.isEmpty()) {
@@ -268,7 +268,7 @@ public class ManagementService implements ManagementUseCase {
         Double evolutionScore = mong.getEvolutionScore();
 
         // 진화 가능한 몽 타입 목록 조회
-        List<MongType> mongTypeCodes = mongPersistencePort.getMongTypes(evolutionScore, mong.getMongTypeCode());
+        List<MongType> mongTypeCodes = mongPersistencePort.getMongTypesPort(evolutionScore, mong.getMongTypeCode());
 
         // 몽 진화
         mong.evolution(mongTypeCodes);

@@ -20,12 +20,3 @@ dependencies {
     }
     implementation 'com.google.guava:guava:32.0.1-android'
 }
-
-tasks.register('copyPrivate', Copy) {
-    copy {
-        from('../../configs/bootstrap/user-bootstrap-api/') {
-            include('application.yml')
-        }
-        into('src/main/resources')
-    }
-}

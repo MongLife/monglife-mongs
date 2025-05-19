@@ -683,7 +683,6 @@ class InteractionServiceTest {
             assertEquals(inventoryItemId, exception.getRandomDrawItemId());
             assertEquals(typeCode, exception.getTypeCode());
             assertEquals(typeName, exception.getTypeName());
-
         }
     }
 }

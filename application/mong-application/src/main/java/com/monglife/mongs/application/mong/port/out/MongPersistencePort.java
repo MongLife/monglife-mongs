@@ -19,6 +19,8 @@ public interface MongPersistencePort {
     /**
      * 몽 쓰다 듬기 이력 등록
      * @param mongId 몽 ID
+     * @param expirationSeconds 쓰다 듬기 대기 시간 (초)
+     * @return 몽 쓰다 듬기 대기 시간
      */
     Optional<Long> createMongStrokeHistoryPort(Long mongId, Long expirationSeconds);
 
@@ -27,7 +29,7 @@ public interface MongPersistencePort {
      * @param level 몽 타입 레벨
      * @return 레벨 기준 몽 타입 목록 조회
      */
-    List<MongType> getMongTypes(Integer level);
+    List<MongType> getMongTypesPort(Integer level);
 
     /**
      * 몽 타입 목록 조회
@@ -35,7 +37,7 @@ public interface MongPersistencePort {
      * @param mongTypeCode 현재 몽 타입 코드
      * @return 현재 진화 점수 기준 진화 가능한 몽 타입 목록
      */
-    List<MongType> getMongTypes(Double evolutionScore, String mongTypeCode);
+    List<MongType> getMongTypesPort(Double evolutionScore, String mongTypeCode);
 
     /**
      * 몽 등록

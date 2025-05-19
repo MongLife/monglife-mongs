@@ -53,7 +53,7 @@ class ManagementServiceTest {
 
             MongType mongType =  MongTestUtil.getEggMongType(maxStatus);
 
-            Mockito.when(mongPersistencePort.getMongTypes(Mockito.any())).thenReturn(List.of(mongType));
+            Mockito.when(mongPersistencePort.getMongTypesPort(Mockito.any())).thenReturn(List.of(mongType));
             Mockito.when(mongPersistencePort.createMongPort(Mockito.any())).thenReturn(Optional.of(mong));
 
             // act
@@ -76,7 +76,7 @@ class ManagementServiceTest {
 
     @Nested
     @DisplayName("몽 삭제 단위 테스트")
-    class DeleteMongUseCase{
+    class DeleteMongUseCase {
 
         @Test
         @DisplayName("몽을 삭제 한다.")
@@ -145,7 +145,7 @@ class ManagementServiceTest {
 
     @Nested
     @DisplayName("몽 사망 단위 테스트")
-    class DeadMongUseCase{
+    class DeadMongUseCase {
 
         @Test
         @DisplayName("몽을 사망 상태로 변경 한다.")
@@ -211,7 +211,6 @@ class ManagementServiceTest {
                     .build();
 
             assertThrows(InvalidMongStateException.class, () -> managementUseCase.deadMongUseCase(command));
-
         }
 
         @Test
@@ -275,7 +274,7 @@ class ManagementServiceTest {
 
     @Nested
     @DisplayName("몽 목록 조회 단위 테스트")
-    class GetMongsUseCase{
+    class GetMongsUseCase {
 
         @Test
         @DisplayName("몽 목록을 조회 한다.")
@@ -305,7 +304,7 @@ class ManagementServiceTest {
 
     @Nested
     @DisplayName("몽 조회 단위 테스트")
-    class GetMongUseCase{
+    class GetMongUseCase {
 
         @Test
         @DisplayName("몽을 단건 조회 한다.")
@@ -478,7 +477,6 @@ class ManagementServiceTest {
                     .build();
 
             assertThrows(InvalidMongStateException.class, () -> managementUseCase.strokeMongUseCase(command));
-
         }
 
         @Test
@@ -573,7 +571,7 @@ class ManagementServiceTest {
 
     @Nested
     @DisplayName("몽 수면 단위 테스트")
-    class SleepMongUseCase{
+    class SleepMongUseCase {
 
         @Test
         @DisplayName("몽을 수면 상태로 변경 한다.")
@@ -874,7 +872,7 @@ class ManagementServiceTest {
 
     @Nested
     @DisplayName("몽 배변 처리 단위 테스트")
-    class PoopCleanMongUseCase{
+    class PoopCleanMongUseCase {
 
         @Test
         @DisplayName("몽 배변을 처리하고 지수를 증가 시킨다.")
@@ -1026,7 +1024,7 @@ class ManagementServiceTest {
 
     @Nested
     @DisplayName("몽 진화 단위 테스트")
-    class EvolutionMongUseCase{
+    class EvolutionMongUseCase {
 
         @Test
         @DisplayName("몽을 진화 시키고 지수를 재조정 한다.")
@@ -1041,7 +1039,7 @@ class ManagementServiceTest {
             MongType mongType = MongTestUtil.getSecondLevelMongType(nextMaxStatus);
 
             Mockito.when(mongPersistencePort.getMongPort(mongId)).thenReturn(Optional.of(mong));
-            Mockito.when(mongPersistencePort.getMongTypes(mong.getEvolutionScore(), mong.getMongTypeCode())).thenReturn(List.of(mongType));
+            Mockito.when(mongPersistencePort.getMongTypesPort(mong.getEvolutionScore(), mong.getMongTypeCode())).thenReturn(List.of(mongType));
             Mockito.when(mongPersistencePort.saveMongPort(mong)).thenReturn(Optional.of(mong));
 
             // act
@@ -1065,7 +1063,6 @@ class ManagementServiceTest {
             assertEquals(nextMaxStatus, expected.getHealthy());
             assertEquals(nextMaxStatus, expected.getFatigue());
             assertEquals(0D, expected.getExp());
-
         }
 
         @Test
@@ -1080,7 +1077,7 @@ class ManagementServiceTest {
             MongType mongType = MongTestUtil.getSecondLevelMongType(nextMaxStatus);
 
             Mockito.when(mongPersistencePort.getMongPort(mongId)).thenReturn(Optional.of(mong));
-            Mockito.when(mongPersistencePort.getMongTypes(mong.getEvolutionScore(), mong.getMongTypeCode())).thenReturn(List.of(mongType));
+            Mockito.when(mongPersistencePort.getMongTypesPort(mong.getEvolutionScore(), mong.getMongTypeCode())).thenReturn(List.of(mongType));
             Mockito.when(mongPersistencePort.saveMongPort(mong)).thenReturn(Optional.of(mong));
 
             // act & assert
@@ -1104,7 +1101,7 @@ class ManagementServiceTest {
             MongType mongType = MongTestUtil.getSecondLevelMongType(nextMaxStatus);
 
             Mockito.when(mongPersistencePort.getMongPort(mongId)).thenReturn(Optional.of(mong));
-            Mockito.when(mongPersistencePort.getMongTypes(mong.getEvolutionScore(), mong.getMongTypeCode())).thenReturn(List.of(mongType));
+            Mockito.when(mongPersistencePort.getMongTypesPort(mong.getEvolutionScore(), mong.getMongTypeCode())).thenReturn(List.of(mongType));
             Mockito.when(mongPersistencePort.saveMongPort(mong)).thenReturn(Optional.of(mong));
 
             // act & assert
@@ -1128,7 +1125,7 @@ class ManagementServiceTest {
             MongType mongType = MongTestUtil.getSecondLevelMongType(nextMaxStatus);
 
             Mockito.when(mongPersistencePort.getMongPort(mongId)).thenReturn(Optional.of(mong));
-            Mockito.when(mongPersistencePort.getMongTypes(mong.getEvolutionScore(), mong.getMongTypeCode())).thenReturn(List.of(mongType));
+            Mockito.when(mongPersistencePort.getMongTypesPort(mong.getEvolutionScore(), mong.getMongTypeCode())).thenReturn(List.of(mongType));
             Mockito.when(mongPersistencePort.saveMongPort(mong)).thenReturn(Optional.of(mong));
 
             // act & assert
@@ -1149,7 +1146,7 @@ class ManagementServiceTest {
             Mong mong = MongTestUtil.getFirstLevelMong(mongId, accountId, maxStatus, MongStateCode.EVOLUTION_READY);
 
             Mockito.when(mongPersistencePort.getMongPort(mongId)).thenReturn(Optional.of(mong));
-            Mockito.when(mongPersistencePort.getMongTypes(mong.getEvolutionScore(), mong.getMongTypeCode())).thenReturn(Collections.emptyList());
+            Mockito.when(mongPersistencePort.getMongTypesPort(mong.getEvolutionScore(), mong.getMongTypeCode())).thenReturn(Collections.emptyList());
             Mockito.when(mongPersistencePort.saveMongPort(mong)).thenReturn(Optional.of(mong));
 
             // act & assert
@@ -1202,7 +1199,7 @@ class ManagementServiceTest {
 
     @Nested
     @DisplayName("몽 졸업 단위 테스트")
-    class GraduateMongUseCase{
+    class GraduateMongUseCase {
 
         @Test
         @DisplayName("몽을 졸업 상태로 변경 한다.")
@@ -1333,7 +1330,7 @@ class ManagementServiceTest {
 
     @Nested
     @DisplayName("몽 페이 포인트 증가 단위 테스트")
-    class IncreaseMongPayPointUseCase{
+    class IncreaseMongPayPointUseCase {
 
         @Test
         @DisplayName("몽의 페이 포인트를 증가 시킨다.")
@@ -1402,7 +1399,7 @@ class ManagementServiceTest {
 
     @Nested
     @DisplayName("몽 지수 증가 단위 테스트")
-    class IncreaseMongStatusUseCase{
+    class IncreaseMongStatusUseCase {
 
         @Test
         @DisplayName("몽의 지수를 1 cycle 증가 시킨다.")
@@ -1470,7 +1467,7 @@ class ManagementServiceTest {
 
     @Nested
     @DisplayName("몽 지수 감소 단위 테스트")
-    class DecreaseMongStatusUseCase{
+    class DecreaseMongStatusUseCase {
 
         @Test
         @DisplayName("몽의 지수를 1 cycle 감소 시킨다.")
@@ -1540,7 +1537,7 @@ class ManagementServiceTest {
 
     @Nested
     @DisplayName("몽 배변 수 증가 단위 테스트")
-    class IncreaseMongPoopCountUseCase{
+    class IncreaseMongPoopCountUseCase {
 
         @Test
         @DisplayName("몽 배변 수를 1 cycle 증가 시킨다.")

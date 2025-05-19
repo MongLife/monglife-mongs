@@ -20,4 +20,48 @@ allprojects {
     java {
         sourceCompatibility = JavaVersion.VERSION_17
     }
+
+    tasks.register('copyPrivate', DefaultTask) {
+
+        def configPath = '../../configs/properties'
+        def fullPath = project.path
+        def pathSegments = fullPath.tokenize(':')
+
+        if (pathSegments.size() > 1) {
+            def parentModule = pathSegments[-2]
+            def currentModule = pathSegments[-1]
+
+            doLast {
+                project.delete fileTree('src/main/resources') {
+                    include('*.yml')
+                    include('*.json')
+                }
+                project.delete fileTree('src/test/resources') {
+                    include('*.yml')
+                    include('*.json')
+                }
+
+                project.copy {
+                    from(configPath + '/' + parentModule + '/' + currentModule + '/') {
+                        include('*.yml')
+                        include('*.json')
+                    }
+                    into('src/main/resources')
+                }
+
+                project.copy {
+                    from(configPath + '/' + parentModule + '/' + currentModule + '/') {
+                        include('*.yml')
+                        include('*.json')
+                        rename { fileName ->
+                            if (fileName.endsWith(".yml") && fileName.contains("-")) {
+                                return "application-test.yml"
+                            }
+                        }
+                    }
+                    into('src/test/resources')
+                }
+            }
+        }
+    }
 }

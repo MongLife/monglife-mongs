@@ -34,6 +34,9 @@ public class MatchPlayer {
     // 기본 방어 수치
     private static final Double DEFAULT_DEFENCE = 250D;
 
+    /**
+     * persist field
+     */
     private final String playerId;
 
     private final String deviceId;
@@ -64,6 +67,9 @@ public class MatchPlayer {
 
     private LocalDateTime exitedAt;
 
+    /**
+     * local field
+     */
     private Double damage;
 
     private Double recovery;

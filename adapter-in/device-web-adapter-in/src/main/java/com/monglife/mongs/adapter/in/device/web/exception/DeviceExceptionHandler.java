@@ -3,7 +3,7 @@ package com.monglife.mongs.adapter.in.device.web.exception;
 import com.monglife.core.dto.response.ResponseDto;
 import com.monglife.core.enums.response.GlobalResponse;
 import com.monglife.core.exception.ErrorException;
-import com.monglife.mongs.adapter.in.device.web.step.controller.StepController;
+import com.monglife.mongs.adapter.in.device.web.controller.StepController;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.ConstraintViolationException;
 import org.springframework.http.HttpStatus;

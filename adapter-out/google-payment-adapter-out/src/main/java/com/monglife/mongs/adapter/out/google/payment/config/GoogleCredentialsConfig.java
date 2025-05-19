@@ -19,21 +19,21 @@ import java.security.GeneralSecurityException;
 public class GoogleCredentialsConfig {
 
     @Value("${google.account.filepath}")
-    private String googleAccountFilePath;
+    private String GOOGLE_ACCOUNT_FILE_PATH;
 
     @Value("${google.app-package-name}")
-    private String appPackageName;
+    private String APP_PACKAGE_NAME;
 
     @Bean
     public AndroidPublisher androidPublisher() throws IOException, GeneralSecurityException {
 
-        InputStream inputStream = new ClassPathResource(googleAccountFilePath).getInputStream();
+        InputStream inputStream = new ClassPathResource(GOOGLE_ACCOUNT_FILE_PATH).getInputStream();
         GoogleCredentials credentials = GoogleCredentials.fromStream(inputStream).createScoped(AndroidPublisherScopes.ANDROIDPUBLISHER);
 
         return new AndroidPublisher.Builder(
                 GoogleNetHttpTransport.newTrustedTransport(),
                 GsonFactory.getDefaultInstance(),
                 new HttpCredentialsAdapter(credentials)
-        ).setApplicationName(appPackageName).build();
+        ).setApplicationName(APP_PACKAGE_NAME).build();
     }
 }

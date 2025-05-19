@@ -22,7 +22,7 @@ import java.util.Optional;
 public class GooglePaymentService implements GooglePaymentPort {
 
     @Value("${google.app-package-name}")
-    private String appPackageName;
+    private String APP_PACKAGE_NAME;
 
     private final AndroidPublisher androidPublisher;
 
@@ -37,7 +37,7 @@ public class GooglePaymentService implements GooglePaymentPort {
     public Optional<InAppOrder> getInAppOrderPort(String productId, String socialOrderId, String purchaseToken) {
 
         try {
-            var get = androidPublisher.purchases().products().get(appPackageName, productId.toLowerCase(), purchaseToken);
+            var get = androidPublisher.purchases().products().get(APP_PACKAGE_NAME, productId.toLowerCase(), purchaseToken);
             var purchase = get.execute();
 
             OrderPurchaseTypeCode orderPurchaseTypeCode = switch (purchase.getPurchaseState()) {
@@ -78,7 +78,7 @@ public class GooglePaymentService implements GooglePaymentPort {
         try {
             androidPublisher.purchases()
                     .products()
-                    .consume(appPackageName, inAppOrder.getProductId().toLowerCase(), inAppOrder.getPurchaseToken())
+                    .consume(APP_PACKAGE_NAME, inAppOrder.getProductId().toLowerCase(), inAppOrder.getPurchaseToken())
                     .execute();
 
             return this.getInAppOrderPort(inAppOrder.getProductId(), inAppOrder.getSocialOrderId(), inAppOrder.getPurchaseToken());
@@ -97,7 +97,7 @@ public class GooglePaymentService implements GooglePaymentPort {
     public Optional<InAppProduct> getInAppProductPort(String productId) {
 
         try {
-            var get = androidPublisher.inappproducts().get(appPackageName, productId.toLowerCase());
+            var get = androidPublisher.inappproducts().get(APP_PACKAGE_NAME, productId.toLowerCase());
             var inAppProduct = get.execute();
 
             var inAppProductListing = inAppProduct.getListings().get("ko-KR");
@@ -122,7 +122,7 @@ public class GooglePaymentService implements GooglePaymentPort {
 
         try {
             return androidPublisher.inappproducts()
-                    .list(appPackageName)
+                    .list(APP_PACKAGE_NAME)
                     .execute()
                     .getInappproduct()
                     .stream()

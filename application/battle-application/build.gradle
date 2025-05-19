@@ -5,18 +5,3 @@ dependencies {
 
     implementation("org.springframework.boot:spring-boot-starter-aop")
 }
-
-tasks.register('copyPrivate', Copy) {
-    copy {
-        from('../../configs/application/battle-application/') {
-            include('application.yml')
-            rename('application.yml', 'application-battle.yml')
-        }
-        into('src/main/resources')
-    }
-    copy {
-        from('../../configs/application/battle-application/')
-        include('application.yml')
-        into('src/test/resources')
-    }
-}

@@ -26,7 +26,6 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @DataJpaTest
 @ActiveProfiles("test")
-@TestPropertySource(locations = "classpath:application.yml")
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 @ContextConfiguration(classes = { AdapterOutDevicePersistenceConfig.class, DeviceDataSourceConfig.class, HibernateAutoConfig.class })
 class DevicePersistenceServiceTest {

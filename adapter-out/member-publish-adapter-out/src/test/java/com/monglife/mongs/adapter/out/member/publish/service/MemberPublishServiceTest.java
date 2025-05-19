@@ -27,7 +27,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 @SpringBootTest
 @EnableAutoConfiguration
 @ActiveProfiles("test")
-@TestPropertySource(locations = "classpath:application.yml")
 @ContextConfiguration(classes = { AdapterOutMemberPublishConfig.class, MqttAutoConfig.class })
 class MemberPublishServiceTest {
 

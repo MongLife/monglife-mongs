@@ -26,7 +26,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 @SpringBootTest
 @EnableAutoConfiguration
 @ActiveProfiles("test")
-@TestPropertySource(locations = "classpath:application.yml")
 @ContextConfiguration(classes = { AdapterOutDeviceEventConfig.class, KafkaAutoConfig.class })
 @EmbeddedKafka(partitions = 1, brokerProperties = {"listeners=PLAINTEXT://localhost:9092", "port=9092"})
 @DirtiesContext

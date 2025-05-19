@@ -24,7 +24,6 @@ import static org.junit.jupiter.api.Assertions.*;
 @SpringBootTest
 @EnableAutoConfiguration
 @ActiveProfiles("test")
-@TestPropertySource(locations = "classpath:application.yml")
 @ContextConfiguration(classes = { AdapterOutGooglePaymentConfig.class })
 class GooglePaymentServiceTest {
 

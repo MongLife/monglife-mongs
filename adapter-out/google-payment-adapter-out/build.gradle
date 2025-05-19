@@ -7,28 +7,3 @@ dependencies {
     implementation 'com.google.auth:google-auth-library-oauth2-http:1.20.0'
     implementation 'com.google.guava:guava:32.0.1-android'
 }
-
-tasks.register('copyPrivate', Copy) {
-    copy {
-        from('../../configs/adapter/payment/google/') {
-            include('application.yml')
-            rename('application.yml', 'payment-google.yml')
-        }
-        into('src/main/resources')
-    }
-    copy {
-        from('../../configs/adapter/payment/google/')
-        include('application.yml')
-        into('src/test/resources')
-    }
-    copy {
-        from('../../configs/adapter/payment/google/')
-        include('account-google.json')
-        into('src/main/resources')
-    }
-    copy {
-        from('../../configs/adapter/payment/google/')
-        include('account-google.json')
-        into('src/test/resources')
-    }
-}
