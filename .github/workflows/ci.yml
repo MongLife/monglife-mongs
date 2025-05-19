@@ -9,8 +9,9 @@ permissions:
   checks: write
   pull-requests: write
 jobs:
-  # 각 모듈 별 단위 테스트
+  # domain 모듈 단위 테스트
   domain-unit-test:
+    name: Domain 모듈 단위 테스트
     runs-on: ubuntu-latest
     steps:
       # 소스 로드
@@ -49,8 +50,9 @@ jobs:
         if: success() || failure()
         with:
           report_paths: '**/build/test-results/test/TEST-*.xml'
-
+  # application 모듈 단위 테스트
   application-unit-test:
+    name: Application 모듈 단위 테스트
     runs-on: ubuntu-latest
     steps:
       # 소스 로드
@@ -89,8 +91,9 @@ jobs:
         if: success() || failure()
         with:
           report_paths: '**/build/test-results/test/TEST-*.xml'
-
+  # adapter out 모듈 단위 테스트
   adapter-out-unit-test:
+    name: Adapter out 모듈 단위 테스트
     runs-on: ubuntu-latest
     steps:
       # 소스 로드
@@ -117,9 +120,6 @@ jobs:
       # Battle Publish Adapter Out  모듈 단위 테스트
       - name: Battle Publish Adapter Out 모듈 단위 테스트
         run: ./gradlew :adapter-out:battle-publish-adapter-out:test
-      # Device Persistence Adapter Out 모듈 단위 테스트
-      - name: Device Persistence Adapter Out 모듈 단위 테스트
-        run: ./gradlew :adapter-out:device-persistence-adapter-out:test
       # Device Event Adapter Out  모듈 단위 테스트
       - name: Device Event Adapter Out 모듈 단위 테스트
         run: ./gradlew :adapter-out:device-event-adapter-out:test
@@ -147,14 +147,18 @@ jobs:
       # Mong Publish Adapter Out 모듈 단위 테스트
       - name: Mong Publish Adapter Out 모듈 단위 테스트
         run: ./gradlew :adapter-out:mong-publish-adapter-out:test
+      # Mong Schedule Adapter Out 모듈 단위 테스트
+      - name: Mong Schedule Adapter Out 모듈 단위 테스트
+        run: ./gradlew :adapter-out:mong-schedule-adapter-out:test
       # 레포트 생성
       - name: 테스트 리포트 작성
         uses: mikepenz/action-junit-report@v5
         if: success() || failure()
         with:
           report_paths: '**/build/test-results/test/TEST-*.xml'
-
+  # adapter in 모듈 단위 테스트
   adapter-in-unit-test:
+    name: Adapter in 모듈 단위 테스트
     runs-on: ubuntu-latest
     steps:
       # 소스 로드
@@ -175,9 +179,9 @@ jobs:
       # 환경 설정 파일 로드
       - name: 환경 설정 파일 로드
         run: ./gradlew copyPrivate
-      # Battle Event Adapter In 모듈 단위 테스트
+      # Battle Subscribe Adapter In 모듈 단위 테스트
       - name: Battle Event Adapter In 모듈 단위 테스트
-        run: ./gradlew :adapter-in:battle-event-adapter-in:test
+        run: ./gradlew :adapter-in:battle-subscribe-adapter-in:test
       # Battle Web Adapter In 모듈 단위 테스트
       - name: Battle Web Adapter In 모듈 단위 테스트
         run: ./gradlew :adapter-in:battle-web-adapter-in:test
@@ -205,7 +209,6 @@ jobs:
         if: success() || failure()
         with:
           report_paths: '**/build/test-results/test/TEST-*.xml'
-
   # User API 빌드 테스트
   bootstrap-user-build-test:
     needs:
@@ -242,7 +245,6 @@ jobs:
         if: success() || failure()
         with:
           report_paths: '**/build/test-results/test/TEST-*.xml'
-
   # Character API 빌드 테스트
   bootstrap-character-build-test:
     needs:
