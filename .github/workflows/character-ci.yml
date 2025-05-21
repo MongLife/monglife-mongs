@@ -166,6 +166,7 @@ jobs:
           report_paths: '**/build/test-results/test/TEST-*.xml'
   # Character API 빌드 테스트
   bootstrap-build-test:
+    name: Character API 빌드 테스트
     needs:
       - domain-unit-test
       - application-unit-test

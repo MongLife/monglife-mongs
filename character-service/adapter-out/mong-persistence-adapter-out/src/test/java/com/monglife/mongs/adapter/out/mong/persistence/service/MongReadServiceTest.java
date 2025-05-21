@@ -67,7 +67,7 @@ class MongReadServiceTest {
 
         private static final String MONG_STROKE_HISTORY_ID = CommonUtil.randomId();
         private static final Long MONG_ID = 1L;
-        private static final Long EXPIRATION = 5L;
+        private static final Long EXPIRATION = 180L;
 
         @BeforeEach
         void beforeEach() {
