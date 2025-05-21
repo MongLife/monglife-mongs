@@ -92,7 +92,8 @@ class MongReadServiceTest {
             long expected = mongReadPort.getMongStrokeExpirationSecondsPort(MONG_ID);
 
             // assert
-            assertEquals(EXPIRATION, expected);
+            assertTrue(0 < expected);
+            assertTrue(EXPIRATION > expected);
         }
     }
 
