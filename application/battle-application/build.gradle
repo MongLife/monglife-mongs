@@ -1,7 +1,0 @@
-dependencies {
-    // domain layer
-    api project(":domain:battle-domain")
-    api project(":domain:mong-domain")
-
-    implementation("org.springframework.boot:spring-boot-starter-aop")
-}

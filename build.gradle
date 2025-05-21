@@ -23,7 +23,7 @@ allprojects {
 
     tasks.register('copyPrivate', DefaultTask) {
 
-        def configPath = '../../configs/properties'
+        def configPath = '../../../configs/properties'
         def fullPath = project.path
         def pathSegments = fullPath.tokenize(':')
 

@@ -1,6 +1,0 @@
-dependencies {
-    // application layer
-    implementation project(':application:device-application')
-    // monglife-mqtt
-    implementation 'com.github.monglife:monglife-module-mqtt:1.0.1'
-}

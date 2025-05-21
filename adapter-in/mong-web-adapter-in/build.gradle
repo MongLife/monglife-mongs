@@ -1,6 +1,0 @@
-dependencies {
-    // application layer
-    implementation project(':application:mong-application')
-    // monglife-security
-    implementation 'com.github.monglife.monglife-module-common:monglife-module-common-security:1.0.11'
-}
