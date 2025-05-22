@@ -5,6 +5,7 @@ import com.monglife.mongs.application.mong.port.exception.NotExistsTrainingTypeE
 import com.monglife.mongs.application.mong.port.in.ActivityUseCase;
 import com.monglife.mongs.application.mong.port.in.command.GetTrainingTypeCommand;
 import com.monglife.mongs.application.mong.port.in.command.TrainingEndCommand;
+import com.monglife.mongs.application.mong.port.in.utils.MongTestUtil;
 import com.monglife.mongs.application.mong.port.out.MongPersistencePort;
 import com.monglife.mongs.application.mong.port.out.MongReadPort;
 import com.monglife.mongs.domain.mong.model.Mong;

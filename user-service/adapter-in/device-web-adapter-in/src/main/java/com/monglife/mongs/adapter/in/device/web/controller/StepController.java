@@ -2,11 +2,11 @@ package com.monglife.mongs.adapter.in.device.web.controller;
 
 import com.monglife.core.dto.response.ResponseDto;
 import com.monglife.module.common.security.principal.Passport;
-import com.monglife.mongs.adapter.in.device.web.enums.AdapterInDeviceWebResponse;
 import com.monglife.mongs.adapter.in.device.web.dto.request.ExchangeCurrentWalkingCountRequestDto;
 import com.monglife.mongs.adapter.in.device.web.dto.request.UpdateTotalWalkingCountRequestDto;
 import com.monglife.mongs.adapter.in.device.web.dto.response.ExchangeCurrentWalkingCountResponseDto;
 import com.monglife.mongs.adapter.in.device.web.dto.response.UpdateTotalWalkingCountResponseDto;
+import com.monglife.mongs.adapter.in.device.web.enums.AdapterInDeviceWebResponse;
 import com.monglife.mongs.application.device.port.in.StepUseCase;
 import com.monglife.mongs.application.device.port.in.command.ExchangeCurrentWalkingCountCommand;
 import com.monglife.mongs.application.device.port.in.command.UpdateTotalWalkingCountCommand;

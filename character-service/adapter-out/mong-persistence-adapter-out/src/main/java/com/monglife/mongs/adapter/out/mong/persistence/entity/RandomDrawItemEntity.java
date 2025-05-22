@@ -4,15 +4,13 @@ import com.monglife.module.common.jpa.entity.ComnCodeEntity;
 import com.monglife.mongs.domain.mong.enums.InventoryItemTypeCode;
 import com.monglife.mongs.domain.mong.model.RandomDrawItem;
 import jakarta.persistence.*;
-import lombok.AccessLevel;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Table(name = "mongs_random_draw_item")
+@ToString
 public class RandomDrawItemEntity {
 
     @Id

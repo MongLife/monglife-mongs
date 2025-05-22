@@ -66,7 +66,7 @@ class StepUseCaseTest {
                     .mongId(1L)
                     .walkingCount(TOTAL_WALKING_COUNT)
                     .totalWalkingCount(TOTAL_WALKING_COUNT)
-                    .deviceBootedDt(LocalDateTime.of(2025, 1, 1, 0, 0))
+                    .deviceBootedDt(DEVICE_BOOTED_DT)
                     .build();
 
             stepUseCase.exchangeCurrentWalkingCountUseCase(command);
@@ -115,7 +115,7 @@ class StepUseCaseTest {
                     .mongId(1L)
                     .walkingCount(TOTAL_WALKING_COUNT)
                     .totalWalkingCount(TOTAL_WALKING_COUNT)
-                    .deviceBootedDt(LocalDateTime.of(2025, 1, 1, 0, 0))
+                    .deviceBootedDt(DEVICE_BOOTED_DT)
                     .build();
 
             assertThrows(NotExistStepException.class, () -> stepUseCase.exchangeCurrentWalkingCountUseCase(command));

@@ -18,6 +18,7 @@ import java.util.stream.Collectors;
 
 @ToString
 public class Match {
+
     // 매치 완료 시 보상 경험치
     private static final double REWARD_EXP = 10D;
     // 매치 승리 시 보상 페이 포인트

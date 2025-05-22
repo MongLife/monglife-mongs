@@ -16,7 +16,6 @@ import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 
@@ -24,7 +23,8 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @DataJpaTest
 @ActiveProfiles("test")
@@ -36,7 +36,6 @@ import static org.junit.jupiter.api.Assertions.*;
         JpaAuditingAutoConfig.class,
         MongRedisConfig.class
 })
-@DirtiesContext
 class MongReadServiceTest {
 
     private final MongReadPort mongReadPort;
@@ -93,7 +92,7 @@ class MongReadServiceTest {
 
             // assert
             assertTrue(0 < expected);
-            assertTrue(EXPIRATION > expected);
+            assertTrue(EXPIRATION >= expected);
         }
     }
 

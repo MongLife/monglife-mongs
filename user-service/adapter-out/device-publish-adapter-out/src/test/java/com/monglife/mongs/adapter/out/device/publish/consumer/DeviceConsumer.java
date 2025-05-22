@@ -1,4 +1,4 @@
-package com.monglife.mongs.adapter.out.device.publish.service;
+package com.monglife.mongs.adapter.out.device.publish.consumer;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
@@ -18,7 +18,7 @@ import java.util.concurrent.CountDownLatch;
  * @hidden
  */
 @MqttConsumer
-public class Consumer {
+public class DeviceConsumer {
 
     private final ObjectMapper objectMapper;
 
@@ -28,7 +28,7 @@ public class Consumer {
 
     private CountDownLatch countDownLatch;
 
-    public Consumer(ObjectMapper objectMapper) {
+    public DeviceConsumer(ObjectMapper objectMapper) {
         this.objectMapper = objectMapper;
         this.objectMapper.registerModule(new JavaTimeModule());
     }

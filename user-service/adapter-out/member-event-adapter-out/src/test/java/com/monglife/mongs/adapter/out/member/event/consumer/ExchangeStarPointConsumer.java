@@ -1,4 +1,4 @@
-package com.monglife.mongs.adapter.out.member.event.service;
+package com.monglife.mongs.adapter.out.member.event.consumer;
 
 import com.monglife.module.common.kafka.event.TransactionEvent;
 import com.monglife.mongs.adapter.transaction.ExchangeStarPointEventDto;
@@ -11,13 +11,13 @@ import java.util.concurrent.CountDownLatch;
  * Kafka Consume Component
  */
 @Component
-public class Consumer {
+public class ExchangeStarPointConsumer {
 
     private ExchangeStarPointEventDto exchangeStarPointEventDto;
 
     private CountDownLatch countDownLatch;
 
-    public Consumer() {}
+    public ExchangeStarPointConsumer() {}
 
     @KafkaListener(topics = "commit.exchangeStarPoint")
     public void exchangeStarPointEvent(TransactionEvent<ExchangeStarPointEventDto> event) {

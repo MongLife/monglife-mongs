@@ -2,8 +2,10 @@ package com.monglife.mongs.domain.mong.model;
 
 import lombok.Builder;
 import lombok.Getter;
+import lombok.ToString;
 
 @Getter
+@ToString
 public class MongType {
 
     private final Long mongTypeId;

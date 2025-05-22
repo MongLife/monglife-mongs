@@ -17,7 +17,6 @@ import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabas
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.TestPropertySource;
 
 import java.time.LocalDateTime;
 import java.util.Optional;
@@ -27,7 +26,11 @@ import static org.junit.jupiter.api.Assertions.*;
 @DataJpaTest
 @ActiveProfiles("test")
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
-@ContextConfiguration(classes = { AdapterOutDevicePersistenceConfig.class, DeviceDataSourceConfig.class, HibernateAutoConfig.class })
+@ContextConfiguration(classes = {
+        AdapterOutDevicePersistenceConfig.class,
+        DeviceDataSourceConfig.class,
+        HibernateAutoConfig.class
+})
 class DevicePersistenceServiceTest {
 
     private final DevicePersistencePort devicePersistencePort;

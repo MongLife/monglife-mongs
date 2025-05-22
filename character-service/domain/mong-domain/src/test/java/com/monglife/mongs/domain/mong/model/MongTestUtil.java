@@ -9,48 +9,6 @@ import java.time.LocalTime;
 public class MongTestUtil {
 
     /**
-     * 테스트 음식 생성
-     * @param price 음식 가격
-     * @param isCanBuy 음식 구매 가능 여부
-     * @param status 음식 섭취 시, 증가할 지수 수치
-     * @return 음식 도메인 객체
-     */
-    public static Food getFood(Integer price, Boolean isCanBuy, Double status) {
-        return Food.builder()
-                .foodTypeCode("TEST-FOOD-YPE-CODE")
-                .foodTypeName("테스트 음식 코드")
-                .price(price)
-                .isCanBuy(isCanBuy)
-                .weight(status)
-                .strength(status)
-                .satiety(status)
-                .healthy(status)
-                .fatigue(status)
-                .build();
-    }
-
-    /**
-     * 테스트 간식 생성
-     * @param price 간식 가격
-     * @param isCanBuy 간식 구매 가능 여부
-     * @param status 간식 섭취 시, 증가할 지수 수치
-     * @return 간식 도메인 객체
-     */
-    public static Snack getSnack(Integer price, Boolean isCanBuy, Double status) {
-        return Snack.builder()
-                .snackTypeCode("TEST-SNACK-YPE-CODE")
-                .snackTypeName("테스트 간식 코드")
-                .price(price)
-                .isCanBuy(isCanBuy)
-                .weight(status)
-                .strength(status)
-                .satiety(status)
-                .healthy(status)
-                .fatigue(status)
-                .build();
-    }
-
-    /**
      * 알 상태의 테스트 몽 생성
      * @param mongId 몽 ID
      * @param accountId 계정 ID
@@ -106,14 +64,6 @@ public class MongTestUtil {
      */
     public static Mong getFirstLevelMong(Long mongId, Long accountId, Double maxStatus, MongStateCode mongStateCode) {
         return getFirstLevelMong(mongId, accountId, maxStatus, maxStatus, 0, mongStateCode, MongStatusCode.NORMAL, false, 0);
-    }
-
-    /**
-     * 1레벨의 테스트 몽 생성
-     * @return 몽 도메인 객체
-     */
-    public static Mong getFirstLevelMong(Long mongId, Long accountId, Double maxStatus, MongStatusCode mongStatusCode) {
-        return getFirstLevelMong(mongId, accountId, maxStatus, maxStatus, 0, MongStateCode.NORMAL, mongStatusCode, false, 0);
     }
 
     /**
@@ -181,38 +131,6 @@ public class MongTestUtil {
                 .randomDrawTicketCount(0)
                 .createdAt(LocalDateTime.now())
                 .updatedAt(LocalDateTime.now())
-                .build();
-    }
-
-    /**
-     * 알 상태의 몽 타입 생성
-     * @param maxStatus 최대 지수 수치
-     * @return 몽 타입 도메인 객체
-     */
-    public static MongType getEggMongType(Double maxStatus) {
-        return MongType.builder()
-                .mongTypeId(1L)
-                .mongTypeCode("CH000")
-                .mongTypeName("테스트 몽 타입 1")
-                .level(0)
-                .evolutionScore(0D)
-                .maxStatus(maxStatus)
-                .build();
-    }
-
-    /**
-     * 1레벨의 몽 타입 생성
-     * @param maxStatus 최대 지수 수치
-     * @return 몽 타입 도메인 객체
-     */
-    public static MongType getFirstLevelMongType(Double maxStatus) {
-        return MongType.builder()
-                .mongTypeId(1L)
-                .mongTypeCode("CH100")
-                .mongTypeName("테스트 몽 타입 1")
-                .level(1)
-                .evolutionScore(0D)
-                .maxStatus(maxStatus)
                 .build();
     }
 

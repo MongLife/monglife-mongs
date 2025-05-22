@@ -7,9 +7,6 @@ import lombok.Getter;
 @AllArgsConstructor
 public enum MatchRoundCode {
 
-    /**
-     * 응답
-     */
     NONE("원상태 유지"),
     MATCH_DEFENCE("배틀 방어"),
     MATCH_ATTACKED("배틀 피해"),

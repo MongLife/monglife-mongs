@@ -36,7 +36,11 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 @DataJpaTest
 @ActiveProfiles("test")
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
-@ContextConfiguration(classes = { AdapterOutMemberPersistenceConfig.class, MemberDataSourceConfig.class, HibernateAutoConfig.class })
+@ContextConfiguration(classes = {
+        AdapterOutMemberPersistenceConfig.class,
+        MemberDataSourceConfig.class,
+        HibernateAutoConfig.class
+})
 class CollectionPersistenceServiceTest {
 
     private final CollectionPersistencePort collectionPersistencePort;

@@ -5,7 +5,7 @@ import lombok.Getter;
 
 @Getter
 @AllArgsConstructor
-public enum MongSchedulerTypeCode {
+public enum MongSchedulerType implements SchedulerType {
 
     EGG_EVOLUTION("EGG-EVOLUTION", 300L),
     SLEEP("SLEEP", 86400L),

@@ -3,6 +3,8 @@ package com.monglife.mongs.adapter.out.member.publish.service;
 import ch.qos.logback.core.testUtil.RandomUtil;
 import com.monglife.module.mqtt.config.MqttAutoConfig;
 import com.monglife.mongs.adapter.out.member.publish.config.AdapterOutMemberPublishConfig;
+import com.monglife.mongs.adapter.out.member.publish.consumer.MemberSlotCountConsumer;
+import com.monglife.mongs.adapter.out.member.publish.consumer.MemberStarPointConsumer;
 import com.monglife.mongs.adapter.out.member.publish.dto.response.MemberSlotCountPublishDto;
 import com.monglife.mongs.adapter.out.member.publish.dto.response.MemberStarPointPublishDto;
 import com.monglife.mongs.application.member.port.out.MemberPublishPort;
@@ -16,7 +18,6 @@ import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.TestPropertySource;
 
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
@@ -27,28 +28,35 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 @SpringBootTest
 @EnableAutoConfiguration
 @ActiveProfiles("test")
-@ContextConfiguration(classes = { AdapterOutMemberPublishConfig.class, MqttAutoConfig.class })
+@ContextConfiguration(classes = {
+        AdapterOutMemberPublishConfig.class,
+        MqttAutoConfig.class
+})
 class MemberPublishServiceTest {
 
     private final MemberPublishPort memberPublishPort;
 
-    private final Consumer consumer;
-
     @Autowired
-    public MemberPublishServiceTest(MemberPublishPort memberPublishPort, Consumer consumer) {
+    public MemberPublishServiceTest(MemberPublishPort memberPublishPort) {
         this.memberPublishPort = memberPublishPort;
-        this.consumer = consumer;
     }
 
     @Nested
     @DisplayName("회원 스타 포인트 비동기 응답 단위 테스트")
     class PublishMemberStarPointPort {
 
-        private static Long accountId;
+        private final MemberStarPointConsumer memberSlotCountConsumer;
+
+        @Autowired
+        public PublishMemberStarPointPort(MemberStarPointConsumer memberSlotCountConsumer) {
+            this.memberSlotCountConsumer = memberSlotCountConsumer;
+        }
+
+        private static Long ACCOUNT_ID;
 
         @BeforeEach
         void beforeEach() {
-            accountId = (long) RandomUtil.getPositiveInt();
+            ACCOUNT_ID = (long) RandomUtil.getPositiveInt();
         }
 
         @Test
@@ -58,7 +66,7 @@ class MemberPublishServiceTest {
             int starPoint = 100;
             int slotCount = 1;
             Player player = Player.builder()
-                    .accountId(accountId)
+                    .accountId(ACCOUNT_ID)
                     .starPoint(starPoint)
                     .slotCount(slotCount)
                     .build();
@@ -66,7 +74,7 @@ class MemberPublishServiceTest {
             MemberStarPointPublishDto memberStarPointPublishDto = new MemberStarPointPublishDto();
             CountDownLatch countDownLatch = new CountDownLatch(1);
 
-            consumer.resetConsumeStarPoint(accountId, memberStarPointPublishDto, countDownLatch);
+            memberSlotCountConsumer.reset(ACCOUNT_ID, memberStarPointPublishDto, countDownLatch);
 
             // act
             memberPublishPort.publishStarPointPort(player);
@@ -75,7 +83,7 @@ class MemberPublishServiceTest {
 
             // assert
             assertTrue(messageConsumed);
-            assertEquals(accountId, memberStarPointPublishDto.getAccountId());
+            assertEquals(ACCOUNT_ID, memberStarPointPublishDto.getAccountId());
             assertEquals(starPoint, memberStarPointPublishDto.getStarPoint());
         }
     }
@@ -84,11 +92,18 @@ class MemberPublishServiceTest {
     @DisplayName("회원 슬롯 수 비동기 응답 단위 테스트")
     class PublishMemberSlotCountPort {
 
-        private static Long accountId;
+        private final MemberSlotCountConsumer memberSlotCountConsumer;
+
+        @Autowired
+        public PublishMemberSlotCountPort(MemberSlotCountConsumer memberSlotCountConsumer) {
+            this.memberSlotCountConsumer = memberSlotCountConsumer;
+        }
+
+        private static Long ACCOUNT_ID;
 
         @BeforeEach
         void beforeEach() {
-            accountId = (long) RandomUtil.getPositiveInt();
+            ACCOUNT_ID = (long) RandomUtil.getPositiveInt();
         }
 
         @Test
@@ -98,7 +113,7 @@ class MemberPublishServiceTest {
             int starPoint = 100;
             int slotCount = 5;
             Player player = Player.builder()
-                    .accountId(accountId)
+                    .accountId(ACCOUNT_ID)
                     .starPoint(starPoint)
                     .slotCount(slotCount)
                     .build();
@@ -106,7 +121,7 @@ class MemberPublishServiceTest {
             MemberSlotCountPublishDto memberSlotCountPublishDto = new MemberSlotCountPublishDto();
             CountDownLatch countDownLatch = new CountDownLatch(1);
 
-            consumer.resetConsumeSlotCount(accountId, memberSlotCountPublishDto, countDownLatch);
+            memberSlotCountConsumer.reset(ACCOUNT_ID, memberSlotCountPublishDto, countDownLatch);
 
             // act
             memberPublishPort.publishSlotCountPort(player);
@@ -115,7 +130,7 @@ class MemberPublishServiceTest {
 
             // assert
             assertTrue(messageConsumed);
-            assertEquals(accountId, memberSlotCountPublishDto.getAccountId());
+            assertEquals(ACCOUNT_ID, memberSlotCountPublishDto.getAccountId());
             assertEquals(slotCount, memberSlotCountPublishDto.getSlotCount());
         }
     }

@@ -2,15 +2,13 @@ package com.monglife.mongs.adapter.out.mong.persistence.entity;
 
 import com.monglife.module.common.jpa.entity.ComnCodeEntity;
 import jakarta.persistence.*;
-import lombok.AccessLevel;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Table(name = "mongs_snack_type")
+@ToString
 public class SnackTypeEntity {
 
     @Id

@@ -1,16 +1,12 @@
 package com.monglife.mongs.application.mong.port.aspect;
 
 import com.monglife.mongs.application.mong.port.annotation.CheckMongDead;
-import com.monglife.mongs.application.mong.port.annotation.PublishMongPort;
-import com.monglife.mongs.application.mong.port.enums.MongSchedulerTypeCode;
+import com.monglife.mongs.application.mong.port.enums.MongSchedulerType;
 import com.monglife.mongs.application.mong.port.exception.NotExistsMongException;
-import com.monglife.mongs.application.mong.port.out.MongPublishPort;
 import com.monglife.mongs.application.mong.port.out.MongSchedulerPort;
 import com.monglife.mongs.domain.mong.model.Mong;
 import lombok.RequiredArgsConstructor;
-import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.ProceedingJoinPoint;
-import org.aspectj.lang.annotation.AfterReturning;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.springframework.stereotype.Component;
@@ -29,9 +25,9 @@ public class CheckMongDeadAspect {
 
         if (returnValue instanceof Mong mong) {
             if (mong.getSatiety() == 0D || mong.getHealthy() == 0D) {
-                mongSchedulerPort.createTaskPort(mong.getMongId(), MongSchedulerTypeCode.DEAD);
+                mongSchedulerPort.createTaskPort(mong.getMongId(), MongSchedulerType.DEAD);
             } else {
-                mongSchedulerPort.deleteTaskPort(mong.getMongId(), MongSchedulerTypeCode.DEAD);
+                mongSchedulerPort.deleteTaskPort(mong.getMongId(), MongSchedulerType.DEAD);
             }
         } else {
             throw new NotExistsMongException();

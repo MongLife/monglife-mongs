@@ -13,7 +13,7 @@ import java.util.Map;
 @AllArgsConstructor
 public enum AdapterOutPublishMongResponse implements Response {
 
-    MONG_PUBLISH_MONG(HttpStatus.OK.value(), "ADAPTER-OUT-PUBLISH-MONG-000", "몽 정보에 변동이 있습니다."),
+    MONG_PUBLISH_MONG(HttpStatus.OK.value(), "PUBLISH-MONG-000", "몽 정보에 변동이 있습니다."),
     ;
 
     private final Integer httpStatus;

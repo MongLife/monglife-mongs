@@ -13,8 +13,8 @@ import java.util.Map;
 @AllArgsConstructor
 public enum AdapterInDeviceWebResponse implements Response {
 
-    EXCHANGE_CURRENT_WALKING_COUNT(HttpStatus.OK.value(), "ADAPTER-IN-WEB-DEVICE-000", "걸음수 환전에 성공했습니다."),
-    UPDATE_TOTAL_WALKING_COUNT(HttpStatus.OK.value(), "ADAPTER-IN-WEB-DEVICE-001", "걸음수 동기화에 성공했습니다."),
+    EXCHANGE_CURRENT_WALKING_COUNT(HttpStatus.OK.value(), "WEB-DEVICE-000", "걸음수 환전에 성공했습니다."),
+    UPDATE_TOTAL_WALKING_COUNT(HttpStatus.OK.value(), "WEB-DEVICE-001", "걸음수 동기화에 성공했습니다."),
     ;
 
     private final Integer httpStatus;

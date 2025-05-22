@@ -1,4 +1,4 @@
-package com.monglife.mongs.adapter.out.device.event.service;
+package com.monglife.mongs.adapter.out.device.event.consumer;
 
 import com.monglife.module.common.kafka.event.TransactionEvent;
 import com.monglife.mongs.adapter.transaction.ExchangeCurrentWalkingCountEventDto;
@@ -11,13 +11,13 @@ import java.util.concurrent.CountDownLatch;
  * Kafka Consume Component
  */
 @Component
-public class Consumer {
+public class ExchangeCurrentWalkingCountEventConsumer {
 
     private ExchangeCurrentWalkingCountEventDto exchangeCurrentWalkingCountEventDto;
 
     private CountDownLatch countDownLatch;
 
-    public Consumer() {}
+    public ExchangeCurrentWalkingCountEventConsumer() {}
 
     @KafkaListener(topics = "commit.exchangeCurrentWalkingCount")
     public void exchangeCurrentWalkingCountEvent(TransactionEvent<ExchangeCurrentWalkingCountEventDto> event) {

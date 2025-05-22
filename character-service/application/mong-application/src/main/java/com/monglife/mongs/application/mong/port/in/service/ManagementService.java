@@ -2,7 +2,7 @@ package com.monglife.mongs.application.mong.port.in.service;
 
 import com.monglife.mongs.application.mong.port.annotation.CheckMongDead;
 import com.monglife.mongs.application.mong.port.annotation.PublishMongPort;
-import com.monglife.mongs.application.mong.port.enums.MongSchedulerTypeCode;
+import com.monglife.mongs.application.mong.port.enums.MongSchedulerType;
 import com.monglife.mongs.application.mong.port.exception.*;
 import com.monglife.mongs.application.mong.port.in.ManagementUseCase;
 import com.monglife.mongs.application.mong.port.in.command.*;
@@ -80,7 +80,7 @@ public class ManagementService implements ManagementUseCase {
                 .orElseThrow(InvalidCreateMongException::new);
 
         // 알 부화 스케줄 등록
-        mongSchedulerPort.createTaskPort(mong.getMongId(), MongSchedulerTypeCode.EGG_EVOLUTION)
+        mongSchedulerPort.createTaskPort(mong.getMongId(), MongSchedulerType.EGG_EVOLUTION)
                 .orElseThrow(InvalidCreateMongScheduleException::new);
 
         // 몽 생성 이벤트 발생
@@ -209,9 +209,9 @@ public class ManagementService implements ManagementUseCase {
                 .orElseThrow(NotExistsMongException::new);
 
         // 스케줄 등록 및 삭제
-        mongSchedulerPort.deleteTaskPort(mong.getMongId(), MongSchedulerTypeCode.DECREASE_STATUS);
-        mongSchedulerPort.deleteTaskPort(mong.getMongId(), MongSchedulerTypeCode.INCREASE_POOP);
-        mongSchedulerPort.createCycleTaskPort(mong.getMongId(), MongSchedulerTypeCode.INCREASE_STATUS)
+        mongSchedulerPort.deleteTaskPort(mong.getMongId(), MongSchedulerType.DECREASE_STATUS);
+        mongSchedulerPort.deleteTaskPort(mong.getMongId(), MongSchedulerType.INCREASE_POOP);
+        mongSchedulerPort.createCycleTaskPort(mong.getMongId(), MongSchedulerType.INCREASE_STATUS)
                 .orElseThrow(InvalidCreateMongScheduleException::new);
 
         return mong;
@@ -237,10 +237,10 @@ public class ManagementService implements ManagementUseCase {
                 .orElseThrow(NotExistsMongException::new);
 
         // 스케줄 등록 및 삭제
-        mongSchedulerPort.deleteTaskPort(mong.getMongId(), MongSchedulerTypeCode.INCREASE_STATUS);
-        mongSchedulerPort.createCycleTaskPort(mong.getMongId(), MongSchedulerTypeCode.DECREASE_STATUS)
+        mongSchedulerPort.deleteTaskPort(mong.getMongId(), MongSchedulerType.INCREASE_STATUS);
+        mongSchedulerPort.createCycleTaskPort(mong.getMongId(), MongSchedulerType.DECREASE_STATUS)
                 .orElseThrow(InvalidCreateMongScheduleException::new);
-        mongSchedulerPort.createCycleTaskPort(mong.getMongId(), MongSchedulerTypeCode.INCREASE_POOP)
+        mongSchedulerPort.createCycleTaskPort(mong.getMongId(), MongSchedulerType.INCREASE_POOP)
                 .orElseThrow(InvalidCreateMongScheduleException::new);
 
         return mong;
@@ -295,13 +295,13 @@ public class ManagementService implements ManagementUseCase {
 
         // 알 진화 경우 스케줄 등록
         if (mong.getLevel() == 1) {
-            mongSchedulerPort.createCycleTaskPort(mong.getMongId(), MongSchedulerTypeCode.DECREASE_STATUS)
+            mongSchedulerPort.createCycleTaskPort(mong.getMongId(), MongSchedulerType.DECREASE_STATUS)
                     .orElseThrow(InvalidCreateMongScheduleException::new);
-            mongSchedulerPort.createCycleTaskPort(mong.getMongId(), MongSchedulerTypeCode.INCREASE_POOP)
+            mongSchedulerPort.createCycleTaskPort(mong.getMongId(), MongSchedulerType.INCREASE_POOP)
                     .orElseThrow(InvalidCreateMongScheduleException::new);
-            mongSchedulerPort.createFixedTimeCycleTaskPort(mong.getMongId(), MongSchedulerTypeCode.SLEEP, mong.getSleepAt())
+            mongSchedulerPort.createFixedTimeCycleTaskPort(mong.getMongId(), MongSchedulerType.SLEEP, mong.getSleepAt())
                     .orElseThrow(InvalidCreateMongScheduleException::new);
-            mongSchedulerPort.createFixedTimeCycleTaskPort(mong.getMongId(), MongSchedulerTypeCode.WAKEUP, mong.getWakeupAt())
+            mongSchedulerPort.createFixedTimeCycleTaskPort(mong.getMongId(), MongSchedulerType.WAKEUP, mong.getWakeupAt())
                     .orElseThrow(InvalidCreateMongScheduleException::new);
         }
 

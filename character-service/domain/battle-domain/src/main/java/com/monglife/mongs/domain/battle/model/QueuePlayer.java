@@ -7,6 +7,7 @@ import lombok.ToString;
 @Getter
 @ToString
 public class QueuePlayer {
+
     // 봇 매칭 대기 시간 (초)
     private static final Long EXPIRED_SECONDS = 10L;
 

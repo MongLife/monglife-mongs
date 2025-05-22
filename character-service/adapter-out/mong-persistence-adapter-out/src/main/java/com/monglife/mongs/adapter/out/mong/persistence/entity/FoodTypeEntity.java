@@ -3,15 +3,13 @@ package com.monglife.mongs.adapter.out.mong.persistence.entity;
 import com.monglife.module.common.jpa.entity.ComnCodeEntity;
 import com.monglife.mongs.domain.mong.model.Food;
 import jakarta.persistence.*;
-import lombok.AccessLevel;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Table(name = "mongs_food_type")
+@ToString
 public class FoodTypeEntity {
 
     @Id

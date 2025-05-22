@@ -4,7 +4,6 @@ import com.monglife.module.common.jpa.entity.ComnCodeEntity;
 import com.monglife.mongs.adapter.out.member.persistence.entity.CollectionMongEntity;
 import com.querydsl.core.Tuple;
 import com.querydsl.jpa.impl.JPAQueryFactory;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Repository;
 
@@ -14,7 +13,6 @@ import java.util.List;
 import static com.monglife.module.common.jpa.entity.QComnCodeEntity.comnCodeEntity;
 import static com.monglife.mongs.adapter.out.member.persistence.entity.QCollectionMongEntity.collectionMongEntity;
 
-@Slf4j
 @Repository
 public class CollectionMongDslRepositoryImpl implements CollectionMongDslRepository {
 

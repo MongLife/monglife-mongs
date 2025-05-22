@@ -2,10 +2,7 @@ package com.monglife.mongs.adapter.out.battle.persistence.entity;
 
 import com.monglife.module.common.jpa.entity.BaseTimeEntity;
 import jakarta.persistence.*;
-import lombok.AccessLevel;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.util.HashSet;
@@ -16,6 +13,7 @@ import java.util.Set;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @EntityListeners({ AuditingEntityListener.class })
 @Table(name = "mongs_match")
+@ToString
 public class MatchEntity extends BaseTimeEntity {
 
     @Id

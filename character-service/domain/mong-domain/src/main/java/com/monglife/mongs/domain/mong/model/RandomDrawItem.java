@@ -3,8 +3,10 @@ package com.monglife.mongs.domain.mong.model;
 import com.monglife.mongs.domain.mong.enums.InventoryItemTypeCode;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.ToString;
 
 @Getter
+@ToString
 public class RandomDrawItem {
 
     private final Long randomDrawItemId;

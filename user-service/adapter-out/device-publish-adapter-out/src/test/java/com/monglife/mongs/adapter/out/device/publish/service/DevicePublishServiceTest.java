@@ -3,6 +3,7 @@ package com.monglife.mongs.adapter.out.device.publish.service;
 import com.monglife.core.utils.CommonUtil;
 import com.monglife.module.mqtt.config.MqttAutoConfig;
 import com.monglife.mongs.adapter.out.device.publish.config.AdapterOutDevicePublishConfig;
+import com.monglife.mongs.adapter.out.device.publish.consumer.DeviceConsumer;
 import com.monglife.mongs.adapter.out.device.publish.dto.response.DevicePublishDto;
 import com.monglife.mongs.application.device.port.out.DevicePublishPort;
 import com.monglife.mongs.domain.device.model.Step;
@@ -15,7 +16,6 @@ import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.TestPropertySource;
 
 import java.time.LocalDateTime;
 import java.util.concurrent.CountDownLatch;
@@ -27,23 +27,30 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 @SpringBootTest
 @EnableAutoConfiguration
 @ActiveProfiles("test")
-@ContextConfiguration(classes = { AdapterOutDevicePublishConfig.class, MqttAutoConfig.class })
+@ContextConfiguration(classes = {
+        AdapterOutDevicePublishConfig.class,
+        MqttAutoConfig.class
+})
 class DevicePublishServiceTest {
 
     private final DevicePublishPort devicePublishPort;
 
-    private final Consumer consumer;
-
     @Autowired
-    public DevicePublishServiceTest(DevicePublishPort devicePublishPort, Consumer consumer) {
+    public DevicePublishServiceTest(DevicePublishPort devicePublishPort) {
         this.devicePublishPort = devicePublishPort;
-        this.consumer = consumer;
     }
 
 
     @Nested
     @DisplayName("보유 걸음 수 비동기 응답 단위 테스트")
     class PublishCurrentWalkingCountPort {
+
+        private final DeviceConsumer deviceConsumer;
+
+        @Autowired
+        public PublishCurrentWalkingCountPort(DeviceConsumer deviceConsumer) {
+            this.deviceConsumer = deviceConsumer;
+        }
 
         private static String deviceId;
         private static final LocalDateTime deviceBootedDt = LocalDateTime.of(2025, 1, 1, 0, 0);
@@ -70,7 +77,7 @@ class DevicePublishServiceTest {
             DevicePublishDto devicePublishDto = new DevicePublishDto();
             CountDownLatch countDownLatch = new CountDownLatch(1);
 
-            consumer.reset(deviceId, devicePublishDto, countDownLatch);
+            deviceConsumer.reset(deviceId, devicePublishDto, countDownLatch);
 
             // act
             devicePublishPort.publishCurrentWalkingCountPort(step);

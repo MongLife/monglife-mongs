@@ -1,4 +1,4 @@
-package com.monglife.mongs.application.mong.port.in.service;
+package com.monglife.mongs.application.mong.port.in.utils;
 
 import com.monglife.mongs.domain.mong.enums.MongStateCode;
 import com.monglife.mongs.domain.mong.enums.MongStatusCode;

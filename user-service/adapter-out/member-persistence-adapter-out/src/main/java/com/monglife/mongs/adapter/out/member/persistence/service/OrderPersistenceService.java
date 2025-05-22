@@ -33,6 +33,7 @@ public class OrderPersistenceService implements OrderPersistencePort {
      * @return 주문 존재 여부
      */
     @Override
+    @Transactional
     public Boolean isExistsOrderByAccountIdAndSocialOrderIdPort(Long accountId, String socialOrderId) {
         return orderRepository.existsByAccountIdAndSocialOrderId(accountId, socialOrderId);
     }

@@ -24,7 +24,11 @@ import static org.junit.jupiter.api.Assertions.*;
 @DataJpaTest
 @ActiveProfiles("test")
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
-@ContextConfiguration(classes = { AdapterOutMemberPersistenceConfig.class, MemberDataSourceConfig.class, HibernateAutoConfig.class })
+@ContextConfiguration(classes = {
+        AdapterOutMemberPersistenceConfig.class,
+        MemberDataSourceConfig.class,
+        HibernateAutoConfig.class
+})
 class MemberPersistenceServiceTest {
 
     private final MemberPersistencePort memberPersistencePort;
