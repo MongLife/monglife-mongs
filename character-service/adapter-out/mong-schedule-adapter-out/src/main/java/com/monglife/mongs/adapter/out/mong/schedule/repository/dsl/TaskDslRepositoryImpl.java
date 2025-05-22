@@ -1,7 +1,6 @@
 package com.monglife.mongs.adapter.out.mong.schedule.repository.dsl;
 
 import com.monglife.mongs.adapter.out.mong.schedule.entity.TaskEntity;
-import com.monglife.mongs.application.mong.port.enums.MongSchedulerTypeCode;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import jakarta.persistence.LockModeType;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -47,7 +46,7 @@ public class TaskDslRepositoryImpl implements TaskDslRepository {
     }
 
     @Override
-    public Optional<TaskEntity> findByAppPackageNameAndTaskOwnerIdAndSchedulerTypeCodeWithLock(String appPackageName, String taskOwnerId, MongSchedulerTypeCode schedulerTypeCode) {
+    public Optional<TaskEntity> findByAppPackageNameAndTaskOwnerIdAndSchedulerTypeCodeWithLock(String appPackageName, String taskOwnerId, String schedulerTypeCode) {
         return Optional.ofNullable(jpaQueryFactory.selectFrom(taskEntity)
                 .where(taskEntity.appPackageName.eq(appPackageName))
                 .where(taskEntity.taskOwnerId.eq(taskOwnerId))

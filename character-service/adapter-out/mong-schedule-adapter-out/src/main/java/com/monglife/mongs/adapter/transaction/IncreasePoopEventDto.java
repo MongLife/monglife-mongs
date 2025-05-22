@@ -5,12 +5,12 @@ import lombok.*;
 @Getter
 @Setter
 @NoArgsConstructor
-public class DecreaseStatusEventDto {
+public class IncreasePoopEventDto {
 
     private Long mongId;
 
     @Builder
-    public DecreaseStatusEventDto(Long mongId) {
+    public IncreasePoopEventDto(Long mongId) {
         this.mongId = mongId;
     }
 }

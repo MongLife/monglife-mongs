@@ -7,10 +7,10 @@ import lombok.*;
 @NoArgsConstructor
 public class IncreaseStatusEventDto {
 
-    private Long taskId;
+    private Long mongId;
 
     @Builder
-    public IncreaseStatusEventDto(Long taskId) {
-        this.taskId = taskId;
+    public IncreaseStatusEventDto(Long mongId) {
+        this.mongId = mongId;
     }
 }

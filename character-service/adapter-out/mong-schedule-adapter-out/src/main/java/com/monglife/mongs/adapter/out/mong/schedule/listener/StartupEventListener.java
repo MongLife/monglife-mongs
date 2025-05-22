@@ -9,7 +9,7 @@ import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
 @Slf4j
-@Order(-9999)
+@Order(Integer.MIN_VALUE)
 @Component
 @RequiredArgsConstructor
 public class StartupEventListener implements ApplicationListener<ApplicationReadyEvent> {
@@ -31,7 +31,7 @@ public class StartupEventListener implements ApplicationListener<ApplicationRead
                         .append("]")
                         .append(taskEntity.getTaskOwnerId())
                         .append(" | ")
-                        .append(taskEntity.getComn().getCode())
+                        .append(taskEntity.getSchedulerTypeCode())
                         .append(" | ")
                         .append(taskEntity.getRestExpirationSeconds())
                         .append("/")

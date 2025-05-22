@@ -31,8 +31,8 @@ public class TaskDataSourceConfig {
      */
     private static final String DOMAIN_NAME                 = "task";
     private static final String COMMON_ENTITY_BASE_PACKAGES = "com.monglife.module.common.jpa.entity";
-    private static final String ENTITY_BASE_PACKAGES        = "com.monglife.mongs.adapter.out." + DOMAIN_NAME + ".persistence.entity";
-    private static final String REPOSITORY_BASE_PACKAGES    = "com.monglife.mongs.adapter.out." + DOMAIN_NAME + ".persistence.repository";
+    private static final String ENTITY_BASE_PACKAGES        = "com.monglife.mongs.adapter.out.mong.schedule.entity";
+    private static final String REPOSITORY_BASE_PACKAGES    = "com.monglife.mongs.adapter.out.mong.schedule.repository";
     private static final String JPA_PROPERTIES_NAME         = DOMAIN_NAME + "JpaProperties";
     private static final String DATASOURCE_PROPERTIES_NAME  = DOMAIN_NAME + "DataSourceProperties";
     private static final String DATASOURCE_NAME             = DOMAIN_NAME + "DataSource";

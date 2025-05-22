@@ -12,7 +12,7 @@ import java.util.concurrent.ScheduledExecutorService;
 @ComponentScan({ "com.monglife.mongs.adapter.out.mong.schedule", "com.monglife.module" })
 public class AdapterOutMongScheduleConfig {
 
-    @Value("${application.scheduler.pool-size}")
+    @Value("${application.task.scheduler.pool-size}")
     private Integer SCHEDULER_POOL_SIZE;
 
     @Bean

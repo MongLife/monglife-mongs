@@ -1,11 +1,8 @@
 package com.monglife.mongs.adapter.out.mong.schedule.entity;
 
 import com.monglife.module.common.jpa.entity.BaseTimeEntity;
-import com.monglife.module.common.jpa.entity.ComnCodeEntity;
 import com.monglife.mongs.adapter.out.mong.schedule.enums.TaskStateCode;
 import com.monglife.mongs.adapter.out.mong.schedule.enums.TaskStatusCode;
-import com.monglife.mongs.adapter.out.mong.schedule.listener.TaskEntityListener;
-import com.monglife.mongs.application.mong.port.enums.MongSchedulerTypeCode;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -20,7 +17,7 @@ import java.time.LocalTime;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@EntityListeners({ AuditingEntityListener.class, TaskEntityListener.class })
+@EntityListeners({ AuditingEntityListener.class })
 @Table(name = "mongs_task")
 @ToString
 public class TaskEntity extends BaseTimeEntity {
@@ -38,9 +35,8 @@ public class TaskEntity extends BaseTimeEntity {
     @Column(name = "task_owner_id", updatable = false)
     private String taskOwnerId;
 
-    @Enumerated(EnumType.STRING)
     @Column(name = "scheduler_type_code")
-    private MongSchedulerTypeCode schedulerTypeCode;
+    private String schedulerTypeCode;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "task_status_code")
@@ -51,13 +47,13 @@ public class TaskEntity extends BaseTimeEntity {
     private TaskStateCode taskStateCode;
 
     @Column(name = "rest_expiration_seconds")
-    private Long restExpirationSeconds; // 남은 만료 시간
+    private Long restExpirationSeconds;
 
     @Column(name = "expiration_seconds")
-    private Long expirationSeconds;     // 만료 시간
+    private Long expirationSeconds;
 
     @Column(name = "expired_at")
-    private LocalDateTime expiredAt;    // 만료 시각
+    private LocalDateTime expiredAt;
 
     @Column(name = "fix_time", updatable = false)
     private LocalTime fixTime;
@@ -66,9 +62,26 @@ public class TaskEntity extends BaseTimeEntity {
     private LocalDateTime now = LocalDateTime.now();
 
     /**
+     * 시간 반복 Task 생성자
+     */
+    public TaskEntity(String appPackageName, String taskOwnerId, String schedulerTypeCode, TaskStateCode taskStateCode, Long expirationSeconds) {
+        this.appPackageName = appPackageName;
+        this.taskOwnerId = taskOwnerId;
+        this.schedulerTypeCode = schedulerTypeCode;
+        this.taskStateCode = taskStateCode;
+        this.expirationSeconds = expirationSeconds;
+        this.taskStatusCode = TaskStatusCode.PROCESSING;
+
+        this.restExpirationSeconds = this.expirationSeconds;
+        this.expiredAt = LocalDateTime.now().plusSeconds(this.restExpirationSeconds);
+
+        this.now = LocalDateTime.now();
+    }
+
+    /**
      * 시간 고정 Task 생성자
      */
-    public TaskEntity(String appPackageName, String taskOwnerId, MongSchedulerTypeCode schedulerTypeCode, TaskStateCode taskStateCode, LocalTime fixTime) {
+    public TaskEntity(String appPackageName, String taskOwnerId, String schedulerTypeCode, TaskStateCode taskStateCode, LocalTime fixTime) {
         this.appPackageName = appPackageName;
         this.taskOwnerId = taskOwnerId;
         this.schedulerTypeCode = schedulerTypeCode;
@@ -93,53 +106,19 @@ public class TaskEntity extends BaseTimeEntity {
     }
 
     /**
-     * 시간 반복 Task 생성자
+     * Task 반복 여부 확인
+     * @return Task 반복 여부
      */
-    public TaskEntity(String appPackageName, String taskOwnerId, MongSchedulerTypeCode schedulerTypeCode, TaskStateCode taskStateCode, Long expirationSeconds) {
-        this.appPackageName = appPackageName;
-        this.taskOwnerId = taskOwnerId;
-        this.schedulerTypeCode = schedulerTypeCode;
-        this.taskStateCode = taskStateCode;
-        this.expirationSeconds = expirationSeconds;
-        this.taskStatusCode = TaskStatusCode.PROCESSING;
-
-        this.restExpirationSeconds = this.expirationSeconds;
-        this.expiredAt = LocalDateTime.now().plusSeconds(this.restExpirationSeconds);
-
-        this.now = LocalDateTime.now();
-    }
-
     public Boolean isCycle() {
         return this.taskStateCode.equals(TaskStateCode.FIX_TIME_CYCLE) || this.taskStateCode.equals(TaskStateCode.NONE_FIX_TIME_CYCLE);
     }
 
+    /**
+     * Task 고정 시간 여부
+     * @return 고정 시간 여부
+     */
     private Boolean isFixTime() {
         return this.taskStateCode.equals(TaskStateCode.FIX_TIME_CYCLE) || this.taskStateCode.equals(TaskStateCode.FIX_TIME);
-    }
-
-    public void retry() {
-
-        switch (this.taskStatusCode) {
-            case PROCESSING -> {
-                if (this.isCycle()) {
-                    this.cycle();
-                } else {
-                    if (this.isFixTime()) {
-                        this.expiredAt = LocalDateTime.of(this.expiredAt.toLocalDate().plusDays(1), this.fixTime);
-                        this.restExpirationSeconds = Duration.between(this.now, this.expiredAt).toSeconds();
-                    } else {
-                        this.restExpirationSeconds = this.expirationSeconds;
-                        this.expiredAt = this.now.plusSeconds(this.restExpirationSeconds);
-                    }
-                }
-            }
-
-            case PAUSE -> {}
-
-            case APP_STOP_PROCESSING -> {}
-
-            case APP_STOP_PAUSE -> {}
-        }
     }
 
     /**
@@ -161,20 +140,15 @@ public class TaskEntity extends BaseTimeEntity {
                     this.expiredAt = this.now.plusSeconds(this.restExpirationSeconds);
                 }
             }
-
-            case PAUSE -> {}
-
-            case APP_STOP_PROCESSING -> {}
-
-            case APP_STOP_PAUSE -> {}
+            case PAUSE, APP_STOP_PROCESSING, APP_STOP_PAUSE -> {}
         }
     }
 
     /**
+     * @hidden
      * Task 일시 중지
      */
     public void pause() {
-
         switch (this.taskStatusCode) {
             case PROCESSING -> {
                 if (this.isFixTime()) {
@@ -187,25 +161,19 @@ public class TaskEntity extends BaseTimeEntity {
                     this.expiredAt = null;
                 }
 
-                this.taskStatusCode = TaskStatusCode.PAUSE;
+                this.updateTaskStatusCode(TaskStatusCode.PAUSE);
             }
-
-            case PAUSE -> {}
-
-            case APP_STOP_PROCESSING -> {}
-
-            case APP_STOP_PAUSE -> {}
+            case PAUSE, APP_STOP_PAUSE, APP_STOP_PROCESSING -> {}
         }
     }
 
     /**
+     * @hidden
      * Task 재시작
      */
     public void resume() {
-
         switch (this.taskStatusCode) {
             case PROCESSING -> {}
-
             case PAUSE, APP_STOP_PROCESSING, APP_STOP_PAUSE -> {
                 if (this.isFixTime()) {
                     this.expiredAt = LocalDateTime.of(this.now.toLocalDate(), this.fixTime);
@@ -225,13 +193,15 @@ public class TaskEntity extends BaseTimeEntity {
                     this.expiredAt = this.now.plusSeconds(this.restExpirationSeconds);
                 }
 
-                this.taskStatusCode = TaskStatusCode.PROCESSING;
+                this.updateTaskStatusCode(TaskStatusCode.PROCESSING);
             }
         }
     }
 
+    /**
+     * 앱 중단 Task 일시 중지
+     */
     public void appStopPause() {
-
         switch (this.taskStatusCode) {
             case PROCESSING -> {
                 if (this.isFixTime()) {
@@ -244,24 +214,19 @@ public class TaskEntity extends BaseTimeEntity {
                     this.expiredAt = null;
                 }
 
-                this.taskStatusCode = TaskStatusCode.APP_STOP_PROCESSING;
+                this.updateTaskStatusCode(TaskStatusCode.APP_STOP_PROCESSING);
             }
-
-            case PAUSE -> this.taskStatusCode = TaskStatusCode.APP_STOP_PAUSE;
-
-            case APP_STOP_PROCESSING -> {}
-
-            case APP_STOP_PAUSE -> {}
+            case PAUSE -> this.updateTaskStatusCode(TaskStatusCode.APP_STOP_PAUSE);
+            case APP_STOP_PROCESSING, APP_STOP_PAUSE -> {}
         }
     }
 
+    /**
+     * 앱 재기동 Task 재시작
+     */
     public void appStopResume() {
 
         switch (this.taskStatusCode) {
-            case PROCESSING -> {}
-
-            case PAUSE -> {}
-
             case APP_STOP_PROCESSING -> {
                 if (this.isFixTime()) {
                     this.expiredAt = LocalDateTime.of(this.now.toLocalDate(), this.fixTime);
@@ -282,10 +247,36 @@ public class TaskEntity extends BaseTimeEntity {
                     this.expiredAt = this.now.plusSeconds(this.restExpirationSeconds);
                 }
 
-                this.taskStatusCode = TaskStatusCode.PROCESSING;
+                this.updateTaskStatusCode(TaskStatusCode.PROCESSING);
             }
-
-            case APP_STOP_PAUSE -> this.taskStatusCode = TaskStatusCode.PAUSE;
+            case APP_STOP_PAUSE -> this.updateTaskStatusCode(TaskStatusCode.PAUSE);
+            case PROCESSING, PAUSE -> {}
         }
+    }
+
+    /**
+     * Task 복구
+     */
+    public void retry() {
+        switch (this.taskStatusCode) {
+            case PROCESSING -> {
+                if (this.isCycle()) {
+                    this.cycle();
+                } else {
+                    if (this.isFixTime()) {
+                        this.expiredAt = LocalDateTime.of(this.expiredAt.toLocalDate().plusDays(1), this.fixTime);
+                        this.restExpirationSeconds = Duration.between(this.now, this.expiredAt).toSeconds();
+                    } else {
+                        this.restExpirationSeconds = this.expirationSeconds;
+                        this.expiredAt = this.now.plusSeconds(this.restExpirationSeconds);
+                    }
+                }
+            }
+            case PAUSE, APP_STOP_PROCESSING, APP_STOP_PAUSE -> {}
+        }
+    }
+
+    private void updateTaskStatusCode(TaskStatusCode taskStatusCode) {
+        this.taskStatusCode = taskStatusCode;
     }
 }
