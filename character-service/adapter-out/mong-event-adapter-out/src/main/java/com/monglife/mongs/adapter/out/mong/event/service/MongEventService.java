@@ -1,7 +1,11 @@
 package com.monglife.mongs.adapter.out.mong.event.service;
 
 import com.monglife.module.common.kafka.service.KafkaService;
+import com.monglife.mongs.adapter.transaction.CreateMongEventDto;
+import com.monglife.mongs.adapter.transaction.EvolutionMongEventDto;
+import com.monglife.mongs.adapter.transaction.RandomDrawMapEventDto;
 import com.monglife.mongs.application.mong.port.out.MongEventPort;
+import com.monglife.mongs.core.kafka.event.enums.EventTopic;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -19,6 +23,10 @@ public class MongEventService  implements MongEventPort {
     @Override
     public void createMongEventPort(Long accountId, String mongTypeCode) {
 
+        kafkaService.generateEvent(EventTopic.COMMIT_CREATE_MONG, CreateMongEventDto.builder()
+                .accountId(accountId)
+                .mongTypeCode(mongTypeCode)
+                .build());
     }
 
     /**
@@ -29,6 +37,10 @@ public class MongEventService  implements MongEventPort {
     @Override
     public void evolutionMongEventPort(Long accountId, String mongTypeCode) {
 
+        kafkaService.generateEvent(EventTopic.COMMIT_EVOLUTION_MONG, EvolutionMongEventDto.builder()
+                .accountId(accountId)
+                .mongTypeCode(mongTypeCode)
+                .build());
     }
 
     /**
@@ -39,5 +51,9 @@ public class MongEventService  implements MongEventPort {
     @Override
     public void randomDrawMapEventPort(Long accountId, String mapTypeCode) {
 
+        kafkaService.generateEvent(EventTopic.COMMIT_RANDOM_DRAW_MAP, RandomDrawMapEventDto.builder()
+                .accountId(accountId)
+                .mapTypeCode(mapTypeCode)
+                .build());
     }
 }

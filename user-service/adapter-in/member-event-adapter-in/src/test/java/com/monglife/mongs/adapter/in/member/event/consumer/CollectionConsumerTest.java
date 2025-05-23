@@ -5,6 +5,7 @@ import com.monglife.module.common.kafka.service.KafkaService;
 import com.monglife.mongs.adapter.transaction.CreateCollectionMongEventDto;
 import com.monglife.mongs.application.member.port.in.CollectionUseCase;
 import com.monglife.mongs.application.member.port.in.command.CreateCollectionMongCommand;
+import com.monglife.mongs.core.kafka.event.enums.EventTopic;
 import org.awaitility.Awaitility;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -52,7 +53,7 @@ class CollectionConsumerTest {
         @DisplayName("컬렉션 몽 등록 트랜잭션이 성공하는 경우 이벤트를 소비하여 컬렉션 몽 등록 UseCase를 실행 한다.")
         void createCollectionMong() {
             // arrange
-            String topic = "commit.createCollectionMong";
+            String topic = EventTopic.COMMIT_CREATE_COLLECTION_MONG;
             long accountId = 1L;
             String mongTypeCode = "CH000";
 

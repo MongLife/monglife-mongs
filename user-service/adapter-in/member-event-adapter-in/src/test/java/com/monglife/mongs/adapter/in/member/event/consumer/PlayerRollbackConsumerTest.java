@@ -5,6 +5,7 @@ import com.monglife.module.common.kafka.service.KafkaService;
 import com.monglife.mongs.adapter.transaction.ExchangeStarPointEventDto;
 import com.monglife.mongs.application.member.port.in.PlayerUseCase;
 import com.monglife.mongs.application.member.port.in.command.IncreaseStarPointCommand;
+import com.monglife.mongs.core.kafka.event.enums.EventTopic;
 import org.awaitility.Awaitility;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -52,7 +53,7 @@ class PlayerRollbackConsumerTest {
         @DisplayName("스타 포인트 환전 트랜잭션이 실패하는 경우 롤백 이벤트를 소비하여 스타 포인트 증가 UseCase를 실행 한다.")
         void exchangeStarPointRollback() {
             // arrange
-            String topic = "rollback.exchangeStarPoint";
+            String topic = EventTopic.ROLLBACK_EXCHANGE_STAR_POINT;
             long accountId = 1L;
             long mongId = 1L;
             int starPoint = 10;

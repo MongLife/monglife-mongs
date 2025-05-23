@@ -4,6 +4,7 @@ import com.monglife.module.common.kafka.service.KafkaService;
 import com.monglife.mongs.adapter.transaction.ExchangeCurrentWalkingCountEventDto;
 import com.monglife.mongs.application.device.port.out.DeviceEventPort;
 import com.monglife.mongs.application.device.port.out.dto.StepEventDto;
+import com.monglife.mongs.core.kafka.event.enums.EventTopic;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -20,8 +21,6 @@ public class DeviceEventService implements DeviceEventPort {
     @Override
     public void exchangeCurrentWalkingCountEventPort(StepEventDto stepEventDto) {
 
-        String topic = "commit.exchangeCurrentWalkingCount";
-
         ExchangeCurrentWalkingCountEventDto exchangeCurrentWalkingCountEventDto = ExchangeCurrentWalkingCountEventDto.builder()
                 .deviceId(stepEventDto.getDeviceId())
                 .mongId(stepEventDto.getMongId())
@@ -29,6 +28,6 @@ public class DeviceEventService implements DeviceEventPort {
                 .payPoint(stepEventDto.getPayPoint())
                 .build();
 
-        kafkaService.generateEvent(topic, exchangeCurrentWalkingCountEventDto);
+        kafkaService.generateEvent(EventTopic.COMMIT_EXCHANGE_CURRENT_WALKING_COUNT, exchangeCurrentWalkingCountEventDto);
     }
 }

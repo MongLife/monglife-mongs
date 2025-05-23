@@ -61,7 +61,6 @@ class DeviceEventServiceTest {
 
             ExchangeCurrentWalkingCountEventDto exchangeCurrentWalkingCountEventDto = new ExchangeCurrentWalkingCountEventDto();
             CountDownLatch countDownLatch = new CountDownLatch(1);
-
             exchangeCurrentWalkingCountEventConsumer.reset(exchangeCurrentWalkingCountEventDto, countDownLatch);
 
             // act
@@ -72,10 +71,10 @@ class DeviceEventServiceTest {
                     .payPoint(payPoint)
                     .build());
 
-            boolean messageConsumed = countDownLatch.await(30, TimeUnit.SECONDS);
+            var expected = countDownLatch.await(30, TimeUnit.SECONDS);
 
             // assert
-            assertTrue(messageConsumed);
+            assertTrue(expected);
             assertEquals(deviceId, exchangeCurrentWalkingCountEventDto.getDeviceId());
             assertEquals(mongId, exchangeCurrentWalkingCountEventDto.getMongId());
             assertEquals(walkingCount, exchangeCurrentWalkingCountEventDto.getWalkingCount());

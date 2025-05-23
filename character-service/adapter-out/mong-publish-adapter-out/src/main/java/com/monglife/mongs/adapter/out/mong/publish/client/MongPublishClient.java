@@ -11,7 +11,7 @@ import org.springframework.stereotype.Component;
 public class MongPublishClient {
 
     @MqttPublish("/management/{topic}")
-    public MqttResponseEntity<ResponseDto<MongPublishDto>> mongBasicObservePublish(MongPublishDto mongPublishDto) {
+    public MqttResponseEntity<ResponseDto<MongPublishDto>> publishMong(MongPublishDto mongPublishDto) {
 
         String topic = String.valueOf(mongPublishDto.getMongId());
 

@@ -7,6 +7,7 @@ import com.monglife.mongs.adapter.out.mong.schedule.repository.TaskRepository;
 import com.monglife.mongs.adapter.out.mong.schedule.repository.TaskScheduleRepository;
 import com.monglife.mongs.adapter.transaction.*;
 import com.monglife.mongs.application.mong.port.enums.MongSchedulerType;
+import com.monglife.mongs.core.kafka.event.enums.EventTopic;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.event.EventListener;
@@ -64,28 +65,28 @@ public class TaskRunEventListener {
                 .ifPresentOrElse(mongSchedulerType -> {
                     switch (mongSchedulerType) {
                         case EGG_EVOLUTION ->
-                                kafkaService.generateEvent("commit.eggEvolution", EggEvolutionEventDto.builder()
+                                kafkaService.generateEvent(EventTopic.COMMIT_EGG_EVOLUTION, EggEvolutionEventDto.builder()
                                         .mongId(mongId)
                                         .build());
                         case INCREASE_STATUS ->
-                                kafkaService.generateEvent("commit.increaseStatus", IncreaseStatusEventDto.builder()
+                                kafkaService.generateEvent(EventTopic.COMMIT_INCREASE_STATUS, IncreaseStatusEventDto.builder()
                                         .mongId(mongId)
                                         .build());
                         case DECREASE_STATUS ->
-                                kafkaService.generateEvent("commit.decreaseStatus", DecreaseStatusEventDto.builder()
+                                kafkaService.generateEvent(EventTopic.COMMIT_DECREASE_STATUS, DecreaseStatusEventDto.builder()
                                         .mongId(mongId)
                                         .build());
                         case INCREASE_POOP ->
-                                kafkaService.generateEvent("commit.increasePoop", IncreasePoopEventDto.builder()
+                                kafkaService.generateEvent(EventTopic.COMMIT_INCREASE_POOP, IncreasePoopEventDto.builder()
                                         .mongId(mongId)
                                         .build());
-                        case DEAD -> kafkaService.generateEvent("commit.dead", DeadEventDto.builder()
+                        case DEAD -> kafkaService.generateEvent(EventTopic.COMMIT_DEAD, DeadEventDto.builder()
                                 .mongId(mongId)
                                 .build());
-                        case SLEEP -> kafkaService.generateEvent("commit.sleep", SleepEventDto.builder()
+                        case SLEEP -> kafkaService.generateEvent(EventTopic.COMMIT_SLEEP, SleepEventDto.builder()
                                 .mongId(mongId)
                                 .build());
-                        case WAKEUP -> kafkaService.generateEvent("commit.wakeup", WakeupEventDto.builder()
+                        case WAKEUP -> kafkaService.generateEvent(EventTopic.COMMIT_WAKEUP, WakeupEventDto.builder()
                                 .mongId(mongId)
                                 .build());
                     }

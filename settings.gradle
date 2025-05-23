@@ -1,5 +1,9 @@
 rootProject.name = 'monglife-mongs'
 
+// --- core ---
+include 'core'
+include 'core:kafka-event-core'
+
 // --- character service ---
 include 'character-service'
 

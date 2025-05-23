@@ -82,10 +82,10 @@ class DevicePublishServiceTest {
             // act
             devicePublishPort.publishCurrentWalkingCountPort(step);
 
-            boolean messageConsumed = countDownLatch.await(5, TimeUnit.SECONDS);
+            var expected = countDownLatch.await(5, TimeUnit.SECONDS);
 
             // assert
-            assertTrue(messageConsumed);
+            assertTrue(expected);
             assertEquals(deviceId, devicePublishDto.getDeviceId());
             assertEquals(walkingCount, devicePublishDto.getWalkingCount());
             assertEquals(consumeWalkingCount, devicePublishDto.getConsumeWalkingCount());

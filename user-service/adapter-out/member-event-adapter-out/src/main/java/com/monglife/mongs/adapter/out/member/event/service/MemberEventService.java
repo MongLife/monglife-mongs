@@ -3,6 +3,7 @@ package com.monglife.mongs.adapter.out.member.event.service;
 import com.monglife.module.common.kafka.service.KafkaService;
 import com.monglife.mongs.adapter.transaction.ExchangeStarPointEventDto;
 import com.monglife.mongs.application.member.port.out.MemberEventPort;
+import com.monglife.mongs.core.kafka.event.enums.EventTopic;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -21,8 +22,6 @@ public class MemberEventService implements MemberEventPort {
     @Override
     public void exchangeStarPointEventPort(Long accountId, Long mongId, Integer starPoint, Integer payPoint) {
 
-        String topic = "commit.exchangeStarPoint";
-
         ExchangeStarPointEventDto exchangeStarPointEventDto = ExchangeStarPointEventDto.builder()
                 .accountId(accountId)
                 .mongId(mongId)
@@ -30,6 +29,6 @@ public class MemberEventService implements MemberEventPort {
                 .payPoint(payPoint)
                 .build();
 
-        kafkaService.generateEvent(topic, exchangeStarPointEventDto);
+        kafkaService.generateEvent(EventTopic.COMMIT_EXCHANGE_STAR_POINT, exchangeStarPointEventDto);
     }
 }

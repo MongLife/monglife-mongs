@@ -16,5 +16,5 @@ public interface MongPublishPort {
      * @param title 알림 제목
      * @param body 알림 본문
      */
-    void publishMongPort(Long accountId, String title, String body);
+    void publishNotificationPort(Long accountId, String title, String body);
 }

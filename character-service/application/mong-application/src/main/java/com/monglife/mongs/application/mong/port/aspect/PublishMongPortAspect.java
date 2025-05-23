@@ -46,7 +46,7 @@ public class PublishMongPortAspect {
                 }
 
                 // 알림 전송
-                mongPublishPort.publishMongPort(mong.getAccountId(), title, body);
+                mongPublishPort.publishNotificationPort(mong.getAccountId(), title, body);
             }
 
             // 몽 지수 코드 변동 알림 전송
@@ -71,7 +71,7 @@ public class PublishMongPortAspect {
                 }
 
                 // 알림 전송
-                mongPublishPort.publishMongPort(mong.getAccountId(), title, body);
+                mongPublishPort.publishNotificationPort(mong.getAccountId(), title, body);
             }
 
         } else {

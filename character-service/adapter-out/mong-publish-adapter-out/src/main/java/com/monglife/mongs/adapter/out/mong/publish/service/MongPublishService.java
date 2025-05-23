@@ -5,6 +5,7 @@ import com.monglife.module.common.kafka.service.KafkaService;
 import com.monglife.mongs.adapter.out.mong.publish.client.MongPublishClient;
 import com.monglife.mongs.adapter.out.mong.publish.dto.response.MongPublishDto;
 import com.monglife.mongs.application.mong.port.out.MongPublishPort;
+import com.monglife.mongs.core.kafka.event.enums.EventTopic;
 import com.monglife.mongs.domain.mong.model.Mong;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -49,7 +50,7 @@ public class MongPublishService implements MongPublishPort {
                 .build();
 
         // 비동기 응답 전송
-        mongPublishClient.mongBasicObservePublish(mongPublishDto);
+        mongPublishClient.publishMong(mongPublishDto);
     }
 
     /**
@@ -59,11 +60,9 @@ public class MongPublishService implements MongPublishPort {
      * @param body 알림 본문
      */
     @Override
-    public void publishMongPort(Long accountId, String title, String body) {
+    public void publishNotificationPort(Long accountId, String title, String body) {
 
-        String topic = "notification.mongs";
-
-        kafkaService.generateEvent(topic, SendNotificationDto.builder()
+        kafkaService.generateEvent(EventTopic.NOTIFICATION_MONGS, SendNotificationDto.builder()
                 .accountId(accountId)
                 .title(title)
                 .body(body)

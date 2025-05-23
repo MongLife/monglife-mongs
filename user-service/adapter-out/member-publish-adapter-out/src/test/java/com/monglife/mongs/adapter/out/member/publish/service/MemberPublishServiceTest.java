@@ -73,16 +73,15 @@ class MemberPublishServiceTest {
 
             MemberStarPointPublishDto memberStarPointPublishDto = new MemberStarPointPublishDto();
             CountDownLatch countDownLatch = new CountDownLatch(1);
-
             memberSlotCountConsumer.reset(ACCOUNT_ID, memberStarPointPublishDto, countDownLatch);
 
             // act
             memberPublishPort.publishStarPointPort(player);
 
-            boolean messageConsumed = countDownLatch.await(5, TimeUnit.SECONDS);
+            var expected = countDownLatch.await(5, TimeUnit.SECONDS);
 
             // assert
-            assertTrue(messageConsumed);
+            assertTrue(expected);
             assertEquals(ACCOUNT_ID, memberStarPointPublishDto.getAccountId());
             assertEquals(starPoint, memberStarPointPublishDto.getStarPoint());
         }
@@ -120,16 +119,15 @@ class MemberPublishServiceTest {
 
             MemberSlotCountPublishDto memberSlotCountPublishDto = new MemberSlotCountPublishDto();
             CountDownLatch countDownLatch = new CountDownLatch(1);
-
             memberSlotCountConsumer.reset(ACCOUNT_ID, memberSlotCountPublishDto, countDownLatch);
 
             // act
             memberPublishPort.publishSlotCountPort(player);
 
-            boolean messageConsumed = countDownLatch.await(5, TimeUnit.SECONDS);
+            var expected = countDownLatch.await(5, TimeUnit.SECONDS);
 
             // assert
-            assertTrue(messageConsumed);
+            assertTrue(expected);
             assertEquals(ACCOUNT_ID, memberSlotCountPublishDto.getAccountId());
             assertEquals(slotCount, memberSlotCountPublishDto.getSlotCount());
         }

@@ -60,16 +60,15 @@ class MemberEventServiceTest {
 
             ExchangeStarPointEventDto exchangeStarPointEventDto = new ExchangeStarPointEventDto();
             CountDownLatch countDownLatch = new CountDownLatch(1);
-
             exchangeStarPointConsumer.reset(exchangeStarPointEventDto, countDownLatch);
 
             // act
             memberEventPort.exchangeStarPointEventPort(accountId, mongId, starPoint, payPoint);
 
-            boolean messageConsumed = countDownLatch.await(30, TimeUnit.SECONDS);
+            var expected = countDownLatch.await(30, TimeUnit.SECONDS);
 
             // assert
-            assertTrue(messageConsumed);
+            assertTrue(expected);
             assertEquals(mongId, exchangeStarPointEventDto.getMongId());
             assertEquals(starPoint, exchangeStarPointEventDto.getStarPoint());
             assertEquals(payPoint, exchangeStarPointEventDto.getPayPoint());

@@ -7,6 +7,7 @@ import com.monglife.module.mqtt.annotation.MqttConsumer;
 import com.monglife.module.mqtt.annotation.MqttMapping;
 import com.monglife.module.mqtt.annotation.MqttPayload;
 import com.monglife.mongs.adapter.out.device.publish.dto.response.DevicePublishDto;
+import org.springframework.beans.BeanUtils;
 import org.springframework.web.bind.annotation.PathVariable;
 
 import java.util.Map;
@@ -40,9 +41,7 @@ public class DeviceConsumer {
         DevicePublishDto devicePublishDto = objectMapper.convertValue(payload.getResult(), DevicePublishDto.class);
 
         if (devicePublishDto != null && countDownLatch != null && id.equals(deviceId)) {
-            this.devicePublishDto.setDeviceId(devicePublishDto.getDeviceId());
-            this.devicePublishDto.setWalkingCount(devicePublishDto.getWalkingCount());
-            this.devicePublishDto.setConsumeWalkingCount(devicePublishDto.getConsumeWalkingCount());
+            BeanUtils.copyProperties(devicePublishDto, this.devicePublishDto);
             countDownLatch.countDown();
         }
     }

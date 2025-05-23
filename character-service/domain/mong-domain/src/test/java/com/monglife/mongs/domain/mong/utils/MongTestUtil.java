@@ -1,7 +1,9 @@
-package com.monglife.mongs.domain.mong.model;
+package com.monglife.mongs.domain.mong.utils;
 
 import com.monglife.mongs.domain.mong.enums.MongStateCode;
 import com.monglife.mongs.domain.mong.enums.MongStatusCode;
+import com.monglife.mongs.domain.mong.model.Mong;
+import com.monglife.mongs.domain.mong.model.MongType;
 
 import java.time.LocalDateTime;
 import java.time.LocalTime;

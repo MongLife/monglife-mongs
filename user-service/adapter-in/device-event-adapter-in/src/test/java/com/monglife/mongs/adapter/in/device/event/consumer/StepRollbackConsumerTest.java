@@ -5,6 +5,7 @@ import com.monglife.module.common.kafka.service.KafkaService;
 import com.monglife.mongs.adapter.transaction.ExchangeCurrentWalkingCountEventDto;
 import com.monglife.mongs.application.device.port.in.StepUseCase;
 import com.monglife.mongs.application.device.port.in.command.IncreaseCurrentWalkingCountCommand;
+import com.monglife.mongs.core.kafka.event.enums.EventTopic;
 import org.awaitility.Awaitility;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -52,7 +53,7 @@ class StepRollbackConsumerTest {
         @DisplayName("걸음 수 환전 트랜잭션이 실패하는 경우 롤백 이벤트를 소비하여 보유 걸음 수 증가 UseCase를 실행 한다.")
         void exchangeCurrentWalkingCountRollback() {
             // arrange
-            String topic = "rollback.exchangeCurrentWalkingCount";
+            String topic = EventTopic.ROLLBACK_EXCHANGE_CURRENT_WALKING_COUNT;
             String deviceId = "TEST-DEVICE-ID";
             long mongId = 1L;
             int walkingCount = 10;
