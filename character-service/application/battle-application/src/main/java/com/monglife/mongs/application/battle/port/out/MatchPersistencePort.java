@@ -36,10 +36,10 @@ public interface MatchPersistencePort {
 
     /**
      * 매치 대기열 삭제
-     * @param queuePlayerDto 삭제할 매치 대기열 도메인 객체
+     * @param queuePlayer 삭제할 매치 대기열 도메인 객체
      * @return 매치 대기열 도메인 객체
      */
-    Optional<QueuePlayer> deleteQueuePlayerPort(QueuePlayer queuePlayerDto);
+    Optional<QueuePlayer> deleteQueuePlayerPort(QueuePlayer queuePlayer);
 
     /**
      * 매치 조회

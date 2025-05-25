@@ -1,5 +1,8 @@
 package com.monglife.mongs.adapter.out.battle.persistence.service;
 
+import com.monglife.mongs.adapter.out.battle.persistence.entity.QueuePlayerEntity;
+import com.monglife.mongs.adapter.out.battle.persistence.repository.MatchRepository;
+import com.monglife.mongs.adapter.out.battle.persistence.repository.QueuePlayerRepository;
 import com.monglife.mongs.application.battle.port.out.MatchPersistencePort;
 import com.monglife.mongs.application.battle.port.out.vo.CreateMatchVo;
 import com.monglife.mongs.application.battle.port.out.vo.CreateQueuePlayerVo;
@@ -8,12 +11,19 @@ import com.monglife.mongs.domain.battle.model.QueuePlayer;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
 public class MatchPersistenceService implements MatchPersistencePort {
+
+    private final MatchRepository matchRepository;
+
+    private final QueuePlayerRepository queuePlayerRepository;
 
     /**
      * 매치 대기열 조회
@@ -24,7 +34,9 @@ public class MatchPersistenceService implements MatchPersistencePort {
      */
     @Override
     public Optional<QueuePlayer> getQueuePlayerPort(Long mongId, Long accountId, String deviceId) {
-        return Optional.empty();
+        return queuePlayerRepository.findByMongIdAndAccountIdAndDeviceId(mongId, accountId, deviceId)
+                .map(QueuePlayerEntity::toDomain)
+                .or(Optional::empty);
     }
 
     /**
@@ -35,7 +47,25 @@ public class MatchPersistenceService implements MatchPersistencePort {
      */
     @Override
     public List<QueuePlayer> getQueuePlayersPort(Integer matchPlayerCount, Long expiredSeconds) {
-        return List.of();
+
+        LocalDateTime now = LocalDateTime.now();
+
+        Set<QueuePlayerEntity> queuePlayerEntities = queuePlayerRepository.findByCount(matchPlayerCount);
+
+        if (queuePlayerEntities.size() < matchPlayerCount) {
+            queuePlayerEntities = queuePlayerEntities.stream()
+                    .filter(queuePlayerEntity -> {
+                        LocalDateTime expiredAt = queuePlayerEntity.getCreatedAt().plusSeconds(expiredSeconds);
+                        return now.isEqual(expiredAt) || now.isAfter(expiredAt);
+                    })
+                    .collect(Collectors.toSet());
+        }
+
+        queuePlayerEntities.forEach(queuePlayerRepository::delete);
+
+        return queuePlayerEntities.stream()
+                .map(QueuePlayerEntity::toDomain)
+                .toList();
     }
 
     /**
@@ -45,16 +75,33 @@ public class MatchPersistenceService implements MatchPersistencePort {
      */
     @Override
     public Optional<QueuePlayer> createQueuePlayerPort(CreateQueuePlayerVo createQueuePlayerVo) {
-        return Optional.empty();
+
+        QueuePlayerEntity queuePlayerEntity = QueuePlayerEntity.builder()
+                .mongId(createQueuePlayerVo.getMongId())
+                .deviceId(createQueuePlayerVo.getDeviceId())
+                .accountId(createQueuePlayerVo.getAccountId())
+                .createdAt(LocalDateTime.now())
+                .build();
+
+        return Optional.of(queuePlayerRepository.save(queuePlayerEntity).toDomain());
     }
 
     /**
      * 매치 대기열 삭제
-     * @param queuePlayerDto 삭제할 매치 대기열 도메인 객체
+     * @param queuePlayer 삭제할 매치 대기열 도메인 객체
      * @return 매치 대기열 도메인 객체
      */
     @Override
-    public Optional<QueuePlayer> deleteQueuePlayerPort(QueuePlayer queuePlayerDto) {
+    public Optional<QueuePlayer> deleteQueuePlayerPort(QueuePlayer queuePlayer) {
+
+        Optional<QueuePlayerEntity> queuePlayerEntityOptional = queuePlayerRepository.findByMongIdAndAccountIdAndDeviceId(queuePlayer.getMongId(), queuePlayer.getAccountId(), queuePlayer.getDeviceId());
+
+        if (queuePlayerEntityOptional.isPresent()) {
+            QueuePlayerEntity queuePlayerEntity = queuePlayerEntityOptional.get();
+            queuePlayerRepository.delete(queuePlayerEntity);
+            return Optional.of(queuePlayerEntity.toDomain());
+        }
+
         return Optional.empty();
     }
 
