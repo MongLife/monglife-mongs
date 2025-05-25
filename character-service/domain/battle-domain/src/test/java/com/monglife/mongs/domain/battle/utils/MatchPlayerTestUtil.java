@@ -98,7 +98,7 @@ public class MatchPlayerTestUtil {
 
         return Match.builder()
                 .matchId(matchId)
-                .round(Match.getInitMaxRound())
+                .round(Match.getInitMaxRound() - 1)
                 .maxRound(Match.getInitMaxRound())
                 .matchPlayers(matchPlayers)
                 .matchStateCode(MatchStateCode.PROCESS)

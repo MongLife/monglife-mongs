@@ -74,37 +74,6 @@ public class MatchPlayerTestUtil {
     }
 
     /**
-     * 봇 매치 플레이어 1명, 사용자 매치 플레이어 1명 / 입장 완료 / 마지막 매치 바로 전 라운드
-     * @param matchId 매치 ID
-     * @param playerId 플레이어 ID
-     * @param deviceId 기기 ID
-     * @param accountId 계정 ID
-     * @param mongId 몽 ID
-     * @param attack 공격 수치
-     * @param defence 방어 수치
-     * @param heal 회복 수치
-     * @param hp 매치 체력
-     * @return 매치 도메인 객체
-     */
-    public static Match generateTwoMatchPlayerBotMatchWhenMaxRound(Long matchId, String playerId, String deviceId, Long accountId, Long mongId, Double attack, Double defence, Double heal, Double hp) {
-
-        MatchPlayer matchPlayer = generateMatchPlayer(playerId, deviceId, accountId, mongId, attack, defence, heal, hp);
-        MatchPlayer botMatchPlayer = generateBotMatchPlayer(attack, defence, heal, hp);
-
-        List<MatchPlayer> matchPlayers = List.of(matchPlayer, botMatchPlayer);
-
-        matchPlayer.enter();
-
-        return Match.builder()
-                .matchId(matchId)
-                .round(Match.getInitMaxRound())
-                .maxRound(Match.getInitMaxRound())
-                .matchPlayers(matchPlayers)
-                .matchStateCode(MatchStateCode.PROCESS)
-                .build();
-    }
-
-    /**
      * 사용자 매치 플레이어 2명 / 입장 완료 전 / 매치 시작 전
      * @param matchId 매치 ID
      * @param playerId 플레이어 ID
