@@ -9,11 +9,11 @@ public interface QueuePublishPort {
      * 매칭 성공 비동기 응답
      * @param match 매치 도메인 객체
      */
-    void publishMatchingQueuePlayer(Match match);
+    void publishMatchingQueuePlayerPort(Match match);
 
     /**
      * 매치 대기열 등록 실패 비동기 응답
      * @param queuePlayer 매치 대기열 도메인 객체
      */
-    void publishMatchingQueuePlayerFail(QueuePlayer queuePlayer);
+    void publishMatchingQueuePlayerFailPort(QueuePlayer queuePlayer);
 }

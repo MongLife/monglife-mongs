@@ -131,7 +131,7 @@ public class QueueService implements QueueUseCase {
             for (QueuePlayer queuePlayer : notExistsMongQueuePlayer) {
                 if (notExistsMongIds.contains(queuePlayer.getMongId())) {
                     // 몽이 존재 하지 않는 경우
-                    queuePublishPort.publishMatchingQueuePlayerFail(queuePlayer);
+                    queuePublishPort.publishMatchingQueuePlayerFailPort(queuePlayer);
                     continue;
                 }
 
@@ -145,7 +145,7 @@ public class QueueService implements QueueUseCase {
                 // 대기열 등록에 실패한 경우
                 if (queuePlayerOptional.isEmpty()) {
                     // 대기열 등록 실패 비동기 응답
-                    queuePublishPort.publishMatchingQueuePlayerFail(queuePlayer);
+                    queuePublishPort.publishMatchingQueuePlayerFailPort(queuePlayer);
                 }
             }
         } else {
@@ -163,7 +163,7 @@ public class QueueService implements QueueUseCase {
                     .orElseThrow(InvalidCreateMatchException::new);
 
             // 매칭 성공 비동기 응답
-            queuePublishPort.publishMatchingQueuePlayer(match);
+            queuePublishPort.publishMatchingQueuePlayerPort(match);
         }
     }
 }

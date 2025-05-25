@@ -67,7 +67,7 @@ class MatchServiceTest {
             matchUseCase.enterMatchUseCase(command);
 
             // assert
-            Mockito.verify(matchPublishPort).publishMatch(match);
+            Mockito.verify(matchPublishPort).publishMatchPort(match);
         }
 
         @Test
@@ -88,7 +88,7 @@ class MatchServiceTest {
             matchUseCase.enterMatchUseCase(command);
 
             // assert
-            Mockito.verify(matchPublishPort, Mockito.never()).publishMatch(match);
+            Mockito.verify(matchPublishPort, Mockito.never()).publishMatchPort(match);
         }
     }
 
@@ -114,7 +114,7 @@ class MatchServiceTest {
             matchUseCase.exitMatchUseCase(command);
 
             // assert
-            Mockito.verify(matchPublishPort).publishStopMatch(match);
+            Mockito.verify(matchPublishPort).publishMatchEndPort(match, match.getWinner());
         }
 
         @Test
@@ -135,7 +135,7 @@ class MatchServiceTest {
             matchUseCase.exitMatchUseCase(command);
 
             // assert
-            Mockito.verify(matchPublishPort, Mockito.never()).publishStopMatch(match);
+            Mockito.verify(matchPublishPort, Mockito.never()).publishMatchEndPort(match, match.getWinner());
         }
     }
 
@@ -167,7 +167,7 @@ class MatchServiceTest {
 
             // assert
             assertTrue(pastRound < expected.getRound());
-            Mockito.verify(matchPublishPort).publishMatch(match);
+            Mockito.verify(matchPublishPort).publishMatchPort(match);
         }
 
         @Test
@@ -192,7 +192,7 @@ class MatchServiceTest {
 
             // assert
             assertEquals(pastRound, expected.getRound());
-            Mockito.verify(matchPublishPort, Mockito.never()).publishMatch(match);
+            Mockito.verify(matchPublishPort, Mockito.never()).publishMatchPort(match);
         }
     }
 }

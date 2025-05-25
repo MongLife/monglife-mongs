@@ -63,7 +63,7 @@ public class Match {
      */
     private void start() {
         this.matchStateCode = MatchStateCode.PROCESS;
-        this.round = 1;
+        this.round = 0;
     }
 
     /**
@@ -129,7 +129,7 @@ public class Match {
         });
 
         // 마지막 라운드 경우
-        if (this.round.equals(this.maxRound)) {
+        if (this.maxRound.equals(this.round + 1)) {
             // 매치 종료
             this.end();
         } else {

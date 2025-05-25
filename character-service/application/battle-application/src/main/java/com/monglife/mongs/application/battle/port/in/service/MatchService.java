@@ -83,7 +83,7 @@ public class MatchService implements MatchUseCase {
 
         // 매치가 시작된 경우 매치 정보 비동기 응답
         if (Boolean.TRUE.equals(match.isStart())) {
-            matchPublishPort.publishMatch(match);
+            matchPublishPort.publishMatchPort(match);
         }
 
         return match;
@@ -109,7 +109,7 @@ public class MatchService implements MatchUseCase {
 
         // 매치가 중단된 경우 승리 매치 종료 비동기 응답
         if (Boolean.TRUE.equals(match.isAllMatchPlayersExited())) {
-            matchPublishPort.publishStopMatch(match);
+            matchPublishPort.publishMatchEndPort(match, match.getWinner());
         }
 
         return match;
@@ -166,7 +166,7 @@ public class MatchService implements MatchUseCase {
         // 다음 라운드 진행한 경우
         if (Boolean.TRUE.equals(isRoundOver)) {
             // 매치 라운드 종료 비동기 응답
-            matchPublishPort.publishMatch(match);
+            matchPublishPort.publishMatchPort(match);
         }
 
         return match;

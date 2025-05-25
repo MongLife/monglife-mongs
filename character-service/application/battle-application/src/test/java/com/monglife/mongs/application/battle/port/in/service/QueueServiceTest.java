@@ -156,7 +156,7 @@ class QueueServiceTest {
             ArgumentCaptor<CreateMatchVo> captor = ArgumentCaptor.forClass(CreateMatchVo.class);
 
             Mockito.verify(matchPersistencePort).createMatchPort(captor.capture());
-            Mockito.verify(queuePublishPort).publishMatchingQueuePlayer(Mockito.any());
+            Mockito.verify(queuePublishPort).publishMatchingQueuePlayerPort(Mockito.any());
             for (MatchPlayer matchPlayer : captor.getValue().getMatchPlayers()) {
                 assertFalse(matchPlayer.getIsBot());
             }
@@ -205,7 +205,7 @@ class QueueServiceTest {
             ArgumentCaptor<CreateMatchVo> captor = ArgumentCaptor.forClass(CreateMatchVo.class);
 
             Mockito.verify(matchPersistencePort).createMatchPort(captor.capture());
-            Mockito.verify(queuePublishPort).publishMatchingQueuePlayer(Mockito.any());
+            Mockito.verify(queuePublishPort).publishMatchingQueuePlayerPort(Mockito.any());
             assertFalse(captor.getValue().getMatchPlayers().get(0).getIsBot());
             assertTrue(captor.getValue().getMatchPlayers().get(1).getIsBot());
         }
@@ -313,7 +313,7 @@ class QueueServiceTest {
             queueUseCase.matchingQueuePlayersUseCase(command);
 
             // assert
-            Mockito.verify(queuePublishPort).publishMatchingQueuePlayerFail(Mockito.any());
+            Mockito.verify(queuePublishPort).publishMatchingQueuePlayerFailPort(Mockito.any());
         }
 
         @Test
