@@ -37,7 +37,7 @@ public class MatchPublishService implements MatchPublishPort {
                                 .build())
                         .toList())
                 .build();
-        if (match.getRound() == 0) {
+        if (match.getRound() == 1) {
             battlePublishClient.publishMatchPlayersEntered(matchPublishDto);
         } else {
             battlePublishClient.publishMatch(matchPublishDto);

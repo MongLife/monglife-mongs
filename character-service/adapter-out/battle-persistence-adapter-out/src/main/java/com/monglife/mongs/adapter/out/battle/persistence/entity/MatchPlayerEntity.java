@@ -1,5 +1,6 @@
 package com.monglife.mongs.adapter.out.battle.persistence.entity;
 
+import com.monglife.mongs.domain.battle.model.MatchPlayer;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
@@ -56,13 +57,13 @@ public class MatchPlayerEntity {
     private Boolean isEnter;
 
     @Column(name = "entered_at")
-    private LocalDateTime enteredDt;
+    private LocalDateTime enteredAt;
 
     @Column(name = "exited_at")
     private LocalDateTime exitedAt;
 
     @Builder
-    public MatchPlayerEntity(String playerId, String deviceId, Long accountId, Long mongId, String mongTypeCode, String mongTypeName, String mongName, Double attack, Double heal, Double defence, Boolean isBot, Double hp, Boolean isEnter, LocalDateTime enteredDt, LocalDateTime exitedAt) {
+    public MatchPlayerEntity(String playerId, String deviceId, Long accountId, Long mongId, String mongTypeCode, String mongTypeName, String mongName, Double attack, Double heal, Double defence, Boolean isBot, Double hp, Boolean isEnter, LocalDateTime enteredAt, LocalDateTime exitedAt) {
         this.playerId = playerId;
         this.deviceId = deviceId;
         this.accountId = accountId;
@@ -76,7 +77,44 @@ public class MatchPlayerEntity {
         this.isBot = isBot;
         this.hp = hp;
         this.isEnter = isEnter;
-        this.enteredDt = enteredDt;
+        this.enteredAt = enteredAt;
         this.exitedAt = exitedAt;
+    }
+
+    public void update(MatchPlayer matchPlayer) {
+        this.deviceId = matchPlayer.getDeviceId();
+        this.accountId = matchPlayer.getAccountId();
+        this.mongId = matchPlayer.getMongId();
+        this.mongTypeCode = matchPlayer.getMongTypeCode();
+        this.mongTypeName = matchPlayer.getMongTypeName();
+        this.mongName = matchPlayer.getMongName();
+        this.attack = matchPlayer.getAttack();
+        this.heal = matchPlayer.getHeal();
+        this.defence = matchPlayer.getDefence();
+        this.isBot = matchPlayer.getIsBot();
+        this.hp = matchPlayer.getHp();
+        this.isEnter = matchPlayer.getIsEnter();
+        this.enteredAt = matchPlayer.getEnteredAt();
+        this.exitedAt = matchPlayer.getExitedAt();
+    }
+
+    public MatchPlayer toDomain() {
+        return MatchPlayer.builder()
+                .playerId(this.playerId)
+                .deviceId(this.deviceId)
+                .accountId(this.accountId)
+                .mongId(this.mongId)
+                .mongTypeCode(this.mongTypeCode)
+                .mongTypeName(this.mongTypeName)
+                .mongName(this.mongName)
+                .attack(this.attack)
+                .heal(this.heal)
+                .defence(this.defence)
+                .isBot(this.isBot)
+                .hp(this.hp)
+                .isEnter(this.isEnter)
+                .enteredAt(this.enteredAt)
+                .exitedAt(this.exitedAt)
+                .build();
     }
 }

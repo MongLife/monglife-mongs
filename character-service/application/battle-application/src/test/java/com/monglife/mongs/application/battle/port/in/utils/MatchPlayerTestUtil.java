@@ -1,8 +1,6 @@
 package com.monglife.mongs.application.battle.port.in.utils;
 
 import com.monglife.core.utils.CommonUtil;
-import com.monglife.mongs.domain.battle.enums.MatchRoundCode;
-import com.monglife.mongs.domain.battle.enums.MatchStateCode;
 import com.monglife.mongs.domain.battle.model.Match;
 import com.monglife.mongs.domain.battle.model.MatchPlayer;
 
@@ -181,9 +179,6 @@ public class MatchPlayerTestUtil {
                 .isBot(Boolean.FALSE)
                 .hp(hp)
                 .isEnter(Boolean.FALSE)
-                .damage(0D)
-                .recovery(0D)
-                .matchRoundCode(MatchRoundCode.NONE)
                 .build();
     }
 
@@ -202,9 +197,6 @@ public class MatchPlayerTestUtil {
                 .isBot(Boolean.FALSE)
                 .hp(hp)
                 .isEnter(Boolean.FALSE)
-                .damage(0D)
-                .recovery(0D)
-                .matchRoundCode(MatchRoundCode.NONE)
                 .build();
     }
 
@@ -223,9 +215,6 @@ public class MatchPlayerTestUtil {
                 .isBot(Boolean.TRUE)
                 .hp(hp)
                 .isEnter(Boolean.TRUE)
-                .damage(0D)
-                .recovery(0D)
-                .matchRoundCode(MatchRoundCode.NONE)
                 .build();
     }
 

@@ -1,7 +1,6 @@
 package com.monglife.mongs.domain.battle.utils;
 
 import com.monglife.core.utils.CommonUtil;
-import com.monglife.mongs.domain.battle.enums.MatchRoundCode;
 import com.monglife.mongs.domain.battle.enums.MatchStateCode;
 import com.monglife.mongs.domain.battle.model.Match;
 import com.monglife.mongs.domain.battle.model.MatchPlayer;
@@ -64,7 +63,7 @@ public class MatchPlayerTestUtil {
 
         Match match = Match.builder()
                 .matchId(matchId)
-                .round(0)
+                .round(1)
                 .maxRound(Match.getInitMaxRound())
                 .matchPlayers(matchPlayers)
                 .build();
@@ -98,7 +97,7 @@ public class MatchPlayerTestUtil {
 
         return Match.builder()
                 .matchId(matchId)
-                .round(Match.getInitMaxRound() - 1)
+                .round(Match.getInitMaxRound())
                 .maxRound(Match.getInitMaxRound())
                 .matchPlayers(matchPlayers)
                 .matchStateCode(MatchStateCode.PROCESS)
@@ -155,7 +154,7 @@ public class MatchPlayerTestUtil {
 
         Match match = Match.builder()
                 .matchId(matchId)
-                .round(0)
+                .round(1)
                 .maxRound(Match.getInitMaxRound())
                 .matchPlayers(matchPlayers)
                 .build();
@@ -188,7 +187,7 @@ public class MatchPlayerTestUtil {
 
         Match match = Match.builder()
                 .matchId(matchId)
-                .round(0)
+                .round(1)
                 .maxRound(Match.getInitMaxRound())
                 .matchPlayers(matchPlayers)
                 .build();
@@ -213,9 +212,6 @@ public class MatchPlayerTestUtil {
                 .isBot(Boolean.FALSE)
                 .hp(hp)
                 .isEnter(Boolean.FALSE)
-                .damage(0D)
-                .recovery(0D)
-                .matchRoundCode(MatchRoundCode.NONE)
                 .build();
     }
 
@@ -234,9 +230,6 @@ public class MatchPlayerTestUtil {
                 .isBot(Boolean.FALSE)
                 .hp(hp)
                 .isEnter(Boolean.FALSE)
-                .damage(0D)
-                .recovery(0D)
-                .matchRoundCode(MatchRoundCode.NONE)
                 .build();
     }
 
@@ -256,9 +249,6 @@ public class MatchPlayerTestUtil {
                 .hp(hp)
                 .isEnter(Boolean.TRUE)
                 .enteredAt(LocalDateTime.now())
-                .damage(0D)
-                .recovery(0D)
-                .matchRoundCode(MatchRoundCode.NONE)
                 .build();
     }
 

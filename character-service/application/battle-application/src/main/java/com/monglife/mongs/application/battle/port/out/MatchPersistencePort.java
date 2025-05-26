@@ -57,8 +57,8 @@ public interface MatchPersistencePort {
 
     /**
      * 매치 동기화
-     * @param matchDto 매치 도메인 객체
+     * @param match 매치 도메인 객체
      * @return 매치 도메인 객체
      */
-    Optional<Match> saveMatchPort(Match matchDto);
+    Optional<Match> saveMatchPort(Match match);
 }

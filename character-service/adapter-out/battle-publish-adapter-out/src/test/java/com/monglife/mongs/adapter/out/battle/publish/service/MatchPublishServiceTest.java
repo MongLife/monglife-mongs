@@ -7,7 +7,6 @@ import com.monglife.mongs.adapter.out.battle.publish.consumer.MatchConsumer;
 import com.monglife.mongs.adapter.out.battle.publish.dto.response.MatchEndPublishDto;
 import com.monglife.mongs.adapter.out.battle.publish.dto.response.MatchPublishDto;
 import com.monglife.mongs.application.battle.port.out.MatchPublishPort;
-import com.monglife.mongs.domain.battle.enums.MatchRoundCode;
 import com.monglife.mongs.domain.battle.enums.MatchStateCode;
 import com.monglife.mongs.domain.battle.model.Match;
 import com.monglife.mongs.domain.battle.model.MatchPlayer;
@@ -76,9 +75,6 @@ class MatchPublishServiceTest {
                             .isEnter(true)
                             .enteredAt(LocalDateTime.now())
                             .exitedAt(null)
-                            .damage(0D)
-                            .recovery(0D)
-                            .matchRoundCode(MatchRoundCode.NONE)
                             .build(),
                     MatchPlayer.builder()
                             .playerId(CommonUtil.randomId())
@@ -96,9 +92,6 @@ class MatchPublishServiceTest {
                             .isEnter(true)
                             .enteredAt(LocalDateTime.now())
                             .exitedAt(null)
-                            .damage(0D)
-                            .recovery(0D)
-                            .matchRoundCode(MatchRoundCode.NONE)
                             .build());
 
             Match match = Match.builder()
@@ -149,9 +142,6 @@ class MatchPublishServiceTest {
                     .isEnter(true)
                     .enteredAt(LocalDateTime.now())
                     .exitedAt(null)
-                    .damage(0D)
-                    .recovery(0D)
-                    .matchRoundCode(MatchRoundCode.NONE)
                     .build();
 
             List<MatchPlayer> matchPlayers = List.of(
@@ -172,9 +162,6 @@ class MatchPublishServiceTest {
                             .isEnter(true)
                             .enteredAt(LocalDateTime.now())
                             .exitedAt(null)
-                            .damage(0D)
-                            .recovery(0D)
-                            .matchRoundCode(MatchRoundCode.NONE)
                             .build());
 
             Match match = Match.builder()

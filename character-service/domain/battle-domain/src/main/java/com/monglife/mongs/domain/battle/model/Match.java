@@ -11,11 +11,11 @@ import lombok.Getter;
 import lombok.ToString;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+@Getter
 @ToString
 public class Match {
 
@@ -32,30 +32,26 @@ public class Match {
     // 매치 최대 라운드 수
     private static final int MAX_ROUND = 10;
 
-    @Getter
     private final Long matchId;
 
-    @Getter
     private final Integer maxRound;
 
-    @Getter
     private final List<MatchPlayer> matchPlayers;
 
-    private final Set<MatchPick> matchPicks;
+    private final List<MatchPick> matchPicks;
 
-    @Getter
     private Integer round;
 
     private MatchStateCode matchStateCode;
 
     @Builder
-    public Match(Long matchId, Integer maxRound, Integer round, MatchStateCode matchStateCode, List<MatchPlayer> matchPlayers, Set<MatchPick> matchPicks) {
+    public Match(Long matchId, Integer maxRound, Integer round, MatchStateCode matchStateCode, List<MatchPlayer> matchPlayers, List<MatchPick> matchPicks) {
         this.matchId = matchId;
         this.round = round;
         this.maxRound = maxRound;
         this.matchStateCode = matchStateCode;
         this.matchPlayers = matchPlayers == null ? new ArrayList<>() : matchPlayers;
-        this.matchPicks = matchPicks == null ? new HashSet<>() : matchPicks;
+        this.matchPicks = matchPicks == null ? new ArrayList<>() : matchPicks;
     }
 
     /**
@@ -63,7 +59,7 @@ public class Match {
      */
     private void start() {
         this.matchStateCode = MatchStateCode.PROCESS;
-        this.round = 0;
+        this.round = 1;
     }
 
     /**
@@ -129,7 +125,7 @@ public class Match {
         });
 
         // 마지막 라운드 경우
-        if (this.maxRound.equals(this.round + 1)) {
+        if (this.maxRound.equals(this.round)) {
             // 매치 종료
             this.end();
         } else {

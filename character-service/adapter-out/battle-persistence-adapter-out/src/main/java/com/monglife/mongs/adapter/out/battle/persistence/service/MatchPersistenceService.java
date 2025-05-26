@@ -1,5 +1,7 @@
 package com.monglife.mongs.adapter.out.battle.persistence.service;
 
+import com.monglife.mongs.adapter.out.battle.persistence.entity.MatchEntity;
+import com.monglife.mongs.adapter.out.battle.persistence.entity.MatchPlayerEntity;
 import com.monglife.mongs.adapter.out.battle.persistence.entity.QueuePlayerEntity;
 import com.monglife.mongs.adapter.out.battle.persistence.repository.MatchRepository;
 import com.monglife.mongs.adapter.out.battle.persistence.repository.QueuePlayerRepository;
@@ -12,6 +14,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -112,7 +115,9 @@ public class MatchPersistenceService implements MatchPersistencePort {
      */
     @Override
     public Optional<Match> getMatchPort(Long matchId) {
-        return Optional.empty();
+        return matchRepository.findByMatchId(matchId)
+                .map(MatchEntity::toDomain)
+                .or(Optional::empty);
     }
 
     /**
@@ -122,16 +127,56 @@ public class MatchPersistenceService implements MatchPersistencePort {
      */
     @Override
     public Optional<Match> createMatchPort(CreateMatchVo createMatchVo) {
-        return Optional.empty();
+
+        List<MatchPlayerEntity> matchPlayerEntities = createMatchVo.getMatchPlayers().stream()
+                .map(matchPlayer -> MatchPlayerEntity.builder()
+                        .playerId(matchPlayer.getPlayerId())
+                        .deviceId(matchPlayer.getDeviceId())
+                        .accountId(matchPlayer.getAccountId())
+                        .mongId(matchPlayer.getMongId())
+                        .mongTypeCode(matchPlayer.getMongTypeCode())
+                        .mongTypeName(matchPlayer.getMongTypeName())
+                        .mongName(matchPlayer.getMongName())
+                        .attack(matchPlayer.getAttack())
+                        .heal(matchPlayer.getHeal())
+                        .defence(matchPlayer.getDefence())
+                        .isBot(matchPlayer.getIsBot())
+                        .hp(matchPlayer.getHp())
+                        .isEnter(matchPlayer.getIsEnter())
+                        .enteredAt(matchPlayer.getEnteredAt())
+                        .exitedAt(matchPlayer.getExitedAt())
+                        .build())
+                .collect(Collectors.toList());
+
+        MatchEntity matchEntity = MatchEntity.builder()
+                .maxRound(createMatchVo.getMaxRound())
+                .matchPlayers(matchPlayerEntities)
+                .matchPicks(Collections.emptyList())
+                .round(createMatchVo.getRound())
+                .stateCode(createMatchVo.getMatchStateCode())
+                .build();
+
+        return Optional.of(matchRepository.save(matchEntity).toDomain());
     }
 
     /**
      * 매치 동기화
-     * @param matchDto 매치 도메인 객체
+     * @param match 매치 도메인 객체
      * @return 매치 도메인 객체
      */
     @Override
-    public Optional<Match> saveMatchPort(Match matchDto) {
+    public Optional<Match> saveMatchPort(Match match) {
+
+        Optional<MatchEntity> matchEntityOptional = matchRepository.findByMatchId(match.getMatchId());
+
+        if (matchEntityOptional.isPresent()) {
+            MatchEntity matchEntity = matchEntityOptional.get();
+
+            matchEntity.update(match);
+
+            return Optional.of(matchRepository.save(matchEntity).toDomain());
+        }
+
         return Optional.empty();
     }
 }

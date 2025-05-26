@@ -14,6 +14,8 @@ public class MatchPick {
 
     private static final Random random = new Random();
 
+    private final Long pickId;
+
     private final MatchPlayer matchPlayer;
 
     private final MatchPlayer targetMatchPlayer;
@@ -25,7 +27,8 @@ public class MatchPick {
     private final Double value;
 
     @Builder
-    public MatchPick(MatchPlayer matchPlayer, MatchPlayer targetMatchPlayer, Integer round, MatchPickCode matchPickCode, Double value) {
+    public MatchPick(Long pickId, MatchPlayer matchPlayer, MatchPlayer targetMatchPlayer, Integer round, MatchPickCode matchPickCode, Double value) {
+        this.pickId = pickId;
         this.matchPlayer = matchPlayer;
         this.targetMatchPlayer = targetMatchPlayer;
         this.round = round;

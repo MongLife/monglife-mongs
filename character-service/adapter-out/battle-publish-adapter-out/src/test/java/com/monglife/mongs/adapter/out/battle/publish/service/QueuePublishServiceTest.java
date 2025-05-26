@@ -7,7 +7,6 @@ import com.monglife.mongs.adapter.out.battle.publish.consumer.MatchingQueuePlaye
 import com.monglife.mongs.adapter.out.battle.publish.dto.response.MatchingQueuePlayerFailPublishDto;
 import com.monglife.mongs.adapter.out.battle.publish.dto.response.MatchingQueuePlayerPublishDto;
 import com.monglife.mongs.application.battle.port.out.QueuePublishPort;
-import com.monglife.mongs.domain.battle.enums.MatchRoundCode;
 import com.monglife.mongs.domain.battle.enums.MatchStateCode;
 import com.monglife.mongs.domain.battle.model.Match;
 import com.monglife.mongs.domain.battle.model.MatchPlayer;
@@ -77,10 +76,6 @@ class QueuePublishServiceTest {
                             .hp(100D)
                             .isEnter(true)
                             .enteredAt(LocalDateTime.now())
-                            .exitedAt(null)
-                            .damage(0D)
-                            .recovery(0D)
-                            .matchRoundCode(MatchRoundCode.NONE)
                             .build(),
                     MatchPlayer.builder()
                             .playerId(CommonUtil.randomId())
@@ -98,9 +93,6 @@ class QueuePublishServiceTest {
                             .isEnter(true)
                             .enteredAt(LocalDateTime.now())
                             .exitedAt(null)
-                            .damage(0D)
-                            .recovery(0D)
-                            .matchRoundCode(MatchRoundCode.NONE)
                             .build());
 
             Match match = Match.builder()

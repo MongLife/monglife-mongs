@@ -164,7 +164,7 @@ public class MatchService implements MatchUseCase {
                 .orElseThrow(NotExistsMatchException::new);
 
         // 다음 라운드 진행한 경우
-        if (Boolean.TRUE.equals(isRoundOver)) {
+        if (isRoundOver) {
             // 매치 라운드 종료 비동기 응답
             matchPublishPort.publishMatchPort(match);
         }

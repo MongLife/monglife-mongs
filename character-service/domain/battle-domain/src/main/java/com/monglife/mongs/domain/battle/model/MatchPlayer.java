@@ -79,7 +79,7 @@ public class MatchPlayer {
     private Set<MatchHistoryCode> matchHistoryCodes;
 
     @Builder
-    public MatchPlayer(String playerId, String deviceId, Long accountId, Long mongId, String mongTypeCode, String mongTypeName, String mongName, Double attack, Double heal, Double defence, Boolean isBot, Double hp, Boolean isEnter, LocalDateTime enteredAt, LocalDateTime exitedAt, Double damage, Double recovery, MatchRoundCode matchRoundCode, Set<MatchHistoryCode> matchHistoryCodes) {
+    public MatchPlayer(String playerId, String deviceId, Long accountId, Long mongId, String mongTypeCode, String mongTypeName, String mongName, Double attack, Double heal, Double defence, Boolean isBot, Double hp, Boolean isEnter, LocalDateTime enteredAt, LocalDateTime exitedAt) {
         this.playerId = playerId;
         this.deviceId = deviceId;
         this.accountId = accountId;
@@ -95,10 +95,10 @@ public class MatchPlayer {
         this.isEnter = isEnter;
         this.enteredAt = enteredAt;
         this.exitedAt = exitedAt;
-        this.damage = damage;
-        this.recovery = recovery;
-        this.matchRoundCode = matchRoundCode;
-        this.matchHistoryCodes = matchHistoryCodes == null ? new HashSet<>() : matchHistoryCodes;
+        this.damage = 0D;
+        this.recovery = 0D;
+        this.matchRoundCode = MatchRoundCode.NONE;
+        this.matchHistoryCodes = new HashSet<>();
     }
 
     /**
@@ -181,7 +181,7 @@ public class MatchPlayer {
             this.matchRoundCode = MatchRoundCode.NONE;
         }
 
-        // 피해, 회복 수치 초기화
+        // TODO: 피해, 회복 수치 초기화
         this.damage = 0D;
         this.recovery = 0D;
         this.matchHistoryCodes = new HashSet<>();
@@ -228,9 +228,6 @@ public class MatchPlayer {
                     .isBot(Boolean.TRUE)
                     .hp(MAX_HP)
                     .isEnter(Boolean.TRUE)
-                    .damage(0D)
-                    .recovery(0D)
-                    .matchRoundCode(MatchRoundCode.NONE)
                     .build();
 
             matchPlayers.add(matchPlayer);
@@ -265,9 +262,6 @@ public class MatchPlayer {
                 .isBot(Boolean.FALSE)
                 .hp(MAX_HP)
                 .isEnter(Boolean.FALSE)
-                .damage(0D)
-                .recovery(0D)
-                .matchRoundCode(MatchRoundCode.NONE)
                 .build();
     }
 }
