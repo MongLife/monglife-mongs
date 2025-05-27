@@ -42,14 +42,14 @@ public class Match {
 
     private Integer round;
 
-    private MatchStateCode matchStateCode;
+    private MatchStateCode stateCode;
 
     @Builder
-    public Match(Long matchId, Integer maxRound, Integer round, MatchStateCode matchStateCode, List<MatchPlayer> matchPlayers, List<MatchPick> matchPicks) {
+    public Match(Long matchId, Integer maxRound, Integer round, MatchStateCode stateCode, List<MatchPlayer> matchPlayers, List<MatchPick> matchPicks) {
         this.matchId = matchId;
         this.round = round;
         this.maxRound = maxRound;
-        this.matchStateCode = matchStateCode;
+        this.stateCode = stateCode;
         this.matchPlayers = matchPlayers == null ? new ArrayList<>() : matchPlayers;
         this.matchPicks = matchPicks == null ? new ArrayList<>() : matchPicks;
     }
@@ -58,7 +58,7 @@ public class Match {
      * 매치 시작
      */
     private void start() {
-        this.matchStateCode = MatchStateCode.PROCESS;
+        this.stateCode = MatchStateCode.PROCESS;
         this.round = 1;
     }
 
@@ -67,7 +67,7 @@ public class Match {
      *
      */
     private void end() {
-        this.matchStateCode = MatchStateCode.END;
+        this.stateCode = MatchStateCode.END;
     }
 
     /**
@@ -99,18 +99,18 @@ public class Match {
                                 .matchPlayer(matchPlayer)
                                 .targetMatchPlayer(matchPlayer)
                                 .round(this.round)
-                                .matchPickCode(MatchPickCode.MATCH_PICK_DEFENCE)
-                                .value(matchPlayer.getDefence())
+                                .pickCode(MatchPickCode.MATCH_PICK_DEFENCE)
+                                .pickValue(matchPlayer.getDefence())
                                 .build());
                     }
                 });
 
         // 매치 플레이어 선택 적용 (공격, 방어, 회복)
         this.matchPicks.forEach(matchPick -> {
-            switch (matchPick.getMatchPickCode()) {
+            switch (matchPick.getPickCode()) {
                 case MATCH_PICK_DEFENCE -> matchPick.getTargetMatchPlayer().defence();
-                case MATCH_PICK_HEAL -> matchPick.getTargetMatchPlayer().heal(matchPick.getValue());
-                case MATCH_PICK_ATTACK -> matchPick.getTargetMatchPlayer().damage(matchPick.getValue());
+                case MATCH_PICK_HEAL -> matchPick.getTargetMatchPlayer().heal(matchPick.getPickValue());
+                case MATCH_PICK_ATTACK -> matchPick.getTargetMatchPlayer().damage(matchPick.getPickValue());
             }
         });
 
@@ -255,7 +255,7 @@ public class Match {
      * @return 매치 시작 여부
      */
     public Boolean isStart() {
-        return MatchStateCode.PROCESS.equals(this.matchStateCode);
+        return MatchStateCode.PROCESS.equals(this.stateCode);
     }
 
     /**
@@ -263,7 +263,7 @@ public class Match {
      * @return 매치 종료 여부
      */
     public Boolean isEnd() {
-        return MatchStateCode.END.equals(this.matchStateCode);
+        return MatchStateCode.END.equals(this.stateCode);
     }
 
     /**

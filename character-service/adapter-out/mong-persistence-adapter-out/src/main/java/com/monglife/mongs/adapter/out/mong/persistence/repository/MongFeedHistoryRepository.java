@@ -9,5 +9,5 @@ public interface MongFeedHistoryRepository  extends CrudRepository<MongFeedHisto
 
     Optional<MongFeedHistoryEntity> findByMongId(Long mongId);
 
-    Optional<MongFeedHistoryEntity> findByMongIdAndTypeCode(Long mongId, String typeCode);
+    Optional<MongFeedHistoryEntity> findByMongIdAndCode(Long mongId, String typeCode);
 }

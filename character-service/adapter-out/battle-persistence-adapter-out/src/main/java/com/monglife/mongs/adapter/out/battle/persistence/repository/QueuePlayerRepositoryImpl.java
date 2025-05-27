@@ -1,7 +1,7 @@
 package com.monglife.mongs.adapter.out.battle.persistence.repository;
 
 import com.monglife.mongs.adapter.out.battle.persistence.entity.QueuePlayerEntity;
-import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Repository;
 
@@ -10,12 +10,16 @@ import java.util.Optional;
 import java.util.Set;
 
 @Repository
-@RequiredArgsConstructor
 public class QueuePlayerRepositoryImpl implements QueuePlayerRepository {
 
     private static final String QUEUE_PLAYER_KEY = "QUEUE_PLAYER_KEY";
 
     private final RedisTemplate<String, QueuePlayerEntity> redisTemplate;
+
+
+    public QueuePlayerRepositoryImpl(@Qualifier("battleRedisTemplate") RedisTemplate<String, QueuePlayerEntity> redisTemplate) {
+        this.redisTemplate = redisTemplate;
+    }
 
     @Override
     public Set<QueuePlayerEntity> findAll() {

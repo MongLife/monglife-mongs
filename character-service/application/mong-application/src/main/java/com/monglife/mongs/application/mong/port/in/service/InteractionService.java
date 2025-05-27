@@ -8,7 +8,7 @@ import com.monglife.mongs.application.mong.port.in.command.*;
 import com.monglife.mongs.application.mong.port.out.MongEventPort;
 import com.monglife.mongs.application.mong.port.out.MongPersistencePort;
 import com.monglife.mongs.application.mong.port.out.MongReadPort;
-import com.monglife.mongs.application.mong.port.out.vo.CreateInventoryItemVo;
+import com.monglife.mongs.application.mong.port.out.vo.CreateInventoryVo;
 import com.monglife.mongs.domain.mong.exception.ForbiddenInventoryItemException;
 import com.monglife.mongs.domain.mong.model.*;
 import lombok.RequiredArgsConstructor;
@@ -83,7 +83,7 @@ public class InteractionService implements InteractionUseCase {
                 .orElseThrow(NotExistsMongException::new);
 
         // 몽 섭취 이력 등록
-        mongPersistencePort.createMongFeedFoodHistoryPort(mong.getMongId(), food.getFoodTypeCode())
+        mongPersistencePort.createMongFeedFoodHistoryPort(mong.getMongId(), food.getFoodCode())
                 .orElseThrow(InvalidCreateMongFeedHistoryException::new);
 
         return mong;
@@ -114,7 +114,7 @@ public class InteractionService implements InteractionUseCase {
                 .orElseThrow(NotExistsMongException::new);
 
         // 몽 섭취 이력 등록
-        mongPersistencePort.createMongFeedSnackHistoryPort(mong.getMongId(), snack.getSnackTypeCode())
+        mongPersistencePort.createMongFeedSnackHistoryPort(mong.getMongId(), snack.getSnackCode())
                 .orElseThrow(InvalidCreateMongFeedHistoryException::new);
 
         return mong;
@@ -125,7 +125,7 @@ public class InteractionService implements InteractionUseCase {
      */
     @Override
     @Transactional
-    public List<InventoryItem> getInventoryItemsUseCase(GetInventoryItemsCommand command) {
+    public List<Inventory> getInventoriesUseCase(GetInventoryItemsCommand command) {
 
         Mong mong = mongReadPort.getMongPort(command.getMongId())
                 .orElseThrow(NotExistsMongException::new)
@@ -141,27 +141,27 @@ public class InteractionService implements InteractionUseCase {
     @Transactional
     @CheckMongDead
     @PublishMongPort
-    public Mong useInventoryItemUseCase(UseInventoryItemCommand command) {
+    public Mong useInventoryUseCase(UseInventoryItemCommand command) {
 
         Mong mong = mongPersistencePort.getMongPort(command.getMongId())
                 .orElseThrow(NotExistsMongException::new)
                 .verify(command.getAccountId());
 
-        InventoryItem inventoryItem = mongPersistencePort.getInventoryItemPort(command.getInventoryItemId())
+        Inventory inventory = mongPersistencePort.getInventoryItemPort(command.getInventoryItemId())
                 .orElseThrow(NotExistsInventoryItemException::new)
                 .verify(command.getMongId());
 
         // 인벤 아이템 소유자 체크
-        if (!mong.getMongId().equals(inventoryItem.getMongId())) {
+        if (!mong.getMongId().equals(inventory.getMongId())) {
             throw new ForbiddenInventoryItemException();
         }
 
-        switch (inventoryItem.getInventoryItemTypeCode()) {
+        switch (inventory.getInventoryTypeCode()) {
             // 음식 섭취
-            case FOOD -> mong.feed(mongReadPort.getFoodPort(inventoryItem.getTypeCode(), mong.getMongId())
+            case FOOD -> mong.feed(mongReadPort.getFoodPort(inventory.getInventoryCode(), mong.getMongId())
                     .orElseThrow(NotExistsFoodException::new));
             // 간식 섭취
-            case SNACK -> mong.feed(mongReadPort.getSnackPort(inventoryItem.getTypeCode(), mong.getMongId())
+            case SNACK -> mong.feed(mongReadPort.getSnackPort(inventory.getInventoryCode(), mong.getMongId())
                     .orElseThrow(NotExistsSnackException::new));
             // 이외의 경우 예외
             default -> throw new InvalidUseInventoryItemException();
@@ -172,7 +172,7 @@ public class InteractionService implements InteractionUseCase {
                 .orElseThrow(NotExistsMongException::new);
 
         // 인벤 아이템 삭제
-        mongPersistencePort.deleteInventoryItemPort(inventoryItem.getInventoryItemId())
+        mongPersistencePort.deleteInventoryItemPort(inventory.getInventoryId())
                 .orElseThrow(InvalidDeleteInventoryItemException::new);
 
         return mong;
@@ -183,7 +183,7 @@ public class InteractionService implements InteractionUseCase {
      */
     @Override
     @Transactional
-    public RandomDrawItem randomDrawUseCase(RandomDrawCommand command) {
+    public RandomDraw randomDrawUseCase(RandomDrawCommand command) {
 
         Mong mong = mongPersistencePort.getMongPort(command.getMongId())
                 .orElseThrow(NotExistsMongException::new)
@@ -193,31 +193,31 @@ public class InteractionService implements InteractionUseCase {
         mong.decreaseRandomDrawTicketCount();
 
         // 랜덤 뽑기 아이템 목록 조회
-        List<RandomDrawItem> randomDrawItems = mongReadPort.getRandomDrawItemsPort();
+        List<RandomDraw> randomDraws = mongReadPort.getRandomDrawItemsPort();
 
         // 랜덤 뽑기 아이템 목록이 없는 경우 예외
-        if (randomDrawItems.isEmpty()) {
+        if (randomDraws.isEmpty()) {
             throw new NotExistsRandomDrawItemsException();
         }
 
         // 코드 값 랜덤 선정
-        int randomDrawItemsIndex = random.nextInt(0, randomDrawItems.size());
+        int randomDrawItemsIndex = random.nextInt(0, randomDraws.size());
         // 랜덤 뽑기 아이템 선정
-        RandomDrawItem randomDrawItem = randomDrawItems.get(randomDrawItemsIndex);
+        RandomDraw randomDraw = randomDraws.get(randomDrawItemsIndex);
 
-        switch (randomDrawItem.getInventoryItemTypeCode()) {
+        switch (randomDraw.getInventoryTypeCode()) {
             // 맵인 경우 컬렉션 맵 등록
-            case MAP -> mongEventPort.randomDrawMapEventPort(command.getAccountId(), randomDrawItem.getTypeCode());
+            case MAP -> mongEventPort.randomDrawMapEventPort(command.getAccountId(), randomDraw.getRandomDrawCode());
             // 음식, 간식인 경우 인벤 등록
             case FOOD, SNACK ->
-                    mongPersistencePort.createInventoryItemPort(CreateInventoryItemVo.builder()
+                    mongPersistencePort.createInventoryItemPort(CreateInventoryVo.builder()
                         .mongId(mong.getMongId())
-                        .typeCode(randomDrawItem.getTypeCode())
-                        .inventoryItemTypeCode(randomDrawItem.getInventoryItemTypeCode())
+                        .typeCode(randomDraw.getRandomDrawCode())
+                        .inventoryTypeCode(randomDraw.getInventoryTypeCode())
                         .build())
                         .orElseThrow(InvalidCreateInventoryItemException::new);
         }
 
-        return randomDrawItem;
+        return randomDraw;
     }
 }

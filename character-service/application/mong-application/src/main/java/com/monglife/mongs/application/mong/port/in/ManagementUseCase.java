@@ -25,6 +25,8 @@ public interface ManagementUseCase {
 
     Mong poopCleanMongUseCase(PoopCleanMongCommand command);
 
+    Mong evolutionReadyMongUseCase(EvolutionReadyMongCommand command);
+
     Mong evolutionMongUseCase(EvolutionMongCommand command);
 
     Mong graduateMongUseCase(GraduateMongCommand command);

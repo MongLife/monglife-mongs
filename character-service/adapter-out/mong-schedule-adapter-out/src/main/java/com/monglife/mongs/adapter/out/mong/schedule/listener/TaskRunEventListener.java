@@ -8,7 +8,8 @@ import com.monglife.mongs.adapter.out.mong.schedule.repository.TaskScheduleRepos
 import com.monglife.mongs.adapter.transaction.*;
 import com.monglife.mongs.application.mong.port.enums.MongSchedulerType;
 import com.monglife.mongs.core.kafka.event.enums.EventTopic;
-import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
@@ -20,7 +21,6 @@ import java.util.Map;
 import java.util.concurrent.ScheduledExecutorService;
 
 @Component
-@RequiredArgsConstructor
 public class TaskRunEventListener {
 
     private final TaskRepository taskRepository;
@@ -33,6 +33,20 @@ public class TaskRunEventListener {
 
     private final ScheduledExecutorService executor;
 
+    public TaskRunEventListener(
+            @Autowired TaskRepository taskRepository,
+            @Autowired TaskScheduleRepository taskScheduleRepository,
+            @Autowired KafkaService kafkaService,
+            @Autowired ApplicationEventPublisher publisher,
+            @Qualifier("taskScheduledExecutorService") ScheduledExecutorService executor
+    ) {
+        this.taskRepository = taskRepository;
+        this.taskScheduleRepository = taskScheduleRepository;
+        this.kafkaService = kafkaService;
+        this.publisher = publisher;
+        this.executor = executor;
+    }
+
     /**
      * 테스크 스케줄 실행 이벤트 리스너
      * @param taskEntity 테스크 엔티티
@@ -40,8 +54,6 @@ public class TaskRunEventListener {
     @EventListener(TaskEntity.class)
     @Transactional(propagation = Propagation.REQUIRES_NEW)
     public void taskRunEventListener(TaskEntity taskEntity) {
-
-        Long mongId = Long.parseLong(taskEntity.getTaskOwnerId());
 
         taskRepository.findByTaskIdWithLock(taskEntity.getTaskId()).ifPresent(pasTaskEntity -> {
             // 테스크 스케줄 삭제
@@ -66,29 +78,36 @@ public class TaskRunEventListener {
                     switch (mongSchedulerType) {
                         case EGG_EVOLUTION ->
                                 kafkaService.generateEvent(EventTopic.COMMIT_EGG_EVOLUTION, EggEvolutionEventDto.builder()
-                                        .mongId(mongId)
+                                        .accountId(taskEntity.getAccountId())
+                                        .mongId(taskEntity.getMongId())
                                         .build());
                         case INCREASE_STATUS ->
                                 kafkaService.generateEvent(EventTopic.COMMIT_INCREASE_STATUS, IncreaseStatusEventDto.builder()
-                                        .mongId(mongId)
+                                        .accountId(taskEntity.getAccountId())
+                                        .mongId(taskEntity.getMongId())
                                         .build());
                         case DECREASE_STATUS ->
                                 kafkaService.generateEvent(EventTopic.COMMIT_DECREASE_STATUS, DecreaseStatusEventDto.builder()
-                                        .mongId(mongId)
+                                        .accountId(taskEntity.getAccountId())
+                                        .mongId(taskEntity.getMongId())
                                         .build());
                         case INCREASE_POOP ->
                                 kafkaService.generateEvent(EventTopic.COMMIT_INCREASE_POOP, IncreasePoopEventDto.builder()
-                                        .mongId(mongId)
+                                        .accountId(taskEntity.getAccountId())
+                                        .mongId(taskEntity.getMongId())
                                         .build());
                         case DEAD -> kafkaService.generateEvent(EventTopic.COMMIT_DEAD, DeadEventDto.builder()
-                                .mongId(mongId)
-                                .build());
+                                        .accountId(taskEntity.getAccountId())
+                                        .mongId(taskEntity.getMongId())
+                                        .build());
                         case SLEEP -> kafkaService.generateEvent(EventTopic.COMMIT_SLEEP, SleepEventDto.builder()
-                                .mongId(mongId)
-                                .build());
+                                        .accountId(taskEntity.getAccountId())
+                                        .mongId(taskEntity.getMongId())
+                                        .build());
                         case WAKEUP -> kafkaService.generateEvent(EventTopic.COMMIT_WAKEUP, WakeupEventDto.builder()
-                                .mongId(mongId)
-                                .build());
+                                        .accountId(taskEntity.getAccountId())
+                                        .mongId(taskEntity.getMongId())
+                                        .build());
                     }
                 }, () -> kafkaService.generateEvent("commit.test", Map.of("taskId", taskEntity.getTaskId())));
     }

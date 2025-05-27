@@ -10,5 +10,5 @@ public interface TaskRepository extends JpaRepository<TaskEntity, Long>, TaskDsl
 
     Optional<TaskEntity> findByTaskId(Long taskId);
 
-    Optional<TaskEntity> findByAppPackageNameAndTaskOwnerIdAndSchedulerTypeCode(String appPackageName, String taskOwnerId, String schedulerTypeCode);
+    Optional<TaskEntity> findByAppPackageNameAndMongIdAndSchedulerTypeCode(String appPackageName, Long mongId, String schedulerTypeCode);
 }

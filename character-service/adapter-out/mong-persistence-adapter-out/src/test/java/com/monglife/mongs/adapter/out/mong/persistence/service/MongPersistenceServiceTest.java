@@ -7,15 +7,15 @@ import com.monglife.module.common.jpa.entity.GroupCodeEntity;
 import com.monglife.mongs.adapter.out.mong.persistence.config.AdapterOutMongPersistenceConfig;
 import com.monglife.mongs.adapter.out.mong.persistence.config.MongDataSourceConfig;
 import com.monglife.mongs.adapter.out.mong.persistence.config.MongRedisConfig;
-import com.monglife.mongs.adapter.out.mong.persistence.entity.FoodTypeEntity;
-import com.monglife.mongs.adapter.out.mong.persistence.entity.InventoryItemEntity;
+import com.monglife.mongs.adapter.out.mong.persistence.entity.FoodEntity;
+import com.monglife.mongs.adapter.out.mong.persistence.entity.InventoryEntity;
 import com.monglife.mongs.adapter.out.mong.persistence.entity.MongEntity;
 import com.monglife.mongs.adapter.out.mong.persistence.entity.MongTypeEntity;
 import com.monglife.mongs.adapter.out.mong.persistence.repository.*;
 import com.monglife.mongs.application.mong.port.out.MongPersistencePort;
-import com.monglife.mongs.application.mong.port.out.vo.CreateInventoryItemVo;
+import com.monglife.mongs.application.mong.port.out.vo.CreateInventoryVo;
 import com.monglife.mongs.application.mong.port.out.vo.CreateMongVo;
-import com.monglife.mongs.domain.mong.enums.InventoryItemTypeCode;
+import com.monglife.mongs.domain.mong.enums.InventoryTypeCode;
 import com.monglife.mongs.domain.mong.enums.MongStateCode;
 import com.monglife.mongs.domain.mong.enums.MongStatusCode;
 import com.monglife.mongs.domain.mong.model.Mong;
@@ -507,7 +507,7 @@ class MongPersistenceServiceTest {
 
     @Nested
     @DisplayName("인벤 아이템 등록 단위 테스트")
-    class CreateInventoryItemPort {
+    class CreateInventoryPort {
 
         private static final Long MONG_ID = 1L;
         private static final GroupCodeEntity GROUP_CODE_ENTITY = new GroupCodeEntity("TEST-GROUP-CODE", "테스트 그룹 코드");
@@ -520,31 +520,31 @@ class MongPersistenceServiceTest {
             groupCodeRepository.saveAndFlush(GROUP_CODE_ENTITY);
             comnCodeRepository.saveAndFlush(COMN_CODE_ENTITY);
 
-            CreateInventoryItemVo createInventoryItemVo = CreateInventoryItemVo.builder()
+            CreateInventoryVo createInventoryVo = CreateInventoryVo.builder()
                     .mongId(MONG_ID)
                     .typeCode(COMN_CODE_ENTITY.getCode())
-                    .inventoryItemTypeCode(InventoryItemTypeCode.FOOD)
+                    .inventoryTypeCode(InventoryTypeCode.FOOD)
                     .build();
 
             // act
-            var expected = mongPersistencePort.createInventoryItemPort(createInventoryItemVo);
+            var expected = mongPersistencePort.createInventoryItemPort(createInventoryVo);
 
             // assert
             assertFalse(expected.isEmpty());
-            assertEquals(COMN_CODE_ENTITY.getCode(), expected.get().getTypeCode());
-            assertEquals(COMN_CODE_ENTITY.getName(), expected.get().getTypeName());
+            assertEquals(COMN_CODE_ENTITY.getCode(), expected.get().getInventoryCode());
+            assertEquals(COMN_CODE_ENTITY.getName(), expected.get().getInventoryName());
         }
 
     }
 
     @Nested
     @DisplayName("인벤 아이템 삭제 단위 테스트")
-    class DeleteInventoryItemPort {
+    class DeleteInventoryPort {
 
         private static final Long MONG_ID = 1L;
         private static final GroupCodeEntity GROUP_CODE_ENTITY = new GroupCodeEntity("TEST-GROUP-CODE", "테스트 그룹 코드");
         private static final ComnCodeEntity COMN_CODE_ENTITY = new ComnCodeEntity("TEST-FOOD-TYPE-CODE", "테스트 음식 타입 코드", GROUP_CODE_ENTITY);
-        private static final FoodTypeEntity FOOD_TYPE_ENTITY = new FoodTypeEntity(null, COMN_CODE_ENTITY, 100, 100D, 100D, 100D, 100D, 100D, 5);
+        private static final FoodEntity FOOD_TYPE_ENTITY = new FoodEntity(null, COMN_CODE_ENTITY, 100, 100D, 100D, 100D, 100D, 100D, 5);
 
         @Test
         @DisplayName("인벤 아이템을 삭제 한다.")
@@ -554,15 +554,15 @@ class MongPersistenceServiceTest {
             comnCodeRepository.saveAndFlush(COMN_CODE_ENTITY);
             foodTypeRepository.saveAndFlush(FOOD_TYPE_ENTITY);
 
-            InventoryItemEntity inventoryItemEntity = inventoryItemRepository.saveAndFlush(InventoryItemEntity.builder()
+            InventoryEntity inventoryEntity = inventoryItemRepository.saveAndFlush(InventoryEntity.builder()
                     .mongId(MONG_ID)
-                    .type(COMN_CODE_ENTITY)
-                    .inventoryItemTypeCode(InventoryItemTypeCode.FOOD)
+                    .comn(COMN_CODE_ENTITY)
+                    .inventoryTypeCode(InventoryTypeCode.FOOD)
                     .build());
 
             // act
-            var expected1 = mongPersistencePort.deleteInventoryItemPort(inventoryItemEntity.getInventoryItemId());
-            var expected2 = mongRepository.findById(inventoryItemEntity.getInventoryItemId());
+            var expected1 = mongPersistencePort.deleteInventoryItemPort(inventoryEntity.getInventoryId());
+            var expected2 = mongRepository.findById(inventoryEntity.getInventoryId());
 
             // assert
             assertFalse(expected1.isEmpty());
@@ -572,12 +572,12 @@ class MongPersistenceServiceTest {
 
     @Nested
     @DisplayName("인벤 아이템 조회 단위 테스트")
-    class GetInventoryItemPort {
+    class GetInventoryPort {
 
         private static final Long MONG_ID = 1L;
         private static final GroupCodeEntity GROUP_CODE_ENTITY = new GroupCodeEntity("TEST-GROUP-CODE", "테스트 그룹 코드");
         private static final ComnCodeEntity COMN_CODE_ENTITY = new ComnCodeEntity("TEST-FOOD-TYPE-CODE", "테스트 음식 타입 코드", GROUP_CODE_ENTITY);
-        private static final FoodTypeEntity FOOD_TYPE_ENTITY = new FoodTypeEntity(null, COMN_CODE_ENTITY, 100, 100D, 100D, 100D, 100D, 100D, 5);
+        private static final FoodEntity FOOD_TYPE_ENTITY = new FoodEntity(null, COMN_CODE_ENTITY, 100, 100D, 100D, 100D, 100D, 100D, 5);
 
         @Test
         @DisplayName("인벤 아이템을 조회 한다.")
@@ -587,19 +587,19 @@ class MongPersistenceServiceTest {
             comnCodeRepository.saveAndFlush(COMN_CODE_ENTITY);
             foodTypeRepository.saveAndFlush(FOOD_TYPE_ENTITY);
 
-            InventoryItemEntity inventoryItemEntity = inventoryItemRepository.saveAndFlush(InventoryItemEntity.builder()
+            InventoryEntity inventoryEntity = inventoryItemRepository.saveAndFlush(InventoryEntity.builder()
                     .mongId(MONG_ID)
-                    .type(COMN_CODE_ENTITY)
-                    .inventoryItemTypeCode(InventoryItemTypeCode.FOOD)
+                    .comn(COMN_CODE_ENTITY)
+                    .inventoryTypeCode(InventoryTypeCode.FOOD)
                     .build());
 
             // act
-            var expected = mongPersistencePort.getInventoryItemPort(inventoryItemEntity.getInventoryItemId());
+            var expected = mongPersistencePort.getInventoryItemPort(inventoryEntity.getInventoryId());
 
             // assert
             assertFalse(expected.isEmpty());
-            assertEquals(COMN_CODE_ENTITY.getCode(), expected.get().getTypeCode());
-            assertEquals(COMN_CODE_ENTITY.getName(), expected.get().getTypeName());
+            assertEquals(COMN_CODE_ENTITY.getCode(), expected.get().getInventoryCode());
+            assertEquals(COMN_CODE_ENTITY.getName(), expected.get().getInventoryName());
         }
 
     }

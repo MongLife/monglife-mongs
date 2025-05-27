@@ -371,7 +371,7 @@ class MatchPersistenceServiceTest {
             assertEquals(matchEntity.getMatchId(), expected1.get().getMatchId());
             assertEquals(matchEntity.getMaxRound(), expected1.get().getMaxRound());
             assertEquals(matchEntity.getMatchPicks().size(), expected1.get().getMatchPicks().size());
-            assertEquals(matchEntity.getStateCode(), expected1.get().getMatchStateCode());
+            assertEquals(matchEntity.getStateCode(), expected1.get().getStateCode());
             assertEquals(matchEntity.getRound(), expected1.get().getRound());
             assertEquals(2, expected1.get().getMatchPlayers().size());
             assertEquals(matchEntity.getMatchPlayers().get(0).getPlayerId() , expected2.getPlayerId());
@@ -447,7 +447,7 @@ class MatchPersistenceServiceTest {
             assertNotNull(expected2);
             assertNotNull(expected1.get().getMatchId());
             assertEquals(createMatchVo.getRound(), expected1.get().getRound());
-            assertEquals(createMatchVo.getMatchStateCode(), expected1.get().getMatchStateCode());
+            assertEquals(createMatchVo.getMatchStateCode(), expected1.get().getStateCode());
             assertEquals(createMatchVo.getMatchPlayers().size(), expected1.get().getMatchPlayers().size());
             assertEquals(createMatchVo.getMatchPlayers().get(0).getPlayerId() , expected2.getPlayerId());
             assertEquals(createMatchVo.getMatchPlayers().get(0).getDeviceId() , expected2.getDeviceId());
@@ -519,7 +519,7 @@ class MatchPersistenceServiceTest {
                             .targetPlayerId(playerId1)
                             .round(1)
                             .pickCode(MatchPickCode.MATCH_PICK_ATTACK)
-                            .value(attack2)
+                            .pickValue(attack2)
                             .build()));
 
             MatchEntity matchEntity = matchRepository.saveAndFlush(MatchEntity.builder()
@@ -536,8 +536,8 @@ class MatchPersistenceServiceTest {
                     .matchPlayer(saveMatch.getMatchPlayer(playerId1))
                     .targetMatchPlayer(saveMatch.getMatchPlayer(playerId2))
                     .round(1)
-                    .matchPickCode(MatchPickCode.MATCH_PICK_ATTACK)
-                    .value(attack1)
+                    .pickCode(MatchPickCode.MATCH_PICK_ATTACK)
+                    .pickValue(attack1)
                     .build());
 
             // act
@@ -550,7 +550,7 @@ class MatchPersistenceServiceTest {
             assertEquals(matchEntity.getMatchId(), expected1.get().getMatchId());
             assertEquals(matchEntity.getMaxRound(), expected1.get().getMaxRound());
             assertEquals(0, expected1.get().getMatchPicks().size());
-            assertEquals(matchEntity.getStateCode(), expected1.get().getMatchStateCode());
+            assertEquals(matchEntity.getStateCode(), expected1.get().getStateCode());
             assertEquals(2, expected1.get().getRound());
             assertEquals(2, expected1.get().getMatchPlayers().size());
             assertEquals(matchEntity.getMatchPlayers().get(0).getPlayerId(), expected2.getPlayerId());

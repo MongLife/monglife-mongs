@@ -2,7 +2,7 @@ package com.monglife.mongs.adapter.in.device.event.consumer;
 
 import com.monglife.module.common.kafka.config.KafkaAutoConfig;
 import com.monglife.module.common.kafka.service.KafkaService;
-import com.monglife.mongs.adapter.transaction.ExchangeCurrentWalkingCountEventDto;
+import com.monglife.mongs.adapter.transaction.ExchangeCurrentWalkingCountRollbackEventDto;
 import com.monglife.mongs.application.device.port.in.StepUseCase;
 import com.monglife.mongs.application.device.port.in.command.IncreaseCurrentWalkingCountCommand;
 import com.monglife.mongs.core.kafka.event.enums.EventTopic;
@@ -60,14 +60,14 @@ class StepRollbackConsumerTest {
             int payPoint = 100;
 
             // act
-            ExchangeCurrentWalkingCountEventDto exchangeCurrentWalkingCountEventDto = ExchangeCurrentWalkingCountEventDto.builder()
+            ExchangeCurrentWalkingCountRollbackEventDto exchangeCurrentWalkingCountRollbackEventDto = ExchangeCurrentWalkingCountRollbackEventDto.builder()
                     .deviceId(deviceId)
                     .mongId(mongId)
                     .walkingCount(walkingCount)
                     .payPoint(payPoint)
                     .build();
 
-            kafkaService.generateEvent(topic, exchangeCurrentWalkingCountEventDto);
+            kafkaService.generateEvent(topic, exchangeCurrentWalkingCountRollbackEventDto);
 
             // assert
             ArgumentCaptor<IncreaseCurrentWalkingCountCommand> captor = ArgumentCaptor.forClass(IncreaseCurrentWalkingCountCommand.class);

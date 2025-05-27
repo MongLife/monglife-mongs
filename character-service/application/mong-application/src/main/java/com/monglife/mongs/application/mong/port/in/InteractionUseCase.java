@@ -15,9 +15,9 @@ public interface InteractionUseCase {
 
     Mong feedSnackUseCase(FeedSnackCommand command);
 
-    List<InventoryItem> getInventoryItemsUseCase(GetInventoryItemsCommand command);
+    List<Inventory> getInventoriesUseCase(GetInventoryItemsCommand command);
 
-    Mong useInventoryItemUseCase(UseInventoryItemCommand command);
+    Mong useInventoryUseCase(UseInventoryItemCommand command);
 
-    RandomDrawItem randomDrawUseCase(RandomDrawCommand command);
+    RandomDraw randomDrawUseCase(RandomDrawCommand command);
 }

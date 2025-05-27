@@ -15,7 +15,7 @@ public class AdapterOutMongScheduleConfig {
     @Value("${application.task.scheduler.pool-size}")
     private Integer SCHEDULER_POOL_SIZE;
 
-    @Bean
+    @Bean(name = "taskScheduledExecutorService")
     public ScheduledExecutorService scheduledExecutorService() {
         return Executors.newScheduledThreadPool(SCHEDULER_POOL_SIZE);
     }

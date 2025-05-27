@@ -1,5 +1,6 @@
 dependencies {
     // adapter-in layer
+    implementation project(':character-service:adapter-in:battle-schedule-adapter-in')
     implementation project(':character-service:adapter-in:battle-subscribe-adapter-in')
     implementation project(':character-service:adapter-in:battle-web-adapter-in')
     implementation project(':character-service:adapter-in:mong-event-adapter-in')
@@ -8,6 +9,7 @@ dependencies {
     // adapter-out layer
     implementation project(':character-service:adapter-out:battle-persistence-adapter-out')
     implementation project(':character-service:adapter-out:battle-publish-adapter-out')
+    implementation project(':character-service:adapter-out:mong-event-adapter-out')
     implementation project(':character-service:adapter-out:mong-persistence-adapter-out')
     implementation project(':character-service:adapter-out:mong-publish-adapter-out')
     implementation project(':character-service:adapter-out:mong-schedule-adapter-out')

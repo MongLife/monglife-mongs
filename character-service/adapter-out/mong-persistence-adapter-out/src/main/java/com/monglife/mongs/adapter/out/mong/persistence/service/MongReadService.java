@@ -45,7 +45,7 @@ public class MongReadService implements MongReadPort {
     @Transactional
     public Long getMongStrokeExpirationSecondsPort(Long mongId) {
         return mongStrokeHistoryRepository.findByMongId(mongId)
-                .map(mongStrokeHistoryEntity -> mongStrokeHistoryEntity.getExpiration() - Duration.between(mongStrokeHistoryEntity.getStrokeAt(), LocalDateTime.now()).getSeconds())
+                .map(mongStrokeHistoryEntity -> mongStrokeHistoryEntity.getExpiration() - Duration.between(mongStrokeHistoryEntity.getStrokedAt(), LocalDateTime.now()).getSeconds())
                 .orElse(0L);
     }
 
@@ -112,22 +112,22 @@ public class MongReadService implements MongReadPort {
     @Transactional
     public Optional<Food> getFoodPort(String foodTypeCode, Long mongId) {
 
-        Optional<FoodTypeEntity> foodTypeEntityOptional = foodTypeRepository.findByComnCode(foodTypeCode);
+        Optional<FoodEntity> foodTypeEntityOptional = foodTypeRepository.findByComnCode(foodTypeCode);
 
         if (foodTypeEntityOptional.isPresent()) {
-            FoodTypeEntity foodTypeEntity = foodTypeEntityOptional.get();
-            boolean isCanBuy = mongFeedHistoryRepository.findByMongIdAndTypeCode(mongId, foodTypeCode).isEmpty();
+            FoodEntity foodEntity = foodTypeEntityOptional.get();
+            boolean isCanBuy = mongFeedHistoryRepository.findByMongIdAndCode(mongId, foodTypeCode).isEmpty();
 
             Food food = Food.builder()
-                    .foodTypeCode(foodTypeEntity.getComn().getCode())
-                    .foodTypeName(foodTypeEntity.getComn().getName())
-                    .price(foodTypeEntity.getPrice())
+                    .foodCode(foodEntity.getComn().getCode())
+                    .foodName(foodEntity.getComn().getName())
+                    .price(foodEntity.getPrice())
                     .isCanBuy(isCanBuy)
-                    .weight(foodTypeEntity.getWeight())
-                    .strength(foodTypeEntity.getStrength())
-                    .satiety(foodTypeEntity.getSatiety())
-                    .healthy(foodTypeEntity.getHealthy())
-                    .fatigue(foodTypeEntity.getFatigue())
+                    .weight(foodEntity.getWeight())
+                    .strength(foodEntity.getStrength())
+                    .satiety(foodEntity.getSatiety())
+                    .healthy(foodEntity.getHealthy())
+                    .fatigue(foodEntity.getFatigue())
                     .build();
 
             return Optional.of(food);
@@ -146,20 +146,20 @@ public class MongReadService implements MongReadPort {
     public List<Food> getFoodsPort(Long mongId) {
 
         List<String> invalidBuyFoodTypeCodes = mongFeedHistoryRepository.findByMongId(mongId).stream()
-                .map(MongFeedHistoryEntity::getTypeCode)
+                .map(MongFeedHistoryEntity::getCode)
                 .toList();
 
         return foodTypeRepository.findAll().stream()
-                .map(foodTypeEntity -> Food.builder()
-                            .foodTypeCode(foodTypeEntity.getComn().getCode())
-                            .foodTypeName(foodTypeEntity.getComn().getName())
-                            .price(foodTypeEntity.getPrice())
-                            .isCanBuy(!invalidBuyFoodTypeCodes.contains(foodTypeEntity.getComn().getCode()))
-                            .weight(foodTypeEntity.getWeight())
-                            .strength(foodTypeEntity.getStrength())
-                            .satiety(foodTypeEntity.getSatiety())
-                            .healthy(foodTypeEntity.getHealthy())
-                            .fatigue(foodTypeEntity.getFatigue())
+                .map(foodEntity -> Food.builder()
+                            .foodCode(foodEntity.getComn().getCode())
+                            .foodName(foodEntity.getComn().getName())
+                            .price(foodEntity.getPrice())
+                            .isCanBuy(!invalidBuyFoodTypeCodes.contains(foodEntity.getComn().getCode()))
+                            .weight(foodEntity.getWeight())
+                            .strength(foodEntity.getStrength())
+                            .satiety(foodEntity.getSatiety())
+                            .healthy(foodEntity.getHealthy())
+                            .fatigue(foodEntity.getFatigue())
                             .build())
                 .toList();
     }
@@ -174,22 +174,22 @@ public class MongReadService implements MongReadPort {
     @Transactional
     public Optional<Snack> getSnackPort(String snackTypeCode, Long mongId) {
 
-        Optional<SnackTypeEntity> snackTypeEntityOptional = snackTypeRepository.findByComnCode(snackTypeCode);
+        Optional<SnackEntity> snackTypeEntityOptional = snackTypeRepository.findByComnCode(snackTypeCode);
 
         if (snackTypeEntityOptional.isPresent()) {
-            SnackTypeEntity snackTypeEntity = snackTypeEntityOptional.get();
-            boolean isCanBuy = mongFeedHistoryRepository.findByMongIdAndTypeCode(mongId, snackTypeCode).isEmpty();
+            SnackEntity snackEntity = snackTypeEntityOptional.get();
+            boolean isCanBuy = mongFeedHistoryRepository.findByMongIdAndCode(mongId, snackTypeCode).isEmpty();
 
             Snack snack = Snack.builder()
-                    .snackTypeCode(snackTypeEntity.getComn().getCode())
-                    .snackTypeName(snackTypeEntity.getComn().getName())
-                    .price(snackTypeEntity.getPrice())
+                    .snackCode(snackEntity.getComn().getCode())
+                    .snackName(snackEntity.getComn().getName())
+                    .price(snackEntity.getPrice())
                     .isCanBuy(isCanBuy)
-                    .weight(snackTypeEntity.getWeight())
-                    .strength(snackTypeEntity.getStrength())
-                    .satiety(snackTypeEntity.getSatiety())
-                    .healthy(snackTypeEntity.getHealthy())
-                    .fatigue(snackTypeEntity.getFatigue())
+                    .weight(snackEntity.getWeight())
+                    .strength(snackEntity.getStrength())
+                    .satiety(snackEntity.getSatiety())
+                    .healthy(snackEntity.getHealthy())
+                    .fatigue(snackEntity.getFatigue())
                     .build();
 
             return Optional.of(snack);
@@ -208,20 +208,20 @@ public class MongReadService implements MongReadPort {
     public List<Snack> getSnacksPort(Long mongId) {
 
         List<String> invalidBuySnackTypeCodes = mongFeedHistoryRepository.findByMongId(mongId).stream()
-                .map(MongFeedHistoryEntity::getTypeCode)
+                .map(MongFeedHistoryEntity::getCode)
                 .toList();
 
         return snackTypeRepository.findAll().stream()
-                .map(snackTypeEntity -> Snack.builder()
-                        .snackTypeCode(snackTypeEntity.getComn().getCode())
-                        .snackTypeName(snackTypeEntity.getComn().getName())
-                        .price(snackTypeEntity.getPrice())
-                        .isCanBuy(!invalidBuySnackTypeCodes.contains(snackTypeEntity.getComn().getCode()))
-                        .weight(snackTypeEntity.getWeight())
-                        .strength(snackTypeEntity.getStrength())
-                        .satiety(snackTypeEntity.getSatiety())
-                        .healthy(snackTypeEntity.getHealthy())
-                        .fatigue(snackTypeEntity.getFatigue())
+                .map(snackEntity -> Snack.builder()
+                        .snackCode(snackEntity.getComn().getCode())
+                        .snackName(snackEntity.getComn().getName())
+                        .price(snackEntity.getPrice())
+                        .isCanBuy(!invalidBuySnackTypeCodes.contains(snackEntity.getComn().getCode()))
+                        .weight(snackEntity.getWeight())
+                        .strength(snackEntity.getStrength())
+                        .satiety(snackEntity.getSatiety())
+                        .healthy(snackEntity.getHealthy())
+                        .fatigue(snackEntity.getFatigue())
                         .build())
                 .toList();
     }
@@ -246,7 +246,7 @@ public class MongReadService implements MongReadPort {
     @Override
     @Transactional
     public Optional<TrainingType> getTrainingTypePort(String trainingTypeCode) {
-        return trainingTypeRepository.findByTrainingTypeCode(trainingTypeCode)
+        return trainingTypeRepository.findByComnCode(trainingTypeCode)
                 .map(TrainingTypeEntity::toDomain)
                 .or(Optional::empty);
     }
@@ -257,9 +257,9 @@ public class MongReadService implements MongReadPort {
      */
     @Override
     @Transactional
-    public List<RandomDrawItem> getRandomDrawItemsPort() {
+    public List<RandomDraw> getRandomDrawItemsPort() {
         return randomDrawItemRepository.findAll().stream()
-                .map(RandomDrawItemEntity::toDomain)
+                .map(RandomDrawEntity::toDomain)
                 .toList();
     }
 
@@ -270,9 +270,9 @@ public class MongReadService implements MongReadPort {
      */
     @Override
     @Transactional
-    public List<InventoryItem> getInventoryItemsPort(Long mongId) {
+    public List<Inventory> getInventoryItemsPort(Long mongId) {
         return inventoryItemRepository.findByMongId(mongId).stream()
-                .map(InventoryItemEntity::toDomain)
+                .map(InventoryEntity::toDomain)
                 .toList();
     }
 }

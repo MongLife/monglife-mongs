@@ -22,16 +22,16 @@ public class MongStrokeHistoryEntity {
     @Indexed
     private Long mongId;
 
-    private LocalDateTime strokeAt;
+    private LocalDateTime strokedAt;
 
     @TimeToLive
     private Long expiration;
 
     @Builder
-    public MongStrokeHistoryEntity(String mongStrokeHistoryId, Long mongId, LocalDateTime strokeAt, Long expiration) {
+    public MongStrokeHistoryEntity(String mongStrokeHistoryId, Long mongId, LocalDateTime strokedAt, Long expiration) {
         this.mongStrokeHistoryId = mongStrokeHistoryId;
         this.mongId = mongId;
-        this.strokeAt = strokeAt;
+        this.strokedAt = strokedAt;
         this.expiration = expiration;
     }
 }

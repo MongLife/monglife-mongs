@@ -8,7 +8,7 @@ import com.monglife.mongs.application.mong.port.in.utils.MongTestUtil;
 import com.monglife.mongs.application.mong.port.out.MongEventPort;
 import com.monglife.mongs.application.mong.port.out.MongPersistencePort;
 import com.monglife.mongs.application.mong.port.out.MongReadPort;
-import com.monglife.mongs.domain.mong.enums.InventoryItemTypeCode;
+import com.monglife.mongs.domain.mong.enums.InventoryTypeCode;
 import com.monglife.mongs.domain.mong.exception.InvalidMongStateException;
 import com.monglife.mongs.domain.mong.model.*;
 import org.junit.jupiter.api.DisplayName;
@@ -171,14 +171,14 @@ class InteractionServiceTest {
             int payPoint = 100;
             Mong mong = MongTestUtil.getFirstLevelMong(mongId, accountId, status, maxStatus, payPoint);
 
-            Mockito.when(mongReadPort.getFoodPort(food.getFoodTypeCode(), mongId)).thenReturn(Optional.of(food));
+            Mockito.when(mongReadPort.getFoodPort(food.getFoodCode(), mongId)).thenReturn(Optional.of(food));
             Mockito.when(mongPersistencePort.getMongPort(mongId)).thenReturn(Optional.of(mong));
             Mockito.when(mongPersistencePort.saveMongPort(mong)).thenReturn(Optional.of(mong));
-            Mockito.when(mongPersistencePort.createMongFeedFoodHistoryPort(mongId, food.getFoodTypeCode())).thenReturn(Optional.of(food.getFoodTypeCode()));
+            Mockito.when(mongPersistencePort.createMongFeedFoodHistoryPort(mongId, food.getFoodCode())).thenReturn(Optional.of(food.getFoodCode()));
 
             // act
             FeedFoodCommand command = FeedFoodCommand.builder()
-                    .foodTypeCode(food.getFoodTypeCode())
+                    .foodTypeCode(food.getFoodCode())
                     .mongId(mongId)
                     .accountId(accountId)
                     .build();
@@ -207,14 +207,14 @@ class InteractionServiceTest {
             double maxStatus = 100;
             Mong mong = MongTestUtil.getEggMong(mongId, accountId, maxStatus);
 
-            Mockito.when(mongReadPort.getFoodPort(food.getFoodTypeCode(), mongId)).thenReturn(Optional.of(food));
+            Mockito.when(mongReadPort.getFoodPort(food.getFoodCode(), mongId)).thenReturn(Optional.of(food));
             Mockito.when(mongPersistencePort.getMongPort(mongId)).thenReturn(Optional.of(mong));
             Mockito.when(mongPersistencePort.saveMongPort(mong)).thenReturn(Optional.of(mong));
-            Mockito.when(mongPersistencePort.createMongFeedFoodHistoryPort(mongId, food.getFoodTypeCode())).thenReturn(Optional.of(food.getFoodTypeCode()));
+            Mockito.when(mongPersistencePort.createMongFeedFoodHistoryPort(mongId, food.getFoodCode())).thenReturn(Optional.of(food.getFoodCode()));
 
             // act & assert
             FeedFoodCommand command = FeedFoodCommand.builder()
-                    .foodTypeCode(food.getFoodTypeCode())
+                    .foodTypeCode(food.getFoodCode())
                     .mongId(mongId)
                     .accountId(accountId)
                     .build();
@@ -238,14 +238,14 @@ class InteractionServiceTest {
             // 자는 상태로 변경
             mong.sleep();
 
-            Mockito.when(mongReadPort.getFoodPort(food.getFoodTypeCode(), mongId)).thenReturn(Optional.of(food));
+            Mockito.when(mongReadPort.getFoodPort(food.getFoodCode(), mongId)).thenReturn(Optional.of(food));
             Mockito.when(mongPersistencePort.getMongPort(mongId)).thenReturn(Optional.of(mong));
             Mockito.when(mongPersistencePort.saveMongPort(mong)).thenReturn(Optional.of(mong));
-            Mockito.when(mongPersistencePort.createMongFeedFoodHistoryPort(mongId, food.getFoodTypeCode())).thenReturn(Optional.of(food.getFoodTypeCode()));
+            Mockito.when(mongPersistencePort.createMongFeedFoodHistoryPort(mongId, food.getFoodCode())).thenReturn(Optional.of(food.getFoodCode()));
 
             // act & assert
             FeedFoodCommand command = FeedFoodCommand.builder()
-                    .foodTypeCode(food.getFoodTypeCode())
+                    .foodTypeCode(food.getFoodCode())
                     .mongId(mongId)
                     .accountId(accountId)
                     .build();
@@ -269,14 +269,14 @@ class InteractionServiceTest {
             // 사망 상태로 변경
             mong.dead();
 
-            Mockito.when(mongReadPort.getFoodPort(food.getFoodTypeCode(), mongId)).thenReturn(Optional.of(food));
+            Mockito.when(mongReadPort.getFoodPort(food.getFoodCode(), mongId)).thenReturn(Optional.of(food));
             Mockito.when(mongPersistencePort.getMongPort(mongId)).thenReturn(Optional.of(mong));
             Mockito.when(mongPersistencePort.saveMongPort(mong)).thenReturn(Optional.of(mong));
-            Mockito.when(mongPersistencePort.createMongFeedFoodHistoryPort(mongId, food.getFoodTypeCode())).thenReturn(Optional.of(food.getFoodTypeCode()));
+            Mockito.when(mongPersistencePort.createMongFeedFoodHistoryPort(mongId, food.getFoodCode())).thenReturn(Optional.of(food.getFoodCode()));
 
             // act & assert
             FeedFoodCommand command = FeedFoodCommand.builder()
-                    .foodTypeCode(food.getFoodTypeCode())
+                    .foodTypeCode(food.getFoodCode())
                     .mongId(mongId)
                     .accountId(accountId)
                     .build();
@@ -304,14 +304,14 @@ class InteractionServiceTest {
             int payPoint = 100;
             Mong mong = MongTestUtil.getFirstLevelMong(mongId, accountId, status, maxStatus, payPoint);
 
-            Mockito.when(mongReadPort.getSnackPort(snack.getSnackTypeCode(), mongId)).thenReturn(Optional.of(snack));
+            Mockito.when(mongReadPort.getSnackPort(snack.getSnackCode(), mongId)).thenReturn(Optional.of(snack));
             Mockito.when(mongPersistencePort.getMongPort(mongId)).thenReturn(Optional.of(mong));
             Mockito.when(mongPersistencePort.saveMongPort(mong)).thenReturn(Optional.of(mong));
-            Mockito.when(mongPersistencePort.createMongFeedSnackHistoryPort(mongId, snack.getSnackTypeCode())).thenReturn(Optional.of(snack.getSnackTypeCode()));
+            Mockito.when(mongPersistencePort.createMongFeedSnackHistoryPort(mongId, snack.getSnackCode())).thenReturn(Optional.of(snack.getSnackCode()));
 
             // act
             FeedSnackCommand command = FeedSnackCommand.builder()
-                    .snackTypeCode(snack.getSnackTypeCode())
+                    .snackTypeCode(snack.getSnackCode())
                     .mongId(mongId)
                     .accountId(accountId)
                     .build();
@@ -340,14 +340,14 @@ class InteractionServiceTest {
             double maxStatus = 100;
             Mong mong = MongTestUtil.getEggMong(mongId, accountId, maxStatus);
 
-            Mockito.when(mongReadPort.getSnackPort(snack.getSnackTypeCode(), mongId)).thenReturn(Optional.of(snack));
+            Mockito.when(mongReadPort.getSnackPort(snack.getSnackCode(), mongId)).thenReturn(Optional.of(snack));
             Mockito.when(mongPersistencePort.getMongPort(mongId)).thenReturn(Optional.of(mong));
             Mockito.when((mongPersistencePort.saveMongPort(mong))).thenReturn(Optional.of(mong));
-            Mockito.when(mongPersistencePort.createMongFeedSnackHistoryPort(mongId, snack.getSnackTypeCode())).thenReturn(Optional.of(snack.getSnackTypeCode()));
+            Mockito.when(mongPersistencePort.createMongFeedSnackHistoryPort(mongId, snack.getSnackCode())).thenReturn(Optional.of(snack.getSnackCode()));
 
             // act & assert
             FeedSnackCommand command = FeedSnackCommand.builder()
-                    .snackTypeCode(snack.getSnackTypeCode())
+                    .snackTypeCode(snack.getSnackCode())
                     .mongId(mongId)
                     .accountId(accountId)
                     .build();
@@ -371,14 +371,14 @@ class InteractionServiceTest {
             // 수면 상태로 변경
             mong.sleep();
 
-            Mockito.when(mongReadPort.getSnackPort(snack.getSnackTypeCode(), mongId)).thenReturn(Optional.of(snack));
+            Mockito.when(mongReadPort.getSnackPort(snack.getSnackCode(), mongId)).thenReturn(Optional.of(snack));
             Mockito.when(mongPersistencePort.getMongPort(mongId)).thenReturn(Optional.of(mong));
             Mockito.when((mongPersistencePort.saveMongPort(mong))).thenReturn(Optional.of(mong));
-            Mockito.when(mongPersistencePort.createMongFeedSnackHistoryPort(mongId, snack.getSnackTypeCode())).thenReturn(Optional.of(snack.getSnackTypeCode()));
+            Mockito.when(mongPersistencePort.createMongFeedSnackHistoryPort(mongId, snack.getSnackCode())).thenReturn(Optional.of(snack.getSnackCode()));
 
             // act & assert
             FeedSnackCommand command = FeedSnackCommand.builder()
-                    .snackTypeCode(snack.getSnackTypeCode())
+                    .snackTypeCode(snack.getSnackCode())
                     .mongId(mongId)
                     .accountId(accountId)
                     .build();
@@ -402,14 +402,14 @@ class InteractionServiceTest {
             // 사망 상태로 변경
             mong.dead();
 
-            Mockito.when(mongReadPort.getSnackPort(snack.getSnackTypeCode(), mongId)).thenReturn(Optional.of(snack));
+            Mockito.when(mongReadPort.getSnackPort(snack.getSnackCode(), mongId)).thenReturn(Optional.of(snack));
             Mockito.when(mongPersistencePort.getMongPort(mongId)).thenReturn(Optional.of(mong));
             Mockito.when((mongPersistencePort.saveMongPort(mong))).thenReturn(Optional.of(mong));
-            Mockito.when(mongPersistencePort.createMongFeedSnackHistoryPort(mongId, snack.getSnackTypeCode())).thenReturn(Optional.of(snack.getSnackTypeCode()));
+            Mockito.when(mongPersistencePort.createMongFeedSnackHistoryPort(mongId, snack.getSnackCode())).thenReturn(Optional.of(snack.getSnackCode()));
 
             // act & assert
             FeedSnackCommand command = FeedSnackCommand.builder()
-                    .snackTypeCode(snack.getSnackTypeCode())
+                    .snackTypeCode(snack.getSnackCode())
                     .mongId(mongId)
                     .accountId(accountId)
                     .build();
@@ -420,11 +420,11 @@ class InteractionServiceTest {
 
     @Nested
     @DisplayName("인벤 아이템 목록 조회 단위 테스트")
-    class GetInventoryItemsUseCase {
+    class GetInventoriesUseCase {
 
         @Test
         @DisplayName("인벤토리 아이템 목록을 조회 한다.")
-        void getInventoryItems() {
+        void getInventories() {
             // arrange
             long mongId = 1L;
             long accountId = 1L;
@@ -435,17 +435,17 @@ class InteractionServiceTest {
             String typeCode = "TEST-INVENTORY-ITEM-TYPE-CODE";
             String typeName = "TEST-INVENTORY-ITEM-TYPE-NAME";
 
-            List<InventoryItem> inventoryItems = List.of(
-                    InventoryItem.builder()
-                            .inventoryItemId(inventoryItemId)
+            List<Inventory> inventories = List.of(
+                    Inventory.builder()
+                            .inventoryId(inventoryItemId)
                             .mongId(mongId)
-                            .inventoryItemTypeCode(InventoryItemTypeCode.FOOD)
-                            .typeCode(typeCode)
-                            .typeName(typeName)
+                            .inventoryTypeCode(InventoryTypeCode.FOOD)
+                            .inventoryCode(typeCode)
+                            .inventoryName(typeName)
                             .build());
 
             Mockito.when(mongReadPort.getMongPort(mongId)).thenReturn(Optional.of(mong));
-            Mockito.when(mongReadPort.getInventoryItemsPort(mongId)).thenReturn(inventoryItems);
+            Mockito.when(mongReadPort.getInventoryItemsPort(mongId)).thenReturn(inventories);
 
             // act
             GetInventoryItemsCommand command = GetInventoryItemsCommand.builder()
@@ -453,20 +453,20 @@ class InteractionServiceTest {
                     .accountId(accountId)
                     .build();
 
-            List<InventoryItem> expected = interactionUseCase.getInventoryItemsUseCase(command);
+            List<Inventory> expected = interactionUseCase.getInventoriesUseCase(command);
 
             // assert
-            assertIterableEquals(expected, inventoryItems);
+            assertIterableEquals(expected, inventories);
         }
     }
 
     @Nested
     @DisplayName("인벤 소비성 아이템 사용 단위 테스트")
-    class UseInventoryItemUseCase {
+    class UseInventoryUseCase {
 
         @Test
         @DisplayName("소비성 인벤토리 아이템을 사용하여 음식을 섭취 한다.")
-        void useInventoryItemWhenFeedFood() {
+        void useInventoryWhenFeedFood() {
             // arrange
             long mongId = 1L;
             long accountId = 1L;
@@ -480,19 +480,19 @@ class InteractionServiceTest {
             Food food = MongTestUtil.getFood(price, isCanBuy, 10D);
 
             long inventoryItemId = 1L;
-            InventoryItem inventoryItem = InventoryItem.builder()
-                    .inventoryItemId(inventoryItemId)
+            Inventory inventory = Inventory.builder()
+                    .inventoryId(inventoryItemId)
                     .mongId(mongId)
-                    .inventoryItemTypeCode(InventoryItemTypeCode.FOOD)
-                    .typeCode(food.getFoodTypeCode())
-                    .typeName(food.getFoodTypeName())
+                    .inventoryTypeCode(InventoryTypeCode.FOOD)
+                    .inventoryCode(food.getFoodCode())
+                    .inventoryName(food.getFoodName())
                     .build();
 
             Mockito.when(mongPersistencePort.getMongPort(mongId)).thenReturn(Optional.of(mong));
-            Mockito.when(mongPersistencePort.getInventoryItemPort(mongId)).thenReturn(Optional.of(inventoryItem));
-            Mockito.when(mongReadPort.getFoodPort(food.getFoodTypeCode(), mongId)).thenReturn(Optional.of(food));
+            Mockito.when(mongPersistencePort.getInventoryItemPort(mongId)).thenReturn(Optional.of(inventory));
+            Mockito.when(mongReadPort.getFoodPort(food.getFoodCode(), mongId)).thenReturn(Optional.of(food));
             Mockito.when((mongPersistencePort.saveMongPort(mong))).thenReturn(Optional.of(mong));
-            Mockito.when(mongPersistencePort.deleteInventoryItemPort(inventoryItemId)).thenReturn(Optional.of(inventoryItem));
+            Mockito.when(mongPersistencePort.deleteInventoryItemPort(inventoryItemId)).thenReturn(Optional.of(inventory));
 
             // act
             UseInventoryItemCommand command = UseInventoryItemCommand.builder()
@@ -501,7 +501,7 @@ class InteractionServiceTest {
                     .accountId(accountId)
                     .build();
 
-            Mong expected = interactionUseCase.useInventoryItemUseCase(command);
+            Mong expected = interactionUseCase.useInventoryUseCase(command);
 
             // assert
             assertEquals(payPoint, mong.getPayPoint());
@@ -514,7 +514,7 @@ class InteractionServiceTest {
 
         @Test
         @DisplayName("소비성 인벤토리 아이템을 사용하여 간식을 섭취 한다.")
-        void useInventoryItemWhenFeedSnack() {
+        void useInventoryWhenFeedSnack() {
             // arrange
             long mongId = 1L;
             long accountId = 1L;
@@ -528,19 +528,19 @@ class InteractionServiceTest {
             Snack snack = MongTestUtil.getSnack(price, isCanBuy, 10D);
 
             long inventoryItemId = 1L;
-            InventoryItem inventoryItem = InventoryItem.builder()
-                    .inventoryItemId(inventoryItemId)
+            Inventory inventory = Inventory.builder()
+                    .inventoryId(inventoryItemId)
                     .mongId(mongId)
-                    .inventoryItemTypeCode(InventoryItemTypeCode.SNACK)
-                    .typeCode(snack.getSnackTypeCode())
-                    .typeName(snack.getSnackTypeName())
+                    .inventoryTypeCode(InventoryTypeCode.SNACK)
+                    .inventoryCode(snack.getSnackCode())
+                    .inventoryName(snack.getSnackName())
                     .build();
 
             Mockito.when(mongPersistencePort.getMongPort(mongId)).thenReturn(Optional.of(mong));
-            Mockito.when(mongPersistencePort.getInventoryItemPort(mongId)).thenReturn(Optional.of(inventoryItem));
-            Mockito.when(mongReadPort.getSnackPort(snack.getSnackTypeCode(), mongId)).thenReturn(Optional.of(snack));
+            Mockito.when(mongPersistencePort.getInventoryItemPort(mongId)).thenReturn(Optional.of(inventory));
+            Mockito.when(mongReadPort.getSnackPort(snack.getSnackCode(), mongId)).thenReturn(Optional.of(snack));
             Mockito.when(mongPersistencePort.saveMongPort(mong)).thenReturn(Optional.of(mong));
-            Mockito.when(mongPersistencePort.deleteInventoryItemPort(inventoryItemId)).thenReturn(Optional.of(inventoryItem));
+            Mockito.when(mongPersistencePort.deleteInventoryItemPort(inventoryItemId)).thenReturn(Optional.of(inventory));
 
             // act
             UseInventoryItemCommand command = UseInventoryItemCommand.builder()
@@ -549,7 +549,7 @@ class InteractionServiceTest {
                     .accountId(accountId)
                     .build();
 
-            Mong expected = interactionUseCase.useInventoryItemUseCase(command);
+            Mong expected = interactionUseCase.useInventoryUseCase(command);
 
             // assert
             assertEquals(payPoint, mong.getPayPoint());
@@ -574,16 +574,16 @@ class InteractionServiceTest {
             long inventoryItemId = 1L;
             String typeCode = "TEST-TYPE-CODE";
             String typeName = "TEST-TYPE-NAME";
-            InventoryItem inventoryItem = InventoryItem.builder()
-                    .inventoryItemId(inventoryItemId)
+            Inventory inventory = Inventory.builder()
+                    .inventoryId(inventoryItemId)
                     .mongId(mongId)
-                    .inventoryItemTypeCode(InventoryItemTypeCode.MAP)
-                    .typeCode(typeCode)
-                    .typeName(typeName)
+                    .inventoryTypeCode(InventoryTypeCode.MAP)
+                    .inventoryCode(typeCode)
+                    .inventoryName(typeName)
                     .build();
 
             Mockito.when(mongPersistencePort.getMongPort(mongId)).thenReturn(Optional.of(mong));
-            Mockito.when(mongPersistencePort.getInventoryItemPort(mongId)).thenReturn(Optional.of(inventoryItem));
+            Mockito.when(mongPersistencePort.getInventoryItemPort(mongId)).thenReturn(Optional.of(inventory));
 
             // act & assert
             UseInventoryItemCommand command = UseInventoryItemCommand.builder()
@@ -592,7 +592,7 @@ class InteractionServiceTest {
                     .accountId(accountId)
                     .build();
 
-            assertThrows(InvalidUseInventoryItemException.class, () -> interactionUseCase.useInventoryItemUseCase(command));
+            assertThrows(InvalidUseInventoryItemException.class, () -> interactionUseCase.useInventoryUseCase(command));
         }
     }
 
@@ -614,25 +614,25 @@ class InteractionServiceTest {
             long inventoryItemId = 1L;
             String typeCode = "TEST-TYPE-CODE";
             String typeName = "TEST-TYPE-NAME";
-            InventoryItem inventoryItem = InventoryItem.builder()
-                    .inventoryItemId(inventoryItemId)
+            Inventory inventory = Inventory.builder()
+                    .inventoryId(inventoryItemId)
                     .mongId(mongId)
-                    .inventoryItemTypeCode(InventoryItemTypeCode.FOOD)
-                    .typeCode(typeCode)
-                    .typeName(typeName)
+                    .inventoryTypeCode(InventoryTypeCode.FOOD)
+                    .inventoryCode(typeCode)
+                    .inventoryName(typeName)
                     .build();
 
-            List<RandomDrawItem> randomDrawItems = List.of(
-                    RandomDrawItem.builder()
-                            .randomDrawItemId(inventoryItemId)
-                            .inventoryItemTypeCode(inventoryItem.getInventoryItemTypeCode())
-                            .typeCode(inventoryItem.getTypeCode())
-                            .typeName(inventoryItem.getTypeName())
+            List<RandomDraw> randomDraws = List.of(
+                    RandomDraw.builder()
+                            .randomDrawId(inventoryItemId)
+                            .inventoryTypeCode(inventory.getInventoryTypeCode())
+                            .randomDrawCode(inventory.getInventoryCode())
+                            .randomDrawName(inventory.getInventoryName())
                             .build());
 
             Mockito.when(mongPersistencePort.getMongPort(mongId)).thenReturn(Optional.of(mong));
-            Mockito.when(mongReadPort.getRandomDrawItemsPort()).thenReturn(randomDrawItems);
-            Mockito.when(mongPersistencePort.createInventoryItemPort(Mockito.any())).thenReturn(Optional.of(inventoryItem));
+            Mockito.when(mongReadPort.getRandomDrawItemsPort()).thenReturn(randomDraws);
+            Mockito.when(mongPersistencePort.createInventoryItemPort(Mockito.any())).thenReturn(Optional.of(inventory));
 
             // act
             RandomDrawCommand command = RandomDrawCommand.builder()
@@ -640,12 +640,12 @@ class InteractionServiceTest {
                     .accountId(accountId)
                     .build();
 
-            RandomDrawItem exception = interactionUseCase.randomDrawUseCase(command);
+            RandomDraw exception = interactionUseCase.randomDrawUseCase(command);
 
             // assert
-            assertEquals(inventoryItemId, exception.getRandomDrawItemId());
-            assertEquals(typeCode, exception.getTypeCode());
-            assertEquals(typeName, exception.getTypeName());
+            assertEquals(inventoryItemId, exception.getRandomDrawId());
+            assertEquals(typeCode, exception.getRandomDrawCode());
+            assertEquals(typeName, exception.getRandomDrawName());
         }
 
         @Test
@@ -662,24 +662,24 @@ class InteractionServiceTest {
             long inventoryItemId = 1L;
             String typeCode = "TEST-TYPE-CODE";
             String typeName = "TEST-TYPE-NAME";
-            InventoryItem inventoryItem = InventoryItem.builder()
-                    .inventoryItemId(inventoryItemId)
+            Inventory inventory = Inventory.builder()
+                    .inventoryId(inventoryItemId)
                     .mongId(mongId)
-                    .inventoryItemTypeCode(InventoryItemTypeCode.MAP)
-                    .typeCode(typeCode)
-                    .typeName(typeName)
+                    .inventoryTypeCode(InventoryTypeCode.MAP)
+                    .inventoryCode(typeCode)
+                    .inventoryName(typeName)
                     .build();
 
-            List<RandomDrawItem> randomDrawItems = List.of(
-                    RandomDrawItem.builder()
-                            .randomDrawItemId(inventoryItemId)
-                            .inventoryItemTypeCode(inventoryItem.getInventoryItemTypeCode())
-                            .typeCode(inventoryItem.getTypeCode())
-                            .typeName(inventoryItem.getTypeName())
+            List<RandomDraw> randomDraws = List.of(
+                    RandomDraw.builder()
+                            .randomDrawId(inventoryItemId)
+                            .inventoryTypeCode(inventory.getInventoryTypeCode())
+                            .randomDrawCode(inventory.getInventoryCode())
+                            .randomDrawName(inventory.getInventoryName())
                             .build());
 
             Mockito.when(mongPersistencePort.getMongPort(mongId)).thenReturn(Optional.of(mong));
-            Mockito.when(mongReadPort.getRandomDrawItemsPort()).thenReturn(randomDrawItems);
+            Mockito.when(mongReadPort.getRandomDrawItemsPort()).thenReturn(randomDraws);
 
             // act
             RandomDrawCommand command = RandomDrawCommand.builder()
@@ -687,13 +687,13 @@ class InteractionServiceTest {
                     .accountId(accountId)
                     .build();
 
-            RandomDrawItem exception = interactionUseCase.randomDrawUseCase(command);
+            RandomDraw exception = interactionUseCase.randomDrawUseCase(command);
 
             // assert
             Mockito.verify(mongEventPort).randomDrawMapEventPort(accountId, typeCode);
-            assertEquals(inventoryItemId, exception.getRandomDrawItemId());
-            assertEquals(typeCode, exception.getTypeCode());
-            assertEquals(typeName, exception.getTypeName());
+            assertEquals(inventoryItemId, exception.getRandomDrawId());
+            assertEquals(typeCode, exception.getRandomDrawCode());
+            assertEquals(typeName, exception.getRandomDrawName());
         }
     }
 }

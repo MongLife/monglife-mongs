@@ -64,7 +64,7 @@ class ManagementServiceTest {
 
             Mockito.when(mongReadPort.getMongTypesPort(Mockito.any())).thenReturn(List.of(mongType));
             Mockito.when(mongPersistencePort.createMongPort(Mockito.any())).thenReturn(Optional.of(mong));
-            Mockito.when(mongSchedulerPort.createTaskPort(Mockito.any(), Mockito.any())).thenReturn(Optional.of(Mockito.anyLong()));
+            Mockito.when(mongSchedulerPort.createTaskPort(Mockito.any(), Mockito.any(), Mockito.any())).thenReturn(Optional.of(Mockito.anyLong()));
 
             // act
             CreateMongCommand command = CreateMongCommand.builder()
@@ -594,7 +594,7 @@ class ManagementServiceTest {
 
             Mockito.when(mongPersistencePort.getMongPort(mongId)).thenReturn(Optional.of(mong));
             Mockito.when(mongPersistencePort.saveMongPort(mong)).thenReturn(Optional.of(mong));
-            Mockito.when(mongSchedulerPort.createCycleTaskPort(Mockito.any(), Mockito.any())).thenReturn(Optional.of(Mockito.anyLong()));
+            Mockito.when(mongSchedulerPort.createCycleTaskPort(Mockito.any(), Mockito.any(), Mockito.any())).thenReturn(Optional.of(Mockito.anyLong()));
 
             // act
             SleepMongCommand command = SleepMongCommand.builder()
@@ -745,7 +745,7 @@ class ManagementServiceTest {
 
             Mockito.when(mongPersistencePort.getMongPort(mongId)).thenReturn(Optional.of(mong));
             Mockito.when(mongPersistencePort.saveMongPort(mong)).thenReturn(Optional.of(mong));
-            Mockito.when(mongSchedulerPort.createCycleTaskPort(Mockito.any(), Mockito.any())).thenReturn(Optional.of(Mockito.anyLong()));
+            Mockito.when(mongSchedulerPort.createCycleTaskPort(Mockito.any(), Mockito.any(), Mockito.any())).thenReturn(Optional.of(Mockito.anyLong()));
 
             // act
             WakeupMongCommand command = WakeupMongCommand.builder()
@@ -1359,7 +1359,6 @@ class ManagementServiceTest {
 
             // act
             IncreaseMongPayPointCommand command = IncreaseMongPayPointCommand.builder()
-                    .accountId(accountId)
                     .mongId(mongId)
                     .payPoint(payPoint)
                     .build();
@@ -1375,37 +1374,15 @@ class ManagementServiceTest {
         void notExistsMong() {
             // arrange
             long mongId = 1L;
-            long accountId = 1L;
 
             Mockito.when(mongPersistencePort.getMongPort(mongId)).thenReturn(Optional.empty());
 
             // act & assert
             IncreaseMongPayPointCommand command = IncreaseMongPayPointCommand.builder()
-                    .accountId(accountId)
                     .mongId(mongId)
                     .build();
 
             assertThrows(NotExistsMongException.class, () -> managementUseCase.increaseMongPayPointUseCase(command));
-        }
-
-        @Test
-        @DisplayName("몽의 소유자가 일치하지 않는 경우 예외가 발생 한다.")
-        void forbiddenMong() {
-            // arrange
-            long mongId = 1L;
-            long accountId = 1L;
-            double maxStatus = 100D;
-            Mong mong = MongTestUtil.getFirstLevelMong(mongId, accountId, maxStatus);
-
-            Mockito.when(mongPersistencePort.getMongPort(mongId)).thenReturn(Optional.of(mong));
-
-            // act & assert
-            IncreaseMongPayPointCommand command = IncreaseMongPayPointCommand.builder()
-                    .accountId(accountId + 1)
-                    .mongId(mongId)
-                    .build();
-
-            assertThrows(ForbiddenMongException.class, () -> managementUseCase.increaseMongPayPointUseCase(command));
         }
     }
 

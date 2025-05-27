@@ -80,13 +80,13 @@ public class MatchEntity extends BaseTimeEntity {
                         .playerId(matchPick.getMatchPlayer().getPlayerId())
                         .targetPlayerId(matchPick.getTargetMatchPlayer().getPlayerId())
                         .round(matchPick.getRound())
-                        .pickCode(matchPick.getMatchPickCode())
-                        .value(matchPick.getValue())
+                        .pickCode(matchPick.getPickCode())
+                        .pickValue(matchPick.getPickValue())
                         .build())));
 
         this.maxRound = match.getMaxRound();
         this.round = match.getRound();
-        this.stateCode = match.getMatchStateCode();
+        this.stateCode = match.getStateCode();
     }
 
     public Match toDomain() {
@@ -116,7 +116,7 @@ public class MatchEntity extends BaseTimeEntity {
                 .matchId(this.matchId)
                 .round(this.round)
                 .maxRound(this.maxRound)
-                .matchStateCode(this.stateCode)
+                .stateCode(this.stateCode)
                 .matchPlayers(matchPlayers)
                 .matchPicks(matchPicks)
                 .build();

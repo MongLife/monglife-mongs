@@ -74,9 +74,9 @@ public class MatchPlayer {
 
     private Double recovery;
 
-    private MatchRoundCode matchRoundCode;
+    private MatchRoundCode roundCode;
 
-    private Set<MatchHistoryCode> matchHistoryCodes;
+    private Set<MatchHistoryCode> historyCodes;
 
     @Builder
     public MatchPlayer(String playerId, String deviceId, Long accountId, Long mongId, String mongTypeCode, String mongTypeName, String mongName, Double attack, Double heal, Double defence, Boolean isBot, Double hp, Boolean isEnter, LocalDateTime enteredAt, LocalDateTime exitedAt) {
@@ -97,8 +97,8 @@ public class MatchPlayer {
         this.exitedAt = exitedAt;
         this.damage = 0D;
         this.recovery = 0D;
-        this.matchRoundCode = MatchRoundCode.NONE;
-        this.matchHistoryCodes = new HashSet<>();
+        this.roundCode = MatchRoundCode.NONE;
+        this.historyCodes = new HashSet<>();
     }
 
     /**
@@ -130,7 +130,7 @@ public class MatchPlayer {
      */
     public void defence() {
         this.damage = this.damage - this.defence;
-        matchHistoryCodes.add(MatchHistoryCode.MATCH_HISTORY_DEFENCED);
+        historyCodes.add(MatchHistoryCode.MATCH_HISTORY_DEFENCED);
     }
 
     /**
@@ -139,7 +139,7 @@ public class MatchPlayer {
      */
     public void damage(Double damage) {
         this.damage = this.damage + damage;
-        matchHistoryCodes.add(MatchHistoryCode.MATCH_HISTORY_ATTACKED);
+        historyCodes.add(MatchHistoryCode.MATCH_HISTORY_ATTACKED);
     }
 
     /**
@@ -148,7 +148,7 @@ public class MatchPlayer {
      */
     public void heal(Double recovery) {
         this.recovery = this.recovery + recovery;
-        this.matchHistoryCodes.add(MatchHistoryCode.MATCH_HISTORY_HEALED);
+        this.historyCodes.add(MatchHistoryCode.MATCH_HISTORY_HEALED);
     }
 
     /**
@@ -162,29 +162,29 @@ public class MatchPlayer {
         // HP 범위 체크
         this.hp = Math.max(0, Math.min(this.hp, MAX_HP));
 
-        if (matchHistoryCodes.contains(MatchHistoryCode.MATCH_HISTORY_DEFENCED)) {
+        if (historyCodes.contains(MatchHistoryCode.MATCH_HISTORY_DEFENCED)) {
             // 방어
-            this.matchRoundCode = MatchRoundCode.MATCH_DEFENCE;
-        } else if (matchHistoryCodes.contains(MatchHistoryCode.MATCH_HISTORY_ATTACKED)) {
-            if (matchHistoryCodes.contains(MatchHistoryCode.MATCH_HISTORY_HEALED)) {
+            this.roundCode = MatchRoundCode.MATCH_DEFENCE;
+        } else if (historyCodes.contains(MatchHistoryCode.MATCH_HISTORY_ATTACKED)) {
+            if (historyCodes.contains(MatchHistoryCode.MATCH_HISTORY_HEALED)) {
                 // 공격 + 회복
-                this.matchRoundCode = MatchRoundCode.MATCH_ATTACKED_HEAL;
+                this.roundCode = MatchRoundCode.MATCH_ATTACKED_HEAL;
             } else {
                 // 공격
-                this.matchRoundCode = MatchRoundCode.MATCH_ATTACKED;
+                this.roundCode = MatchRoundCode.MATCH_ATTACKED;
             }
-        } else if (matchHistoryCodes.contains(MatchHistoryCode.MATCH_HISTORY_HEALED)) {
+        } else if (historyCodes.contains(MatchHistoryCode.MATCH_HISTORY_HEALED)) {
             // 회복
-            this.matchRoundCode = MatchRoundCode.MATCH_HEAL;
+            this.roundCode = MatchRoundCode.MATCH_HEAL;
         } else {
             // 변동 없음
-            this.matchRoundCode = MatchRoundCode.NONE;
+            this.roundCode = MatchRoundCode.NONE;
         }
 
-        // TODO: 피해, 회복 수치 초기화
+        // 피해, 회복 수치 초기화
         this.damage = 0D;
         this.recovery = 0D;
-        this.matchHistoryCodes = new HashSet<>();
+        this.historyCodes = new HashSet<>();
     }
 
     /**

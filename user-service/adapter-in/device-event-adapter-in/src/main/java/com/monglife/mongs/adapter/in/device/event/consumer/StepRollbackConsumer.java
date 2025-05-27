@@ -1,7 +1,7 @@
 package com.monglife.mongs.adapter.in.device.event.consumer;
 
 import com.monglife.module.common.kafka.event.TransactionEvent;
-import com.monglife.mongs.adapter.transaction.ExchangeCurrentWalkingCountEventDto;
+import com.monglife.mongs.adapter.transaction.ExchangeCurrentWalkingCountRollbackEventDto;
 import com.monglife.mongs.application.device.port.in.StepUseCase;
 import com.monglife.mongs.application.device.port.in.command.IncreaseCurrentWalkingCountCommand;
 import com.monglife.mongs.core.kafka.event.enums.EventTopic;
@@ -20,7 +20,7 @@ public class StepRollbackConsumer {
      * @param event 걸음 수 환전 정보
      */
     @KafkaListener(topics = EventTopic.ROLLBACK_EXCHANGE_CURRENT_WALKING_COUNT)
-    public void exchangeCurrentWalkingCountRollbackEvent(TransactionEvent<ExchangeCurrentWalkingCountEventDto> event) {
+    public void exchangeCurrentWalkingCountRollbackEvent(TransactionEvent<ExchangeCurrentWalkingCountRollbackEventDto> event) {
 
         if (event.getData() != null) {
             IncreaseCurrentWalkingCountCommand command = IncreaseCurrentWalkingCountCommand.builder()

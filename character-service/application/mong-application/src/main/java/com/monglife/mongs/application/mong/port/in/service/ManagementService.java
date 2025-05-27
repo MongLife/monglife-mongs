@@ -80,7 +80,7 @@ public class ManagementService implements ManagementUseCase {
                 .orElseThrow(InvalidCreateMongException::new);
 
         // 알 부화 스케줄 등록
-        mongSchedulerPort.createTaskPort(mong.getMongId(), MongSchedulerType.EGG_EVOLUTION)
+        mongSchedulerPort.createTaskPort(mong.getMongId(), mong.getAccountId(), MongSchedulerType.EGG_EVOLUTION)
                 .orElseThrow(InvalidCreateMongScheduleException::new);
 
         // 몽 생성 이벤트 발생
@@ -211,7 +211,7 @@ public class ManagementService implements ManagementUseCase {
         // 스케줄 등록 및 삭제
         mongSchedulerPort.deleteTaskPort(mong.getMongId(), MongSchedulerType.DECREASE_STATUS);
         mongSchedulerPort.deleteTaskPort(mong.getMongId(), MongSchedulerType.INCREASE_POOP);
-        mongSchedulerPort.createCycleTaskPort(mong.getMongId(), MongSchedulerType.INCREASE_STATUS)
+        mongSchedulerPort.createCycleTaskPort(mong.getMongId(), mong.getAccountId(), MongSchedulerType.INCREASE_STATUS)
                 .orElseThrow(InvalidCreateMongScheduleException::new);
 
         return mong;
@@ -238,9 +238,9 @@ public class ManagementService implements ManagementUseCase {
 
         // 스케줄 등록 및 삭제
         mongSchedulerPort.deleteTaskPort(mong.getMongId(), MongSchedulerType.INCREASE_STATUS);
-        mongSchedulerPort.createCycleTaskPort(mong.getMongId(), MongSchedulerType.DECREASE_STATUS)
+        mongSchedulerPort.createCycleTaskPort(mong.getMongId(), mong.getAccountId(), MongSchedulerType.DECREASE_STATUS)
                 .orElseThrow(InvalidCreateMongScheduleException::new);
-        mongSchedulerPort.createCycleTaskPort(mong.getMongId(), MongSchedulerType.INCREASE_POOP)
+        mongSchedulerPort.createCycleTaskPort(mong.getMongId(), mong.getAccountId(), MongSchedulerType.INCREASE_POOP)
                 .orElseThrow(InvalidCreateMongScheduleException::new);
 
         return mong;
@@ -262,6 +262,26 @@ public class ManagementService implements ManagementUseCase {
         mong.poopClean();
 
         // 몽 정보 동기화
+        mong = mongPersistencePort.saveMongPort(mong)
+                .orElseThrow(NotExistsMongException::new);
+
+        return mong;
+    }
+
+    /**
+     * 몽 진화 준비
+     */
+    @Override
+    @Transactional
+    @PublishMongPort
+    public Mong evolutionReadyMongUseCase(EvolutionReadyMongCommand command) {
+
+        Mong mong = mongPersistencePort.getMongPort(command.getMongId())
+                .orElseThrow(NotExistsMongException::new)
+                .verify(command.getAccountId());
+
+        mong.evolutionReady();
+
         mong = mongPersistencePort.saveMongPort(mong)
                 .orElseThrow(NotExistsMongException::new);
 
@@ -295,13 +315,13 @@ public class ManagementService implements ManagementUseCase {
 
         // 알 진화 경우 스케줄 등록
         if (mong.getLevel() == 1) {
-            mongSchedulerPort.createCycleTaskPort(mong.getMongId(), MongSchedulerType.DECREASE_STATUS)
+            mongSchedulerPort.createCycleTaskPort(mong.getMongId(), mong.getAccountId(), MongSchedulerType.DECREASE_STATUS)
                     .orElseThrow(InvalidCreateMongScheduleException::new);
-            mongSchedulerPort.createCycleTaskPort(mong.getMongId(), MongSchedulerType.INCREASE_POOP)
+            mongSchedulerPort.createCycleTaskPort(mong.getMongId(), mong.getAccountId(), MongSchedulerType.INCREASE_POOP)
                     .orElseThrow(InvalidCreateMongScheduleException::new);
-            mongSchedulerPort.createFixedTimeCycleTaskPort(mong.getMongId(), MongSchedulerType.SLEEP, mong.getSleepAt())
+            mongSchedulerPort.createFixedTimeCycleTaskPort(mong.getMongId(), mong.getAccountId(), MongSchedulerType.SLEEP, mong.getSleepAt())
                     .orElseThrow(InvalidCreateMongScheduleException::new);
-            mongSchedulerPort.createFixedTimeCycleTaskPort(mong.getMongId(), MongSchedulerType.WAKEUP, mong.getWakeupAt())
+            mongSchedulerPort.createFixedTimeCycleTaskPort(mong.getMongId(), mong.getAccountId(), MongSchedulerType.WAKEUP, mong.getWakeupAt())
                     .orElseThrow(InvalidCreateMongScheduleException::new);
         }
 
@@ -345,8 +365,7 @@ public class ManagementService implements ManagementUseCase {
     public Mong increaseMongPayPointUseCase(IncreaseMongPayPointCommand command) {
 
         Mong mong = mongPersistencePort.getMongPort(command.getMongId())
-                .orElseThrow(NotExistsMongException::new)
-                .verify(command.getAccountId());
+                .orElseThrow(NotExistsMongException::new);
 
         // 몽 페이 포인트 증가
         mong.increasePayPoint(command.getPayPoint());

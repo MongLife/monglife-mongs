@@ -1,7 +1,7 @@
 package com.monglife.mongs.adapter.in.member.event.consumer;
 
 import com.monglife.module.common.kafka.event.TransactionEvent;
-import com.monglife.mongs.adapter.transaction.ExchangeStarPointEventDto;
+import com.monglife.mongs.adapter.transaction.ExchangeStarPointRollbackEventDto;
 import com.monglife.mongs.application.member.port.in.PlayerUseCase;
 import com.monglife.mongs.application.member.port.in.command.IncreaseStarPointCommand;
 import com.monglife.mongs.core.kafka.event.enums.EventTopic;
@@ -20,7 +20,7 @@ public class PlayerRollbackConsumer {
      * @param event 스타 포인트 환전 정보
      */
     @KafkaListener(topics = EventTopic.ROLLBACK_EXCHANGE_STAR_POINT)
-    public void exchangeStarPointRollbackEvent(TransactionEvent<ExchangeStarPointEventDto> event) {
+    public void exchangeStarPointRollbackEvent(TransactionEvent<ExchangeStarPointRollbackEventDto> event) {
 
         if (event.getData() != null) {
             IncreaseStarPointCommand command = IncreaseStarPointCommand.builder()

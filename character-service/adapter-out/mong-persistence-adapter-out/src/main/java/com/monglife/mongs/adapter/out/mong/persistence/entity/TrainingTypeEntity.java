@@ -19,7 +19,7 @@ public class TrainingTypeEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "training_type_code")
-    private ComnCodeEntity trainingType;
+    private ComnCodeEntity comn;
 
     @Column(name = "pay_point")
     private Integer payPoint;
@@ -42,10 +42,13 @@ public class TrainingTypeEntity {
     @Column(name = "fatigue")
     private Double fatigue;
 
+    @Column(name = "strength")
+    private Double strength;
+
     @Builder
-    public TrainingTypeEntity(Long trainingTypeId, ComnCodeEntity trainingType, Integer payPoint, Integer score, Integer timeout, Double exp, Double weight, Double satiety, Double fatigue) {
+    public TrainingTypeEntity(Long trainingTypeId, ComnCodeEntity comn, Integer payPoint, Integer score, Integer timeout, Double exp, Double weight, Double satiety, Double fatigue, Double strength) {
         this.trainingTypeId = trainingTypeId;
-        this.trainingType = trainingType;
+        this.comn = comn;
         this.payPoint = payPoint;
         this.score = score;
         this.timeout = timeout;
@@ -53,13 +56,14 @@ public class TrainingTypeEntity {
         this.weight = weight;
         this.satiety = satiety;
         this.fatigue = fatigue;
+        this.strength = strength;
     }
 
     public TrainingType toDomain() {
         return TrainingType.builder()
                 .trainingTypeId(this.trainingTypeId)
-                .trainingTypeCode(this.trainingType.getCode())
-                .trainingTypeName(this.trainingType.getName())
+                .trainingTypeCode(this.comn.getCode())
+                .trainingTypeName(this.comn.getName())
                 .payPoint(this.payPoint)
                 .score(this.score)
                 .timeout(this.timeout)
@@ -67,6 +71,7 @@ public class TrainingTypeEntity {
                 .weight(this.weight)
                 .satiety(this.satiety)
                 .fatigue(this.fatigue)
+                .strength(this.strength)
                 .build();
     }
 }

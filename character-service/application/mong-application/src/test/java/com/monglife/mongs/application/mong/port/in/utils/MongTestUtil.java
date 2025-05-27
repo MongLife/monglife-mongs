@@ -21,8 +21,8 @@ public class MongTestUtil {
      */
     public static Food getFood(Integer price, Boolean isCanBuy, Double status) {
         return Food.builder()
-                .foodTypeCode("TEST-FOOD-YPE-CODE")
-                .foodTypeName("테스트 음식 코드")
+                .foodCode("TEST-FOOD-YPE-CODE")
+                .foodName("테스트 음식 코드")
                 .price(price)
                 .isCanBuy(isCanBuy)
                 .weight(status)
@@ -42,8 +42,8 @@ public class MongTestUtil {
      */
     public static Snack getSnack(Integer price, Boolean isCanBuy, Double status) {
         return Snack.builder()
-                .snackTypeCode("TEST-SNACK-YPE-CODE")
-                .snackTypeName("테스트 간식 코드")
+                .snackCode("TEST-SNACK-YPE-CODE")
+                .snackName("테스트 간식 코드")
                 .price(price)
                 .isCanBuy(isCanBuy)
                 .weight(status)

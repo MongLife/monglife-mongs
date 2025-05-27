@@ -3,7 +3,8 @@ package com.monglife.mongs.adapter.in.battle.web.exception;
 import com.monglife.core.dto.response.ResponseDto;
 import com.monglife.core.enums.response.GlobalResponse;
 import com.monglife.core.exception.ErrorException;
-import com.monglife.mongs.adapter.in.battle.web.controller.BattleController;
+import com.monglife.mongs.adapter.in.battle.web.controller.MatchController;
+import com.monglife.mongs.adapter.in.battle.web.controller.QueueController;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.ConstraintViolationException;
 import org.springframework.http.HttpStatus;
@@ -20,7 +21,10 @@ import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
 
-@RestControllerAdvice(basePackageClasses = { BattleController.class })
+@RestControllerAdvice(basePackageClasses = {
+        QueueController.class,
+        MatchController.class,
+})
 public class BattleExceptionHandler {
 
     /**

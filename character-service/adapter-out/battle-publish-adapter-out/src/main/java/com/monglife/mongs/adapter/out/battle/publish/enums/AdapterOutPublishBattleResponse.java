@@ -13,11 +13,11 @@ import java.util.Map;
 @AllArgsConstructor
 public enum AdapterOutPublishBattleResponse implements Response {
 
-    BATTLE_PUBLISH_MATCHING_QUEUE_PLAYER(HttpStatus.OK.value(), "PUBLISH-BATTLE-000", "배틀 매칭에 성공했습니다."),
-    BATTLE_PUBLISH_MATCHING_QUEUE_PLAYER_FAIL(HttpStatus.NOT_ACCEPTABLE.value(), "PUBLISH-BATTLE-001", "배틀 매칭에 실패했습니다."),
-    BATTLE_PUBLISH_MATCH_PLAYERS_ENTERED(HttpStatus.OK.value(), "PUBLISH-BATTLE-002", "모든 플레이어가 입장했습니다."),
-    BATTLE_PUBLISH_MATCH(HttpStatus.OK.value(), "PUBLISH-BATTLE-003", "라운드가 종료되었습니다."),
-    BATTLE_PUBLISH_MATCH_END(HttpStatus.OK.value(), "PUBLISH-BATTLE-004", "배틀이 종료되었습니다."),
+    BATTLE_PUBLISH_MATCHING_QUEUE_PLAYER(HttpStatus.OK.value(), "PUBLISH-MATCH-000", "배틀 매칭에 성공했습니다."),
+    BATTLE_PUBLISH_MATCHING_QUEUE_PLAYER_FAIL(HttpStatus.NOT_ACCEPTABLE.value(), "PUBLISH-MATCH-001", "배틀 매칭에 실패했습니다."),
+    BATTLE_PUBLISH_MATCH_PLAYERS_ENTERED(HttpStatus.OK.value(), "PUBLISH-MATCH-002", "모든 플레이어가 입장했습니다."),
+    BATTLE_PUBLISH_MATCH(HttpStatus.OK.value(), "PUBLISH-MATCH-003", "라운드가 종료되었습니다."),
+    BATTLE_PUBLISH_MATCH_END(HttpStatus.OK.value(), "PUBLISH-MATCH-004", "배틀이 종료되었습니다."),
     ;
 
     private final Integer httpStatus;

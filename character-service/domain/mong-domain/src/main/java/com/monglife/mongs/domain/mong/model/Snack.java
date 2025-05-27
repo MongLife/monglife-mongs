@@ -8,9 +8,9 @@ import lombok.ToString;
 @ToString
 public class Snack {
 
-    private final String snackTypeCode;
+    private final String snackCode;
 
-    private final String snackTypeName;
+    private final String snackName;
 
     private final Integer price;
 
@@ -27,9 +27,9 @@ public class Snack {
     private final Double fatigue;
 
     @Builder
-    public Snack(String snackTypeCode, String snackTypeName, Integer price, Boolean isCanBuy, Double weight, Double strength, Double satiety, Double healthy, Double fatigue) {
-        this.snackTypeCode = snackTypeCode;
-        this.snackTypeName = snackTypeName;
+    public Snack(String snackCode, String snackName, Integer price, Boolean isCanBuy, Double weight, Double strength, Double satiety, Double healthy, Double fatigue) {
+        this.snackCode = snackCode;
+        this.snackName = snackName;
         this.price = price;
         this.isCanBuy = isCanBuy;
         this.weight = weight;

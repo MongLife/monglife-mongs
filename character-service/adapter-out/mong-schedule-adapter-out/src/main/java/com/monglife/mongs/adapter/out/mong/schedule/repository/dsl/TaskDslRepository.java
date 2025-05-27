@@ -11,7 +11,7 @@ public interface TaskDslRepository {
 
     List<TaskEntity> findAllByAppPackageNameWithLock(String appPackageName);
 
-    List<TaskEntity> findAllByAppPackageNameAndTaskOwnerIdWithLock(String appPackageName, String taskOwnerId);
+    List<TaskEntity> findAllByAppPackageNameAndMongIdWithLock(String appPackageName, Long mongId);
 
-    Optional<TaskEntity> findByAppPackageNameAndTaskOwnerIdAndSchedulerTypeCodeWithLock(String appPackageName, String taskOwnerId, String schedulerTypeCode);
+    Optional<TaskEntity> findByAppPackageNameAndMongIdAndSchedulerTypeCodeWithLock(String appPackageName, Long mongId, String schedulerTypeCode);
 }

@@ -24,32 +24,32 @@ public class MatchPickEntity {
     @Column(name = "target_player_id")
     private String targetPlayerId;
 
-    @Column(name = "round_number")
+    @Column(name = "round")
     private Integer round;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "match_pick_code")
+    @Column(name = "pick_code")
     private MatchPickCode pickCode;
 
     @Column(name = "pick_value")
-    private Double value;
+    private Double pickValue;
 
     @Builder
-    public MatchPickEntity(Long pickId, String playerId, String targetPlayerId, Integer round, MatchPickCode pickCode, Double value) {
+    public MatchPickEntity(Long pickId, String playerId, String targetPlayerId, Integer round, MatchPickCode pickCode, Double pickValue) {
         this.pickId = pickId;
         this.playerId = playerId;
         this.targetPlayerId = targetPlayerId;
         this.round = round;
         this.pickCode = pickCode;
-        this.value = value;
+        this.pickValue = pickValue;
     }
 
     public void update(MatchPick matchPick) {
         this.playerId = matchPick.getMatchPlayer().getPlayerId();
         this.targetPlayerId = matchPick.getTargetMatchPlayer().getPlayerId();
         this.round = matchPick.getRound();
-        this.pickCode = matchPick.getMatchPickCode();
-        this.value = matchPick.getValue();
+        this.pickCode = matchPick.getPickCode();
+        this.pickValue = matchPick.getPickValue();
     }
 
     public MatchPick toDomain(MatchPlayer matchPlayer, MatchPlayer targetMatchPlayer) {
@@ -58,8 +58,8 @@ public class MatchPickEntity {
                 .matchPlayer(matchPlayer)
                 .targetMatchPlayer(targetMatchPlayer)
                 .round(this.round)
-                .matchPickCode(this.pickCode)
-                .value(this.value)
+                .pickCode(this.pickCode)
+                .pickValue(this.pickValue)
                 .build();
     }
 }

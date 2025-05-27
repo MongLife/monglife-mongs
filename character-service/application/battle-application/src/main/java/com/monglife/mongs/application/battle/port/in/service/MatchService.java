@@ -137,22 +137,22 @@ public class MatchService implements MatchUseCase {
                     .matchPlayer(matchPlayer)
                     .targetMatchPlayer(targetMatchPlayer)
                     .round(match.getRound())
-                    .matchPickCode(command.getMatchPickCode())
-                    .value(matchPlayer.getDefence())
+                    .pickCode(command.getMatchPickCode())
+                    .pickValue(matchPlayer.getDefence())
                     .build();
             case MATCH_PICK_HEAL -> MatchPick.builder()
                     .matchPlayer(matchPlayer)
                     .targetMatchPlayer(targetMatchPlayer)
                     .round(match.getRound())
-                    .matchPickCode(command.getMatchPickCode())
-                    .value(matchPlayer.getHeal())
+                    .pickCode(command.getMatchPickCode())
+                    .pickValue(matchPlayer.getHeal())
                     .build();
             case MATCH_PICK_ATTACK -> MatchPick.builder()
                     .matchPlayer(matchPlayer)
                     .targetMatchPlayer(targetMatchPlayer)
                     .round(match.getRound())
-                    .matchPickCode(command.getMatchPickCode())
-                    .value(matchPlayer.getAttack())
+                    .pickCode(command.getMatchPickCode())
+                    .pickValue(matchPlayer.getAttack())
                     .build();
         };
 

@@ -50,10 +50,8 @@ public class QueueService implements QueueUseCase {
                 .accountId(command.getAccountId())
                 .build();
 
-        QueuePlayer queuePlayer = matchPersistencePort.createQueuePlayerPort(createQueuePlayerVo)
+        return matchPersistencePort.createQueuePlayerPort(createQueuePlayerVo)
                 .orElseThrow(InvalidCreateQueuePlayerException::new);
-
-        return queuePlayer;
     }
 
     /**

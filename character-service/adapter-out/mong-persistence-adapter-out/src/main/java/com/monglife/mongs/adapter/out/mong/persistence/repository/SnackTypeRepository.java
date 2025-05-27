@@ -1,11 +1,11 @@
 package com.monglife.mongs.adapter.out.mong.persistence.repository;
 
-import com.monglife.mongs.adapter.out.mong.persistence.entity.SnackTypeEntity;
+import com.monglife.mongs.adapter.out.mong.persistence.entity.SnackEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Optional;
 
-public interface SnackTypeRepository extends JpaRepository<SnackTypeEntity, Long> {
+public interface SnackTypeRepository extends JpaRepository<SnackEntity, Long> {
 
-    Optional<SnackTypeEntity> findByComnCode(String snackCode);
+    Optional<SnackEntity> findByComnCode(String snackCode);
 }

@@ -18,7 +18,9 @@ public class TaskScheduleEntity {
 
     private final String appPackageName;
 
-    private final String taskOwnerId;
+    private final Long mongId;
+
+    private final Long accountId;
 
     private final String schedulerTypeCode;
 
@@ -31,10 +33,11 @@ public class TaskScheduleEntity {
     private ScheduledFuture<?> scheduler;
 
     @Builder
-    private TaskScheduleEntity(Long taskId, String appPackageName, String taskOwnerId, String schedulerTypeCode, Boolean isCycle, LocalDateTime expiredAt) {
+    private TaskScheduleEntity(Long taskId, String appPackageName, Long mongId, Long accountId, String schedulerTypeCode, Boolean isCycle, LocalDateTime expiredAt) {
         this.taskId = taskId;
         this.appPackageName = appPackageName;
-        this.taskOwnerId = taskOwnerId;
+        this.mongId = mongId;
+        this.accountId = accountId;
         this.schedulerTypeCode = schedulerTypeCode;
         this.isCycle = isCycle;
         this.expiredAt = expiredAt;
@@ -53,7 +56,8 @@ public class TaskScheduleEntity {
         return TaskScheduleEntity.builder()
                 .taskId(taskEntity.getTaskId())
                 .appPackageName(taskEntity.getAppPackageName())
-                .taskOwnerId(taskEntity.getTaskOwnerId())
+                .mongId(taskEntity.getMongId())
+                .accountId(taskEntity.getAccountId())
                 .schedulerTypeCode(taskEntity.getSchedulerTypeCode())
                 .isCycle(taskEntity.isCycle())
                 .expiredAt(taskEntity.getExpiredAt())

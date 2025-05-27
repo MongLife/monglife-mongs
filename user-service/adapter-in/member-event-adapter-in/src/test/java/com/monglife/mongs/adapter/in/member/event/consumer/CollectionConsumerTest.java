@@ -2,7 +2,7 @@ package com.monglife.mongs.adapter.in.member.event.consumer;
 
 import com.monglife.module.common.kafka.config.KafkaAutoConfig;
 import com.monglife.module.common.kafka.service.KafkaService;
-import com.monglife.mongs.adapter.transaction.CreateCollectionMongEventDto;
+import com.monglife.mongs.adapter.transaction.CreateMongEventDto;
 import com.monglife.mongs.application.member.port.in.CollectionUseCase;
 import com.monglife.mongs.application.member.port.in.command.CreateCollectionMongCommand;
 import com.monglife.mongs.core.kafka.event.enums.EventTopic;
@@ -46,24 +46,24 @@ class CollectionConsumerTest {
     }
 
     @Nested
-    @DisplayName("컬렉션 몽 등록 트랜잭션 이벤트 리스너 단위 테스트")
-    class CreateCollectionMongEvent {
+    @DisplayName("몽 등록 트랜잭션 이벤트 리스너 단위 테스트")
+    class CreateMongEvent {
 
         @Test
-        @DisplayName("컬렉션 몽 등록 트랜잭션이 성공하는 경우 이벤트를 소비하여 컬렉션 몽 등록 UseCase를 실행 한다.")
-        void createCollectionMong() {
+        @DisplayName("몽 등록 트랜잭션이 성공하는 경우 이벤트를 소비하여 컬렉션 몽 등록 UseCase를 실행 한다.")
+        void createMong() {
             // arrange
-            String topic = EventTopic.COMMIT_CREATE_COLLECTION_MONG;
+            String topic = EventTopic.COMMIT_CREATE_MONG;
             long accountId = 1L;
             String mongTypeCode = "CH000";
 
             // act
-            CreateCollectionMongEventDto createCollectionMongEventDto = CreateCollectionMongEventDto.builder()
+            CreateMongEventDto createMongEventDto = CreateMongEventDto.builder()
                     .accountId(accountId)
                     .mongTypeCode(mongTypeCode)
                     .build();
 
-            kafkaService.generateEvent(topic, createCollectionMongEventDto);
+            kafkaService.generateEvent(topic, createMongEventDto);
 
             // assert
             ArgumentCaptor<CreateCollectionMongCommand> captor = ArgumentCaptor.forClass(CreateCollectionMongCommand.class);

@@ -47,7 +47,7 @@ public interface MongReadPort {
      * 랜덤 뽑기 아이템 목록 조회
      * @return 랜덤 뽑기 아이템 도메인 객체 목록
      */
-    List<RandomDrawItem> getRandomDrawItemsPort();
+    List<RandomDraw> getRandomDrawItemsPort();
 
     /**
      * 음식 조회
@@ -97,5 +97,5 @@ public interface MongReadPort {
      * @param mongId 몽 ID
      * @return 인벤토리 아이템 도메인 객체 목록
      */
-    List<InventoryItem> getInventoryItemsPort(Long mongId);
+    List<Inventory> getInventoryItemsPort(Long mongId);
 }

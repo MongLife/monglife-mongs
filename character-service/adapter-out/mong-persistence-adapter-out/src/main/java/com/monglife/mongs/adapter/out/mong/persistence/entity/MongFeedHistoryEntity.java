@@ -23,19 +23,19 @@ public class MongFeedHistoryEntity {
     private Long mongId;
 
     @Indexed
-    private String typeCode;
+    private String code;
 
-    private LocalDateTime buyAt;
+    private LocalDateTime boughtAt;
 
     @TimeToLive
     private Long expiration;
 
     @Builder
-    public MongFeedHistoryEntity(String mongFeedHistoryId, Long mongId, String typeCode, LocalDateTime buyAt, Long expiration) {
+    public MongFeedHistoryEntity(String mongFeedHistoryId, Long mongId, String code, LocalDateTime boughtAt, Long expiration) {
         this.mongFeedHistoryId = mongFeedHistoryId;
         this.mongId = mongId;
-        this.typeCode = typeCode;
-        this.buyAt = buyAt;
+        this.code = code;
+        this.boughtAt = boughtAt;
         this.expiration = expiration;
     }
 }

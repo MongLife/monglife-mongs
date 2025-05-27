@@ -6,7 +6,7 @@ import com.monglife.module.common.kafka.config.KafkaAutoConfig;
 import com.monglife.mongs.adapter.out.mong.schedule.config.AdapterOutMongScheduleConfig;
 import com.monglife.mongs.adapter.out.mong.schedule.config.TaskDataSourceConfig;
 import com.monglife.mongs.adapter.out.mong.schedule.consumer.TestEventConsumer;
-import com.monglife.mongs.adapter.out.mong.schedule.enums.TaskStatusCode;
+import com.monglife.mongs.adapter.out.mong.schedule.enums.TaskStateCode;
 import com.monglife.mongs.adapter.out.mong.schedule.enums.TestSchedulerType;
 import com.monglife.mongs.adapter.out.mong.schedule.repository.TaskRepository;
 import com.monglife.mongs.adapter.out.mong.schedule.repository.TaskScheduleRepository;
@@ -86,6 +86,7 @@ class TaskServiceTest {
         void createTask() throws InterruptedException {
             // arrange
             long mongId = 1L;
+            long accountId = 1L;
             TestSchedulerType testSchedulerType = TestSchedulerType.CREATE_TEST;
 
             TestEventDto testEventDto = new TestEventDto();
@@ -93,7 +94,7 @@ class TaskServiceTest {
             testEventConsumer.reset(testEventDto, countDownLatch);
 
             // act
-            var expected1 = mongSchedulerPort.createTaskPort(mongId, testSchedulerType);
+            var expected1 = mongSchedulerPort.createTaskPort(mongId, accountId, testSchedulerType);
             var expected2 = countDownLatch.await(testSchedulerType.getExpiration() * 2, TimeUnit.SECONDS);
 
             // assert
@@ -124,6 +125,7 @@ class TaskServiceTest {
         void createCycleTask() throws InterruptedException {
             // arrange
             long mongId = 1L;
+            long accountId = 1L;
             int cycleCount = 3;
             TestSchedulerType testSchedulerType = TestSchedulerType.CREATE_TEST;
 
@@ -132,7 +134,7 @@ class TaskServiceTest {
             testEventConsumer.reset(testEventDto, countDownLatch);
 
             // act
-            var expected1 = mongSchedulerPort.createCycleTaskPort(mongId, testSchedulerType);
+            var expected1 = mongSchedulerPort.createCycleTaskPort(mongId, accountId, testSchedulerType);
             var expected2 = countDownLatch.await(testSchedulerType.getExpiration() * cycleCount * 2, TimeUnit.SECONDS);
 
             // assert
@@ -163,6 +165,7 @@ class TaskServiceTest {
         void createFixedTimeCycleTask() throws InterruptedException {
             // arrange
             long mongId = 1L;
+            long accountId = 1L;
             TestSchedulerType testSchedulerType = TestSchedulerType.CREATE_TEST;
             LocalTime fixedTime = LocalTime.now().plusSeconds(testSchedulerType.getExpiration());
             LocalDateTime expiredAt = LocalDateTime.of(LocalDate.now().plusDays(1), fixedTime);
@@ -171,7 +174,7 @@ class TaskServiceTest {
             CountDownLatch countDownLatch = new CountDownLatch(1);
             testEventConsumer.reset(testEventDto, countDownLatch);
 
-            var expected1 = mongSchedulerPort.createFixedTimeCycleTaskPort(mongId, testSchedulerType, fixedTime);
+            var expected1 = mongSchedulerPort.createFixedTimeCycleTaskPort(mongId, accountId, testSchedulerType, fixedTime);
             var expected2 = countDownLatch.await(testSchedulerType.getExpiration() * 2, TimeUnit.SECONDS);
 
             // assert
@@ -204,6 +207,7 @@ class TaskServiceTest {
         void deleteTask() throws InterruptedException {
             // arrange
             long mongId = 1L;
+            long accountId = 1L;
             int cycleCount = 2;
             TestSchedulerType testSchedulerType = TestSchedulerType.DELETE_1_TEST;
 
@@ -212,7 +216,7 @@ class TaskServiceTest {
             testEventConsumer.reset(testEventDto, countDownLatch);
 
             // act
-            var expected1 = mongSchedulerPort.createCycleTaskPort(mongId, testSchedulerType);
+            var expected1 = mongSchedulerPort.createCycleTaskPort(mongId, accountId, testSchedulerType);
             var expected2 = countDownLatch.await(testSchedulerType.getExpiration() * cycleCount * 2, TimeUnit.SECONDS);
             mongSchedulerPort.deleteTaskPort(mongId, testSchedulerType);
 
@@ -244,6 +248,7 @@ class TaskServiceTest {
         void deleteAllTask() throws InterruptedException {
             // arrange
             long mongId = 1L;
+            long accountId = 1L;
             List<TestSchedulerType> testSchedulerTypes = List.of(TestSchedulerType.DELETE_1_TEST, TestSchedulerType.DELETE_2_TEST);
 
             TestEventDto testEventDto = new TestEventDto();
@@ -253,7 +258,7 @@ class TaskServiceTest {
             // act
             List<Optional<Long>> expected1 = new ArrayList<>();
             for (TestSchedulerType testSchedulerType : testSchedulerTypes) {
-                expected1.add(mongSchedulerPort.createCycleTaskPort(mongId, testSchedulerType));
+                expected1.add(mongSchedulerPort.createCycleTaskPort(mongId, accountId, testSchedulerType));
             }
 
             var expected2 = countDownLatch.await(testSchedulerTypes.stream().mapToLong(TestSchedulerType::getExpiration).sum() * 2, TimeUnit.SECONDS);
@@ -289,6 +294,7 @@ class TaskServiceTest {
         void appStopPauseAndResumeAllTask() throws InterruptedException {
             // arrange
             long mongId = 1L;
+            long accountId = 1L;
             List<TestSchedulerType> testSchedulerTypes = List.of(
                     TestSchedulerType.APP_STOP_1_TEST,
                     TestSchedulerType.APP_STOP_2_TEST,
@@ -304,7 +310,7 @@ class TaskServiceTest {
             // act
             List<Optional<Long>> expected1 = new ArrayList<>();
             for (TestSchedulerType testSchedulerType : testSchedulerTypes) {
-                expected1.add(mongSchedulerPort.createCycleTaskPort(mongId, testSchedulerType));
+                expected1.add(mongSchedulerPort.createCycleTaskPort(mongId, accountId, testSchedulerType));
             }
 
             var expected2 = countDownLatch.await(testSchedulerTypes.stream().mapToLong(TestSchedulerType::getExpiration).sum() * 2, TimeUnit.SECONDS);
@@ -322,10 +328,10 @@ class TaskServiceTest {
             expected1.forEach(optional -> assertFalse(optional.isEmpty()));
             assertTrue(expected2);
 
-            expected3.forEach(taskEntity -> assertEquals(TaskStatusCode.APP_STOP_PROCESSING, taskEntity.getTaskStatusCode()));
+            expected3.forEach(taskEntity -> assertEquals(TaskStateCode.APP_STOP_PROCESSING, taskEntity.getStateCode()));
             assertEquals(0, expected4);
 
-            expected5.forEach(taskEntity -> assertEquals(TaskStatusCode.PROCESSING, taskEntity.getTaskStatusCode()));
+            expected5.forEach(taskEntity -> assertEquals(TaskStateCode.PROCESSING, taskEntity.getStateCode()));
             assertEquals(testSchedulerTypes.size(), expected6);
         }
     }

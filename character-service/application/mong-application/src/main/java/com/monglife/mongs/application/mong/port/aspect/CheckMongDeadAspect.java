@@ -25,7 +25,7 @@ public class CheckMongDeadAspect {
 
         if (returnValue instanceof Mong mong) {
             if (mong.getSatiety() == 0D || mong.getHealthy() == 0D) {
-                mongSchedulerPort.createTaskPort(mong.getMongId(), MongSchedulerType.DEAD);
+                mongSchedulerPort.createTaskPort(mong.getMongId(), mong.getAccountId(), MongSchedulerType.DEAD);
             } else {
                 mongSchedulerPort.deleteTaskPort(mong.getMongId(), MongSchedulerType.DEAD);
             }

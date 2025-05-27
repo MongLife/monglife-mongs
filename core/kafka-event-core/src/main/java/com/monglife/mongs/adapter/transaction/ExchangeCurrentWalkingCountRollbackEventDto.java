@@ -1,0 +1,28 @@
+package com.monglife.mongs.adapter.transaction;
+
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
+@Getter
+@Setter
+@NoArgsConstructor
+public class ExchangeCurrentWalkingCountRollbackEventDto {
+
+    private String deviceId;
+
+    private Long mongId;
+
+    private Integer walkingCount;
+
+    private Integer payPoint;
+
+    @Builder
+    public ExchangeCurrentWalkingCountRollbackEventDto(String deviceId, Long mongId, Integer walkingCount, Integer payPoint) {
+        this.deviceId = deviceId;
+        this.mongId = mongId;
+        this.walkingCount = walkingCount;
+        this.payPoint = payPoint;
+    }
+}

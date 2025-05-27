@@ -37,19 +37,19 @@ public class TaskDslRepositoryImpl implements TaskDslRepository {
     }
 
     @Override
-    public List<TaskEntity> findAllByAppPackageNameAndTaskOwnerIdWithLock(String appPackageName, String taskOwnerId) {
+    public List<TaskEntity> findAllByAppPackageNameAndMongIdWithLock(String appPackageName, Long mongId) {
         return jpaQueryFactory.selectFrom(taskEntity)
                 .where(taskEntity.appPackageName.eq(appPackageName))
-                .where(taskEntity.taskOwnerId.eq(taskOwnerId))
+                .where(taskEntity.mongId.eq(mongId))
                 .setLockMode(LockModeType.PESSIMISTIC_WRITE)
                 .fetch();
     }
 
     @Override
-    public Optional<TaskEntity> findByAppPackageNameAndTaskOwnerIdAndSchedulerTypeCodeWithLock(String appPackageName, String taskOwnerId, String schedulerTypeCode) {
+    public Optional<TaskEntity> findByAppPackageNameAndMongIdAndSchedulerTypeCodeWithLock(String appPackageName, Long mongId, String schedulerTypeCode) {
         return Optional.ofNullable(jpaQueryFactory.selectFrom(taskEntity)
                 .where(taskEntity.appPackageName.eq(appPackageName))
-                .where(taskEntity.taskOwnerId.eq(taskOwnerId))
+                .where(taskEntity.mongId.eq(mongId))
                 .where(taskEntity.schedulerTypeCode.eq(schedulerTypeCode))
                 .setLockMode(LockModeType.PESSIMISTIC_WRITE)
                 .fetchOne());

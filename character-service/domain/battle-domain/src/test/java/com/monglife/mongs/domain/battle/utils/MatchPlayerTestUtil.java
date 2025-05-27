@@ -100,7 +100,7 @@ public class MatchPlayerTestUtil {
                 .round(Match.getInitMaxRound())
                 .maxRound(Match.getInitMaxRound())
                 .matchPlayers(matchPlayers)
-                .matchStateCode(MatchStateCode.PROCESS)
+                .stateCode(MatchStateCode.PROCESS)
                 .build();
     }
 

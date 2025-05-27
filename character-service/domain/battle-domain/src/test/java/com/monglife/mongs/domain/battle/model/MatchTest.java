@@ -97,8 +97,8 @@ class MatchTest {
                 .matchPlayer(matchPlayer)
                 .targetMatchPlayer(targetMatchPlayer)
                 .round(match.getRound())
-                .matchPickCode(MatchPickCode.MATCH_PICK_ATTACK)
-                .value(matchPlayer.getAttack())
+                .pickCode(MatchPickCode.MATCH_PICK_ATTACK)
+                .pickValue(matchPlayer.getAttack())
                 .build();
 
         match.pickMatchPlayer(matchPick);
@@ -123,8 +123,8 @@ class MatchTest {
                 .matchPlayer(matchPlayer)
                 .targetMatchPlayer(targetMatchPlayer)
                 .round(match.getRound())
-                .matchPickCode(MatchPickCode.MATCH_PICK_ATTACK)
-                .value(matchPlayer.getAttack())
+                .pickCode(MatchPickCode.MATCH_PICK_ATTACK)
+                .pickValue(matchPlayer.getAttack())
                 .build();
 
         match.pickMatchPlayer(matchPick);
@@ -146,8 +146,8 @@ class MatchTest {
                 .matchPlayer(matchPlayer)
                 .targetMatchPlayer(targetMatchPlayer)
                 .round(match.getRound())
-                .matchPickCode(MatchPickCode.MATCH_PICK_HEAL)
-                .value(matchPlayer.getHeal())
+                .pickCode(MatchPickCode.MATCH_PICK_HEAL)
+                .pickValue(matchPlayer.getHeal())
                 .build());
 
         // act & assert
@@ -155,8 +155,8 @@ class MatchTest {
                 .matchPlayer(matchPlayer)
                 .targetMatchPlayer(targetMatchPlayer)
                 .round(match.getRound())
-                .matchPickCode(MatchPickCode.MATCH_PICK_ATTACK)
-                .value(matchPlayer.getAttack())
+                .pickCode(MatchPickCode.MATCH_PICK_ATTACK)
+                .pickValue(matchPlayer.getAttack())
                 .build();
 
         assertThrows(AlreadyExistsMatchPickException.class, () -> match.pickMatchPlayer(matchPick));
@@ -177,8 +177,8 @@ class MatchTest {
                 .matchPlayer(matchPlayer)
                 .targetMatchPlayer(targetMatchPlayer)
                 .round(match.getRound())
-                .matchPickCode(MatchPickCode.MATCH_PICK_ATTACK)
-                .value(matchPlayer.getAttack())
+                .pickCode(MatchPickCode.MATCH_PICK_ATTACK)
+                .pickValue(matchPlayer.getAttack())
                 .build();
 
         match.pickMatchPlayer(matchPick);
@@ -208,8 +208,8 @@ class MatchTest {
                 .matchPlayer(matchPlayer)
                 .targetMatchPlayer(targetMatchPlayer)
                 .round(match.getRound())
-                .matchPickCode(MatchPickCode.MATCH_PICK_ATTACK)
-                .value(matchPlayer.getAttack())
+                .pickCode(MatchPickCode.MATCH_PICK_ATTACK)
+                .pickValue(matchPlayer.getAttack())
                 .build();
 
         match.pickMatchPlayer(matchPick);
@@ -235,25 +235,25 @@ class MatchTest {
         match.pickMatchPlayer(MatchPick.builder()
                 .matchPlayer(matchPlayer1)
                 .targetMatchPlayer(matchPlayer1)
-                .matchPickCode(MatchPickCode.MATCH_PICK_DEFENCE)
                 .round(match.getRound())
-                .value(matchPlayer1.getDefence())
+                .pickCode(MatchPickCode.MATCH_PICK_DEFENCE)
+                .pickValue(matchPlayer1.getDefence())
                 .build());
         // 플레이어 2 매치 선택
         match.pickMatchPlayer(MatchPick.builder()
                 .matchPlayer(matchPlayer2)
                 .targetMatchPlayer(matchPlayer2)
-                .matchPickCode(MatchPickCode.MATCH_PICK_DEFENCE)
                 .round(match.getRound())
-                .value(matchPlayer2.getDefence())
+                .pickCode(MatchPickCode.MATCH_PICK_DEFENCE)
+                .pickValue(matchPlayer2.getDefence())
                 .build());
 
         MatchPlayer expected1 = match.getMatchPlayer(matchPlayer1.getPlayerId());
         MatchPlayer expected2 = match.getMatchPlayer(matchPlayer2.getPlayerId());
 
         // assert
-        assertEquals(MatchRoundCode.MATCH_DEFENCE, expected1.getMatchRoundCode());
-        assertEquals(MatchRoundCode.MATCH_DEFENCE, expected2.getMatchRoundCode());
+        assertEquals(MatchRoundCode.MATCH_DEFENCE, expected1.getRoundCode());
+        assertEquals(MatchRoundCode.MATCH_DEFENCE, expected2.getRoundCode());
         assertEquals(HP, expected1.getHp());
         assertEquals(HP, expected2.getHp());
     }
@@ -273,25 +273,25 @@ class MatchTest {
         match.pickMatchPlayer(MatchPick.builder()
                 .matchPlayer(matchPlayer1)
                 .targetMatchPlayer(matchPlayer2)
-                .matchPickCode(MatchPickCode.MATCH_PICK_ATTACK)
                 .round(match.getRound())
-                .value(matchPlayer1.getAttack())
+                .pickCode(MatchPickCode.MATCH_PICK_ATTACK)
+                .pickValue(matchPlayer1.getAttack())
                 .build());
         // 플레이어 2 매치 선택
         match.pickMatchPlayer(MatchPick.builder()
                 .matchPlayer(matchPlayer2)
                 .targetMatchPlayer(matchPlayer1)
-                .matchPickCode(MatchPickCode.MATCH_PICK_ATTACK)
                 .round(match.getRound())
-                .value(matchPlayer2.getAttack())
+                .pickCode(MatchPickCode.MATCH_PICK_ATTACK)
+                .pickValue(matchPlayer2.getAttack())
                 .build());
 
         MatchPlayer expected1 = match.getMatchPlayer(matchPlayer1.getPlayerId());
         MatchPlayer expected2 = match.getMatchPlayer(matchPlayer2.getPlayerId());
 
         // assert
-        assertEquals(MatchRoundCode.MATCH_ATTACKED, expected1.getMatchRoundCode());
-        assertEquals(MatchRoundCode.MATCH_ATTACKED, expected2.getMatchRoundCode());
+        assertEquals(MatchRoundCode.MATCH_ATTACKED, expected1.getRoundCode());
+        assertEquals(MatchRoundCode.MATCH_ATTACKED, expected2.getRoundCode());
         assertTrue(HP > expected1.getHp());
         assertTrue(HP > expected2.getHp());
     }
@@ -310,25 +310,25 @@ class MatchTest {
         match.pickMatchPlayer(MatchPick.builder()
                 .matchPlayer(matchPlayer1)
                 .targetMatchPlayer(matchPlayer1)
-                .matchPickCode(MatchPickCode.MATCH_PICK_HEAL)
                 .round(match.getRound())
-                .value(matchPlayer1.getHeal())
+                .pickCode(MatchPickCode.MATCH_PICK_HEAL)
+                .pickValue(matchPlayer1.getHeal())
                 .build());
         // 플레이어 2 매치 선택
         match.pickMatchPlayer(MatchPick.builder()
                 .matchPlayer(matchPlayer2)
                 .targetMatchPlayer(matchPlayer2)
-                .matchPickCode(MatchPickCode.MATCH_PICK_HEAL)
                 .round(match.getRound())
-                .value(matchPlayer2.getHeal())
+                .pickCode(MatchPickCode.MATCH_PICK_HEAL)
+                .pickValue(matchPlayer2.getHeal())
                 .build());
 
         MatchPlayer expected1 = match.getMatchPlayer(matchPlayer1.getPlayerId());
         MatchPlayer expected2 = match.getMatchPlayer(matchPlayer2.getPlayerId());
 
         // assert
-        assertEquals(MatchRoundCode.MATCH_HEAL, expected1.getMatchRoundCode());
-        assertEquals(MatchRoundCode.MATCH_HEAL, expected2.getMatchRoundCode());
+        assertEquals(MatchRoundCode.MATCH_HEAL, expected1.getRoundCode());
+        assertEquals(MatchRoundCode.MATCH_HEAL, expected2.getRoundCode());
         assertEquals(HP, expected1.getHp());
         assertEquals(HP, expected2.getHp());
     }
@@ -347,25 +347,25 @@ class MatchTest {
         match.pickMatchPlayer(MatchPick.builder()
                 .matchPlayer(matchPlayer1)
                 .targetMatchPlayer(matchPlayer1)
-                .matchPickCode(MatchPickCode.MATCH_PICK_HEAL)
                 .round(match.getRound())
-                .value(matchPlayer1.getHeal())
+                .pickCode(MatchPickCode.MATCH_PICK_HEAL)
+                .pickValue(matchPlayer1.getHeal())
                 .build());
         // 플레이어 2 매치 선택
         match.pickMatchPlayer(MatchPick.builder()
                 .matchPlayer(matchPlayer2)
                 .targetMatchPlayer(matchPlayer2)
-                .matchPickCode(MatchPickCode.MATCH_PICK_DEFENCE)
                 .round(match.getRound())
-                .value(matchPlayer2.getDefence())
+                .pickCode(MatchPickCode.MATCH_PICK_DEFENCE)
+                .pickValue(matchPlayer2.getDefence())
                 .build());
 
         MatchPlayer expected1 = match.getMatchPlayer(matchPlayer1.getPlayerId());
         MatchPlayer expected2 = match.getMatchPlayer(matchPlayer2.getPlayerId());
 
         // assert
-        assertEquals(MatchRoundCode.MATCH_HEAL, expected1.getMatchRoundCode());
-        assertEquals(MatchRoundCode.MATCH_DEFENCE, expected2.getMatchRoundCode());
+        assertEquals(MatchRoundCode.MATCH_HEAL, expected1.getRoundCode());
+        assertEquals(MatchRoundCode.MATCH_DEFENCE, expected2.getRoundCode());
         assertEquals(HP, expected1.getHp());
         assertEquals(HP - HEAL, expected2.getHp());
     }
@@ -384,25 +384,25 @@ class MatchTest {
         match.pickMatchPlayer(MatchPick.builder()
                 .matchPlayer(matchPlayer1)
                 .targetMatchPlayer(matchPlayer1)
-                .matchPickCode(MatchPickCode.MATCH_PICK_HEAL)
                 .round(match.getRound())
-                .value(matchPlayer1.getHeal())
+                .pickCode(MatchPickCode.MATCH_PICK_HEAL)
+                .pickValue(matchPlayer1.getHeal())
                 .build());
         // 플레이어 2 매치 선택
         match.pickMatchPlayer(MatchPick.builder()
                 .matchPlayer(matchPlayer2)
                 .targetMatchPlayer(matchPlayer1)
-                .matchPickCode(MatchPickCode.MATCH_PICK_ATTACK)
                 .round(match.getRound())
-                .value(matchPlayer2.getAttack())
+                .pickCode(MatchPickCode.MATCH_PICK_ATTACK)
+                .pickValue(matchPlayer2.getAttack())
                 .build());
 
         MatchPlayer expected1 = match.getMatchPlayer(matchPlayer1.getPlayerId());
         MatchPlayer expected2 = match.getMatchPlayer(matchPlayer2.getPlayerId());
 
         // assert
-        assertEquals(MatchRoundCode.MATCH_ATTACKED_HEAL, expected1.getMatchRoundCode());
-        assertEquals(MatchRoundCode.NONE, expected2.getMatchRoundCode());
+        assertEquals(MatchRoundCode.MATCH_ATTACKED_HEAL, expected1.getRoundCode());
+        assertEquals(MatchRoundCode.NONE, expected2.getRoundCode());
         assertTrue(HP > expected1.getHp());
         assertEquals(HP, expected2.getHp());
     }
@@ -421,25 +421,25 @@ class MatchTest {
         match.pickMatchPlayer(MatchPick.builder()
                 .matchPlayer(matchPlayer1)
                 .targetMatchPlayer(matchPlayer2)
-                .matchPickCode(MatchPickCode.MATCH_PICK_ATTACK)
                 .round(match.getRound())
-                .value(matchPlayer1.getAttack())
+                .pickCode(MatchPickCode.MATCH_PICK_ATTACK)
+                .pickValue(matchPlayer1.getAttack())
                 .build());
         // 플레이어 2 매치 선택
         match.pickMatchPlayer(MatchPick.builder()
                 .matchPlayer(matchPlayer2)
                 .targetMatchPlayer(matchPlayer2)
-                .matchPickCode(MatchPickCode.MATCH_PICK_DEFENCE)
                 .round(match.getRound())
-                .value(matchPlayer2.getDefence())
+                .pickCode(MatchPickCode.MATCH_PICK_DEFENCE)
+                .pickValue(matchPlayer2.getDefence())
                 .build());
 
         MatchPlayer expected1 = match.getMatchPlayer(matchPlayer1.getPlayerId());
         MatchPlayer expected2 = match.getMatchPlayer(matchPlayer2.getPlayerId());
 
         // assert
-        assertEquals(MatchRoundCode.NONE, expected1.getMatchRoundCode());
-        assertEquals(MatchRoundCode.MATCH_DEFENCE, expected2.getMatchRoundCode());
+        assertEquals(MatchRoundCode.NONE, expected1.getRoundCode());
+        assertEquals(MatchRoundCode.MATCH_DEFENCE, expected2.getRoundCode());
         assertEquals(HP, expected1.getHp());
         assertTrue(HP > expected2.getHp());
     }

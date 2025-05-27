@@ -26,15 +26,11 @@ public class MemberEntity extends BaseTimeEntity {
     @Column(name = "star_point")
     private Integer starPoint;
 
-    @Column(name = "is_active")
-    private Boolean isActive;
-
     @Builder
     public MemberEntity(Long accountId, Integer slotCount, Integer starPoint) {
         this.accountId = accountId;
         this.slotCount = slotCount;
         this.starPoint = starPoint;
-        this.isActive = Boolean.TRUE;
     }
 
     /**

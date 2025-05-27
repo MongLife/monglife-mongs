@@ -74,7 +74,7 @@ class MongReadServiceTest {
             mongStrokeHistoryRepository.save(MongStrokeHistoryEntity.builder()
                     .mongStrokeHistoryId(MONG_STROKE_HISTORY_ID)
                     .mongId(MONG_ID)
-                    .strokeAt(LocalDateTime.now())
+                    .strokedAt(LocalDateTime.now())
                     .expiration(EXPIRATION)
                     .build());
         }

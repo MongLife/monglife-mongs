@@ -1,6 +1,6 @@
 package com.monglife.mongs.application.mong.port.out;
 
-import com.monglife.mongs.application.mong.port.out.vo.CreateInventoryItemVo;
+import com.monglife.mongs.application.mong.port.out.vo.CreateInventoryVo;
 import com.monglife.mongs.application.mong.port.out.vo.CreateMongVo;
 import com.monglife.mongs.domain.mong.model.*;
 
@@ -61,21 +61,21 @@ public interface MongPersistencePort {
 
     /**
      * 인벤토리 아이템 등록
-     * @param createInventoryItemVo 인벤토리 아이템 등록 Vo
+     * @param createInventoryVo 인벤토리 아이템 등록 Vo
      * @return 등록한 인벤토리 아이템 도메인 객체
      */
-    Optional<InventoryItem> createInventoryItemPort(CreateInventoryItemVo createInventoryItemVo);
+    Optional<Inventory> createInventoryItemPort(CreateInventoryVo createInventoryVo);
 
     /**
      * 인벤토리 아이템 삭제
      * @param inventoryItemId 인벤토리 아이템 ID
      */
-    Optional<InventoryItem> deleteInventoryItemPort(Long inventoryItemId);
+    Optional<Inventory> deleteInventoryItemPort(Long inventoryItemId);
 
     /**
      * 인벤토리 아이템 조회
      * @param inventoryItemId 인벤토리 아이템 ID
      * @return 인벤토리 아이템 도메인 객체
      */
-    Optional<InventoryItem> getInventoryItemPort(Long inventoryItemId);
+    Optional<Inventory> getInventoryItemPort(Long inventoryItemId);
 }

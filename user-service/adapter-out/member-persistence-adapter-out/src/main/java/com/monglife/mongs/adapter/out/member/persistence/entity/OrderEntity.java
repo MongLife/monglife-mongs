@@ -26,7 +26,7 @@ public class OrderEntity extends BaseTimeEntity {
     private Long accountId;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "product_type")
+    @JoinColumn(name = "product_code")
     private ComnCodeEntity productType;
 
     @Column(name = "price")

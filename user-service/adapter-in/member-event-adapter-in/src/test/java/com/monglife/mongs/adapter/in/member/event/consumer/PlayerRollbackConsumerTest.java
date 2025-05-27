@@ -2,7 +2,7 @@ package com.monglife.mongs.adapter.in.member.event.consumer;
 
 import com.monglife.module.common.kafka.config.KafkaAutoConfig;
 import com.monglife.module.common.kafka.service.KafkaService;
-import com.monglife.mongs.adapter.transaction.ExchangeStarPointEventDto;
+import com.monglife.mongs.adapter.transaction.ExchangeStarPointRollbackEventDto;
 import com.monglife.mongs.application.member.port.in.PlayerUseCase;
 import com.monglife.mongs.application.member.port.in.command.IncreaseStarPointCommand;
 import com.monglife.mongs.core.kafka.event.enums.EventTopic;
@@ -60,14 +60,14 @@ class PlayerRollbackConsumerTest {
             int payPoint = 100;
 
             // act
-            ExchangeStarPointEventDto exchangeStarPointEventDto = ExchangeStarPointEventDto.builder()
+            ExchangeStarPointRollbackEventDto exchangeStarPointRollbackEventDto = ExchangeStarPointRollbackEventDto.builder()
                     .accountId(accountId)
                     .mongId(mongId)
                     .starPoint(starPoint)
                     .payPoint(payPoint)
                     .build();
 
-            kafkaService.generateEvent(topic, exchangeStarPointEventDto);
+            kafkaService.generateEvent(topic, exchangeStarPointRollbackEventDto);
 
             // assert
             ArgumentCaptor<IncreaseStarPointCommand> captor = ArgumentCaptor.forClass(IncreaseStarPointCommand.class);

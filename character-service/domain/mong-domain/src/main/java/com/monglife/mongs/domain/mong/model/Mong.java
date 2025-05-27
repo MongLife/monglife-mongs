@@ -238,6 +238,13 @@ public class Mong {
     }
 
     /**
+     * 진화 준비
+     */
+    public void evolutionReady() {
+        this.updateStateCode(MongStateCode.EVOLUTION_READY);
+    }
+
+    /**
      * 진화
      * @param mongTypes 진화 가능한 몽 타입 목록
      */

@@ -22,18 +22,18 @@ public class MatchPick {
 
     private final Integer round;
 
-    private final MatchPickCode matchPickCode;
+    private final MatchPickCode pickCode;
 
-    private final Double value;
+    private final Double pickValue;
 
     @Builder
-    public MatchPick(Long pickId, MatchPlayer matchPlayer, MatchPlayer targetMatchPlayer, Integer round, MatchPickCode matchPickCode, Double value) {
+    public MatchPick(Long pickId, MatchPlayer matchPlayer, MatchPlayer targetMatchPlayer, Integer round, MatchPickCode pickCode, Double pickValue) {
         this.pickId = pickId;
         this.matchPlayer = matchPlayer;
         this.targetMatchPlayer = targetMatchPlayer;
         this.round = round;
-        this.matchPickCode = matchPickCode;
-        this.value = value;
+        this.pickCode = pickCode;
+        this.pickValue = pickValue;
     }
 
     /**
@@ -46,14 +46,14 @@ public class MatchPick {
 
         // 매치 선택 코드 랜덤 선택
         int matchPickIndex = random.nextInt(0, MatchPickCode.values().length);
-        MatchPickCode matchPickCode = MatchPickCode.values()[matchPickIndex];
+        MatchPickCode pickCode = MatchPickCode.values()[matchPickIndex];
 
         List<MatchPlayer> targetMatchPlayers = match.getMatchPlayers().stream()
                 .filter(targetMatchPlayer -> !targetMatchPlayer.getPlayerId().equals(matchPlayer.getPlayerId()))
                 .toList();
 
         MatchPlayer targetMatchPlayer;
-        if (MatchPickCode.MATCH_PICK_ATTACK.equals(matchPickCode)) {
+        if (MatchPickCode.MATCH_PICK_ATTACK.equals(pickCode)) {
             int targetMatchPlayerIndex = random.nextInt(0, targetMatchPlayers.size());
             targetMatchPlayer = targetMatchPlayers.get(targetMatchPlayerIndex);
         } else {
@@ -61,27 +61,27 @@ public class MatchPick {
         }
 
         // 매치 선택 코드 조회
-        return switch (matchPickCode) {
+        return switch (pickCode) {
             case MATCH_PICK_DEFENCE -> MatchPick.builder()
                     .matchPlayer(matchPlayer)
                     .targetMatchPlayer(targetMatchPlayer)
                     .round(match.getRound())
-                    .matchPickCode(matchPickCode)
-                    .value(matchPlayer.getDefence())
+                    .pickCode(pickCode)
+                    .pickValue(matchPlayer.getDefence())
                     .build();
             case MATCH_PICK_HEAL -> MatchPick.builder()
                     .matchPlayer(matchPlayer)
                     .targetMatchPlayer(targetMatchPlayer)
                     .round(match.getRound())
-                    .matchPickCode(matchPickCode)
-                    .value(matchPlayer.getHeal())
+                    .pickCode(pickCode)
+                    .pickValue(matchPlayer.getHeal())
                     .build();
             default -> MatchPick.builder()
                     .matchPlayer(matchPlayer)
                     .targetMatchPlayer(targetMatchPlayer)
                     .round(match.getRound())
-                    .matchPickCode(matchPickCode)
-                    .value(matchPlayer.getAttack())
+                    .pickCode(pickCode)
+                    .pickValue(matchPlayer.getAttack())
                     .build();
         };
     }
