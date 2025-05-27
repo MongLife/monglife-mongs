@@ -9,14 +9,14 @@ public class CreateInventoryVo {
 
     private final Long mongId;
 
-    private final String typeCode;
+    private final String inventoryCode;
 
     private final InventoryTypeCode inventoryTypeCode;
 
     @Builder
-    public CreateInventoryVo(Long mongId, String typeCode, InventoryTypeCode inventoryTypeCode) {
+    public CreateInventoryVo(Long mongId, String inventoryCode, InventoryTypeCode inventoryTypeCode) {
         this.mongId = mongId;
-        this.typeCode = typeCode;
+        this.inventoryCode = inventoryCode;
         this.inventoryTypeCode = inventoryTypeCode;
     }
 }

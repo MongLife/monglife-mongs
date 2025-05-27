@@ -19,18 +19,18 @@ public interface MongPersistencePort {
     /**
      * 몽 음식 섭취 이력 등록
      * @param mongId 몽 ID
-     * @param foodTypeCode 음식 코드
+     * @param foodCode 음식 코드
      * @return 음식 코드
      */
-    Optional<String> createMongFeedFoodHistoryPort(Long mongId, String foodTypeCode);
+    Optional<String> createMongFeedFoodHistoryPort(Long mongId, String foodCode);
 
     /**
      * 몽 간식 섭취 이력 등록
      * @param mongId 몽 ID
-     * @param snackTypeCode 간식 코드
+     * @param snackCode 간식 코드
      * @return 간식 코드
      */
-    Optional<String> createMongFeedSnackHistoryPort(Long mongId, String snackTypeCode);
+    Optional<String> createMongFeedSnackHistoryPort(Long mongId, String snackCode);
 
     /**
      * 몽 등록
@@ -64,18 +64,18 @@ public interface MongPersistencePort {
      * @param createInventoryVo 인벤토리 아이템 등록 Vo
      * @return 등록한 인벤토리 아이템 도메인 객체
      */
-    Optional<Inventory> createInventoryItemPort(CreateInventoryVo createInventoryVo);
+    Optional<Inventory> createInventoryPort(CreateInventoryVo createInventoryVo);
 
     /**
      * 인벤토리 아이템 삭제
-     * @param inventoryItemId 인벤토리 아이템 ID
+     * @param inventoryId 인벤토리 아이템 ID
      */
-    Optional<Inventory> deleteInventoryItemPort(Long inventoryItemId);
+    Optional<Inventory> deleteInventoryPort(Long inventoryId);
 
     /**
      * 인벤토리 아이템 조회
-     * @param inventoryItemId 인벤토리 아이템 ID
+     * @param inventoryId 인벤토리 아이템 ID
      * @return 인벤토리 아이템 도메인 객체
      */
-    Optional<Inventory> getInventoryItemPort(Long inventoryItemId);
+    Optional<Inventory> getInventoryPort(Long inventoryId);
 }

@@ -160,7 +160,7 @@ class MatchServiceTest {
                     .matchId(MATCH_ID)
                     .playerId(PLAYER_ID)
                     .targetPlayerId(targetMatchPlayer.getPlayerId())
-                    .matchPickCode(MatchPickCode.MATCH_PICK_ATTACK)
+                    .pickCode(MatchPickCode.MATCH_PICK_ATTACK)
                     .build();
 
             var expected = matchUseCase.pickMatchUseCase(command);
@@ -185,7 +185,7 @@ class MatchServiceTest {
                     .matchId(MATCH_ID)
                     .playerId(PLAYER_ID)
                     .targetPlayerId(PLAYER_ID)
-                    .matchPickCode(MatchPickCode.MATCH_PICK_HEAL)
+                    .pickCode(MatchPickCode.MATCH_PICK_HEAL)
                     .build();
 
             var expected = matchUseCase.pickMatchUseCase(command);

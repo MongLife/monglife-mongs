@@ -8,16 +8,16 @@ public class TrainingEndCommand {
 
     private final Long accountId;
 
-    private final String trainingTypeCode;
+    private final String trainingCode;
 
     private final Long mongId;
 
     private final Integer score;
 
     @Builder
-    public TrainingEndCommand(Long accountId, String trainingTypeCode, Long mongId, Integer score) {
+    public TrainingEndCommand(Long accountId, String trainingCode, Long mongId, Integer score) {
         this.accountId = accountId;
-        this.trainingTypeCode = trainingTypeCode;
+        this.trainingCode = trainingCode;
         this.mongId = mongId;
         this.score = score;
     }

@@ -69,7 +69,7 @@ class ManagementServiceTest {
             // act
             CreateMongCommand command = CreateMongCommand.builder()
                     .accountId(accountId)
-                    .mongName(mong.getMongName())
+                    .name(mong.getName())
                     .sleepAt(mong.getSleepAt())
                     .wakeupAt(mong.getWakeupAt())
                     .build();
@@ -77,7 +77,7 @@ class ManagementServiceTest {
             Mong expected = managementUseCase.createMongUseCase(command);
 
             // assert
-            Mockito.verify(mongEventPort).createMongEventPort(accountId, mongType.getMongTypeCode());
+            Mockito.verify(mongEventPort).createMongEventPort(accountId, mongType.getMongCode());
             assertEquals(mongId, expected.getMongId());
             assertEquals(accountId, expected.getAccountId());
             assertEquals(maxStatus, expected.getMaxStatus());
@@ -1004,6 +1004,7 @@ class ManagementServiceTest {
             long accountId = 1L;
 
             Mockito.when(mongPersistencePort.getMongPort(mongId)).thenReturn(Optional.empty());
+
             // act & assert
             PoopCleanMongCommand command = PoopCleanMongCommand.builder()
                     .accountId(accountId)
@@ -1051,7 +1052,7 @@ class ManagementServiceTest {
             MongType mongType = MongTestUtil.getSecondLevelMongType(nextMaxStatus);
 
             Mockito.when(mongPersistencePort.getMongPort(mongId)).thenReturn(Optional.of(mong));
-            Mockito.when(mongReadPort.getNextLevelMongTypesPort(mong.getEvolutionScore(), mong.getMongTypeCode())).thenReturn(List.of(mongType));
+            Mockito.when(mongReadPort.getNextLevelMongTypesPort(mong.getEvolutionScore(), mong.getMongCode())).thenReturn(List.of(mongType));
             Mockito.when(mongPersistencePort.saveMongPort(mong)).thenReturn(Optional.of(mong));
 
             // act
@@ -1066,8 +1067,8 @@ class ManagementServiceTest {
             assertNotEquals(MongStateCode.EVOLUTION_READY, expected.getStateCode());
             assertEquals(0D, expected.getEvolutionReward());
             assertEquals(0D, expected.getEvolutionPenalty());
-            assertEquals(mongType.getMongTypeCode(), expected.getMongTypeCode());
-            assertEquals(mongType.getMongTypeName(), expected.getMongTypeName());
+            assertEquals(mongType.getMongCode(), expected.getMongCode());
+            assertEquals(mongType.getMongName(), expected.getMongName());
             assertEquals(mongType.getLevel(), expected.getLevel());
             assertEquals(nextMaxStatus, expected.getMaxStatus());
             assertEquals(nextMaxStatus, expected.getStrength());
@@ -1089,7 +1090,7 @@ class ManagementServiceTest {
             MongType mongType = MongTestUtil.getSecondLevelMongType(nextMaxStatus);
 
             Mockito.when(mongPersistencePort.getMongPort(mongId)).thenReturn(Optional.of(mong));
-            Mockito.when(mongReadPort.getNextLevelMongTypesPort(mong.getEvolutionScore(), mong.getMongTypeCode())).thenReturn(List.of(mongType));
+            Mockito.when(mongReadPort.getNextLevelMongTypesPort(mong.getEvolutionScore(), mong.getMongCode())).thenReturn(List.of(mongType));
             Mockito.when(mongPersistencePort.saveMongPort(mong)).thenReturn(Optional.of(mong));
 
             // act & assert
@@ -1113,7 +1114,7 @@ class ManagementServiceTest {
             MongType mongType = MongTestUtil.getSecondLevelMongType(nextMaxStatus);
 
             Mockito.when(mongPersistencePort.getMongPort(mongId)).thenReturn(Optional.of(mong));
-            Mockito.when(mongReadPort.getNextLevelMongTypesPort(mong.getEvolutionScore(), mong.getMongTypeCode())).thenReturn(List.of(mongType));
+            Mockito.when(mongReadPort.getNextLevelMongTypesPort(mong.getEvolutionScore(), mong.getMongCode())).thenReturn(List.of(mongType));
             Mockito.when(mongPersistencePort.saveMongPort(mong)).thenReturn(Optional.of(mong));
 
             // act & assert
@@ -1137,7 +1138,7 @@ class ManagementServiceTest {
             MongType mongType = MongTestUtil.getSecondLevelMongType(nextMaxStatus);
 
             Mockito.when(mongPersistencePort.getMongPort(mongId)).thenReturn(Optional.of(mong));
-            Mockito.when(mongReadPort.getNextLevelMongTypesPort(mong.getEvolutionScore(), mong.getMongTypeCode())).thenReturn(List.of(mongType));
+            Mockito.when(mongReadPort.getNextLevelMongTypesPort(mong.getEvolutionScore(), mong.getMongCode())).thenReturn(List.of(mongType));
             Mockito.when(mongPersistencePort.saveMongPort(mong)).thenReturn(Optional.of(mong));
 
             // act & assert
@@ -1158,7 +1159,7 @@ class ManagementServiceTest {
             Mong mong = MongTestUtil.getFirstLevelMong(mongId, accountId, maxStatus, MongStateCode.EVOLUTION_READY);
 
             Mockito.when(mongPersistencePort.getMongPort(mongId)).thenReturn(Optional.of(mong));
-            Mockito.when(mongReadPort.getNextLevelMongTypesPort(mong.getEvolutionScore(), mong.getMongTypeCode())).thenReturn(Collections.emptyList());
+            Mockito.when(mongReadPort.getNextLevelMongTypesPort(mong.getEvolutionScore(), mong.getMongCode())).thenReturn(Collections.emptyList());
             Mockito.when(mongPersistencePort.saveMongPort(mong)).thenReturn(Optional.of(mong));
 
             // act & assert
@@ -1588,6 +1589,7 @@ class ManagementServiceTest {
             long accountId = 1L;
 
             Mockito.when(mongPersistencePort.getMongPort(mongId)).thenReturn(Optional.empty());
+
             // act & assert
             IncreaseMongPoopCountCommand command = IncreaseMongPoopCountCommand.builder()
                     .accountId(accountId)

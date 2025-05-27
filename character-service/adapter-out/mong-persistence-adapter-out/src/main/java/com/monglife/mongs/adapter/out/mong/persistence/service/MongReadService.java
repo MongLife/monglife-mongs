@@ -5,6 +5,7 @@ import com.monglife.mongs.adapter.out.mong.persistence.repository.*;
 import com.monglife.mongs.application.mong.port.out.MongReadPort;
 import com.monglife.mongs.domain.mong.model.*;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -14,6 +15,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class MongReadService implements MongReadPort {
@@ -22,9 +24,9 @@ public class MongReadService implements MongReadPort {
 
     private final MongFeedHistoryRepository mongFeedHistoryRepository;
 
-    private final FoodTypeRepository foodTypeRepository;
+    private final FoodRepository foodRepository;
 
-    private final SnackTypeRepository snackTypeRepository;
+    private final SnackRepository snackRepository;
 
     private final MongTypeRepository mongTypeRepository;
 
@@ -32,9 +34,9 @@ public class MongReadService implements MongReadPort {
 
     private final MongRepository mongRepository;
 
-    private final RandomDrawItemRepository randomDrawItemRepository;
+    private final RandomDrawRepository randomDrawRepository;
 
-    private final InventoryItemRepository inventoryItemRepository;
+    private final InventoryRepository inventoryRepository;
 
     /**
      * 몽 쓰다 듬기 대기 잔여 시간 조회
@@ -65,13 +67,13 @@ public class MongReadService implements MongReadPort {
     /**
      * 다음 레벨 몽 타입 목록 조회
      * @param evolutionScore 현재 진화 점수
-     * @param mongTypeCode 현재 몽 타입 코드
+     * @param mongCode 현재 몽 타입 코드
      * @return 몽 타입 목록
      */
     @Override
     @Transactional
-    public List<MongType> getNextLevelMongTypesPort(Double evolutionScore, String mongTypeCode) {
-        return mongTypeRepository.findByEvolutionScoreAndMongTypeCode(evolutionScore, mongTypeCode).stream()
+    public List<MongType> getNextLevelMongTypesPort(Double evolutionScore, String mongCode) {
+        return mongTypeRepository.findByEvolutionScoreAndMongCode(evolutionScore, mongCode).stream()
                 .map(MongTypeEntity::toDomain)
                 .collect(Collectors.toList());
     }
@@ -104,19 +106,19 @@ public class MongReadService implements MongReadPort {
 
     /**
      * 음식 조회
-     * @param foodTypeCode 음식 타입 코드
+     * @param foodCode 음식 타입 코드
      * @param mongId 몽 ID
      * @return 음식 도메인 객체
      */
     @Override
     @Transactional
-    public Optional<Food> getFoodPort(String foodTypeCode, Long mongId) {
+    public Optional<Food> getFoodPort(String foodCode, Long mongId) {
 
-        Optional<FoodEntity> foodTypeEntityOptional = foodTypeRepository.findByComnCode(foodTypeCode);
+        Optional<FoodEntity> foodEntityOptional = foodRepository.findByComnCode(foodCode);
 
-        if (foodTypeEntityOptional.isPresent()) {
-            FoodEntity foodEntity = foodTypeEntityOptional.get();
-            boolean isCanBuy = mongFeedHistoryRepository.findByMongIdAndCode(mongId, foodTypeCode).isEmpty();
+        if (foodEntityOptional.isPresent()) {
+            FoodEntity foodEntity = foodEntityOptional.get();
+            boolean isCanBuy = mongFeedHistoryRepository.findByMongIdAndCode(mongId, foodCode).isEmpty();
 
             Food food = Food.builder()
                     .foodCode(foodEntity.getComn().getCode())
@@ -145,16 +147,18 @@ public class MongReadService implements MongReadPort {
     @Transactional
     public List<Food> getFoodsPort(Long mongId) {
 
-        List<String> invalidBuyFoodTypeCodes = mongFeedHistoryRepository.findByMongId(mongId).stream()
+        List<String> invalidBuyFoodCodes = mongFeedHistoryRepository.findByMongId(mongId).stream()
                 .map(MongFeedHistoryEntity::getCode)
                 .toList();
 
-        return foodTypeRepository.findAll().stream()
+        log.info("##### {}", invalidBuyFoodCodes);
+
+        return foodRepository.findAll().stream()
                 .map(foodEntity -> Food.builder()
                             .foodCode(foodEntity.getComn().getCode())
                             .foodName(foodEntity.getComn().getName())
                             .price(foodEntity.getPrice())
-                            .isCanBuy(!invalidBuyFoodTypeCodes.contains(foodEntity.getComn().getCode()))
+                            .isCanBuy(!invalidBuyFoodCodes.contains(foodEntity.getComn().getCode()))
                             .weight(foodEntity.getWeight())
                             .strength(foodEntity.getStrength())
                             .satiety(foodEntity.getSatiety())
@@ -166,19 +170,19 @@ public class MongReadService implements MongReadPort {
 
     /**
      * 간식 조회
-     * @param snackTypeCode 간식 타입 코드
+     * @param snackCode 간식 타입 코드
      * @param mongId 몽 ID
      * @return 간식 도메인 객체
      */
     @Override
     @Transactional
-    public Optional<Snack> getSnackPort(String snackTypeCode, Long mongId) {
+    public Optional<Snack> getSnackPort(String snackCode, Long mongId) {
 
-        Optional<SnackEntity> snackTypeEntityOptional = snackTypeRepository.findByComnCode(snackTypeCode);
+        Optional<SnackEntity> snackEntityOptional = snackRepository.findByComnCode(snackCode);
 
-        if (snackTypeEntityOptional.isPresent()) {
-            SnackEntity snackEntity = snackTypeEntityOptional.get();
-            boolean isCanBuy = mongFeedHistoryRepository.findByMongIdAndCode(mongId, snackTypeCode).isEmpty();
+        if (snackEntityOptional.isPresent()) {
+            SnackEntity snackEntity = snackEntityOptional.get();
+            boolean isCanBuy = mongFeedHistoryRepository.findByMongIdAndCode(mongId, snackCode).isEmpty();
 
             Snack snack = Snack.builder()
                     .snackCode(snackEntity.getComn().getCode())
@@ -207,16 +211,16 @@ public class MongReadService implements MongReadPort {
     @Transactional
     public List<Snack> getSnacksPort(Long mongId) {
 
-        List<String> invalidBuySnackTypeCodes = mongFeedHistoryRepository.findByMongId(mongId).stream()
+        List<String> invalidBuySnackCodes = mongFeedHistoryRepository.findByMongId(mongId).stream()
                 .map(MongFeedHistoryEntity::getCode)
                 .toList();
 
-        return snackTypeRepository.findAll().stream()
+        return snackRepository.findAll().stream()
                 .map(snackEntity -> Snack.builder()
                         .snackCode(snackEntity.getComn().getCode())
                         .snackName(snackEntity.getComn().getName())
                         .price(snackEntity.getPrice())
-                        .isCanBuy(!invalidBuySnackTypeCodes.contains(snackEntity.getComn().getCode()))
+                        .isCanBuy(!invalidBuySnackCodes.contains(snackEntity.getComn().getCode()))
                         .weight(snackEntity.getWeight())
                         .strength(snackEntity.getStrength())
                         .satiety(snackEntity.getSatiety())
@@ -240,13 +244,13 @@ public class MongReadService implements MongReadPort {
 
     /**
      * 훈련 타입 조회
-     * @param trainingTypeCode 훈련 타입 코드
+     * @param trainingCode 훈련 타입 코드
      * @return 훈련 타입 도메인 객체
      */
     @Override
     @Transactional
-    public Optional<TrainingType> getTrainingTypePort(String trainingTypeCode) {
-        return trainingTypeRepository.findByComnCode(trainingTypeCode)
+    public Optional<TrainingType> getTrainingTypePort(String trainingCode) {
+        return trainingTypeRepository.findByComnCode(trainingCode)
                 .map(TrainingTypeEntity::toDomain)
                 .or(Optional::empty);
     }
@@ -257,8 +261,8 @@ public class MongReadService implements MongReadPort {
      */
     @Override
     @Transactional
-    public List<RandomDraw> getRandomDrawItemsPort() {
-        return randomDrawItemRepository.findAll().stream()
+    public List<RandomDraw> getRandomDrawsPort() {
+        return randomDrawRepository.findAll().stream()
                 .map(RandomDrawEntity::toDomain)
                 .toList();
     }
@@ -270,8 +274,8 @@ public class MongReadService implements MongReadPort {
      */
     @Override
     @Transactional
-    public List<Inventory> getInventoryItemsPort(Long mongId) {
-        return inventoryItemRepository.findByMongId(mongId).stream()
+    public List<Inventory> getInventoriesPort(Long mongId) {
+        return inventoryRepository.findByMongId(mongId).stream()
                 .map(InventoryEntity::toDomain)
                 .toList();
     }

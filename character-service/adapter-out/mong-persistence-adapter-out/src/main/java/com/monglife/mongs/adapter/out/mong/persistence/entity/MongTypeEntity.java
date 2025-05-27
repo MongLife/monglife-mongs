@@ -18,7 +18,7 @@ public class MongTypeEntity {
     private Long mongTypeId;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "mong_type_code")
+    @JoinColumn(name = "mong_code")
     private ComnCodeEntity comn;
 
     @Column(name = "level")
@@ -54,8 +54,8 @@ public class MongTypeEntity {
     public MongType toDomain() {
         return MongType.builder()
                 .mongTypeId(this.mongTypeId)
-                .mongTypeCode(comn.getCode())
-                .mongTypeName(comn.getName())
+                .mongCode(this.comn.getCode())
+                .mongName(this.comn.getName())
                 .level(this.level)
                 .evolutionScore(this.evolutionScore)
                 .maxStatus(this.maxStatus)

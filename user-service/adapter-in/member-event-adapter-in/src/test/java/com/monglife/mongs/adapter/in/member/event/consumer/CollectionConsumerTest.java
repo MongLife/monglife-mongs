@@ -55,12 +55,12 @@ class CollectionConsumerTest {
             // arrange
             String topic = EventTopic.COMMIT_CREATE_MONG;
             long accountId = 1L;
-            String mongTypeCode = "CH000";
+            String mongCode = "CH000";
 
             // act
             CreateMongEventDto createMongEventDto = CreateMongEventDto.builder()
                     .accountId(accountId)
-                    .mongTypeCode(mongTypeCode)
+                    .mongCode(mongCode)
                     .build();
 
             kafkaService.generateEvent(topic, createMongEventDto);
@@ -77,7 +77,7 @@ class CollectionConsumerTest {
 
             var command = captor.getValue();
             assertEquals(accountId, command.getAccountId());
-            assertEquals(mongTypeCode, command.getMongTypeCode());
+            assertEquals(mongCode, command.getMongCode());
         }
     }
 }

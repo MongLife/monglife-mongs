@@ -14,5 +14,5 @@ public enum MongStateCode {
     GRADUATE("졸업")
     ;
 
-    public final String stateName;
+    public final String description;
 }

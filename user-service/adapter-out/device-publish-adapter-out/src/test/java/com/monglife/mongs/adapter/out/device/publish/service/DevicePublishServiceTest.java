@@ -52,12 +52,12 @@ class DevicePublishServiceTest {
             this.deviceConsumer = deviceConsumer;
         }
 
-        private static String deviceId;
-        private static final LocalDateTime deviceBootedDt = LocalDateTime.of(2025, 1, 1, 0, 0);
+        private static String DEVICE_ID;
+        private static final LocalDateTime DEVICE_BOOTED_AT = LocalDateTime.of(2025, 1, 1, 0, 0);
 
         @BeforeEach
         void beforeEach() {
-            deviceId = CommonUtil.randomId();
+            DEVICE_ID = CommonUtil.randomId();
         }
 
         @Test
@@ -67,17 +67,17 @@ class DevicePublishServiceTest {
             int walkingCount = 50;
             int consumeWalkingCount = 100;
             Step step = Step.builder()
-                    .deviceId(deviceId)
+                    .deviceId(DEVICE_ID)
                     .walkingCount(walkingCount)
                     .totalWalkingCount(100)
                     .consumeWalkingCount(consumeWalkingCount)
-                    .deviceBootedDt(deviceBootedDt)
+                    .deviceBootedAt(DEVICE_BOOTED_AT)
                     .build();
 
             DevicePublishDto devicePublishDto = new DevicePublishDto();
             CountDownLatch countDownLatch = new CountDownLatch(1);
 
-            deviceConsumer.reset(deviceId, devicePublishDto, countDownLatch);
+            deviceConsumer.reset(DEVICE_ID, devicePublishDto, countDownLatch);
 
             // act
             devicePublishPort.publishCurrentWalkingCountPort(step);
@@ -86,7 +86,7 @@ class DevicePublishServiceTest {
 
             // assert
             assertTrue(expected);
-            assertEquals(deviceId, devicePublishDto.getDeviceId());
+            assertEquals(DEVICE_ID, devicePublishDto.getDeviceId());
             assertEquals(walkingCount, devicePublishDto.getWalkingCount());
             assertEquals(consumeWalkingCount, devicePublishDto.getConsumeWalkingCount());
         }

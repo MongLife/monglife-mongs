@@ -323,9 +323,9 @@ class MatchPersistenceServiceTest {
                             .deviceId(CommonUtil.randomId())
                             .accountId(1L)
                             .mongId(1L)
-                            .mongTypeCode("MONG-TYPE-CODE 1")
-                            .mongTypeName("MONG-TYPE-NAME 1")
-                            .mongName("MONG-NAME 1")
+                            .mongCode("MONG-TYPE-CODE 1")
+                            .mongName("MONG-TYPE-NAME 1")
+                            .name("MONG-NAME 1")
                             .attack(100D)
                             .heal(100D)
                             .defence(100D)
@@ -339,9 +339,9 @@ class MatchPersistenceServiceTest {
                             .deviceId(CommonUtil.randomId())
                             .accountId(2L)
                             .mongId(2L)
-                            .mongTypeCode("MONG-TYPE-CODE 2")
-                            .mongTypeName("MONG-TYPE-NAME 2")
-                            .mongName("MONG-NAME 2")
+                            .mongCode("MONG-TYPE-CODE 2")
+                            .mongName("MONG-TYPE-NAME 2")
+                            .name("MONG-NAME 2")
                             .attack(200D)
                             .heal(200D)
                             .defence(200D)
@@ -378,9 +378,9 @@ class MatchPersistenceServiceTest {
             assertEquals(matchEntity.getMatchPlayers().get(0).getDeviceId() , expected2.getDeviceId());
             assertEquals(matchEntity.getMatchPlayers().get(0).getAccountId() , expected2.getAccountId());
             assertEquals(matchEntity.getMatchPlayers().get(0).getMongId() , expected2.getMongId());
-            assertEquals(matchEntity.getMatchPlayers().get(0).getMongTypeCode() , expected2.getMongTypeCode());
-            assertEquals(matchEntity.getMatchPlayers().get(0).getMongTypeName() , expected2.getMongTypeName());
+            assertEquals(matchEntity.getMatchPlayers().get(0).getMongCode() , expected2.getMongCode());
             assertEquals(matchEntity.getMatchPlayers().get(0).getMongName() , expected2.getMongName());
+            assertEquals(matchEntity.getMatchPlayers().get(0).getName() , expected2.getName());
             assertEquals(matchEntity.getMatchPlayers().get(0).getAttack() , expected2.getAttack());
             assertEquals(matchEntity.getMatchPlayers().get(0).getHeal() , expected2.getHeal());
             assertEquals(matchEntity.getMatchPlayers().get(0).getDefence() , expected2.getDefence());
@@ -406,9 +406,9 @@ class MatchPersistenceServiceTest {
                             .deviceId(CommonUtil.randomId())
                             .accountId(1L)
                             .mongId(1L)
-                            .mongTypeCode("MONG-TYPE-CODE 1")
-                            .mongTypeName("MONG-TYPE-NAME 1")
-                            .mongName("MONG-NAME 1")
+                            .mongCode("MONG-TYPE-CODE 1")
+                            .mongName("MONG-TYPE-NAME 1")
+                            .name("MONG-NAME 1")
                             .attack(100D)
                             .heal(100D)
                             .defence(100D)
@@ -422,9 +422,9 @@ class MatchPersistenceServiceTest {
                             .deviceId(CommonUtil.randomId())
                             .accountId(2L)
                             .mongId(2L)
-                            .mongTypeCode("MONG-TYPE-CODE 2")
-                            .mongTypeName("MONG-TYPE-NAME 2")
-                            .mongName("MONG-NAME 2")
+                            .mongCode("MONG-TYPE-CODE 2")
+                            .mongName("MONG-TYPE-NAME 2")
+                            .name("MONG-NAME 2")
                             .attack(200D)
                             .heal(200D)
                             .defence(200D)
@@ -447,15 +447,15 @@ class MatchPersistenceServiceTest {
             assertNotNull(expected2);
             assertNotNull(expected1.get().getMatchId());
             assertEquals(createMatchVo.getRound(), expected1.get().getRound());
-            assertEquals(createMatchVo.getMatchStateCode(), expected1.get().getStateCode());
+            assertEquals(createMatchVo.getStateCode(), expected1.get().getStateCode());
             assertEquals(createMatchVo.getMatchPlayers().size(), expected1.get().getMatchPlayers().size());
             assertEquals(createMatchVo.getMatchPlayers().get(0).getPlayerId() , expected2.getPlayerId());
             assertEquals(createMatchVo.getMatchPlayers().get(0).getDeviceId() , expected2.getDeviceId());
             assertEquals(createMatchVo.getMatchPlayers().get(0).getAccountId() , expected2.getAccountId());
             assertEquals(createMatchVo.getMatchPlayers().get(0).getMongId() , expected2.getMongId());
-            assertEquals(createMatchVo.getMatchPlayers().get(0).getMongTypeCode() , expected2.getMongTypeCode());
-            assertEquals(createMatchVo.getMatchPlayers().get(0).getMongTypeName() , expected2.getMongTypeName());
+            assertEquals(createMatchVo.getMatchPlayers().get(0).getMongCode() , expected2.getMongCode());
             assertEquals(createMatchVo.getMatchPlayers().get(0).getMongName() , expected2.getMongName());
+            assertEquals(createMatchVo.getMatchPlayers().get(0).getName() , expected2.getName());
             assertEquals(createMatchVo.getMatchPlayers().get(0).getAttack() , expected2.getAttack());
             assertEquals(createMatchVo.getMatchPlayers().get(0).getHeal() , expected2.getHeal());
             assertEquals(createMatchVo.getMatchPlayers().get(0).getDefence() , expected2.getDefence());
@@ -485,9 +485,9 @@ class MatchPersistenceServiceTest {
                             .deviceId(CommonUtil.randomId())
                             .accountId(1L)
                             .mongId(1L)
-                            .mongTypeCode("MONG-TYPE-CODE 1")
-                            .mongTypeName("MONG-TYPE-NAME 1")
-                            .mongName("MONG-NAME 1")
+                            .mongCode("MONG-TYPE-CODE 1")
+                            .mongName("MONG-TYPE-NAME 1")
+                            .name("MONG-NAME 1")
                             .attack(attack1)
                             .heal(100D)
                             .defence(100D)
@@ -501,9 +501,9 @@ class MatchPersistenceServiceTest {
                             .deviceId(CommonUtil.randomId())
                             .accountId(2L)
                             .mongId(2L)
-                            .mongTypeCode("MONG-TYPE-CODE 2")
-                            .mongTypeName("MONG-TYPE-NAME 2")
-                            .mongName("MONG-NAME 2")
+                            .mongCode("MONG-TYPE-CODE 2")
+                            .mongName("MONG-TYPE-NAME 2")
+                            .name("MONG-NAME 2")
                             .attack(attack2)
                             .heal(200D)
                             .defence(200D)
@@ -557,9 +557,9 @@ class MatchPersistenceServiceTest {
             assertEquals(matchEntity.getMatchPlayers().get(0).getDeviceId(), expected2.getDeviceId());
             assertEquals(matchEntity.getMatchPlayers().get(0).getAccountId(), expected2.getAccountId());
             assertEquals(matchEntity.getMatchPlayers().get(0).getMongId(), expected2.getMongId());
-            assertEquals(matchEntity.getMatchPlayers().get(0).getMongTypeCode(), expected2.getMongTypeCode());
-            assertEquals(matchEntity.getMatchPlayers().get(0).getMongTypeName(), expected2.getMongTypeName());
+            assertEquals(matchEntity.getMatchPlayers().get(0).getMongCode(), expected2.getMongCode());
             assertEquals(matchEntity.getMatchPlayers().get(0).getMongName(), expected2.getMongName());
+            assertEquals(matchEntity.getMatchPlayers().get(0).getName(), expected2.getName());
             assertEquals(matchEntity.getMatchPlayers().get(0).getAttack(), expected2.getAttack());
             assertEquals(matchEntity.getMatchPlayers().get(0).getHeal(), expected2.getHeal());
             assertEquals(matchEntity.getMatchPlayers().get(0).getDefence(), expected2.getDefence());

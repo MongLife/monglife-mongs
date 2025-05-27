@@ -134,9 +134,9 @@ public class MatchPersistenceService implements MatchPersistencePort {
                         .deviceId(matchPlayer.getDeviceId())
                         .accountId(matchPlayer.getAccountId())
                         .mongId(matchPlayer.getMongId())
-                        .mongTypeCode(matchPlayer.getMongTypeCode())
-                        .mongTypeName(matchPlayer.getMongTypeName())
+                        .mongCode(matchPlayer.getMongCode())
                         .mongName(matchPlayer.getMongName())
+                        .name(matchPlayer.getName())
                         .attack(matchPlayer.getAttack())
                         .heal(matchPlayer.getHeal())
                         .defence(matchPlayer.getDefence())
@@ -153,7 +153,7 @@ public class MatchPersistenceService implements MatchPersistencePort {
                 .matchPlayers(matchPlayerEntities)
                 .matchPicks(Collections.emptyList())
                 .round(createMatchVo.getRound())
-                .stateCode(createMatchVo.getMatchStateCode())
+                .stateCode(createMatchVo.getStateCode())
                 .build();
 
         return Optional.of(matchRepository.save(matchEntity).toDomain());

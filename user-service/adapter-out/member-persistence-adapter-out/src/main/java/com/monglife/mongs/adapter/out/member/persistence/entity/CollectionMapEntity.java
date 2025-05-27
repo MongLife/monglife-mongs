@@ -26,16 +26,16 @@ public class CollectionMapEntity extends BaseTimeEntity {
     private Long accountId;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "collection_map_code")
-    private ComnCodeEntity mapType;
+    @JoinColumn(name = "map_code")
+    private ComnCodeEntity comn;
 
     @Transient
     private Boolean isIncluded = true;
 
     @Builder
-    public CollectionMapEntity(Long accountId, ComnCodeEntity mapType) {
+    public CollectionMapEntity(Long accountId, ComnCodeEntity comn) {
         this.accountId = accountId;
-        this.mapType = mapType;
+        this.comn = comn;
     }
 
     public void exclude() {
@@ -50,8 +50,8 @@ public class CollectionMapEntity extends BaseTimeEntity {
         return CollectionMap.builder()
                 .collectionMapId(this.collectionMapId)
                 .accountId(this.accountId)
-                .mapTypeCode(this.mapType.getCode())
-                .mapTypeName(this.mapType.getName())
+                .mapCode(this.comn.getCode())
+                .mapName(this.comn.getName())
                 .isIncluded(this.isIncluded)
                 .build();
     }

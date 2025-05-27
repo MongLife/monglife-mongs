@@ -15,12 +15,12 @@ public class PickMatchRequestDto {
 
     private String targetPlayerId;
 
-    private MatchPickCode matchPickCode;
+    private MatchPickCode pickCode;
 
     @Builder
-    public PickMatchRequestDto(String playerId, String targetPlayerId, MatchPickCode matchPickCode) {
+    public PickMatchRequestDto(String playerId, String targetPlayerId, MatchPickCode pickCode) {
         this.playerId = playerId;
         this.targetPlayerId = targetPlayerId;
-        this.matchPickCode = matchPickCode;
+        this.pickCode = pickCode;
     }
 }

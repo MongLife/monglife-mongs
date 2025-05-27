@@ -12,18 +12,18 @@ public class CollectionMong {
 
     private final Long accountId;
 
-    private final String mongTypeCode;
+    private final String mongCode;
 
-    private final String mongTypeName;
+    private final String mongName;
 
     private final Boolean isIncluded;
 
     @Builder
-    public CollectionMong(Long collectionMongId, Long accountId, String mongTypeCode, String mongTypeName, Boolean isIncluded) {
+    public CollectionMong(Long collectionMongId, Long accountId, String mongCode, String mongName, Boolean isIncluded) {
         this.collectionMongId = collectionMongId;
         this.accountId = accountId;
-        this.mongTypeCode = mongTypeCode;
-        this.mongTypeName = mongTypeName;
+        this.mongCode = mongCode;
+        this.mongName = mongName;
         this.isIncluded = isIncluded;
     }
 }

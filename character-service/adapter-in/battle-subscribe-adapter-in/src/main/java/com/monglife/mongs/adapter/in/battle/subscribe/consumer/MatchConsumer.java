@@ -63,7 +63,7 @@ public class MatchConsumer {
                 .matchId(matchId)
                 .playerId(pickMatchRequestDto.getPlayerId())
                 .targetPlayerId(pickMatchRequestDto.getTargetPlayerId())
-                .matchPickCode(pickMatchRequestDto.getMatchPickCode())
+                .pickCode(pickMatchRequestDto.getPickCode())
                 .build();
 
         matchUseCase.pickMatchUseCase(command);

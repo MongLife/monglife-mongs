@@ -9,7 +9,7 @@ import java.util.Optional;
 
 public interface MongTypeRepository extends JpaRepository<MongTypeEntity, String>, MongTypeDslRepository {
 
-    Optional<MongTypeEntity> findByComnCode(String mongTypeCode);
+    Optional<MongTypeEntity> findByComnCode(String mongCode);
 
     List<MongTypeEntity> findByLevel(Integer level);
 }

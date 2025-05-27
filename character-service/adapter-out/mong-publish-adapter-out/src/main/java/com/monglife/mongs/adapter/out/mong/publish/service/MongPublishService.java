@@ -33,8 +33,8 @@ public class MongPublishService implements MongPublishPort {
 
         MongPublishDto mongPublishDto = MongPublishDto.builder()
                 .mongId(mong.getMongId())
-                .mongName(mong.getMongName())
-                .mongTypeCode(mong.getMongTypeCode())
+                .name(mong.getName())
+                .mongCode(mong.getMongCode())
                 .payPoint(mong.getPayPoint())
                 .stateCode(mong.getStateCode().name())
                 .isSleep(mong.getIsSleep())

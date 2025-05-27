@@ -13,7 +13,7 @@ public class CreateMongVo {
 
     private final Long accountId;
 
-    private final String mongName;
+    private final String name;
 
     private final MongStatusCode statusCode;
 
@@ -54,9 +54,9 @@ public class CreateMongVo {
     private final MongType mongType;
 
     @Builder
-    public CreateMongVo(Long accountId, String mongName, MongStatusCode statusCode, MongStateCode stateCode, LocalTime sleepAt, LocalTime wakeupAt, Integer payPoint, Boolean isSleep, Double strength, Double satiety, Double healthy, Double fatigue, Double exp, Double weight, Double evolutionReward, Double evolutionPenalty, Integer strokeCount, Integer trainingCount, Integer poopCount, Integer randomDrawTicketCount, MongType mongType) {
+    public CreateMongVo(Long accountId, String name, MongStatusCode statusCode, MongStateCode stateCode, LocalTime sleepAt, LocalTime wakeupAt, Integer payPoint, Boolean isSleep, Double strength, Double satiety, Double healthy, Double fatigue, Double exp, Double weight, Double evolutionReward, Double evolutionPenalty, Integer strokeCount, Integer trainingCount, Integer poopCount, Integer randomDrawTicketCount, MongType mongType) {
         this.accountId = accountId;
-        this.mongName = mongName;
+        this.name = name;
         this.statusCode = statusCode;
         this.stateCode = stateCode;
         this.sleepAt = sleepAt;

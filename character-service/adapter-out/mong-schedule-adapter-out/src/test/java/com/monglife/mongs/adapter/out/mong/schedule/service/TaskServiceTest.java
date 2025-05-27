@@ -87,24 +87,24 @@ class TaskServiceTest {
             // arrange
             long mongId = 1L;
             long accountId = 1L;
-            TestSchedulerType testSchedulerType = TestSchedulerType.CREATE_TEST;
+            TestSchedulerType schedulerType = TestSchedulerType.CREATE_TEST;
 
             TestEventDto testEventDto = new TestEventDto();
             CountDownLatch countDownLatch = new CountDownLatch(1);
             testEventConsumer.reset(testEventDto, countDownLatch);
 
             // act
-            var expected1 = mongSchedulerPort.createTaskPort(mongId, accountId, testSchedulerType);
-            var expected2 = countDownLatch.await(testSchedulerType.getExpiration() * 2, TimeUnit.SECONDS);
+            var expected1 = mongSchedulerPort.createTaskPort(mongId, accountId, schedulerType);
+            var expected2 = countDownLatch.await(schedulerType.getExpiration() * 2, TimeUnit.SECONDS);
 
             // assert
             assertFalse(expected1.isEmpty());
             assertTrue(expected2);
             assertEquals(expected1.get(), testEventDto.getTaskId());
 
-            Awaitility.waitAtMost(Duration.ofSeconds(testSchedulerType.getExpiration() * 2))
+            Awaitility.waitAtMost(Duration.ofSeconds(schedulerType.getExpiration() * 2))
                     .untilAsserted(() -> assertTrue(taskRepository.findByTaskId(expected1.orElse(-1L)).isEmpty()));
-            Awaitility.waitAtMost(Duration.ofSeconds(testSchedulerType.getExpiration() * 2))
+            Awaitility.waitAtMost(Duration.ofSeconds(schedulerType.getExpiration() * 2))
                     .untilAsserted(() -> assertTrue(taskScheduleRepository.findByTaskId(expected1.orElse(-1L)).isEmpty()));
         }
     }
@@ -127,24 +127,24 @@ class TaskServiceTest {
             long mongId = 1L;
             long accountId = 1L;
             int cycleCount = 3;
-            TestSchedulerType testSchedulerType = TestSchedulerType.CREATE_TEST;
+            TestSchedulerType schedulerType = TestSchedulerType.CREATE_TEST;
 
             TestEventDto testEventDto = new TestEventDto();
             CountDownLatch countDownLatch = new CountDownLatch(cycleCount);
             testEventConsumer.reset(testEventDto, countDownLatch);
 
             // act
-            var expected1 = mongSchedulerPort.createCycleTaskPort(mongId, accountId, testSchedulerType);
-            var expected2 = countDownLatch.await(testSchedulerType.getExpiration() * cycleCount * 2, TimeUnit.SECONDS);
+            var expected1 = mongSchedulerPort.createCycleTaskPort(mongId, accountId, schedulerType);
+            var expected2 = countDownLatch.await(schedulerType.getExpiration() * cycleCount * 2, TimeUnit.SECONDS);
 
             // assert
             assertFalse(expected1.isEmpty());
             assertEquals(expected1.get(), testEventDto.getTaskId());
             assertTrue(expected2);
 
-            Awaitility.waitAtMost(Duration.ofSeconds(testSchedulerType.getExpiration() * 2))
+            Awaitility.waitAtMost(Duration.ofSeconds(schedulerType.getExpiration() * 2))
                     .untilAsserted(() -> assertFalse(taskRepository.findByTaskId(expected1.orElse(-1L)).isEmpty()));
-            Awaitility.waitAtMost(Duration.ofSeconds(testSchedulerType.getExpiration() * 2))
+            Awaitility.waitAtMost(Duration.ofSeconds(schedulerType.getExpiration() * 2))
                     .untilAsserted(() -> assertFalse(taskScheduleRepository.findByTaskId(expected1.orElse(-1L)).isEmpty()));
         }
     }
@@ -166,26 +166,26 @@ class TaskServiceTest {
             // arrange
             long mongId = 1L;
             long accountId = 1L;
-            TestSchedulerType testSchedulerType = TestSchedulerType.CREATE_TEST;
-            LocalTime fixedTime = LocalTime.now().plusSeconds(testSchedulerType.getExpiration());
+            TestSchedulerType schedulerType = TestSchedulerType.CREATE_TEST;
+            LocalTime fixedTime = LocalTime.now().plusSeconds(schedulerType.getExpiration());
             LocalDateTime expiredAt = LocalDateTime.of(LocalDate.now().plusDays(1), fixedTime);
 
             TestEventDto testEventDto = new TestEventDto();
             CountDownLatch countDownLatch = new CountDownLatch(1);
             testEventConsumer.reset(testEventDto, countDownLatch);
 
-            var expected1 = mongSchedulerPort.createFixedTimeCycleTaskPort(mongId, accountId, testSchedulerType, fixedTime);
-            var expected2 = countDownLatch.await(testSchedulerType.getExpiration() * 2, TimeUnit.SECONDS);
+            var expected1 = mongSchedulerPort.createFixedTimeCycleTaskPort(mongId, accountId, schedulerType, fixedTime);
+            var expected2 = countDownLatch.await(schedulerType.getExpiration() * 2, TimeUnit.SECONDS);
 
             // assert
             assertFalse(expected1.isEmpty());
             assertEquals(expected1.get(), testEventDto.getTaskId());
             assertTrue(expected2);
 
-            Awaitility.waitAtMost(Duration.ofSeconds(testSchedulerType.getExpiration() * 2))
+            Awaitility.waitAtMost(Duration.ofSeconds(schedulerType.getExpiration() * 2))
                     .untilAsserted(() -> taskRepository.findByTaskId(expected1.orElse(-1L)).ifPresentOrElse(taskScheduleEntity ->
                             assertTrue(Math.abs(Duration.between(taskScheduleEntity.getExpiredAt(), expiredAt).toSeconds()) <= 1), Assertions::fail));
-            Awaitility.waitAtMost(Duration.ofSeconds(testSchedulerType.getExpiration() * 2))
+            Awaitility.waitAtMost(Duration.ofSeconds(schedulerType.getExpiration() * 2))
                     .untilAsserted(() -> taskScheduleRepository.findByTaskId(expected1.orElse(-1L)).ifPresentOrElse(taskScheduleEntity ->
                             assertTrue(Math.abs(Duration.between(taskScheduleEntity.getExpiredAt(), expiredAt).toSeconds()) <= 1), Assertions::fail));
         }
@@ -209,25 +209,25 @@ class TaskServiceTest {
             long mongId = 1L;
             long accountId = 1L;
             int cycleCount = 2;
-            TestSchedulerType testSchedulerType = TestSchedulerType.DELETE_1_TEST;
+            TestSchedulerType schedulerType = TestSchedulerType.DELETE_1_TEST;
 
             TestEventDto testEventDto = new TestEventDto();
             CountDownLatch countDownLatch = new CountDownLatch(cycleCount);
             testEventConsumer.reset(testEventDto, countDownLatch);
 
             // act
-            var expected1 = mongSchedulerPort.createCycleTaskPort(mongId, accountId, testSchedulerType);
-            var expected2 = countDownLatch.await(testSchedulerType.getExpiration() * cycleCount * 2, TimeUnit.SECONDS);
-            mongSchedulerPort.deleteTaskPort(mongId, testSchedulerType);
+            var expected1 = mongSchedulerPort.createCycleTaskPort(mongId, accountId, schedulerType);
+            var expected2 = countDownLatch.await(schedulerType.getExpiration() * cycleCount * 2, TimeUnit.SECONDS);
+            mongSchedulerPort.deleteTaskPort(mongId, schedulerType);
 
             // assert
             assertFalse(expected1.isEmpty());
             assertEquals(expected1.get(), testEventDto.getTaskId());
             assertTrue(expected2);
 
-            Awaitility.waitAtMost(Duration.ofSeconds(testSchedulerType.getExpiration() * 2))
+            Awaitility.waitAtMost(Duration.ofSeconds(schedulerType.getExpiration() * 2))
                     .untilAsserted(() -> assertTrue(taskRepository.findByTaskId(expected1.orElse(-1L)).isEmpty()));
-            Awaitility.waitAtMost(Duration.ofSeconds(testSchedulerType.getExpiration() * 2))
+            Awaitility.waitAtMost(Duration.ofSeconds(schedulerType.getExpiration() * 2))
                     .untilAsserted(() -> assertTrue(taskScheduleRepository.findByTaskId(expected1.orElse(-1L)).isEmpty()));
         }
     }
@@ -249,28 +249,28 @@ class TaskServiceTest {
             // arrange
             long mongId = 1L;
             long accountId = 1L;
-            List<TestSchedulerType> testSchedulerTypes = List.of(TestSchedulerType.DELETE_1_TEST, TestSchedulerType.DELETE_2_TEST);
+            List<TestSchedulerType> schedulerType = List.of(TestSchedulerType.DELETE_1_TEST, TestSchedulerType.DELETE_2_TEST);
 
             TestEventDto testEventDto = new TestEventDto();
-            CountDownLatch countDownLatch = new CountDownLatch(testSchedulerTypes.size());
+            CountDownLatch countDownLatch = new CountDownLatch(schedulerType.size());
             testEventConsumer.reset(testEventDto, countDownLatch);
 
             // act
             List<Optional<Long>> expected1 = new ArrayList<>();
-            for (TestSchedulerType testSchedulerType : testSchedulerTypes) {
+            for (TestSchedulerType testSchedulerType : schedulerType) {
                 expected1.add(mongSchedulerPort.createCycleTaskPort(mongId, accountId, testSchedulerType));
             }
 
-            var expected2 = countDownLatch.await(testSchedulerTypes.stream().mapToLong(TestSchedulerType::getExpiration).sum() * 2, TimeUnit.SECONDS);
+            var expected2 = countDownLatch.await(schedulerType.stream().mapToLong(TestSchedulerType::getExpiration).sum() * 2, TimeUnit.SECONDS);
             mongSchedulerPort.deleteAllTaskPort(mongId);
 
             // assert
             expected1.forEach(optional -> assertFalse(optional.isEmpty()));
             assertTrue(expected2);
 
-            Awaitility.waitAtMost(Duration.ofSeconds(testSchedulerTypes.stream().mapToLong(TestSchedulerType::getExpiration).sum() * 2))
+            Awaitility.waitAtMost(Duration.ofSeconds(schedulerType.stream().mapToLong(TestSchedulerType::getExpiration).sum() * 2))
                             .untilAsserted(() -> assertEquals(0, taskRepository.count()));
-            Awaitility.waitAtMost(Duration.ofSeconds(testSchedulerTypes.stream().mapToLong(TestSchedulerType::getExpiration).sum() * 2))
+            Awaitility.waitAtMost(Duration.ofSeconds(schedulerType.stream().mapToLong(TestSchedulerType::getExpiration).sum() * 2))
                     .untilAsserted(() -> assertEquals(0, taskScheduleRepository.count()));
         }
     }
@@ -295,7 +295,7 @@ class TaskServiceTest {
             // arrange
             long mongId = 1L;
             long accountId = 1L;
-            List<TestSchedulerType> testSchedulerTypes = List.of(
+            List<TestSchedulerType> schedulerTypes = List.of(
                     TestSchedulerType.APP_STOP_1_TEST,
                     TestSchedulerType.APP_STOP_2_TEST,
                     TestSchedulerType.APP_STOP_3_TEST,
@@ -304,16 +304,16 @@ class TaskServiceTest {
             );
 
             TestEventDto testEventDto = new TestEventDto();
-            CountDownLatch countDownLatch = new CountDownLatch(testSchedulerTypes.size());
+            CountDownLatch countDownLatch = new CountDownLatch(schedulerTypes.size());
             testEventConsumer.reset(testEventDto, countDownLatch);
 
             // act
             List<Optional<Long>> expected1 = new ArrayList<>();
-            for (TestSchedulerType testSchedulerType : testSchedulerTypes) {
+            for (TestSchedulerType testSchedulerType : schedulerTypes) {
                 expected1.add(mongSchedulerPort.createCycleTaskPort(mongId, accountId, testSchedulerType));
             }
 
-            var expected2 = countDownLatch.await(testSchedulerTypes.stream().mapToLong(TestSchedulerType::getExpiration).sum() * 2, TimeUnit.SECONDS);
+            var expected2 = countDownLatch.await(schedulerTypes.stream().mapToLong(TestSchedulerType::getExpiration).sum() * 2, TimeUnit.SECONDS);
             taskService.appStopPauseAllTask();
 
             var expected3 = List.copyOf(taskRepository.findAll());
@@ -332,7 +332,7 @@ class TaskServiceTest {
             assertEquals(0, expected4);
 
             expected5.forEach(taskEntity -> assertEquals(TaskStateCode.PROCESSING, taskEntity.getStateCode()));
-            assertEquals(testSchedulerTypes.size(), expected6);
+            assertEquals(schedulerTypes.size(), expected6);
         }
     }
 }

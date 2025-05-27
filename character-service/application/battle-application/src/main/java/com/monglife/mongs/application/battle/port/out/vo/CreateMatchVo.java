@@ -18,13 +18,13 @@ public class CreateMatchVo {
 
     private final Integer round;
 
-    private final MatchStateCode matchStateCode;
+    private final MatchStateCode stateCode;
 
     @Builder
     public CreateMatchVo(List<MatchPlayer> matchPlayers) {
         this.maxRound = Match.getInitMaxRound();
         this.matchPlayers = matchPlayers == null ? new ArrayList<>() : matchPlayers;
         this.round = Match.getInitRound();
-        this.matchStateCode = Match.getInitMatchStateCode();
+        this.stateCode = Match.getInitMatchStateCode();
     }
 }

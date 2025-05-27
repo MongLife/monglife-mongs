@@ -5,7 +5,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Optional;
 
-public interface SnackTypeRepository extends JpaRepository<SnackEntity, Long> {
+public interface SnackRepository extends JpaRepository<SnackEntity, Long> {
 
     Optional<SnackEntity> findByComnCode(String snackCode);
 }

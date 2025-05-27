@@ -6,10 +6,10 @@ import lombok.Getter;
 @Getter
 public class GetTrainingTypeCommand {
 
-    private final String trainingTypeCode;
+    private final String trainingCode;
 
     @Builder
-    public GetTrainingTypeCommand(String trainingTypeCode) {
-        this.trainingTypeCode = trainingTypeCode;
+    public GetTrainingTypeCommand(String trainingCode) {
+        this.trainingCode = trainingCode;
     }
 }

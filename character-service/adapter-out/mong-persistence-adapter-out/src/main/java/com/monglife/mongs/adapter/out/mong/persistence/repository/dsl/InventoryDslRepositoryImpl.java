@@ -11,18 +11,18 @@ import java.util.Optional;
 import static com.monglife.mongs.adapter.out.mong.persistence.entity.QInventoryEntity.inventoryEntity;
 
 @Repository
-public class InventoryItemDslRepositoryImpl implements InventoryItemDslRepository {
+public class InventoryDslRepositoryImpl implements InventoryDslRepository {
 
     private final JPAQueryFactory jpaQueryFactory;
 
-    public InventoryItemDslRepositoryImpl(@Qualifier("mongJpaQueryFactory") JPAQueryFactory jpaQueryFactory) {
+    public InventoryDslRepositoryImpl(@Qualifier("mongJpaQueryFactory") JPAQueryFactory jpaQueryFactory) {
         this.jpaQueryFactory = jpaQueryFactory;
     }
 
     @Override
-    public Optional<InventoryEntity> findByIdWithLock(Long inventoryItemId) {
+    public Optional<InventoryEntity> findByIdWithLock(Long inventoryId) {
         return Optional.ofNullable(jpaQueryFactory.selectFrom(inventoryEntity)
-                .where(inventoryEntity.inventoryId.eq(inventoryItemId))
+                .where(inventoryEntity.inventoryId.eq(inventoryId))
                 .setLockMode(LockModeType.PESSIMISTIC_WRITE)
                 .fetchOne());
     }

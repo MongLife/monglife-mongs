@@ -16,14 +16,14 @@ public class CreateStepVo {
 
     private final Integer consumeWalkingCount;
 
-    private final LocalDateTime deviceBootedDt;
+    private final LocalDateTime deviceBootedAt;
 
     @Builder
-    public CreateStepVo(String deviceId, Integer walkingCount, Integer totalWalkingCount, Integer consumeWalkingCount, LocalDateTime deviceBootedDt) {
+    public CreateStepVo(String deviceId, Integer walkingCount, Integer totalWalkingCount, Integer consumeWalkingCount, LocalDateTime deviceBootedAt) {
         this.deviceId = deviceId;
         this.walkingCount = walkingCount;
         this.totalWalkingCount = totalWalkingCount;
         this.consumeWalkingCount = consumeWalkingCount;
-        this.deviceBootedDt = deviceBootedDt;
+        this.deviceBootedAt = deviceBootedAt;
     }
 }

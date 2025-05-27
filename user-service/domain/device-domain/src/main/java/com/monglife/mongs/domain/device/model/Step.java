@@ -22,15 +22,15 @@ public class Step {
 
     private Integer consumeWalkingCount;
 
-    private LocalDateTime deviceBootedDt;
+    private LocalDateTime deviceBootedAt;
 
     @Builder
-    public Step(String deviceId, Integer walkingCount, Integer totalWalkingCount, Integer consumeWalkingCount, LocalDateTime deviceBootedDt) {
+    public Step(String deviceId, Integer walkingCount, Integer totalWalkingCount, Integer consumeWalkingCount, LocalDateTime deviceBootedAt) {
         this.deviceId = deviceId;
         this.walkingCount = walkingCount;
         this.totalWalkingCount = totalWalkingCount;
         this.consumeWalkingCount = consumeWalkingCount;
-        this.deviceBootedDt = deviceBootedDt;
+        this.deviceBootedAt = deviceBootedAt;
     }
 
     /**
@@ -82,7 +82,7 @@ public class Step {
      */
     public void syncTotalWalkingCount(Integer totalWalkingCount, LocalDateTime deviceBootedDt) {
 
-        if (this.getDeviceBootedDt().equals(deviceBootedDt)) {
+        if (this.getDeviceBootedAt().equals(deviceBootedDt)) {
             // 기기 부팅 시간이 변경 되지 않은 경우, 걸음 수 동기화
             this.updateTotalWalkingCount(totalWalkingCount);
         } else {
@@ -110,11 +110,11 @@ public class Step {
      * @param deviceBootedDt 기기에 기록된 부팅 시간
      */
     private void reset(Integer totalWalkingCount, LocalDateTime deviceBootedDt) {
-        if (this.deviceBootedDt.isBefore(deviceBootedDt)) {
+        if (this.deviceBootedAt.isBefore(deviceBootedDt)) {
             this.walkingCount = this.walkingCount + this.totalWalkingCount - this.consumeWalkingCount;
             this.totalWalkingCount = totalWalkingCount;
             this.consumeWalkingCount = 0;
-            this.deviceBootedDt = deviceBootedDt;
+            this.deviceBootedAt = deviceBootedDt;
         }
     }
 }

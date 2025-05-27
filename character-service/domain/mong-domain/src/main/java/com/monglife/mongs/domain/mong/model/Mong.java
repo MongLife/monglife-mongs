@@ -28,11 +28,11 @@ public class Mong {
 
     private final Long accountId;
 
-    private final String mongName;
+    private final String name;
 
-    private String mongTypeCode;
+    private String mongCode;
 
-    private String mongTypeName;
+    private String mongName;
 
     private MongStatusCode statusCode;
 
@@ -83,12 +83,12 @@ public class Mong {
     private Boolean isMongStatusCodeChange;
 
     @Builder
-    public Mong(Long mongId, Long accountId, String mongName, String mongTypeCode, String mongTypeName, MongStatusCode statusCode, MongStateCode stateCode, Integer level, Double maxStatus, LocalTime sleepAt, LocalTime wakeupAt, Integer payPoint, Boolean isSleep, Double strength, Double satiety, Double healthy, Double fatigue, Double exp, Double weight, Double evolutionReward, Double evolutionPenalty, Integer strokeCount, Integer trainingCount, Integer poopCount, Integer randomDrawTicketCount, LocalDateTime createdAt, LocalDateTime updatedAt) {
+    public Mong(Long mongId, Long accountId, String name, String mongCode, String mongName, MongStatusCode statusCode, MongStateCode stateCode, Integer level, Double maxStatus, LocalTime sleepAt, LocalTime wakeupAt, Integer payPoint, Boolean isSleep, Double strength, Double satiety, Double healthy, Double fatigue, Double exp, Double weight, Double evolutionReward, Double evolutionPenalty, Integer strokeCount, Integer trainingCount, Integer poopCount, Integer randomDrawTicketCount, LocalDateTime createdAt, LocalDateTime updatedAt) {
         this.mongId = mongId;
         this.accountId = accountId;
+        this.name = name;
+        this.mongCode = mongCode;
         this.mongName = mongName;
-        this.mongTypeCode = mongTypeCode;
-        this.mongTypeName = mongTypeName;
         this.statusCode = statusCode;
         this.stateCode = stateCode;
         this.level = level;
@@ -278,8 +278,8 @@ public class Mong {
         // 진화 리워드 점수 갱신
         this.evolutionReward = Math.max(0, Math.min(evolutionScore - 100D, 25D));
         this.evolutionPenalty = 0D;
-        this.mongTypeCode = mongType.getMongTypeCode();
-        this.mongTypeName = mongType.getMongTypeName();
+        this.mongCode = mongType.getMongCode();
+        this.mongName = mongType.getMongName();
         this.level = mongType.getLevel();
         this.maxStatus = mongType.getMaxStatus();
 
@@ -488,17 +488,25 @@ public class Mong {
     }
 
     /**
-     * 랜덤 뽑기 횟수 감소
+     * 랜덤 뽑기 티켓 구매
+     */
+    public void buyRandomDrawTicket() {
+        // 랜덤 뽑기 티켓 구매 불가능 경우
+        if (this.payPoint < RANDOM_DRAW_PAY_POINT) {
+            throw new NotEnoughPayPointException();
+        }
+        // 뽑기 횟수 페이 포인트 구매
+        this.payPoint = this.payPoint - RANDOM_DRAW_PAY_POINT;
+        this.randomDrawTicketCount = this.randomDrawTicketCount + 1;
+    }
+
+    /**
+     * 랜덤 뽑기 티켓 감소
      */
     public void decreaseRandomDrawTicketCount() {
         // 랜덤 뽑기 가능 횟수가 없는 경우
         if (this.randomDrawTicketCount == 0) {
-            if (this.payPoint < RANDOM_DRAW_PAY_POINT) {
-                throw new NotEnoughPayPointException();
-            }
-            // 뽑기 횟수 페이 포인트 구매
-            this.payPoint = this.payPoint - RANDOM_DRAW_PAY_POINT;
-            this.randomDrawTicketCount = this.randomDrawTicketCount + 1;
+            throw new NotEnoughRandomDrawTicketException();
         }
 
         this.randomDrawTicketCount = this.randomDrawTicketCount - 1;

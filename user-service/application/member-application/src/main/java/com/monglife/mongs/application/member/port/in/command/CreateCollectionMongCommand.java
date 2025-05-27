@@ -8,11 +8,11 @@ public class CreateCollectionMongCommand {
 
     private final Long accountId;
 
-    private final String mongTypeCode;
+    private final String mongCode;
 
     @Builder
-    public CreateCollectionMongCommand(Long accountId, String mongTypeCode) {
+    public CreateCollectionMongCommand(Long accountId, String mongCode) {
         this.accountId = accountId;
-        this.mongTypeCode = mongTypeCode;
+        this.mongCode = mongCode;
     }
 }

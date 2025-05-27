@@ -41,10 +41,8 @@ public class MatchService implements MatchUseCase {
     @Override
     @Transactional
     public Match getMatchUseCase(GetMatchCommand command) {
-        Match match = matchPersistencePort.getMatchPort(command.getMatchId())
+        return matchPersistencePort.getMatchPort(command.getMatchId())
                 .orElseThrow(NotExistsMatchException::new);
-
-        return match;
     }
 
     /**
@@ -132,26 +130,26 @@ public class MatchService implements MatchUseCase {
         MatchPlayer targetMatchPlayer = match.getMatchPlayer(command.getTargetPlayerId());
 
         // 매치 선택 도메인 객체 생성
-        MatchPick matchPick = switch (command.getMatchPickCode()) {
+        MatchPick matchPick = switch (command.getPickCode()) {
             case MATCH_PICK_DEFENCE -> MatchPick.builder()
                     .matchPlayer(matchPlayer)
                     .targetMatchPlayer(targetMatchPlayer)
                     .round(match.getRound())
-                    .pickCode(command.getMatchPickCode())
+                    .pickCode(command.getPickCode())
                     .pickValue(matchPlayer.getDefence())
                     .build();
             case MATCH_PICK_HEAL -> MatchPick.builder()
                     .matchPlayer(matchPlayer)
                     .targetMatchPlayer(targetMatchPlayer)
                     .round(match.getRound())
-                    .pickCode(command.getMatchPickCode())
+                    .pickCode(command.getPickCode())
                     .pickValue(matchPlayer.getHeal())
                     .build();
             case MATCH_PICK_ATTACK -> MatchPick.builder()
                     .matchPlayer(matchPlayer)
                     .targetMatchPlayer(targetMatchPlayer)
                     .round(match.getRound())
-                    .pickCode(command.getMatchPickCode())
+                    .pickCode(command.getPickCode())
                     .pickValue(matchPlayer.getAttack())
                     .build();
         };

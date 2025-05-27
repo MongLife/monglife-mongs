@@ -4,18 +4,15 @@ import lombok.Builder;
 import lombok.Getter;
 
 @Getter
-public class UseInventoryItemCommand {
+public class GetInventoriesCommand {
 
     private final Long accountId;
 
     private final Long mongId;
 
-    private final Long inventoryItemId;
-
     @Builder
-    public UseInventoryItemCommand(Long accountId, Long mongId, Long inventoryItemId) {
+    public GetInventoriesCommand(Long accountId, Long mongId) {
         this.accountId = accountId;
         this.mongId = mongId;
-        this.inventoryItemId = inventoryItemId;
     }
 }

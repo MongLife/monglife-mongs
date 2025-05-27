@@ -2,9 +2,8 @@ package com.monglife.mongs.adapter.out.device.event.service;
 
 import com.monglife.module.common.kafka.config.KafkaAutoConfig;
 import com.monglife.mongs.adapter.out.device.event.consumer.ExchangeCurrentWalkingCountEventConsumer;
-import com.monglife.mongs.adapter.transaction.ExchangeCurrentWalkingCountEventDto;
 import com.monglife.mongs.application.device.port.out.DeviceEventPort;
-import com.monglife.mongs.application.device.port.out.dto.StepEventDto;
+import com.monglife.mongs.application.device.port.out.dto.ExchangeCurrentWalkingCountDto;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -59,12 +58,12 @@ class DeviceEventServiceTest {
             int walkingCount = 10;
             int payPoint = 100;
 
-            ExchangeCurrentWalkingCountEventDto exchangeCurrentWalkingCountEventDto = new ExchangeCurrentWalkingCountEventDto();
+            com.monglife.mongs.adapter.transaction.ExchangeCurrentWalkingCountEventDto exchangeCurrentWalkingCountEventDto = new com.monglife.mongs.adapter.transaction.ExchangeCurrentWalkingCountEventDto();
             CountDownLatch countDownLatch = new CountDownLatch(1);
             exchangeCurrentWalkingCountEventConsumer.reset(exchangeCurrentWalkingCountEventDto, countDownLatch);
 
             // act
-            deviceEventPort.exchangeCurrentWalkingCountEventPort(StepEventDto.builder()
+            deviceEventPort.exchangeCurrentWalkingCountEventPort(ExchangeCurrentWalkingCountDto.builder()
                     .deviceId(deviceId)
                     .mongId(mongId)
                     .walkingCount(walkingCount)

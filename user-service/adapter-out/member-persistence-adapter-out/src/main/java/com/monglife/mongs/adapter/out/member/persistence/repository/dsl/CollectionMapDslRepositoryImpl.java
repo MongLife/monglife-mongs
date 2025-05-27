@@ -16,7 +16,7 @@ import static com.monglife.mongs.adapter.out.member.persistence.entity.QCollecti
 @Repository
 public class CollectionMapDslRepositoryImpl implements CollectionMapDslRepository{
 
-    private static final String mapGroupCode = "MP";
+    private static final String MAP_GROUP_CODE = "MP";
 
     private final JPAQueryFactory jpaQueryFactory;
 
@@ -29,10 +29,10 @@ public class CollectionMapDslRepositoryImpl implements CollectionMapDslRepositor
 
         List<Tuple> tuples = jpaQueryFactory.select(collectionMapEntity, comnCodeEntity)
                 .from(collectionMapEntity)
-                .rightJoin(collectionMapEntity.mapType, comnCodeEntity)
-                .on(collectionMapEntity.mapType.eq(comnCodeEntity), collectionMapEntity.accountId.eq(accountId))
-                .where(comnCodeEntity.group.code.eq(mapGroupCode))
-                .orderBy(collectionMapEntity.mapType.code.asc())
+                .rightJoin(collectionMapEntity.comn, comnCodeEntity)
+                .on(collectionMapEntity.comn.eq(comnCodeEntity), collectionMapEntity.accountId.eq(accountId))
+                .where(comnCodeEntity.group.code.eq(MAP_GROUP_CODE))
+                .orderBy(collectionMapEntity.comn.code.asc())
                 .fetch();
 
         List<CollectionMapEntity> collectionMapEntities = new ArrayList<>();
@@ -45,7 +45,7 @@ public class CollectionMapDslRepositoryImpl implements CollectionMapDslRepositor
                 if (collectionMap == null) {
                     collectionMap = CollectionMapEntity.builder()
                             .accountId(accountId)
-                            .mapType(comnCode)
+                            .comn(comnCode)
                             .build();
                     // 보유 여부 제외
                     collectionMap.exclude();

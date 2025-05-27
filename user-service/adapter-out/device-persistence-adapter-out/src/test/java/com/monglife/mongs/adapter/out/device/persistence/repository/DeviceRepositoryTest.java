@@ -47,7 +47,7 @@ class DeviceRepositoryTest {
                     .walkingCount(0)
                     .totalWalkingCount(totalWalkingCount)
                     .consumeWalkingCount(0)
-                    .deviceBootedDt(deviceBootedDt)
+                    .deviceBootedAt(deviceBootedDt)
                     .build();
 
             deviceRepository.saveAndFlush(deviceEntity);
@@ -63,7 +63,7 @@ class DeviceRepositoryTest {
             assertTrue(deviceEntityOptional.isPresent());
             assertEquals(deviceId, deviceEntityOptional.get().getDeviceId());
             assertEquals(totalWalkingCount, deviceEntityOptional.get().getTotalWalkingCount());
-            assertEquals(deviceBootedDt, deviceEntityOptional.get().getDeviceBootedDt());
+            assertEquals(deviceBootedDt, deviceEntityOptional.get().getDeviceBootedAt());
         }
     }
 }

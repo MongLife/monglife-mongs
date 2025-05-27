@@ -40,7 +40,7 @@ public class StepController {
                 .mongId(exchangeCurrentWalkingCountRequestDto.getMongId())
                 .walkingCount(exchangeCurrentWalkingCountRequestDto.getWalkingCount())
                 .totalWalkingCount(exchangeCurrentWalkingCountRequestDto.getTotalWalkingCount())
-                .deviceBootedDt(exchangeCurrentWalkingCountRequestDto.getDeviceBootedDt())
+                .deviceBootedAt(exchangeCurrentWalkingCountRequestDto.getDeviceBootedAt())
                 .build();
 
         Step step = stepUseCase.exchangeCurrentWalkingCountUseCase(command);
@@ -65,7 +65,7 @@ public class StepController {
         UpdateTotalWalkingCountCommand updateTotalWalkingCountCommand = UpdateTotalWalkingCountCommand.builder()
                 .deviceId(passport.getDeviceId())
                 .totalWalkingCount(updateTotalWalkingCountRequestDto.getTotalWalkingCount())
-                .deviceBootedDt(updateTotalWalkingCountRequestDto.getDeviceBootedDt())
+                .deviceBootedAt(updateTotalWalkingCountRequestDto.getDeviceBootedAt())
                 .build();
 
         Step step = stepUseCase.updateTotalWalkingCountUseCase(updateTotalWalkingCountCommand);

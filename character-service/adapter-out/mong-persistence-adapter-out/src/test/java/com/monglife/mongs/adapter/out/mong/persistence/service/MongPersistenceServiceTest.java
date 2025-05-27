@@ -59,20 +59,20 @@ class MongPersistenceServiceTest {
 
     private final MongRepository mongRepository;
 
-    private final FoodTypeRepository foodTypeRepository;
+    private final FoodRepository foodRepository;
 
-    private final InventoryItemRepository inventoryItemRepository;
+    private final InventoryRepository inventoryRepository;
 
     @Autowired
-    public MongPersistenceServiceTest(MongPersistencePort mongPersistencePort, GroupCodeRepository groupCodeRepository, ComnCodeRepository comnCodeRepository, MongStrokeHistoryRepository mongStrokeHistoryRepository, MongTypeRepository mongTypeRepository, MongRepository mongRepository, FoodTypeRepository foodTypeRepository, InventoryItemRepository inventoryItemRepository) {
+    public MongPersistenceServiceTest(MongPersistencePort mongPersistencePort, GroupCodeRepository groupCodeRepository, ComnCodeRepository comnCodeRepository, MongStrokeHistoryRepository mongStrokeHistoryRepository, MongTypeRepository mongTypeRepository, MongRepository mongRepository, FoodRepository foodRepository, InventoryRepository inventoryRepository) {
         this.mongPersistencePort = mongPersistencePort;
         this.groupCodeRepository = groupCodeRepository;
         this.comnCodeRepository = comnCodeRepository;
         this.mongStrokeHistoryRepository = mongStrokeHistoryRepository;
         this.mongTypeRepository = mongTypeRepository;
         this.mongRepository = mongRepository;
-        this.foodTypeRepository = foodTypeRepository;
-        this.inventoryItemRepository = inventoryItemRepository;
+        this.foodRepository = foodRepository;
+        this.inventoryRepository = inventoryRepository;
     }
 
     @Nested
@@ -140,7 +140,7 @@ class MongPersistenceServiceTest {
     class CreateMongPort {
 
         private static final Long ACCOUNT_ID = 1L;
-        private static final String MONG_NAME = "TEST-MONG-NAME";
+        private static final String NAME = "TEST-MONG-NAME";
         private static final LocalTime SLEEP_AT = LocalTime.of(22, 0);
         private static final LocalTime WAKEUP_AT = LocalTime.of(8, 0);
         private static final GroupCodeEntity GROUP_CODE_ENTITY = new GroupCodeEntity("TEST-GROUP-CODE", "테스트 그룹 코드");
@@ -157,7 +157,7 @@ class MongPersistenceServiceTest {
 
             CreateMongVo createMongVo = CreateMongVo.builder()
                     .accountId(ACCOUNT_ID)
-                    .mongName(MONG_NAME)
+                    .name(NAME)
                     .statusCode(MongStatusCode.NORMAL)
                     .stateCode(MongStateCode.NORMAL)
                     .sleepAt(SLEEP_AT)
@@ -186,9 +186,9 @@ class MongPersistenceServiceTest {
             // assert
             assertFalse(expected1.isEmpty());
             assertEquals(ACCOUNT_ID, expected1.get().getAccountId());
-            assertEquals(MONG_NAME, expected1.get().getMongName());
-            assertEquals(MONG_TYPE_ENTITY.getComn().getCode(), expected1.get().getMongTypeCode());
-            assertEquals(MONG_TYPE_ENTITY.getComn().getName(), expected1.get().getMongTypeName());
+            assertEquals(NAME, expected1.get().getName());
+            assertEquals(MONG_TYPE_ENTITY.getComn().getCode(), expected1.get().getMongCode());
+            assertEquals(MONG_TYPE_ENTITY.getComn().getName(), expected1.get().getMongName());
             assertEquals(MongStatusCode.NORMAL, expected1.get().getStatusCode());
             assertEquals(MongStateCode.NORMAL, expected1.get().getStateCode());
             assertEquals(MONG_TYPE_ENTITY.getLevel(), expected1.get().getLevel());
@@ -213,7 +213,7 @@ class MongPersistenceServiceTest {
 
             assertFalse(expected2.isEmpty());
             assertEquals(ACCOUNT_ID, expected2.get().getAccountId());
-            assertEquals(MONG_NAME, expected2.get().getMongName());
+            assertEquals(NAME, expected2.get().getName());
             assertEquals(SLEEP_AT, expected2.get().getSleepAt());
             assertEquals(WAKEUP_AT, expected2.get().getWakeupAt());
             assertEquals(0, expected2.get().getPayPoint());
@@ -238,11 +238,11 @@ class MongPersistenceServiceTest {
 
         @Test
         @DisplayName("몽을 등록할 때, 몽 타입 코드가 존재하지 않는 경우 빈 옵셔널 객체를 반환 한다.")
-        void createMongWhenNotExistsMongTypeCode() {
+        void createMongWhenNotExistsMongCode() {
             // arrange
             CreateMongVo createMongVo = CreateMongVo.builder()
                     .accountId(ACCOUNT_ID)
-                    .mongName(MONG_NAME)
+                    .name(NAME)
                     .statusCode(MongStatusCode.NORMAL)
                     .stateCode(MongStateCode.NORMAL)
                     .sleepAt(SLEEP_AT)
@@ -277,7 +277,7 @@ class MongPersistenceServiceTest {
     class GetMongPort {
 
         private static final Long ACCOUNT_ID = 1L;
-        private static final String MONG_NAME = "TEST-MONG-NAME";
+        private static final String NAME = "TEST-MONG-NAME";
         private static final LocalTime SLEEP_AT = LocalTime.of(22, 0);
         private static final LocalTime WAKEUP_AT = LocalTime.of(8, 0);
         private static final GroupCodeEntity GROUP_CODE_ENTITY = new GroupCodeEntity("TEST-GROUP-CODE", "테스트 그룹 코드");
@@ -294,7 +294,7 @@ class MongPersistenceServiceTest {
 
             MongEntity mongEntity = mongRepository.save(MongEntity.builder()
                     .accountId(ACCOUNT_ID)
-                    .mongName(MONG_NAME)
+                    .name(NAME)
                     .sleepAt(SLEEP_AT)
                     .wakeupAt(WAKEUP_AT)
                     .payPoint(0)
@@ -344,7 +344,7 @@ class MongPersistenceServiceTest {
     class SaveMongPort {
 
         private static final Long ACCOUNT_ID = 1L;
-        private static final String MONG_NAME = "TEST-MONG-NAME";
+        private static final String NAME = "TEST-MONG-NAME";
         private static final LocalTime SLEEP_AT = LocalTime.of(22, 0);
         private static final LocalTime WAKEUP_AT = LocalTime.of(8, 0);
         private static final GroupCodeEntity GROUP_CODE_ENTITY = new GroupCodeEntity("TEST-GROUP-CODE", "테스트 그룹 코드");
@@ -362,7 +362,7 @@ class MongPersistenceServiceTest {
 
             MongEntity mongEntity = mongRepository.save(MongEntity.builder()
                     .accountId(ACCOUNT_ID)
-                    .mongName(MONG_NAME)
+                    .name(NAME)
                     .sleepAt(SLEEP_AT)
                     .wakeupAt(WAKEUP_AT)
                     .payPoint(0)
@@ -388,7 +388,7 @@ class MongPersistenceServiceTest {
             Mong mong = MongEntity.builder()
                     .mongId(mongEntity.getMongId())
                     .accountId(ACCOUNT_ID)
-                    .mongName(MONG_NAME)
+                    .name(NAME)
                     .sleepAt(SLEEP_AT)
                     .wakeupAt(WAKEUP_AT)
                     .payPoint(0)
@@ -427,7 +427,7 @@ class MongPersistenceServiceTest {
     class DeleteMongPort {
 
         private static final Long ACCOUNT_ID = 1L;
-        private static final String MONG_NAME = "TEST-MONG-NAME";
+        private static final String NAME = "TEST-MONG-NAME";
         private static final LocalTime SLEEP_AT = LocalTime.of(22, 0);
         private static final LocalTime WAKEUP_AT = LocalTime.of(8, 0);
         private static final GroupCodeEntity GROUP_CODE_ENTITY = new GroupCodeEntity("TEST-GROUP-CODE", "테스트 그룹 코드");
@@ -444,7 +444,7 @@ class MongPersistenceServiceTest {
 
             MongEntity mongEntity = mongRepository.save(MongEntity.builder()
                     .accountId(ACCOUNT_ID)
-                    .mongName(MONG_NAME)
+                    .name(NAME)
                     .sleepAt(SLEEP_AT)
                     .wakeupAt(WAKEUP_AT)
                     .payPoint(0)
@@ -470,7 +470,7 @@ class MongPersistenceServiceTest {
             Mong mong = MongEntity.builder()
                     .mongId(mongEntity.getMongId())
                     .accountId(ACCOUNT_ID)
-                    .mongName(MONG_NAME)
+                    .name(NAME)
                     .sleepAt(SLEEP_AT)
                     .wakeupAt(WAKEUP_AT)
                     .payPoint(0)
@@ -522,12 +522,12 @@ class MongPersistenceServiceTest {
 
             CreateInventoryVo createInventoryVo = CreateInventoryVo.builder()
                     .mongId(MONG_ID)
-                    .typeCode(COMN_CODE_ENTITY.getCode())
+                    .inventoryCode(COMN_CODE_ENTITY.getCode())
                     .inventoryTypeCode(InventoryTypeCode.FOOD)
                     .build();
 
             // act
-            var expected = mongPersistencePort.createInventoryItemPort(createInventoryVo);
+            var expected = mongPersistencePort.createInventoryPort(createInventoryVo);
 
             // assert
             assertFalse(expected.isEmpty());
@@ -552,16 +552,16 @@ class MongPersistenceServiceTest {
             // arrange
             groupCodeRepository.saveAndFlush(GROUP_CODE_ENTITY);
             comnCodeRepository.saveAndFlush(COMN_CODE_ENTITY);
-            foodTypeRepository.saveAndFlush(FOOD_TYPE_ENTITY);
+            foodRepository.saveAndFlush(FOOD_TYPE_ENTITY);
 
-            InventoryEntity inventoryEntity = inventoryItemRepository.saveAndFlush(InventoryEntity.builder()
+            InventoryEntity inventoryEntity = inventoryRepository.saveAndFlush(InventoryEntity.builder()
                     .mongId(MONG_ID)
                     .comn(COMN_CODE_ENTITY)
                     .inventoryTypeCode(InventoryTypeCode.FOOD)
                     .build());
 
             // act
-            var expected1 = mongPersistencePort.deleteInventoryItemPort(inventoryEntity.getInventoryId());
+            var expected1 = mongPersistencePort.deleteInventoryPort(inventoryEntity.getInventoryId());
             var expected2 = mongRepository.findById(inventoryEntity.getInventoryId());
 
             // assert
@@ -585,16 +585,16 @@ class MongPersistenceServiceTest {
             // arrange
             groupCodeRepository.saveAndFlush(GROUP_CODE_ENTITY);
             comnCodeRepository.saveAndFlush(COMN_CODE_ENTITY);
-            foodTypeRepository.saveAndFlush(FOOD_TYPE_ENTITY);
+            foodRepository.saveAndFlush(FOOD_TYPE_ENTITY);
 
-            InventoryEntity inventoryEntity = inventoryItemRepository.saveAndFlush(InventoryEntity.builder()
+            InventoryEntity inventoryEntity = inventoryRepository.saveAndFlush(InventoryEntity.builder()
                     .mongId(MONG_ID)
                     .comn(COMN_CODE_ENTITY)
                     .inventoryTypeCode(InventoryTypeCode.FOOD)
                     .build());
 
             // act
-            var expected = mongPersistencePort.getInventoryItemPort(inventoryEntity.getInventoryId());
+            var expected = mongPersistencePort.getInventoryPort(inventoryEntity.getInventoryId());
 
             // assert
             assertFalse(expected.isEmpty());

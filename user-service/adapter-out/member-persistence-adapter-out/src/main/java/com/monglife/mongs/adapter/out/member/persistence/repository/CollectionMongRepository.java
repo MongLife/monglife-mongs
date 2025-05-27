@@ -6,5 +6,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface CollectionMongRepository extends JpaRepository<CollectionMongEntity, Long>, CollectionMongDslRepository {
 
-    Boolean existsByAccountIdAndMongTypeCode(Long accountId, String mongTypeCode);
+    Boolean existsByAccountIdAndComnCode(Long accountId, String mongCode);
 }

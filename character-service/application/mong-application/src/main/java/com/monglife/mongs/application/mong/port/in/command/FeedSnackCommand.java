@@ -10,12 +10,12 @@ public class FeedSnackCommand {
 
     private final Long mongId;
 
-    private final String snackTypeCode;
+    private final String snackCode;
 
     @Builder
-    public FeedSnackCommand(Long accountId, Long mongId, String snackTypeCode) {
+    public FeedSnackCommand(Long accountId, Long mongId, String snackCode) {
         this.accountId = accountId;
         this.mongId = mongId;
-        this.snackTypeCode = snackTypeCode;
+        this.snackCode = snackCode;
     }
 }

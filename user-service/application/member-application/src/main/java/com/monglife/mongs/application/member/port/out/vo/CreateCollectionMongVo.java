@@ -8,11 +8,11 @@ public class CreateCollectionMongVo {
 
     private final Long accountId;
 
-    private final String mongTypeCode;
+    private final String mongCode;
 
     @Builder
-    public CreateCollectionMongVo(Long accountId, String mongTypeCode) {
+    public CreateCollectionMongVo(Long accountId, String mongCode) {
         this.accountId = accountId;
-        this.mongTypeCode = mongTypeCode;
+        this.mongCode = mongCode;
     }
 }

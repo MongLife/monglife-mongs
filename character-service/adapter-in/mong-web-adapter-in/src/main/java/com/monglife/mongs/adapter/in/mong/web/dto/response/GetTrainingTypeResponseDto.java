@@ -12,9 +12,9 @@ public class GetTrainingTypeResponseDto {
 
     private Long trainingTypeId;
 
-    private String trainingTypeCode;
+    private String trainingCode;
 
-    private String trainingTypeName;
+    private String trainingName;
 
     private Integer payPoint;
 
@@ -33,10 +33,10 @@ public class GetTrainingTypeResponseDto {
     private Double fatigue;
 
     @Builder
-    public GetTrainingTypeResponseDto(Long trainingTypeId, String trainingTypeCode, String trainingTypeName, Integer payPoint, Integer score, Integer timeout, Double exp, Double strength, Double weight, Double satiety, Double fatigue) {
+    public GetTrainingTypeResponseDto(Long trainingTypeId, String trainingCode, String trainingName, Integer payPoint, Integer score, Integer timeout, Double exp, Double strength, Double weight, Double satiety, Double fatigue) {
         this.trainingTypeId = trainingTypeId;
-        this.trainingTypeCode = trainingTypeCode;
-        this.trainingTypeName = trainingTypeName;
+        this.trainingCode = trainingCode;
+        this.trainingName = trainingName;
         this.payPoint = payPoint;
         this.score = score;
         this.timeout = timeout;

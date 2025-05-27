@@ -20,13 +20,13 @@ public class MongTypeDslRepositoryImpl implements MongTypeDslRepository {
     }
 
     @Override
-    public List<MongTypeEntity> findByEvolutionScoreAndMongTypeCode(Double evolutionScore, String mongTypeCode) {
+    public List<MongTypeEntity> findByEvolutionScoreAndMongCode(Double evolutionScore, String mongCode) {
         return jpaQueryFactory.selectFrom(mongTypeEntity)
                 .where(mongTypeEntity.groupType.eq(
                         JPAExpressions
                                 .select(mongTypeEntity.nextGroupType)
                                 .from(mongTypeEntity)
-                                .where(mongTypeEntity.comn.code.eq(mongTypeCode))))
+                                .where(mongTypeEntity.comn.code.eq(mongCode))))
                 .where(mongTypeEntity.evolutionScore.loe(evolutionScore))
                 .orderBy(mongTypeEntity.evolutionScore.asc())
                 .fetch();

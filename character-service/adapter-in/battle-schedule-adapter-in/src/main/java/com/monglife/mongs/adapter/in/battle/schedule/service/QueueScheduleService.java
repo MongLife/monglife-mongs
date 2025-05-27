@@ -15,7 +15,7 @@ import java.util.concurrent.ScheduledExecutorService;
 public class QueueScheduleService implements SchedulingConfigurer {
 
     private static final Integer MATCH_PLAYER_COUNT = 2;
-    private static final Long FIXED_DELAY = 1000L;
+    private static final Long    FIXED_DELAY        = 1000L;
 
     private final ScheduledExecutorService scheduledExecutorService;
 

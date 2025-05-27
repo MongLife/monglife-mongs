@@ -12,17 +12,17 @@ public class GetWinMatchPlayerResponseDto {
 
     private String playerId;
 
-    private String mongTypeCode;
-
-    private String mongTypeName;
+    private String mongCode;
 
     private String mongName;
 
+    private String name;
+
     @Builder
-    public GetWinMatchPlayerResponseDto(String mongTypeCode, String playerId, String mongTypeName, String mongName) {
-        this.mongTypeCode = mongTypeCode;
+    public GetWinMatchPlayerResponseDto(String mongCode, String playerId, String mongName, String name) {
+        this.mongCode = mongCode;
         this.playerId = playerId;
-        this.mongTypeName = mongTypeName;
         this.mongName = mongName;
+        this.name = name;
     }
 }

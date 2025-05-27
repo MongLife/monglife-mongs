@@ -10,9 +10,9 @@ public class MongType {
 
     private final Long mongTypeId;
 
-    private final String mongTypeCode;
+    private final String mongCode;
 
-    private final String mongTypeName;
+    private final String mongName;
 
     private final Integer level;
 
@@ -21,10 +21,10 @@ public class MongType {
     private final Double maxStatus;
 
     @Builder
-    public MongType(Long mongTypeId, String mongTypeCode, String mongTypeName, Integer level, Double evolutionScore, Double maxStatus) {
+    public MongType(Long mongTypeId, String mongCode, String mongName, Integer level, Double evolutionScore, Double maxStatus) {
         this.mongTypeId = mongTypeId;
-        this.mongTypeCode = mongTypeCode;
-        this.mongTypeName = mongTypeName;
+        this.mongCode = mongCode;
+        this.mongName = mongName;
         this.level = level;
         this.evolutionScore = evolutionScore;
         this.maxStatus = maxStatus;

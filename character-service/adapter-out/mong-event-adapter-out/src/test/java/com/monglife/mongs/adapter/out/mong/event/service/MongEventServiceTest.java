@@ -23,7 +23,8 @@ import org.springframework.test.context.ContextConfiguration;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @SpringBootTest
 @EnableAutoConfiguration
@@ -57,21 +58,21 @@ class MongEventServiceTest {
         void createMongEvent() throws InterruptedException {
             // arrange
             long accountId = 1L;
-            String mongTypeCode = "MONG_TYPE_CODE";
+            String mongCode = "MONG_TYPE_CODE";
 
             CreateMongEventDto createMongEventDto = new CreateMongEventDto();
             CountDownLatch countDownLatch = new CountDownLatch(1);
             createMongConsumer.reset(createMongEventDto, countDownLatch);
 
             // act
-            mongEventPort.createMongEventPort(accountId, mongTypeCode);
+            mongEventPort.createMongEventPort(accountId, mongCode);
 
             var expected = countDownLatch.await(5, TimeUnit.SECONDS);
 
             // assert
             assertTrue(expected);
             assertEquals(accountId, createMongEventDto.getAccountId());
-            assertEquals(mongTypeCode, createMongEventDto.getMongTypeCode());
+            assertEquals(mongCode, createMongEventDto.getMongCode());
         }
     }
 
@@ -91,21 +92,21 @@ class MongEventServiceTest {
         void evolutionMongEvent() throws InterruptedException {
             // arrange
             long accountId = 1L;
-            String mongTypeCode = "MONG_TYPE_CODE";
+            String mongCode = "MONG_TYPE_CODE";
 
             EvolutionMongEventDto evolutionMongEventDto = new EvolutionMongEventDto();
             CountDownLatch countDownLatch = new CountDownLatch(1);
             evolutionMongConsumer.reset(evolutionMongEventDto, countDownLatch);
 
             // act
-            mongEventPort.evolutionMongEventPort(accountId, mongTypeCode);
+            mongEventPort.evolutionMongEventPort(accountId, mongCode);
 
             var expected = countDownLatch.await(5, TimeUnit.SECONDS);
 
             // assert
             assertTrue(expected);
             assertEquals(accountId, evolutionMongEventDto.getAccountId());
-            assertEquals(mongTypeCode, evolutionMongEventDto.getMongTypeCode());
+            assertEquals(mongCode, evolutionMongEventDto.getMongCode());
         }
     }
 
@@ -125,21 +126,21 @@ class MongEventServiceTest {
         void randomDrawMapEvent() throws InterruptedException {
             // arrange
             long accountId = 1L;
-            String mapTypeCode = "MAP_TYPE_CODE";
+            String mapCode = "MAP_TYPE_CODE";
 
             RandomDrawMapEventDto randomDrawMapEventDto = new RandomDrawMapEventDto();
             CountDownLatch countDownLatch = new CountDownLatch(1);
             randomDrawMapConsumer.reset(randomDrawMapEventDto, countDownLatch);
 
             // act
-            mongEventPort.randomDrawMapEventPort(accountId, mapTypeCode);
+            mongEventPort.randomDrawMapEventPort(accountId, mapCode);
 
             var expected = countDownLatch.await(5, TimeUnit.SECONDS);
 
             // assert
             assertTrue(expected);
             assertEquals(accountId, randomDrawMapEventDto.getAccountId());
-            assertEquals(mapTypeCode, randomDrawMapEventDto.getMapTypeCode());
+            assertEquals(mapCode, randomDrawMapEventDto.getMapCode());
         }
     }
 }

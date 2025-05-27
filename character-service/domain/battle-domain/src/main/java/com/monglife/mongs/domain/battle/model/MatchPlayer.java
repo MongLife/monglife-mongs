@@ -45,11 +45,11 @@ public class MatchPlayer {
 
     private final Long mongId;
 
-    private final String mongTypeCode;
-
-    private final String mongTypeName;
+    private final String mongCode;
 
     private final String mongName;
+
+    private final String name;
 
     private final Double attack;
 
@@ -79,14 +79,14 @@ public class MatchPlayer {
     private Set<MatchHistoryCode> historyCodes;
 
     @Builder
-    public MatchPlayer(String playerId, String deviceId, Long accountId, Long mongId, String mongTypeCode, String mongTypeName, String mongName, Double attack, Double heal, Double defence, Boolean isBot, Double hp, Boolean isEnter, LocalDateTime enteredAt, LocalDateTime exitedAt) {
+    public MatchPlayer(String playerId, String deviceId, Long accountId, Long mongId, String mongCode, String mongName, String name, Double attack, Double heal, Double defence, Boolean isBot, Double hp, Boolean isEnter, LocalDateTime enteredAt, LocalDateTime exitedAt) {
         this.playerId = playerId;
         this.deviceId = deviceId;
         this.accountId = accountId;
         this.mongId = mongId;
-        this.mongTypeCode = mongTypeCode;
-        this.mongTypeName = mongTypeName;
+        this.mongCode = mongCode;
         this.mongName = mongName;
+        this.name = name;
         this.attack = Math.min(attack, MAX_ATTACK);
         this.heal = Math.min(heal, MAX_HEAL);
         this.defence = Math.min(defence, MAX_DEFENCE);
@@ -212,16 +212,16 @@ public class MatchPlayer {
             int mongTypeIndex = random.nextInt(0, BotMatchMongType.values().length);
             BotMatchMongType botMatchMongType = BotMatchMongType.values()[mongTypeIndex];
 
-            String mongName = "봇 " + botMatchMongType.getMongTypeName();
+            String name = "봇 " + botMatchMongType.getMongName();
 
             MatchPlayer matchPlayer = MatchPlayer.builder()
                     .playerId(CommonUtil.randomId())
                     .deviceId(CommonUtil.randomId())
                     .accountId(-index)
                     .mongId(-index)
-                    .mongTypeCode(botMatchMongType.getMongTypeCode())
-                    .mongTypeName(botMatchMongType.getMongTypeName())
-                    .mongName(mongName)
+                    .mongCode(botMatchMongType.getMongCode())
+                    .mongName(botMatchMongType.getMongName())
+                    .name(name)
                     .attack(attack)
                     .heal(heal)
                     .defence(defence)
@@ -253,9 +253,9 @@ public class MatchPlayer {
                 .deviceId(queuePlayer.getDeviceId())
                 .accountId(generateMatchPlayerVo.getAccountId())
                 .mongId(generateMatchPlayerVo.getMongId())
-                .mongTypeCode(generateMatchPlayerVo.getMongTypeCode())
-                .mongTypeName(generateMatchPlayerVo.getMongTypeName())
+                .mongCode(generateMatchPlayerVo.getMongCode())
                 .mongName(generateMatchPlayerVo.getMongName())
+                .name(generateMatchPlayerVo.getName())
                 .attack(attack)
                 .heal(heal)
                 .defence(defence)

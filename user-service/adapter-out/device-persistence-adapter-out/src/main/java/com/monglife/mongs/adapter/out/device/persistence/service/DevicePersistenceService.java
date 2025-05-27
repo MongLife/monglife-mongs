@@ -31,7 +31,7 @@ public class DevicePersistenceService implements DevicePersistencePort {
                 .walkingCount(createStepVo.getWalkingCount())
                 .totalWalkingCount(createStepVo.getTotalWalkingCount())
                 .consumeWalkingCount(createStepVo.getConsumeWalkingCount())
-                .deviceBootedDt(createStepVo.getDeviceBootedDt())
+                .deviceBootedAt(createStepVo.getDeviceBootedAt())
                 .build();
 
         return deviceRepository.save(deviceEntity).toDomain();

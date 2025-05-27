@@ -10,16 +10,16 @@ import lombok.Setter;
 @NoArgsConstructor
 public class GetCollectionMongResponseDto {
 
-    private String mongTypeCode;
+    private String mongCode;
 
-    private String mongTypeName;
+    private String mongName;
 
     private Boolean isIncluded;
 
     @Builder
-    public GetCollectionMongResponseDto(String mongTypeCode, String mongTypeName, Boolean isIncluded) {
-        this.mongTypeCode = mongTypeCode;
-        this.mongTypeName = mongTypeName;
+    public GetCollectionMongResponseDto(String mongCode, String mongName, Boolean isIncluded) {
+        this.mongCode = mongCode;
+        this.mongName = mongName;
         this.isIncluded = isIncluded;
     }
 }

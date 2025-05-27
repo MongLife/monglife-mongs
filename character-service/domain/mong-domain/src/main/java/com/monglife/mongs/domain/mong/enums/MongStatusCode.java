@@ -13,5 +13,5 @@ public enum MongStatusCode {
     NORMAL("정상"),
     ;
 
-    private final String statusName;
+    private final String description;
 }

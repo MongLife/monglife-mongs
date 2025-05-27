@@ -8,11 +8,11 @@ public class CreateCollectionMapVo {
 
     private final Long accountId;
 
-    private final String mapTypeCode;
+    private final String mapCode;
 
     @Builder
-    public CreateCollectionMapVo(Long accountId, String mapTypeCode) {
+    public CreateCollectionMapVo(Long accountId, String mapCode) {
         this.accountId = accountId;
-        this.mapTypeCode = mapTypeCode;
+        this.mapCode = mapCode;
     }
 }

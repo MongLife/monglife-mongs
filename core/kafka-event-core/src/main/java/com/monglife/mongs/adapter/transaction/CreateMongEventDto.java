@@ -12,11 +12,11 @@ public class CreateMongEventDto {
 
     private Long accountId;
 
-    private String mongTypeCode;
+    private String mongCode;
 
     @Builder
-    public CreateMongEventDto(Long accountId, String mongTypeCode) {
+    public CreateMongEventDto(Long accountId, String mongCode) {
         this.accountId = accountId;
-        this.mongTypeCode = mongTypeCode;
+        this.mongCode = mongCode;
     }
 }

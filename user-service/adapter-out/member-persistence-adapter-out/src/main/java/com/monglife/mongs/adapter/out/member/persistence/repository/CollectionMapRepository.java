@@ -6,5 +6,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface CollectionMapRepository extends JpaRepository<CollectionMapEntity, Long>, CollectionMapDslRepository {
 
-    Boolean existsByAccountIdAndMapTypeCode(Long accountId, String mapTypeCode);
+    Boolean existsByAccountIdAndComnCode(Long accountId, String mapCode);
 }

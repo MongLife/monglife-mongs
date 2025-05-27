@@ -10,11 +10,11 @@ public class GenerateMatchPlayerVo {
 
     private final Long mongId;
 
-    private final String mongTypeCode;
-
-    private final String mongTypeName;
+    private final String mongCode;
 
     private final String mongName;
+
+    private final String name;
 
     private final Double strength;
 
@@ -23,12 +23,12 @@ public class GenerateMatchPlayerVo {
     private final Double weight;
 
     @Builder
-    public GenerateMatchPlayerVo(Long accountId, Long mongId, String mongTypeCode, String mongTypeName, String mongName, Double strength, Double fatigue, Double weight) {
+    public GenerateMatchPlayerVo(Long accountId, Long mongId, String mongCode, String mongName, String name, Double strength, Double fatigue, Double weight) {
         this.accountId = accountId;
         this.mongId = mongId;
-        this.mongTypeCode = mongTypeCode;
-        this.mongTypeName = mongTypeName;
+        this.mongCode = mongCode;
         this.mongName = mongName;
+        this.name = name;
         this.strength = strength;
         this.fatigue = fatigue;
         this.weight = weight;

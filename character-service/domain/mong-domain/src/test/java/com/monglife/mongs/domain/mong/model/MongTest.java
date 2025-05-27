@@ -394,8 +394,8 @@ class MongTest {
             assertNotEquals(MongStateCode.EVOLUTION_READY, mong.getStateCode());
             assertEquals(0D, mong.getEvolutionReward());
             assertEquals(0D, mong.getEvolutionPenalty());
-            assertEquals(mongType.getMongTypeCode(), mong.getMongTypeCode());
-            assertEquals(mongType.getMongTypeName(), mong.getMongTypeName());
+            assertEquals(mongType.getMongCode(), mong.getMongCode());
+            assertEquals(mongType.getMongName(), mong.getMongName());
             assertEquals(mongType.getLevel(), mong.getLevel());
             assertEquals(nextMaxStatus, mong.getMaxStatus());
             assertEquals(nextMaxStatus, mong.getStrength());

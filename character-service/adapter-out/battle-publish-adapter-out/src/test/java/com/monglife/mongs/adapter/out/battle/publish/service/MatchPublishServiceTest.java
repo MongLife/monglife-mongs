@@ -64,9 +64,9 @@ class MatchPublishServiceTest {
                             .deviceId(CommonUtil.randomId())
                             .accountId(1L)
                             .mongId(1L)
-                            .mongTypeCode("MONG-TYPE-CODE")
-                            .mongTypeName("MONG-TYPE-NAME")
-                            .mongName("MONG-NAME")
+                            .mongCode("MONG-TYPE-CODE")
+                            .mongName("MONG-TYPE-NAME")
+                            .name("MONG-NAME")
                             .attack(0D)
                             .heal(0D)
                             .defence(0D)
@@ -81,9 +81,9 @@ class MatchPublishServiceTest {
                             .deviceId(CommonUtil.randomId())
                             .accountId(2L)
                             .mongId(2L)
-                            .mongTypeCode("MONG-TYPE-CODE 2")
-                            .mongTypeName("MONG-TYPE-NAME 2")
-                            .mongName("MONG-NAME 2")
+                            .mongCode("MONG-TYPE-CODE 2")
+                            .mongName("MONG-TYPE-NAME 2")
+                            .name("MONG-NAME 2")
                             .attack(0D)
                             .heal(0D)
                             .defence(0D)
@@ -99,7 +99,7 @@ class MatchPublishServiceTest {
                     .maxRound(10)
                     .matchPlayers(matchPlayers)
                     .round(0)
-                    .matchStateCode(MatchStateCode.PROCESS)
+                    .stateCode(MatchStateCode.PROCESS)
                     .build();
 
             MatchPublishDto matchPublishDto = new MatchPublishDto();
@@ -123,17 +123,17 @@ class MatchPublishServiceTest {
             // arrange
             long matchId = 1L;
             String playerId = CommonUtil.randomId();
-            String mongName = "MONG-NAME";
-            String mongTypeCode = "MONG-TYPE-CODE";
-            String mongTypeName = "MONG-TYPE-NAME";
+            String name = "MONG-NAME";
+            String mongCode = "MONG-TYPE-CODE";
+            String mongName = "MONG-TYPE-NAME";
             MatchPlayer matchPlayer = MatchPlayer.builder()
                     .playerId(playerId)
                     .deviceId(CommonUtil.randomId())
                     .accountId(1L)
                     .mongId(1L)
-                    .mongTypeCode(mongTypeCode)
-                    .mongTypeName(mongTypeName)
+                    .mongCode(mongCode)
                     .mongName(mongName)
+                    .name(name)
                     .attack(0D)
                     .heal(0D)
                     .defence(0D)
@@ -151,9 +151,9 @@ class MatchPublishServiceTest {
                             .deviceId(CommonUtil.randomId())
                             .accountId(2L)
                             .mongId(2L)
-                            .mongTypeCode("MONG-TYPE-CODE 2")
-                            .mongTypeName("MONG-TYPE-NAME 2")
-                            .mongName("MONG-NAME 2")
+                            .mongCode("MONG-TYPE-CODE 2")
+                            .mongName("MONG-TYPE-NAME 2")
+                            .name("MONG-NAME 2")
                             .attack(0D)
                             .heal(0D)
                             .defence(0D)
@@ -169,7 +169,7 @@ class MatchPublishServiceTest {
                     .maxRound(10)
                     .matchPlayers(matchPlayers)
                     .round(1)
-                    .matchStateCode(MatchStateCode.PROCESS)
+                    .stateCode(MatchStateCode.PROCESS)
                     .build();
 
             MatchEndPublishDto matchEndPublishDto = new MatchEndPublishDto();
@@ -184,9 +184,9 @@ class MatchPublishServiceTest {
             assertTrue(expected);
             assertEquals(matchId, matchEndPublishDto.getMatchId());
             assertEquals(playerId, matchEndPublishDto.getPlayerId());
+            assertEquals(name, matchEndPublishDto.getName());
+            assertEquals(mongCode, matchEndPublishDto.getMongCode());
             assertEquals(mongName, matchEndPublishDto.getMongName());
-            assertEquals(mongTypeCode, matchEndPublishDto.getMongTypeCode());
-            assertEquals(mongTypeName, matchEndPublishDto.getMongTypeName());
         }
     }
 }

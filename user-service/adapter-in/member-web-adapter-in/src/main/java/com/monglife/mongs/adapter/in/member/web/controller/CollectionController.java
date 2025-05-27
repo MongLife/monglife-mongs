@@ -2,22 +2,21 @@ package com.monglife.mongs.adapter.in.member.web.controller;
 
 import com.monglife.core.dto.response.ResponseDto;
 import com.monglife.module.common.security.principal.Passport;
-import com.monglife.mongs.adapter.in.member.web.dto.request.CreateCollectionMapRequestDto;
 import com.monglife.mongs.adapter.in.member.web.dto.response.GetCollectionMapResponseDto;
 import com.monglife.mongs.adapter.in.member.web.dto.response.GetCollectionMongResponseDto;
 import com.monglife.mongs.adapter.in.member.web.enums.AdapterInMemberWebResponse;
 import com.monglife.mongs.application.member.port.in.CollectionUseCase;
-import com.monglife.mongs.application.member.port.in.command.CreateCollectionMapCommand;
 import com.monglife.mongs.application.member.port.in.command.GetCollectionMapsCommand;
 import com.monglife.mongs.application.member.port.in.command.GetCollectionMongsCommand;
 import com.monglife.mongs.domain.member.model.CollectionMap;
 import com.monglife.mongs.domain.member.model.CollectionMong;
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
@@ -28,25 +27,6 @@ import java.util.List;
 public class CollectionController {
 
     private final CollectionUseCase collectionUseCase;
-
-    /**
-     * 맵 컬렉션 등록
-     */
-    @PostMapping("/map")
-    public ResponseEntity<ResponseDto<?>> createCollectionMap(
-            @AuthenticationPrincipal Passport passport,
-            @Valid @RequestBody CreateCollectionMapRequestDto createCollectionMapRequestDto
-    ) {
-
-        CreateCollectionMapCommand command = CreateCollectionMapCommand.builder()
-                .accountId(passport.getAccountId())
-                .mapTypeCode("MP000")
-                .build();
-
-        collectionUseCase.createCollectionMapUseCase(command);
-
-        return ResponseEntity.ok(AdapterInMemberWebResponse.CREATE_COLLECTION_MAP.toResponseDto());
-    }
 
     /**
      * 맵 컬렉션 조회
@@ -64,8 +44,8 @@ public class CollectionController {
 
         List<GetCollectionMapResponseDto> getCollectionMapResponseDtos = collectionMaps.stream()
                 .map(collectionMapVo -> GetCollectionMapResponseDto.builder()
-                        .mapTypeCode(collectionMapVo.getMapTypeCode())
-                        .mapTypeName(collectionMapVo.getMapTypeName())
+                        .mapCode(collectionMapVo.getMapCode())
+                        .mapName(collectionMapVo.getMapName())
                         .isIncluded(collectionMapVo.getIsIncluded())
                         .build())
                 .toList();
@@ -91,8 +71,8 @@ public class CollectionController {
 
         List<GetCollectionMongResponseDto> getCollectionMongResponseDtos = collectionMongs.stream()
                 .map(collectionMongVo -> GetCollectionMongResponseDto.builder()
-                        .mongTypeCode(collectionMongVo.getMongTypeCode())
-                        .mongTypeName(collectionMongVo.getMongTypeName())
+                        .mongCode(collectionMongVo.getMongCode())
+                        .mongName(collectionMongVo.getMongName())
                         .isIncluded(collectionMongVo.getIsIncluded())
                         .build())
                 .toList();

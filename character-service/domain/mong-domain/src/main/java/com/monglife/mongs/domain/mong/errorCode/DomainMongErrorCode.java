@@ -19,6 +19,7 @@ public enum DomainMongErrorCode implements ErrorCode {
     NOT_ENOUGH_PAY_POINT("DOMAIN-MONG-004", "충분한 페이 포인트가 없습니다."),
     FORBIDDEN_MONG("DOMAIN-MONG-005", "몽에 대한 권한이 없습니다."),
     FORBIDDEN_INVENTORY_ITEM("DOMAIN-MONG-006", "인벤토리 아이템에 대한 권한이 없습니다."),
+    NOT_ENOUGH_RANDOM_DRAW_TICKET("DOMAIN-MONG-007", "충분한 랜덤 뽑기 티켓이 없습니다."),
     ;
 
     private final String code;

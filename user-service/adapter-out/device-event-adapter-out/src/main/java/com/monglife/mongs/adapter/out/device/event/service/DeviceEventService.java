@@ -3,7 +3,7 @@ package com.monglife.mongs.adapter.out.device.event.service;
 import com.monglife.module.common.kafka.service.KafkaService;
 import com.monglife.mongs.adapter.transaction.ExchangeCurrentWalkingCountEventDto;
 import com.monglife.mongs.application.device.port.out.DeviceEventPort;
-import com.monglife.mongs.application.device.port.out.dto.StepEventDto;
+import com.monglife.mongs.application.device.port.out.dto.ExchangeCurrentWalkingCountDto;
 import com.monglife.mongs.core.kafka.event.enums.EventTopic;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -19,9 +19,9 @@ public class DeviceEventService implements DeviceEventPort {
      * @param stepEventDto 걸음 수 이벤트 Dto
      */
     @Override
-    public void exchangeCurrentWalkingCountEventPort(StepEventDto stepEventDto) {
+    public void exchangeCurrentWalkingCountEventPort(ExchangeCurrentWalkingCountDto stepEventDto) {
 
-        ExchangeCurrentWalkingCountEventDto exchangeCurrentWalkingCountEventDto = ExchangeCurrentWalkingCountEventDto.builder()
+        com.monglife.mongs.adapter.transaction.ExchangeCurrentWalkingCountEventDto exchangeCurrentWalkingCountEventDto = ExchangeCurrentWalkingCountEventDto.builder()
                 .deviceId(stepEventDto.getDeviceId())
                 .mongId(stepEventDto.getMongId())
                 .walkingCount(stepEventDto.getWalkingCount())

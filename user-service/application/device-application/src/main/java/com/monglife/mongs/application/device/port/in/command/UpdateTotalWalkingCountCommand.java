@@ -12,12 +12,12 @@ public class UpdateTotalWalkingCountCommand {
 
     private final Integer totalWalkingCount;
 
-    private final LocalDateTime deviceBootedDt;
+    private final LocalDateTime deviceBootedAt;
 
     @Builder
-    public UpdateTotalWalkingCountCommand(String deviceId, Integer totalWalkingCount, LocalDateTime deviceBootedDt) {
+    public UpdateTotalWalkingCountCommand(String deviceId, Integer totalWalkingCount, LocalDateTime deviceBootedAt) {
         this.deviceId = deviceId;
         this.totalWalkingCount = totalWalkingCount;
-        this.deviceBootedDt = deviceBootedDt;
+        this.deviceBootedAt = deviceBootedAt;
     }
 }

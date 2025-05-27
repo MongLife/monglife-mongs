@@ -10,9 +10,9 @@ public class TrainingType {
 
     private final Long trainingTypeId;
 
-    private final String trainingTypeCode;
+    private final String trainingCode;
 
-    private final String trainingTypeName;
+    private final String trainingName;
 
     private final Integer payPoint;
 
@@ -31,10 +31,10 @@ public class TrainingType {
     private final Double fatigue;
 
     @Builder
-    public TrainingType(Long trainingTypeId, String trainingTypeCode, String trainingTypeName, Integer payPoint, Integer score, Integer timeout, Double exp, Double strength, Double weight, Double satiety, Double fatigue) {
+    public TrainingType(Long trainingTypeId, String trainingCode, String trainingName, Integer payPoint, Integer score, Integer timeout, Double exp, Double strength, Double weight, Double satiety, Double fatigue) {
         this.trainingTypeId = trainingTypeId;
-        this.trainingTypeCode = trainingTypeCode;
-        this.trainingTypeName = trainingTypeName;
+        this.trainingCode = trainingCode;
+        this.trainingName = trainingName;
         this.payPoint = payPoint;
         this.score = score;
         this.timeout = timeout;

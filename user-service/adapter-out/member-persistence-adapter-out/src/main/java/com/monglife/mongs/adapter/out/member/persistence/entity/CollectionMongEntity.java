@@ -26,16 +26,16 @@ public class CollectionMongEntity extends BaseTimeEntity {
     private Long accountId;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "collection_mong_code")
-    private ComnCodeEntity mongType;
+    @JoinColumn(name = "mong_code")
+    private ComnCodeEntity comn;
 
     @Transient
     private Boolean isIncluded = true;
 
     @Builder
-    public CollectionMongEntity(Long accountId, ComnCodeEntity mongType) {
+    public CollectionMongEntity(Long accountId, ComnCodeEntity comn) {
         this.accountId = accountId;
-        this.mongType = mongType;
+        this.comn = comn;
     }
 
     public void exclude() {
@@ -50,8 +50,8 @@ public class CollectionMongEntity extends BaseTimeEntity {
         return CollectionMong.builder()
                 .collectionMongId(this.collectionMongId)
                 .accountId(this.accountId)
-                .mongTypeCode(this.mongType.getCode())
-                .mongTypeName(this.mongType.getName())
+                .mongCode(this.comn.getCode())
+                .mongName(this.comn.getName())
                 .isIncluded(this.isIncluded)
                 .build();
     }

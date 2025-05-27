@@ -28,7 +28,7 @@ public class CollectionConsumer {
         if (event.getData() != null) {
             CreateCollectionMongCommand command = CreateCollectionMongCommand.builder()
                     .accountId(event.getData().getAccountId())
-                    .mongTypeCode(event.getData().getMongTypeCode())
+                    .mongCode(event.getData().getMongCode())
                     .build();
 
             collectionUseCase.createCollectionMongUseCase(command);
@@ -45,7 +45,7 @@ public class CollectionConsumer {
         if (event.getData() != null) {
             CreateCollectionMongCommand command = CreateCollectionMongCommand.builder()
                     .accountId(event.getData().getAccountId())
-                    .mongTypeCode(event.getData().getMongTypeCode())
+                    .mongCode(event.getData().getMongCode())
                     .build();
 
             collectionUseCase.createCollectionMongUseCase(command);
@@ -62,7 +62,7 @@ public class CollectionConsumer {
         if (event.getData() != null) {
             CreateCollectionMapCommand command = CreateCollectionMapCommand.builder()
                     .accountId(event.getData().getAccountId())
-                    .mapTypeCode(event.getData().getMapTypeCode())
+                    .mapCode(event.getData().getMapCode())
                     .build();
 
             collectionUseCase.createCollectionMapUseCase(command);

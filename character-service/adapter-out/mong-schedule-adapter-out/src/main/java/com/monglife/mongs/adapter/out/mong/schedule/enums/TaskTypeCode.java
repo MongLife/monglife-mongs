@@ -13,5 +13,5 @@ public enum TaskTypeCode {
     NONE_FIX_TIME_CYCLE("일정 시간 간격 반복 실행"),
     ;
 
-    private final String message;
+    private final String description;
 }

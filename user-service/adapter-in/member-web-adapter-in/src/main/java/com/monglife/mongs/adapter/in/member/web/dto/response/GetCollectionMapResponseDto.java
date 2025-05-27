@@ -10,16 +10,16 @@ import lombok.Setter;
 @NoArgsConstructor
 public class GetCollectionMapResponseDto {
 
-    private String mapTypeCode;
+    private String mapCode;
 
-    private String mapTypeName;
+    private String mapName;
 
     private Boolean isIncluded;
 
     @Builder
-    public GetCollectionMapResponseDto(String mapTypeCode, String mapTypeName, Boolean isIncluded) {
-        this.mapTypeCode = mapTypeCode;
-        this.mapTypeName = mapTypeName;
+    public GetCollectionMapResponseDto(String mapCode, String mapName, Boolean isIncluded) {
+        this.mapCode = mapCode;
+        this.mapName = mapName;
         this.isIncluded = isIncluded;
     }
 }

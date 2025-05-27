@@ -66,33 +66,33 @@ class ActivityServiceTest {
         @DisplayName("훈련 타입 정보를 조회 한다.")
         void getTrainingType() {
             // arrange
-            String trainingTypeCode = "TEST-TRAINING-TYPE-CODE";
-            TrainingType trainingType = new TrainingType(1L, trainingTypeCode, "테스트 훈련 타입", 10, 100, 60, 1D, 2D, 3D, 4D, 5D);
+            String trainingCode = "TEST-TRAINING-TYPE-CODE";
+            TrainingType trainingType = new TrainingType(1L, trainingCode, "테스트 훈련 타입", 10, 100, 60, 1D, 2D, 3D, 4D, 5D);
 
-            Mockito.when(mongReadPort.getTrainingTypePort(trainingTypeCode)).thenReturn(Optional.of(trainingType));
+            Mockito.when(mongReadPort.getTrainingTypePort(trainingCode)).thenReturn(Optional.of(trainingType));
 
             // act
             GetTrainingTypeCommand command = GetTrainingTypeCommand.builder()
-                    .trainingTypeCode(trainingTypeCode)
+                    .trainingCode(trainingCode)
                     .build();
 
             TrainingType expected = activityUseCase.getTrainingTypeUseCase(command);
 
             // assert
-            assertEquals(trainingTypeCode, expected.getTrainingTypeCode());
+            assertEquals(trainingCode, expected.getTrainingCode());
         }
 
         @Test
         @DisplayName("훈련 타입이 없는 경우 예외가 발생 한다.")
         void getTrainingTypeWhenNotExistsTrainingType() {
             // arrange
-            String trainingTypeCode = "TEST-TRAINING-TYPE-CODE";
+            String trainingCode = "TEST-TRAINING-TYPE-CODE";
 
-            Mockito.when(mongReadPort.getTrainingTypePort(trainingTypeCode)).thenReturn(Optional.empty());
+            Mockito.when(mongReadPort.getTrainingTypePort(trainingCode)).thenReturn(Optional.empty());
 
             // act & assert
             GetTrainingTypeCommand command = GetTrainingTypeCommand.builder()
-                    .trainingTypeCode(trainingTypeCode)
+                    .trainingCode(trainingCode)
                     .build();
 
             assertThrows(NotExistsTrainingTypeException.class, () -> activityUseCase.getTrainingTypeUseCase(command));
@@ -107,25 +107,25 @@ class ActivityServiceTest {
         @DisplayName("훈련을 완료하고 스코어를 달성시 보상을 받는다")
         void trainingEnd() {
             // arrange
-            String trainingTypeCode = "TEST-TRAINING-TYPE-CODE";
+            String trainingCode = "TEST-TRAINING-TYPE-CODE";
             int score = 100;
             int payPoint = 10;
             double status = 10D;
-            TrainingType trainingType = new TrainingType(1L, trainingTypeCode, "테스트 훈련 타입", payPoint, score, 60, status, -status, -status, -status, -status);
+            TrainingType trainingType = new TrainingType(1L, trainingCode, "테스트 훈련 타입", payPoint, score, 60, status, -status, -status, -status, -status);
 
             long mongId = 1L;
             long accountId = 1L;
             double maxStatus = 100D;
             Mong mong = MongTestUtil.getFirstLevelMong(mongId, accountId, maxStatus);
 
-            Mockito.when(mongReadPort.getTrainingTypePort(trainingTypeCode)).thenReturn(Optional.of(trainingType));
+            Mockito.when(mongReadPort.getTrainingTypePort(trainingCode)).thenReturn(Optional.of(trainingType));
             Mockito.when(mongPersistencePort.getMongPort(mongId)).thenReturn(Optional.of(mong));
             Mockito.when(mongPersistencePort.saveMongPort(mong)).thenReturn(Optional.of(mong));
 
             // act
             TrainingEndCommand command = TrainingEndCommand.builder()
                     .accountId(accountId)
-                    .trainingTypeCode(trainingTypeCode)
+                    .trainingCode(trainingCode)
                     .mongId(mongId)
                     .score(score)
                     .build();
@@ -146,21 +146,21 @@ class ActivityServiceTest {
         @DisplayName("훈련 타입이 없는 경우 예외가 발생 한다.")
         void trainingEndWhenNotExistsTrainingType() {
             // arrange
-            String trainingTypeCode = "TEST-TRAINING-TYPE-CODE";
+            String trainingCode = "TEST-TRAINING-TYPE-CODE";
 
             long mongId = 1L;
             long accountId = 1L;
             double maxStatus = 100D;
             Mong mong = MongTestUtil.getEggMong(mongId, accountId, maxStatus);
 
-            Mockito.when(mongReadPort.getTrainingTypePort(trainingTypeCode)).thenReturn(Optional.empty());
+            Mockito.when(mongReadPort.getTrainingTypePort(trainingCode)).thenReturn(Optional.empty());
             Mockito.when(mongPersistencePort.getMongPort(mongId)).thenReturn(Optional.of(mong));
             Mockito.when(mongPersistencePort.saveMongPort(mong)).thenReturn(Optional.of(mong));
 
             // act & assert
             TrainingEndCommand command = TrainingEndCommand.builder()
                     .accountId(accountId)
-                    .trainingTypeCode(trainingTypeCode)
+                    .trainingCode(trainingCode)
                     .mongId(mongId)
                     .score(0)
                     .build();
@@ -172,22 +172,22 @@ class ActivityServiceTest {
         @DisplayName("몽이 없는 경우 예외가 발생 한다.")
         void trainingEndWhenNotExistsMong() {
             // arrange
-            String trainingTypeCode = "TEST-TRAINING-TYPE-CODE";
+            String trainingCode = "TEST-TRAINING-TYPE-CODE";
             int score = 100;
             int payPoint = 10;
             double status = 10D;
-            TrainingType trainingType = new TrainingType(1L, trainingTypeCode, "테스트 훈련 타입", payPoint, score, 60, status, -status, -status, -status, -status);
+            TrainingType trainingType = new TrainingType(1L, trainingCode, "테스트 훈련 타입", payPoint, score, 60, status, -status, -status, -status, -status);
 
             long mongId = 1L;
             long accountId = 1L;
 
-            Mockito.when(mongReadPort.getTrainingTypePort(trainingTypeCode)).thenReturn(Optional.of(trainingType));
+            Mockito.when(mongReadPort.getTrainingTypePort(trainingCode)).thenReturn(Optional.of(trainingType));
             Mockito.when(mongPersistencePort.getMongPort(mongId)).thenReturn(Optional.empty());
 
             // act & assert
             TrainingEndCommand command = TrainingEndCommand.builder()
                     .accountId(accountId)
-                    .trainingTypeCode(trainingTypeCode)
+                    .trainingCode(trainingCode)
                     .mongId(mongId)
                     .score(0)
                     .build();

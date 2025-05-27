@@ -56,7 +56,7 @@ public class ManagementService implements ManagementUseCase {
         // 새로운 몽 영속화
         Mong mong = mongPersistencePort.createMongPort(CreateMongVo.builder()
                 .accountId(command.getAccountId())
-                .mongName(command.getMongName())
+                .name(command.getName())
                 .statusCode(MongStatusCode.NORMAL)
                 .stateCode(MongStateCode.NORMAL)
                 .sleepAt(command.getSleepAt())
@@ -84,7 +84,7 @@ public class ManagementService implements ManagementUseCase {
                 .orElseThrow(InvalidCreateMongScheduleException::new);
 
         // 몽 생성 이벤트 발생
-        mongEventPort.createMongEventPort(command.getAccountId(), mongType.getMongTypeCode());
+        mongEventPort.createMongEventPort(command.getAccountId(), mongType.getMongCode());
 
         return mong;
     }
@@ -304,10 +304,10 @@ public class ManagementService implements ManagementUseCase {
         Double evolutionScore = mong.getEvolutionScore();
 
         // 진화 가능한 몽 타입 목록 조회
-        List<MongType> mongTypeCodes = mongReadPort.getNextLevelMongTypesPort(evolutionScore, mong.getMongTypeCode());
+        List<MongType> mongCodes = mongReadPort.getNextLevelMongTypesPort(evolutionScore, mong.getMongCode());
 
         // 몽 진화
-        mong.evolution(mongTypeCodes);
+        mong.evolution(mongCodes);
 
         // 몽 정보 동기화
         mong = mongPersistencePort.saveMongPort(mong)
@@ -326,7 +326,7 @@ public class ManagementService implements ManagementUseCase {
         }
 
         // 몽 진화 이벤트 발생
-        mongEventPort.evolutionMongEventPort(command.getAccountId(), mong.getMongTypeCode());
+        mongEventPort.evolutionMongEventPort(command.getAccountId(), mong.getMongCode());
 
         return mong;
     }

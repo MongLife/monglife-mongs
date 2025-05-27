@@ -12,7 +12,7 @@ public enum BotMatchMongType {
     CH102("CH102", "네몽")
     ;
 
-    private final String mongTypeCode;
+    private final String mongCode;
 
-    private final String mongTypeName;
+    private final String mongName;
 }

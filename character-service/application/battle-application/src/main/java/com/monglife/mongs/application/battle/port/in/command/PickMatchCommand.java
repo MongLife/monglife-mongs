@@ -13,13 +13,13 @@ public class PickMatchCommand {
 
     private final String targetPlayerId;
 
-    private final MatchPickCode matchPickCode;
+    private final MatchPickCode pickCode;
 
     @Builder
-    public PickMatchCommand(Long matchId, String playerId, String targetPlayerId, MatchPickCode matchPickCode) {
+    public PickMatchCommand(Long matchId, String playerId, String targetPlayerId, MatchPickCode pickCode) {
         this.matchId = matchId;
         this.playerId = playerId;
         this.targetPlayerId = targetPlayerId;
-        this.matchPickCode = matchPickCode;
+        this.pickCode = pickCode;
     }
 }

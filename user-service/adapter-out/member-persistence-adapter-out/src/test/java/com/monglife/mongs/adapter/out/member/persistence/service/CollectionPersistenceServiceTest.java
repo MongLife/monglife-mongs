@@ -113,7 +113,7 @@ class CollectionPersistenceServiceTest {
             // arrange
             CreateCollectionMapVo createCollectionMapVo = CreateCollectionMapVo.builder()
                     .accountId(ACCOUNT_ID)
-                    .mapTypeCode(MAP_TYPE.getCode())
+                    .mapCode(MAP_TYPE.getCode())
                     .build();
 
             // act
@@ -125,12 +125,12 @@ class CollectionPersistenceServiceTest {
 
         @Test
         @DisplayName("맵 코드가 공통 코드 테이블에 없는 경우 빈 옵셔널 객체를 반환 한다.")
-        void notExistsMapTypeCode() {
+        void notExistsMapCode() {
             // arrange
-            String mapTypeCode = "MP___";
+            String mapCode = "MP___";
             CreateCollectionMapVo createCollectionMapVo = CreateCollectionMapVo.builder()
                     .accountId(ACCOUNT_ID)
-                    .mapTypeCode(mapTypeCode)
+                    .mapCode(mapCode)
                     .build();
 
             // act
@@ -151,7 +151,7 @@ class CollectionPersistenceServiceTest {
             // arrange
             CreateCollectionMongVo createCollectionMongVo = CreateCollectionMongVo.builder()
                     .accountId(ACCOUNT_ID)
-                    .mongTypeCode(MONG_TYPE.getCode())
+                    .mongCode(MONG_TYPE.getCode())
                     .build();
 
             // act
@@ -163,12 +163,12 @@ class CollectionPersistenceServiceTest {
 
         @Test
         @DisplayName("몽 코드가 공통 코드 테이블에 없는 경우 빈 옵셔널 객체를 반환 한다.")
-        void notExistsMongTypeCode() {
+        void notExistsMongCode() {
             // arrange
-            String mongTypeCode = "CH___";
+            String mongCode = "CH___";
             CreateCollectionMongVo createCollectionMongVo = CreateCollectionMongVo.builder()
                     .accountId(ACCOUNT_ID)
-                    .mongTypeCode(mongTypeCode)
+                    .mongCode(mongCode)
                     .build();
 
             // act
@@ -189,7 +189,7 @@ class CollectionPersistenceServiceTest {
             // arrange
             collectionMapRepository.saveAndFlush(CollectionMapEntity.builder()
                     .accountId(ACCOUNT_ID)
-                    .mapType(MAP_TYPE)
+                    .comn(MAP_TYPE)
                     .build());
 
             // act
@@ -203,10 +203,10 @@ class CollectionPersistenceServiceTest {
         @DisplayName("컬렉션 맵이 존재하지 않는 경우 false를 반환 한다.")
         void notExistsCollectionMap() {
             // arrange
-            String mapTypeCode = "MP___";
+            String mapCode = "MP___";
 
             // act
-            Boolean expected = collectionPersistencePort.isExistsCollectionMapPort(ACCOUNT_ID, mapTypeCode);
+            Boolean expected = collectionPersistencePort.isExistsCollectionMapPort(ACCOUNT_ID, mapCode);
 
             // assert
             assertFalse(expected);
@@ -223,7 +223,7 @@ class CollectionPersistenceServiceTest {
             // arrange
             collectionMongRepository.saveAndFlush(CollectionMongEntity.builder()
                     .accountId(ACCOUNT_ID)
-                    .mongType(MONG_TYPE)
+                    .comn(MONG_TYPE)
                     .build());
 
             // act
@@ -237,10 +237,10 @@ class CollectionPersistenceServiceTest {
         @DisplayName("컬렉션 몽이 존재하지 않는 경우 false를 반환 한다.")
         void notExistsCollectionMong() {
             // arrange
-            String mongTypeCode = "CH___";
+            String mongCode = "CH___";
 
             // act
-            Boolean expected = collectionPersistencePort.isExistsCollectionMongPort(ACCOUNT_ID, mongTypeCode);
+            Boolean expected = collectionPersistencePort.isExistsCollectionMongPort(ACCOUNT_ID, mongCode);
 
             // assert
             assertFalse(expected);
@@ -257,7 +257,7 @@ class CollectionPersistenceServiceTest {
             // arrange
             collectionMapRepository.saveAndFlush(CollectionMapEntity.builder()
                     .accountId(ACCOUNT_ID)
-                    .mapType(MAP_TYPE)
+                    .comn(MAP_TYPE)
                     .build());
 
             // act
@@ -267,7 +267,7 @@ class CollectionPersistenceServiceTest {
             for (int index = 0; index < MAP_TYPE_ENTITIES.size(); index++) {
                 CollectionMap collectionMap = collectionMaps.get(index);
 
-                if (MAP_TYPE.getCode().equals(collectionMap.getMapTypeCode())) {
+                if (MAP_TYPE.getCode().equals(collectionMap.getMapCode())) {
                     assertTrue(collectionMap.getIsIncluded());
                 } else {
                     assertFalse(collectionMap.getIsIncluded());
@@ -286,7 +286,7 @@ class CollectionPersistenceServiceTest {
             // arrange
             collectionMongRepository.saveAndFlush(CollectionMongEntity.builder()
                     .accountId(ACCOUNT_ID)
-                    .mongType(MONG_TYPE)
+                    .comn(MONG_TYPE)
                     .build());
 
             // act
@@ -296,7 +296,7 @@ class CollectionPersistenceServiceTest {
             for (int index = 0; index < MONG_TYPE_ENTITIES.size(); index++) {
                 CollectionMong collectionMong = collectionMongs.get(index);
 
-                if (MONG_TYPE.getCode().equals(collectionMong.getMongTypeCode())) {
+                if (MONG_TYPE.getCode().equals(collectionMong.getMongCode())) {
                     assertTrue(collectionMong.getIsIncluded());
                 } else {
                     assertFalse(collectionMong.getIsIncluded());

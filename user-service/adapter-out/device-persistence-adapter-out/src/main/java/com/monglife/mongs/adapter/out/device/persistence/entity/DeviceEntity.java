@@ -19,7 +19,7 @@ import java.time.LocalDateTime;
 public class DeviceEntity extends BaseTimeEntity {
 
     @Id
-    @Column(name = "device_id", unique = true)
+    @Column(name = "device_id")
     private String deviceId;
 
     @Column(name = "walking_count")
@@ -31,16 +31,16 @@ public class DeviceEntity extends BaseTimeEntity {
     @Column(name = "consume_walking_count")
     private Integer consumeWalkingCount;
 
-    @Column(name = "device_booted_dt")
-    private LocalDateTime deviceBootedDt;
+    @Column(name = "device_booted_at")
+    private LocalDateTime deviceBootedAt;
 
     @Builder
-    public DeviceEntity(String deviceId, Integer walkingCount, Integer totalWalkingCount, Integer consumeWalkingCount, LocalDateTime deviceBootedDt) {
+    public DeviceEntity(String deviceId, Integer walkingCount, Integer totalWalkingCount, Integer consumeWalkingCount, LocalDateTime deviceBootedAt) {
         this.deviceId = deviceId;
         this.walkingCount = walkingCount;
         this.totalWalkingCount = totalWalkingCount;
         this.consumeWalkingCount = consumeWalkingCount;
-        this.deviceBootedDt = deviceBootedDt;
+        this.deviceBootedAt = deviceBootedAt;
     }
 
     /**
@@ -51,7 +51,7 @@ public class DeviceEntity extends BaseTimeEntity {
         this.walkingCount = step.getWalkingCount();
         this.totalWalkingCount = step.getTotalWalkingCount();
         this.consumeWalkingCount = step.getConsumeWalkingCount();
-        this.deviceBootedDt = step.getDeviceBootedDt();
+        this.deviceBootedAt = step.getDeviceBootedAt();
     }
 
     /**
@@ -64,7 +64,7 @@ public class DeviceEntity extends BaseTimeEntity {
                 .walkingCount(this.walkingCount)
                 .totalWalkingCount(this.totalWalkingCount)
                 .consumeWalkingCount(this.consumeWalkingCount)
-                .deviceBootedDt(this.deviceBootedDt)
+                .deviceBootedAt(this.deviceBootedAt)
                 .build();
     }
 }

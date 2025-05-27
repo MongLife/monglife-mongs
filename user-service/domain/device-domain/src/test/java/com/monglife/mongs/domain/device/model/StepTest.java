@@ -13,7 +13,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class StepTest {
 
     private static final String DEVICE_ID = "TEST-DEVICE-ID";
-    private static final LocalDateTime DEVICE_BOOTED_DT = LocalDateTime.of(2025, 1, 1, 0, 0);
+    private static final LocalDateTime DEVICE_BOOTED_AT = LocalDateTime.of(2025, 1, 1, 0, 0);
 
     @Nested
     @DisplayName("보유 걸음 수 페이 포인트 환전 단위 테스트")
@@ -29,7 +29,7 @@ class StepTest {
                     .walkingCount(0)
                     .consumeWalkingCount(0)
                     .totalWalkingCount(totalWalkingCount)
-                    .deviceBootedDt(DEVICE_BOOTED_DT)
+                    .deviceBootedAt(DEVICE_BOOTED_AT)
                     .build();
 
             // act
@@ -48,7 +48,7 @@ class StepTest {
                     .walkingCount(0)
                     .consumeWalkingCount(0)
                     .totalWalkingCount(0)
-                    .deviceBootedDt(DEVICE_BOOTED_DT)
+                    .deviceBootedAt(DEVICE_BOOTED_AT)
                     .build();
 
             // act & assert
@@ -70,7 +70,7 @@ class StepTest {
                     .walkingCount(0)
                     .consumeWalkingCount(0)
                     .totalWalkingCount(0)
-                    .deviceBootedDt(DEVICE_BOOTED_DT)
+                    .deviceBootedAt(DEVICE_BOOTED_AT)
                     .build();
 
             // act
@@ -95,7 +95,7 @@ class StepTest {
                     .walkingCount(0)
                     .consumeWalkingCount(0)
                     .totalWalkingCount(totalWalkingCount)
-                    .deviceBootedDt(DEVICE_BOOTED_DT)
+                    .deviceBootedAt(DEVICE_BOOTED_AT)
                     .build();
 
             // act
@@ -121,11 +121,11 @@ class StepTest {
                     .walkingCount(0)
                     .consumeWalkingCount(0)
                     .totalWalkingCount(totalWalkingCount)
-                    .deviceBootedDt(DEVICE_BOOTED_DT)
+                    .deviceBootedAt(DEVICE_BOOTED_AT)
                     .build();
 
             // act
-            step.syncTotalWalkingCount(newTotalWalkingCount, DEVICE_BOOTED_DT);
+            step.syncTotalWalkingCount(newTotalWalkingCount, DEVICE_BOOTED_AT);
 
             // assert
             assertEquals(newTotalWalkingCount, step.getCurrentWalkingCount());
@@ -137,20 +137,20 @@ class StepTest {
             // arrange
             int totalWalkingCount = 100;
             int newTotalWalkingCount = 50;
-            LocalDateTime newDeviceBootedDt = DEVICE_BOOTED_DT.plusDays(1);
+            LocalDateTime newDeviceBootedDt = DEVICE_BOOTED_AT.plusDays(1);
             Step step = Step.builder()
                     .deviceId(DEVICE_ID)
                     .walkingCount(0)
                     .consumeWalkingCount(0)
                     .totalWalkingCount(totalWalkingCount)
-                    .deviceBootedDt(DEVICE_BOOTED_DT)
+                    .deviceBootedAt(DEVICE_BOOTED_AT)
                     .build();
 
             // act
             step.syncTotalWalkingCount(newTotalWalkingCount, newDeviceBootedDt);
 
             // assert
-            assertEquals(newDeviceBootedDt, step.getDeviceBootedDt());
+            assertEquals(newDeviceBootedDt, step.getDeviceBootedAt());
             assertEquals(totalWalkingCount, step.getWalkingCount());
             assertEquals(newTotalWalkingCount, step.getTotalWalkingCount());
             assertEquals(totalWalkingCount + newTotalWalkingCount, step.getCurrentWalkingCount());
@@ -166,11 +166,11 @@ class StepTest {
                     .walkingCount(0)
                     .consumeWalkingCount(0)
                     .totalWalkingCount(Integer.MAX_VALUE)
-                    .deviceBootedDt(DEVICE_BOOTED_DT)
+                    .deviceBootedAt(DEVICE_BOOTED_AT)
                     .build();
 
             // act & assert
-            assertThrows(InvalidTotalWalkingCountException.class, () -> step.syncTotalWalkingCount(newTotalWalkingCount, DEVICE_BOOTED_DT));
+            assertThrows(InvalidTotalWalkingCountException.class, () -> step.syncTotalWalkingCount(newTotalWalkingCount, DEVICE_BOOTED_AT));
         }
     }
 }

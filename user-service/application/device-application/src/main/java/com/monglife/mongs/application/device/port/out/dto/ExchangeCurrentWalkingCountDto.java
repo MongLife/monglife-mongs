@@ -6,7 +6,7 @@ import lombok.ToString;
 
 @Getter
 @ToString
-public class StepEventDto {
+public class ExchangeCurrentWalkingCountDto {
 
     private final String deviceId;
 
@@ -17,7 +17,7 @@ public class StepEventDto {
     private final Integer walkingCount;
 
     @Builder
-    public StepEventDto(String deviceId, Long mongId, Integer payPoint, Integer walkingCount) {
+    public ExchangeCurrentWalkingCountDto(String deviceId, Long mongId, Integer payPoint, Integer walkingCount) {
         this.deviceId = deviceId;
         this.mongId = mongId;
         this.payPoint = payPoint;

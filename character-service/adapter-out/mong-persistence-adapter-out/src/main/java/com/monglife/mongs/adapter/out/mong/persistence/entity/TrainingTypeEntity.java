@@ -18,7 +18,7 @@ public class TrainingTypeEntity {
     private Long trainingTypeId;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "training_type_code")
+    @JoinColumn(name = "training_code")
     private ComnCodeEntity comn;
 
     @Column(name = "pay_point")
@@ -62,8 +62,8 @@ public class TrainingTypeEntity {
     public TrainingType toDomain() {
         return TrainingType.builder()
                 .trainingTypeId(this.trainingTypeId)
-                .trainingTypeCode(this.comn.getCode())
-                .trainingTypeName(this.comn.getName())
+                .trainingCode(this.comn.getCode())
+                .trainingName(this.comn.getName())
                 .payPoint(this.payPoint)
                 .score(this.score)
                 .timeout(this.timeout)

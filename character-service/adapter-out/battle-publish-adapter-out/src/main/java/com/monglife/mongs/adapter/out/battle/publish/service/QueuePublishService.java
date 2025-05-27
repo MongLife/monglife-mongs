@@ -30,8 +30,8 @@ public class QueuePublishService implements QueuePublishPort {
                                 .deviceId(matchPlayer.getDeviceId())
                                 .playerId(matchPlayer.getPlayerId())
                                 .mongId(matchPlayer.getMongId())
-                                .mongTypeCode(matchPlayer.getMongTypeCode())
-                                .mongTypeName(matchPlayer.getMongTypeName())
+                                .mongCode(matchPlayer.getMongCode())
+                                .mongName(matchPlayer.getMongName())
                                 .build())
                         .toList())
                 .build();

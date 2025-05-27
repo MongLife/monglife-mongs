@@ -20,11 +20,11 @@ public class UpdateTotalWalkingCountRequestDto {
 
     @NotNull
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
-    private LocalDateTime deviceBootedDt;
+    private LocalDateTime deviceBootedAt;
 
     @Builder
-    public UpdateTotalWalkingCountRequestDto(Integer totalWalkingCount, LocalDateTime deviceBootedDt) {
+    public UpdateTotalWalkingCountRequestDto(Integer totalWalkingCount, LocalDateTime deviceBootedAt) {
         this.totalWalkingCount = totalWalkingCount;
-        this.deviceBootedDt = deviceBootedDt;
+        this.deviceBootedAt = deviceBootedAt;
     }
 }

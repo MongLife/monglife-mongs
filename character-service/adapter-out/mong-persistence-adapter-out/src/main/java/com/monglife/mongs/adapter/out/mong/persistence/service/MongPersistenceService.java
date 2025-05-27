@@ -27,15 +27,15 @@ public class MongPersistenceService implements
 
     private final MongFeedHistoryRepository mongFeedHistoryRepository;
 
-    private final FoodTypeRepository foodTypeRepository;
+    private final FoodRepository foodRepository;
 
-    private final SnackTypeRepository snackTypeRepository;
+    private final SnackRepository snackRepository;
 
     private final MongTypeRepository mongTypeRepository;
 
     private final MongRepository mongRepository;
 
-    private final InventoryItemRepository inventoryItemRepository;
+    private final InventoryRepository inventoryRepository;
 
     /**
      * 몽 쓰다 듬기 이력 등록
@@ -62,17 +62,17 @@ public class MongPersistenceService implements
     /**
      * 몽 음식 섭취 이력 등록
      * @param mongId 몽 ID
-     * @param foodTypeCode 음식 코드
+     * @param foodCode 음식 코드
      * @return 음식 코드
      */
     @Override
     @Transactional
-    public Optional<String> createMongFeedFoodHistoryPort(Long mongId, String foodTypeCode) {
+    public Optional<String> createMongFeedFoodHistoryPort(Long mongId, String foodCode) {
 
-        Optional<FoodEntity> foodTypeEntityOptional = foodTypeRepository.findByComnCode(foodTypeCode);
+        Optional<FoodEntity> foodEntityOptional = foodRepository.findByComnCode(foodCode);
 
-        if (foodTypeEntityOptional.isPresent()) {
-            FoodEntity foodEntity = foodTypeEntityOptional.get();
+        if (foodEntityOptional.isPresent()) {
+            FoodEntity foodEntity = foodEntityOptional.get();
 
             MongFeedHistoryEntity mongFeedHistoryEntity = MongFeedHistoryEntity.builder()
                     .mongFeedHistoryId(CommonUtil.randomId())
@@ -91,17 +91,17 @@ public class MongPersistenceService implements
     /**
      * 몽 간식 섭취 이력 등록
      * @param mongId 몽 ID
-     * @param snackTypeCode 간식 코드
+     * @param snackCode 간식 코드
      * @return 간식 코드
      */
     @Override
     @Transactional
-    public Optional<String> createMongFeedSnackHistoryPort(Long mongId, String snackTypeCode) {
+    public Optional<String> createMongFeedSnackHistoryPort(Long mongId, String snackCode) {
 
-        Optional<SnackEntity> snackTypeEntityOptional = snackTypeRepository.findByComnCode(snackTypeCode);
+        Optional<SnackEntity> snackEntityOptional = snackRepository.findByComnCode(snackCode);
 
-        if (snackTypeEntityOptional.isPresent()) {
-            SnackEntity snackEntity = snackTypeEntityOptional.get();
+        if (snackEntityOptional.isPresent()) {
+            SnackEntity snackEntity = snackEntityOptional.get();
 
             MongFeedHistoryEntity mongFeedHistoryEntity = MongFeedHistoryEntity.builder()
                     .mongFeedHistoryId(CommonUtil.randomId())
@@ -126,12 +126,12 @@ public class MongPersistenceService implements
     @Transactional
     public Optional<Mong> createMongPort(CreateMongVo createMongVo) {
 
-        Optional<MongTypeEntity> mongTypeEntityOptional = mongTypeRepository.findByComnCode(createMongVo.getMongType().getMongTypeCode());
+        Optional<MongTypeEntity> mongTypeEntityOptional = mongTypeRepository.findByComnCode(createMongVo.getMongType().getMongCode());
 
         if (mongTypeEntityOptional.isPresent()) {
             MongEntity mongEntity = mongRepository.save(MongEntity.builder()
                     .accountId(createMongVo.getAccountId())
-                    .mongName(createMongVo.getMongName())
+                    .name(createMongVo.getName())
                     .sleepAt(createMongVo.getSleepAt())
                     .wakeupAt(createMongVo.getWakeupAt())
                     .payPoint(createMongVo.getPayPoint())
@@ -185,8 +185,8 @@ public class MongPersistenceService implements
         if (mongEntityOptional.isPresent()) {
             MongEntity mongEntity = mongEntityOptional.get();
 
-            if (mong.getMongTypeCode().equals(mongEntity.getMongType().getComn().getCode())) {
-                Optional<MongTypeEntity> mongTypeEntityOptional = mongTypeRepository.findByComnCode(mong.getMongTypeCode());
+            if (mong.getMongCode().equals(mongEntity.getMongType().getComn().getCode())) {
+                Optional<MongTypeEntity> mongTypeEntityOptional = mongTypeRepository.findByComnCode(mong.getMongCode());
 
                 if (mongTypeEntityOptional.isEmpty()) {
                     return Optional.empty();
@@ -231,9 +231,9 @@ public class MongPersistenceService implements
      */
     @Override
     @Transactional
-    public Optional<Inventory> createInventoryItemPort(CreateInventoryVo createInventoryVo) {
+    public Optional<Inventory> createInventoryPort(CreateInventoryVo createInventoryVo) {
 
-        Optional<ComnCodeEntity> comnCodeEntityOptional = comnCodeRepository.findById(createInventoryVo.getTypeCode());
+        Optional<ComnCodeEntity> comnCodeEntityOptional = comnCodeRepository.findById(createInventoryVo.getInventoryCode());
 
         if (comnCodeEntityOptional.isPresent()) {
             ComnCodeEntity comnCodeEntity = comnCodeEntityOptional.get();
@@ -244,7 +244,7 @@ public class MongPersistenceService implements
                     .inventoryTypeCode(createInventoryVo.getInventoryTypeCode())
                     .build();
 
-            return Optional.of(inventoryItemRepository.save(inventoryEntity).toDomain());
+            return Optional.of(inventoryRepository.save(inventoryEntity).toDomain());
         }
 
         return Optional.empty();
@@ -252,20 +252,20 @@ public class MongPersistenceService implements
 
     /**
      * 인벤 아이템 삭제
-     * @param inventoryItemId 인벤토리 아이템 ID
+     * @param inventoryId 인벤토리 아이템 ID
      * @return 인벤 아이템 도메인 객체
      */
     @Override
     @Transactional
-    public Optional<Inventory> deleteInventoryItemPort(Long inventoryItemId) {
+    public Optional<Inventory> deleteInventoryPort(Long inventoryId) {
 
-        Optional<InventoryEntity> inventoryItemEntityOptional = inventoryItemRepository.findByIdWithLock(inventoryItemId);
+        Optional<InventoryEntity> inventoryEntityOptional = inventoryRepository.findByIdWithLock(inventoryId);
 
-        if (inventoryItemEntityOptional.isPresent()) {
+        if (inventoryEntityOptional.isPresent()) {
 
-            inventoryItemRepository.deleteById(inventoryItemId);
+            inventoryRepository.deleteById(inventoryId);
 
-            return Optional.of(inventoryItemEntityOptional.get().toDomain());
+            return Optional.of(inventoryEntityOptional.get().toDomain());
         }
 
         return Optional.empty();
@@ -273,13 +273,13 @@ public class MongPersistenceService implements
 
     /**
      * 인벤 아이템 조회
-     * @param inventoryItemId 인벤토리 아이템 ID
+     * @param inventoryId 인벤토리 아이템 ID
      * @return 인벤 아이템 도메인 객체
      */
     @Override
     @Transactional
-    public Optional<Inventory> getInventoryItemPort(Long inventoryItemId) {
-        return inventoryItemRepository.findByIdWithLock(inventoryItemId)
+    public Optional<Inventory> getInventoryPort(Long inventoryId) {
+        return inventoryRepository.findByIdWithLock(inventoryId)
                 .map(InventoryEntity::toDomain)
                 .or(Optional::empty);
     }

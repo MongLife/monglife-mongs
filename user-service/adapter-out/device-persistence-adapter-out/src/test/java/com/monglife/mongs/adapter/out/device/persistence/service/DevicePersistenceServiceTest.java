@@ -60,7 +60,7 @@ class DevicePersistenceServiceTest {
                     .walkingCount(0)
                     .totalWalkingCount(totalWalkingCount)
                     .consumeWalkingCount(0)
-                    .deviceBootedDt(deviceBootedDt)
+                    .deviceBootedAt(deviceBootedDt)
                     .build();
 
             // act
@@ -74,14 +74,14 @@ class DevicePersistenceServiceTest {
             assertEquals(0, step.getWalkingCount());
             assertEquals(totalWalkingCount, step.getTotalWalkingCount());
             assertEquals(0, step.getConsumeWalkingCount());
-            assertEquals(deviceBootedDt, step.getDeviceBootedDt());
+            assertEquals(deviceBootedDt, step.getDeviceBootedAt());
 
             assertTrue(deviceEntityOptional.isPresent());
             assertEquals(deviceId, deviceEntityOptional.get().getDeviceId());
             assertEquals(0, deviceEntityOptional.get().getWalkingCount());
             assertEquals(totalWalkingCount, deviceEntityOptional.get().getTotalWalkingCount());
             assertEquals(0, deviceEntityOptional.get().getConsumeWalkingCount());
-            assertEquals(deviceBootedDt, deviceEntityOptional.get().getDeviceBootedDt());
+            assertEquals(deviceBootedDt, deviceEntityOptional.get().getDeviceBootedAt());
         }
     }
 
@@ -96,7 +96,7 @@ class DevicePersistenceServiceTest {
                     .walkingCount(0)
                     .totalWalkingCount(0)
                     .consumeWalkingCount(0)
-                    .deviceBootedDt(deviceBootedDt)
+                    .deviceBootedAt(deviceBootedDt)
                     .build();
 
             deviceRepository.saveAndFlush(deviceEntity);
@@ -111,7 +111,7 @@ class DevicePersistenceServiceTest {
                     .walkingCount(0)
                     .totalWalkingCount(totalWalkingCount)
                     .consumeWalkingCount(0)
-                    .deviceBootedDt(deviceBootedDt)
+                    .deviceBootedAt(deviceBootedDt)
                     .build();
 
             // act
@@ -123,7 +123,7 @@ class DevicePersistenceServiceTest {
             assertEquals(0, stepOptional.get().getWalkingCount());
             assertEquals(totalWalkingCount, stepOptional.get().getTotalWalkingCount());
             assertEquals(0, stepOptional.get().getConsumeWalkingCount());
-            assertEquals(deviceBootedDt, stepOptional.get().getDeviceBootedDt());
+            assertEquals(deviceBootedDt, stepOptional.get().getDeviceBootedAt());
         }
 
         @Test
@@ -135,7 +135,7 @@ class DevicePersistenceServiceTest {
                     .walkingCount(0)
                     .totalWalkingCount(totalWalkingCount)
                     .consumeWalkingCount(0)
-                    .deviceBootedDt(deviceBootedDt)
+                    .deviceBootedAt(deviceBootedDt)
                     .build();
 
             deviceRepository.deleteById(deviceId);
@@ -159,7 +159,7 @@ class DevicePersistenceServiceTest {
                     .walkingCount(0)
                     .totalWalkingCount(totalWalkingCount)
                     .consumeWalkingCount(0)
-                    .deviceBootedDt(deviceBootedDt)
+                    .deviceBootedAt(deviceBootedDt)
                     .build();
 
             deviceRepository.saveAndFlush(deviceEntity);
@@ -177,7 +177,7 @@ class DevicePersistenceServiceTest {
             assertEquals(0, stepOptional.get().getWalkingCount());
             assertEquals(totalWalkingCount, stepOptional.get().getTotalWalkingCount());
             assertEquals(0, stepOptional.get().getConsumeWalkingCount());
-            assertEquals(deviceBootedDt, stepOptional.get().getDeviceBootedDt());
+            assertEquals(deviceBootedDt, stepOptional.get().getDeviceBootedAt());
         }
     }
 }

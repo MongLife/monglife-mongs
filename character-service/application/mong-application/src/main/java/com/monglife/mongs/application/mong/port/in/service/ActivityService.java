@@ -39,7 +39,7 @@ public class ActivityService  implements ActivityUseCase {
     @Override
     @Transactional
     public TrainingType getTrainingTypeUseCase(GetTrainingTypeCommand command) {
-        return mongReadPort.getTrainingTypePort(command.getTrainingTypeCode())
+        return mongReadPort.getTrainingTypePort(command.getTrainingCode())
                 .orElseThrow(NotExistsTrainingTypeException::new);
     }
 
@@ -52,7 +52,7 @@ public class ActivityService  implements ActivityUseCase {
     public Mong trainingEndUseCase(TrainingEndCommand command) {
 
         // 훈련 타입 조회
-        TrainingType trainingType = mongReadPort.getTrainingTypePort(command.getTrainingTypeCode())
+        TrainingType trainingType = mongReadPort.getTrainingTypePort(command.getTrainingCode())
                 .orElseThrow(NotExistsTrainingTypeException::new);
 
         Mong mong = mongPersistencePort.getMongPort(command.getMongId())

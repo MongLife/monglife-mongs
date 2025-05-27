@@ -29,14 +29,14 @@ public class MatchPlayerEntity {
     @Column(name = "mong_id")
     private Long mongId;
 
-    @Column(name = "mong_type_code")
-    private String mongTypeCode;
-
-    @Column(name = "mong_type_name")
-    private String mongTypeName;
+    @Column(name = "mong_code")
+    private String mongCode;
 
     @Column(name = "mong_name")
     private String mongName;
+
+    @Column(name = "name")
+    private String name;
 
     @Column(name = "attack")
     private Double attack;
@@ -63,14 +63,14 @@ public class MatchPlayerEntity {
     private LocalDateTime exitedAt;
 
     @Builder
-    public MatchPlayerEntity(String playerId, String deviceId, Long accountId, Long mongId, String mongTypeCode, String mongTypeName, String mongName, Double attack, Double heal, Double defence, Boolean isBot, Double hp, Boolean isEnter, LocalDateTime enteredAt, LocalDateTime exitedAt) {
+    public MatchPlayerEntity(String playerId, String deviceId, Long accountId, Long mongId, String mongCode, String mongName, String name, Double attack, Double heal, Double defence, Boolean isBot, Double hp, Boolean isEnter, LocalDateTime enteredAt, LocalDateTime exitedAt) {
         this.playerId = playerId;
         this.deviceId = deviceId;
         this.accountId = accountId;
         this.mongId = mongId;
-        this.mongTypeCode = mongTypeCode;
-        this.mongTypeName = mongTypeName;
+        this.mongCode = mongCode;
         this.mongName = mongName;
+        this.name = name;
         this.attack = attack;
         this.heal = heal;
         this.defence = defence;
@@ -85,9 +85,9 @@ public class MatchPlayerEntity {
         this.deviceId = matchPlayer.getDeviceId();
         this.accountId = matchPlayer.getAccountId();
         this.mongId = matchPlayer.getMongId();
-        this.mongTypeCode = matchPlayer.getMongTypeCode();
-        this.mongTypeName = matchPlayer.getMongTypeName();
+        this.mongCode = matchPlayer.getMongCode();
         this.mongName = matchPlayer.getMongName();
+        this.name = matchPlayer.getName();
         this.attack = matchPlayer.getAttack();
         this.heal = matchPlayer.getHeal();
         this.defence = matchPlayer.getDefence();
@@ -104,9 +104,9 @@ public class MatchPlayerEntity {
                 .deviceId(this.deviceId)
                 .accountId(this.accountId)
                 .mongId(this.mongId)
-                .mongTypeCode(this.mongTypeCode)
-                .mongTypeName(this.mongTypeName)
+                .mongCode(this.mongCode)
                 .mongName(this.mongName)
+                .name(this.name)
                 .attack(this.attack)
                 .heal(this.heal)
                 .defence(this.defence)

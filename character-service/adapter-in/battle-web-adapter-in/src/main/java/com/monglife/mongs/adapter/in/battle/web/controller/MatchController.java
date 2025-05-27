@@ -65,9 +65,9 @@ public class MatchController {
                 .map(matchPlayer -> MatchPlayerVo.builder()
                         .playerId(matchPlayer.getPlayerId())
                         .deviceId(matchPlayer.getDeviceId())
-                        .mongTypeCode(matchPlayer.getMongTypeCode())
-                        .mongTypeName(matchPlayer.getMongTypeName())
+                        .mongCode(matchPlayer.getMongCode())
                         .mongName(matchPlayer.getMongName())
+                        .name(matchPlayer.getName())
                         .hp(matchPlayer.getHp())
                         .roundCode(matchPlayer.getRoundCode())
                         .build())
@@ -98,9 +98,9 @@ public class MatchController {
 
         GetWinMatchPlayerResponseDto getWinMatchPlayerResponseDto = GetWinMatchPlayerResponseDto.builder()
                 .playerId(matchPlayer.getPlayerId())
-                .mongTypeCode(matchPlayer.getMongTypeCode())
-                .mongTypeName(matchPlayer.getMongTypeName())
+                .mongCode(matchPlayer.getMongCode())
                 .mongName(matchPlayer.getMongName())
+                .name(matchPlayer.getName())
                 .build();
 
         return ResponseEntity.ok(AdapterInBattleWebResponse.GET_WIN_MATCH_PLAYER.toResponseDto(getWinMatchPlayerResponseDto));

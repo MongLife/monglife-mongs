@@ -175,10 +175,10 @@ class MongReadServiceTest {
         void getNextLevelMongTypes() {
             // arrange
             double evolutionScore = 50D;
-            String mongTypeCode = "TEST-MONG-TYPE-CODE-0";
+            String mongCode = "TEST-MONG-TYPE-CODE-0";
 
             // act
-            var expected = mongReadPort.getNextLevelMongTypesPort(evolutionScore, mongTypeCode);
+            var expected = mongReadPort.getNextLevelMongTypesPort(evolutionScore, mongCode);
 
             // assert
             assertEquals(1, expected.size());
@@ -190,19 +190,19 @@ class MongReadServiceTest {
         void getNextLevelMongTypesWhenMutilMongTypes() {
             // arrange
             double evolutionScore = 100D;
-            String mongTypeCode = "TEST-MONG-TYPE-CODE-0";
+            String mongCode = "TEST-MONG-TYPE-CODE-0";
 
             // act
-            var expected = mongReadPort.getNextLevelMongTypesPort(evolutionScore, mongTypeCode);
+            var expected = mongReadPort.getNextLevelMongTypesPort(evolutionScore, mongCode);
 
             // assert
             assertEquals(2, expected.size());
             assertTrue(evolutionScore >= expected.get(0).getEvolutionScore());
             assertTrue(evolutionScore >= expected.get(1).getEvolutionScore());
-            assertEquals(COMN_CODE_ENTITIES.get(2).getCode(), expected.get(0).getMongTypeCode());
-            assertEquals(COMN_CODE_ENTITIES.get(3).getCode(), expected.get(1).getMongTypeCode());
-            assertEquals(COMN_CODE_ENTITIES.get(2).getName(), expected.get(0).getMongTypeName());
-            assertEquals(COMN_CODE_ENTITIES.get(3).getName(), expected.get(1).getMongTypeName());
+            assertEquals(COMN_CODE_ENTITIES.get(2).getCode(), expected.get(0).getMongCode());
+            assertEquals(COMN_CODE_ENTITIES.get(3).getCode(), expected.get(1).getMongCode());
+            assertEquals(COMN_CODE_ENTITIES.get(2).getName(), expected.get(0).getMongName());
+            assertEquals(COMN_CODE_ENTITIES.get(3).getName(), expected.get(1).getMongName());
         }
     }
 

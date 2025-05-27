@@ -24,10 +24,10 @@ public interface MongReadPort {
     /**
      * 다음 레벨 몽 타입 목록 조회
      * @param evolutionScore 현재 진화 점수
-     * @param mongTypeCode 현재 몽 타입 코드
+     * @param mongCode 현재 몽 타입 코드
      * @return 현재 진화 점수 기준 진화 가능한 몽 타입 목록
      */
-    List<MongType> getNextLevelMongTypesPort(Double evolutionScore, String mongTypeCode);
+    List<MongType> getNextLevelMongTypesPort(Double evolutionScore, String mongCode);
 
     /**
      * 몽 조회
@@ -47,15 +47,15 @@ public interface MongReadPort {
      * 랜덤 뽑기 아이템 목록 조회
      * @return 랜덤 뽑기 아이템 도메인 객체 목록
      */
-    List<RandomDraw> getRandomDrawItemsPort();
+    List<RandomDraw> getRandomDrawsPort();
 
     /**
      * 음식 조회
-     * @param foodTypeCode 음식 타입 코드
+     * @param foodCode 음식 타입 코드
      * @param mongId 몽 ID
      * @return 음식 도메인 객체
      */
-    Optional<Food> getFoodPort(String foodTypeCode, Long mongId);
+    Optional<Food> getFoodPort(String foodCode, Long mongId);
 
     /**
      * 음식 목록 조회
@@ -66,11 +66,11 @@ public interface MongReadPort {
 
     /**
      * 간식 조회
-     * @param snackTypeCode 간식 타입 코드
+     * @param snackCode 간식 타입 코드
      * @param mongId 몽 ID
      * @return 간식 도메인 객체
      */
-    Optional<Snack> getSnackPort(String snackTypeCode, Long mongId);
+    Optional<Snack> getSnackPort(String snackCode, Long mongId);
 
     /**
      * 간식 목록 조회
@@ -87,15 +87,15 @@ public interface MongReadPort {
 
     /**
      * 훈련 타입 조회
-     * @param trainingTypeCode 훈련 타입 코드
+     * @param trainingCode 훈련 타입 코드
      * @return 훈련 타입 도메인 객체
      */
-    Optional<TrainingType> getTrainingTypePort(String trainingTypeCode);
+    Optional<TrainingType> getTrainingTypePort(String trainingCode);
 
     /**
      * 인벤토리 아이템 목록 조회
      * @param mongId 몽 ID
      * @return 인벤토리 아이템 도메인 객체 목록
      */
-    List<Inventory> getInventoryItemsPort(Long mongId);
+    List<Inventory> getInventoriesPort(Long mongId);
 }

@@ -30,8 +30,8 @@ public class MatchPublishService implements MatchPublishPort {
                         .map(matchPlayer -> MatchPlayerVo.builder()
                                 .playerId(matchPlayer.getPlayerId())
                                 .deviceId(matchPlayer.getDeviceId())
-                                .mongTypeCode(matchPlayer.getMongTypeCode())
-                                .mongTypeName(matchPlayer.getMongTypeName())
+                                .mongCode(matchPlayer.getMongCode())
+                                .mongName(matchPlayer.getMongName())
                                 .hp(matchPlayer.getHp())
                                 .roundCode(matchPlayer.getRoundCode())
                                 .build())
@@ -55,9 +55,9 @@ public class MatchPublishService implements MatchPublishPort {
         MatchEndPublishDto matchEndPublishDto = MatchEndPublishDto.builder()
                 .matchId(match.getMatchId())
                 .playerId(matchPlayer.getPlayerId())
+                .mongCode(matchPlayer.getMongCode())
                 .mongName(matchPlayer.getMongName())
-                .mongTypeCode(matchPlayer.getMongTypeCode())
-                .mongTypeName(matchPlayer.getMongTypeName())
+                .name(matchPlayer.getName())
                 .build();
 
         battlePublishClient.publishMatchEnd(matchEndPublishDto);

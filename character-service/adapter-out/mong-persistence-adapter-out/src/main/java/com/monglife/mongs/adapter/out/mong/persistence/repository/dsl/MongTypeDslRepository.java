@@ -6,5 +6,5 @@ import java.util.List;
 
 public interface MongTypeDslRepository {
 
-    List<MongTypeEntity> findByEvolutionScoreAndMongTypeCode(Double evolutionScore, String mongTypeCode);
+    List<MongTypeEntity> findByEvolutionScoreAndMongCode(Double evolutionScore, String mongCode);
 }

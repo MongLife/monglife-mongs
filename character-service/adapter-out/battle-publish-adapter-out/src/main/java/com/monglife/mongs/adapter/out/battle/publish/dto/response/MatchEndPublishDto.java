@@ -14,18 +14,18 @@ public class MatchEndPublishDto {
 
     private String playerId;
 
+    private String name;
+
+    private String mongCode;
+
     private String mongName;
 
-    private String mongTypeCode;
-
-    private String mongTypeName;
-
     @Builder
-    public MatchEndPublishDto(Long matchId, String playerId, String mongName, String mongTypeCode, String mongTypeName) {
+    public MatchEndPublishDto(Long matchId, String playerId, String name, String mongCode, String mongName) {
         this.matchId = matchId;
         this.playerId = playerId;
+        this.name = name;
+        this.mongCode = mongCode;
         this.mongName = mongName;
-        this.mongTypeCode = mongTypeCode;
-        this.mongTypeName = mongTypeName;
     }
 }

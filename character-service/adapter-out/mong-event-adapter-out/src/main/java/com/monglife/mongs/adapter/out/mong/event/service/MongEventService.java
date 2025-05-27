@@ -18,42 +18,42 @@ public class MongEventService  implements MongEventPort {
     /**
      * 몽 생성 이벤트 발생
      * @param accountId 계정 ID
-     * @param mongTypeCode 몽 타입 코드
+     * @param mongCode 몽 타입 코드
      */
     @Override
-    public void createMongEventPort(Long accountId, String mongTypeCode) {
+    public void createMongEventPort(Long accountId, String mongCode) {
 
         kafkaService.generateEvent(EventTopic.COMMIT_CREATE_MONG, CreateMongEventDto.builder()
                 .accountId(accountId)
-                .mongTypeCode(mongTypeCode)
+                .mongCode(mongCode)
                 .build());
     }
 
     /**
      * 몽 진화 이벤트 발생
      * @param accountId 계정 ID
-     * @param mongTypeCode 몽 타입 코드
+     * @param mongCode 몽 타입 코드
      */
     @Override
-    public void evolutionMongEventPort(Long accountId, String mongTypeCode) {
+    public void evolutionMongEventPort(Long accountId, String mongCode) {
 
         kafkaService.generateEvent(EventTopic.COMMIT_EVOLUTION_MONG, EvolutionMongEventDto.builder()
                 .accountId(accountId)
-                .mongTypeCode(mongTypeCode)
+                .mongCode(mongCode)
                 .build());
     }
 
     /**
      * 컬렉션 맵 랜덤 뽑기 이벤트 발생
      * @param accountId 계정 ID
-     * @param mapTypeCode 맵 타입 코드
+     * @param mapCode 맵 타입 코드
      */
     @Override
-    public void randomDrawMapEventPort(Long accountId, String mapTypeCode) {
+    public void randomDrawMapEventPort(Long accountId, String mapCode) {
 
         kafkaService.generateEvent(EventTopic.COMMIT_RANDOM_DRAW_MAP, RandomDrawMapEventDto.builder()
                 .accountId(accountId)
-                .mapTypeCode(mapTypeCode)
+                .mapCode(mapCode)
                 .build());
     }
 }

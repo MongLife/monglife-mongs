@@ -38,12 +38,12 @@ public class CollectionPersistenceService implements CollectionPersistencePort {
     @Transactional
     public Optional<CollectionMap> createCollectionMapPort(CreateCollectionMapVo createCollectionMapVo) {
 
-        Optional<ComnCodeEntity> comnCodeEntityOptional = comnCodeRepository.findById(createCollectionMapVo.getMapTypeCode());
+        Optional<ComnCodeEntity> comnCodeEntityOptional = comnCodeRepository.findById(createCollectionMapVo.getMapCode());
 
         if (comnCodeEntityOptional.isPresent()) {
             CollectionMapEntity collectionMapEntity = CollectionMapEntity.builder()
                     .accountId(createCollectionMapVo.getAccountId())
-                    .mapType(comnCodeEntityOptional.get())
+                    .comn(comnCodeEntityOptional.get())
                     .build();
 
             return Optional.of(collectionMapRepository.save(collectionMapEntity).toDomain());
@@ -60,12 +60,12 @@ public class CollectionPersistenceService implements CollectionPersistencePort {
     @Transactional
     public Optional<CollectionMong> createCollectionMongPort(CreateCollectionMongVo createCollectionMongVo) {
 
-        Optional<ComnCodeEntity> comnCodeEntityOptional = comnCodeRepository.findById(createCollectionMongVo.getMongTypeCode());
+        Optional<ComnCodeEntity> comnCodeEntityOptional = comnCodeRepository.findById(createCollectionMongVo.getMongCode());
 
         if (comnCodeEntityOptional.isPresent()) {
             CollectionMongEntity collectionMongEntity = CollectionMongEntity.builder()
                     .accountId(createCollectionMongVo.getAccountId())
-                    .mongType(comnCodeEntityOptional.get())
+                    .comn(comnCodeEntityOptional.get())
                     .build();
 
             return Optional.of(collectionMongRepository.save(collectionMongEntity).toDomain());
@@ -77,25 +77,25 @@ public class CollectionPersistenceService implements CollectionPersistencePort {
     /**
      * 컬렉션 맵 존재 여부 조회
      * @param accountId 회원 ID
-     * @param mapTypeCode 맵 타입 코드
+     * @param mapCode 맵 타입 코드
      * @return 컬렉션 맵 존재 여부
      */
     @Override
     @Transactional
-    public Boolean isExistsCollectionMapPort(Long accountId, String mapTypeCode) {
-        return collectionMapRepository.existsByAccountIdAndMapTypeCode(accountId, mapTypeCode);
+    public Boolean isExistsCollectionMapPort(Long accountId, String mapCode) {
+        return collectionMapRepository.existsByAccountIdAndComnCode(accountId, mapCode);
     }
 
     /**
      * 컬렉션 몽 존재 여부 조회
      * @param accountId 회원 ID
-     * @param mongTypeCode 몽 타입 코드
+     * @param mongCode 몽 타입 코드
      * @return 컬렉션 몽 존재 여부
      */
     @Override
     @Transactional
-    public Boolean isExistsCollectionMongPort(Long accountId, String mongTypeCode) {
-        return collectionMongRepository.existsByAccountIdAndMongTypeCode(accountId, mongTypeCode);
+    public Boolean isExistsCollectionMongPort(Long accountId, String mongCode) {
+        return collectionMongRepository.existsByAccountIdAndComnCode(accountId, mongCode);
     }
 
     /**
@@ -110,7 +110,7 @@ public class CollectionPersistenceService implements CollectionPersistencePort {
         List<CollectionMapEntity> collectionMapEntities = collectionMapRepository.findByAccountId(accountId);
 
         return collectionMapEntities.stream()
-                .sorted(Comparator.comparing(o -> o.getMapType().getCode()))
+                .sorted(Comparator.comparing(o -> o.getComn().getCode()))
                 .map(CollectionMapEntity::toDomain)
                 .collect(Collectors.toList());
     }
@@ -127,7 +127,7 @@ public class CollectionPersistenceService implements CollectionPersistencePort {
         List<CollectionMongEntity> collectionMongEntities = collectionMongRepository.findByAccountId(accountId);
 
         return collectionMongEntities.stream()
-                .sorted(Comparator.comparing(o -> o.getMongType().getCode()))
+                .sorted(Comparator.comparing(o -> o.getComn().getCode()))
                 .map(CollectionMongEntity::toDomain)
                 .collect(Collectors.toList());
     }

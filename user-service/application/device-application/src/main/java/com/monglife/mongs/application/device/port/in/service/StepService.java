@@ -8,7 +8,7 @@ import com.monglife.mongs.application.device.port.in.command.UpdateTotalWalkingC
 import com.monglife.mongs.application.device.port.out.DeviceEventPort;
 import com.monglife.mongs.application.device.port.out.DevicePersistencePort;
 import com.monglife.mongs.application.device.port.out.DevicePublishPort;
-import com.monglife.mongs.application.device.port.out.dto.StepEventDto;
+import com.monglife.mongs.application.device.port.out.dto.ExchangeCurrentWalkingCountDto;
 import com.monglife.mongs.application.device.port.out.vo.CreateStepVo;
 import com.monglife.mongs.domain.device.model.Step;
 import lombok.RequiredArgsConstructor;
@@ -36,7 +36,7 @@ public class StepService implements StepUseCase {
                 .orElseThrow(NotExistStepException::new);
 
         // 걸음 수 동기화
-        step.syncTotalWalkingCount(command.getTotalWalkingCount(), command.getDeviceBootedDt());
+        step.syncTotalWalkingCount(command.getTotalWalkingCount(), command.getDeviceBootedAt());
 
         // 보유 걸음 수 환전
         int payPoint = step.exchangeWalkingCountToPayPoint(command.getWalkingCount());
@@ -46,7 +46,7 @@ public class StepService implements StepUseCase {
                 .orElseThrow(NotExistStepException::new);
 
         // 보유 걸음 수 환전 이벤트 발생
-        deviceEventPort.exchangeCurrentWalkingCountEventPort(StepEventDto.builder()
+        deviceEventPort.exchangeCurrentWalkingCountEventPort(ExchangeCurrentWalkingCountDto.builder()
                 .deviceId(command.getDeviceId())
                 .mongId(command.getMongId())
                 .walkingCount(command.getWalkingCount())
@@ -73,11 +73,11 @@ public class StepService implements StepUseCase {
                             .walkingCount(0)
                             .totalWalkingCount(command.getTotalWalkingCount())
                             .consumeWalkingCount(0)
-                            .deviceBootedDt(command.getDeviceBootedDt())
+                            .deviceBootedAt(command.getDeviceBootedAt())
                             .build()));
 
         // 걸음 수 동기화
-        step.syncTotalWalkingCount(command.getTotalWalkingCount(), command.getDeviceBootedDt());
+        step.syncTotalWalkingCount(command.getTotalWalkingCount(), command.getDeviceBootedAt());
 
         // 걸음 수 수정
         devicePersistencePort.saveStepPort(step)

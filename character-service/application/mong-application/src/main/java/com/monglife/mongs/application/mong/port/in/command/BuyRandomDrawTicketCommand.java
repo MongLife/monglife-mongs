@@ -4,14 +4,14 @@ import lombok.Builder;
 import lombok.Getter;
 
 @Getter
-public class GetInventoryItemsCommand {
+public class BuyRandomDrawTicketCommand {
 
     private final Long accountId;
 
     private final Long mongId;
 
     @Builder
-    public GetInventoryItemsCommand(Long accountId, Long mongId) {
+    public BuyRandomDrawTicketCommand(Long accountId, Long mongId) {
         this.accountId = accountId;
         this.mongId = mongId;
     }

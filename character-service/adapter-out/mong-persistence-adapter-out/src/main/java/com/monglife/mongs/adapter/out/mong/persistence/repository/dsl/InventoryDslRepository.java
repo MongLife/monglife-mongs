@@ -4,7 +4,7 @@ import com.monglife.mongs.adapter.out.mong.persistence.entity.InventoryEntity;
 
 import java.util.Optional;
 
-public interface InventoryItemDslRepository {
+public interface InventoryDslRepository {
 
-    Optional<InventoryEntity> findByIdWithLock(Long inventoryItemId);
+    Optional<InventoryEntity> findByIdWithLock(Long inventoryId);
 }

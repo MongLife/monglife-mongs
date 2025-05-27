@@ -73,9 +73,9 @@ class MongPublishServiceTest {
             Mong mong = Mong.builder()
                     .mongId(mongId)
                     .accountId(accountId)
-                    .mongName("TEST-MONG-NAME")
-                    .mongTypeCode("CH100")
-                    .mongTypeName("TEST-MONG-TYPE-NAME")
+                    .mongCode("CH100")
+                    .mongName("TEST-MONG-TYPE-NAME")
+                    .name("TEST-MONG-NAME")
                     .stateCode(MongStateCode.NORMAL)
                     .statusCode(MongStatusCode.NORMAL)
                     .level(1)
@@ -112,8 +112,8 @@ class MongPublishServiceTest {
             // assert
             assertTrue(expected);
             assertEquals(mongId, mongPublishDto.getMongId());
-            assertEquals(mong.getMongName(), mongPublishDto.getMongName());
-            assertEquals(mong.getMongName(), mongPublishDto.getMongName());
+            assertEquals(mong.getName(), mongPublishDto.getName());
+            assertEquals(mong.getMongCode(), mongPublishDto.getMongCode());
             assertEquals(status / maxStatus * 100, mongPublishDto.getExpRatio());
             assertEquals(status / maxStatus * 100, mongPublishDto.getStrengthRatio());
             assertEquals(status / maxStatus * 100, mongPublishDto.getSatietyRatio());

@@ -16,7 +16,7 @@ import static com.monglife.mongs.adapter.out.member.persistence.entity.QCollecti
 @Repository
 public class CollectionMongDslRepositoryImpl implements CollectionMongDslRepository {
 
-    private static final String mongGroupCode = "CH";
+    private static final String MONG_GROUP_CODE = "CH";
 
     private final JPAQueryFactory jpaQueryFactory;
 
@@ -29,10 +29,10 @@ public class CollectionMongDslRepositoryImpl implements CollectionMongDslReposit
 
         List<Tuple> tuples = jpaQueryFactory.select(collectionMongEntity, comnCodeEntity)
                 .from(collectionMongEntity)
-                .rightJoin(collectionMongEntity.mongType, comnCodeEntity)
-                .on(collectionMongEntity.mongType.eq(comnCodeEntity), collectionMongEntity.accountId.eq(accountId))
-                .where(comnCodeEntity.group.code.eq(mongGroupCode))
-                .orderBy(collectionMongEntity.mongType.code.asc())
+                .rightJoin(collectionMongEntity.comn, comnCodeEntity)
+                .on(collectionMongEntity.comn.eq(comnCodeEntity), collectionMongEntity.accountId.eq(accountId))
+                .where(comnCodeEntity.group.code.eq(MONG_GROUP_CODE))
+                .orderBy(collectionMongEntity.comn.code.asc())
                 .fetch();
 
         List<CollectionMongEntity> collectionMongEntities = new ArrayList<>();
@@ -45,7 +45,7 @@ public class CollectionMongDslRepositoryImpl implements CollectionMongDslReposit
                 if (collectionMong == null) {
                     collectionMong = CollectionMongEntity.builder()
                             .accountId(accountId)
-                            .mongType(comnCode)
+                            .comn(comnCode)
                             .build();
                     // 보유 여부 제외
                     collectionMong.exclude();

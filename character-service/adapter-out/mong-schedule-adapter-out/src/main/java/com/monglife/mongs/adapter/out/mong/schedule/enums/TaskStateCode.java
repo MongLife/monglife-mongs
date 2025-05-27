@@ -13,5 +13,5 @@ public enum TaskStateCode {
     APP_STOP_PAUSE("task 일시 중지, app 중지"),
     ;
 
-    private final String message;
+    private final String description;
 }

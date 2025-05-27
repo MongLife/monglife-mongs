@@ -12,18 +12,18 @@ public class CollectionMap {
 
     private final Long accountId;
 
-    private final String mapTypeCode;
+    private final String mapCode;
 
-    private final String mapTypeName;
+    private final String mapName;
 
     private final Boolean isIncluded;
 
     @Builder
-    public CollectionMap(Long collectionMapId, Long accountId, String mapTypeCode, String mapTypeName, Boolean isIncluded) {
+    public CollectionMap(Long collectionMapId, Long accountId, String mapCode, String mapName, Boolean isIncluded) {
         this.collectionMapId = collectionMapId;
         this.accountId = accountId;
-        this.mapTypeCode = mapTypeCode;
-        this.mapTypeName = mapTypeName;
+        this.mapCode = mapCode;
+        this.mapName = mapName;
         this.isIncluded = isIncluded;
     }
 }

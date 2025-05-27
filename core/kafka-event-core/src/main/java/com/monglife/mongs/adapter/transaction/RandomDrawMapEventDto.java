@@ -12,11 +12,11 @@ public class RandomDrawMapEventDto {
 
     private Long accountId;
 
-    private String mapTypeCode;
+    private String mapCode;
 
     @Builder
-    public RandomDrawMapEventDto(Long accountId, String mapTypeCode) {
+    public RandomDrawMapEventDto(Long accountId, String mapCode) {
         this.accountId = accountId;
-        this.mapTypeCode = mapTypeCode;
+        this.mapCode = mapCode;
     }
 }

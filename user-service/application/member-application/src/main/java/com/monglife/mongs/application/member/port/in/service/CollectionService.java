@@ -31,10 +31,10 @@ public class CollectionService implements CollectionUseCase {
     @Transactional
     public void createCollectionMapUseCase(CreateCollectionMapCommand command) {
 
-        if (Boolean.FALSE.equals(collectionPersistencePort.isExistsCollectionMapPort(command.getAccountId(), command.getMapTypeCode()))) {
+        if (Boolean.FALSE.equals(collectionPersistencePort.isExistsCollectionMapPort(command.getAccountId(), command.getMapCode()))) {
             collectionPersistencePort.createCollectionMapPort(CreateCollectionMapVo.builder()
                     .accountId(command.getAccountId())
-                    .mapTypeCode(command.getMapTypeCode())
+                    .mapCode(command.getMapCode())
                     .build())
                     .orElseThrow(InvalidCreateCollectionMapException::new);
         }
@@ -47,10 +47,10 @@ public class CollectionService implements CollectionUseCase {
     @Transactional
     public void createCollectionMongUseCase(CreateCollectionMongCommand command) {
 
-        if (Boolean.FALSE.equals(collectionPersistencePort.isExistsCollectionMongPort(command.getAccountId(), command.getMongTypeCode()))) {
+        if (Boolean.FALSE.equals(collectionPersistencePort.isExistsCollectionMongPort(command.getAccountId(), command.getMongCode()))) {
             collectionPersistencePort.createCollectionMongPort(CreateCollectionMongVo.builder()
                     .accountId(command.getAccountId())
-                    .mongTypeCode(command.getMongTypeCode())
+                    .mongCode(command.getMongCode())
                     .build())
                     .orElseThrow(InvalidCreateCollectionMongException::new);
         }

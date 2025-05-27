@@ -15,9 +15,9 @@ public class MongPublishDto {
 
     private Long mongId;
 
-    private String mongName;
+    private String name;
 
-    private String mongTypeCode;
+    private String mongCode;
 
     private Integer payPoint;
 
@@ -46,10 +46,10 @@ public class MongPublishDto {
     private LocalDateTime updatedAt;
 
     @Builder
-    public MongPublishDto(Long mongId, String mongName, String mongTypeCode, Integer payPoint, String stateCode, Boolean isSleep, String statusCode, Double weight, Double expRatio, Double strengthRatio, Double satietyRatio, Double healthyRatio, Double fatigueRatio, LocalDateTime createdAt, LocalDateTime updatedAt) {
+    public MongPublishDto(Long mongId, String name, String mongCode, Integer payPoint, String stateCode, Boolean isSleep, String statusCode, Double weight, Double expRatio, Double strengthRatio, Double satietyRatio, Double healthyRatio, Double fatigueRatio, LocalDateTime createdAt, LocalDateTime updatedAt) {
         this.mongId = mongId;
-        this.mongName = mongName;
-        this.mongTypeCode = mongTypeCode;
+        this.name = name;
+        this.mongCode = mongCode;
         this.payPoint = payPoint;
         this.stateCode = stateCode;
         this.isSleep = isSleep;

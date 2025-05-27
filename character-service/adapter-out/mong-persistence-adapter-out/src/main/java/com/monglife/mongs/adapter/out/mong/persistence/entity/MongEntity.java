@@ -26,8 +26,8 @@ public class MongEntity extends BaseTimeEntity {
     @Column(name = "account_id")
     private Long accountId;
 
-    @Column(name = "mong_name")
-    private String mongName;
+    @Column(name = "name")
+    private String name;
 
     @Column(name = "sleep_at")
     private LocalTime sleepAt;
@@ -43,7 +43,7 @@ public class MongEntity extends BaseTimeEntity {
     private MongTypeEntity mongType;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "mong_state_code")
+    @Column(name = "state_code")
     private MongStateCode stateCode;
 
     @Column(name = "is_sleep")
@@ -53,7 +53,7 @@ public class MongEntity extends BaseTimeEntity {
     private Double maxStatus;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "mong_status_code")
+    @Column(name = "status_code")
     private MongStatusCode statusCode;
 
     @Column(name = "weight")
@@ -93,10 +93,10 @@ public class MongEntity extends BaseTimeEntity {
     private Double evolutionPenalty;
 
     @Builder
-    public MongEntity(Long mongId, Long accountId, String mongName, LocalTime sleepAt, LocalTime wakeupAt, Integer payPoint, MongTypeEntity mongType, MongStateCode stateCode, Boolean isSleep, Double maxStatus, MongStatusCode statusCode, Double weight, Integer poopCount, Double exp, Double strength, Double satiety, Double healthy, Double fatigue, Integer trainingCount, Integer strokeCount, Integer randomDrawTicketCount, Double evolutionReward, Double evolutionPenalty) {
+    public MongEntity(Long mongId, Long accountId, String name, LocalTime sleepAt, LocalTime wakeupAt, Integer payPoint, MongTypeEntity mongType, MongStateCode stateCode, Boolean isSleep, Double maxStatus, MongStatusCode statusCode, Double weight, Integer poopCount, Double exp, Double strength, Double satiety, Double healthy, Double fatigue, Integer trainingCount, Integer strokeCount, Integer randomDrawTicketCount, Double evolutionReward, Double evolutionPenalty) {
         this.mongId = mongId;
         this.accountId = accountId;
-        this.mongName = mongName;
+        this.name = name;
         this.sleepAt = sleepAt;
         this.wakeupAt = wakeupAt;
         this.payPoint = payPoint;
@@ -127,9 +127,9 @@ public class MongEntity extends BaseTimeEntity {
         return Mong.builder()
                 .mongId(this.mongId)
                 .accountId(this.accountId)
-                .mongName(this.mongName)
-                .mongTypeCode(this.mongType.getComn().getCode())
-                .mongTypeName(this.mongType.getComn().getName())
+                .name(this.name)
+                .mongCode(this.mongType.getComn().getCode())
+                .mongName(this.mongType.getComn().getName())
                 .statusCode(this.statusCode)
                 .stateCode(this.stateCode)
                 .level(this.mongType.getLevel())
@@ -170,7 +170,7 @@ public class MongEntity extends BaseTimeEntity {
      */
     public void update(Mong mong, MongTypeEntity mongTypeEntity) {
         this.accountId = mong.getAccountId();
-        this.mongName = mong.getMongName();
+        this.name = mong.getName();
         this.sleepAt = mong.getSleepAt();
         this.wakeupAt = mong.getWakeupAt();
         this.payPoint = mong.getPayPoint();

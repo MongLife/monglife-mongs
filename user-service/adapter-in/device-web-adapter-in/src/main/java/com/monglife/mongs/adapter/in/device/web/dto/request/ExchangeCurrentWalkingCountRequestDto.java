@@ -26,13 +26,13 @@ public class ExchangeCurrentWalkingCountRequestDto {
 
     @NotNull
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
-    private LocalDateTime deviceBootedDt;
+    private LocalDateTime deviceBootedAt;
 
     @Builder
-    public ExchangeCurrentWalkingCountRequestDto(Long mongId, Integer totalWalkingCount, Integer walkingCount, LocalDateTime deviceBootedDt) {
+    public ExchangeCurrentWalkingCountRequestDto(Long mongId, Integer totalWalkingCount, Integer walkingCount, LocalDateTime deviceBootedAt) {
         this.mongId = mongId;
         this.totalWalkingCount = totalWalkingCount;
         this.walkingCount = walkingCount;
-        this.deviceBootedDt = deviceBootedDt;
+        this.deviceBootedAt = deviceBootedAt;
     }
 }

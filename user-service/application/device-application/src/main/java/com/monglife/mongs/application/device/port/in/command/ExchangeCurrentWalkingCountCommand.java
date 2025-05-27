@@ -16,14 +16,14 @@ public class ExchangeCurrentWalkingCountCommand {
 
     private final Integer totalWalkingCount;
 
-    private final LocalDateTime deviceBootedDt;
+    private final LocalDateTime deviceBootedAt;
 
     @Builder
-    public ExchangeCurrentWalkingCountCommand(String deviceId, Long mongId, Integer walkingCount, Integer totalWalkingCount, LocalDateTime deviceBootedDt) {
+    public ExchangeCurrentWalkingCountCommand(String deviceId, Long mongId, Integer walkingCount, Integer totalWalkingCount, LocalDateTime deviceBootedAt) {
         this.deviceId = deviceId;
         this.mongId = mongId;
         this.walkingCount = walkingCount;
         this.totalWalkingCount = totalWalkingCount;
-        this.deviceBootedDt = deviceBootedDt;
+        this.deviceBootedAt = deviceBootedAt;
     }
 }

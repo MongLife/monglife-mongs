@@ -11,6 +11,8 @@ import com.monglife.mongs.application.mong.port.in.command.GetTrainingTypeComman
 import com.monglife.mongs.application.mong.port.in.command.TrainingEndCommand;
 import com.monglife.mongs.domain.mong.model.Mong;
 import com.monglife.mongs.domain.mong.model.TrainingType;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotBlank;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -37,8 +39,8 @@ public class ActivityController {
         List<GetTrainingTypeResponseDto> getTrainingTypeResponseDtos = activityUseCase.getTrainingTypesUseCase().stream()
                 .map(trainingType -> GetTrainingTypeResponseDto.builder()
                         .trainingTypeId(trainingType.getTrainingTypeId())
-                        .trainingTypeCode(trainingType.getTrainingTypeCode())
-                        .trainingTypeName(trainingType.getTrainingTypeName())
+                        .trainingCode(trainingType.getTrainingCode())
+                        .trainingName(trainingType.getTrainingName())
                         .payPoint(trainingType.getPayPoint())
                         .score(trainingType.getScore())
                         .timeout(trainingType.getTimeout())
@@ -53,24 +55,23 @@ public class ActivityController {
         return ResponseEntity.ok(AdapterInMongWebResponse.GET_TRAINING_TYPES.toResponseDto(getTrainingTypeResponseDtos));
     }
 
-
     /**
      * 훈련 조회
      * @return 훈련 정보
      */
-    @GetMapping("/{trainingTypeCode}")
-    public ResponseEntity<ResponseDto<GetTrainingTypeResponseDto>> getTraining(@PathVariable("trainingTypeCode") String trainingTypeCode) {
+    @GetMapping("/{trainingCode}")
+    public ResponseEntity<ResponseDto<GetTrainingTypeResponseDto>> getTraining(@PathVariable("trainingCode") @NotBlank String trainingCode) {
 
         GetTrainingTypeCommand command = GetTrainingTypeCommand.builder()
-                .trainingTypeCode(trainingTypeCode)
+                .trainingCode(trainingCode)
                 .build();
 
         TrainingType trainingType = activityUseCase.getTrainingTypeUseCase(command);
 
         GetTrainingTypeResponseDto getTrainingTypeResponseDto = GetTrainingTypeResponseDto.builder()
                 .trainingTypeId(trainingType.getTrainingTypeId())
-                .trainingTypeCode(trainingType.getTrainingTypeCode())
-                .trainingTypeName(trainingType.getTrainingTypeName())
+                .trainingCode(trainingType.getTrainingCode())
+                .trainingName(trainingType.getTrainingName())
                 .payPoint(trainingType.getPayPoint())
                 .score(trainingType.getScore())
                 .timeout(trainingType.getTimeout())
@@ -88,11 +89,14 @@ public class ActivityController {
      * 훈련 완료
      */
     @PostMapping
-    public ResponseEntity<ResponseDto<TrainingEndResponseDto>> trainingRunnerEnd(@AuthenticationPrincipal Passport passport, @RequestBody TrainingEndRequestDto trainingEndRequestDto) {
+    public ResponseEntity<ResponseDto<TrainingEndResponseDto>> trainingRunnerEnd(
+            @AuthenticationPrincipal Passport passport,
+            @Valid @RequestBody TrainingEndRequestDto trainingEndRequestDto
+    ) {
 
         TrainingEndCommand command = TrainingEndCommand.builder()
                 .accountId(passport.getAccountId())
-                .trainingTypeCode(trainingEndRequestDto.getTrainingTypeCode())
+                .trainingCode(trainingEndRequestDto.getTrainingCode())
                 .mongId(trainingEndRequestDto.getMongId())
                 .score(trainingEndRequestDto.getScore())
                 .build();
