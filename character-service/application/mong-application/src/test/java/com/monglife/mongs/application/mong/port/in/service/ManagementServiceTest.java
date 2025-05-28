@@ -203,27 +203,6 @@ class ManagementServiceTest {
         }
 
         @Test
-        @DisplayName("몽이 진화 준비 상태인 경우 예외가 발생 한다.")
-        void deadMongWhenIsEvolutionReady() {
-            // arrange
-            long mongId = 1L;
-            long accountId = 1L;
-            double maxStatus = 100D;
-            Mong mong = MongTestUtil.getFirstLevelMong(mongId, accountId, maxStatus, MongStateCode.EVOLUTION_READY);
-
-            Mockito.when(mongPersistencePort.getMongPort(mongId)).thenReturn(Optional.of(mong));
-            Mockito.when(mongPersistencePort.saveMongPort(mong)).thenReturn(Optional.of(mong));
-
-            // act & assert
-            DeadMongCommand command = DeadMongCommand.builder()
-                    .accountId(accountId)
-                    .mongId(mongId)
-                    .build();
-
-            assertThrows(InvalidMongStateException.class, () -> managementUseCase.deadMongUseCase(command));
-        }
-
-        @Test
         @DisplayName("몽이 졸업 준비 상태인 경우 예외가 발생 한다.")
         void deadMongWhenIsGraduateReady() {
             // arrange

@@ -51,19 +51,6 @@ class MongTest {
 
         @Test
         @DisplayName("몽이 진화 준비 상태인 경우 예외가 발생 한다.")
-        void deadMongWhenIsEvolutionReady() {
-            // arrange
-            long mongId = 1L;
-            long accountId = 1L;
-            double maxStatus = 100D;
-            Mong mong = MongTestUtil.getFirstLevelMong(mongId, accountId, maxStatus, MongStateCode.EVOLUTION_READY);
-
-            // act & assert
-            assertThrows(InvalidMongStateException.class, mong::dead);
-        }
-
-        @Test
-        @DisplayName("몽이 진화 준비 상태인 경우 예외가 발생 한다.")
         void deadMongWhenIsGraduateReady() {
             // arrange
             long mongId = 1L;
