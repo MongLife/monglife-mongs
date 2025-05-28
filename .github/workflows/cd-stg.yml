@@ -4,6 +4,10 @@ on:
     branches:
       - stage
       - refac/character-api
+permissions:
+  contents: read
+  checks: write
+  pull-requests: write
 env:
   bootstrap-character-path: ./character-service/bootstrap/character-bootstrap-api
   bootstrap-user-path: ./user-service/bootstrap/user-bootstrap-api
@@ -46,7 +50,7 @@ jobs:
           report_paths: '**/build/test-results/test/TEST-*.xml'
       # 배포 파일 원격 복사
       - name: Character Bootstrap API 배포 파일 STAGE 서버로 전송
-        uses: appleboy/scp-action@master
+        uses: appleboy/scp-action@v1
         with:
           host: ${{ secrets.HOST }}
           port: ${{ secrets.PORT }}
@@ -99,7 +103,7 @@ jobs:
           report_paths: '**/build/test-results/test/TEST-*.xml'
       # 배포 파일 원격 복사
       - name: User Bootstrap API 배포 파일 STAGE 서버로 전송
-        uses: appleboy/scp-action@master
+        uses: appleboy/scp-action@v1
         with:
           host: ${{ secrets.HOST }}
           port: ${{ secrets.PORT }}
