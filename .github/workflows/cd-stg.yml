@@ -61,7 +61,7 @@ jobs:
           strip_components: 5
       # 배포 스크립트 실행
       - name: Character Bootstrap API 서비스 실행
-        uses: appleboy/ssh-action@master
+        uses: appleboy/ssh-action@@v1
         with:
           host: ${{ secrets.HOST }}
           port: ${{ secrets.PORT }}
@@ -114,7 +114,7 @@ jobs:
           strip_components: 5
       # 배포 스크립트 실행
       - name: User Bootstrap API 서비스 실행
-        uses: appleboy/ssh-action@master
+        uses: appleboy/ssh-action@@v1
         with:
           host: ${{ secrets.HOST }}
           port: ${{ secrets.PORT }}
