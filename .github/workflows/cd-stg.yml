@@ -5,12 +5,12 @@ on:
       - stage
       - refac/character-api
 env:
-  service-path: ~/service/mongs
-  service-script: ~/service/mongs/run.sh
-  bootstrap-character-path: ./bootstrap/character-bootstrap-api
-  bootstrap-user-path: ./bootstrap/user-bootstrap-api
+  bootstrap-character-path: ./character-service/bootstrap/character-bootstrap-api
+  bootstrap-user-path: ./user-service/bootstrap/user-bootstrap-api
   bootstrap-character: monglife-mongs-character-api
   bootstrap-user: monglife-mongs-user-api
+  service-path: ~/service/mongs
+  service-script: ~/service/mongs/run.sh
 jobs:
   # Character API 빌드 및 배포
   bootstrap-character-build-and-deploy:
@@ -54,7 +54,7 @@ jobs:
           password: ${{ secrets.PASSWORD }}
           source: "${{ env.bootstrap-character-path }}/build/libs/*.jar"
           target: "${{ env.service-path }}/${{ env.bootstrap-character }}"
-          strip_components: 4
+          strip_components: 5
       # 배포 스크립트 실행
       - name: Character Bootstrap API 서비스 실행
         uses: appleboy/ssh-action@master
@@ -107,7 +107,7 @@ jobs:
           password: ${{ secrets.PASSWORD }}
           source: "${{ env.bootstrap-user-path }}/build/libs/*.jar"
           target: "${{ env.service-path }}/${{ env.bootstrap-user }}"
-          strip_components: 4
+          strip_components: 5
       # 배포 스크립트 실행
       - name: User Bootstrap API 서비스 실행
         uses: appleboy/ssh-action@master
