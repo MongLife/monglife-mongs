@@ -23,7 +23,7 @@ import java.util.List;
 
 @Validated
 @RestController
-@RequestMapping("/training")
+@RequestMapping("/activity")
 @RequiredArgsConstructor
 public class ActivityController {
 
@@ -33,7 +33,7 @@ public class ActivityController {
      * 훈련 목록 조회
      * @return 훈련 정보 목록
      */
-    @GetMapping
+    @GetMapping("/training")
     public ResponseEntity<ResponseDto<List<GetTrainingTypeResponseDto>>> getTraining() {
 
         List<GetTrainingTypeResponseDto> getTrainingTypeResponseDtos = activityUseCase.getTrainingTypesUseCase().stream()
@@ -59,7 +59,7 @@ public class ActivityController {
      * 훈련 조회
      * @return 훈련 정보
      */
-    @GetMapping("/{trainingCode}")
+    @GetMapping("/training/{trainingCode}")
     public ResponseEntity<ResponseDto<GetTrainingTypeResponseDto>> getTraining(@PathVariable("trainingCode") @NotBlank String trainingCode) {
 
         GetTrainingTypeCommand command = GetTrainingTypeCommand.builder()
@@ -88,7 +88,7 @@ public class ActivityController {
     /**
      * 훈련 완료
      */
-    @PostMapping
+    @PostMapping("/training")
     public ResponseEntity<ResponseDto<TrainingEndResponseDto>> trainingRunnerEnd(
             @AuthenticationPrincipal Passport passport,
             @Valid @RequestBody TrainingEndRequestDto trainingEndRequestDto

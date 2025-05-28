@@ -1,5 +1,6 @@
 package com.monglife.mongs.application.mong.port.in.service;
 
+import com.monglife.mongs.application.mong.port.annotation.CheckMongDead;
 import com.monglife.mongs.application.mong.port.annotation.PublishMongPort;
 import com.monglife.mongs.application.mong.port.exception.NotExistsMongException;
 import com.monglife.mongs.application.mong.port.exception.NotExistsTrainingTypeException;
@@ -48,6 +49,7 @@ public class ActivityService  implements ActivityUseCase {
      */
     @Override
     @Transactional
+    @CheckMongDead
     @PublishMongPort
     public Mong trainingEndUseCase(TrainingEndCommand command) {
 

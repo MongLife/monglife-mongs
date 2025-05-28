@@ -78,4 +78,12 @@ public interface MongPersistencePort {
      * @return 인벤토리 아이템 도메인 객체
      */
     Optional<Inventory> getInventoryPort(Long inventoryId);
+
+    /**
+     * 랜덤 뽑기 이력 등록
+     * @param accountId 계정 ID
+     * @param randomDraw 랜덤 뽑기 아이템 도메인 객체
+     * @return 랜덤 뽑기 아이템 도메인 객체
+     */
+    Optional<RandomDraw> createRandomDrawHistoryPort(Long accountId, RandomDraw randomDraw);
 }

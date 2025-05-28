@@ -26,8 +26,7 @@ public class MongTypeDslRepositoryImpl implements MongTypeDslRepository {
                         JPAExpressions
                                 .select(mongTypeEntity.nextGroupType)
                                 .from(mongTypeEntity)
-                                .where(mongTypeEntity.comn.code.eq(mongCode))))
-                .where(mongTypeEntity.evolutionScore.loe(evolutionScore))
+                                .where(mongTypeEntity.comn.code.eq(mongCode))).and(mongTypeEntity.evolutionScore.loe(evolutionScore)))
                 .orderBy(mongTypeEntity.evolutionScore.asc())
                 .fetch();
     }

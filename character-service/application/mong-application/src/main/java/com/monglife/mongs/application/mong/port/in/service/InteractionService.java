@@ -216,7 +216,7 @@ public class InteractionService implements InteractionUseCase {
                 .orElseThrow(NotExistsMongException::new);
 
         // 랜덤 뽑기 아이템 목록 조회
-        List<RandomDraw> randomDraws = mongReadPort.getRandomDrawsPort();
+        List<RandomDraw> randomDraws = mongReadPort.getRandomDrawsPort(command.getAccountId());
 
         // 랜덤 뽑기 아이템 목록이 없는 경우 예외
         if (randomDraws.isEmpty()) {
@@ -225,8 +225,12 @@ public class InteractionService implements InteractionUseCase {
 
         // 코드 값 랜덤 선정
         int randomDrawItemsIndex = random.nextInt(0, randomDraws.size());
+
         // 랜덤 뽑기 아이템 선정
         RandomDraw randomDraw = randomDraws.get(randomDrawItemsIndex);
+
+        // 랜덤 뽑기 이력 등록
+        mongPersistencePort.createRandomDrawHistoryPort(command.getAccountId(), randomDraw);
 
         switch (randomDraw.getInventoryTypeCode()) {
             // 맵인 경우 컬렉션 맵 등록

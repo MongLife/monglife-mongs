@@ -150,7 +150,6 @@ public class Mong {
     public void dead() {
 
         if (MongStateCode.DEAD.equals(this.stateCode) ||
-            MongStateCode.EVOLUTION_READY.equals(this.stateCode) ||
             MongStateCode.GRADUATE_READY.equals(this.stateCode)
         ) throw new InvalidMongStateException();
 
@@ -168,7 +167,7 @@ public class Mong {
             Boolean.TRUE.equals(this.isSleep)
         ) throw new InvalidMongStateException();
 
-        this.exp = this.exp + 5D;
+        this.exp = Math.max(0, Math.min(this.exp + 5D, this.maxStatus));
         this.strokeCount = this.strokeCount + 1;
 
         // 몽 상태 코드 동기화
@@ -214,7 +213,7 @@ public class Mong {
             Boolean.TRUE.equals(this.isSleep)
         ) throw new InvalidMongStateException();
 
-        this.exp = this.poopCount * 2D;
+        this.exp = Math.max(0, Math.min(this.exp + this.poopCount * 2D, this.maxStatus));
         this.poopCount = 0;
 
         // 몽 상태 코드 동기화
@@ -234,7 +233,7 @@ public class Mong {
         evolutionScore += this.strokeCount * 2D;
         evolutionScore += this.trainingCount * 5D;
 
-        return Math.max(evolutionScore, 0);
+        return Math.max(0, evolutionScore);
     }
 
     /**
@@ -266,9 +265,9 @@ public class Mong {
 
         // 지수 수치 -> 지수 비율 퍼센트 변환
         double strengthRatio = this.strength / this.maxStatus * 100;
-        double satietyRatio = this.satiety / this.maxStatus * 100;
-        double healthyRatio = this.healthy / this.maxStatus * 100;
-        double fatigueRatio = this.fatigue / this.maxStatus * 100;
+        double satietyRatio  = this.satiety  / this.maxStatus * 100;
+        double healthyRatio  = this.healthy  / this.maxStatus * 100;
+        double fatigueRatio  = this.fatigue  / this.maxStatus * 100;
 
         // 진화 점수 계산
         double evolutionScore = this.getEvolutionScore();
@@ -276,17 +275,17 @@ public class Mong {
         MongType mongType = sortedMongTypes.get(0);
 
         // 진화 리워드 점수 갱신
-        this.evolutionReward = Math.max(0, Math.min(evolutionScore - 100D, 25D));
+        this.evolutionReward  = Math.max(0, Math.min(evolutionScore - 100D, 25D));
         this.evolutionPenalty = 0D;
-        this.mongCode = mongType.getMongCode();
-        this.mongName = mongType.getMongName();
-        this.level = mongType.getLevel();
-        this.maxStatus = mongType.getMaxStatus();
+        this.mongCode         = mongType.getMongCode();
+        this.mongName         = mongType.getMongName();
+        this.level            = mongType.getLevel();
+        this.maxStatus        = mongType.getMaxStatus();
 
-        this.strength = mongType.getMaxStatus() * strengthRatio / 100;
-        this.satiety = mongType.getMaxStatus() * satietyRatio / 100;
-        this.healthy = mongType.getMaxStatus() * healthyRatio / 100;
-        this.fatigue = mongType.getMaxStatus() * fatigueRatio / 100;
+        this.strength = Math.max(0, Math.min(mongType.getMaxStatus() * strengthRatio / 100, this.maxStatus));
+        this.satiety  = Math.max(0, Math.min(mongType.getMaxStatus() * satietyRatio  / 100, this.maxStatus));
+        this.healthy  = Math.max(0, Math.min(mongType.getMaxStatus() * healthyRatio  / 100, this.maxStatus));
+        this.fatigue  = Math.max(0, Math.min(mongType.getMaxStatus() * fatigueRatio  / 100, this.maxStatus));
         this.exp = 0D;
 
         this.updateStateCode(MongStateCode.NORMAL);
@@ -311,7 +310,7 @@ public class Mong {
      * @param payPoint 증가할 페이 포인트
      */
     public void increasePayPoint(Integer payPoint) {
-        this.payPoint = this.payPoint + payPoint;
+        this.payPoint = Math.max(0, this.payPoint + payPoint);
     }
 
     /**
@@ -319,11 +318,15 @@ public class Mong {
      */
     public void cycleIncreaseStatus() {
 
+        if (MongStateCode.DEAD.equals(this.stateCode)) {
+            throw new InvalidMongStateException();
+        }
+
         double addHealthy = this.maxStatus * 0.2;
         double addFatigue = this.maxStatus * 0.6;
 
-        this.healthy = Math.min(this.healthy + addHealthy, this.maxStatus);
-        this.fatigue = Math.min(this.fatigue + addFatigue, this.maxStatus);
+        this.healthy = Math.max(0, Math.min(this.healthy + addHealthy, this.maxStatus));
+        this.fatigue = Math.max(0, Math.min(this.fatigue + addFatigue, this.maxStatus));
 
         // 몽 지수 코드 동기화
         this.syncMongStatusCode();
@@ -334,17 +337,21 @@ public class Mong {
      */
     public void cycleDecreaseStatus() {
 
+        if (MongStateCode.DEAD.equals(this.stateCode)) {
+            throw new InvalidMongStateException();
+        }
+
         double subWeight   = 1.3;
         double subStrength = 0.7 * this.maxStatus;
         double subSatiety  = 0.5 * this.maxStatus;
         double subHealthy  = 0.5 * this.maxStatus;
         double subFatigue  = 0.3 * this.maxStatus;
 
-        this.weight   = Math.max(this.weight   - subWeight, 0);
-        this.strength = Math.max(this.strength - subStrength, 0);
-        this.satiety  = Math.max(this.satiety  - subSatiety, 0);
-        this.healthy  = Math.max(this.healthy  - subHealthy, 0);
-        this.fatigue  = Math.max(this.fatigue  - subFatigue, 0);
+        this.weight   = Math.max(0, this.weight   - subWeight);
+        this.strength = Math.max(0, Math.min(this.strength - subStrength, this.maxStatus));
+        this.satiety  = Math.max(0, Math.min(this.satiety  - subSatiety,  this.maxStatus));
+        this.healthy  = Math.max(0, Math.min(this.healthy  - subHealthy,  this.maxStatus));
+        this.fatigue  = Math.max(0, Math.min(this.fatigue  - subFatigue,  this.maxStatus));
 
         // 몽 지수 코드 동기화
         this.syncMongStatusCode();
@@ -355,11 +362,15 @@ public class Mong {
      */
     public void cycleIncreasePoopCount() {
 
+        if (MongStateCode.DEAD.equals(this.stateCode)) {
+            throw new InvalidMongStateException();
+        }
+
         int addPoopCount = 1;
 
         // 최대 배변 수를 초과한 경우 진화 패널티 증가
         if (this.poopCount + addPoopCount >= MAX_POOP_COUNT) {
-            this.evolutionPenalty = this.evolutionPenalty + 1;
+            this.evolutionPenalty = this.evolutionPenalty + 0.1;
         }
 
         this.poopCount = Math.min(this.poopCount + addPoopCount, MAX_POOP_COUNT);
@@ -371,12 +382,16 @@ public class Mong {
      */
     public void training(TrainingType trainingType) {
 
-        this.exp           = this.exp + trainingType.getExp();
-        this.strength      = this.strength + trainingType.getStrength();
-        this.satiety       = this.satiety + trainingType.getSatiety();
-        this.fatigue       = this.fatigue + trainingType.getFatigue();
-        this.weight        = this.weight + trainingType.getWeight();
-        this.trainingCount = this.trainingCount + 1;
+        if (MongStateCode.DEAD.equals(this.stateCode)) {
+            throw new InvalidMongStateException();
+        }
+
+        this.exp           = Math.max(0, Math.min(this.exp + trainingType.getExp(), this.maxStatus));
+        this.strength      = Math.max(0, Math.min(this.strength + trainingType.getStrength(), this.maxStatus));
+        this.satiety       = Math.max(0, Math.min(this.satiety + trainingType.getSatiety(), this.maxStatus));
+        this.fatigue       = Math.max(0, Math.min(this.fatigue + trainingType.getFatigue(), this.maxStatus));
+        this.weight        = Math.max(0, this.weight + trainingType.getWeight());
+        this.trainingCount = Math.max(0, this.trainingCount + 1);
 
         // 몽 상태 코드 동기화
         this.syncMongStateCode();
@@ -389,10 +404,15 @@ public class Mong {
      * @param trainingType 훈련 타입 도메인 객체
      */
     public void trainingWithReward(TrainingType trainingType) {
+
+        if (MongStateCode.DEAD.equals(this.stateCode)) {
+            throw new InvalidMongStateException();
+        }
+
         // 훈련 완료
         this.training(trainingType);
         // 스코어 달성 시 페이 포인트 증가
-        this.payPoint = this.payPoint + trainingType.getPayPoint();
+        this.payPoint = Math.max(0, this.payPoint + trainingType.getPayPoint());
     }
 
     /**
@@ -416,7 +436,7 @@ public class Mong {
             throw new NotEnoughPayPointException();
         }
 
-        this.payPoint = this.payPoint - food.getPrice();
+        this.payPoint = Math.max(0, this.payPoint - food.getPrice());
         this.feed(food);
     }
 
@@ -441,7 +461,7 @@ public class Mong {
             throw new NotEnoughPayPointException();
         }
 
-        this.payPoint = this.payPoint - snack.getPrice();
+        this.payPoint = Math.max(0, this.payPoint - snack.getPrice());
         this.feed(snack);
     }
 
@@ -456,11 +476,11 @@ public class Mong {
             Boolean.TRUE.equals(this.isSleep)
         ) throw new InvalidMongStateException();
 
-        this.strength = Math.min(this.strength + food.getStrength(), this.maxStatus);
-        this.satiety  = Math.min(this.satiety  + food.getSatiety(), this.maxStatus);
-        this.healthy  = Math.min(this.healthy  + food.getHealthy(), this.maxStatus);
-        this.fatigue  = Math.min(this.fatigue  + food.getFatigue(), this.maxStatus);
-        this.weight   = Math.min(this.weight   + food.getWeight(), this.maxStatus);
+        this.strength = Math.max(0, Math.min(this.strength + food.getStrength(), this.maxStatus));
+        this.satiety  = Math.max(0, Math.min(this.satiety  + food.getSatiety(), this.maxStatus));
+        this.healthy  = Math.max(0, Math.min(this.healthy  + food.getHealthy(), this.maxStatus));
+        this.fatigue  = Math.max(0, Math.min(this.fatigue  + food.getFatigue(), this.maxStatus));
+        this.weight   = Math.max(0, Math.min(this.weight   + food.getWeight(), this.maxStatus));
 
         // 몽 지수 코드 동기화
         this.syncMongStatusCode();
@@ -477,11 +497,11 @@ public class Mong {
             Boolean.TRUE.equals(this.isSleep)
         ) throw new InvalidMongStateException();
 
-        this.strength = Math.min(this.strength + snack.getStrength(), this.maxStatus);
-        this.satiety  = Math.min(this.satiety  + snack.getSatiety(), this.maxStatus);
-        this.healthy  = Math.min(this.healthy  + snack.getHealthy(), this.maxStatus);
-        this.fatigue  = Math.min(this.fatigue  + snack.getFatigue(), this.maxStatus);
-        this.weight   = Math.min(this.weight   + snack.getWeight(), this.maxStatus);
+        this.strength = Math.max(0, Math.min(this.strength + snack.getStrength(), this.maxStatus));
+        this.satiety  = Math.max(0, Math.min(this.satiety  + snack.getSatiety(), this.maxStatus));
+        this.healthy  = Math.max(0, Math.min(this.healthy  + snack.getHealthy(), this.maxStatus));
+        this.fatigue  = Math.max(0, Math.min(this.fatigue  + snack.getFatigue(), this.maxStatus));
+        this.weight   = Math.max(0, Math.min(this.weight   + snack.getWeight(), this.maxStatus));
 
         // 몽 지수 코드 동기화
         this.syncMongStatusCode();
@@ -491,12 +511,17 @@ public class Mong {
      * 랜덤 뽑기 티켓 구매
      */
     public void buyRandomDrawTicket() {
+
+        if (MongStateCode.DEAD.equals(this.stateCode)) {
+            throw new InvalidMongStateException();
+        }
+
         // 랜덤 뽑기 티켓 구매 불가능 경우
         if (this.payPoint < RANDOM_DRAW_PAY_POINT) {
             throw new NotEnoughPayPointException();
         }
         // 뽑기 횟수 페이 포인트 구매
-        this.payPoint = this.payPoint - RANDOM_DRAW_PAY_POINT;
+        this.payPoint = Math.max(0, this.payPoint - RANDOM_DRAW_PAY_POINT);
         this.randomDrawTicketCount = this.randomDrawTicketCount + 1;
     }
 
@@ -504,12 +529,17 @@ public class Mong {
      * 랜덤 뽑기 티켓 감소
      */
     public void decreaseRandomDrawTicketCount() {
+
+        if (MongStateCode.DEAD.equals(this.stateCode)) {
+            throw new InvalidMongStateException();
+        }
+
         // 랜덤 뽑기 가능 횟수가 없는 경우
         if (this.randomDrawTicketCount == 0) {
             throw new NotEnoughRandomDrawTicketException();
         }
 
-        this.randomDrawTicketCount = this.randomDrawTicketCount - 1;
+        this.randomDrawTicketCount = Math.max(0, this.randomDrawTicketCount - 1);
     }
 
     /**
@@ -517,12 +547,17 @@ public class Mong {
      * @param payPoint 배팅 페이 포인트
      */
     public void matchBetting(Integer payPoint) {
+
+        if (MongStateCode.DEAD.equals(this.stateCode)) {
+            throw new InvalidMongStateException();
+        }
+
         if (this.payPoint < payPoint) {
             throw new NotEnoughPayPointException();
         }
 
         // 페이 포인트 감소
-        this.payPoint = this.payPoint - payPoint;
+        this.payPoint = Math.max(0, this.payPoint - payPoint);
     }
 
     /**
@@ -533,7 +568,7 @@ public class Mong {
     public void matchReward(Integer payPoint, Double exp) {
         // 페이 포인트 증가
         this.payPoint = this.payPoint + payPoint;
-        this.exp = Math.min(this.exp + exp, this.maxStatus);
+        this.exp = Math.max(0, Math.min(this.exp + exp, this.maxStatus));
 
         // 몽 상태 코드 동기화
         this.syncMongStateCode();
@@ -543,20 +578,11 @@ public class Mong {
      * 몽 상태 코드 동기화
      */
     private void syncMongStateCode() {
+
         // 경험치 기준 상태 검증 및 변경
         if (this.exp >= this.maxStatus) {
             this.updateStateCode(this.level == MAX_LEVEL ? MongStateCode.GRADUATE_READY : MongStateCode.EVOLUTION_READY);
         }
-    }
-
-    private void updateStateCode(MongStateCode stateCode) {
-        this.stateCode = stateCode;
-        this.isMongStateChange = Boolean.TRUE;
-    }
-
-    private void updateStatusCode(MongStatusCode statusCode) {
-        this.statusCode = statusCode;
-        this.isMongStatusCodeChange = Boolean.TRUE;
     }
 
     /**
@@ -577,5 +603,25 @@ public class Mong {
         } else {
             this.updateStatusCode(MongStatusCode.NORMAL);
         }
+    }
+
+    private void updateStateCode(MongStateCode stateCode) {
+
+        if (MongStateCode.DEAD.equals(this.stateCode)) {
+            throw new InvalidMongStateException();
+        }
+
+        this.stateCode = stateCode;
+        this.isMongStateChange = Boolean.TRUE;
+    }
+
+    private void updateStatusCode(MongStatusCode statusCode) {
+
+        if (MongStateCode.DEAD.equals(this.stateCode)) {
+            throw new InvalidMongStateException();
+        }
+
+        this.statusCode = statusCode;
+        this.isMongStatusCodeChange = Boolean.TRUE;
     }
 }

@@ -633,7 +633,7 @@ class InteractionServiceTest {
                             .build());
 
             Mockito.when(mongPersistencePort.getMongPort(mongId)).thenReturn(Optional.of(mong));
-            Mockito.when(mongReadPort.getRandomDrawsPort()).thenReturn(randomDraws);
+            Mockito.when(mongReadPort.getRandomDrawsPort(accountId)).thenReturn(randomDraws);
             Mockito.when(mongPersistencePort.createInventoryPort(Mockito.any())).thenReturn(Optional.of(inventory));
             Mockito.when(mongPersistencePort.saveMongPort(mong)).thenReturn(Optional.of(mong));
 
@@ -684,7 +684,7 @@ class InteractionServiceTest {
                             .build());
 
             Mockito.when(mongPersistencePort.getMongPort(mongId)).thenReturn(Optional.of(mong));
-            Mockito.when(mongReadPort.getRandomDrawsPort()).thenReturn(randomDraws);
+            Mockito.when(mongReadPort.getRandomDrawsPort(accountId)).thenReturn(randomDraws);
             Mockito.when(mongPersistencePort.saveMongPort(mong)).thenReturn(Optional.of(mong));
 
             // act

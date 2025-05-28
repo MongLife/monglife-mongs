@@ -47,7 +47,7 @@ public interface MongReadPort {
      * 랜덤 뽑기 아이템 목록 조회
      * @return 랜덤 뽑기 아이템 도메인 객체 목록
      */
-    List<RandomDraw> getRandomDrawsPort();
+    List<RandomDraw> getRandomDrawsPort(Long accountId);
 
     /**
      * 음식 조회

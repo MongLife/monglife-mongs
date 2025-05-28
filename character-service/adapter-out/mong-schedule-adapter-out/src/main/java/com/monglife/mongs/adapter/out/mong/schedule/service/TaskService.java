@@ -21,7 +21,7 @@ import java.util.concurrent.ScheduledExecutorService;
 @Service
 public class TaskService implements MongSchedulerPort {
 
-    private static final String APP_PACKAGE_NAME = "com.wear.mongs";
+    private static final String APP_PACKAGE_NAME = "com.monglife.mongs";
 
     private final TaskRepository taskRepository;
 

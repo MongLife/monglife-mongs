@@ -8,6 +8,7 @@ import com.monglife.mongs.application.mong.port.out.vo.CreateInventoryVo;
 import com.monglife.mongs.application.mong.port.out.vo.CreateMongVo;
 import com.monglife.mongs.domain.mong.model.Inventory;
 import com.monglife.mongs.domain.mong.model.Mong;
+import com.monglife.mongs.domain.mong.model.RandomDraw;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -36,6 +37,8 @@ public class MongPersistenceService implements
     private final MongRepository mongRepository;
 
     private final InventoryRepository inventoryRepository;
+
+    private final RandomDrawHistoryRepository randomDrawHistoryRepository;
 
     /**
      * 몽 쓰다 듬기 이력 등록
@@ -185,7 +188,7 @@ public class MongPersistenceService implements
         if (mongEntityOptional.isPresent()) {
             MongEntity mongEntity = mongEntityOptional.get();
 
-            if (mong.getMongCode().equals(mongEntity.getMongType().getComn().getCode())) {
+            if (!mong.getMongCode().equals(mongEntity.getMongType().getComn().getCode())) {
                 Optional<MongTypeEntity> mongTypeEntityOptional = mongTypeRepository.findByComnCode(mong.getMongCode());
 
                 if (mongTypeEntityOptional.isEmpty()) {
@@ -282,6 +285,35 @@ public class MongPersistenceService implements
         return inventoryRepository.findByIdWithLock(inventoryId)
                 .map(InventoryEntity::toDomain)
                 .or(Optional::empty);
+    }
+
+    /**
+     * 랜덤 뽑기 이력 등록
+     * @param accountId 계정 ID
+     * @param randomDraw 랜덤 뽑기 아이템 도메인 객체
+     * @return 랜덤 뽑기 아이템 도메인 객체
+     */
+    @Override
+    @Transactional
+    public Optional<RandomDraw> createRandomDrawHistoryPort(Long accountId, RandomDraw randomDraw) {
+
+        Optional<ComnCodeEntity> comnCodeEntityOptional = comnCodeRepository.findById(randomDraw.getRandomDrawCode());
+
+        if (comnCodeEntityOptional.isPresent()) {
+            ComnCodeEntity comnCodeEntity = comnCodeEntityOptional.get();
+
+            RandomDrawHistoryEntity randomDrawHistoryEntity = RandomDrawHistoryEntity.builder()
+                    .accountId(accountId)
+                    .comn(comnCodeEntity)
+                    .inventoryTypeCode(randomDraw.getInventoryTypeCode())
+                    .build();
+
+            randomDrawHistoryRepository.save(randomDrawHistoryEntity);
+
+            return Optional.of(randomDraw);
+        }
+
+        return Optional.empty();
     }
 }
 

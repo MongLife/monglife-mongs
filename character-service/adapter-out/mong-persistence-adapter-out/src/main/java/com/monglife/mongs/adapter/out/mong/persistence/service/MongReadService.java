@@ -259,8 +259,8 @@ public class MongReadService implements MongReadPort {
      */
     @Override
     @Transactional
-    public List<RandomDraw> getRandomDrawsPort() {
-        return randomDrawRepository.findAll().stream()
+    public List<RandomDraw> getRandomDrawsPort(Long accountId) {
+        return randomDrawRepository.findNotDrawByAccountId(accountId).stream()
                 .map(RandomDrawEntity::toDomain)
                 .toList();
     }
