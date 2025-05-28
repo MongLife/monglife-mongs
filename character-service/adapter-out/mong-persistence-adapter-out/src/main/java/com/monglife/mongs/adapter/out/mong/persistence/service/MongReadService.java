@@ -151,8 +151,6 @@ public class MongReadService implements MongReadPort {
                 .map(MongFeedHistoryEntity::getCode)
                 .toList();
 
-        log.info("##### {}", invalidBuyFoodCodes);
-
         return foodRepository.findAll().stream()
                 .map(foodEntity -> Food.builder()
                             .foodCode(foodEntity.getComn().getCode())

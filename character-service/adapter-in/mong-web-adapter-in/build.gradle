@@ -1,6 +1,6 @@
 dependencies {
     // application layer
-    implementation project(':character-service:application:mong-application')
+    implementation project(":character-service:application:mong-application")
     // monglife-security
-    implementation 'com.github.monglife.monglife-module-common:monglife-module-common-security:1.0.11'
+    implementation "com.github.monglife.monglife-module-common:monglife-module-common-security:${monglifeModuleCommonVersion}"
 }

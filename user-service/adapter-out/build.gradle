@@ -1,7 +1,7 @@
 plugins {
-    id 'java-library'
-    id 'org.springframework.boot'
-    id 'io.spring.dependency-management'
+    id "java-library"
+    id "org.springframework.boot"        version "${springBootVersion}"
+    id "io.spring.dependency-management" version "${springDependencyManagementVersion}"
 }
 
 bootJar {
@@ -9,9 +9,9 @@ bootJar {
 }
 
 subprojects {
-    apply plugin: 'java-library'
-    apply plugin: 'org.springframework.boot'
-    apply plugin: 'io.spring.dependency-management'
+    apply plugin: "java-library"
+    apply plugin: "org.springframework.boot"
+    apply plugin: "io.spring.dependency-management"
 
     jar {
         enabled(true)
@@ -29,29 +29,29 @@ subprojects {
 
     dependencies {
         // monglife-core
-        implementation 'com.github.monglife:monglife-core:2.0.10'
+        implementation "com.github.monglife:monglife-core:${monglifeCoreVersion}"
         // monglife-logging
-        implementation 'com.github.monglife.monglife-module-common:monglife-module-common-logging:1.0.11'
-        // spring
-        implementation 'org.springframework.boot:spring-boot-starter-web'
+        // implementation "com.github.monglife.monglife-module-common:monglife-module-common-logging:${monglifeModuleCommonVersion}"
         // lombok
-        compileOnly 'org.projectlombok:lombok'
-        annotationProcessor 'org.projectlombok:lombok'
+        compileOnly "org.projectlombok:lombok:${lombokVersion}"
+        annotationProcessor "org.projectlombok:lombok:${lombokVersion}"
+        // spring
+        implementation "org.springframework.boot:spring-boot-starter-web"
+        // spring-test
+        testImplementation "org.springframework.boot:spring-boot-starter-test"
         // JUnit 5
-        testImplementation 'org.junit.jupiter:junit-jupiter-api'
-        testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine'
+        testImplementation "org.junit.jupiter:junit-jupiter-api:${jupiterVersion}"
+        testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:${jupiterVersion}"
         // mock
-        testImplementation 'org.mockito:mockito-core'
-        testImplementation 'org.mockito:mockito-junit-jupiter'
+        testImplementation "org.mockito:mockito-core:${mockitoVersion}"
+        testImplementation "org.mockito:mockito-junit-jupiter:${mockitoVersion}"
         // AssertJ
-        testImplementation 'org.assertj:assertj-core'
+        testImplementation "org.assertj:assertj-core:${assertjVersion}"
         // awaitility
-        testImplementation "org.awaitility:awaitility:4.2.0"
-        // test
-        testImplementation 'org.springframework.boot:spring-boot-starter-test'
+        testImplementation "org.awaitility:awaitility:${awaitilityVersion}"
     }
 
-    tasks.named('test') {
+    tasks.named("test") {
         useJUnitPlatform()
     }
 }

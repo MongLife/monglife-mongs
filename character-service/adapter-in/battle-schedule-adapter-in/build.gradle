@@ -1,4 +1,4 @@
 dependencies {
     // application layer
-    implementation project(':character-service:application:battle-application')
+    implementation project(":character-service:application:battle-application")
 }
