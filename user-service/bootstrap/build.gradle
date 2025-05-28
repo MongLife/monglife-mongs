@@ -19,6 +19,7 @@ subprojects {
 
     bootJar {
         duplicatesStrategy = DuplicatesStrategy.FAIL
+        archiveFileName = "${project.name}.jar"
         enabled(true)
     }
 

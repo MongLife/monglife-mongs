@@ -1,4 +1,4 @@
-name: CHARACTER CI
+name: CI CHARACTER
 on:
   pull_request:
     branches:

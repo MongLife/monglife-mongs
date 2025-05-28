@@ -1,4 +1,4 @@
-name: USER CI
+name: CI USER
 on:
   pull_request:
     branches:
