@@ -1,17 +1,21 @@
 name: CD STAGE
 on:
   push:
-    branches: [ stage ]
+    branches:
+      - stage
+      - refac/character-api
 env:
   service-path: ~/service/mongs
   service-script: ~/service/mongs/run.sh
+  bootstrap-character-path: ./bootstrap/character-bootstrap-api
+  bootstrap-user-path: ./bootstrap/user-bootstrap-api
   bootstrap-character: monglife-mongs-character-api
   bootstrap-user: monglife-mongs-user-api
 jobs:
-  # 각 모듈 별 단위 테스트
-  # 각 모듈 별 단위 테스트
-  application-unit-test:
+  # Character API 빌드 및 배포
+  bootstrap-character-build-and-deploy:
     runs-on: ubuntu-latest
+    environment: stage
     steps:
       # 소스 로드
       - name: 소스 코드 로드
@@ -31,99 +35,38 @@ jobs:
       # 환경 설정 파일 로드
       - name: 환경 설정 파일 로드
         run: ./gradlew copyPrivate
-      # Battle Application/Domain 모듈 단위 테스트
-      - name: Battle Application/Domain 모듈 단위 테스트
-        run: ./gradlew :application:battle-application:test
-      # Device Application/Domain 모듈 단위 테스트
-      - name: Device Application/Domain 모듈 단위 테스트
-        run: ./gradlew :application:device-application:test
-      # Member Application/Domain 모듈 단위 테스트
-      - name: Member Application/Domain 모듈 단위 테스트
-        run: ./gradlew :application:member-application:test
-      # Mong Application/Domain 모듈 단위 테스트
-      - name: Mong Application/Domain 모듈 단위 테스트
-        run: ./gradlew :application:mong-application:test
-  adapter-out-unit-test:
-    runs-on: ubuntu-latest
-    steps:
-      # 소스 로드
-      - name: 소스 코드 로드
-        uses: actions/checkout@v3
+      # Bootstrap User API 빌드
+      - name: Character Bootstrap API 모듈 빌드
+        run: ./gradlew :character-service:bootstrap:character-bootstrap-api:build
+      # 레포트 생성
+      - name: 테스트 리포트 작성
+        uses: mikepenz/action-junit-report@v5
+        if: success() || failure()
         with:
-          token: ${{ secrets.ACTION_TOKEN }}
-          submodules: true
-      # Java 환경 설정
-      - name: JDK 설정
-        uses: actions/setup-java@v3
+          report_paths: '**/build/test-results/test/TEST-*.xml'
+      # 배포 파일 원격 복사
+      - name: Character Bootstrap API 배포 파일 STAGE 서버로 전송
+        uses: appleboy/scp-action@master
         with:
-          distribution: 'zulu'
-          java-version: '17'
-      # gradlew 권한 변경
-      - name: Gradle 권한 부여
-        run: chmod +x gradlew
-      # 환경 설정 파일 로드
-      - name: 환경 설정 파일 로드
-        run: ./gradlew copyPrivate
-      # Device Event Adapter Out  모듈 단위 테스트
-      - name: Device Event Adapter Out  모듈 단위 테스트
-        run: ./gradlew :adapter-out:device-event-adapter-out:test
-      # Device Persistence Adapter Out 모듈 단위 테스트
-      - name: Device Persistence Adapter Out 모듈 단위 테스트
-        run: ./gradlew :adapter-out:device-persistence-adapter-out:test
-      # Device Publish Adapter Out 모듈 단위 테스트
-      - name: Device Publish Adapter Out 모듈 단위 테스트
-        run: ./gradlew :adapter-out:device-publish-adapter-out:test
-      # Google Payment Adapter Out 모듈 단위 테스트
-      - name: Google Payment Adapter Out 모듈 단위 테스트
-        run: ./gradlew :adapter-out:google-payment-adapter-out:test
-      # Member Event Adapter Out 모듈 단위 테스트
-      - name: Member Event Adapter Out 모듈 단위 테스트
-        run: ./gradlew :adapter-out:member-event-adapter-out:test
-      # Member Persistence Adapter Out 모듈 단위 테스트
-      - name: Member Persistence Adapter Out 모듈 단위 테스트
-        run: ./gradlew :adapter-out:member-persistence-adapter-out:test
-      # Member Publish Adapter Out 모듈 단위 테스트
-      - name: Member Publish Adapter Out 모듈 단위 테스트
-        run: ./gradlew :adapter-out:member-publish-adapter-out:test
-  adapter-in-unit-test:
-    runs-on: ubuntu-latest
-    steps:
-      # 소스 로드
-      - name: 소스 코드 로드
-        uses: actions/checkout@v3
+          host: ${{ secrets.HOST }}
+          port: ${{ secrets.PORT }}
+          username: ${{ secrets.USERNAME }}
+          password: ${{ secrets.PASSWORD }}
+          source: "${{ env.bootstrap-character-path }}/build/libs/*.jar"
+          target: "${{ env.service-path }}/${{ env.bootstrap-character }}"
+          strip_components: 4
+      # 배포 스크립트 실행
+      - name: Character Bootstrap API 서비스 실행
+        uses: appleboy/ssh-action@master
         with:
-          token: ${{ secrets.ACTION_TOKEN }}
-          submodules: true
-      # Java 환경 설정
-      - name: JDK 설정
-        uses: actions/setup-java@v3
-        with:
-          distribution: 'zulu'
-          java-version: '17'
-      # gradlew 권한 변경
-      - name: Gradle 권한 부여
-        run: chmod +x gradlew
-      # 환경 설정 파일 로드
-      - name: 환경 설정 파일 로드
-        run: ./gradlew copyPrivate
-      # Device Event Adapter In 모듈 단위 테스트
-      - name: Device Event Adapter In 모듈 단위 테스트
-        run: ./gradlew :adapter-in:device-event-adapter-in:test
-      # Device Web Adapter In 모듈 단위 테스트
-      - name: Device Web Adapter In 모듈 단위 테스트
-        run: ./gradlew :adapter-in:device-web-adapter-in:test
-      # Member Event Adapter In 모듈 단위 테스트
-      - name: Member Event Adapter In 모듈 단위 테스트
-        run: ./gradlew :adapter-in:member-event-adapter-in:test
-      # Member Web Adapter In 모듈 단위 테스트
-      - name: Member Web Adapter In 모듈 단위 테스트
-        run: ./gradlew :adapter-in:member-web-adapter-in:test
+          host: ${{ secrets.HOST }}
+          port: ${{ secrets.PORT }}
+          username: ${{ secrets.USERNAME }}
+          password: ${{ secrets.PASSWORD }}
+          script: |
+            sh ${{ env.service-script }} ${{ env.bootstrap-character }} ${{ env.service-path }}/${{ env.bootstrap-character }}
   # User API 빌드 및 배포
   bootstrap-user-build-and-deploy:
-    needs:
-      - application-unit-test
-      - adapter-out-unit-test
-      - adapter-in-unit-test
     runs-on: ubuntu-latest
     environment: stage
     steps:
@@ -147,7 +90,13 @@ jobs:
         run: ./gradlew copyPrivate
       # Bootstrap User API 빌드
       - name: User Bootstrap API 모듈 빌드
-        run: ./gradlew :bootstrap:user-bootstrap-api:build -x test
+        run: ./gradlew :user-service:bootstrap:user-bootstrap-api:build
+      # 레포트 생성
+      - name: 테스트 리포트 작성
+        uses: mikepenz/action-junit-report@v5
+        if: success() || failure()
+        with:
+          report_paths: '**/build/test-results/test/TEST-*.xml'
       # 배포 파일 원격 복사
       - name: User Bootstrap API 배포 파일 STAGE 서버로 전송
         uses: appleboy/scp-action@master
@@ -169,54 +118,3 @@ jobs:
           password: ${{ secrets.PASSWORD }}
           script: |
             sh ${{ env.service-script }} ${{ env.bootstrap-user }} ${{ env.service-path }}/${{ env.bootstrap-user }}
-  # Character API 빌드 및 배포
-  bootstrap-character-build-and-deploy:
-    needs:
-      - application-unit-test
-      - adapter-out-unit-test
-      - adapter-in-unit-test
-    runs-on: ubuntu-latest
-    environment: stage
-    steps:
-      # 소스 로드
-      - name: 소스 코드 로드
-        uses: actions/checkout@v3
-        with:
-          token: ${{ secrets.ACTION_TOKEN }}
-          submodules: true
-      # Java 환경 설정
-      - name: JDK 설정
-        uses: actions/setup-java@v3
-        with:
-          distribution: 'zulu'
-          java-version: '17'
-      # gradlew 권한 변경
-      - name: Gradle 권한 부여
-        run: chmod +x gradlew
-      # 환경 설정 파일 로드
-      - name: 환경 설정 파일 로드
-        run: ./gradlew copyPrivate
-      # Bootstrap User API 빌드
-      - name: User Bootstrap API 모듈 빌드
-        run: ./gradlew :bootstrap:user-bootstrap-api:build -x test
-      # 배포 파일 원격 복사
-      - name: User Bootstrap API 배포 파일 STAGE 서버로 전송
-        uses: appleboy/scp-action@master
-        with:
-          host: ${{ secrets.HOST }}
-          port: ${{ secrets.PORT }}
-          username: ${{ secrets.USERNAME }}
-          password: ${{ secrets.PASSWORD }}
-          source: "${{ env.bootstrap-user-path }}/build/libs/*.jar"
-          target: "${{ env.service-path }}/${{ env.bootstrap-user }}"
-          strip_components: 4
-      # 배포 스크립트 실행
-      - name: Character Bootstrap API 서비스 실행
-        uses: appleboy/ssh-action@master
-        with:
-          host: ${{ secrets.HOST }}
-          port: ${{ secrets.PORT }}
-          username: ${{ secrets.USERNAME }}
-          password: ${{ secrets.PASSWORD }}
-          script: |
-            sh ${{ env.service-script }} ${{ env.bootstrap-character }} ${{ env.service-path }}/${{ env.bootstrap-character }}

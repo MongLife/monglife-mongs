@@ -1,9 +1,8 @@
 name: USER CI
 on:
   pull_request:
-    branches: [ develop ]
-  push:
-    branches: [ refac/character-api ]
+    branches:
+      - develop
 permissions:
   contents: read
   checks: write
