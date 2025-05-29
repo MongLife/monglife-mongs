@@ -76,7 +76,7 @@ public class MatchController {
         GetMatchResponseDto getMatchResponseDto = GetMatchResponseDto.builder()
                 .matchId(match.getMatchId())
                 .round(match.getRound())
-                .isLastRound(match.isEnd())
+                .isLastRound(match.isLastRound())
                 .matchPlayers(matchPlayers)
                 .build();
 

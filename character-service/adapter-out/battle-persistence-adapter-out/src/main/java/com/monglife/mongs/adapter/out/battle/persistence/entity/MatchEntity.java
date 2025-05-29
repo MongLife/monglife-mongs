@@ -56,8 +56,9 @@ public class MatchEntity extends BaseTimeEntity {
     }
 
     public void update(Match match) {
-        match.getMatchPlayers().forEach(matchPlayer -> this.getMatchPlayerEntity(matchPlayer.getPlayerId())
-                .ifPresentOrElse(matchPlayerEntity -> matchPlayerEntity.update(matchPlayer), () -> this.matchPlayers.add(MatchPlayerEntity.builder()
+        match.getMatchPlayers().forEach(matchPlayer -> {
+            if (matchPlayer.getPlayerId() == null) {
+                this.matchPlayers.add(MatchPlayerEntity.builder()
                         .playerId(matchPlayer.getPlayerId())
                         .deviceId(matchPlayer.getDeviceId())
                         .accountId(matchPlayer.getAccountId())
@@ -73,16 +74,27 @@ public class MatchEntity extends BaseTimeEntity {
                         .isEnter(matchPlayer.getIsEnter())
                         .enteredAt(matchPlayer.getEnteredAt())
                         .exitedAt(matchPlayer.getExitedAt())
-                        .build())));
+                        .build());
+            } else {
+                this.getMatchPlayerEntity(matchPlayer.getPlayerId())
+                        .ifPresent(matchPlayerEntity -> matchPlayerEntity.update(matchPlayer));
+            }
+        });
 
-        match.getMatchPicks().forEach(matchPick -> this.getMatchPickEntity(matchPick.getPickId())
-                .ifPresentOrElse(matchPickEntity -> matchPickEntity.update(matchPick), () -> this.matchPicks.add(MatchPickEntity.builder()
+        match.getMatchPicks().forEach(matchPick -> {
+            if (matchPick.getPickId() == null) {
+                this.matchPicks.add(MatchPickEntity.builder()
                         .playerId(matchPick.getMatchPlayer().getPlayerId())
                         .targetPlayerId(matchPick.getTargetMatchPlayer().getPlayerId())
                         .round(matchPick.getRound())
                         .pickCode(matchPick.getPickCode())
                         .pickValue(matchPick.getPickValue())
-                        .build())));
+                        .build());
+            } else {
+                this.getMatchPickEntity(matchPick.getPickId())
+                        .ifPresent(matchPickEntity -> matchPickEntity.update(matchPick));
+            }
+        });
 
         this.maxRound = match.getMaxRound();
         this.round = match.getRound();
@@ -112,7 +124,7 @@ public class MatchEntity extends BaseTimeEntity {
                 })
                 .collect(Collectors.toList());
 
-        return Match.builder()
+        Match match = Match.builder()
                 .matchId(this.matchId)
                 .round(this.round)
                 .maxRound(this.maxRound)
@@ -120,17 +132,19 @@ public class MatchEntity extends BaseTimeEntity {
                 .matchPlayers(matchPlayers)
                 .matchPicks(matchPicks)
                 .build();
+
+        return match;
     }
 
     private Optional<MatchPlayerEntity> getMatchPlayerEntity(String playerId) {
         return this.matchPlayers.stream()
-                .filter(mp -> mp.getPlayerId().equals(playerId))
+                .filter(matchPlayer -> playerId.equals(matchPlayer.getPlayerId()))
                 .findFirst();
     }
 
     private Optional<MatchPickEntity> getMatchPickEntity(Long pickId) {
         return this.matchPicks.stream()
-                .filter(matchPick -> matchPick.getPickId().equals(pickId))
+                .filter(matchPick -> pickId.equals(matchPick.getPickId()))
                 .findFirst();
     }
 }

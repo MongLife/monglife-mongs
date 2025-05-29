@@ -34,7 +34,7 @@ public class MemberStarPointConsumer {
         this.objectMapper.registerModule(new JavaTimeModule());
     }
 
-    @MqttMapping("/player/starPoint/{accountId}")
+    @MqttMapping("/member/starPoint/{accountId}")
     public void consumeMemberStarPoint(@PathVariable("accountId") Long accountId, @MqttPayload ResponseDto<Map<String, Objects>> payload) {
 
         // mqtt library 는 제네릭 타입 Payload 를 변환할 수 없음 (직접 변환)

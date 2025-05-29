@@ -44,7 +44,7 @@ public class QueueScheduleService implements SchedulingConfigurer {
                     break;
                 }
             }
-        }, Duration.ofSeconds(FIXED_DELAY));
+        }, Duration.ofMillis(FIXED_DELAY));
 
         registrar.setScheduler(scheduledExecutorService);
     }

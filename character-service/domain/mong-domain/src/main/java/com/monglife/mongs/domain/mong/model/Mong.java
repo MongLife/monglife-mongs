@@ -561,6 +561,15 @@ public class Mong {
     }
 
     /**
+     * 매치 배팅 취소
+     * @param payPoint 배팅 페이 포인트
+     */
+    public void matchBettingCancel(Integer payPoint) {
+        // 페이 포인트 증가
+        this.payPoint = Math.max(0, this.payPoint + payPoint);
+    }
+
+    /**
      * 매치 보상
      * @param payPoint 보상 페이 포인트
      * @param exp 보상 경험치

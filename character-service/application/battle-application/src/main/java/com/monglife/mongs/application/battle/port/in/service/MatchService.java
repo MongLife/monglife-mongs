@@ -73,10 +73,14 @@ public class MatchService implements MatchUseCase {
         Match match = matchPersistencePort.getMatchPort(command.getMatchId())
                 .orElseThrow(NotExistsMatchException::new);
 
+        if (match.isEnd()) {
+            throw new NotExistsMatchException();
+        }
+
         // 플레이어 입장
         match.enterMatchPlayer(command.getPlayerId());
 
-        match = matchPersistencePort.saveMatchPort(match)
+        matchPersistencePort.saveMatchPort(match)
                 .orElseThrow(NotExistsMatchException::new);
 
         // 매치가 시작된 경우 매치 정보 비동기 응답
@@ -98,11 +102,15 @@ public class MatchService implements MatchUseCase {
         Match match = matchPersistencePort.getMatchPort(command.getMatchId())
                 .orElseThrow(NotExistsMatchException::new);
 
+        if (match.isEnd()) {
+            throw new NotExistsMatchException();
+        }
+
         // 플레이어 퇴장
         match.exitMatchPlayer(command.getPlayerId());
 
         // 매치 정보 동기화
-        match = matchPersistencePort.saveMatchPort(match)
+        matchPersistencePort.saveMatchPort(match)
                 .orElseThrow(NotExistsMatchException::new);
 
         // 매치가 중단된 경우 승리 매치 종료 비동기 응답
@@ -123,6 +131,10 @@ public class MatchService implements MatchUseCase {
 
         Match match = matchPersistencePort.getMatchPort(command.getMatchId())
                 .orElseThrow(NotExistsMatchException::new);
+
+        if (match.isEnd()) {
+            throw new NotExistsMatchException();
+        }
 
         // 매치 플레이어 조회
         MatchPlayer matchPlayer = match.getMatchPlayer(command.getPlayerId());
@@ -158,7 +170,7 @@ public class MatchService implements MatchUseCase {
         boolean isRoundOver = match.pickMatchPlayer(matchPick);
 
         // 매치 정보 동기화
-        match = matchPersistencePort.saveMatchPort(match)
+        matchPersistencePort.saveMatchPort(match)
                 .orElseThrow(NotExistsMatchException::new);
 
         // 다음 라운드 진행한 경우

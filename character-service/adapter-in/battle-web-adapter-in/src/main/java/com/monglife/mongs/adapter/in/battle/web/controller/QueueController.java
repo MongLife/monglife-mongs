@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.*;
 
 @Validated
 @RestController
-@RequestMapping("/battle/match")
+@RequestMapping("/battle/queue")
 @RequiredArgsConstructor
 public class QueueController {
 
@@ -28,7 +28,7 @@ public class QueueController {
      * @param mongId 몽 ID
      * @return 성공 응답
      */
-    @PostMapping("/wait/{mongId}")
+    @PostMapping("/{mongId}")
     public ResponseEntity<ResponseDto<?>> createQueuePlayer(@AuthenticationPrincipal Passport passport, @PathVariable("mongId") @NotNull @Min(1)  Long mongId) {
 
         CreateQueuePlayerCommand command = CreateQueuePlayerCommand.builder()
@@ -48,7 +48,7 @@ public class QueueController {
      * @param mongId 몽 ID
      * @return 성공 응답
      */
-    @DeleteMapping("/wait/{mongId}")
+    @DeleteMapping("/{mongId}")
     public ResponseEntity<ResponseDto<?>> deleteWaitMatching(@AuthenticationPrincipal Passport passport, @PathVariable("mongId") @NotNull @Min(1) Long mongId) {
 
         DeleteQueuePlayerCommand command = DeleteQueuePlayerCommand.builder()

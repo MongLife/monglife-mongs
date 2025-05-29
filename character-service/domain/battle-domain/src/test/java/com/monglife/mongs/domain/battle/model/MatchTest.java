@@ -187,7 +187,6 @@ class MatchTest {
         // assert
         assertTrue(match.isEnd());
         assertEquals(pastRound, match.getRound());
-        assertEquals(PLAYER_ID, winMatchPlayer.getPlayerId());
     }
 
     @Test

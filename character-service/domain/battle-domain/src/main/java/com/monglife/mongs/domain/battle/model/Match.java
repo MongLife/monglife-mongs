@@ -84,7 +84,7 @@ public class Match {
                 .filter(MatchPlayer::getIsBot)
                 .forEach(matchPlayer -> {
                     // 매치 선택 중복 방지
-                    if (Boolean.TRUE.equals(this.isPickedMatchPlayerInCurrentRound(matchPlayer.getPlayerId()))) {
+                    if (Boolean.FALSE.equals(this.isPickedMatchPlayerInCurrentRound(matchPlayer.getPlayerId()))) {
                         this.matchPicks.add(MatchPick.generateMatchPick(this, matchPlayer));
                     }
                 });
@@ -94,7 +94,7 @@ public class Match {
                 .filter(matchPlayer -> !matchPlayer.getIsBot() && !matchPlayer.getIsEnter())
                 .forEach(matchPlayer -> {
                     // 매치 선택 중복 방지
-                    if (Boolean.TRUE.equals(this.isPickedMatchPlayerInCurrentRound(matchPlayer.getPlayerId()))) {
+                    if (Boolean.FALSE.equals(this.isPickedMatchPlayerInCurrentRound(matchPlayer.getPlayerId()))) {
                         this.matchPicks.add(MatchPick.builder()
                                 .matchPlayer(matchPlayer)
                                 .targetMatchPlayer(matchPlayer)
@@ -125,7 +125,7 @@ public class Match {
         });
 
         // 마지막 라운드 경우
-        if (this.maxRound.equals(this.round)) {
+        if (this.maxRound < this.round + 1) {
             // 매치 종료
             this.end();
         } else {
@@ -264,6 +264,14 @@ public class Match {
      */
     public Boolean isEnd() {
         return MatchStateCode.END.equals(this.stateCode);
+    }
+
+    /**
+     * 마지막 라운드 여부 확인
+     * @return 마지막 라운드 여부
+     */
+    public Boolean isLastRound() {
+        return this.maxRound.equals(this.round);
     }
 
     /**

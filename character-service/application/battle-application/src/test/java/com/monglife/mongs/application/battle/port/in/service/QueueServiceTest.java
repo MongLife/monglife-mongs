@@ -13,7 +13,6 @@ import com.monglife.mongs.application.battle.port.out.vo.CreateMatchVo;
 import com.monglife.mongs.domain.battle.model.Match;
 import com.monglife.mongs.domain.battle.model.MatchPlayer;
 import com.monglife.mongs.domain.battle.model.QueuePlayer;
-import com.monglife.mongs.domain.mong.exception.NotEnoughPayPointException;
 import com.monglife.mongs.domain.mong.model.Mong;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -57,6 +56,21 @@ class QueueServiceTest {
             QueuePlayer queuePlayer = new QueuePlayer(accountId, deviceId, mongId);
 
             Mockito.when(matchPersistencePort.createQueuePlayerPort(Mockito.any())).thenReturn(Optional.of(queuePlayer));
+            Mockito.when(mongPersistencePort.getMongPort(queuePlayer.getMongId())).thenReturn(Optional.of(Mong.builder()
+                    .mongId(queuePlayer.getMongId())
+                    .accountId(queuePlayer.getAccountId())
+                    .mongCode("TEST-MONG_TYPE-CODE")
+                    .mongName("TEST-MONG_TYPE-NAME")
+                    .name("TEST-MONG-NAME")
+                    .isSleep(Boolean.FALSE)
+                    .strength(100D)
+                    .satiety(100D)
+                    .healthy(100D)
+                    .fatigue(100D)
+                    .exp(0D)
+                    .weight(100D)
+                    .payPoint(Match.getBettingPayPoint())
+                    .build()));
 
             // act
             CreateQueuePlayerCommand command = CreateQueuePlayerCommand.builder()
@@ -89,6 +103,21 @@ class QueueServiceTest {
 
             Mockito.when(matchPersistencePort.getQueuePlayerPort(mongId, accountId, deviceId)).thenReturn(Optional.of(queuePlayer));
             Mockito.when(matchPersistencePort.deleteQueuePlayerPort(queuePlayer)).thenReturn(Optional.of(queuePlayer));
+            Mockito.when(mongPersistencePort.getMongPort(queuePlayer.getMongId())).thenReturn(Optional.of(Mong.builder()
+                    .mongId(queuePlayer.getMongId())
+                    .accountId(queuePlayer.getAccountId())
+                    .mongCode("TEST-MONG_TYPE-CODE")
+                    .mongName("TEST-MONG_TYPE-NAME")
+                    .name("TEST-MONG-NAME")
+                    .isSleep(Boolean.FALSE)
+                    .strength(100D)
+                    .satiety(100D)
+                    .healthy(100D)
+                    .fatigue(100D)
+                    .exp(0D)
+                    .weight(100D)
+                    .payPoint(Match.getBettingPayPoint())
+                    .build()));
 
             // act
             DeleteQueuePlayerCommand command = DeleteQueuePlayerCommand.builder()
@@ -286,7 +315,6 @@ class QueueServiceTest {
                     .build();
 
             Mockito.when(matchPersistencePort.getQueuePlayersPort(matchPlayerCount, QueuePlayer.getExpiredSeconds())).thenReturn(queuePlayers);
-            Mockito.when(matchPersistencePort.createMatchPort(Mockito.any())).thenReturn(Optional.of(match));
             Mockito.when(mongPersistencePort.getMongPort(queuePlayers.get(0).getMongId())).thenReturn(Optional.empty());
             Mockito.when(mongPersistencePort.getMongPort(queuePlayers.get(1).getMongId())).thenReturn(Optional.of(Mong.builder()
                     .mongId(queuePlayers.get(1).getMongId())
@@ -304,6 +332,7 @@ class QueueServiceTest {
                     .payPoint(Match.getBettingPayPoint())
                     .build()));
             Mockito.when(matchPersistencePort.createQueuePlayerPort(Mockito.any())).thenReturn(Optional.empty());
+            Mockito.when(matchPersistencePort.createMatchPort(Mockito.any())).thenReturn(Optional.of(match));
 
             // act
             MatchingQueuePlayersCommand command = MatchingQueuePlayersCommand.builder()
@@ -313,51 +342,8 @@ class QueueServiceTest {
             queueUseCase.matchingQueuePlayersUseCase(command);
 
             // assert
-            Mockito.verify(queuePublishPort).publishMatchingQueuePlayerFailPort(Mockito.any());
-        }
-
-        @Test
-        @DisplayName("배팅 페이 포인트가 부족한 경우 예외가 발생 한다.")
-        void matchingQueuePlayersWhenNotEnoughPayPoint() {
-            // arrange
-            int matchPlayerCount = 2;
-            List<QueuePlayer> queuePlayers = List.of(
-                    new QueuePlayer(1L, CommonUtil.randomId(), 1L),
-                    new QueuePlayer(2L, CommonUtil.randomId(), 2L)
-            );
-
-            Match match = Match.builder()
-                    .matchId(1L)
-                    .round(0)
-                    .build();
-
-            Mockito.when(matchPersistencePort.getQueuePlayersPort(matchPlayerCount, QueuePlayer.getExpiredSeconds())).thenReturn(queuePlayers);
-            Mockito.when(matchPersistencePort.createMatchPort(Mockito.any())).thenReturn(Optional.of(match));
-            for (QueuePlayer queuePlayer : queuePlayers) {
-                Mockito.when(mongPersistencePort.getMongPort(queuePlayer.getMongId())).thenReturn(Optional.of(Mong.builder()
-                        .mongId(queuePlayers.get(1).getMongId())
-                        .accountId(queuePlayers.get(1).getAccountId())
-                        .mongCode("TEST-MONG_TYPE-CODE")
-                        .mongName("TEST-MONG_TYPE-NAME")
-                        .name("TEST-MONG-NAME")
-                        .isSleep(Boolean.FALSE)
-                        .strength(100D)
-                        .satiety(100D)
-                        .healthy(100D)
-                        .fatigue(100D)
-                        .exp(0D)
-                        .weight(100D)
-                        .payPoint(0)
-                        .build()));
-            }
-            Mockito.when(matchPersistencePort.createQueuePlayerPort(Mockito.any())).thenReturn(Optional.empty());
-
-            // act & assert
-            MatchingQueuePlayersCommand command = MatchingQueuePlayersCommand.builder()
-                    .matchPlayerCount(matchPlayerCount)
-                    .build();
-
-            assertThrows(NotEnoughPayPointException.class, () -> queueUseCase.matchingQueuePlayersUseCase(command));
+            Mockito.verify(queuePublishPort).publishMatchingQueuePlayerFailPort(queuePlayers.get(0));
+            Mockito.verify(queuePublishPort).publishMatchingQueuePlayerFailPort(queuePlayers.get(1));
         }
     }
 }

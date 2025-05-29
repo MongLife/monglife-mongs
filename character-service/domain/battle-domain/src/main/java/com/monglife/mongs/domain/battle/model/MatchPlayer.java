@@ -130,7 +130,7 @@ public class MatchPlayer {
      */
     public void defence() {
         this.damage = this.damage - this.defence;
-        historyCodes.add(MatchHistoryCode.MATCH_HISTORY_DEFENCED);
+        this.historyCodes.add(MatchHistoryCode.MATCH_HISTORY_DEFENCED);
     }
 
     /**
@@ -139,7 +139,7 @@ public class MatchPlayer {
      */
     public void damage(Double damage) {
         this.damage = this.damage + damage;
-        historyCodes.add(MatchHistoryCode.MATCH_HISTORY_ATTACKED);
+        this.historyCodes.add(MatchHistoryCode.MATCH_HISTORY_ATTACKED);
     }
 
     /**
@@ -162,18 +162,18 @@ public class MatchPlayer {
         // HP 범위 체크
         this.hp = Math.max(0, Math.min(this.hp, MAX_HP));
 
-        if (historyCodes.contains(MatchHistoryCode.MATCH_HISTORY_DEFENCED)) {
+        if (this.historyCodes.contains(MatchHistoryCode.MATCH_HISTORY_DEFENCED)) {
             // 방어
             this.roundCode = MatchRoundCode.MATCH_DEFENCE;
-        } else if (historyCodes.contains(MatchHistoryCode.MATCH_HISTORY_ATTACKED)) {
-            if (historyCodes.contains(MatchHistoryCode.MATCH_HISTORY_HEALED)) {
+        } else if (this.historyCodes.contains(MatchHistoryCode.MATCH_HISTORY_ATTACKED)) {
+            if (this.historyCodes.contains(MatchHistoryCode.MATCH_HISTORY_HEALED)) {
                 // 공격 + 회복
                 this.roundCode = MatchRoundCode.MATCH_ATTACKED_HEAL;
             } else {
                 // 공격
                 this.roundCode = MatchRoundCode.MATCH_ATTACKED;
             }
-        } else if (historyCodes.contains(MatchHistoryCode.MATCH_HISTORY_HEALED)) {
+        } else if (this.historyCodes.contains(MatchHistoryCode.MATCH_HISTORY_HEALED)) {
             // 회복
             this.roundCode = MatchRoundCode.MATCH_HEAL;
         } else {
@@ -228,6 +228,7 @@ public class MatchPlayer {
                     .isBot(Boolean.TRUE)
                     .hp(MAX_HP)
                     .isEnter(Boolean.TRUE)
+                    .enteredAt(LocalDateTime.now())
                     .build();
 
             matchPlayers.add(matchPlayer);

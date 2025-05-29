@@ -34,7 +34,7 @@ public class MongConsumer {
         this.objectMapper.registerModule(new JavaTimeModule());
     }
 
-    @MqttMapping("/management/{mongId}")
+    @MqttMapping("/mong/management/{mongId}")
     public void consumeMemberSlotCount(@PathVariable("mongId") Long mongId, @MqttPayload ResponseDto<Map<String, Objects>> payload) {
 
         // mqtt library 는 제네릭 타입 Payload 를 변환할 수 없음 (직접 변환)

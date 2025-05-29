@@ -12,6 +12,7 @@ import com.monglife.mongs.domain.battle.model.Match;
 import com.monglife.mongs.domain.battle.model.QueuePlayer;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.Collections;
@@ -36,6 +37,7 @@ public class MatchPersistenceService implements MatchPersistencePort {
      * @return 매치 대기열 도메인 객체
      */
     @Override
+    @Transactional
     public Optional<QueuePlayer> getQueuePlayerPort(Long mongId, Long accountId, String deviceId) {
         return queuePlayerRepository.findByMongIdAndAccountIdAndDeviceId(mongId, accountId, deviceId)
                 .map(QueuePlayerEntity::toDomain)
@@ -49,6 +51,7 @@ public class MatchPersistenceService implements MatchPersistencePort {
      * @return 매치 대기열 도메인 객체 목록
      */
     @Override
+    @Transactional
     public List<QueuePlayer> getQueuePlayersPort(Integer matchPlayerCount, Long expiredSeconds) {
 
         LocalDateTime now = LocalDateTime.now();
@@ -77,14 +80,16 @@ public class MatchPersistenceService implements MatchPersistencePort {
      * @return 매치 대기열 도메인 객체
      */
     @Override
+    @Transactional
     public Optional<QueuePlayer> createQueuePlayerPort(CreateQueuePlayerVo createQueuePlayerVo) {
 
-        QueuePlayerEntity queuePlayerEntity = QueuePlayerEntity.builder()
+        QueuePlayerEntity queuePlayerEntity = queuePlayerRepository.findByMongIdAndAccountIdAndDeviceId(
+                createQueuePlayerVo.getMongId(), createQueuePlayerVo.getAccountId(), createQueuePlayerVo.getDeviceId()).orElse(QueuePlayerEntity.builder()
                 .mongId(createQueuePlayerVo.getMongId())
                 .deviceId(createQueuePlayerVo.getDeviceId())
                 .accountId(createQueuePlayerVo.getAccountId())
                 .createdAt(LocalDateTime.now())
-                .build();
+                .build());
 
         return Optional.of(queuePlayerRepository.save(queuePlayerEntity).toDomain());
     }
@@ -95,6 +100,7 @@ public class MatchPersistenceService implements MatchPersistencePort {
      * @return 매치 대기열 도메인 객체
      */
     @Override
+    @Transactional
     public Optional<QueuePlayer> deleteQueuePlayerPort(QueuePlayer queuePlayer) {
 
         Optional<QueuePlayerEntity> queuePlayerEntityOptional = queuePlayerRepository.findByMongIdAndAccountIdAndDeviceId(queuePlayer.getMongId(), queuePlayer.getAccountId(), queuePlayer.getDeviceId());
@@ -114,6 +120,7 @@ public class MatchPersistenceService implements MatchPersistencePort {
      * @return 매치 도메인 객체
      */
     @Override
+    @Transactional
     public Optional<Match> getMatchPort(Long matchId) {
         return matchRepository.findByMatchId(matchId)
                 .map(MatchEntity::toDomain)
@@ -126,6 +133,7 @@ public class MatchPersistenceService implements MatchPersistencePort {
      * @return 매치 도메인 객체
      */
     @Override
+    @Transactional
     public Optional<Match> createMatchPort(CreateMatchVo createMatchVo) {
 
         List<MatchPlayerEntity> matchPlayerEntities = createMatchVo.getMatchPlayers().stream()
@@ -165,6 +173,7 @@ public class MatchPersistenceService implements MatchPersistencePort {
      * @return 매치 도메인 객체
      */
     @Override
+    @Transactional
     public Optional<Match> saveMatchPort(Match match) {
 
         Optional<MatchEntity> matchEntityOptional = matchRepository.findByMatchId(match.getMatchId());

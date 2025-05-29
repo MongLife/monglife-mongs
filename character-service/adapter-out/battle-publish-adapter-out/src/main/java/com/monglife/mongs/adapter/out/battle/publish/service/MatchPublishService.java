@@ -8,8 +8,10 @@ import com.monglife.mongs.application.battle.port.out.MatchPublishPort;
 import com.monglife.mongs.domain.battle.model.Match;
 import com.monglife.mongs.domain.battle.model.MatchPlayer;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class MatchPublishService implements MatchPublishPort {
@@ -25,7 +27,7 @@ public class MatchPublishService implements MatchPublishPort {
         MatchPublishDto matchPublishDto = MatchPublishDto.builder()
                 .matchId(match.getMatchId())
                 .round(match.getRound())
-                .isLastRound(match.isEnd())
+                .isLastRound(match.isLastRound())
                 .matchPlayers(match.getMatchPlayers().stream()
                         .map(matchPlayer -> MatchPlayerVo.builder()
                                 .playerId(matchPlayer.getPlayerId())

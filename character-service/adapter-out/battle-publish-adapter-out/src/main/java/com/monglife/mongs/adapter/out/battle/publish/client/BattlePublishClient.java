@@ -21,7 +21,7 @@ public class BattlePublishClient {
      * @param matchingQueuePlayerPublishDto 매칭된 매치 플레이어 정보
      * @return 매치 생성 시, 비동기 응답
      */
-    @MqttPublish("/battle/search/{topic}")
+    @MqttPublish("/battle/queue/{topic}")
     public MqttResponseEntity<ResponseDto<MatchingQueuePlayerPublishDto>> publishMatchingQueuePlayer(MatchingQueuePlayerPublishDto matchingQueuePlayerPublishDto) {
 
         List<String> topics = matchingQueuePlayerPublishDto.getMatchPlayers().stream()
@@ -38,7 +38,7 @@ public class BattlePublishClient {
      * @param matchingQueuePlayerFailPublishDto 대기열 재등록 시도한 매치 플레이어 정보
      * @return 대기열 등록 실패 시, 비동기 응답
      */
-    @MqttPublish("/battle/search/{topic}")
+    @MqttPublish("/battle/queue/{topic}")
     public MqttResponseEntity<ResponseDto<MatchingQueuePlayerFailPublishDto>> publishMatchingQueuePlayerFail(MatchingQueuePlayerFailPublishDto matchingQueuePlayerFailPublishDto) {
 
         String topic = matchingQueuePlayerFailPublishDto.getDeviceId();
