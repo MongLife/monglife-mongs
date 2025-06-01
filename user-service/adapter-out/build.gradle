@@ -1,0 +1,57 @@
+plugins {
+    id "java-library"
+    id "org.springframework.boot"        version "${springBootVersion}"
+    id "io.spring.dependency-management" version "${springDependencyManagementVersion}"
+}
+
+bootJar {
+    enabled(false)
+}
+
+subprojects {
+    apply plugin: "java-library"
+    apply plugin: "org.springframework.boot"
+    apply plugin: "io.spring.dependency-management"
+
+    jar {
+        enabled(true)
+    }
+
+    bootJar {
+        enabled(false)
+    }
+
+    dependencyManagement {
+        imports {
+            mavenBom "org.springframework.cloud:spring-cloud-dependencies:2022.0.3"
+        }
+    }
+
+    dependencies {
+        // monglife-core
+        implementation "com.github.monglife:monglife-core:${monglifeCoreVersion}"
+        // monglife-logging
+        // implementation "com.github.monglife.monglife-module-common:monglife-module-common-logging:${monglifeModuleCommonVersion}"
+        // lombok
+        compileOnly "org.projectlombok:lombok:${lombokVersion}"
+        annotationProcessor "org.projectlombok:lombok:${lombokVersion}"
+        // spring
+        implementation "org.springframework.boot:spring-boot-starter-web"
+        // spring-test
+        testImplementation "org.springframework.boot:spring-boot-starter-test"
+        // JUnit 5
+        testImplementation "org.junit.jupiter:junit-jupiter-api:${jupiterVersion}"
+        testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:${jupiterVersion}"
+        // mock
+        testImplementation "org.mockito:mockito-core:${mockitoVersion}"
+        testImplementation "org.mockito:mockito-junit-jupiter:${mockitoVersion}"
+        // AssertJ
+        testImplementation "org.assertj:assertj-core:${assertjVersion}"
+        // awaitility
+        testImplementation "org.awaitility:awaitility:${awaitilityVersion}"
+    }
+
+    tasks.named("test") {
+        useJUnitPlatform()
+    }
+}

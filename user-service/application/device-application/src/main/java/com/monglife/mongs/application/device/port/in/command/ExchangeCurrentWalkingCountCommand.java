@@ -1,0 +1,29 @@
+package com.monglife.mongs.application.device.port.in.command;
+
+import lombok.Builder;
+import lombok.Getter;
+
+import java.time.LocalDateTime;
+
+@Getter
+public class ExchangeCurrentWalkingCountCommand {
+
+    private final String deviceId;
+
+    private final Long mongId;
+
+    private final Integer walkingCount;
+
+    private final Integer totalWalkingCount;
+
+    private final LocalDateTime deviceBootedAt;
+
+    @Builder
+    public ExchangeCurrentWalkingCountCommand(String deviceId, Long mongId, Integer walkingCount, Integer totalWalkingCount, LocalDateTime deviceBootedAt) {
+        this.deviceId = deviceId;
+        this.mongId = mongId;
+        this.walkingCount = walkingCount;
+        this.totalWalkingCount = totalWalkingCount;
+        this.deviceBootedAt = deviceBootedAt;
+    }
+}
