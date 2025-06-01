@@ -6,10 +6,6 @@ public class TestEventDto {
 
     public TestEventDto() {}
 
-    public TestEventDto(Long taskId) {
-        this.taskId = taskId;
-    }
-
     public Long getTaskId() {
         return taskId;
     }

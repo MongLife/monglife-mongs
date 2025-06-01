@@ -45,12 +45,8 @@ class MemberPublishServiceTest {
     @DisplayName("회원 스타 포인트 비동기 응답 단위 테스트")
     class PublishMemberStarPointPort {
 
-        private final MemberStarPointConsumer memberSlotCountConsumer;
-
         @Autowired
-        public PublishMemberStarPointPort(MemberStarPointConsumer memberSlotCountConsumer) {
-            this.memberSlotCountConsumer = memberSlotCountConsumer;
-        }
+        private MemberStarPointConsumer memberSlotCountConsumer;
 
         private static Long ACCOUNT_ID;
 
@@ -63,9 +59,9 @@ class MemberPublishServiceTest {
         @DisplayName("회원 스타 포인트 변동 사항을 사용자의 기기로 비동기 전송 한다.")
         void publishStarPoint() throws InterruptedException {
             // arrange
-            int starPoint = 100;
-            int slotCount = 1;
-            Player player = Player.builder()
+            final int starPoint = 100;
+            final int slotCount = 1;
+            final Player player = Player.builder()
                     .accountId(ACCOUNT_ID)
                     .starPoint(starPoint)
                     .slotCount(slotCount)
@@ -91,12 +87,8 @@ class MemberPublishServiceTest {
     @DisplayName("회원 슬롯 수 비동기 응답 단위 테스트")
     class PublishMemberSlotCountPort {
 
-        private final MemberSlotCountConsumer memberSlotCountConsumer;
-
         @Autowired
-        public PublishMemberSlotCountPort(MemberSlotCountConsumer memberSlotCountConsumer) {
-            this.memberSlotCountConsumer = memberSlotCountConsumer;
-        }
+        private MemberSlotCountConsumer memberSlotCountConsumer;
 
         private static Long ACCOUNT_ID;
 
@@ -109,9 +101,9 @@ class MemberPublishServiceTest {
         @DisplayName("회원 슬롯 수 변동 사항을 사용자의 기기로 비동기 전송 한다.")
         void publishSlotCount() throws InterruptedException {
             // arrange
-            int starPoint = 100;
-            int slotCount = 5;
-            Player player = Player.builder()
+            final int starPoint = 100;
+            final int slotCount = 5;
+            final Player player = Player.builder()
                     .accountId(ACCOUNT_ID)
                     .starPoint(starPoint)
                     .slotCount(slotCount)

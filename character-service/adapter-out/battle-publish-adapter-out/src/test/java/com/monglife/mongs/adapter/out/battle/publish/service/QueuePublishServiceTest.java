@@ -49,18 +49,14 @@ class QueuePublishServiceTest {
     @DisplayName("매칭 비동기 응답 단위 테스트")
     class PublishMatchingQueuePlayerPort {
 
-        private final MatchingQueuePlayerConsumer matchingQueuePlayerConsumer;
-
         @Autowired
-        public PublishMatchingQueuePlayerPort(MatchingQueuePlayerConsumer matchingQueuePlayerConsumer) {
-            this.matchingQueuePlayerConsumer = matchingQueuePlayerConsumer;
-        }
+        private MatchingQueuePlayerConsumer matchingQueuePlayerConsumer;
 
         @Test
         @DisplayName("매칭 성공 정보를 비동기 전송 한다.")
         void publishMatchingQueuePlayer() throws InterruptedException {
             // arrange
-            List<MatchPlayer> matchPlayers = List.of(
+            final List<MatchPlayer> matchPlayers = List.of(
                     MatchPlayer.builder()
                             .playerId(CommonUtil.randomId())
                             .deviceId(CommonUtil.randomId())
@@ -95,7 +91,7 @@ class QueuePublishServiceTest {
                             .exitedAt(null)
                             .build());
 
-            Match match = Match.builder()
+            final Match match = Match.builder()
                     .matchId(1L)
                     .maxRound(10)
                     .matchPlayers(matchPlayers)
@@ -126,10 +122,10 @@ class QueuePublishServiceTest {
         @DisplayName("매칭 대기열 등록 실패 정보를 비동기 전송 한다.")
         void publishMatchingQueuePlayerFail() throws InterruptedException {
             // arrange
-            long mongId = 1L;
-            long accountId = 1L;
-            String deviceId = CommonUtil.randomId();
-            QueuePlayer queuePlayer = QueuePlayer.builder()
+            final long mongId = 1L;
+            final long accountId = 1L;
+            final String deviceId = CommonUtil.randomId();
+            final QueuePlayer queuePlayer = QueuePlayer.builder()
                     .mongId(mongId)
                     .deviceId(deviceId)
                     .accountId(accountId)

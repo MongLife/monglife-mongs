@@ -53,9 +53,9 @@ class CollectionConsumerTest {
         @DisplayName("몽 등록 트랜잭션이 성공하는 경우 이벤트를 소비하여 컬렉션 몽 등록 UseCase를 실행 한다.")
         void createMong() {
             // arrange
-            String topic = EventTopic.COMMIT_CREATE_MONG;
-            long accountId = 1L;
-            String mongCode = "CH000";
+            final String topic = EventTopic.COMMIT_CREATE_MONG;
+            final long accountId = 1L;
+            final String mongCode = "CH000";
 
             // act
             CreateMongEventDto createMongEventDto = CreateMongEventDto.builder()

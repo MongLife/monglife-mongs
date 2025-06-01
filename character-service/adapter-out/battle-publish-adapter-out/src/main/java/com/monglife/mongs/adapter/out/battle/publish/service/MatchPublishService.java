@@ -24,6 +24,7 @@ public class MatchPublishService implements MatchPublishPort {
      */
     @Override
     public void publishMatchPort(Match match) {
+
         MatchPublishDto matchPublishDto = MatchPublishDto.builder()
                 .matchId(match.getMatchId())
                 .round(match.getRound())

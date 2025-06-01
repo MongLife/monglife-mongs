@@ -13,7 +13,7 @@ import java.util.Map;
 @AllArgsConstructor
 public enum AdapterOutPublishDeviceResponse implements Response {
 
-    DEVICE_PUBLISH_DEVICE(HttpStatus.OK.value(), "PUBLISH-DEVICE-000", "기기 정보에 변동이 있습니다."),
+    DEVICE_PUBLISH_DEVICE(HttpStatus.OK.value(), "200-000-000", "기기 정보에 변동이 있습니다."),
     ;
 
     private final Integer httpStatus;

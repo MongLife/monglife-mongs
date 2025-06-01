@@ -55,22 +55,18 @@ class MongPublishServiceTest {
     @DisplayName("몽 정보 비동기 응답 단위 테스트")
     class PublishMongPort {
 
-        private final MongConsumer mongConsumer;
-
         @Autowired
-        public PublishMongPort(MongConsumer mongConsumer) {
-            this.mongConsumer = mongConsumer;
-        }
+        private MongConsumer mongConsumer;
 
         @Test
         @DisplayName("몽 정보를 비동기 전송 한다.")
         void publishMong() throws InterruptedException {
             // arrange
-            long mongId = 1L;
-            long accountId = 1L;
-            double status = 50D;
-            double maxStatus = 100D;
-            Mong mong = Mong.builder()
+            final long mongId = 1L;
+            final long accountId = 1L;
+            final double status = 50D;
+            final double maxStatus = 100D;
+            final Mong mong = Mong.builder()
                     .mongId(mongId)
                     .accountId(accountId)
                     .mongCode("CH100")
@@ -126,20 +122,16 @@ class MongPublishServiceTest {
     @DisplayName("몽 변동 알림 응답 단위 테스트")
     class PublishNotificationPort {
 
-        private final NotificationConsumer notificationConsumer;
-
         @Autowired
-        public PublishNotificationPort(NotificationConsumer notificationConsumer) {
-            this.notificationConsumer = notificationConsumer;
-        }
+        private NotificationConsumer notificationConsumer;
 
         @Test
         @DisplayName("몽 변동 알림을 전송 한다.")
         void publishNotification() throws InterruptedException {
             // arrange
-            long accountId = 1L;
-            String title = "TEST-TITLE";
-            String body = "TEST-BODY";
+            final long accountId = 1L;
+            final String title = "TEST-TITLE";
+            final String body = "TEST-BODY";
 
             SendNotificationDto sendNotificationDto = new SendNotificationDto();
             CountDownLatch countDownLatch = new CountDownLatch(1);

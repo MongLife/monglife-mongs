@@ -12,7 +12,7 @@ import java.util.Map;
 @AllArgsConstructor
 public enum ApplicationDeviceErrorCode implements ErrorCode {
 
-    NOT_EXISTS_STEP("APPLICATION-DEVICE-000", "걸음 수가 존재하지 않습니다."),
+    NOT_EXISTS_STEP("400-200-000", "걸음 수가 존재하지 않습니다."),
     ;
 
     private final String code;

@@ -46,19 +46,15 @@ class MatchPublishServiceTest {
     @DisplayName("매치 비동기 응답 단위 테스트")
     class PublishMatchPort {
 
-        private final MatchConsumer matchConsumer;
-
         @Autowired
-        public PublishMatchPort(MatchConsumer matchConsumer) {
-            this.matchConsumer = matchConsumer;
-        }
+        private MatchConsumer matchConsumer;
 
         @Test
         @DisplayName("매치 정보를 비동기 전송 한다.")
         void publishMatch() throws InterruptedException {
             // arrange
-            long matchId = 1L;
-            List<MatchPlayer> matchPlayers = List.of(
+            final long matchId = 1L;
+            final List<MatchPlayer> matchPlayers = List.of(
                     MatchPlayer.builder()
                             .playerId(CommonUtil.randomId())
                             .deviceId(CommonUtil.randomId())
@@ -94,7 +90,7 @@ class MatchPublishServiceTest {
                             .exitedAt(null)
                             .build());
 
-            Match match = Match.builder()
+            final Match match = Match.builder()
                     .matchId(matchId)
                     .maxRound(10)
                     .matchPlayers(matchPlayers)
@@ -121,12 +117,12 @@ class MatchPublishServiceTest {
         @DisplayName("매치 중지 정보를 비동기 전송 한다.")
         void publishMatchEnd() throws InterruptedException {
             // arrange
-            long matchId = 1L;
-            String playerId = CommonUtil.randomId();
-            String name = "MONG-NAME";
-            String mongCode = "MONG-TYPE-CODE";
-            String mongName = "MONG-TYPE-NAME";
-            MatchPlayer matchPlayer = MatchPlayer.builder()
+            final long matchId = 1L;
+            final String playerId = CommonUtil.randomId();
+            final String name = "MONG-NAME";
+            final String mongCode = "MONG-TYPE-CODE";
+            final String mongName = "MONG-TYPE-NAME";
+            final MatchPlayer matchPlayer = MatchPlayer.builder()
                     .playerId(playerId)
                     .deviceId(CommonUtil.randomId())
                     .accountId(1L)
@@ -144,7 +140,7 @@ class MatchPublishServiceTest {
                     .exitedAt(null)
                     .build();
 
-            List<MatchPlayer> matchPlayers = List.of(
+            final List<MatchPlayer> matchPlayers = List.of(
                     matchPlayer,
                     MatchPlayer.builder()
                             .playerId(CommonUtil.randomId())
@@ -164,7 +160,7 @@ class MatchPublishServiceTest {
                             .exitedAt(null)
                             .build());
 
-            Match match = Match.builder()
+            final Match match = Match.builder()
                     .matchId(matchId)
                     .maxRound(10)
                     .matchPlayers(matchPlayers)

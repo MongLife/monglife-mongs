@@ -46,19 +46,15 @@ class MongEventServiceTest {
     @DisplayName("몽 생성 이벤트 발생 단위 테스트")
     class CreateMongEventPort{
 
-        private final CreateMongConsumer createMongConsumer;
-
         @Autowired
-        public CreateMongEventPort(CreateMongConsumer createMongConsumer) {
-            this.createMongConsumer = createMongConsumer;
-        }
+        private CreateMongConsumer createMongConsumer;
 
         @Test
         @DisplayName("몽 생성 이벤트를 발생 시킨다.")
         void createMongEvent() throws InterruptedException {
             // arrange
-            long accountId = 1L;
-            String mongCode = "MONG_TYPE_CODE";
+            final long accountId = 1L;
+            final String mongCode = "MONG_TYPE_CODE";
 
             CreateMongEventDto createMongEventDto = new CreateMongEventDto();
             CountDownLatch countDownLatch = new CountDownLatch(1);
@@ -80,19 +76,15 @@ class MongEventServiceTest {
     @DisplayName("몽 진화 이벤트 발생 단위 테스트")
     class EvolutionMongEventPort{
 
-        private final EvolutionMongConsumer evolutionMongConsumer;
-
         @Autowired
-        public EvolutionMongEventPort(EvolutionMongConsumer evolutionMongConsumer) {
-            this.evolutionMongConsumer = evolutionMongConsumer;
-        }
+        private EvolutionMongConsumer evolutionMongConsumer;
 
         @Test
         @DisplayName("몽 진화 이벤트를 발생 시킨다.")
         void evolutionMongEvent() throws InterruptedException {
             // arrange
-            long accountId = 1L;
-            String mongCode = "MONG_TYPE_CODE";
+            final long accountId = 1L;
+            final String mongCode = "MONG_TYPE_CODE";
 
             EvolutionMongEventDto evolutionMongEventDto = new EvolutionMongEventDto();
             CountDownLatch countDownLatch = new CountDownLatch(1);
@@ -114,19 +106,15 @@ class MongEventServiceTest {
     @DisplayName("컬렉션 맵 랜덤 뽑기 이벤트 발생 단위 테스트")
     class RandomDrawMapEventPort{
 
-        private final RandomDrawMapConsumer randomDrawMapConsumer;
-
         @Autowired
-        public RandomDrawMapEventPort(RandomDrawMapConsumer randomDrawMapConsumer) {
-            this.randomDrawMapConsumer = randomDrawMapConsumer;
-        }
+        private RandomDrawMapConsumer randomDrawMapConsumer;
 
         @Test
         @DisplayName("컬렉션 몽 랜덤 뽑기 이벤트를 발생 시킨다.")
         void randomDrawMapEvent() throws InterruptedException {
             // arrange
-            long accountId = 1L;
-            String mapCode = "MAP_TYPE_CODE";
+            final long accountId = 1L;
+            final String mapCode = "MAP_TYPE_CODE";
 
             RandomDrawMapEventDto randomDrawMapEventDto = new RandomDrawMapEventDto();
             CountDownLatch countDownLatch = new CountDownLatch(1);

@@ -42,21 +42,17 @@ class MemberEventServiceTest {
     @DisplayName("스타 포인트 환전 분산 트랜잭션 이벤트 발생 단위 테스트")
     class ExchangeStarPointEventPort {
 
-        private final ExchangeStarPointConsumer exchangeStarPointConsumer;
-
         @Autowired
-        public ExchangeStarPointEventPort(ExchangeStarPointConsumer exchangeStarPointConsumer) {
-            this.exchangeStarPointConsumer = exchangeStarPointConsumer;
-        }
+        private ExchangeStarPointConsumer exchangeStarPointConsumer;
 
         @Test
         @DisplayName("환전할 스타 포인트, 환전할 페이 포인트 정보를 담아 스타 포인트 환전 이벤트를 발생 한다.")
         void exchangeStarPointEvent() throws InterruptedException {
             // arrange
-            long accountId = 1L;
-            long mongId = 1L;
-            int starPoint = 10;
-            int payPoint = 100;
+            final long accountId = 1L;
+            final long mongId = 1L;
+            final int starPoint = 10;
+            final int payPoint = 100;
 
             ExchangeStarPointEventDto exchangeStarPointEventDto = new ExchangeStarPointEventDto();
             CountDownLatch countDownLatch = new CountDownLatch(1);

@@ -40,17 +40,12 @@ class DevicePublishServiceTest {
         this.devicePublishPort = devicePublishPort;
     }
 
-
     @Nested
     @DisplayName("보유 걸음 수 비동기 응답 단위 테스트")
     class PublishCurrentWalkingCountPort {
 
-        private final DeviceConsumer deviceConsumer;
-
         @Autowired
-        public PublishCurrentWalkingCountPort(DeviceConsumer deviceConsumer) {
-            this.deviceConsumer = deviceConsumer;
-        }
+        private DeviceConsumer deviceConsumer;
 
         private static String DEVICE_ID;
         private static final LocalDateTime DEVICE_BOOTED_AT = LocalDateTime.of(2025, 1, 1, 0, 0);
@@ -64,9 +59,9 @@ class DevicePublishServiceTest {
         @DisplayName("걸음 수 도메인 객체의 정보를 사용자의 기기로 비동기 전송 한다.")
         void publishCurrentWalkingCount() throws InterruptedException {
             // arrange
-            int walkingCount = 50;
-            int consumeWalkingCount = 100;
-            Step step = Step.builder()
+            final int walkingCount = 50;
+            final int consumeWalkingCount = 100;
+            final Step step = Step.builder()
                     .deviceId(DEVICE_ID)
                     .walkingCount(walkingCount)
                     .totalWalkingCount(100)
@@ -76,7 +71,6 @@ class DevicePublishServiceTest {
 
             DevicePublishDto devicePublishDto = new DevicePublishDto();
             CountDownLatch countDownLatch = new CountDownLatch(1);
-
             deviceConsumer.reset(DEVICE_ID, devicePublishDto, countDownLatch);
 
             // act

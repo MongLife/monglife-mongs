@@ -4,13 +4,11 @@ import com.monglife.mongs.domain.battle.model.QueuePlayer;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.ToString;
 
 import java.time.LocalDateTime;
 
 @Getter
 @NoArgsConstructor
-@ToString
 public class QueuePlayerEntity {
 
     private Long mongId;

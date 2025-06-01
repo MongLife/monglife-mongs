@@ -1,13 +1,12 @@
 package com.monglife.mongs.adapter.out.mong.schedule.entity;
 
 import com.monglife.module.common.jpa.entity.BaseTimeEntity;
-import com.monglife.mongs.adapter.out.mong.schedule.enums.TaskTypeCode;
 import com.monglife.mongs.adapter.out.mong.schedule.enums.TaskStateCode;
+import com.monglife.mongs.adapter.out.mong.schedule.enums.TaskTypeCode;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.ToString;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.Duration;
@@ -19,7 +18,6 @@ import java.time.LocalTime;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @EntityListeners({ AuditingEntityListener.class })
 @Table(name = "mongs_task")
-@ToString
 public class TaskEntity extends BaseTimeEntity {
 
     private static final Long MIN_EXPIRATION = 5L;

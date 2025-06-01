@@ -2,7 +2,6 @@ package com.monglife.mongs.adapter.out.mong.schedule.entity;
 
 import lombok.Builder;
 import lombok.Getter;
-import lombok.ToString;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
@@ -11,7 +10,6 @@ import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
 @Getter
-@ToString
 public class TaskScheduleEntity {
 
     private final Long taskId;

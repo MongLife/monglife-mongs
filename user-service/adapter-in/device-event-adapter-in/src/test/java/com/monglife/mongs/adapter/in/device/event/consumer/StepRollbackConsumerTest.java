@@ -53,11 +53,11 @@ class StepRollbackConsumerTest {
         @DisplayName("걸음 수 환전 트랜잭션이 실패하는 경우 롤백 이벤트를 소비하여 보유 걸음 수 증가 UseCase를 실행 한다.")
         void exchangeCurrentWalkingCountRollback() {
             // arrange
-            String topic = EventTopic.ROLLBACK_EXCHANGE_CURRENT_WALKING_COUNT;
-            String deviceId = "TEST-DEVICE-ID";
-            long mongId = 1L;
-            int walkingCount = 10;
-            int payPoint = 100;
+            final String topic = EventTopic.ROLLBACK_EXCHANGE_CURRENT_WALKING_COUNT;
+            final String deviceId = "TEST-DEVICE-ID";
+            final long mongId = 1L;
+            final int walkingCount = 10;
+            final int payPoint = 100;
 
             // act
             ExchangeCurrentWalkingCountRollbackEventDto exchangeCurrentWalkingCountRollbackEventDto = ExchangeCurrentWalkingCountRollbackEventDto.builder()

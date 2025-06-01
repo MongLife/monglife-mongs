@@ -2,6 +2,7 @@ package com.monglife.mongs.adapter.out.device.event.service;
 
 import com.monglife.module.common.kafka.config.KafkaAutoConfig;
 import com.monglife.mongs.adapter.out.device.event.consumer.ExchangeCurrentWalkingCountEventConsumer;
+import com.monglife.mongs.adapter.transaction.ExchangeCurrentWalkingCountEventDto;
 import com.monglife.mongs.application.device.port.out.DeviceEventPort;
 import com.monglife.mongs.application.device.port.out.dto.ExchangeCurrentWalkingCountDto;
 import org.junit.jupiter.api.DisplayName;
@@ -42,23 +43,19 @@ class DeviceEventServiceTest {
     @DisplayName("보유 걸음 수 환전 분산 트랜잭션 이벤트 발생 단위 테스트")
     class ExchangeCurrentWalkingCountEventPort {
 
-        private final ExchangeCurrentWalkingCountEventConsumer exchangeCurrentWalkingCountEventConsumer;
-
         @Autowired
-        public ExchangeCurrentWalkingCountEventPort(ExchangeCurrentWalkingCountEventConsumer exchangeCurrentWalkingCountEventConsumer) {
-            this.exchangeCurrentWalkingCountEventConsumer = exchangeCurrentWalkingCountEventConsumer;
-        }
+        private ExchangeCurrentWalkingCountEventConsumer exchangeCurrentWalkingCountEventConsumer;
 
         @Test
         @DisplayName("환전할 걸음 수, 환전할 페이 포인트 정보를 담아 걸음 수 환전 이벤트를 발생 한다.")
         void exchangeCurrentWalkingCountEvent() throws InterruptedException {
             // arrange
-            String deviceId = "TEST-DEVICE-ID";
-            long mongId = 1L;
-            int walkingCount = 10;
-            int payPoint = 100;
+            final String deviceId = "TEST-DEVICE-ID";
+            final long mongId = 1L;
+            final int walkingCount = 10;
+            final int payPoint = 100;
 
-            com.monglife.mongs.adapter.transaction.ExchangeCurrentWalkingCountEventDto exchangeCurrentWalkingCountEventDto = new com.monglife.mongs.adapter.transaction.ExchangeCurrentWalkingCountEventDto();
+            ExchangeCurrentWalkingCountEventDto exchangeCurrentWalkingCountEventDto = new ExchangeCurrentWalkingCountEventDto();
             CountDownLatch countDownLatch = new CountDownLatch(1);
             exchangeCurrentWalkingCountEventConsumer.reset(exchangeCurrentWalkingCountEventDto, countDownLatch);
 

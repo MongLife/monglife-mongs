@@ -43,45 +43,45 @@ class DevicePersistenceServiceTest {
         this.deviceRepository = deviceRepository;
     }
 
-    private static final String deviceId = "TEST-DEVICE-ID";
-    private static final int totalWalkingCount = 100;
-    private static final LocalDateTime deviceBootedDt = LocalDateTime.of(2025, 1, 1, 0, 0);
-
     @Nested
     @DisplayName("걸음 수 등록 단위 테스트")
     class CreateStepPort {
+
+        private static final String DEVICE_ID = "TEST-DEVICE-ID";
+        private static final int TOTAL_WALKING_COUNT = 100;
+        private static final LocalDateTime DEVICE_BOOTED_AT = LocalDateTime.of(2025, 1, 1, 0, 0);
 
         @Test
         @DisplayName("걸음 수를 등록하고 등록된 걸음 수 도메인 객체를 반환 한다.")
         void createStep() {
             // arrange
-            CreateStepVo createStepVo = CreateStepVo.builder()
-                    .deviceId(deviceId)
+            final CreateStepVo createStepVo = CreateStepVo.builder()
+                    .deviceId(DEVICE_ID)
                     .walkingCount(0)
-                    .totalWalkingCount(totalWalkingCount)
+                    .totalWalkingCount(TOTAL_WALKING_COUNT)
                     .consumeWalkingCount(0)
-                    .deviceBootedAt(deviceBootedDt)
+                    .deviceBootedAt(DEVICE_BOOTED_AT)
                     .build();
 
             // act
             Step step = devicePersistencePort.createStepPort(createStepVo);
 
-            Optional<DeviceEntity> deviceEntityOptional = deviceRepository.findByDeviceId(deviceId);
+            Optional<DeviceEntity> deviceEntityOptional = deviceRepository.findByDeviceId(DEVICE_ID);
 
             // assert
             assertNotNull(step);
-            assertEquals(deviceId, step.getDeviceId());
+            assertEquals(DEVICE_ID, step.getDeviceId());
             assertEquals(0, step.getWalkingCount());
-            assertEquals(totalWalkingCount, step.getTotalWalkingCount());
+            assertEquals(TOTAL_WALKING_COUNT, step.getTotalWalkingCount());
             assertEquals(0, step.getConsumeWalkingCount());
-            assertEquals(deviceBootedDt, step.getDeviceBootedAt());
+            assertEquals(DEVICE_BOOTED_AT, step.getDeviceBootedAt());
 
             assertTrue(deviceEntityOptional.isPresent());
-            assertEquals(deviceId, deviceEntityOptional.get().getDeviceId());
+            assertEquals(DEVICE_ID, deviceEntityOptional.get().getDeviceId());
             assertEquals(0, deviceEntityOptional.get().getWalkingCount());
-            assertEquals(totalWalkingCount, deviceEntityOptional.get().getTotalWalkingCount());
+            assertEquals(TOTAL_WALKING_COUNT, deviceEntityOptional.get().getTotalWalkingCount());
             assertEquals(0, deviceEntityOptional.get().getConsumeWalkingCount());
-            assertEquals(deviceBootedDt, deviceEntityOptional.get().getDeviceBootedAt());
+            assertEquals(DEVICE_BOOTED_AT, deviceEntityOptional.get().getDeviceBootedAt());
         }
     }
 
@@ -89,14 +89,18 @@ class DevicePersistenceServiceTest {
     @DisplayName("걸음 수 수정 단위 테스트")
     class SaveStepPort {
 
+        private static final String DEVICE_ID = "TEST-DEVICE-ID";
+        private static final int TOTAL_WALKING_COUNT = 100;
+        private static final LocalDateTime DEVICE_BOOTED_AT = LocalDateTime.of(2025, 1, 1, 0, 0);
+
         @BeforeEach
         void beforeEach() {
-            DeviceEntity deviceEntity = DeviceEntity.builder()
-                    .deviceId(deviceId)
+            final DeviceEntity deviceEntity = DeviceEntity.builder()
+                    .deviceId(DEVICE_ID)
                     .walkingCount(0)
                     .totalWalkingCount(0)
                     .consumeWalkingCount(0)
-                    .deviceBootedAt(deviceBootedDt)
+                    .deviceBootedAt(DEVICE_BOOTED_AT)
                     .build();
 
             deviceRepository.saveAndFlush(deviceEntity);
@@ -106,12 +110,12 @@ class DevicePersistenceServiceTest {
         @DisplayName("걸음 수를 수정하고 수정된 걸음 수 옵셔널 도메인 객체를 반환 한다.")
         void saveStep() {
             // arrange
-            Step saveStep = Step.builder()
-                    .deviceId(deviceId)
+            final Step saveStep = Step.builder()
+                    .deviceId(DEVICE_ID)
                     .walkingCount(0)
-                    .totalWalkingCount(totalWalkingCount)
+                    .totalWalkingCount(TOTAL_WALKING_COUNT)
                     .consumeWalkingCount(0)
-                    .deviceBootedAt(deviceBootedDt)
+                    .deviceBootedAt(DEVICE_BOOTED_AT)
                     .build();
 
             // act
@@ -119,26 +123,26 @@ class DevicePersistenceServiceTest {
 
             // assert
             assertTrue(stepOptional.isPresent());
-            assertEquals(deviceId, stepOptional.get().getDeviceId());
+            assertEquals(DEVICE_ID, stepOptional.get().getDeviceId());
             assertEquals(0, stepOptional.get().getWalkingCount());
-            assertEquals(totalWalkingCount, stepOptional.get().getTotalWalkingCount());
+            assertEquals(TOTAL_WALKING_COUNT, stepOptional.get().getTotalWalkingCount());
             assertEquals(0, stepOptional.get().getConsumeWalkingCount());
-            assertEquals(deviceBootedDt, stepOptional.get().getDeviceBootedAt());
+            assertEquals(DEVICE_BOOTED_AT, stepOptional.get().getDeviceBootedAt());
         }
 
         @Test
         @DisplayName("걸음 수를 수정할 때 걸음 수가 존재하지 않는 경우 빈 옵셔널 객체를 반환 한다.")
         void notExistsStepWhenSaveStep() {
             // arrange
-            Step saveStep = Step.builder()
-                    .deviceId(deviceId)
+            final Step saveStep = Step.builder()
+                    .deviceId(DEVICE_ID)
                     .walkingCount(0)
-                    .totalWalkingCount(totalWalkingCount)
+                    .totalWalkingCount(TOTAL_WALKING_COUNT)
                     .consumeWalkingCount(0)
-                    .deviceBootedAt(deviceBootedDt)
+                    .deviceBootedAt(DEVICE_BOOTED_AT)
                     .build();
 
-            deviceRepository.deleteById(deviceId);
+            deviceRepository.deleteById(DEVICE_ID);
 
             // act
             Optional<Step> stepOptional = devicePersistencePort.saveStepPort(saveStep);
@@ -152,14 +156,18 @@ class DevicePersistenceServiceTest {
     @DisplayName("걸음 수 조회 단위 테스트")
     class GetStepPort {
 
+        private static final String DEVICE_ID = "TEST-DEVICE-ID";
+        private static final int TOTAL_WALKING_COUNT = 100;
+        private static final LocalDateTime DEVICE_BOOTED_AT = LocalDateTime.of(2025, 1, 1, 0, 0);
+
         @BeforeEach
         void beforeEach() {
-            DeviceEntity deviceEntity = DeviceEntity.builder()
-                    .deviceId(deviceId)
+            final DeviceEntity deviceEntity = DeviceEntity.builder()
+                    .deviceId(DEVICE_ID)
                     .walkingCount(0)
-                    .totalWalkingCount(totalWalkingCount)
+                    .totalWalkingCount(TOTAL_WALKING_COUNT)
                     .consumeWalkingCount(0)
-                    .deviceBootedAt(deviceBootedDt)
+                    .deviceBootedAt(DEVICE_BOOTED_AT)
                     .build();
 
             deviceRepository.saveAndFlush(deviceEntity);
@@ -169,15 +177,15 @@ class DevicePersistenceServiceTest {
         @DisplayName("걸음 수를 조회하고 걸음 수 옵셔널 도메인 객체를 반환 한다.")
         void getStep() {
             // act
-            Optional<Step> stepOptional = devicePersistencePort.getStepPort(deviceId);
+            Optional<Step> stepOptional = devicePersistencePort.getStepPort(DEVICE_ID);
 
             // assert
             assertTrue(stepOptional.isPresent());
-            assertEquals(deviceId, stepOptional.get().getDeviceId());
+            assertEquals(DEVICE_ID, stepOptional.get().getDeviceId());
             assertEquals(0, stepOptional.get().getWalkingCount());
-            assertEquals(totalWalkingCount, stepOptional.get().getTotalWalkingCount());
+            assertEquals(TOTAL_WALKING_COUNT, stepOptional.get().getTotalWalkingCount());
             assertEquals(0, stepOptional.get().getConsumeWalkingCount());
-            assertEquals(deviceBootedDt, stepOptional.get().getDeviceBootedAt());
+            assertEquals(DEVICE_BOOTED_AT, stepOptional.get().getDeviceBootedAt());
         }
     }
 }

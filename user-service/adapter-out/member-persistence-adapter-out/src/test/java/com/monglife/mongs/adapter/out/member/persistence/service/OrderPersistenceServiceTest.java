@@ -14,7 +14,6 @@ import com.monglife.mongs.adapter.out.member.persistence.repository.GroupCodeRep
 import com.monglife.mongs.adapter.out.member.persistence.repository.OrderRepository;
 import com.monglife.mongs.application.member.port.out.OrderPersistencePort;
 import com.monglife.mongs.application.member.port.out.vo.CreateOrderVo;
-import com.monglife.mongs.domain.member.model.ExchangeStarPointProduct;
 import com.monglife.mongs.domain.member.model.Order;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -25,8 +24,6 @@ import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabas
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
-
-import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -41,13 +38,9 @@ import static org.junit.jupiter.api.Assertions.*;
 class OrderPersistenceServiceTest {
 
     private final OrderPersistencePort orderPersistencePort;
-
     private final GroupCodeRepository groupCodeRepository;
-
     private final ComnCodeRepository comnCodeRepository;
-
     private final OrderRepository orderRepository;
-
     private final ExchangeStarPointProductRepository exchangeStarPointProductRepository;
 
     @Autowired
@@ -79,8 +72,8 @@ class OrderPersistenceServiceTest {
         @DisplayName("주문이 존재하는 경우 true를 반환 한다.")
         void isExistOrderBySocialOrderId() {
             // arrange
-            String socialOrderId = CommonUtil.randomId();
-            String purchaseToken = CommonUtil.randomId();
+            final String socialOrderId = CommonUtil.randomId();
+            final String purchaseToken = CommonUtil.randomId();
 
             orderRepository.saveAndFlush(OrderEntity.builder()
                             .accountId(ACCOUNT_ID)
@@ -91,7 +84,7 @@ class OrderPersistenceServiceTest {
                             .build());
 
             // act
-            Boolean expected = orderPersistencePort.isExistsOrderByAccountIdAndSocialOrderIdPort(ACCOUNT_ID, socialOrderId);
+            var expected = orderPersistencePort.isExistsOrderByAccountIdAndSocialOrderIdPort(ACCOUNT_ID, socialOrderId);
 
             // assert
             assertTrue(expected);
@@ -101,10 +94,10 @@ class OrderPersistenceServiceTest {
         @DisplayName("주문이 존재하지 않는 경우 false를 반환 한다.")
         void notExistOrderBySocialOrderId() {
             // arrange
-            String socialOrderId = CommonUtil.randomId();
+            final String socialOrderId = CommonUtil.randomId();
 
             // act
-            Boolean expected = orderPersistencePort.isExistsOrderByAccountIdAndSocialOrderIdPort(ACCOUNT_ID, socialOrderId);
+            var expected = orderPersistencePort.isExistsOrderByAccountIdAndSocialOrderIdPort(ACCOUNT_ID, socialOrderId);
 
             // assert
             assertFalse(expected);
@@ -119,7 +112,7 @@ class OrderPersistenceServiceTest {
         @DisplayName("스타 포인트 환전 상품을 조회 한다.")
         void getExchangeStarPointProduct() {
             // arrange
-            int starPoint = 100;
+            final int starPoint = 100;
 
             exchangeStarPointProductRepository.saveAndFlush(ExchangeStarPointProductEntity.builder()
                     .productId(PRODUCT_ID)
@@ -128,22 +121,22 @@ class OrderPersistenceServiceTest {
                     .build());
 
             // act
-            Optional<ExchangeStarPointProduct> exchangeStarPointProductOptional = orderPersistencePort.getExchangeStarPointProductPort(PRODUCT_ID);
+            var expected = orderPersistencePort.getExchangeStarPointProductPort(PRODUCT_ID);
 
             // assert
-            assertTrue(exchangeStarPointProductOptional.isPresent());
-            assertEquals(PRODUCT_ID, exchangeStarPointProductOptional.get().getProductId());
-            assertEquals(starPoint, exchangeStarPointProductOptional.get().getStarPoint());
+            assertTrue(expected.isPresent());
+            assertEquals(PRODUCT_ID, expected.get().getProductId());
+            assertEquals(starPoint, expected.get().getStarPoint());
         }
 
         @Test
         @DisplayName("스타 포인트 환전 상품이 없는 경우 빈 옵셔널 객체를 반환 한다.")
         void getExchangeStarPointProductWhenNotExistProduct() {
             // act
-            Optional<ExchangeStarPointProduct> exchangeStarPointProductOptional = orderPersistencePort.getExchangeStarPointProductPort(PRODUCT_ID);
+            var expected = orderPersistencePort.getExchangeStarPointProductPort(PRODUCT_ID);
 
             // assert
-            assertTrue(exchangeStarPointProductOptional.isEmpty());
+            assertTrue(expected.isEmpty());
         }
     }
 
@@ -155,10 +148,10 @@ class OrderPersistenceServiceTest {
         @DisplayName("주문을 등록 한다.")
         void createOrder() {
             // arrange
-            double price = 1000D;
-            String socialOrderId = CommonUtil.randomId();
-            String purchaseToken = CommonUtil.randomId();
-            CreateOrderVo createOrderVo = CreateOrderVo.builder()
+            final double price = 1000D;
+            final String socialOrderId = CommonUtil.randomId();
+            final String purchaseToken = CommonUtil.randomId();
+            final CreateOrderVo createOrderVo = CreateOrderVo.builder()
                     .accountId(ACCOUNT_ID)
                     .productId(PRODUCT_ID)
                     .price(price)
@@ -167,26 +160,26 @@ class OrderPersistenceServiceTest {
                     .build();
 
             // act
-            Optional<Order> orderOptional = orderPersistencePort.createOrderPort(createOrderVo);
+            var expected = orderPersistencePort.createOrderPort(createOrderVo);
 
             // assert
-            assertTrue(orderOptional.isPresent());
-            assertEquals(ACCOUNT_ID, orderOptional.get().getAccountId());
-            assertEquals(PRODUCT_ID, orderOptional.get().getProductId());
-            assertEquals(price, orderOptional.get().getPrice());
-            assertEquals(socialOrderId, orderOptional.get().getSocialOrderId());
-            assertEquals(purchaseToken, orderOptional.get().getPurchaseToken());
+            assertTrue(expected.isPresent());
+            assertEquals(ACCOUNT_ID, expected.get().getAccountId());
+            assertEquals(PRODUCT_ID, expected.get().getProductId());
+            assertEquals(price, expected.get().getPrice());
+            assertEquals(socialOrderId, expected.get().getSocialOrderId());
+            assertEquals(purchaseToken, expected.get().getPurchaseToken());
         }
 
         @Test
         @DisplayName("상품 공통 코드가 존재하지 않는 경우 빈 옵셔널 객체를 반환 한다.")
         void createOrderWhenNotExistProduct() {
             // arrange
-            String productId = "PRDT999";
-            double price = 1000D;
-            String socialOrderId = CommonUtil.randomId();
-            String purchaseToken = CommonUtil.randomId();
-            CreateOrderVo createOrderVo = CreateOrderVo.builder()
+            final String productId = "PRDT999";
+            final double price = 1000D;
+            final String socialOrderId = CommonUtil.randomId();
+            final String purchaseToken = CommonUtil.randomId();
+            final CreateOrderVo createOrderVo = CreateOrderVo.builder()
                     .accountId(ACCOUNT_ID)
                     .productId(productId)
                     .price(price)
@@ -195,10 +188,10 @@ class OrderPersistenceServiceTest {
                     .build();
 
             // act
-            Optional<Order> orderOptional = orderPersistencePort.createOrderPort(createOrderVo);
+            var expected = orderPersistencePort.createOrderPort(createOrderVo);
 
             // assert
-            assertTrue(orderOptional.isEmpty());
+            assertTrue(expected.isEmpty());
         }
     }
 
@@ -210,11 +203,10 @@ class OrderPersistenceServiceTest {
         @DisplayName("주문을 수정 한다.")
         void saveOrder() {
             // arrange
-            double price = 1000D;
-            String socialOrderId = CommonUtil.randomId();
-            String purchaseToken = CommonUtil.randomId();
-
-            long orderId = orderRepository.saveAndFlush(OrderEntity.builder()
+            final double price = 1000D;
+            final String socialOrderId = CommonUtil.randomId();
+            final String purchaseToken = CommonUtil.randomId();
+            final long orderId = orderRepository.saveAndFlush(OrderEntity.builder()
                     .accountId(ACCOUNT_ID)
                     .productType(PRODUCT_TYPE)
                     .price(0D)
@@ -222,8 +214,7 @@ class OrderPersistenceServiceTest {
                     .purchaseToken(purchaseToken)
                     .build())
                     .getOrderId();
-
-            Order order = Order.builder()
+            final Order order = Order.builder()
                     .orderId(orderId)
                     .accountId(ACCOUNT_ID)
                     .productId(PRODUCT_ID)
@@ -233,28 +224,27 @@ class OrderPersistenceServiceTest {
                     .build();
 
             // act
-            Optional<Order> orderOptional = orderPersistencePort.saveOrderPort(order);
+            var expected = orderPersistencePort.saveOrderPort(order);
 
             // assert
-            assertTrue(orderOptional.isPresent());
-            assertEquals(orderId, orderOptional.get().getOrderId());
-            assertEquals(ACCOUNT_ID, orderOptional.get().getAccountId());
-            assertEquals(PRODUCT_ID, orderOptional.get().getProductId());
-            assertEquals(price, orderOptional.get().getPrice());
-            assertEquals(socialOrderId, orderOptional.get().getSocialOrderId());
-            assertEquals(purchaseToken, orderOptional.get().getPurchaseToken());
+            assertTrue(expected.isPresent());
+            assertEquals(orderId, expected.get().getOrderId());
+            assertEquals(ACCOUNT_ID, expected.get().getAccountId());
+            assertEquals(PRODUCT_ID, expected.get().getProductId());
+            assertEquals(price, expected.get().getPrice());
+            assertEquals(socialOrderId, expected.get().getSocialOrderId());
+            assertEquals(purchaseToken, expected.get().getPurchaseToken());
         }
 
         @Test
         @DisplayName("주문이 존재하지 않는 경우 빈 옵셔널 객체를 반환 한다.")
         void saveOrderWhenNotExistsOrder() {
             // arrange
-            long orderId = 1L;
-            double price = 1000D;
-            String socialOrderId = CommonUtil.randomId();
-            String purchaseToken = CommonUtil.randomId();
-
-            Order order = Order.builder()
+            final long orderId = 1L;
+            final double price = 1000D;
+            final String socialOrderId = CommonUtil.randomId();
+            final String purchaseToken = CommonUtil.randomId();
+            final Order order = Order.builder()
                     .orderId(orderId)
                     .accountId(ACCOUNT_ID)
                     .productId(PRODUCT_ID)
@@ -264,10 +254,10 @@ class OrderPersistenceServiceTest {
                     .build();
 
             // act
-            Optional<Order> orderOptional = orderPersistencePort.saveOrderPort(order);
+            var expected = orderPersistencePort.saveOrderPort(order);
 
             // assert
-            assertTrue(orderOptional.isEmpty());
+            assertTrue(expected.isEmpty());
         }
     }
 
@@ -279,11 +269,10 @@ class OrderPersistenceServiceTest {
         @DisplayName("인앱 주문 ID 기준으로 주문을 조회 한다.")
         void getOrderBySocialOrderId() {
             // arrange
-            double price = 1000D;
-            String socialOrderId = CommonUtil.randomId();
-            String purchaseToken = CommonUtil.randomId();
-
-            long orderId = orderRepository.saveAndFlush(OrderEntity.builder()
+            final double price = 1000D;
+            final String socialOrderId = CommonUtil.randomId();
+            final String purchaseToken = CommonUtil.randomId();
+            final long orderId = orderRepository.saveAndFlush(OrderEntity.builder()
                     .accountId(ACCOUNT_ID)
                     .productType(PRODUCT_TYPE)
                     .price(price)
@@ -293,29 +282,29 @@ class OrderPersistenceServiceTest {
                     .getOrderId();
 
             // act
-            Optional<Order> orderOptional = orderPersistencePort.getOrderBySocialOrderIdPort(socialOrderId);
+            var expected = orderPersistencePort.getOrderBySocialOrderIdPort(socialOrderId);
 
             // assert
-            assertTrue(orderOptional.isPresent());
-            assertEquals(orderId, orderOptional.get().getOrderId());
-            assertEquals(ACCOUNT_ID, orderOptional.get().getAccountId());
-            assertEquals(PRODUCT_ID, orderOptional.get().getProductId());
-            assertEquals(price, orderOptional.get().getPrice());
-            assertEquals(socialOrderId, orderOptional.get().getSocialOrderId());
-            assertEquals(purchaseToken, orderOptional.get().getPurchaseToken());
+            assertTrue(expected.isPresent());
+            assertEquals(orderId, expected.get().getOrderId());
+            assertEquals(ACCOUNT_ID, expected.get().getAccountId());
+            assertEquals(PRODUCT_ID, expected.get().getProductId());
+            assertEquals(price, expected.get().getPrice());
+            assertEquals(socialOrderId, expected.get().getSocialOrderId());
+            assertEquals(purchaseToken, expected.get().getPurchaseToken());
         }
 
         @Test
         @DisplayName("주문 내역이 없는 경우 빈 옵셔널 객체를 반환 한다.")
         void getOrderBySocialOrderIdWhenNotExistsOrder() {
             // arrange
-            String socialOrderId = CommonUtil.randomId();
+            final String socialOrderId = CommonUtil.randomId();
 
             // act
-            Optional<Order> orderOptional = orderPersistencePort.getOrderBySocialOrderIdPort(socialOrderId);
+            var expected = orderPersistencePort.getOrderBySocialOrderIdPort(socialOrderId);
 
             // assert
-            assertTrue(orderOptional.isEmpty());
+            assertTrue(expected.isEmpty());
         }
     }
 }

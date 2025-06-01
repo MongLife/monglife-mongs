@@ -51,9 +51,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class MatchPersistenceServiceTest {
 
     private final MatchPersistencePort matchPersistencePort;
-
     private final MatchRepository matchRepository;
-
     private final QueuePlayerRepository queuePlayerRepository;
 
     @Autowired
@@ -80,7 +78,7 @@ class MatchPersistenceServiceTest {
         @DisplayName("매치 대기열을 조회 한다.")
         void getQueuePlayer() {
             // arrange
-            QueuePlayerEntity queuePlayerEntity = QueuePlayerEntity.builder()
+            final QueuePlayerEntity queuePlayerEntity = QueuePlayerEntity.builder()
                     .mongId(MONG_ID)
                     .deviceId(DEVICE_ID)
                     .accountId(ACCOUNT_ID)
@@ -99,12 +97,11 @@ class MatchPersistenceServiceTest {
             assertEquals(ACCOUNT_ID, expected.get().getAccountId());
         }
 
-
         @Test
         @DisplayName("매치 대기열이 비어 있는 경우 빈 옵셔널 객체를 반환 한다.")
         void getQueuePlayerWhenNotExists() {
             // arrange
-            QueuePlayerEntity queuePlayerEntity = QueuePlayerEntity.builder()
+            final QueuePlayerEntity queuePlayerEntity = QueuePlayerEntity.builder()
                     .mongId(0L)
                     .deviceId(CommonUtil.randomId())
                     .accountId(0L)
@@ -134,11 +131,11 @@ class MatchPersistenceServiceTest {
         @DisplayName("매치 대기열 목록을 조회 한다.")
         void getQueuePlayers() {
             // arrange
-            long queuePlayerCount = 10;
-            int matchPlayerCount = 2;
-            long expiredSeconds = 5L;
-            LocalDateTime now = LocalDateTime.now();
-            List<QueuePlayerEntity> queuePlayerEntities = new ArrayList<>();
+            final long queuePlayerCount = 10;
+            final int matchPlayerCount = 2;
+            final long expiredSeconds = 5L;
+            final LocalDateTime now = LocalDateTime.now();
+            final List<QueuePlayerEntity> queuePlayerEntities = new ArrayList<>();
 
             for (long index = 0; index < queuePlayerCount; index++) {
                 queuePlayerEntities.add(queuePlayerRepository.save(QueuePlayerEntity.builder()
@@ -164,14 +161,14 @@ class MatchPersistenceServiceTest {
         @DisplayName("대기 시간이 지난 플레이어는 한명이라도 목록에 포함 시킨다.")
         void getQueuePlayersWhenIsAfterExpiredSeconds() {
             // arrange
-            long mongId = 1L;
-            String deviceId = CommonUtil.randomId();
-            long accountId = 1L;
-            int matchPlayerCount = 2;
-            long expiredSeconds = 5L;
-            LocalDateTime now = LocalDateTime.now();
+            final long mongId = 1L;
+            final String deviceId = CommonUtil.randomId();
+            final long accountId = 1L;
+            final int matchPlayerCount = 2;
+            final long expiredSeconds = 5L;
+            final LocalDateTime now = LocalDateTime.now();
 
-            QueuePlayerEntity queuePlayerEntity = QueuePlayerEntity.builder()
+            final QueuePlayerEntity queuePlayerEntity = QueuePlayerEntity.builder()
                     .mongId(mongId)
                     .deviceId(deviceId)
                     .accountId(accountId)
@@ -204,9 +201,9 @@ class MatchPersistenceServiceTest {
         @DisplayName("매치 대기열을 등록 한다.")
         void createQueuePlayer() {
             // arrange
-            long mongId = 1L;
-            String deviceId = CommonUtil.randomId();
-            long accountId = 1L;
+            final long mongId = 1L;
+            final String deviceId = CommonUtil.randomId();
+            final long accountId = 1L;
 
             // act
             CreateQueuePlayerVo createQueuePlayerVo = CreateQueuePlayerVo.builder()
@@ -238,11 +235,11 @@ class MatchPersistenceServiceTest {
         @DisplayName("매치 대기열을 삭제 한다.")
         void deleteQueuePlayer() {
             // arrange
-            long mongId = 1L;
-            String deviceId = CommonUtil.randomId();
-            long accountId = 1L;
-            LocalDateTime now = LocalDateTime.now();
-            QueuePlayer queuePlayer = QueuePlayer.builder()
+            final long mongId = 1L;
+            final String deviceId = CommonUtil.randomId();
+            final long accountId = 1L;
+            final LocalDateTime now = LocalDateTime.now();
+            final QueuePlayer queuePlayer = QueuePlayer.builder()
                     .mongId(mongId)
                     .deviceId(deviceId)
                     .accountId(accountId)
@@ -280,11 +277,11 @@ class MatchPersistenceServiceTest {
         @DisplayName("삭제할 대기열이 없는 경우 빈 옵셔널 객체를 반환 한다.")
         void deleteQueuePlayerWhenNotExists() {
             // arrange
-            long mongId = 1L;
-            String deviceId = CommonUtil.randomId();
-            long accountId = 1L;
-            LocalDateTime now = LocalDateTime.now();
-            QueuePlayer queuePlayer = QueuePlayer.builder()
+            final long mongId = 1L;
+            final String deviceId = CommonUtil.randomId();
+            final long accountId = 1L;
+            final LocalDateTime now = LocalDateTime.now();
+            final QueuePlayer queuePlayer = QueuePlayer.builder()
                     .mongId(mongId)
                     .deviceId(deviceId)
                     .accountId(accountId)
@@ -317,7 +314,7 @@ class MatchPersistenceServiceTest {
         @DisplayName("매치 정보를 조회 한다.")
         void getMatch() {
             // arrange
-            List<MatchPlayerEntity> matchPlayerEntities = List.of(
+            final List<MatchPlayerEntity> matchPlayerEntities = List.of(
                     MatchPlayerEntity.builder()
                             .playerId(CommonUtil.randomId())
                             .deviceId(CommonUtil.randomId())
@@ -351,7 +348,7 @@ class MatchPersistenceServiceTest {
                             .enteredAt(LocalDateTime.now())
                             .build());
 
-            MatchEntity matchEntity = MatchEntity.builder()
+            final MatchEntity matchEntity = MatchEntity.builder()
                     .maxRound(10)
                     .matchPlayers(matchPlayerEntities)
                     .matchPicks(Collections.emptyList())
@@ -359,7 +356,7 @@ class MatchPersistenceServiceTest {
                     .stateCode(MatchStateCode.PROCESS)
                     .build();
 
-            long matchId = matchRepository.save(matchEntity).getMatchId();
+            final long matchId = matchRepository.save(matchEntity).getMatchId();
 
             // act
             var expected1 = matchPersistencePort.getMatchPort(matchId);
@@ -400,7 +397,7 @@ class MatchPersistenceServiceTest {
         @DisplayName("매치 정보를 등록 한다.")
         void createMatch() {
             // arrange
-            List<MatchPlayer> matchPlayers = List.of(
+            final List<MatchPlayer> matchPlayers = List.of(
                     MatchPlayer.builder()
                             .playerId(CommonUtil.randomId())
                             .deviceId(CommonUtil.randomId())
@@ -434,7 +431,7 @@ class MatchPersistenceServiceTest {
                             .enteredAt(LocalDateTime.now())
                             .build());
 
-            CreateMatchVo createMatchVo = CreateMatchVo.builder()
+            final CreateMatchVo createMatchVo = CreateMatchVo.builder()
                     .matchPlayers(matchPlayers)
                     .build();
 
@@ -475,11 +472,11 @@ class MatchPersistenceServiceTest {
         @DisplayName("매치 정보를 동기화 한다.")
         void saveMatch() {
             // arrange
-            String playerId1 = CommonUtil.randomId();
-            double attack1 = 100D;
-            String playerId2 = CommonUtil.randomId();
-            double attack2 = 100D;
-            List<MatchPlayerEntity> matchPlayerEntities = new ArrayList<>(List.of(
+            final String playerId1 = CommonUtil.randomId();
+            final double attack1 = 100D;
+            final String playerId2 = CommonUtil.randomId();
+            final double attack2 = 100D;
+            final List<MatchPlayerEntity> matchPlayerEntities = new ArrayList<>(List.of(
                     MatchPlayerEntity.builder()
                             .playerId(playerId1)
                             .deviceId(CommonUtil.randomId())
@@ -513,7 +510,7 @@ class MatchPersistenceServiceTest {
                             .enteredAt(LocalDateTime.now())
                             .build()));
 
-            List<MatchPickEntity> matchPickEntities = new ArrayList<>(List.of(
+            final List<MatchPickEntity> matchPickEntities = new ArrayList<>(List.of(
                     MatchPickEntity.builder()
                             .playerId(playerId2)
                             .targetPlayerId(playerId1)
@@ -522,7 +519,7 @@ class MatchPersistenceServiceTest {
                             .pickValue(attack2)
                             .build()));
 
-            MatchEntity matchEntity = matchRepository.saveAndFlush(MatchEntity.builder()
+            final MatchEntity matchEntity = matchRepository.saveAndFlush(MatchEntity.builder()
                     .maxRound(10)
                     .matchPlayers(matchPlayerEntities)
                     .matchPicks(matchPickEntities)
@@ -530,7 +527,7 @@ class MatchPersistenceServiceTest {
                     .stateCode(MatchStateCode.PROCESS)
                     .build());
 
-            Match saveMatch = matchEntity.toDomain();
+            final Match saveMatch = matchEntity.toDomain();
 
             saveMatch.pickMatchPlayer(MatchPick.builder()
                     .matchPlayer(saveMatch.getMatchPlayer(playerId1))

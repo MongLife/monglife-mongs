@@ -41,9 +41,9 @@ class GooglePaymentServiceTest {
         @DisplayName("구글 플레이 API 를 호출하여 결제 완료된 인앱 상품 주문을 조회 한다.")
         void getInAppOrderIsPayed() {
             // arrange
-            String productId = "PRDT000";
-            String socialOrderId = "GPA.3322-2924-7092-01384";
-            String purchaseToken = "eachhdplenbklhmcopnonind.AO-J1OzX2OwMIxVIjggklKnb69c-nUFkeS_lIVrcrqLXt9ZY2a9kSTF9jdGjtgnIBnGGU3SLs30gPqwW_J-xrxqucseX7zbdGQ";
+            final String productId = "PRDT000";
+            final String socialOrderId = "GPA.3322-2924-7092-01384";
+            final String purchaseToken = "eachhdplenbklhmcopnonind.AO-J1OzX2OwMIxVIjggklKnb69c-nUFkeS_lIVrcrqLXt9ZY2a9kSTF9jdGjtgnIBnGGU3SLs30gPqwW_J-xrxqucseX7zbdGQ";
 
             // act
             Optional<InAppOrder> inAppOrderOptional = googlePaymentPort.getInAppOrderPort(productId, socialOrderId, purchaseToken);
@@ -62,9 +62,9 @@ class GooglePaymentServiceTest {
         @DisplayName("구글 플레이 API 를 호출하여 결제 취소된 인앱 상품 주문을 조회 한다.")
         void getInAppOrderIsCanceled() {
             // arrange
-            String productId = "PRDT001";
-            String socialOrderId = "GPA.3329-2982-1082-96496";
-            String purchaseToken = "hbchocjcfbnfbgmajpkhjgpp.AO-J1Oyp19UoLVtJ9lunRGMVIdgMMVhR2z_NSUYwlNiYdBszRyCnQ0PyzgqzlcFArrIEHvaiyJ8Qvoi8MuTSaw40YT6xCio3Cg";
+            final String productId = "PRDT001";
+            final String socialOrderId = "GPA.3329-2982-1082-96496";
+            final String purchaseToken = "hbchocjcfbnfbgmajpkhjgpp.AO-J1Oyp19UoLVtJ9lunRGMVIdgMMVhR2z_NSUYwlNiYdBszRyCnQ0PyzgqzlcFArrIEHvaiyJ8Qvoi8MuTSaw40YT6xCio3Cg";
 
             // act
             Optional<InAppOrder> inAppOrderOptional = googlePaymentPort.getInAppOrderPort(productId, socialOrderId, purchaseToken);
@@ -83,9 +83,9 @@ class GooglePaymentServiceTest {
         @DisplayName("인앱 상품 주문이 없는 경우 빈 옵셔널 객체를 반환 한다.")
         void notExistsInAppOrder() {
             // arrange
-            String productId = "PRDT002";
-            String socialOrderId = "GPA.0000-0000-0000-00000";
-            String purchaseToken = "-";
+            final String productId = "PRDT002";
+            final String socialOrderId = "GPA.0000-0000-0000-00000";
+            final String purchaseToken = "-";
 
             // act
             Optional<InAppOrder> inAppOrderOptional = googlePaymentPort.getInAppOrderPort(productId, socialOrderId, purchaseToken);
@@ -103,7 +103,7 @@ class GooglePaymentServiceTest {
         @DisplayName("구글 플레이 API 를 호출하여 인앱 상품을 조회 한다.")
         void getInAppProduct() {
             // arrange
-            String productId = "PRDT000";
+            final String productId = "PRDT000";
 
             // act
             Optional<InAppProduct> inAppProductOptional = googlePaymentPort.getInAppProductPort(productId);
@@ -122,7 +122,7 @@ class GooglePaymentServiceTest {
         @DisplayName("구글 플레이 API 를 호출하여 인앱 상품 목록을 조회 한다.")
         void getInAppProducts() {
             // act
-            List<InAppProduct> inAppProducts = googlePaymentPort.getInAppProductsPort();
+            final List<InAppProduct> inAppProducts = googlePaymentPort.getInAppProductsPort();
 
             // assert
             assertFalse(inAppProducts.isEmpty());

@@ -16,7 +16,6 @@ public class QueuePlayerRepositoryImpl implements QueuePlayerRepository {
 
     private final RedisTemplate<String, QueuePlayerEntity> redisTemplate;
 
-
     public QueuePlayerRepositoryImpl(@Qualifier("battleRedisTemplate") RedisTemplate<String, QueuePlayerEntity> redisTemplate) {
         this.redisTemplate = redisTemplate;
     }

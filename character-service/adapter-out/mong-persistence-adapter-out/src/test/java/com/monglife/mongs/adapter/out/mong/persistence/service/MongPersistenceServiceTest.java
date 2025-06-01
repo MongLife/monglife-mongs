@@ -48,19 +48,12 @@ import static org.junit.jupiter.api.Assertions.*;
 class MongPersistenceServiceTest {
 
     private final MongPersistencePort mongPersistencePort;
-
     private final GroupCodeRepository groupCodeRepository;
-
     private final ComnCodeRepository comnCodeRepository;
-
     private final MongStrokeHistoryRepository mongStrokeHistoryRepository;
-
     private final MongTypeRepository mongTypeRepository;
-
     private final MongRepository mongRepository;
-
     private final FoodRepository foodRepository;
-
     private final InventoryRepository inventoryRepository;
 
     @Autowired
@@ -92,8 +85,8 @@ class MongPersistenceServiceTest {
         @DisplayName("몽 쓰다 듬기 이력을 등록 한다.")
         void createMongStrokeHistory() {
             // arrange
-            long mongId = 1L;
-            long expirationSeconds = 5L;
+            final long mongId = 1L;
+            final long expirationSeconds = 5L;
 
             // act
             var expected1 = mongPersistencePort.createMongStrokeHistoryPort(mongId, expirationSeconds);
@@ -108,8 +101,8 @@ class MongPersistenceServiceTest {
         @DisplayName("몽 쓰다 듬기 이력을 등록 후 3초 뒤 사라진다.")
         void createMongStrokeHistoryDeleteAfterFewSeconds() {
             // arrange
-            long mongId = 1L;
-            long expirationSeconds = 3L;
+            final long mongId = 1L;
+            final long expirationSeconds = 3L;
 
             // act
             var expected = mongPersistencePort.createMongStrokeHistoryPort(mongId, expirationSeconds);
@@ -155,7 +148,7 @@ class MongPersistenceServiceTest {
             comnCodeRepository.saveAndFlush(COMN_CODE_ENTITY);
             mongTypeRepository.saveAndFlush(MONG_TYPE_ENTITY);
 
-            CreateMongVo createMongVo = CreateMongVo.builder()
+            final CreateMongVo createMongVo = CreateMongVo.builder()
                     .accountId(ACCOUNT_ID)
                     .name(NAME)
                     .statusCode(MongStatusCode.NORMAL)
@@ -240,7 +233,7 @@ class MongPersistenceServiceTest {
         @DisplayName("몽을 등록할 때, 몽 타입 코드가 존재하지 않는 경우 빈 옵셔널 객체를 반환 한다.")
         void createMongWhenNotExistsMongCode() {
             // arrange
-            CreateMongVo createMongVo = CreateMongVo.builder()
+            final CreateMongVo createMongVo = CreateMongVo.builder()
                     .accountId(ACCOUNT_ID)
                     .name(NAME)
                     .statusCode(MongStatusCode.NORMAL)
@@ -292,7 +285,7 @@ class MongPersistenceServiceTest {
             comnCodeRepository.saveAndFlush(COMN_CODE_ENTITY);
             mongTypeRepository.saveAndFlush(MONG_TYPE_ENTITY);
 
-            MongEntity mongEntity = mongRepository.save(MongEntity.builder()
+            final MongEntity mongEntity = mongRepository.save(MongEntity.builder()
                     .accountId(ACCOUNT_ID)
                     .name(NAME)
                     .sleepAt(SLEEP_AT)
@@ -360,7 +353,7 @@ class MongPersistenceServiceTest {
             comnCodeRepository.saveAndFlush(COMN_CODE_ENTITY);
             mongTypeRepository.saveAndFlush(MONG_TYPE_ENTITY);
 
-            MongEntity mongEntity = mongRepository.save(MongEntity.builder()
+            final MongEntity mongEntity = mongRepository.save(MongEntity.builder()
                     .accountId(ACCOUNT_ID)
                     .name(NAME)
                     .sleepAt(SLEEP_AT)
@@ -385,7 +378,7 @@ class MongPersistenceServiceTest {
                     .randomDrawTicketCount(0)
                     .build());
 
-            Mong mong = MongEntity.builder()
+            final Mong mong = MongEntity.builder()
                     .mongId(mongEntity.getMongId())
                     .accountId(ACCOUNT_ID)
                     .name(NAME)
@@ -442,7 +435,7 @@ class MongPersistenceServiceTest {
             comnCodeRepository.saveAndFlush(COMN_CODE_ENTITY);
             mongTypeRepository.saveAndFlush(MONG_TYPE_ENTITY);
 
-            MongEntity mongEntity = mongRepository.save(MongEntity.builder()
+            final MongEntity mongEntity = mongRepository.save(MongEntity.builder()
                     .accountId(ACCOUNT_ID)
                     .name(NAME)
                     .sleepAt(SLEEP_AT)
@@ -467,7 +460,7 @@ class MongPersistenceServiceTest {
                     .randomDrawTicketCount(0)
                     .build());
 
-            Mong mong = MongEntity.builder()
+            final Mong mong = MongEntity.builder()
                     .mongId(mongEntity.getMongId())
                     .accountId(ACCOUNT_ID)
                     .name(NAME)
@@ -520,7 +513,7 @@ class MongPersistenceServiceTest {
             groupCodeRepository.saveAndFlush(GROUP_CODE_ENTITY);
             comnCodeRepository.saveAndFlush(COMN_CODE_ENTITY);
 
-            CreateInventoryVo createInventoryVo = CreateInventoryVo.builder()
+            final CreateInventoryVo createInventoryVo = CreateInventoryVo.builder()
                     .mongId(MONG_ID)
                     .inventoryCode(COMN_CODE_ENTITY.getCode())
                     .inventoryTypeCode(InventoryTypeCode.FOOD)
@@ -554,7 +547,7 @@ class MongPersistenceServiceTest {
             comnCodeRepository.saveAndFlush(COMN_CODE_ENTITY);
             foodRepository.saveAndFlush(FOOD_TYPE_ENTITY);
 
-            InventoryEntity inventoryEntity = inventoryRepository.saveAndFlush(InventoryEntity.builder()
+            final InventoryEntity inventoryEntity = inventoryRepository.saveAndFlush(InventoryEntity.builder()
                     .mongId(MONG_ID)
                     .comn(COMN_CODE_ENTITY)
                     .inventoryTypeCode(InventoryTypeCode.FOOD)
@@ -587,7 +580,7 @@ class MongPersistenceServiceTest {
             comnCodeRepository.saveAndFlush(COMN_CODE_ENTITY);
             foodRepository.saveAndFlush(FOOD_TYPE_ENTITY);
 
-            InventoryEntity inventoryEntity = inventoryRepository.saveAndFlush(InventoryEntity.builder()
+            final InventoryEntity inventoryEntity = inventoryRepository.saveAndFlush(InventoryEntity.builder()
                     .mongId(MONG_ID)
                     .comn(COMN_CODE_ENTITY)
                     .inventoryTypeCode(InventoryTypeCode.FOOD)

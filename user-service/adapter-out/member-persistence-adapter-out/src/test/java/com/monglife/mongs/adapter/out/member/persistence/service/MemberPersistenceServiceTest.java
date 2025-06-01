@@ -17,8 +17,6 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 
-import java.util.Optional;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 @DataJpaTest
@@ -32,7 +30,6 @@ import static org.junit.jupiter.api.Assertions.*;
 class MemberPersistenceServiceTest {
 
     private final MemberPersistencePort memberPersistencePort;
-
     private final MemberRepository memberRepository;
 
     @Autowired
@@ -41,41 +38,41 @@ class MemberPersistenceServiceTest {
         this.memberRepository = memberRepository;
     }
 
-    private static final Long ACCOUNT_ID = 1L;
-
     @Nested
     @DisplayName("플레이어 등록 단위 테스트")
     class CreatePlayerPort {
+
+        private static final Long ACCOUNT_ID = 1L;
 
         @Test
         @DisplayName("플레이어를 등록에 성공하는 경우 플레이어 옵셔널 객체를 반환 한다.")
         void createPlayer() {
             // arrange
-            int slotCount = 1;
-            int starPoint = 100;
-            CreatePlayerVo createPlayerVo = CreatePlayerVo.builder()
+            final int slotCount = 1;
+            final int starPoint = 100;
+            final CreatePlayerVo createPlayerVo = CreatePlayerVo.builder()
                     .accountId(ACCOUNT_ID)
                     .slotCount(slotCount)
                     .starPoint(starPoint)
                     .build();
 
             // act
-            Optional<Player> playerOptional = memberPersistencePort.createPlayerPort(createPlayerVo);
+            var expected = memberPersistencePort.createPlayerPort(createPlayerVo);
 
             // assert
-            assertTrue(playerOptional.isPresent());
-            assertEquals(ACCOUNT_ID, playerOptional.get().getAccountId());
-            assertEquals(slotCount, playerOptional.get().getSlotCount());
-            assertEquals(starPoint, playerOptional.get().getStarPoint());
+            assertTrue(expected.isPresent());
+            assertEquals(ACCOUNT_ID, expected.get().getAccountId());
+            assertEquals(slotCount, expected.get().getSlotCount());
+            assertEquals(starPoint, expected.get().getStarPoint());
         }
 
         @Test
         @DisplayName("플레이어가 존재하는 경우 빈 옵셔널 객체를 반환 한다.")
         void createPlayerWhenExistPlayer() {
             // arrange
-            int slotCount = 1;
-            int starPoint = 100;
-            CreatePlayerVo createPlayerVo = CreatePlayerVo.builder()
+            final int slotCount = 1;
+            final int starPoint = 100;
+            final CreatePlayerVo createPlayerVo = CreatePlayerVo.builder()
                     .accountId(ACCOUNT_ID)
                     .slotCount(slotCount)
                     .starPoint(starPoint)
@@ -88,10 +85,10 @@ class MemberPersistenceServiceTest {
                     .build());
 
             // act
-            Optional<Player> player = memberPersistencePort.createPlayerPort(createPlayerVo);
+            var expectee = memberPersistencePort.createPlayerPort(createPlayerVo);
 
             // assert
-            assertTrue(player.isEmpty());
+            assertTrue(expectee.isEmpty());
         }
     }
 
@@ -99,12 +96,14 @@ class MemberPersistenceServiceTest {
     @DisplayName("플레이어 존재 여부 조회 단위 테스트")
     class IsExistsPlayerPort {
 
+        private static final Long ACCOUNT_ID = 1L;
+
         @Test
         @DisplayName("플레이어 존재하는 경우 true를 반환 한다..")
         void isExistsPlayerWhenExistPlayer() {
             // arrange
-            int slotCount = 1;
-            int starPoint = 100;
+            final int slotCount = 1;
+            final int starPoint = 100;
 
             memberRepository.saveAndFlush(MemberEntity.builder()
                     .accountId(ACCOUNT_ID)
@@ -113,7 +112,7 @@ class MemberPersistenceServiceTest {
                     .build());
 
             // act
-            boolean expected = memberPersistencePort.isExistsPlayerPort(ACCOUNT_ID);
+            var expected = memberPersistencePort.isExistsPlayerPort(ACCOUNT_ID);
 
             // assert
             assertTrue(expected);
@@ -123,7 +122,7 @@ class MemberPersistenceServiceTest {
         @DisplayName("플레이어 존재하는 경우 false를 반환 한다..")
         void isExistsPlayerWhenNotExistPlayer() {
             // act
-            boolean expected = memberPersistencePort.isExistsPlayerPort(ACCOUNT_ID);
+            var expected = memberPersistencePort.isExistsPlayerPort(ACCOUNT_ID);
 
             // assert
             assertFalse(expected);
@@ -134,12 +133,14 @@ class MemberPersistenceServiceTest {
     @DisplayName("플레이어 조회 단위 테스트")
     class GetPlayerPort {
 
+        private static final Long ACCOUNT_ID = 1L;
+
         @Test
         @DisplayName("플레이어를 조회 한다.")
         void getPlayer() {
             // arrange
-            int slotCount = 1;
-            int starPoint = 100;
+            final int slotCount = 1;
+            final int starPoint = 100;
 
             memberRepository.saveAndFlush(MemberEntity.builder()
                     .accountId(ACCOUNT_ID)
@@ -148,23 +149,23 @@ class MemberPersistenceServiceTest {
                     .build());
 
             // act
-            Optional<Player> playerOptional = memberPersistencePort.getPlayerPort(ACCOUNT_ID);
+            var expected = memberPersistencePort.getPlayerPort(ACCOUNT_ID);
 
             // assert
-            assertTrue(playerOptional.isPresent());
-            assertEquals(ACCOUNT_ID, playerOptional.get().getAccountId());
-            assertEquals(slotCount, playerOptional.get().getSlotCount());
-            assertEquals(starPoint, playerOptional.get().getStarPoint());
+            assertTrue(expected.isPresent());
+            assertEquals(ACCOUNT_ID, expected.get().getAccountId());
+            assertEquals(slotCount, expected.get().getSlotCount());
+            assertEquals(starPoint, expected.get().getStarPoint());
         }
 
         @Test
         @DisplayName("플레이어가 없는 경우 빈 옵셔널 객체를 반환 한다.")
         void getPlayerWhenNotExistPlayer() {
             // act
-            Optional<Player> playerOptional = memberPersistencePort.getPlayerPort(ACCOUNT_ID);
+            var expected = memberPersistencePort.getPlayerPort(ACCOUNT_ID);
 
             // assert
-            assertTrue(playerOptional.isEmpty());
+            assertTrue(expected.isEmpty());
         }
     }
 
@@ -172,13 +173,15 @@ class MemberPersistenceServiceTest {
     @DisplayName("플레이어 수정 단위 테스트")
     class SavePlayerPort {
 
+        private static final Long ACCOUNT_ID = 1L;
+
         @Test
         @DisplayName("플레이어 수정에 성공하는 경우 플레이어 옵셔널 객체를 반환 한다.")
         void savePlayer() {
             // arrange
-            int slotCount = 5;
-            int starPoint = 500;
-            Player player = Player.builder()
+            final int slotCount = 5;
+            final int starPoint = 500;
+            final Player player = Player.builder()
                     .accountId(ACCOUNT_ID)
                     .slotCount(slotCount)
                     .starPoint(starPoint)
@@ -191,32 +194,32 @@ class MemberPersistenceServiceTest {
                     .build());
 
             // act
-            Optional<Player> playerOptional = memberPersistencePort.savePlayerPort(player);
+            var expected = memberPersistencePort.savePlayerPort(player);
 
             // assert
-            assertTrue(playerOptional.isPresent());
-            assertEquals(ACCOUNT_ID, playerOptional.get().getAccountId());
-            assertEquals(slotCount, playerOptional.get().getSlotCount());
-            assertEquals(starPoint, playerOptional.get().getStarPoint());
+            assertTrue(expected.isPresent());
+            assertEquals(ACCOUNT_ID, expected.get().getAccountId());
+            assertEquals(slotCount, expected.get().getSlotCount());
+            assertEquals(starPoint, expected.get().getStarPoint());
         }
 
         @Test
         @DisplayName("플레이어가 존재하지 않는 경우 빈 옵셔널 객체를 반환 한다.")
         void savePlayerWhenExistPlayer() {
             // arrange
-            int slotCount = 5;
-            int starPoint = 500;
-            Player player = Player.builder()
+            final int slotCount = 5;
+            final int starPoint = 500;
+            final Player player = Player.builder()
                     .accountId(ACCOUNT_ID)
                     .slotCount(slotCount)
                     .starPoint(starPoint)
                     .build();
 
             // act
-            Optional<Player> playerOptional = memberPersistencePort.savePlayerPort(player);
+            var expected = memberPersistencePort.savePlayerPort(player);
 
             // assert
-            assertTrue(playerOptional.isEmpty());
+            assertTrue(expected.isEmpty());
         }
     }
 }

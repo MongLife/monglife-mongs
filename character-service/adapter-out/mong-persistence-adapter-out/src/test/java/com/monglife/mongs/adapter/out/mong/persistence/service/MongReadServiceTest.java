@@ -39,15 +39,10 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 class MongReadServiceTest {
 
     private final MongReadPort mongReadPort;
-
     private final GroupCodeRepository groupCodeRepository;
-
     private final ComnCodeRepository comnCodeRepository;
-
     private final MongStrokeHistoryRepository mongStrokeHistoryRepository;
-
     private final MongTypeRepository mongTypeRepository;
-
     private final MongRepository mongRepository;
 
     @Autowired
@@ -139,7 +134,7 @@ class MongReadServiceTest {
             // arrange
             groupCodeRepository.saveAndFlush(GROUP_CODE_ENTITY);
 
-            List<MongTypeEntity> mongTypeEntities = new ArrayList<>();
+            final List<MongTypeEntity> mongTypeEntities = new ArrayList<>();
 
             for (int index = 0;  index < COMN_CODE_ENTITIES.size(); index++) {
                 mongTypeEntities.add(MongTypeEntity.builder()
@@ -159,7 +154,7 @@ class MongReadServiceTest {
         @DisplayName("몽 타입 레벨을 기준으로 몽 타입 목록을 조회 한다.")
         void getMongTypes() {
             // arrange
-            int level = 0;
+            final int level = 0;
 
             // act
             var expected = mongReadPort.getMongTypesPort(level);
@@ -174,8 +169,8 @@ class MongReadServiceTest {
         @DisplayName("다음 레벨 몽 타입 목록을 조회 한다.")
         void getNextLevelMongTypes() {
             // arrange
-            double evolutionScore = 50D;
-            String mongCode = "TEST-MONG-TYPE-CODE-0";
+            final double evolutionScore = 50D;
+            final String mongCode = "TEST-MONG-TYPE-CODE-0";
 
             // act
             var expected = mongReadPort.getNextLevelMongTypesPort(evolutionScore, mongCode);
@@ -189,8 +184,8 @@ class MongReadServiceTest {
         @DisplayName("다음 레벨 몽 타입 목록을 진화 점수 기준으로 오름차순 정렬 조회 한다.")
         void getNextLevelMongTypesWhenMutilMongTypes() {
             // arrange
-            double evolutionScore = 100D;
-            String mongCode = "TEST-MONG-TYPE-CODE-0";
+            final double evolutionScore = 100D;
+            final String mongCode = "TEST-MONG-TYPE-CODE-0";
 
             // act
             var expected = mongReadPort.getNextLevelMongTypesPort(evolutionScore, mongCode);

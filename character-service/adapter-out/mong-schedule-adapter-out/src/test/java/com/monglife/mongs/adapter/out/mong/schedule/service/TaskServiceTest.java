@@ -74,20 +74,16 @@ class TaskServiceTest {
     @DisplayName("일회성 몽 스케줄 테스크 등록 단위 테스트")
     class CreateTaskPort {
 
-        private final TestEventConsumer testEventConsumer;
-
         @Autowired
-        public CreateTaskPort(TestEventConsumer testEventConsumer) {
-            this.testEventConsumer = testEventConsumer;
-        }
+        private TestEventConsumer testEventConsumer;
 
         @Test
         @DisplayName("일회성 몽 스케줄 테스크를 등록 후 스케줄이 실행되고 테스크 엔티티와 테스크 스케줄이 삭제 된다.")
         void createTask() throws InterruptedException {
             // arrange
-            long mongId = 1L;
-            long accountId = 1L;
-            TestSchedulerType schedulerType = TestSchedulerType.CREATE_TEST;
+            final long mongId = 1L;
+            final long accountId = 1L;
+            final TestSchedulerType schedulerType = TestSchedulerType.CREATE_TEST;
 
             TestEventDto testEventDto = new TestEventDto();
             CountDownLatch countDownLatch = new CountDownLatch(1);
@@ -113,21 +109,17 @@ class TaskServiceTest {
     @DisplayName("반복성 몽 스케줄 테스크 등록 단위 테스트")
     class CreateCycleTaskPort {
 
-        private final TestEventConsumer testEventConsumer;
-
         @Autowired
-        public CreateCycleTaskPort(TestEventConsumer testEventConsumer) {
-            this.testEventConsumer = testEventConsumer;
-        }
+        private TestEventConsumer testEventConsumer;
 
         @Test
         @DisplayName("반복성 몽 스케줄 테스크를 등록 후 3번의 스케줄이 실행되고 테스크 엔티티와 테스크 스케줄이 삭제되지 않는다.")
         void createCycleTask() throws InterruptedException {
             // arrange
-            long mongId = 1L;
-            long accountId = 1L;
-            int cycleCount = 3;
-            TestSchedulerType schedulerType = TestSchedulerType.CREATE_TEST;
+            final long mongId = 1L;
+            final long accountId = 1L;
+            final int cycleCount = 3;
+            final TestSchedulerType schedulerType = TestSchedulerType.CREATE_TEST;
 
             TestEventDto testEventDto = new TestEventDto();
             CountDownLatch countDownLatch = new CountDownLatch(cycleCount);
@@ -153,22 +145,18 @@ class TaskServiceTest {
     @DisplayName("고정 시간 반복성 몽 스케줄 테스크 등록 단위 테스트")
     class CreateFixedTimeCycleTaskPort {
 
-        private final TestEventConsumer testEventConsumer;
-
         @Autowired
-        public CreateFixedTimeCycleTaskPort(TestEventConsumer testEventConsumer) {
-            this.testEventConsumer = testEventConsumer;
-        }
+        private TestEventConsumer testEventConsumer;
 
         @Test
         @DisplayName("고정 시간 반복성 몽 스케줄을 등록 후 스케줄이 실행되고 다음 날 같은 시간의 테스크 스케줄로 변경 된다.")
         void createFixedTimeCycleTask() throws InterruptedException {
             // arrange
-            long mongId = 1L;
-            long accountId = 1L;
-            TestSchedulerType schedulerType = TestSchedulerType.CREATE_TEST;
-            LocalTime fixedTime = LocalTime.now().plusSeconds(schedulerType.getExpiration());
-            LocalDateTime expiredAt = LocalDateTime.of(LocalDate.now().plusDays(1), fixedTime);
+            final long mongId = 1L;
+            final long accountId = 1L;
+            final TestSchedulerType schedulerType = TestSchedulerType.CREATE_TEST;
+            final LocalTime fixedTime = LocalTime.now().plusSeconds(schedulerType.getExpiration());
+            final LocalDateTime expiredAt = LocalDateTime.of(LocalDate.now().plusDays(1), fixedTime);
 
             TestEventDto testEventDto = new TestEventDto();
             CountDownLatch countDownLatch = new CountDownLatch(1);
@@ -195,21 +183,17 @@ class TaskServiceTest {
     @DisplayName("스케줄 테스크 삭제 단위 테스트")
     class DeleteTaskPort {
 
-        private final TestEventConsumer testEventConsumer;
-
         @Autowired
-        public DeleteTaskPort(TestEventConsumer testEventConsumer) {
-            this.testEventConsumer = testEventConsumer;
-        }
+        private TestEventConsumer testEventConsumer;
 
         @Test
         @DisplayName("스케줄 테스크를 삭제 한다.")
         void deleteTask() throws InterruptedException {
             // arrange
-            long mongId = 1L;
-            long accountId = 1L;
-            int cycleCount = 2;
-            TestSchedulerType schedulerType = TestSchedulerType.DELETE_1_TEST;
+            final long mongId = 1L;
+            final long accountId = 1L;
+            final int cycleCount = 2;
+            final TestSchedulerType schedulerType = TestSchedulerType.DELETE_1_TEST;
 
             TestEventDto testEventDto = new TestEventDto();
             CountDownLatch countDownLatch = new CountDownLatch(cycleCount);
@@ -236,20 +220,16 @@ class TaskServiceTest {
     @DisplayName("스케줄 테스크 전체 삭제 단위 테스트")
     class DeleteAllTaskPort {
 
-        private final TestEventConsumer testEventConsumer;
-
         @Autowired
-        public DeleteAllTaskPort(TestEventConsumer testEventConsumer) {
-            this.testEventConsumer = testEventConsumer;
-        }
+        private TestEventConsumer testEventConsumer;
 
         @Test
         @DisplayName("모든 스케줄 테스크를 삭제 한다.")
         void deleteAllTask() throws InterruptedException {
             // arrange
-            long mongId = 1L;
-            long accountId = 1L;
-            List<TestSchedulerType> schedulerType = List.of(TestSchedulerType.DELETE_1_TEST, TestSchedulerType.DELETE_2_TEST);
+            final long mongId = 1L;
+            final long accountId = 1L;
+            final List<TestSchedulerType> schedulerType = List.of(TestSchedulerType.DELETE_1_TEST, TestSchedulerType.DELETE_2_TEST);
 
             TestEventDto testEventDto = new TestEventDto();
             CountDownLatch countDownLatch = new CountDownLatch(schedulerType.size());
@@ -279,29 +259,24 @@ class TaskServiceTest {
     @DisplayName("스케줄 테스크 전체 일시 중지 후 재기동 단위 테스트")
     class AppStop {
 
-        private final TestEventConsumer testEventConsumer;
-
-        private final TaskService taskService;
+        @Autowired
+        private TestEventConsumer testEventConsumer;
 
         @Autowired
-        public AppStop(TestEventConsumer testEventConsumer, TaskService taskService) {
-            this.testEventConsumer = testEventConsumer;
-            this.taskService = taskService;
-        }
+        private TaskService taskService;
 
         @Test
         @DisplayName("테스크 스케줄을 전체 일시 중지하고, 재기동하여 기존 상태를 유지 한다.")
         void appStopPauseAndResumeAllTask() throws InterruptedException {
             // arrange
-            long mongId = 1L;
-            long accountId = 1L;
-            List<TestSchedulerType> schedulerTypes = List.of(
+            final long mongId = 1L;
+            final long accountId = 1L;
+            final List<TestSchedulerType> schedulerTypes = List.of(
                     TestSchedulerType.APP_STOP_1_TEST,
                     TestSchedulerType.APP_STOP_2_TEST,
                     TestSchedulerType.APP_STOP_3_TEST,
                     TestSchedulerType.APP_STOP_4_TEST,
-                    TestSchedulerType.APP_STOP_5_TEST
-            );
+                    TestSchedulerType.APP_STOP_5_TEST);
 
             TestEventDto testEventDto = new TestEventDto();
             CountDownLatch countDownLatch = new CountDownLatch(schedulerTypes.size());

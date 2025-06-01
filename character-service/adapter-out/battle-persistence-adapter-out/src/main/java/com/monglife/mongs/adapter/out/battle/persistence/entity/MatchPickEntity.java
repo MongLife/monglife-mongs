@@ -4,13 +4,15 @@ import com.monglife.mongs.domain.battle.enums.MatchPickCode;
 import com.monglife.mongs.domain.battle.model.MatchPick;
 import com.monglife.mongs.domain.battle.model.MatchPlayer;
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.AccessLevel;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Table(name = "mongs_match_pick")
-@ToString
 public class MatchPickEntity {
 
     @Id

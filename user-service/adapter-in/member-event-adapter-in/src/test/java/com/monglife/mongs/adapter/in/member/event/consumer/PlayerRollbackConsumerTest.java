@@ -53,11 +53,11 @@ class PlayerRollbackConsumerTest {
         @DisplayName("스타 포인트 환전 트랜잭션이 실패하는 경우 롤백 이벤트를 소비하여 스타 포인트 증가 UseCase를 실행 한다.")
         void exchangeStarPointRollback() {
             // arrange
-            String topic = EventTopic.ROLLBACK_EXCHANGE_STAR_POINT;
-            long accountId = 1L;
-            long mongId = 1L;
-            int starPoint = 10;
-            int payPoint = 100;
+            final String topic = EventTopic.ROLLBACK_EXCHANGE_STAR_POINT;
+            final long accountId = 1L;
+            final long mongId = 1L;
+            final int starPoint = 10;
+            final int payPoint = 100;
 
             // act
             ExchangeStarPointRollbackEventDto exchangeStarPointRollbackEventDto = ExchangeStarPointRollbackEventDto.builder()

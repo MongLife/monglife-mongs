@@ -13,7 +13,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-import org.springframework.context.annotation.ComponentScan;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 
@@ -38,21 +37,21 @@ class FeedbackPersistenceServiceTest {
         this.feedbackPersistencePort = feedbackPersistencePort;
     }
 
-    private static final Long ACCOUNT_ID = 1L;
-    private static final String DEVICE_ID = CommonUtil.randomId();
-    private static final String DEVICE_NAME = "TEST-DEVICE-NAME";
-
     @Nested
     @DisplayName("오류 신고 등록 단위 테스트")
     class CreateFeedbackPort {
+
+        private static final Long ACCOUNT_ID = 1L;
+        private static final String DEVICE_ID = CommonUtil.randomId();
+        private static final String DEVICE_NAME = "TEST-DEVICE-NAME";
 
         @Test
         @DisplayName("오류 신고를 등록 한다.")
         void createFeedback() {
             // arrange
-            String title = "TEST-TITLE";
-            String content = "TEST-CONTENT";
-            CreateFeedbackVo createFeedbackVo = CreateFeedbackVo.builder()
+            final String title = "TEST-TITLE";
+            final String content = "TEST-CONTENT";
+            final CreateFeedbackVo createFeedbackVo = CreateFeedbackVo.builder()
                     .accountId(ACCOUNT_ID)
                     .deviceId(DEVICE_ID)
                     .deviceName(DEVICE_NAME)
@@ -61,10 +60,10 @@ class FeedbackPersistenceServiceTest {
                     .build();
 
             // act
-            Optional<Feedback> feedbackOptional = feedbackPersistencePort.createFeedbackPort(createFeedbackVo);
+            var expected = feedbackPersistencePort.createFeedbackPort(createFeedbackVo);
 
             // assert
-            assertTrue(feedbackOptional.isPresent());
+            assertTrue(expected.isPresent());
         }
     }
 }

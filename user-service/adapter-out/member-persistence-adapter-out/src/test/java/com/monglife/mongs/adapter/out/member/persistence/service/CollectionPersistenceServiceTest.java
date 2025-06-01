@@ -28,7 +28,6 @@ import org.springframework.test.context.ContextConfiguration;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -44,13 +43,9 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 class CollectionPersistenceServiceTest {
 
     private final CollectionPersistencePort collectionPersistencePort;
-
     private final CollectionMapRepository collectionMapRepository;
-
     private final CollectionMongRepository collectionMongRepository;
-
     private final GroupCodeRepository groupCodeRepository;
-
     private final ComnCodeRepository comnCodeRepository;
 
     @Autowired
@@ -111,33 +106,33 @@ class CollectionPersistenceServiceTest {
         @DisplayName("컬렉션 맵을 등록 한다.")
         void createCollectionMap() {
             // arrange
-            CreateCollectionMapVo createCollectionMapVo = CreateCollectionMapVo.builder()
+            final CreateCollectionMapVo createCollectionMapVo = CreateCollectionMapVo.builder()
                     .accountId(ACCOUNT_ID)
                     .mapCode(MAP_TYPE.getCode())
                     .build();
 
             // act
-            Optional<CollectionMap> collectionMapOptional = collectionPersistencePort.createCollectionMapPort(createCollectionMapVo);
+            var expected = collectionPersistencePort.createCollectionMapPort(createCollectionMapVo);
 
             // assert
-            assertTrue(collectionMapOptional.isPresent());
+            assertTrue(expected.isPresent());
         }
 
         @Test
         @DisplayName("맵 코드가 공통 코드 테이블에 없는 경우 빈 옵셔널 객체를 반환 한다.")
         void notExistsMapCode() {
             // arrange
-            String mapCode = "MP___";
-            CreateCollectionMapVo createCollectionMapVo = CreateCollectionMapVo.builder()
+            final String mapCode = "MP___";
+            final CreateCollectionMapVo createCollectionMapVo = CreateCollectionMapVo.builder()
                     .accountId(ACCOUNT_ID)
                     .mapCode(mapCode)
                     .build();
 
             // act
-            Optional<CollectionMap> collectionMapOptional = collectionPersistencePort.createCollectionMapPort(createCollectionMapVo);
+            var expected = collectionPersistencePort.createCollectionMapPort(createCollectionMapVo);
 
             // assert
-            assertTrue(collectionMapOptional.isEmpty());
+            assertTrue(expected.isEmpty());
         }
     }
 
@@ -149,33 +144,33 @@ class CollectionPersistenceServiceTest {
         @DisplayName("컬렉션 몽을 등록 한다.")
         void createCollectionMong() {
             // arrange
-            CreateCollectionMongVo createCollectionMongVo = CreateCollectionMongVo.builder()
+            final CreateCollectionMongVo createCollectionMongVo = CreateCollectionMongVo.builder()
                     .accountId(ACCOUNT_ID)
                     .mongCode(MONG_TYPE.getCode())
                     .build();
 
             // act
-            Optional<CollectionMong> collectionMongOptional = collectionPersistencePort.createCollectionMongPort(createCollectionMongVo);
+            var expected = collectionPersistencePort.createCollectionMongPort(createCollectionMongVo);
 
             // assert
-            assertTrue(collectionMongOptional.isPresent());
+            assertTrue(expected.isPresent());
         }
 
         @Test
         @DisplayName("몽 코드가 공통 코드 테이블에 없는 경우 빈 옵셔널 객체를 반환 한다.")
         void notExistsMongCode() {
             // arrange
-            String mongCode = "CH___";
-            CreateCollectionMongVo createCollectionMongVo = CreateCollectionMongVo.builder()
+            final String mongCode = "CH___";
+            final CreateCollectionMongVo createCollectionMongVo = CreateCollectionMongVo.builder()
                     .accountId(ACCOUNT_ID)
                     .mongCode(mongCode)
                     .build();
 
             // act
-            Optional<CollectionMong> collectionMongOptional = collectionPersistencePort.createCollectionMongPort(createCollectionMongVo);
+            var expected = collectionPersistencePort.createCollectionMongPort(createCollectionMongVo);
 
             // assert
-            assertTrue(collectionMongOptional.isEmpty());
+            assertTrue(expected.isEmpty());
         }
     }
 
@@ -193,7 +188,7 @@ class CollectionPersistenceServiceTest {
                     .build());
 
             // act
-            Boolean expected = collectionPersistencePort.isExistsCollectionMapPort(ACCOUNT_ID, MAP_TYPE.getCode());
+            var expected = collectionPersistencePort.isExistsCollectionMapPort(ACCOUNT_ID, MAP_TYPE.getCode());
 
             // assert
             assertTrue(expected);
@@ -203,10 +198,10 @@ class CollectionPersistenceServiceTest {
         @DisplayName("컬렉션 맵이 존재하지 않는 경우 false를 반환 한다.")
         void notExistsCollectionMap() {
             // arrange
-            String mapCode = "MP___";
+            final String mapCode = "MP___";
 
             // act
-            Boolean expected = collectionPersistencePort.isExistsCollectionMapPort(ACCOUNT_ID, mapCode);
+            var expected = collectionPersistencePort.isExistsCollectionMapPort(ACCOUNT_ID, mapCode);
 
             // assert
             assertFalse(expected);
@@ -227,7 +222,7 @@ class CollectionPersistenceServiceTest {
                     .build());
 
             // act
-            Boolean expected = collectionPersistencePort.isExistsCollectionMongPort(ACCOUNT_ID, MONG_TYPE.getCode());
+            var expected = collectionPersistencePort.isExistsCollectionMongPort(ACCOUNT_ID, MONG_TYPE.getCode());
 
             // assert
             assertTrue(expected);
@@ -237,10 +232,10 @@ class CollectionPersistenceServiceTest {
         @DisplayName("컬렉션 몽이 존재하지 않는 경우 false를 반환 한다.")
         void notExistsCollectionMong() {
             // arrange
-            String mongCode = "CH___";
+            final String mongCode = "CH___";
 
             // act
-            Boolean expected = collectionPersistencePort.isExistsCollectionMongPort(ACCOUNT_ID, mongCode);
+            var expected = collectionPersistencePort.isExistsCollectionMongPort(ACCOUNT_ID, mongCode);
 
             // assert
             assertFalse(expected);
@@ -261,11 +256,11 @@ class CollectionPersistenceServiceTest {
                     .build());
 
             // act
-            List<CollectionMap> collectionMaps = collectionPersistencePort.getCollectionMapsPort(ACCOUNT_ID);
+            var expected = collectionPersistencePort.getCollectionMapsPort(ACCOUNT_ID);
 
             // assert
             for (int index = 0; index < MAP_TYPE_ENTITIES.size(); index++) {
-                CollectionMap collectionMap = collectionMaps.get(index);
+                CollectionMap collectionMap = expected.get(index);
 
                 if (MAP_TYPE.getCode().equals(collectionMap.getMapCode())) {
                     assertTrue(collectionMap.getIsIncluded());
@@ -290,11 +285,11 @@ class CollectionPersistenceServiceTest {
                     .build());
 
             // act
-            List<CollectionMong> collectionMongs = collectionPersistencePort.getCollectionMongsPort(ACCOUNT_ID);
+            var expected = collectionPersistencePort.getCollectionMongsPort(ACCOUNT_ID);
 
             // assert
             for (int index = 0; index < MONG_TYPE_ENTITIES.size(); index++) {
-                CollectionMong collectionMong = collectionMongs.get(index);
+                CollectionMong collectionMong = expected.get(index);
 
                 if (MONG_TYPE.getCode().equals(collectionMong.getMongCode())) {
                     assertTrue(collectionMong.getIsIncluded());

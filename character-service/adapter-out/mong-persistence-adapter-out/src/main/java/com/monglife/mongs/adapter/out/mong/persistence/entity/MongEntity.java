@@ -5,7 +5,10 @@ import com.monglife.mongs.domain.mong.enums.MongStateCode;
 import com.monglife.mongs.domain.mong.enums.MongStatusCode;
 import com.monglife.mongs.domain.mong.model.Mong;
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.AccessLevel;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.LocalTime;
@@ -15,7 +18,6 @@ import java.time.LocalTime;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @EntityListeners({ AuditingEntityListener.class })
 @Table(name = "mongs_mong")
-@ToString
 public class MongEntity extends BaseTimeEntity {
 
     @Id

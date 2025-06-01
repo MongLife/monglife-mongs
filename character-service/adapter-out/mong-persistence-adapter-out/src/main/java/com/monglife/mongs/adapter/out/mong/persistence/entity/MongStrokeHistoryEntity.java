@@ -2,7 +2,6 @@ package com.monglife.mongs.adapter.out.mong.persistence.entity;
 
 import lombok.Builder;
 import lombok.Getter;
-import lombok.ToString;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.redis.core.RedisHash;
 import org.springframework.data.redis.core.TimeToLive;
@@ -13,7 +12,6 @@ import java.time.LocalDateTime;
 @Getter
 @Builder
 @RedisHash("mongs_stroke_history")
-@ToString
 public class MongStrokeHistoryEntity {
 
     @Id

@@ -5,8 +5,10 @@ import com.monglife.mongs.application.mong.port.enums.SchedulerType;
 public enum TestSchedulerType implements SchedulerType {
 
     CREATE_TEST("TEST-SCHEDULER-CREATE-TYPE-CODE", 3L),
+
     DELETE_1_TEST("TEST-SCHEDULER-DELETE-TYPE-CODE 1", 5L),
     DELETE_2_TEST("TEST-SCHEDULER-DELETE-TYPE-CODE 2", 5L),
+
     APP_STOP_1_TEST("TEST-SCHEDULER-APP-STOP-TYPE-CODE 1", 5L),
     APP_STOP_2_TEST("TEST-SCHEDULER-APP-STOP-TYPE-CODE 2", 5L),
     APP_STOP_3_TEST("TEST-SCHEDULER-APP-STOP-TYPE-CODE 3", 5L),

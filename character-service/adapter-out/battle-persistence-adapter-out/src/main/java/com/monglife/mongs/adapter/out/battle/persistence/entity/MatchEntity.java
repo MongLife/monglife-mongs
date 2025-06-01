@@ -6,7 +6,10 @@ import com.monglife.mongs.domain.battle.model.Match;
 import com.monglife.mongs.domain.battle.model.MatchPick;
 import com.monglife.mongs.domain.battle.model.MatchPlayer;
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.AccessLevel;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.util.ArrayList;
@@ -19,7 +22,6 @@ import java.util.stream.Collectors;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @EntityListeners({ AuditingEntityListener.class })
 @Table(name = "mongs_match")
-@ToString
 public class MatchEntity extends BaseTimeEntity {
 
     @Id
