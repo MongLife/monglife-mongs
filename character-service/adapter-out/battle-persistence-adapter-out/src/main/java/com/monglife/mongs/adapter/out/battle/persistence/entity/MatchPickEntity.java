@@ -1,0 +1,67 @@
+package com.monglife.mongs.adapter.out.battle.persistence.entity;
+
+import com.monglife.mongs.domain.battle.enums.MatchPickCode;
+import com.monglife.mongs.domain.battle.model.MatchPick;
+import com.monglife.mongs.domain.battle.model.MatchPlayer;
+import jakarta.persistence.*;
+import lombok.AccessLevel;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+
+@Entity
+@Getter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@Table(name = "mongs_match_pick")
+public class MatchPickEntity {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "pick_id")
+    private Long pickId;
+
+    @Column(name = "player_id")
+    private String playerId;
+
+    @Column(name = "target_player_id")
+    private String targetPlayerId;
+
+    @Column(name = "round")
+    private Integer round;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "pick_code")
+    private MatchPickCode pickCode;
+
+    @Column(name = "pick_value")
+    private Double pickValue;
+
+    @Builder
+    public MatchPickEntity(Long pickId, String playerId, String targetPlayerId, Integer round, MatchPickCode pickCode, Double pickValue) {
+        this.pickId = pickId;
+        this.playerId = playerId;
+        this.targetPlayerId = targetPlayerId;
+        this.round = round;
+        this.pickCode = pickCode;
+        this.pickValue = pickValue;
+    }
+
+    public void update(MatchPick matchPick) {
+        this.playerId = matchPick.getMatchPlayer().getPlayerId();
+        this.targetPlayerId = matchPick.getTargetMatchPlayer().getPlayerId();
+        this.round = matchPick.getRound();
+        this.pickCode = matchPick.getPickCode();
+        this.pickValue = matchPick.getPickValue();
+    }
+
+    public MatchPick toDomain(MatchPlayer matchPlayer, MatchPlayer targetMatchPlayer) {
+        return MatchPick.builder()
+                .pickId(this.pickId)
+                .matchPlayer(matchPlayer)
+                .targetMatchPlayer(targetMatchPlayer)
+                .round(this.round)
+                .pickCode(this.pickCode)
+                .pickValue(this.pickValue)
+                .build();
+    }
+}

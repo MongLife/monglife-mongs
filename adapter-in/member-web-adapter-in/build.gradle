@@ -1,8 +1,0 @@
-dependencies {
-    // application layer
-    implementation project(':application:member-application')
-    // monglife-security
-    implementation 'com.github.monglife.monglife-module-common:monglife-module-common-security:1.0.11'
-}
-
-tasks.register('copyPrivate', Copy) {}

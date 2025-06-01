@@ -1,18 +1,24 @@
 name: CD STAGE
 on:
   push:
-    branches: [ stage ]
+    branches:
+      - stage
+permissions:
+  contents: read
+  checks: write
+  pull-requests: write
 env:
-  service-path: ~/service/mongs
-  service-script: ~/service/mongs/run.sh
-  bootstrap-character-path: ./bootstrap/character-bootstrap-api
-  bootstrap-user-path: ./bootstrap/user-bootstrap-api
+  bootstrap-character-path: ./character-service/bootstrap/character-bootstrap-api
+  bootstrap-user-path: ./user-service/bootstrap/user-bootstrap-api
   bootstrap-character: monglife-mongs-character-api
   bootstrap-user: monglife-mongs-user-api
+  service-path: ~/service/mongs
+  service-script: ~/service/mongs/run.sh
 jobs:
-  # 각 모듈 별 단위 테스트
-  unit-test:
+  # Character API 빌드 및 배포
+  bootstrap-character-build-and-deploy:
     runs-on: ubuntu-latest
+    environment: stage
     steps:
       # 소스 로드
       - name: 소스 코드 로드
@@ -32,48 +38,38 @@ jobs:
       # 환경 설정 파일 로드
       - name: 환경 설정 파일 로드
         run: ./gradlew copyPrivate
-      # Device Application/Domain 모듈 단위 테스트
-      - name: Device Application/Domain 모듈 단위 테스트
-        run: ./gradlew :application:device-application:test
-      # Member Application/Domain 모듈 단위 테스트
-      - name: Member Application/Domain 모듈 단위 테스트
-        run: ./gradlew :application:member-application:test
-      # Device Event Adapter Out  모듈 단위 테스트
-      - name: Device Event Adapter Out  모듈 단위 테스트
-        run: ./gradlew :adapter-out:device-event-adapter-out:test
-      # Device Persistence Adapter Out 모듈 단위 테스트
-      - name: Device Persistence Adapter Out 모듈 단위 테스트
-        run: ./gradlew :adapter-out:device-persistence-adapter-out:test
-      # Device Publish Adapter Out 모듈 단위 테스트
-      - name: Device Publish Adapter Out 모듈 단위 테스트
-        run: ./gradlew :adapter-out:device-publish-adapter-out:test
-      # Google Payment Adapter Out 모듈 단위 테스트
-      - name: Google Payment Adapter Out 모듈 단위 테스트
-        run: ./gradlew :adapter-out:google-payment-adapter-out:test
-      # Member Event Adapter Out 모듈 단위 테스트
-      - name: Member Event Adapter Out 모듈 단위 테스트
-        run: ./gradlew :adapter-out:member-event-adapter-out:test
-      # Member Persistence Adapter Out 모듈 단위 테스트
-      - name: Member Persistence Adapter Out 모듈 단위 테스트
-        run: ./gradlew :adapter-out:member-persistence-adapter-out:test
-      # Member Publish Adapter Out 모듈 단위 테스트
-      - name: Member Publish Adapter Out 모듈 단위 테스트
-        run: ./gradlew :adapter-out:member-publish-adapter-out:test
-      # Device Event Adapter In 모듈 단위 테스트
-      - name: Device Event Adapter In 모듈 단위 테스트
-        run: ./gradlew :adapter-in:device-event-adapter-in:test
-      # Device Web Adapter In 모듈 단위 테스트
-      - name: Device Web Adapter In 모듈 단위 테스트
-        run: ./gradlew :adapter-in:device-web-adapter-in:test
-      # Member Event Adapter In 모듈 단위 테스트
-      - name: Member Event Adapter In 모듈 단위 테스트
-        run: ./gradlew :adapter-in:member-event-adapter-in:test
-      # Member Web Adapter In 모듈 단위 테스트
-      - name: Member Web Adapter In 모듈 단위 테스트
-        run: ./gradlew :adapter-in:member-web-adapter-in:test
+      # Bootstrap User API 빌드
+      - name: Character Bootstrap API 모듈 빌드
+        run: ./gradlew :character-service:bootstrap:character-bootstrap-api:build
+      # 레포트 생성
+      - name: 테스트 리포트 작성
+        uses: mikepenz/action-junit-report@v5
+        if: success() || failure()
+        with:
+          report_paths: '**/build/test-results/test/TEST-*.xml'
+      # 배포 파일 원격 복사
+      - name: Character Bootstrap API 배포 파일 STAGE 서버로 전송
+        uses: appleboy/scp-action@v1
+        with:
+          host: ${{ secrets.HOST }}
+          port: ${{ secrets.PORT }}
+          username: ${{ secrets.USERNAME }}
+          password: ${{ secrets.PASSWORD }}
+          source: "${{ env.bootstrap-character-path }}/build/libs/*.jar"
+          target: "${{ env.service-path }}/${{ env.bootstrap-character }}"
+          strip_components: 5
+      # 배포 스크립트 실행
+      - name: Character Bootstrap API 서비스 실행
+        uses: appleboy/ssh-action@v1
+        with:
+          host: ${{ secrets.HOST }}
+          port: ${{ secrets.PORT }}
+          username: ${{ secrets.USERNAME }}
+          password: ${{ secrets.PASSWORD }}
+          script: |
+            sh ${{ env.service-script }} ${{ env.bootstrap-character }} ${{ env.service-path }}/${{ env.bootstrap-character }}
   # User API 빌드 및 배포
   bootstrap-user-build-and-deploy:
-    needs: unit-test
     runs-on: ubuntu-latest
     environment: stage
     steps:
@@ -97,10 +93,16 @@ jobs:
         run: ./gradlew copyPrivate
       # Bootstrap User API 빌드
       - name: User Bootstrap API 모듈 빌드
-        run: ./gradlew :bootstrap:user-bootstrap-api:build -x test
+        run: ./gradlew :user-service:bootstrap:user-bootstrap-api:build
+      # 레포트 생성
+      - name: 테스트 리포트 작성
+        uses: mikepenz/action-junit-report@v5
+        if: success() || failure()
+        with:
+          report_paths: '**/build/test-results/test/TEST-*.xml'
       # 배포 파일 원격 복사
       - name: User Bootstrap API 배포 파일 STAGE 서버로 전송
-        uses: appleboy/scp-action@master
+        uses: appleboy/scp-action@v1
         with:
           host: ${{ secrets.HOST }}
           port: ${{ secrets.PORT }}
@@ -108,10 +110,10 @@ jobs:
           password: ${{ secrets.PASSWORD }}
           source: "${{ env.bootstrap-user-path }}/build/libs/*.jar"
           target: "${{ env.service-path }}/${{ env.bootstrap-user }}"
-          strip_components: 4
+          strip_components: 5
       # 배포 스크립트 실행
       - name: User Bootstrap API 서비스 실행
-        uses: appleboy/ssh-action@master
+        uses: appleboy/ssh-action@v1
         with:
           host: ${{ secrets.HOST }}
           port: ${{ secrets.PORT }}
