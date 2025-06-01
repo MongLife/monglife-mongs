@@ -34,6 +34,14 @@ public class Step {
     }
 
     /**
+     * 보유 걸음 수 조회
+     * @return 보유 걸음 수
+     */
+    public Integer getCurrentWalkingCount() {
+        return this.walkingCount + (this.totalWalkingCount - this.consumeWalkingCount);
+    }
+
+    /**
      * 보유 걸음 수 페이 포인트 환전
      * @param walkingCount 환전 걸음 수
      * @return 환전 페이 포인트
@@ -66,14 +74,6 @@ public class Step {
      */
     public void decreaseCurrentWalkingCount(Integer walkingCount) {
         this.consumeWalkingCount = this.consumeWalkingCount + walkingCount;
-    }
-
-    /**
-     * 보유 걸음 수 조회
-     * @return 보유 걸음 수
-     */
-    public Integer getCurrentWalkingCount() {
-        return this.walkingCount + (this.totalWalkingCount - this.consumeWalkingCount);
     }
 
     /**

@@ -22,34 +22,24 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class StepUseCaseTest {
 
-    private final DeviceEventPort deviceEventPort;
-
-    private final DevicePersistencePort devicePersistencePort;
-
-    private final DevicePublishPort devicePublishPort;
-
-    private final StepUseCase stepUseCase;
-
-    public StepUseCaseTest() {
-        this.deviceEventPort = Mockito.mock(DeviceEventPort.class);
-        this.devicePublishPort = Mockito.mock(DevicePublishPort.class);
-        this.devicePersistencePort = Mockito.mock(DevicePersistencePort.class);
-        this.stepUseCase = new StepService(deviceEventPort, devicePersistencePort, devicePublishPort);
-    }
-
-    private static final String DEVICE_ID = "TEST-DEVICE-ID";
-    private static final int TOTAL_WALKING_COUNT = 100;
-    private static final LocalDateTime DEVICE_BOOTED_AT = LocalDateTime.of(2025, 1, 1, 0, 0);
+    private final DeviceEventPort deviceEventPort = Mockito.mock(DeviceEventPort.class);
+    private final DevicePublishPort devicePublishPort = Mockito.mock(DevicePublishPort.class);
+    private final DevicePersistencePort devicePersistencePort = Mockito.mock(DevicePersistencePort.class);
+    private final StepUseCase stepUseCase = new StepService(deviceEventPort, devicePersistencePort, devicePublishPort);
 
     @Nested
     @DisplayName("보유 걸음 수 페이 포인트 환전 단위 테스트")
     class ExchangeCurrentWalkingCountUseCase {
 
+        private static final String DEVICE_ID = "TEST-DEVICE-ID";
+        private static final int TOTAL_WALKING_COUNT = 100;
+        private static final LocalDateTime DEVICE_BOOTED_AT = LocalDateTime.of(2025, 1, 1, 0, 0);
+
         @Test
         @DisplayName("총 걸음 수를 동기화하고 보유 걸음 수를 보유한 경우, 페이 포인트로 환전 후 보유 걸음 수 비동기 응답을 전송 한다.")
         void enoughCurrentWalkingCount() {
             // arrange
-            Step step = Step.builder()
+            final Step step = Step.builder()
                     .deviceId(DEVICE_ID)
                     .walkingCount(0)
                     .consumeWalkingCount(0)
@@ -98,7 +88,7 @@ class StepUseCaseTest {
         @DisplayName("걸음 수를 수정할 때 걸음 수가 없는 경우 예외가 발생 한다.")
         void notExistsStepWhenSaveStep() {
             // arrange
-            Step step = Step.builder()
+            final Step step = Step.builder()
                     .deviceId(DEVICE_ID)
                     .walkingCount(0)
                     .consumeWalkingCount(0)
@@ -126,11 +116,15 @@ class StepUseCaseTest {
     @DisplayName("총 걸음 수 동기화 단위 테스트 ")
     class UpdateTotalWalkingCountUseCase {
 
+        private static final String DEVICE_ID = "TEST-DEVICE-ID";
+        private static final int TOTAL_WALKING_COUNT = 100;
+        private static final LocalDateTime DEVICE_BOOTED_AT = LocalDateTime.of(2025, 1, 1, 0, 0);
+
         @Test
         @DisplayName("걸음 수가 없는 경우 새로운 걸음 수를 등록한다.")
         void createStepWhenNotExistsStep() {
             // arrange
-            Step step = Step.builder()
+            final Step step = Step.builder()
                     .deviceId(DEVICE_ID)
                     .walkingCount(0)
                     .consumeWalkingCount(0)
@@ -156,7 +150,7 @@ class StepUseCaseTest {
         @DisplayName("걸음 수를 수정할 때 걸음 수가 없는 경우 예외가 발생 한다.")
         void notExistsStepWhenSaveStep() {
             // arrange
-            Step step = Step.builder()
+            final Step step = Step.builder()
                     .deviceId(DEVICE_ID)
                     .walkingCount(0)
                     .consumeWalkingCount(0)
@@ -183,11 +177,15 @@ class StepUseCaseTest {
     @DisplayName("총 걸음 수 증가 단위 테스트")
     class IncreaseCurrentWalkingCountUseCase {
 
+        private static final String DEVICE_ID = "TEST-DEVICE-ID";
+        private static final int TOTAL_WALKING_COUNT = 100;
+        private static final LocalDateTime DEVICE_BOOTED_AT = LocalDateTime.of(2025, 1, 1, 0, 0);
+
         @Test
         @DisplayName("걸음 수가 없는 경우 예외가 발생한다.")
         void notExistsStep() {
             // arrange
-            Step step = Step.builder()
+            final Step step = Step.builder()
                     .deviceId(DEVICE_ID)
                     .walkingCount(0)
                     .consumeWalkingCount(0)
@@ -211,7 +209,7 @@ class StepUseCaseTest {
         @DisplayName("걸음 수를 수정할 때 걸음 수가 없는 경우 예외가 발생한다.")
         void notExistsStepWhenSaveStep() {
             // arrange
-            Step step = Step.builder()
+            final Step step = Step.builder()
                     .deviceId(DEVICE_ID)
                     .walkingCount(0)
                     .consumeWalkingCount(0)

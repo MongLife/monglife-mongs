@@ -116,21 +116,6 @@ public class Mong {
     }
 
     /**
-     * 쓰다 듬기 대기 시간 조회
-     * @return 쓰다 듬기 대기 시간
-     */
-    public static Long getStrokeExpirationSeconds() {
-        return STROKE_EXPIRED_SECONDS;
-    }
-
-    /**
-     * 최대 배변 수 조회
-     */
-    public static Integer getMaxPoopCount() {
-        return MAX_POOP_COUNT;
-    }
-
-    /**
      * 몽 권한 확인
      * @param accountId 계정 ID
      * @return 몽 도메인 객체
@@ -614,6 +599,10 @@ public class Mong {
         }
     }
 
+    /**
+     * 상태 코드 수정
+     * @param stateCode 상태 코드
+     */
     private void updateStateCode(MongStateCode stateCode) {
 
         if (MongStateCode.DEAD.equals(this.stateCode)) {
@@ -624,6 +613,10 @@ public class Mong {
         this.isMongStateChange = Boolean.TRUE;
     }
 
+    /**
+     * 지수 코드 수정
+     * @param statusCode 지수 코드
+     */
     private void updateStatusCode(MongStatusCode statusCode) {
 
         if (MongStateCode.DEAD.equals(this.stateCode)) {
@@ -632,5 +625,20 @@ public class Mong {
 
         this.statusCode = statusCode;
         this.isMongStatusCodeChange = Boolean.TRUE;
+    }
+
+    /**
+     * 쓰다 듬기 대기 시간 조회
+     * @return 쓰다 듬기 대기 시간
+     */
+    public static Long getStrokeExpirationSeconds() {
+        return STROKE_EXPIRED_SECONDS;
+    }
+
+    /**
+     * 최대 배변 수 조회
+     */
+    public static Integer getMaxPoopCount() {
+        return MAX_POOP_COUNT;
     }
 }

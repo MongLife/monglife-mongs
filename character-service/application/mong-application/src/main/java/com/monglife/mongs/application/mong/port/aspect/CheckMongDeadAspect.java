@@ -6,13 +6,11 @@ import com.monglife.mongs.application.mong.port.exception.NotExistsMongException
 import com.monglife.mongs.application.mong.port.out.MongSchedulerPort;
 import com.monglife.mongs.domain.mong.model.Mong;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.AfterReturning;
 import org.aspectj.lang.annotation.Aspect;
 import org.springframework.stereotype.Component;
 
-@Slf4j
 @Aspect
 @Component
 @RequiredArgsConstructor
@@ -22,8 +20,6 @@ public class CheckMongDeadAspect {
 
     @AfterReturning(value = "@annotation(checkMongDead)", returning = "returnValue")
     public void afterReturning(JoinPoint joinPoint, CheckMongDead checkMongDead, Object returnValue) {
-
-        log.info("{}", returnValue);
 
         if (returnValue instanceof Mong mong) {
             if (mong.getSatiety() == 0D || mong.getHealthy() == 0D) {

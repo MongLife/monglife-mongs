@@ -23,20 +23,10 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class InteractionServiceTest {
 
-    private final MongPersistencePort mongPersistencePort;
-
-    private final MongReadPort mongReadPort;
-
-    private final MongEventPort mongEventPort;
-
-    private final InteractionUseCase interactionUseCase;
-
-    public InteractionServiceTest() {
-        this.mongPersistencePort = Mockito.mock(MongPersistencePort.class);
-        this.mongEventPort = Mockito.mock(MongEventPort.class);
-        this.mongReadPort = Mockito.mock(MongReadPort.class);
-        this.interactionUseCase = new InteractionService(mongPersistencePort, mongReadPort, mongEventPort);
-    }
+    private final MongPersistencePort mongPersistencePort = Mockito.mock(MongPersistencePort.class);
+    private final MongEventPort mongEventPort = Mockito.mock(MongEventPort.class);
+    private final MongReadPort mongReadPort = Mockito.mock(MongReadPort.class);
+    private final InteractionUseCase interactionUseCase = new InteractionService(mongPersistencePort, mongReadPort, mongEventPort);
 
     @Nested
     @DisplayName("음식 목록 조회 단위 테스트")
@@ -46,14 +36,13 @@ class InteractionServiceTest {
         @DisplayName("섭취 가능 여부를 확인할 수 있는 음식 목록을 조회 한다.")
         void getFoods() {
             // arrange
-            int price = 100;
-            boolean isCanBuy = true;
-            double status = 100;
-            List<Food> foods = List.of(MongTestUtil.getFood(price, isCanBuy, status));
-
-            long mongId = 1L;
-            long accountId = 1L;
-            double maxStatus = 100;
+            final int price = 100;
+            final boolean isCanBuy = true;
+            final double status = 100;
+            final List<Food> foods = List.of(MongTestUtil.getFood(price, isCanBuy, status));
+            final long mongId = 1L;
+            final long accountId = 1L;
+            final double maxStatus = 100;
 
             Mockito.when(mongReadPort.getFoodsPort(mongId)).thenReturn(foods);
             Mockito.when(mongReadPort.getMongPort(mongId)).thenReturn(Optional.of(MongTestUtil.getFirstLevelMong(mongId, accountId, maxStatus)));
@@ -64,7 +53,7 @@ class InteractionServiceTest {
                     .accountId(accountId)
                     .build();
 
-            List<Food> expected = interactionUseCase.getFoodsUseCase(command);
+            var expected = interactionUseCase.getFoodsUseCase(command);
 
             // assert
             assertIterableEquals(expected, foods);
@@ -74,13 +63,12 @@ class InteractionServiceTest {
         @DisplayName("몽이 존재하지 않는 경우 에외가 발생 한다.")
         void getFoodsWhenNotExistsMong() {
             // arrange
-            int price = 100;
-            boolean isCanBuy = true;
-            double status = 100;
-            List<Food> foods = List.of(MongTestUtil.getFood(price, isCanBuy, status));
-
-            long mongId = 1L;
-            long accountId = 1L;
+            final int price = 100;
+            final boolean isCanBuy = true;
+            final double status = 100;
+            final List<Food> foods = List.of(MongTestUtil.getFood(price, isCanBuy, status));
+            final long mongId = 1L;
+            final long accountId = 1L;
 
             Mockito.when(mongReadPort.getFoodsPort(mongId)).thenReturn(foods);
             Mockito.when(mongReadPort.getMongPort(mongId)).thenReturn(Optional.empty());
@@ -103,14 +91,13 @@ class InteractionServiceTest {
         @DisplayName("섭취 가능 여부를 확인할 수 있는 간식 목록을 조회 한다.")
         void getSnacks() {
             // arrange
-            int price = 100;
-            boolean isCanBuy = true;
-            double status = 100;
-            List<Snack> snacks = List.of(MongTestUtil.getSnack(price, isCanBuy, status));
-
-            long mongId = 1L;
-            long accountId = 1L;
-            double maxStatus = 100;
+            final int price = 100;
+            final boolean isCanBuy = true;
+            final double status = 100;
+            final List<Snack> snacks = List.of(MongTestUtil.getSnack(price, isCanBuy, status));
+            final long mongId = 1L;
+            final long accountId = 1L;
+            final double maxStatus = 100;
 
             Mockito.when(mongReadPort.getSnacksPort(mongId)).thenReturn(snacks);
             Mockito.when(mongReadPort.getMongPort(mongId)).thenReturn(Optional.of(MongTestUtil.getFirstLevelMong(mongId, accountId, maxStatus)));
@@ -121,7 +108,7 @@ class InteractionServiceTest {
                     .accountId(accountId)
                     .build();
 
-            List<Snack> expected = interactionUseCase.getSnacksUseCase(command);
+            var expected = interactionUseCase.getSnacksUseCase(command);
 
             // assert
             assertIterableEquals(expected, snacks);
@@ -131,13 +118,12 @@ class InteractionServiceTest {
         @DisplayName("몽이 존재하지 않는 경우 에외가 발생 한다.")
         void getFoodsWhenNotExistsMong() {
             // arrange
-            int price = 100;
-            boolean isCanBuy = true;
-            double status = 100;
-            List<Snack> snacks = List.of(MongTestUtil.getSnack(price, isCanBuy, status));
-
-            long mongId = 1L;
-            long accountId = 1L;
+            final int price = 100;
+            final boolean isCanBuy = true;
+            final double status = 100;
+            final List<Snack> snacks = List.of(MongTestUtil.getSnack(price, isCanBuy, status));
+            final long mongId = 1L;
+            final long accountId = 1L;
 
             Mockito.when(mongReadPort.getSnacksPort(mongId)).thenReturn(snacks);
             Mockito.when(mongReadPort.getMongPort(mongId)).thenReturn(Optional.empty());
@@ -160,16 +146,15 @@ class InteractionServiceTest {
         @DisplayName("몽이 음식을 섭취 한다.")
         void feedFood() {
             // arrange
-            int price = 50;
-            boolean isCanBuy = true;
-            Food food = MongTestUtil.getFood(price, isCanBuy, 10D);
-
-            long mongId = 1L;
-            long accountId = 1L;
-            double maxStatus = 100;
-            double status = 50;
-            int payPoint = 100;
-            Mong mong = MongTestUtil.getFirstLevelMong(mongId, accountId, status, maxStatus, payPoint);
+            final int price = 50;
+            final boolean isCanBuy = true;
+            final Food food = MongTestUtil.getFood(price, isCanBuy, 10D);
+            final long mongId = 1L;
+            final long accountId = 1L;
+            final double maxStatus = 100;
+            final double status = 50;
+            final int payPoint = 100;
+            final Mong mong = MongTestUtil.getFirstLevelMong(mongId, accountId, status, maxStatus, payPoint);
 
             Mockito.when(mongReadPort.getFoodPort(food.getFoodCode(), mongId)).thenReturn(Optional.of(food));
             Mockito.when(mongPersistencePort.getMongPort(mongId)).thenReturn(Optional.of(mong));
@@ -183,7 +168,7 @@ class InteractionServiceTest {
                     .accountId(accountId)
                     .build();
 
-            Mong expected = interactionUseCase.feedFoodUseCase(command);
+            var expected = interactionUseCase.feedFoodUseCase(command);
 
             // assert
             assertEquals(payPoint - price, expected.getPayPoint());
@@ -198,14 +183,13 @@ class InteractionServiceTest {
         @DisplayName("몽 레벨이 0인 경우 (알 상태인 경우) 예외가 발생 한다.")
         void feedFoodWhenEggMong() {
             // arrange
-            int price = 50;
-            boolean isCanBuy = true;
-            Food food = MongTestUtil.getFood(price, isCanBuy, 10D);
-
-            long mongId = 1L;
-            long accountId = 1L;
-            double maxStatus = 100;
-            Mong mong = MongTestUtil.getEggMong(mongId, accountId, maxStatus);
+            final int price = 50;
+            final boolean isCanBuy = true;
+            final Food food = MongTestUtil.getFood(price, isCanBuy, 10D);
+            final long mongId = 1L;
+            final long accountId = 1L;
+            final double maxStatus = 100;
+            final Mong mong = MongTestUtil.getEggMong(mongId, accountId, maxStatus);
 
             Mockito.when(mongReadPort.getFoodPort(food.getFoodCode(), mongId)).thenReturn(Optional.of(food));
             Mockito.when(mongPersistencePort.getMongPort(mongId)).thenReturn(Optional.of(mong));
@@ -226,14 +210,13 @@ class InteractionServiceTest {
         @DisplayName("몽 자는 상태인 경우 예외가 발생 한다.")
         void feedFoodWhenMongIsSleeping() {
             // arrange
-            int price = 50;
-            boolean isCanBuy = true;
-            Food food = MongTestUtil.getFood(price, isCanBuy, 10D);
-
-            long mongId = 1L;
-            long accountId = 1L;
-            double maxStatus = 100;
-            Mong mong = MongTestUtil.getFirstLevelMong(mongId, accountId, maxStatus);
+            final int price = 50;
+            final boolean isCanBuy = true;
+            final Food food = MongTestUtil.getFood(price, isCanBuy, 10D);
+            final long mongId = 1L;
+            final long accountId = 1L;
+            final double maxStatus = 100;
+            final Mong mong = MongTestUtil.getFirstLevelMong(mongId, accountId, maxStatus);
 
             // 자는 상태로 변경
             mong.sleep();
@@ -257,14 +240,13 @@ class InteractionServiceTest {
         @DisplayName("몽 사망 상태인 경우 예외가 발생 한다.")
         void feedFoodWhenMongIsDead() {
             // arrange
-            int price = 50;
-            boolean isCanBuy = true;
-            Food food = MongTestUtil.getFood(price, isCanBuy, 10D);
-
-            long mongId = 1L;
-            long accountId = 1L;
-            double maxStatus = 100;
-            Mong mong = MongTestUtil.getFirstLevelMong(mongId, accountId, maxStatus);
+            final int price = 50;
+            final boolean isCanBuy = true;
+            final Food food = MongTestUtil.getFood(price, isCanBuy, 10D);
+            final long mongId = 1L;
+            final long accountId = 1L;
+            final double maxStatus = 100;
+            final Mong mong = MongTestUtil.getFirstLevelMong(mongId, accountId, maxStatus);
 
             // 사망 상태로 변경
             mong.dead();
@@ -293,16 +275,15 @@ class InteractionServiceTest {
         @DisplayName("몽이 간식을 섭취 한다.")
         void feedSnack() {
             // arrange
-            int price = 50;
-            boolean isCanBuy = true;
-            Snack snack = MongTestUtil.getSnack(price, isCanBuy, 10D);
-
-            long mongId = 1L;
-            long accountId = 1L;
-            double maxStatus = 100;
-            double status = 50;
-            int payPoint = 100;
-            Mong mong = MongTestUtil.getFirstLevelMong(mongId, accountId, status, maxStatus, payPoint);
+            final int price = 50;
+            final boolean isCanBuy = true;
+            final Snack snack = MongTestUtil.getSnack(price, isCanBuy, 10D);
+            final long mongId = 1L;
+            final long accountId = 1L;
+            final double maxStatus = 100;
+            final double status = 50;
+            final int payPoint = 100;
+            final Mong mong = MongTestUtil.getFirstLevelMong(mongId, accountId, status, maxStatus, payPoint);
 
             Mockito.when(mongReadPort.getSnackPort(snack.getSnackCode(), mongId)).thenReturn(Optional.of(snack));
             Mockito.when(mongPersistencePort.getMongPort(mongId)).thenReturn(Optional.of(mong));
@@ -316,7 +297,7 @@ class InteractionServiceTest {
                     .accountId(accountId)
                     .build();
 
-            Mong expected = interactionUseCase.feedSnackUseCase(command);
+            var expected = interactionUseCase.feedSnackUseCase(command);
 
             // assert
             assertEquals(payPoint - price, expected.getPayPoint());
@@ -331,14 +312,13 @@ class InteractionServiceTest {
         @DisplayName("몽 레벨이 0인 경우 (알 상태인 경우) 예외가 발생 한다.")
         void feedFoodWhenEggMong() {
             // arrange
-            int price = 50;
-            boolean isCanBuy = true;
-            Snack snack = MongTestUtil.getSnack(price, isCanBuy, 10D);
-
-            long mongId = 1L;
-            long accountId = 1L;
-            double maxStatus = 100;
-            Mong mong = MongTestUtil.getEggMong(mongId, accountId, maxStatus);
+            final int price = 50;
+            final boolean isCanBuy = true;
+            final Snack snack = MongTestUtil.getSnack(price, isCanBuy, 10D);
+            final long mongId = 1L;
+            final long accountId = 1L;
+            final double maxStatus = 100;
+            final Mong mong = MongTestUtil.getEggMong(mongId, accountId, maxStatus);
 
             Mockito.when(mongReadPort.getSnackPort(snack.getSnackCode(), mongId)).thenReturn(Optional.of(snack));
             Mockito.when(mongPersistencePort.getMongPort(mongId)).thenReturn(Optional.of(mong));
@@ -359,14 +339,13 @@ class InteractionServiceTest {
         @DisplayName("몽 자는 상태인 경우 예외가 발생 한다.")
         void feedFoodWhenMongIsSleeping() {
             // arrange
-            int price = 50;
-            boolean isCanBuy = true;
-            Snack snack = MongTestUtil.getSnack(price, isCanBuy, 10D);
-
-            long mongId = 1L;
-            long accountId = 1L;
-            double maxStatus = 100;
-            Mong mong = MongTestUtil.getFirstLevelMong(mongId, accountId, maxStatus);
+            final int price = 50;
+            final boolean isCanBuy = true;
+            final Snack snack = MongTestUtil.getSnack(price, isCanBuy, 10D);
+            final long mongId = 1L;
+            final long accountId = 1L;
+            final double maxStatus = 100;
+            final Mong mong = MongTestUtil.getFirstLevelMong(mongId, accountId, maxStatus);
 
             // 수면 상태로 변경
             mong.sleep();
@@ -390,14 +369,13 @@ class InteractionServiceTest {
         @DisplayName("몽 사망 상태인 경우 예외가 발생 한다.")
         void feedFoodWhenMongIsDead() {
             // arrange
-            int price = 50;
-            boolean isCanBuy = true;
-            Snack snack = MongTestUtil.getSnack(price, isCanBuy, 10D);
-
-            long mongId = 1L;
-            long accountId = 1L;
-            double maxStatus = 100;
-            Mong mong = MongTestUtil.getFirstLevelMong(mongId, accountId, maxStatus);
+            final int price = 50;
+            final boolean isCanBuy = true;
+            final Snack snack = MongTestUtil.getSnack(price, isCanBuy, 10D);
+            final long mongId = 1L;
+            final long accountId = 1L;
+            final double maxStatus = 100;
+            final Mong mong = MongTestUtil.getFirstLevelMong(mongId, accountId, maxStatus);
 
             // 사망 상태로 변경
             mong.dead();
@@ -426,16 +404,14 @@ class InteractionServiceTest {
         @DisplayName("인벤토리 아이템 목록을 조회 한다.")
         void getInventories() {
             // arrange
-            long mongId = 1L;
-            long accountId = 1L;
-            double maxStatus = 100;
-            Mong mong = MongTestUtil.getFirstLevelMong(mongId, accountId, maxStatus);
-
-            long inventoryItemId = 1L;
-            String typeCode = "TEST-INVENTORY-ITEM-TYPE-CODE";
-            String typeName = "TEST-INVENTORY-ITEM-TYPE-NAME";
-
-            List<Inventory> inventories = List.of(
+            final long mongId = 1L;
+            final long accountId = 1L;
+            final double maxStatus = 100;
+            final Mong mong = MongTestUtil.getFirstLevelMong(mongId, accountId, maxStatus);
+            final long inventoryItemId = 1L;
+            final String typeCode = "TEST-INVENTORY-ITEM-TYPE-CODE";
+            final String typeName = "TEST-INVENTORY-ITEM-TYPE-NAME";
+            final List<Inventory> inventories = List.of(
                     Inventory.builder()
                             .inventoryId(inventoryItemId)
                             .mongId(mongId)
@@ -453,7 +429,7 @@ class InteractionServiceTest {
                     .accountId(accountId)
                     .build();
 
-            List<Inventory> expected = interactionUseCase.getInventoriesUseCase(command);
+            var expected = interactionUseCase.getInventoriesUseCase(command);
 
             // assert
             assertIterableEquals(expected, inventories);
@@ -468,19 +444,17 @@ class InteractionServiceTest {
         @DisplayName("소비성 인벤토리 아이템을 사용하여 음식을 섭취 한다.")
         void useInventoryWhenFeedFood() {
             // arrange
-            long mongId = 1L;
-            long accountId = 1L;
-            double maxStatus = 100;
-            double status = 50;
-            int payPoint = 100;
-            Mong mong = MongTestUtil.getFirstLevelMong(mongId, accountId, status, maxStatus, payPoint);
-
-            int price = 50;
-            boolean isCanBuy = true;
-            Food food = MongTestUtil.getFood(price, isCanBuy, 10D);
-
-            long inventoryId = 1L;
-            Inventory inventory = Inventory.builder()
+            final long mongId = 1L;
+            final long accountId = 1L;
+            final double maxStatus = 100;
+            final double status = 50;
+            final int payPoint = 100;
+            final Mong mong = MongTestUtil.getFirstLevelMong(mongId, accountId, status, maxStatus, payPoint);
+            final int price = 50;
+            final boolean isCanBuy = true;
+            final Food food = MongTestUtil.getFood(price, isCanBuy, 10D);
+            final long inventoryId = 1L;
+            final Inventory inventory = Inventory.builder()
                     .inventoryId(inventoryId)
                     .mongId(mongId)
                     .inventoryTypeCode(InventoryTypeCode.FOOD)
@@ -501,7 +475,7 @@ class InteractionServiceTest {
                     .accountId(accountId)
                     .build();
 
-            Mong expected = interactionUseCase.useInventoryUseCase(command);
+            var expected = interactionUseCase.useInventoryUseCase(command);
 
             // assert
             assertEquals(payPoint, mong.getPayPoint());
@@ -516,19 +490,17 @@ class InteractionServiceTest {
         @DisplayName("소비성 인벤토리 아이템을 사용하여 간식을 섭취 한다.")
         void useInventoryWhenFeedSnack() {
             // arrange
-            long mongId = 1L;
-            long accountId = 1L;
-            double maxStatus = 100;
-            double status = 50;
-            int payPoint = 100;
-            Mong mong = MongTestUtil.getFirstLevelMong(mongId, accountId, status, maxStatus, payPoint);
-
-            int price = 50;
-            boolean isCanBuy = true;
-            Snack snack = MongTestUtil.getSnack(price, isCanBuy, 10D);
-
-            long inventoryId = 1L;
-            Inventory inventory = Inventory.builder()
+            final long mongId = 1L;
+            final long accountId = 1L;
+            final double maxStatus = 100;
+            final double status = 50;
+            final int payPoint = 100;
+            final Mong mong = MongTestUtil.getFirstLevelMong(mongId, accountId, status, maxStatus, payPoint);
+            final int price = 50;
+            final boolean isCanBuy = true;
+            final Snack snack = MongTestUtil.getSnack(price, isCanBuy, 10D);
+            final long inventoryId = 1L;
+            final Inventory inventory = Inventory.builder()
                     .inventoryId(inventoryId)
                     .mongId(mongId)
                     .inventoryTypeCode(InventoryTypeCode.SNACK)
@@ -549,7 +521,7 @@ class InteractionServiceTest {
                     .accountId(accountId)
                     .build();
 
-            Mong expected = interactionUseCase.useInventoryUseCase(command);
+            var expected = interactionUseCase.useInventoryUseCase(command);
 
             // assert
             assertEquals(payPoint, mong.getPayPoint());
@@ -564,17 +536,16 @@ class InteractionServiceTest {
         @DisplayName("소비성 아이템이 아닌 경우 예외가 발생 한다.")
         void useInventoryWhenNotConsumedInventoryItem() {
             // arrange
-            long mongId = 1L;
-            long accountId = 1L;
-            double maxStatus = 100;
-            double status = 50;
-            int payPoint = 100;
-            Mong mong = MongTestUtil.getFirstLevelMong(mongId, accountId, status, maxStatus, payPoint);
-
-            long inventoryId = 1L;
-            String inventoryCode = "TEST-TYPE-CODE";
-            String inventoryName = "TEST-TYPE-NAME";
-            Inventory inventory = Inventory.builder()
+            final long mongId = 1L;
+            final long accountId = 1L;
+            final double maxStatus = 100;
+            final double status = 50;
+            final int payPoint = 100;
+            final Mong mong = MongTestUtil.getFirstLevelMong(mongId, accountId, status, maxStatus, payPoint);
+            final long inventoryId = 1L;
+            final String inventoryCode = "TEST-TYPE-CODE";
+            final String inventoryName = "TEST-TYPE-NAME";
+            final Inventory inventory = Inventory.builder()
                     .inventoryId(inventoryId)
                     .mongId(mongId)
                     .inventoryTypeCode(InventoryTypeCode.MAP)
@@ -597,6 +568,39 @@ class InteractionServiceTest {
     }
 
     @Nested
+    @DisplayName("랜덤 뽑기 티켓 구매 단위 테스트")
+    class BuyRandomDrawTicketUseCase {
+
+        @Test
+        @DisplayName("랜덤 뽑기 티켓을 구매 한다.")
+        void buyRandomDrawTicket() {
+            // arrange
+            final long mongId = 1L;
+            final long accountId = 1L;
+            final double maxStatus = 100;
+            final double status = 50;
+            final int payPoint = 100;
+            final Mong mong = MongTestUtil.getFirstLevelMong(mongId, accountId, status, maxStatus, payPoint);
+
+            Mockito.when(mongPersistencePort.getMongPort(mongId)).thenReturn(Optional.of(mong));
+            Mockito.when(mongPersistencePort.saveMongPort(mong)).thenReturn(Optional.of(mong));
+
+            // act
+            BuyRandomDrawTicketCommand command = BuyRandomDrawTicketCommand.builder()
+                    .accountId(accountId)
+                    .mongId(mongId)
+                    .build();
+
+
+            var expected = interactionUseCase.buyRandomDrawTicketUseCase(command);
+
+            // assert
+            assertTrue(payPoint > expected.getPayPoint());
+            assertTrue(0 < expected.getRandomDrawTicketCount());
+        }
+    }
+
+    @Nested
     @DisplayName("랜덤 뽑기 단위 테스트")
     class RandomDrawUseCase {
 
@@ -604,33 +608,31 @@ class InteractionServiceTest {
         @DisplayName("랜덤 뽑기를 통해 소비성 아이템을 뽑고 인벤토리 아이템으로 등록 한다.")
         void randomDraw() {
             // arrange
-            long mongId = 1L;
-            long accountId = 1L;
-            double maxStatus = 100;
-            double status = 50;
-            int payPoint = 100;
-            Mong mong = MongTestUtil.getFirstLevelMong(mongId, accountId, status, maxStatus, payPoint);
-
-            mong.buyRandomDrawTicket();
-
-            long inventoryId = 1L;
-            String inventoryCode = "TEST-TYPE-CODE";
-            String inventoryName = "TEST-TYPE-NAME";
-            Inventory inventory = Inventory.builder()
+            final long mongId = 1L;
+            final long accountId = 1L;
+            final double maxStatus = 100;
+            final double status = 50;
+            final int payPoint = 100;
+            final Mong mong = MongTestUtil.getFirstLevelMong(mongId, accountId, status, maxStatus, payPoint);
+            final long inventoryId = 1L;
+            final String inventoryCode = "TEST-TYPE-CODE";
+            final String inventoryName = "TEST-TYPE-NAME";
+            final Inventory inventory = Inventory.builder()
                     .inventoryId(inventoryId)
                     .mongId(mongId)
                     .inventoryTypeCode(InventoryTypeCode.FOOD)
                     .inventoryCode(inventoryCode)
                     .inventoryName(inventoryName)
                     .build();
-
-            List<RandomDraw> randomDraws = List.of(
+            final List<RandomDraw> randomDraws = List.of(
                     RandomDraw.builder()
                             .randomDrawId(inventoryId)
                             .inventoryTypeCode(inventory.getInventoryTypeCode())
                             .randomDrawCode(inventory.getInventoryCode())
                             .randomDrawName(inventory.getInventoryName())
                             .build());
+
+            mong.buyRandomDrawTicket();
 
             Mockito.when(mongPersistencePort.getMongPort(mongId)).thenReturn(Optional.of(mong));
             Mockito.when(mongReadPort.getRandomDrawsPort(accountId)).thenReturn(randomDraws);
@@ -643,45 +645,43 @@ class InteractionServiceTest {
                     .accountId(accountId)
                     .build();
 
-            RandomDraw exception = interactionUseCase.randomDrawUseCase(command);
+            var expected = interactionUseCase.randomDrawUseCase(command);
 
             // assert
-            assertEquals(inventoryId, exception.getRandomDrawId());
-            assertEquals(inventoryCode, exception.getRandomDrawCode());
-            assertEquals(inventoryName, exception.getRandomDrawName());
+            assertEquals(inventoryId, expected.getRandomDrawId());
+            assertEquals(inventoryCode, expected.getRandomDrawCode());
+            assertEquals(inventoryName, expected.getRandomDrawName());
         }
 
         @Test
         @DisplayName("랜덤 뽑기를 통해 맵 아이템을 뽑고 컬렉션 맵 등록 이벤트를 발생 시킨다.")
         void randomDrawWhenDrawMap() {
             // arrange
-            long mongId = 1L;
-            long accountId = 1L;
-            double maxStatus = 100;
-            double status = 50;
-            int payPoint = 100;
-            Mong mong = MongTestUtil.getFirstLevelMong(mongId, accountId, status, maxStatus, payPoint);
-
-            mong.buyRandomDrawTicket();
-
-            long inventoryId = 1L;
-            String inventoryCode = "TEST-TYPE-CODE";
-            String inventoryName = "TEST-TYPE-NAME";
-            Inventory inventory = Inventory.builder()
+            final long mongId = 1L;
+            final long accountId = 1L;
+            final double maxStatus = 100;
+            final double status = 50;
+            final int payPoint = 100;
+            final Mong mong = MongTestUtil.getFirstLevelMong(mongId, accountId, status, maxStatus, payPoint);
+            final long inventoryId = 1L;
+            final String inventoryCode = "TEST-TYPE-CODE";
+            final String inventoryName = "TEST-TYPE-NAME";
+            final Inventory inventory = Inventory.builder()
                     .inventoryId(inventoryId)
                     .mongId(mongId)
                     .inventoryTypeCode(InventoryTypeCode.MAP)
                     .inventoryCode(inventoryCode)
                     .inventoryName(inventoryName)
                     .build();
-
-            List<RandomDraw> randomDraws = List.of(
+            final List<RandomDraw> randomDraws = List.of(
                     RandomDraw.builder()
                             .randomDrawId(inventoryId)
                             .inventoryTypeCode(inventory.getInventoryTypeCode())
                             .randomDrawCode(inventory.getInventoryCode())
                             .randomDrawName(inventory.getInventoryName())
                             .build());
+
+            mong.buyRandomDrawTicket();
 
             Mockito.when(mongPersistencePort.getMongPort(mongId)).thenReturn(Optional.of(mong));
             Mockito.when(mongReadPort.getRandomDrawsPort(accountId)).thenReturn(randomDraws);
@@ -693,13 +693,13 @@ class InteractionServiceTest {
                     .accountId(accountId)
                     .build();
 
-            RandomDraw exception = interactionUseCase.randomDrawUseCase(command);
+            var expected = interactionUseCase.randomDrawUseCase(command);
 
             // assert
             Mockito.verify(mongEventPort).randomDrawMapEventPort(accountId, inventoryCode);
-            assertEquals(inventoryId, exception.getRandomDrawId());
-            assertEquals(inventoryCode, exception.getRandomDrawCode());
-            assertEquals(inventoryName, exception.getRandomDrawName());
+            assertEquals(inventoryId, expected.getRandomDrawId());
+            assertEquals(inventoryCode, expected.getRandomDrawCode());
+            assertEquals(inventoryName, expected.getRandomDrawName());
         }
     }
 }

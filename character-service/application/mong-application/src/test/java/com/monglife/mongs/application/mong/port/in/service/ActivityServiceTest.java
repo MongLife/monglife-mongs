@@ -23,17 +23,9 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class ActivityServiceTest {
 
-    private final MongPersistencePort mongPersistencePort;
-
-    private final MongReadPort mongReadPort;
-
-    private final ActivityUseCase activityUseCase;
-
-    public ActivityServiceTest() {
-        this.mongPersistencePort = Mockito.mock(MongPersistencePort.class);
-        this.mongReadPort = Mockito.mock(MongReadPort.class);
-        this.activityUseCase = new ActivityService(mongPersistencePort, mongReadPort);
-    }
+    private final MongPersistencePort mongPersistencePort = Mockito.mock(MongPersistencePort.class);
+    private final MongReadPort mongReadPort = Mockito.mock(MongReadPort.class);
+    private final ActivityUseCase activityUseCase = new ActivityService(mongPersistencePort, mongReadPort);
 
     @Nested
     @DisplayName("훈련 타입 목록 조회 단위 테스트")
@@ -43,7 +35,7 @@ class ActivityServiceTest {
         @DisplayName("훈련 타입 정보 목록을 조회 한다.")
         void getTrainingTypes() {
             // arrange
-            List<TrainingType> trainingTypes = List.of(
+            final List<TrainingType> trainingTypes = List.of(
                     new TrainingType(1L, "TEST-TRAINING-TYPE-CODE", "테스트 훈련 타입", 10, 100, 60, 1D, 2D, 3D, 4D, 5D),
                     new TrainingType(1L, "TEST-TRAINING-TYPE-CODE", "테스트 훈련 타입", 10, 100, 60, 1D, 2D, 3D, 4D, 5D)
             );
@@ -51,7 +43,7 @@ class ActivityServiceTest {
             Mockito.when(mongReadPort.getTrainingTypesPort()).thenReturn(trainingTypes);
 
             // act
-            List<TrainingType> expected = activityUseCase.getTrainingTypesUseCase();
+            var expected = activityUseCase.getTrainingTypesUseCase();
 
             // assert
             assertEquals(expected.size(), trainingTypes.size());
@@ -66,8 +58,8 @@ class ActivityServiceTest {
         @DisplayName("훈련 타입 정보를 조회 한다.")
         void getTrainingType() {
             // arrange
-            String trainingCode = "TEST-TRAINING-TYPE-CODE";
-            TrainingType trainingType = new TrainingType(1L, trainingCode, "테스트 훈련 타입", 10, 100, 60, 1D, 2D, 3D, 4D, 5D);
+            final String trainingCode = "TEST-TRAINING-TYPE-CODE";
+            final TrainingType trainingType = new TrainingType(1L, trainingCode, "테스트 훈련 타입", 10, 100, 60, 1D, 2D, 3D, 4D, 5D);
 
             Mockito.when(mongReadPort.getTrainingTypePort(trainingCode)).thenReturn(Optional.of(trainingType));
 
@@ -86,7 +78,7 @@ class ActivityServiceTest {
         @DisplayName("훈련 타입이 없는 경우 예외가 발생 한다.")
         void getTrainingTypeWhenNotExistsTrainingType() {
             // arrange
-            String trainingCode = "TEST-TRAINING-TYPE-CODE";
+            final String trainingCode = "TEST-TRAINING-TYPE-CODE";
 
             Mockito.when(mongReadPort.getTrainingTypePort(trainingCode)).thenReturn(Optional.empty());
 
@@ -107,16 +99,15 @@ class ActivityServiceTest {
         @DisplayName("훈련을 완료하고 스코어를 달성시 보상을 받는다")
         void trainingEnd() {
             // arrange
-            String trainingCode = "TEST-TRAINING-TYPE-CODE";
-            int score = 100;
-            int payPoint = 10;
-            double status = 10D;
-            TrainingType trainingType = new TrainingType(1L, trainingCode, "테스트 훈련 타입", payPoint, score, 60, status, -status, -status, -status, -status);
-
-            long mongId = 1L;
-            long accountId = 1L;
-            double maxStatus = 100D;
-            Mong mong = MongTestUtil.getFirstLevelMong(mongId, accountId, maxStatus);
+            final String trainingCode = "TEST-TRAINING-TYPE-CODE";
+            final int score = 100;
+            final int payPoint = 10;
+            final double status = 10D;
+            final TrainingType trainingType = new TrainingType(1L, trainingCode, "테스트 훈련 타입", payPoint, score, 60, status, -status, -status, -status, -status);
+            final long mongId = 1L;
+            final long accountId = 1L;
+            final double maxStatus = 100D;
+            final Mong mong = MongTestUtil.getFirstLevelMong(mongId, accountId, maxStatus);
 
             Mockito.when(mongReadPort.getTrainingTypePort(trainingCode)).thenReturn(Optional.of(trainingType));
             Mockito.when(mongPersistencePort.getMongPort(mongId)).thenReturn(Optional.of(mong));
@@ -130,7 +121,7 @@ class ActivityServiceTest {
                     .score(score)
                     .build();
 
-            Mong expected = activityUseCase.trainingEndUseCase(command);
+            var expected = activityUseCase.trainingEndUseCase(command);
 
             // assert
             assertEquals(status, expected.getExp());
@@ -146,12 +137,11 @@ class ActivityServiceTest {
         @DisplayName("훈련 타입이 없는 경우 예외가 발생 한다.")
         void trainingEndWhenNotExistsTrainingType() {
             // arrange
-            String trainingCode = "TEST-TRAINING-TYPE-CODE";
-
-            long mongId = 1L;
-            long accountId = 1L;
-            double maxStatus = 100D;
-            Mong mong = MongTestUtil.getEggMong(mongId, accountId, maxStatus);
+            final String trainingCode = "TEST-TRAINING-TYPE-CODE";
+            final long mongId = 1L;
+            final long accountId = 1L;
+            final double maxStatus = 100D;
+            final Mong mong = MongTestUtil.getEggMong(mongId, accountId, maxStatus);
 
             Mockito.when(mongReadPort.getTrainingTypePort(trainingCode)).thenReturn(Optional.empty());
             Mockito.when(mongPersistencePort.getMongPort(mongId)).thenReturn(Optional.of(mong));
@@ -172,14 +162,13 @@ class ActivityServiceTest {
         @DisplayName("몽이 없는 경우 예외가 발생 한다.")
         void trainingEndWhenNotExistsMong() {
             // arrange
-            String trainingCode = "TEST-TRAINING-TYPE-CODE";
-            int score = 100;
-            int payPoint = 10;
-            double status = 10D;
-            TrainingType trainingType = new TrainingType(1L, trainingCode, "테스트 훈련 타입", payPoint, score, 60, status, -status, -status, -status, -status);
-
-            long mongId = 1L;
-            long accountId = 1L;
+            final String trainingCode = "TEST-TRAINING-TYPE-CODE";
+            final int score = 100;
+            final int payPoint = 10;
+            final double status = 10D;
+            final TrainingType trainingType = new TrainingType(1L, trainingCode, "테스트 훈련 타입", payPoint, score, 60, status, -status, -status, -status, -status);
+            final long mongId = 1L;
+            final long accountId = 1L;
 
             Mockito.when(mongReadPort.getTrainingTypePort(trainingCode)).thenReturn(Optional.of(trainingType));
             Mockito.when(mongPersistencePort.getMongPort(mongId)).thenReturn(Optional.empty());

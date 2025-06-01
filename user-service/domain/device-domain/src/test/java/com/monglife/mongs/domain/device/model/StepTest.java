@@ -12,19 +12,19 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class StepTest {
 
-    private static final String DEVICE_ID = "TEST-DEVICE-ID";
-    private static final LocalDateTime DEVICE_BOOTED_AT = LocalDateTime.of(2025, 1, 1, 0, 0);
-
     @Nested
     @DisplayName("보유 걸음 수 페이 포인트 환전 단위 테스트")
     class ExchangeWalkingCountToPayPoint {
+
+        private static final String DEVICE_ID = "TEST-DEVICE-ID";
+        private static final LocalDateTime DEVICE_BOOTED_AT = LocalDateTime.of(2025, 1, 1, 0, 0);
 
         @Test
         @DisplayName("보유 걸음 수를 감소 시키고 환전 페이 포인트를 반환 한다.")
         void exchangeWalkingCountToPayPoint() {
             // arrange
-            int totalWalkingCount = 100;
-            Step step = Step.builder()
+            final int totalWalkingCount = 100;
+            final Step step = Step.builder()
                     .deviceId(DEVICE_ID)
                     .walkingCount(0)
                     .consumeWalkingCount(0)
@@ -33,7 +33,7 @@ class StepTest {
                     .build();
 
             // act
-            int expected = step.exchangeWalkingCountToPayPoint(totalWalkingCount);
+            var expected = step.exchangeWalkingCountToPayPoint(totalWalkingCount);
 
             // assert
             assertTrue(expected > 0);
@@ -43,7 +43,7 @@ class StepTest {
         @DisplayName("보유 걸음 수가 충분하지 않은 경우 예외가 발생 한다.")
         void exchangeWalkingCountToPayPointWhenNotEnoughCurrentWalkingCount() {
             // arrange
-            Step step = Step.builder()
+            final Step step = Step.builder()
                     .deviceId(DEVICE_ID)
                     .walkingCount(0)
                     .consumeWalkingCount(0)
@@ -60,12 +60,15 @@ class StepTest {
     @DisplayName("보유 걸음 수 증가 단위 테스트")
     class IncreaseCurrentWalkingCount {
 
+        private static final String DEVICE_ID = "TEST-DEVICE-ID";
+        private static final LocalDateTime DEVICE_BOOTED_AT = LocalDateTime.of(2025, 1, 1, 0, 0);
+
         @Test
         @DisplayName("보유 걸음 수를 증가 시킨다.")
         void increaseCurrentWalkingCount() {
             // arrange
-            int walkingCount = 100;
-            Step step = Step.builder()
+            final int walkingCount = 100;
+            final Step step = Step.builder()
                     .deviceId(DEVICE_ID)
                     .walkingCount(0)
                     .consumeWalkingCount(0)
@@ -85,12 +88,15 @@ class StepTest {
     @DisplayName("보유 걸음 수 감소 단위 테스트")
     class DecreaseCurrentWalkingCount {
 
+        private static final String DEVICE_ID = "TEST-DEVICE-ID";
+        private static final LocalDateTime DEVICE_BOOTED_AT = LocalDateTime.of(2025, 1, 1, 0, 0);
+
         @Test
         @DisplayName("보유 걸음 수를 감소 시킨다.")
         void decreaseCurrentWalkingCount() {
             // arrange
-            int totalWalkingCount = 100;
-            Step step = Step.builder()
+            final int totalWalkingCount = 100;
+            final Step step = Step.builder()
                     .deviceId(DEVICE_ID)
                     .walkingCount(0)
                     .consumeWalkingCount(0)
@@ -110,13 +116,16 @@ class StepTest {
     @DisplayName("총 걸음 수 동기화 단위 테스트 ")
     class SyncTotalWalkingCount {
 
+        private static final String DEVICE_ID = "TEST-DEVICE-ID";
+        private static final LocalDateTime DEVICE_BOOTED_AT = LocalDateTime.of(2025, 1, 1, 0, 0);
+
         @Test
         @DisplayName("부팅 시간이 동일한 경우 걸음 수를 동기화 한다.")
         void syncTotalWalkingCount() {
             // arrange
-            int totalWalkingCount = 100;
-            int newTotalWalkingCount = totalWalkingCount + 50;
-            Step step = Step.builder()
+            final int totalWalkingCount = 100;
+            final int newTotalWalkingCount = totalWalkingCount + 50;
+            final Step step = Step.builder()
                     .deviceId(DEVICE_ID)
                     .walkingCount(0)
                     .consumeWalkingCount(0)
@@ -135,10 +144,10 @@ class StepTest {
         @DisplayName("부팅 시간이 지난 경우 총 걸음 수를 초기화 한다.")
         void resetStep() {
             // arrange
-            int totalWalkingCount = 100;
-            int newTotalWalkingCount = 50;
-            LocalDateTime newDeviceBootedDt = DEVICE_BOOTED_AT.plusDays(1);
-            Step step = Step.builder()
+            final int totalWalkingCount = 100;
+            final int newTotalWalkingCount = 50;
+            final LocalDateTime newDeviceBootedDt = DEVICE_BOOTED_AT.plusDays(1);
+            final Step step = Step.builder()
                     .deviceId(DEVICE_ID)
                     .walkingCount(0)
                     .consumeWalkingCount(0)
@@ -160,8 +169,8 @@ class StepTest {
         @DisplayName("부팅 시간이 동일하지만 현재 총 걸음 수보다 적은 총 걸음 수인 경우 예외가 발생 한다.")
         void updateTotalWalkingCountWhenLeastTotalWalkingCount() {
             // arrange
-            int newTotalWalkingCount = 0;
-            Step step = Step.builder()
+            final int newTotalWalkingCount = 0;
+            final Step step = Step.builder()
                     .deviceId(DEVICE_ID)
                     .walkingCount(0)
                     .consumeWalkingCount(0)

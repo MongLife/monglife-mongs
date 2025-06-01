@@ -16,21 +16,21 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class InAppOrderTest {
 
-    private static final String PRODUCT_ID = "PRDT000";
-    private static final String SOCIAL_ORDER_ID = CommonUtil.randomId();
-    private static final String PURCHASE_TOKEN = CommonUtil.randomId();
-
     @Nested
     @DisplayName("주문 소비 단위 테스트")
     class ConsumeOrder {
+
+        private static final String PRODUCT_ID = "PRDT000";
+        private static final String SOCIAL_ORDER_ID = CommonUtil.randomId();
+        private static final String PURCHASE_TOKEN = CommonUtil.randomId();
 
         @Test
         @DisplayName("등록된 주문을 소비 처리 한다.")
         void consumeOrder() {
             // arrange
-            OrderPurchaseTypeCode orderPurchaseTypeCode = OrderPurchaseTypeCode.PAYED;
+            final OrderPurchaseTypeCode orderPurchaseTypeCode = OrderPurchaseTypeCode.PAYED;
 
-            InAppOrder inAppOrder = InAppOrder.builder()
+            final InAppOrder inAppOrder = InAppOrder.builder()
                     .socialOrderId(SOCIAL_ORDER_ID)
                     .productId(PRODUCT_ID)
                     .purchaseToken(PURCHASE_TOKEN)
@@ -50,9 +50,9 @@ class InAppOrderTest {
         @DisplayName("이미 소비된 인앱 상품 주문인 경우 예외가 발생한다.")
         void alreadyConsumedInAppOrder() {
             // arrange
-            OrderPurchaseTypeCode orderPurchaseTypeCode = OrderPurchaseTypeCode.PAYED;
+            final OrderPurchaseTypeCode orderPurchaseTypeCode = OrderPurchaseTypeCode.PAYED;
 
-            InAppOrder inAppOrder = InAppOrder.builder()
+            final InAppOrder inAppOrder = InAppOrder.builder()
                     .socialOrderId(SOCIAL_ORDER_ID)
                     .productId(PRODUCT_ID)
                     .purchaseToken(PURCHASE_TOKEN)
@@ -69,9 +69,9 @@ class InAppOrderTest {
         @DisplayName("구매가 완료되지 않은 주문인 경우 예외가 발생한다.")
         void notPayedInAppOrder() {
             // arrange
-            OrderPurchaseTypeCode orderPurchaseTypeCode = OrderPurchaseTypeCode.PENDING;
+            final OrderPurchaseTypeCode orderPurchaseTypeCode = OrderPurchaseTypeCode.PENDING;
 
-            InAppOrder inAppOrder = InAppOrder.builder()
+            final InAppOrder inAppOrder = InAppOrder.builder()
                     .socialOrderId(SOCIAL_ORDER_ID)
                     .productId(PRODUCT_ID)
                     .purchaseToken(PURCHASE_TOKEN)
@@ -88,9 +88,9 @@ class InAppOrderTest {
         @DisplayName("구매가 취소된 주문인 경우 예외가 발생한다.")
         void payCancelInAppOrder() {
             // arrange
-            OrderPurchaseTypeCode orderPurchaseTypeCode = OrderPurchaseTypeCode.CANCEL;
+            final OrderPurchaseTypeCode orderPurchaseTypeCode = OrderPurchaseTypeCode.CANCEL;
 
-            InAppOrder inAppOrder = InAppOrder.builder()
+            final InAppOrder inAppOrder = InAppOrder.builder()
                     .socialOrderId(SOCIAL_ORDER_ID)
                     .productId(PRODUCT_ID)
                     .purchaseToken(PURCHASE_TOKEN)

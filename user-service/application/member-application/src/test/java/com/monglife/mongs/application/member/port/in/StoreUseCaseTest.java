@@ -26,45 +26,33 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class StoreUseCaseTest {
 
-    private final MemberPersistencePort memberPersistencePort;
-
-    private final OrderPersistencePort orderPersistencePort;
-
-    private final MemberPublishPort memberPublishPort;
-
-    private final GooglePaymentPort googlePaymentPort;
-
-    private final StoreUseCase storeUseCase;
-
-    public StoreUseCaseTest() {
-        this.memberPersistencePort = Mockito.mock(MemberPersistencePort.class);
-        this.orderPersistencePort = Mockito.mock(OrderPersistencePort.class);
-        this.memberPublishPort = Mockito.mock(MemberPublishPort.class);
-        this.googlePaymentPort = Mockito.mock(GooglePaymentPort.class);
-        this.storeUseCase = new StoreService(memberPersistencePort, orderPersistencePort, memberPublishPort, googlePaymentPort);
-    }
-
-    private static final Long ACCOUNT_ID = 1L;
+    private final MemberPersistencePort memberPersistencePort = Mockito.mock(MemberPersistencePort.class);
+    private final OrderPersistencePort orderPersistencePort = Mockito.mock(OrderPersistencePort.class);
+    private final MemberPublishPort memberPublishPort = Mockito.mock(MemberPublishPort.class);
+    private final GooglePaymentPort googlePaymentPort = Mockito.mock(GooglePaymentPort.class);
+    private final StoreUseCase storeUseCase = new StoreService(memberPersistencePort, orderPersistencePort, memberPublishPort, googlePaymentPort);
 
     @Nested
     @DisplayName("주문 등록 단위 테스트")
     class CreateOrderUseCase {
 
+        private static final Long ACCOUNT_ID = 1L;
+
         @Test
         @DisplayName("주문을 등록 한다.")
         void createOrder() {
             // arrange
-            String productId = "PRDT000";
-            String productName = "TEST-PRODUCT-NAME";
-            Double price = 1000D;
-            String socialOrderId = "TEST-SOCIAL_ORDER-ID";
-            String purchaseToken = CommonUtil.randomId();
-            InAppProduct inAppProduct = InAppProduct.builder()
+            final String productId = "PRDT000";
+            final String productName = "TEST-PRODUCT-NAME";
+            final Double price = 1000D;
+            final String socialOrderId = "TEST-SOCIAL_ORDER-ID";
+            final String purchaseToken = CommonUtil.randomId();
+            final InAppProduct inAppProduct = InAppProduct.builder()
                     .productId(productId)
                     .productName(productName)
                     .price(price)
                     .build();
-            Order order = Order.builder()
+            final Order order = Order.builder()
                     .orderId(1L)
                     .accountId(ACCOUNT_ID)
                     .productId(productId)
@@ -93,9 +81,9 @@ class StoreUseCaseTest {
         @DisplayName("인앱 상품 정보가 없는 경우 주문을 등록하지 않고 예외가 발생 한다.")
         void notExistsInAppProduct() {
             // arrange
-            String productId = "PRDT000";
-            String socialOrderId = "TEST-SOCIAL_ORDER-ID";
-            String purchaseToken = CommonUtil.randomId();
+            final String productId = "PRDT000";
+            final String socialOrderId = "TEST-SOCIAL_ORDER-ID";
+            final String purchaseToken = CommonUtil.randomId();
 
             Mockito.when(orderPersistencePort.isExistsOrderByAccountIdAndSocialOrderIdPort(ACCOUNT_ID, socialOrderId)).thenReturn(false);
             Mockito.when(googlePaymentPort.getInAppProductPort(Mockito.any())).thenReturn(Optional.empty());
@@ -116,12 +104,12 @@ class StoreUseCaseTest {
         @DisplayName("주문 등록에 실패하는 경우 예외가 발생 한다.")
         void createOrderFail() {
             // arrange
-            String productId = "PRDT000";
-            String productName = "TEST-PRODUCT-NAME";
-            Double price = 1000D;
-            String socialOrderId = "TEST-SOCIAL_ORDER-ID";
-            String purchaseToken = CommonUtil.randomId();
-            InAppProduct inAppProduct = InAppProduct.builder()
+            final String productId = "PRDT000";
+            final String productName = "TEST-PRODUCT-NAME";
+            final Double price = 1000D;
+            final String socialOrderId = "TEST-SOCIAL_ORDER-ID";
+            final String purchaseToken = CommonUtil.randomId();
+            final InAppProduct inAppProduct = InAppProduct.builder()
                     .productId(productId)
                     .productName(productName)
                     .price(price)
@@ -147,6 +135,7 @@ class StoreUseCaseTest {
     @DisplayName("주문 소비 단위 테스트")
     class ConsumeOrderUseCase {
 
+        private static final Long ACCOUNT_ID = 1L;
         private static final String PRODUCT_ID = "PRDT000";
         private static final Double PRICE = 1000D;
         private static final String SOCIAL_ORDER_ID = CommonUtil.randomId();
@@ -156,9 +145,9 @@ class StoreUseCaseTest {
         @DisplayName("등록된 주문을 소비 처리 한다.")
         void consumeOrder() {
             // arrange
-            int starPoint = 100;
-            OrderPurchaseTypeCode orderPurchaseTypeCode = OrderPurchaseTypeCode.PAYED;
-            Order order = Order.builder()
+            final int starPoint = 100;
+            final OrderPurchaseTypeCode orderPurchaseTypeCode = OrderPurchaseTypeCode.PAYED;
+            final Order order = Order.builder()
                     .orderId(1L)
                     .accountId(ACCOUNT_ID)
                     .productId(PRODUCT_ID)
@@ -167,18 +156,18 @@ class StoreUseCaseTest {
                     .purchaseToken(PURCHASE_TOKEN)
                     .build();
 
-            ExchangeStarPointProduct product = ExchangeStarPointProduct.builder()
+            final ExchangeStarPointProduct product = ExchangeStarPointProduct.builder()
                     .productId(PRODUCT_ID)
                     .starPoint(starPoint)
                     .build();
 
-            Player player = Player.builder()
+            final Player player = Player.builder()
                     .accountId(ACCOUNT_ID)
                     .slotCount(1)
                     .starPoint(0)
                     .build();
 
-            InAppOrder inAppOrder = InAppOrder.builder()
+            final InAppOrder inAppOrder = InAppOrder.builder()
                     .socialOrderId(SOCIAL_ORDER_ID)
                     .productId(PRODUCT_ID)
                     .purchaseToken(PURCHASE_TOKEN)
@@ -187,7 +176,7 @@ class StoreUseCaseTest {
                     .purchasedAt(LocalDateTime.now())
                     .build();
 
-            InAppOrder inAppOrderAfterConsume = InAppOrder.builder()
+            final InAppOrder inAppOrderAfterConsume = InAppOrder.builder()
                     .socialOrderId(SOCIAL_ORDER_ID)
                     .productId(PRODUCT_ID)
                     .purchaseToken(PURCHASE_TOKEN)
@@ -227,20 +216,20 @@ class StoreUseCaseTest {
         @DisplayName("등록된 주문이 없는 경우 예외가 발생 한다.")
         void notExistsOrder() {
             // arrange
-            int starPoint = 100;
-            OrderPurchaseTypeCode orderPurchaseTypeCode = OrderPurchaseTypeCode.PAYED;
-            ExchangeStarPointProduct product = ExchangeStarPointProduct.builder()
+            final int starPoint = 100;
+            final OrderPurchaseTypeCode orderPurchaseTypeCode = OrderPurchaseTypeCode.PAYED;
+            final ExchangeStarPointProduct product = ExchangeStarPointProduct.builder()
                     .productId(PRODUCT_ID)
                     .starPoint(starPoint)
                     .build();
 
-            Player player = Player.builder()
+            final Player player = Player.builder()
                     .accountId(ACCOUNT_ID)
                     .slotCount(1)
                     .starPoint(0)
                     .build();
 
-            InAppOrder inAppOrder = InAppOrder.builder()
+            final InAppOrder inAppOrder = InAppOrder.builder()
                     .socialOrderId(SOCIAL_ORDER_ID)
                     .productId(PRODUCT_ID)
                     .purchaseToken(PURCHASE_TOKEN)
@@ -249,7 +238,7 @@ class StoreUseCaseTest {
                     .purchasedAt(LocalDateTime.now())
                     .build();
 
-            InAppOrder inAppOrderAfterConsume = InAppOrder.builder()
+            final InAppOrder inAppOrderAfterConsume = InAppOrder.builder()
                     .socialOrderId(SOCIAL_ORDER_ID)
                     .productId(PRODUCT_ID)
                     .purchaseToken(PURCHASE_TOKEN)
@@ -285,8 +274,8 @@ class StoreUseCaseTest {
         @DisplayName("등록된 스타 포인트 환전 상품이 없는 경우 예외가 발생 한다.")
         void notExistsExchangeStarPointProduct() {
             // arrange
-            OrderPurchaseTypeCode orderPurchaseTypeCode = OrderPurchaseTypeCode.PAYED;
-            Order order = Order.builder()
+            final OrderPurchaseTypeCode orderPurchaseTypeCode = OrderPurchaseTypeCode.PAYED;
+            final Order order = Order.builder()
                     .orderId(1L)
                     .accountId(ACCOUNT_ID)
                     .productId(PRODUCT_ID)
@@ -295,13 +284,13 @@ class StoreUseCaseTest {
                     .purchaseToken(PURCHASE_TOKEN)
                     .build();
 
-            Player player = Player.builder()
+            final Player player = Player.builder()
                     .accountId(ACCOUNT_ID)
                     .slotCount(1)
                     .starPoint(0)
                     .build();
 
-            InAppOrder inAppOrder = InAppOrder.builder()
+            final InAppOrder inAppOrder = InAppOrder.builder()
                     .socialOrderId(SOCIAL_ORDER_ID)
                     .productId(PRODUCT_ID)
                     .purchaseToken(PURCHASE_TOKEN)
@@ -310,7 +299,7 @@ class StoreUseCaseTest {
                     .purchasedAt(LocalDateTime.now())
                     .build();
 
-            InAppOrder inAppOrderAfterConsume = InAppOrder.builder()
+            final InAppOrder inAppOrderAfterConsume = InAppOrder.builder()
                     .socialOrderId(SOCIAL_ORDER_ID)
                     .productId(PRODUCT_ID)
                     .purchaseToken(PURCHASE_TOKEN)
@@ -346,9 +335,9 @@ class StoreUseCaseTest {
         @DisplayName("등록된 플레이어가 없는 경우 예외가 발생 한다.")
         void notExistsPlayer() {
             // arrange
-            int starPoint = 100;
-            OrderPurchaseTypeCode orderPurchaseTypeCode = OrderPurchaseTypeCode.PAYED;
-            Order order = Order.builder()
+            final int starPoint = 100;
+            final OrderPurchaseTypeCode orderPurchaseTypeCode = OrderPurchaseTypeCode.PAYED;
+            final Order order = Order.builder()
                     .orderId(1L)
                     .accountId(ACCOUNT_ID)
                     .productId(PRODUCT_ID)
@@ -357,12 +346,12 @@ class StoreUseCaseTest {
                     .purchaseToken(PURCHASE_TOKEN)
                     .build();
 
-            ExchangeStarPointProduct product = ExchangeStarPointProduct.builder()
+            final ExchangeStarPointProduct product = ExchangeStarPointProduct.builder()
                     .productId(PRODUCT_ID)
                     .starPoint(starPoint)
                     .build();
 
-            InAppOrder inAppOrder = InAppOrder.builder()
+            final InAppOrder inAppOrder = InAppOrder.builder()
                     .socialOrderId(SOCIAL_ORDER_ID)
                     .productId(PRODUCT_ID)
                     .purchaseToken(PURCHASE_TOKEN)
@@ -371,7 +360,7 @@ class StoreUseCaseTest {
                     .purchasedAt(LocalDateTime.now())
                     .build();
 
-            InAppOrder inAppOrderAfterConsume = InAppOrder.builder()
+            final InAppOrder inAppOrderAfterConsume = InAppOrder.builder()
                     .socialOrderId(SOCIAL_ORDER_ID)
                     .productId(PRODUCT_ID)
                     .purchaseToken(PURCHASE_TOKEN)
@@ -407,9 +396,9 @@ class StoreUseCaseTest {
         @DisplayName("플레이어를 수정할 때 플레이어가 없는 경우 예외가 발생 한다.")
         void notExistsPlayerWhenSavePlayer() {
             // arrange
-            int starPoint = 100;
-            OrderPurchaseTypeCode orderPurchaseTypeCode = OrderPurchaseTypeCode.PAYED;
-            Order order = Order.builder()
+            final int starPoint = 100;
+            final OrderPurchaseTypeCode orderPurchaseTypeCode = OrderPurchaseTypeCode.PAYED;
+            final Order order = Order.builder()
                     .orderId(1L)
                     .accountId(ACCOUNT_ID)
                     .productId(PRODUCT_ID)
@@ -418,18 +407,18 @@ class StoreUseCaseTest {
                     .purchaseToken(PURCHASE_TOKEN)
                     .build();
 
-            Player player = Player.builder()
+            final Player player = Player.builder()
                     .accountId(ACCOUNT_ID)
                     .slotCount(1)
                     .starPoint(0)
                     .build();
 
-            ExchangeStarPointProduct product = ExchangeStarPointProduct.builder()
+            final ExchangeStarPointProduct product = ExchangeStarPointProduct.builder()
                     .productId(PRODUCT_ID)
                     .starPoint(starPoint)
                     .build();
 
-            InAppOrder inAppOrder = InAppOrder.builder()
+            final InAppOrder inAppOrder = InAppOrder.builder()
                     .socialOrderId(SOCIAL_ORDER_ID)
                     .productId(PRODUCT_ID)
                     .purchaseToken(PURCHASE_TOKEN)
@@ -438,7 +427,7 @@ class StoreUseCaseTest {
                     .purchasedAt(LocalDateTime.now())
                     .build();
 
-            InAppOrder inAppOrderAfterConsume = InAppOrder.builder()
+            final InAppOrder inAppOrderAfterConsume = InAppOrder.builder()
                     .socialOrderId(SOCIAL_ORDER_ID)
                     .productId(PRODUCT_ID)
                     .purchaseToken(PURCHASE_TOKEN)
@@ -474,8 +463,8 @@ class StoreUseCaseTest {
         @DisplayName("인앱 상품 주문이 없는 경우 예외가 발생 한다.")
         void notExistsInAppOrder() {
             // arrange
-            int starPoint = 100;
-            Order order = Order.builder()
+            final int starPoint = 100;
+            final Order order = Order.builder()
                     .orderId(1L)
                     .accountId(ACCOUNT_ID)
                     .productId(PRODUCT_ID)
@@ -484,18 +473,18 @@ class StoreUseCaseTest {
                     .purchaseToken(PURCHASE_TOKEN)
                     .build();
 
-            ExchangeStarPointProduct product = ExchangeStarPointProduct.builder()
+            final ExchangeStarPointProduct product = ExchangeStarPointProduct.builder()
                     .productId(PRODUCT_ID)
                     .starPoint(starPoint)
                     .build();
 
-            Player player = Player.builder()
+            final Player player = Player.builder()
                     .accountId(ACCOUNT_ID)
                     .slotCount(1)
                     .starPoint(0)
                     .build();
 
-            InAppOrder inAppOrder = InAppOrder.builder()
+            final InAppOrder inAppOrder = InAppOrder.builder()
                     .socialOrderId(SOCIAL_ORDER_ID)
                     .productId(PRODUCT_ID)
                     .purchaseToken(PURCHASE_TOKEN)
@@ -504,7 +493,7 @@ class StoreUseCaseTest {
                     .purchasedAt(LocalDateTime.now())
                     .build();
 
-            InAppOrder inAppOrderAfterConsume = InAppOrder.builder()
+            final InAppOrder inAppOrderAfterConsume = InAppOrder.builder()
                     .socialOrderId(SOCIAL_ORDER_ID)
                     .productId(PRODUCT_ID)
                     .purchaseToken(PURCHASE_TOKEN)
@@ -540,9 +529,9 @@ class StoreUseCaseTest {
         @DisplayName("인앱 상품 주문을 소비할 수 없는 경우 예외가 발생한다.")
         void invalidConsumedInAppOrder() {
             // arrange
-            int starPoint = 100;
-            OrderPurchaseTypeCode orderPurchaseTypeCode = OrderPurchaseTypeCode.PAYED;
-            Order order = Order.builder()
+            final int starPoint = 100;
+            final OrderPurchaseTypeCode orderPurchaseTypeCode = OrderPurchaseTypeCode.PAYED;
+            final Order order = Order.builder()
                     .orderId(1L)
                     .accountId(ACCOUNT_ID)
                     .productId(PRODUCT_ID)
@@ -551,18 +540,18 @@ class StoreUseCaseTest {
                     .purchaseToken(PURCHASE_TOKEN)
                     .build();
 
-            ExchangeStarPointProduct product = ExchangeStarPointProduct.builder()
+            final ExchangeStarPointProduct product = ExchangeStarPointProduct.builder()
                     .productId(PRODUCT_ID)
                     .starPoint(starPoint)
                     .build();
 
-            Player player = Player.builder()
+            final Player player = Player.builder()
                     .accountId(ACCOUNT_ID)
                     .slotCount(1)
                     .starPoint(0)
                     .build();
 
-            InAppOrder inAppOrder = InAppOrder.builder()
+            final InAppOrder inAppOrder = InAppOrder.builder()
                     .socialOrderId(SOCIAL_ORDER_ID)
                     .productId(PRODUCT_ID)
                     .purchaseToken(PURCHASE_TOKEN)
@@ -599,13 +588,15 @@ class StoreUseCaseTest {
     @DisplayName("주문 소비 내역 목록 조회 단위 테스트")
     class GetConsumedOrderUseCase {
 
+        private static final Long ACCOUNT_ID = 1L;
+
         @Test
         @DisplayName("소비된 주문 목록을 조회 한다.")
         void getConsumedOrder() {
             // arrange
-            String socialOrderId = CommonUtil.randomId();
-            String purchaseToken = CommonUtil.randomId();
-            Order order = Order.builder()
+            final String socialOrderId = CommonUtil.randomId();
+            final String purchaseToken = CommonUtil.randomId();
+            final Order order = Order.builder()
                             .orderId(1L)
                             .accountId(ACCOUNT_ID)
                             .productId("PRDT000")
@@ -613,9 +604,9 @@ class StoreUseCaseTest {
                             .socialOrderId(socialOrderId)
                             .purchaseToken(purchaseToken)
                             .build();
-            List<Order> orders = List.of(order);
+            final List<Order> orders = List.of(order);
 
-            InAppOrder inAppOrder = InAppOrder.builder()
+            final InAppOrder inAppOrder = InAppOrder.builder()
                     .socialOrderId(socialOrderId)
                     .productId(order.getProductId())
                     .purchaseToken(purchaseToken)

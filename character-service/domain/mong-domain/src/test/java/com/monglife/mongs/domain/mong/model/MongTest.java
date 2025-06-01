@@ -18,16 +18,16 @@ class MongTest {
 
     @Nested
     @DisplayName("몽 사망 단위 테스트")
-    class MongDead {
+    class DeadMong {
 
         @Test
         @DisplayName("몽을 사망 상태로 변경 한다.")
         void deadMong() {
             // arrange
-            long mongId = 1L;
-            long accountId = 1L;
-            double maxStatus = 100D;
-            Mong mong = MongTestUtil.getFirstLevelMong(mongId, accountId, maxStatus);
+            final long mongId = 1L;
+            final long accountId = 1L;
+            final double maxStatus = 100D;
+            final Mong mong = MongTestUtil.getFirstLevelMong(mongId, accountId, maxStatus);
 
             // act
             mong.dead();
@@ -40,10 +40,10 @@ class MongTest {
         @DisplayName("몽이 사망 상태인 경우 예외가 발생 한다.")
         void deadMongWhenIsDead() {
             // arrange
-            long mongId = 1L;
-            long accountId = 1L;
-            double maxStatus = 100D;
-            Mong mong = MongTestUtil.getFirstLevelMong(mongId, accountId, maxStatus, MongStateCode.DEAD);
+            final long mongId = 1L;
+            final long accountId = 1L;
+            final double maxStatus = 100D;
+            final Mong mong = MongTestUtil.getFirstLevelMong(mongId, accountId, maxStatus, MongStateCode.DEAD);
 
             // act & assert
             assertThrows(InvalidMongStateException.class, mong::dead);
@@ -53,10 +53,10 @@ class MongTest {
         @DisplayName("몽이 진화 준비 상태인 경우 예외가 발생 한다.")
         void deadMongWhenIsGraduateReady() {
             // arrange
-            long mongId = 1L;
-            long accountId = 1L;
-            double maxStatus = 100D;
-            Mong mong = MongTestUtil.getFirstLevelMong(mongId, accountId, maxStatus, MongStateCode.GRADUATE_READY);
+            final long mongId = 1L;
+            final long accountId = 1L;
+            final double maxStatus = 100D;
+            final Mong mong = MongTestUtil.getFirstLevelMong(mongId, accountId, maxStatus, MongStateCode.GRADUATE_READY);
 
             // act & assert
             assertThrows(InvalidMongStateException.class, mong::dead);
@@ -71,10 +71,10 @@ class MongTest {
         @DisplayName("몽을 쓰다 듬고 지수를 증가 시킨다.")
         void strokeMong() {
             // arrange
-            long mongId = 1L;
-            long accountId = 1L;
-            double maxStatus = 100D;
-            Mong mong = MongTestUtil.getFirstLevelMong(mongId, accountId, maxStatus);
+            final long mongId = 1L;
+            final long accountId = 1L;
+            final double maxStatus = 100D;
+            final Mong mong = MongTestUtil.getFirstLevelMong(mongId, accountId, maxStatus);
 
             // act
             mong.stroke();
@@ -88,10 +88,10 @@ class MongTest {
         @DisplayName("몽이 사망 상태인 경우 예외가 발생 한다.")
         void strokeMongWhenIsDead() {
             // arrange
-            long mongId = 1L;
-            long accountId = 1L;
-            double maxStatus = 100D;
-            Mong mong = MongTestUtil.getFirstLevelMong(mongId, accountId, maxStatus, MongStateCode.DEAD);
+            final long mongId = 1L;
+            final long accountId = 1L;
+            final double maxStatus = 100D;
+            final Mong mong = MongTestUtil.getFirstLevelMong(mongId, accountId, maxStatus, MongStateCode.DEAD);
 
             // act & assert
             assertThrows(InvalidMongStateException.class, mong::stroke);
@@ -101,10 +101,10 @@ class MongTest {
         @DisplayName("몽이 졸업 준비 상태인 경우 예외가 발생 한다.")
         void strokeMongWhenIsGraduateReady() {
             // arrange
-            long mongId = 1L;
-            long accountId = 1L;
-            double maxStatus = 100D;
-            Mong mong = MongTestUtil.getFirstLevelMong(mongId, accountId, maxStatus, MongStateCode.GRADUATE_READY);
+            final long mongId = 1L;
+            final long accountId = 1L;
+            final double maxStatus = 100D;
+            final Mong mong = MongTestUtil.getFirstLevelMong(mongId, accountId, maxStatus, MongStateCode.GRADUATE_READY);
 
             // act & assert
             assertThrows(InvalidMongStateException.class, mong::stroke);
@@ -114,10 +114,10 @@ class MongTest {
         @DisplayName("몽이 알 상태인 경우 예외가 발생 한다.")
         void strokeMongWhenIsEgg() {
             // arrange
-            long mongId = 1L;
-            long accountId = 1L;
-            double maxStatus = 100D;
-            Mong mong = MongTestUtil.getEggMong(mongId, accountId, maxStatus);
+            final long mongId = 1L;
+            final long accountId = 1L;
+            final double maxStatus = 100D;
+            final Mong mong = MongTestUtil.getEggMong(mongId, accountId, maxStatus);
 
             // act & assert
             assertThrows(InvalidMongStateException.class, mong::stroke);
@@ -127,10 +127,10 @@ class MongTest {
         @DisplayName("몽이 수면 상태인 경우 예외가 발생 한다.")
         void strokeMongWhenIsSleeping() {
             // arrange
-            long mongId = 1L;
-            long accountId = 1L;
-            double maxStatus = 100D;
-            Mong mong = MongTestUtil.getFirstLevelMong(mongId, accountId, maxStatus, true);
+            final long mongId = 1L;
+            final long accountId = 1L;
+            final double maxStatus = 100D;
+            final Mong mong = MongTestUtil.getFirstLevelMong(mongId, accountId, maxStatus, true);
 
             // act & assert
             assertThrows(InvalidMongStateException.class, mong::stroke);
@@ -145,10 +145,10 @@ class MongTest {
         @DisplayName("몽을 수면 상태로 변경 한다.")
         void sleepMong() {
             // arrange
-            long mongId = 1L;
-            long accountId = 1L;
-            double maxStatus = 100D;
-            Mong mong = MongTestUtil.getFirstLevelMong(mongId, accountId, maxStatus, false);
+            final long mongId = 1L;
+            final long accountId = 1L;
+            final double maxStatus = 100D;
+            final Mong mong = MongTestUtil.getFirstLevelMong(mongId, accountId, maxStatus, false);
 
             // act
             mong.sleep();
@@ -161,10 +161,10 @@ class MongTest {
         @DisplayName("몽이 수면 상태인 경우 예외가 발생 한다.")
         void sleepMongWhenIsSleeping() {
             // arrange
-            long mongId = 1L;
-            long accountId = 1L;
-            double maxStatus = 100D;
-            Mong mong = MongTestUtil.getFirstLevelMong(mongId, accountId, maxStatus, true);
+            final long mongId = 1L;
+            final long accountId = 1L;
+            final double maxStatus = 100D;
+            final Mong mong = MongTestUtil.getFirstLevelMong(mongId, accountId, maxStatus, true);
 
             // act & assert
             assertThrows(InvalidMongStateException.class, mong::sleep);
@@ -174,10 +174,10 @@ class MongTest {
         @DisplayName("몽이 사망 상태인 경우 예외가 발생 한다.")
         void sleepMongWhenIsDead() {
             // arrange
-            long mongId = 1L;
-            long accountId = 1L;
-            double maxStatus = 100D;
-            Mong mong = MongTestUtil.getFirstLevelMong(mongId, accountId, maxStatus, MongStateCode.DEAD);
+            final long mongId = 1L;
+            final long accountId = 1L;
+            final double maxStatus = 100D;
+            final Mong mong = MongTestUtil.getFirstLevelMong(mongId, accountId, maxStatus, MongStateCode.DEAD);
 
             // act & assert
             assertThrows(InvalidMongStateException.class, mong::sleep);
@@ -187,10 +187,10 @@ class MongTest {
         @DisplayName("몽이 졸업 준비 상태인 경우 예외가 발생 한다.")
         void sleepMongWHenIsGraduateReady() {
             // arrange
-            long mongId = 1L;
-            long accountId = 1L;
-            double maxStatus = 100D;
-            Mong mong = MongTestUtil.getFirstLevelMong(mongId, accountId, maxStatus, MongStateCode.GRADUATE_READY);
+            final long mongId = 1L;
+            final long accountId = 1L;
+            final double maxStatus = 100D;
+            final Mong mong = MongTestUtil.getFirstLevelMong(mongId, accountId, maxStatus, MongStateCode.GRADUATE_READY);
 
             // act & assert
             assertThrows(InvalidMongStateException.class, mong::sleep);
@@ -200,10 +200,10 @@ class MongTest {
         @DisplayName("몽이 알 상태인 경우 예외가 발생 한다.")
         void sleepMongWhenIsEgg() {
             // arrange
-            long mongId = 1L;
-            long accountId = 1L;
-            double maxStatus = 100D;
-            Mong mong = MongTestUtil.getEggMong(mongId, accountId, maxStatus);
+            final long mongId = 1L;
+            final long accountId = 1L;
+            final double maxStatus = 100D;
+            final Mong mong = MongTestUtil.getEggMong(mongId, accountId, maxStatus);
 
             // act & assert
             assertThrows(InvalidMongStateException.class, mong::sleep);
@@ -218,10 +218,10 @@ class MongTest {
         @DisplayName("몽을 기상 상태로 변경 한다.")
         void wakeupMong() {
             // arrange
-            long mongId = 1L;
-            long accountId = 1L;
-            double maxStatus = 100D;
-            Mong mong = MongTestUtil.getFirstLevelMong(mongId, accountId, maxStatus, true);
+            final long mongId = 1L;
+            final long accountId = 1L;
+            final double maxStatus = 100D;
+            final Mong mong = MongTestUtil.getFirstLevelMong(mongId, accountId, maxStatus, true);
 
             // act
             mong.wakeup();
@@ -234,10 +234,10 @@ class MongTest {
         @DisplayName("몽이 기상 상태인 경우 예외가 발생 한다.")
         void wakeupMongWhenIsNotSleeping() {
             // arrange
-            long mongId = 1L;
-            long accountId = 1L;
-            double maxStatus = 100D;
-            Mong mong = MongTestUtil.getFirstLevelMong(mongId, accountId, maxStatus, false);
+            final long mongId = 1L;
+            final long accountId = 1L;
+            final double maxStatus = 100D;
+            final Mong mong = MongTestUtil.getFirstLevelMong(mongId, accountId, maxStatus, false);
 
             // act & assert
             assertThrows(InvalidMongStateException.class, mong::wakeup);
@@ -247,10 +247,10 @@ class MongTest {
         @DisplayName("몽이 사망 상태인 경우 예외가 발생 한다.")
         void wakeupMongWhenIsDead() {
             // arrange
-            long mongId = 1L;
-            long accountId = 1L;
-            double maxStatus = 100D;
-            Mong mong = MongTestUtil.getFirstLevelMong(mongId, accountId, maxStatus, MongStateCode.DEAD);
+            final long mongId = 1L;
+            final long accountId = 1L;
+            final double maxStatus = 100D;
+            final Mong mong = MongTestUtil.getFirstLevelMong(mongId, accountId, maxStatus, MongStateCode.DEAD);
 
             // act & assert
             assertThrows(InvalidMongStateException.class, mong::wakeup);
@@ -260,10 +260,10 @@ class MongTest {
         @DisplayName("몽이 졸업 준비 상태인 경우 예외가 발생 한다.")
         void wakeupMongWHenIsGraduateReady() {
             // arrange
-            long mongId = 1L;
-            long accountId = 1L;
-            double maxStatus = 100D;
-            Mong mong = MongTestUtil.getFirstLevelMong(mongId, accountId, maxStatus, MongStateCode.GRADUATE_READY);
+            final long mongId = 1L;
+            final long accountId = 1L;
+            final double maxStatus = 100D;
+            final Mong mong = MongTestUtil.getFirstLevelMong(mongId, accountId, maxStatus, MongStateCode.GRADUATE_READY);
 
             // act & assert
             assertThrows(InvalidMongStateException.class, mong::wakeup);
@@ -273,10 +273,10 @@ class MongTest {
         @DisplayName("몽이 알 상태인 경우 예외가 발생 한다.")
         void wakeupMongWhenIsEgg() {
             // arrange
-            long mongId = 1L;
-            long accountId = 1L;
-            double maxStatus = 100D;
-            Mong mong = MongTestUtil.getEggMong(mongId, accountId, maxStatus);
+            final long mongId = 1L;
+            final long accountId = 1L;
+            final double maxStatus = 100D;
+            final Mong mong = MongTestUtil.getEggMong(mongId, accountId, maxStatus);
 
             // act & assert
             assertThrows(InvalidMongStateException.class, mong::wakeup);
@@ -291,11 +291,11 @@ class MongTest {
         @DisplayName("몽 배변을 처리하고 지수를 증가 시킨다.")
         void poopCleanMong() {
             // arrange
-            long mongId = 1L;
-            long accountId = 1L;
-            double maxStatus = 100D;
-            int poopCount = 4;
-            Mong mong = MongTestUtil.getFirstLevelMong(mongId, accountId, maxStatus, poopCount);
+            final long mongId = 1L;
+            final long accountId = 1L;
+            final double maxStatus = 100D;
+            final int poopCount = 4;
+            final Mong mong = MongTestUtil.getFirstLevelMong(mongId, accountId, maxStatus, poopCount);
 
             // act
             mong.poopClean();
@@ -309,10 +309,10 @@ class MongTest {
         @DisplayName("몽이 사망 상태인 경우 예외가 발생 한다.")
         void poopCleanMongWhenIsDead() {
             // arrange
-            long mongId = 1L;
-            long accountId = 1L;
-            double maxStatus = 100D;
-            Mong mong = MongTestUtil.getFirstLevelMong(mongId, accountId, maxStatus, MongStateCode.DEAD);
+            final long mongId = 1L;
+            final long accountId = 1L;
+            final double maxStatus = 100D;
+            final Mong mong = MongTestUtil.getFirstLevelMong(mongId, accountId, maxStatus, MongStateCode.DEAD);
 
             // act & assert
             assertThrows(InvalidMongStateException.class, mong::poopClean);
@@ -322,10 +322,10 @@ class MongTest {
         @DisplayName("몽이 졸업 준비 상태인 경우 예외가 발생 한다.")
         void poopCleanMongWhenIsGraduateReady() {
             // arrange
-            long mongId = 1L;
-            long accountId = 1L;
-            double maxStatus = 100D;
-            Mong mong = MongTestUtil.getFirstLevelMong(mongId, accountId, maxStatus, MongStateCode.GRADUATE_READY);
+            final long mongId = 1L;
+            final long accountId = 1L;
+            final double maxStatus = 100D;
+            final Mong mong = MongTestUtil.getFirstLevelMong(mongId, accountId, maxStatus, MongStateCode.GRADUATE_READY);
 
             // act & assert
             assertThrows(InvalidMongStateException.class, mong::poopClean);
@@ -335,10 +335,10 @@ class MongTest {
         @DisplayName("몽이 알 상태인 경우 예외가 발생 한다.")
         void poopCleanWhenIsEgg() {
             // arrange
-            long mongId = 1L;
-            long accountId = 1L;
-            double maxStatus = 100D;
-            Mong mong = MongTestUtil.getEggMong(mongId, accountId, maxStatus);
+            final long mongId = 1L;
+            final long accountId = 1L;
+            final double maxStatus = 100D;
+            final Mong mong = MongTestUtil.getEggMong(mongId, accountId, maxStatus);
 
             // act & assert
             assertThrows(InvalidMongStateException.class, mong::poopClean);
@@ -348,10 +348,10 @@ class MongTest {
         @DisplayName("몽이 수면 상태인 경우 예외가 발생 한다.")
         void poopCleanMongWhenIsSleeping() {
             // arrange
-            long mongId = 1L;
-            long accountId = 1L;
-            double maxStatus = 100D;
-            Mong mong = MongTestUtil.getFirstLevelMong(mongId, accountId, maxStatus, true);
+            final long mongId = 1L;
+            final long accountId = 1L;
+            final double maxStatus = 100D;
+            final Mong mong = MongTestUtil.getFirstLevelMong(mongId, accountId, maxStatus, true);
 
             // act & assert
             assertThrows(InvalidMongStateException.class, mong::poopClean);
@@ -366,13 +366,12 @@ class MongTest {
         @DisplayName("몽을 진화 시키고 지수를 재조정 한다.")
         void evolutionMong() {
             // arrange
-            long mongId = 1L;
-            long accountId = 1L;
-            double maxStatus = 100D;
-            Mong mong = MongTestUtil.getFirstLevelMong(mongId, accountId, maxStatus, MongStateCode.EVOLUTION_READY);
-
-            double nextMaxStatus = 300D;
-            MongType mongType = MongTestUtil.getSecondLevelMongType(nextMaxStatus);
+            final long mongId = 1L;
+            final long accountId = 1L;
+            final double maxStatus = 100D;
+            final Mong mong = MongTestUtil.getFirstLevelMong(mongId, accountId, maxStatus, MongStateCode.EVOLUTION_READY);
+            final double nextMaxStatus = 300D;
+            final MongType mongType = MongTestUtil.getSecondLevelMongType(nextMaxStatus);
 
             // act
             mong.evolution(List.of(mongType));
@@ -395,13 +394,12 @@ class MongTest {
         @Test
         @DisplayName("몽이 진화 준비 상태가 아닌 경우 예외가 발생 한다.")
         void evolutionMongWhenIsNotEvolutionReady() {
-            long mongId = 1L;
-            long accountId = 1L;
-            double maxStatus = 100D;
-            Mong mong = MongTestUtil.getFirstLevelMong(mongId, accountId, maxStatus, MongStateCode.NORMAL);
-
-            double nextMaxStatus = 300D;
-            MongType mongType = MongTestUtil.getSecondLevelMongType(nextMaxStatus);
+            final long mongId = 1L;
+            final long accountId = 1L;
+            final double maxStatus = 100D;
+            final Mong mong = MongTestUtil.getFirstLevelMong(mongId, accountId, maxStatus, MongStateCode.NORMAL);
+            final double nextMaxStatus = 300D;
+            final MongType mongType = MongTestUtil.getSecondLevelMongType(nextMaxStatus);
 
             // act & assert
             assertThrows(InvalidMongStateException.class, () -> mong.evolution(List.of(mongType)));
@@ -410,13 +408,12 @@ class MongTest {
         @Test
         @DisplayName("몽이 사망 상태인 경우 예외가 발생 한다.")
         void evolutionMongWhenIsDead() {
-            long mongId = 1L;
-            long accountId = 1L;
-            double maxStatus = 100D;
-            Mong mong = MongTestUtil.getFirstLevelMong(mongId, accountId, maxStatus, MongStateCode.DEAD);
-
-            double nextMaxStatus = 300D;
-            MongType mongType = MongTestUtil.getSecondLevelMongType(nextMaxStatus);
+            final long mongId = 1L;
+            final long accountId = 1L;
+            final double maxStatus = 100D;
+            final Mong mong = MongTestUtil.getFirstLevelMong(mongId, accountId, maxStatus, MongStateCode.DEAD);
+            final double nextMaxStatus = 300D;
+            final MongType mongType = MongTestUtil.getSecondLevelMongType(nextMaxStatus);
 
             // act & assert
             assertThrows(InvalidMongStateException.class, () -> mong.evolution(List.of(mongType)));
@@ -425,13 +422,12 @@ class MongTest {
         @Test
         @DisplayName("몽이 졸업 준비 상태인 경우 예외가 발생 한다.")
         void evolutionMongWHenIsGraduateReady() {
-            long mongId = 1L;
-            long accountId = 1L;
-            double maxStatus = 100D;
-            Mong mong = MongTestUtil.getFirstLevelMong(mongId, accountId, maxStatus, MongStateCode.GRADUATE_READY);
-
-            double nextMaxStatus = 300D;
-            MongType mongType = MongTestUtil.getSecondLevelMongType(nextMaxStatus);
+            final long mongId = 1L;
+            final long accountId = 1L;
+            final double maxStatus = 100D;
+            final Mong mong = MongTestUtil.getFirstLevelMong(mongId, accountId, maxStatus, MongStateCode.GRADUATE_READY);
+            final double nextMaxStatus = 300D;
+            final MongType mongType = MongTestUtil.getSecondLevelMongType(nextMaxStatus);
 
             // act & assert
             assertThrows(InvalidMongStateException.class, () -> mong.evolution(List.of(mongType)));
@@ -440,10 +436,10 @@ class MongTest {
         @Test
         @DisplayName("진화 가능한 몽 타입이 없는 경우 예외가 발생 한다.")
         void evolutionMongWHenNotExistsMongTypes() {
-            long mongId = 1L;
-            long accountId = 1L;
-            double maxStatus = 100D;
-            Mong mong = MongTestUtil.getFirstLevelMong(mongId, accountId, maxStatus, MongStateCode.EVOLUTION_READY);
+            final long mongId = 1L;
+            final long accountId = 1L;
+            final double maxStatus = 100D;
+            final Mong mong = MongTestUtil.getFirstLevelMong(mongId, accountId, maxStatus, MongStateCode.EVOLUTION_READY);
 
             // act & assert
             assertThrows(InvalidEvolutionException.class, () -> mong.evolution(Collections.emptyList()));
@@ -458,10 +454,10 @@ class MongTest {
         @DisplayName("몽을 졸업 상태로 변경 한다.")
         void graduateMong() {
             // arrange
-            long mongId = 1L;
-            long accountId = 1L;
-            double maxStatus = 100D;
-            Mong mong = MongTestUtil.getFirstLevelMong(mongId, accountId, maxStatus, MongStateCode.GRADUATE_READY);
+            final long mongId = 1L;
+            final long accountId = 1L;
+            final double maxStatus = 100D;
+            final Mong mong = MongTestUtil.getFirstLevelMong(mongId, accountId, maxStatus, MongStateCode.GRADUATE_READY);
 
             // act
             mong.graduate();
@@ -475,10 +471,10 @@ class MongTest {
         @DisplayName("몽이 졸업 준비 상태가 아닌 경우 예외가 발생 한다.")
         void graduateMongWhenIsNotGraduateReady() {
             // arrange
-            long mongId = 1L;
-            long accountId = 1L;
-            double maxStatus = 100D;
-            Mong mong = MongTestUtil.getFirstLevelMong(mongId, accountId, maxStatus, MongStateCode.NORMAL);
+            final long mongId = 1L;
+            final long accountId = 1L;
+            final double maxStatus = 100D;
+            final Mong mong = MongTestUtil.getFirstLevelMong(mongId, accountId, maxStatus, MongStateCode.NORMAL);
 
             // act & assert
             assertThrows(InvalidMongStateException.class, mong::graduate);
@@ -488,10 +484,10 @@ class MongTest {
         @DisplayName("몽이 사망 상태인 경우 예외가 발생 한다.")
         void graduateMongWhenIsDead() {
             // arrange
-            long mongId = 1L;
-            long accountId = 1L;
-            double maxStatus = 100D;
-            Mong mong = MongTestUtil.getFirstLevelMong(mongId, accountId, maxStatus, MongStateCode.DEAD);
+            final long mongId = 1L;
+            final long accountId = 1L;
+            final double maxStatus = 100D;
+            final Mong mong = MongTestUtil.getFirstLevelMong(mongId, accountId, maxStatus, MongStateCode.DEAD);
 
             // act & assert
             assertThrows(InvalidMongStateException.class, mong::graduate);
@@ -501,16 +497,15 @@ class MongTest {
         @DisplayName("몽이 알 상태인 경우 예외가 발생 한다.")
         void graduateMongWhenIsEgg() {
             // arrange
-            long mongId = 1L;
-            long accountId = 1L;
-            double maxStatus = 100D;
-            Mong mong = MongTestUtil.getEggMong(mongId, accountId, maxStatus);
+            final long mongId = 1L;
+            final long accountId = 1L;
+            final double maxStatus = 100D;
+            final Mong mong = MongTestUtil.getEggMong(mongId, accountId, maxStatus);
 
             // act & assert
             assertThrows(InvalidMongStateException.class, mong::graduate);
         }
     }
-
 
     @Nested
     @DisplayName("몽 페이 포인트 증가 단위 테스트")
@@ -520,11 +515,11 @@ class MongTest {
         @DisplayName("몽의 페이 포인트를 증가 시킨다.")
         void increaseMongPayPoint() {
             // arrange
-            long mongId = 1L;
-            long accountId = 1L;
-            double maxStatus = 100D;
-            int payPoint = 100;
-            Mong mong = MongTestUtil.getFirstLevelMong(mongId, accountId, maxStatus);
+            final long mongId = 1L;
+            final long accountId = 1L;
+            final double maxStatus = 100D;
+            final int payPoint = 100;
+            final Mong mong = MongTestUtil.getFirstLevelMong(mongId, accountId, maxStatus);
 
             // act
             mong.increasePayPoint(payPoint);
@@ -542,11 +537,11 @@ class MongTest {
         @DisplayName("몽의 지수를 1 cycle 증가 시킨다.")
         void increaseMongStatus() {
             // arrange
-            long mongId = 1L;
-            long accountId = 1L;
-            double status = 0;
-            double maxStatus = 100D;
-            Mong mong = MongTestUtil.getFirstLevelMong(mongId, accountId, status, maxStatus);
+            final long mongId = 1L;
+            final long accountId = 1L;
+            final double status = 0;
+            final double maxStatus = 100D;
+            final Mong mong = MongTestUtil.getFirstLevelMong(mongId, accountId, status, maxStatus);
 
             // act
             mong.cycleIncreaseStatus();
@@ -565,10 +560,10 @@ class MongTest {
         @DisplayName("몽의 지수를 1 cycle 감소 시킨다.")
         void decreaseMongStatus() {
             // arrange
-            long mongId = 1L;
-            long accountId = 1L;
-            double maxStatus = 100D;
-            Mong mong = MongTestUtil.getFirstLevelMong(mongId, accountId, maxStatus);
+            final long mongId = 1L;
+            final long accountId = 1L;
+            final double maxStatus = 100D;
+            final Mong mong = MongTestUtil.getFirstLevelMong(mongId, accountId, maxStatus);
 
             // act
             mong.cycleDecreaseStatus();
@@ -590,11 +585,11 @@ class MongTest {
         @DisplayName("몽 배변 수를 1 cycle 증가 시킨다.")
         void increaseMongPoopCount() {
             // arrange
-            long mongId = 1L;
-            long accountId = 1L;
-            double maxStatus = 100D;
-            int poopCount = 0;
-            Mong mong = MongTestUtil.getFirstLevelMong(mongId, accountId, maxStatus, poopCount);
+            final long mongId = 1L;
+            final long accountId = 1L;
+            final double maxStatus = 100D;
+            final int poopCount = 0;
+            final Mong mong = MongTestUtil.getFirstLevelMong(mongId, accountId, maxStatus, poopCount);
 
             // act
             mong.cycleIncreasePoopCount();
@@ -608,11 +603,11 @@ class MongTest {
         @DisplayName("이미 최대 배변 수에 도달한 경우 진화 패널티를 1 증가 시킨다.")
         void increaseMongPoopCountWhenAlreadyMaxPoopCount() {
             // arrange
-            long mongId = 1L;
-            long accountId = 1L;
-            double maxStatus = 100D;
-            int poopCount = Mong.getMaxPoopCount();
-            Mong mong = MongTestUtil.getFirstLevelMong(mongId, accountId, maxStatus, poopCount);
+            final long mongId = 1L;
+            final long accountId = 1L;
+            final double maxStatus = 100D;
+            final int poopCount = Mong.getMaxPoopCount();
+            final Mong mong = MongTestUtil.getFirstLevelMong(mongId, accountId, maxStatus, poopCount);
 
             // act
             mong.cycleIncreasePoopCount();
@@ -631,16 +626,15 @@ class MongTest {
         @DisplayName("몽 훈련 완료 후 지수 감소 및 페이 포인트 보상을 지급 한다.")
         void trainingEnd() {
             // arrange
-            String trainingTypeCode = "TEST-TRAINING-TYPE-CODE";
-            int score = 100;
-            int payPoint = 10;
-            double status = 10D;
-            TrainingType trainingType = new TrainingType(1L, trainingTypeCode, "테스트 훈련 타입", payPoint, score, 60, status, -status, -status, -status, -status);
-
-            long mongId = 1L;
-            long accountId = 1L;
-            double maxStatus = 100D;
-            Mong mong = MongTestUtil.getFirstLevelMong(mongId, accountId, maxStatus);
+            final String trainingTypeCode = "TEST-TRAINING-TYPE-CODE";
+            final int score = 100;
+            final int payPoint = 10;
+            final double status = 10D;
+            final TrainingType trainingType = new TrainingType(1L, trainingTypeCode, "테스트 훈련 타입", payPoint, score, 60, status, -status, -status, -status, -status);
+            final long mongId = 1L;
+            final long accountId = 1L;
+            final double maxStatus = 100D;
+            final Mong mong = MongTestUtil.getFirstLevelMong(mongId, accountId, maxStatus);
 
             // act
             mong.trainingWithReward(trainingType);

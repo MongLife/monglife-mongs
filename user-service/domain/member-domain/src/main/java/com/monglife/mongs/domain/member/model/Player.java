@@ -11,6 +11,8 @@ import lombok.ToString;
 public class Player {
 
     private static final Integer PAY_POINT_PER_STAR_POINT = 1000;
+    private static final Integer MAX_SLOT_COUNT = 3;
+    private static final Integer SLOT_PRICE = 10;
 
     private final Long accountId;
 
@@ -24,9 +26,6 @@ public class Player {
         this.slotCount = slotCount;
         this.starPoint = starPoint;
     }
-
-    private static final Integer MAX_SLOT_COUNT = 3;
-    private static final Integer SLOT_PRICE = 10;
 
     /**
      * 슬롯 구매
@@ -58,14 +57,6 @@ public class Player {
     }
 
     /**
-     * 스타 포인트 증가
-     * @param starPoint 증가할 스타 포인트
-     */
-    public void increaseStarPoint(Integer starPoint) {
-        this.starPoint = this.starPoint + starPoint;
-    }
-
-    /**
      * 스타 포인트 감소
      * @param starPoint 감소할 스타 포인트
      */
@@ -75,6 +66,15 @@ public class Player {
             throw new NotEnoughStarPointException();
         }
 
-        this.starPoint = this.starPoint - starPoint;
+        this.starPoint = Math.max(0, this.starPoint - starPoint);
     }
+
+    /**
+     * 스타 포인트 증가
+     * @param starPoint 증가할 스타 포인트
+     */
+    public void increaseStarPoint(Integer starPoint) {
+        this.starPoint = this.starPoint + starPoint;
+    }
+
 }

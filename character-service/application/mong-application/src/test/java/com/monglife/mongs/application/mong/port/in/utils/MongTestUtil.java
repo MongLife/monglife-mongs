@@ -116,14 +116,6 @@ public class MongTestUtil {
      * 1레벨의 테스트 몽 생성
      * @return 몽 도메인 객체
      */
-    public static Mong getFirstLevelMong(Long mongId, Long accountId, Double maxStatus, MongStatusCode mongStatusCode) {
-        return getFirstLevelMong(mongId, accountId, maxStatus, maxStatus, 0, MongStateCode.NORMAL, mongStatusCode, false, 0);
-    }
-
-    /**
-     * 1레벨의 테스트 몽 생성
-     * @return 몽 도메인 객체
-     */
     public static Mong getFirstLevelMong(Long mongId, Long accountId, Double maxStatus, Boolean isSleep) {
         return getFirstLevelMong(mongId, accountId, maxStatus, maxStatus, 0, MongStateCode.NORMAL, MongStatusCode.NORMAL, isSleep, 0);
     }
@@ -199,22 +191,6 @@ public class MongTestUtil {
                 .mongCode("CH000")
                 .mongName("테스트 몽 타입 1")
                 .level(0)
-                .evolutionScore(0D)
-                .maxStatus(maxStatus)
-                .build();
-    }
-
-    /**
-     * 1레벨의 몽 타입 생성
-     * @param maxStatus 최대 지수 수치
-     * @return 몽 타입 도메인 객체
-     */
-    public static MongType getFirstLevelMongType(Double maxStatus) {
-        return MongType.builder()
-                .mongTypeId(1L)
-                .mongCode("CH100")
-                .mongName("테스트 몽 타입 1")
-                .level(1)
                 .evolutionScore(0D)
                 .maxStatus(maxStatus)
                 .build();

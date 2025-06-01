@@ -29,23 +29,11 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class ManagementServiceTest {
 
-    private final MongSchedulerPort mongSchedulerPort;
-
-    private final MongPersistencePort mongPersistencePort;
-
-    private final MongReadPort mongReadPort;
-
-    private final MongEventPort mongEventPort;
-
-    private final ManagementUseCase managementUseCase;
-
-    public ManagementServiceTest() {
-        this.mongSchedulerPort = Mockito.mock(MongSchedulerPort.class);
-        this.mongPersistencePort = Mockito.mock(MongPersistencePort.class);
-        this.mongReadPort = Mockito.mock(MongReadPort.class);
-        this.mongEventPort = Mockito.mock(MongEventPort.class);
-        this.managementUseCase = new ManagementService(mongSchedulerPort, mongPersistencePort, mongReadPort, mongEventPort);
-    }
+    private final MongSchedulerPort mongSchedulerPort = Mockito.mock(MongSchedulerPort.class);
+    private final MongPersistencePort mongPersistencePort = Mockito.mock(MongPersistencePort.class);
+    private final MongReadPort mongReadPort = Mockito.mock(MongReadPort.class);
+    private final MongEventPort mongEventPort = Mockito.mock(MongEventPort.class);
+    private final ManagementUseCase managementUseCase = new ManagementService(mongSchedulerPort, mongPersistencePort, mongReadPort, mongEventPort);
 
     @Nested
     @DisplayName("몽 생성 단위 테스트")
@@ -55,12 +43,11 @@ class ManagementServiceTest {
         @DisplayName("새로운 알 상태의 몽을 생성 한다.")
         void createMong() {
             // arrange
-            long mongId = 1L;
-            long accountId = 1L;
-            double maxStatus = 100D;
-            Mong mong = MongTestUtil.getEggMong(mongId, accountId, maxStatus);
-
-            MongType mongType =  MongTestUtil.getEggMongType(maxStatus);
+            final long mongId = 1L;
+            final long accountId = 1L;
+            final double maxStatus = 100D;
+            final Mong mong = MongTestUtil.getEggMong(mongId, accountId, maxStatus);
+            final MongType mongType =  MongTestUtil.getEggMongType(maxStatus);
 
             Mockito.when(mongReadPort.getMongTypesPort(Mockito.any())).thenReturn(List.of(mongType));
             Mockito.when(mongPersistencePort.createMongPort(Mockito.any())).thenReturn(Optional.of(mong));
@@ -74,7 +61,7 @@ class ManagementServiceTest {
                     .wakeupAt(mong.getWakeupAt())
                     .build();
 
-            Mong expected = managementUseCase.createMongUseCase(command);
+            var expected = managementUseCase.createMongUseCase(command);
 
             // assert
             Mockito.verify(mongEventPort).createMongEventPort(accountId, mongType.getMongCode());
@@ -92,10 +79,10 @@ class ManagementServiceTest {
         @DisplayName("몽을 삭제 한다.")
         void deleteMong() {
             // arrange
-            long mongId = 1L;
-            long accountId = 1L;
-            double maxStatus = 100D;
-            Mong mong = MongTestUtil.getEggMong(mongId, accountId, maxStatus);
+            final long mongId = 1L;
+            final long accountId = 1L;
+            final double maxStatus = 100D;
+            final Mong mong = MongTestUtil.getEggMong(mongId, accountId, maxStatus);
 
             Mockito.when(mongPersistencePort.getMongPort(mongId)).thenReturn(Optional.of(mong));
             Mockito.when(mongPersistencePort.deleteMongPort(mong)).thenReturn(Optional.of(mong));
@@ -106,7 +93,7 @@ class ManagementServiceTest {
                     .mongId(mongId)
                     .build();
 
-            Mong expected = managementUseCase.deleteMongUseCase(command);
+            var expected = managementUseCase.deleteMongUseCase(command);
 
             // assert
             assertEquals(mongId, expected.getMongId());
@@ -118,8 +105,8 @@ class ManagementServiceTest {
         @DisplayName("몽이 존재하지 않는 경우 예외가 발생 한다.")
         void notExistsMong() {
             // arrange
-            long mongId = 1L;
-            long accountId = 1L;
+            final long mongId = 1L;
+            final long accountId = 1L;
 
             Mockito.when(mongPersistencePort.getMongPort(mongId)).thenReturn(Optional.empty());
 
@@ -136,10 +123,10 @@ class ManagementServiceTest {
         @DisplayName("몽의 소유자가 일치하지 않는 경우 예외가 발생 한다.")
         void forbiddenMong() {
             // arrange
-            long mongId = 1L;
-            long accountId = 1L;
-            double maxStatus = 100D;
-            Mong mong = MongTestUtil.getFirstLevelMong(mongId, accountId, maxStatus);
+            final long mongId = 1L;
+            final long accountId = 1L;
+            final double maxStatus = 100D;
+            final Mong mong = MongTestUtil.getFirstLevelMong(mongId, accountId, maxStatus);
 
             Mockito.when(mongPersistencePort.getMongPort(mongId)).thenReturn(Optional.of(mong));
 
@@ -161,10 +148,10 @@ class ManagementServiceTest {
         @DisplayName("몽을 사망 상태로 변경 한다.")
         void deadMong() {
             // arrange
-            long mongId = 1L;
-            long accountId = 1L;
-            double maxStatus = 100D;
-            Mong mong = MongTestUtil.getFirstLevelMong(mongId, accountId, maxStatus);
+            final long mongId = 1L;
+            final long accountId = 1L;
+            final double maxStatus = 100D;
+            final Mong mong = MongTestUtil.getFirstLevelMong(mongId, accountId, maxStatus);
 
             Mockito.when(mongPersistencePort.getMongPort(mongId)).thenReturn(Optional.of(mong));
             Mockito.when(mongPersistencePort.saveMongPort(mong)).thenReturn(Optional.of(mong));
@@ -175,7 +162,7 @@ class ManagementServiceTest {
                     .mongId(mongId)
                     .build();
 
-            Mong expected = managementUseCase.deadMongUseCase(command);
+            var expected = managementUseCase.deadMongUseCase(command);
 
             // assert
             assertEquals(MongStateCode.DEAD, expected.getStateCode());
@@ -185,10 +172,10 @@ class ManagementServiceTest {
         @DisplayName("몽이 사망 상태인 경우 예외가 발생 한다.")
         void deadMongWhenIsDead() {
             // arrange
-            long mongId = 1L;
-            long accountId = 1L;
-            double maxStatus = 100D;
-            Mong mong = MongTestUtil.getFirstLevelMong(mongId, accountId, maxStatus, MongStateCode.DEAD);
+            final long mongId = 1L;
+            final long accountId = 1L;
+            final double maxStatus = 100D;
+            final Mong mong = MongTestUtil.getFirstLevelMong(mongId, accountId, maxStatus, MongStateCode.DEAD);
 
             Mockito.when(mongPersistencePort.getMongPort(mongId)).thenReturn(Optional.of(mong));
             Mockito.when(mongPersistencePort.saveMongPort(mong)).thenReturn(Optional.of(mong));
@@ -206,10 +193,10 @@ class ManagementServiceTest {
         @DisplayName("몽이 졸업 준비 상태인 경우 예외가 발생 한다.")
         void deadMongWhenIsGraduateReady() {
             // arrange
-            long mongId = 1L;
-            long accountId = 1L;
-            double maxStatus = 100D;
-            Mong mong = MongTestUtil.getFirstLevelMong(mongId, accountId, maxStatus, MongStateCode.GRADUATE_READY);
+            final long mongId = 1L;
+            final long accountId = 1L;
+            final double maxStatus = 100D;
+            final Mong mong = MongTestUtil.getFirstLevelMong(mongId, accountId, maxStatus, MongStateCode.GRADUATE_READY);
 
             Mockito.when(mongPersistencePort.getMongPort(mongId)).thenReturn(Optional.of(mong));
             Mockito.when(mongPersistencePort.saveMongPort(mong)).thenReturn(Optional.of(mong));
@@ -227,10 +214,11 @@ class ManagementServiceTest {
         @DisplayName("몽이 존재하지 않는 경우 예외가 발생 한다.")
         void notExistsMong() {
             // arrange
-            long mongId = 1L;
-            long accountId = 1L;
+            final long mongId = 1L;
+            final long accountId = 1L;
 
             Mockito.when(mongPersistencePort.getMongPort(mongId)).thenReturn(Optional.empty());
+
             // act & assert
             DeadMongCommand command = DeadMongCommand.builder()
                     .accountId(accountId)
@@ -244,10 +232,10 @@ class ManagementServiceTest {
         @DisplayName("몽의 소유자가 일치하지 않는 경우 예외가 발생 한다.")
         void forbiddenMong() {
             // arrange
-            long mongId = 1L;
-            long accountId = 1L;
-            double maxStatus = 100D;
-            Mong mong = MongTestUtil.getFirstLevelMong(mongId, accountId, maxStatus);
+            final long mongId = 1L;
+            final long accountId = 1L;
+            final double maxStatus = 100D;
+            final Mong mong = MongTestUtil.getFirstLevelMong(mongId, accountId, maxStatus);
 
             Mockito.when(mongPersistencePort.getMongPort(mongId)).thenReturn(Optional.of(mong));
 
@@ -269,13 +257,12 @@ class ManagementServiceTest {
         @DisplayName("몽 목록을 조회 한다.")
         void getMongs() {
             // arrange
-            long accountId = 1L;
-            double maxStatus = 100D;
-            List<Mong> mongs = List.of(
+            final long accountId = 1L;
+            final double maxStatus = 100D;
+            final List<Mong> mongs = List.of(
                     MongTestUtil.getFirstLevelMong(1L, accountId, maxStatus),
                     MongTestUtil.getFirstLevelMong(2L, accountId, maxStatus),
-                    MongTestUtil.getFirstLevelMong(3L, accountId, maxStatus)
-            );
+                    MongTestUtil.getFirstLevelMong(3L, accountId, maxStatus));
 
             Mockito.when(mongReadPort.getMongsPort(accountId)).thenReturn(mongs);
 
@@ -284,7 +271,7 @@ class ManagementServiceTest {
                     .accountId(accountId)
                     .build();
 
-            List<Mong> expected = managementUseCase.getMongsUseCase(command);
+            var expected = managementUseCase.getMongsUseCase(command);
 
             // assert
             assertIterableEquals(mongs, expected);
@@ -299,10 +286,10 @@ class ManagementServiceTest {
         @DisplayName("몽을 단건 조회 한다.")
         void getMong() {
             // arrange
-            long mongId = 1L;
-            long accountId = 1L;
-            double maxStatus = 100D;
-            Mong mong = MongTestUtil.getFirstLevelMong(mongId, accountId, maxStatus);
+            final long mongId = 1L;
+            final long accountId = 1L;
+            final double maxStatus = 100D;
+            final Mong mong = MongTestUtil.getFirstLevelMong(mongId, accountId, maxStatus);
 
             Mockito.when(mongReadPort.getMongPort(mongId)).thenReturn(Optional.of(mong));
 
@@ -312,7 +299,7 @@ class ManagementServiceTest {
                     .accountId(accountId)
                     .build();
 
-            Mong expected = managementUseCase.getMongUseCase(command);
+            var expected = managementUseCase.getMongUseCase(command);
 
             // assert
             assertEquals(mong.getMongId(), expected.getMongId());
@@ -322,10 +309,11 @@ class ManagementServiceTest {
         @DisplayName("몽이 존재하지 않는 경우 예외가 발생 한다.")
         void notExistsMong() {
             // arrange
-            long mongId = 1L;
-            long accountId = 1L;
+            final long mongId = 1L;
+            final long accountId = 1L;
 
             Mockito.when(mongReadPort.getMongPort(mongId)).thenReturn(Optional.empty());
+
             // act & assert
             GetMongCommand command = GetMongCommand.builder()
                     .accountId(accountId)
@@ -339,10 +327,10 @@ class ManagementServiceTest {
         @DisplayName("몽의 소유자가 일치하지 않는 경우 예외가 발생 한다.")
         void forbiddenMong() {
             // arrange
-            long mongId = 1L;
-            long accountId = 1L;
-            double maxStatus = 100D;
-            Mong mong = MongTestUtil.getFirstLevelMong(mongId, accountId, maxStatus);
+            final long mongId = 1L;
+            final long accountId = 1L;
+            final double maxStatus = 100D;
+            final Mong mong = MongTestUtil.getFirstLevelMong(mongId, accountId, maxStatus);
 
             Mockito.when(mongReadPort.getMongPort(mongId)).thenReturn(Optional.of(mong));
 
@@ -364,13 +352,12 @@ class ManagementServiceTest {
         @DisplayName("몽을 쓰다 듬고 지수를 증가 시킨다.")
         void strokeMong() {
             // arrange
-            long mongId = 1L;
-            long accountId = 1L;
-            double maxStatus = 100D;
-            Mong mong = MongTestUtil.getFirstLevelMong(mongId, accountId, maxStatus);
-
-            long expirationSeconds = 100;
-            long nowExpirationSeconds = 0;
+            final long mongId = 1L;
+            final long accountId = 1L;
+            final double maxStatus = 100D;
+            final Mong mong = MongTestUtil.getFirstLevelMong(mongId, accountId, maxStatus);
+            final long expirationSeconds = 100;
+            final long nowExpirationSeconds = 0;
 
             Mockito.when(mongPersistencePort.getMongPort(mongId)).thenReturn(Optional.of(mong));
             Mockito.when(mongReadPort.getMongStrokeExpirationSecondsPort(mongId)).thenReturn(nowExpirationSeconds);
@@ -383,7 +370,7 @@ class ManagementServiceTest {
                     .mongId(mongId)
                     .build();
 
-            Mong expected = managementUseCase.strokeMongUseCase(command);
+            var expected = managementUseCase.strokeMongUseCase(command);
 
             // assert
             assertEquals(1, expected.getStrokeCount());
@@ -394,13 +381,12 @@ class ManagementServiceTest {
         @DisplayName("쓰다 듬기 대기 시간이 남은 경우 예외가 발생 한다.")
         void strokeMongWhenIsRestExpirationSeconds() {
             // arrange
-            long mongId = 1L;
-            long accountId = 1L;
-            double maxStatus = 100D;
-            Mong mong = MongTestUtil.getFirstLevelMong(mongId, accountId, maxStatus);
-
-            long expirationSeconds = 100;
-            long nowExpirationSeconds = 50;
+            final long mongId = 1L;
+            final long accountId = 1L;
+            final double maxStatus = 100D;
+            final Mong mong = MongTestUtil.getFirstLevelMong(mongId, accountId, maxStatus);
+            final long expirationSeconds = 100;
+            final long nowExpirationSeconds = 50;
 
             Mockito.when(mongPersistencePort.getMongPort(mongId)).thenReturn(Optional.of(mong));
             Mockito.when(mongReadPort.getMongStrokeExpirationSecondsPort(mongId)).thenReturn(nowExpirationSeconds);
@@ -420,13 +406,12 @@ class ManagementServiceTest {
         @DisplayName("몽이 사망 상태인 경우 예외가 발생 한다.")
         void strokeMongWhenIsDead() {
             // arrange
-            long mongId = 1L;
-            long accountId = 1L;
-            double maxStatus = 100D;
-            Mong mong = MongTestUtil.getFirstLevelMong(mongId, accountId, maxStatus, MongStateCode.DEAD);
-
-            long expirationSeconds = 100;
-            long nowExpirationSeconds = 0;
+            final long mongId = 1L;
+            final long accountId = 1L;
+            final double maxStatus = 100D;
+            final Mong mong = MongTestUtil.getFirstLevelMong(mongId, accountId, maxStatus, MongStateCode.DEAD);
+            final long expirationSeconds = 100;
+            final long nowExpirationSeconds = 0;
 
             Mockito.when(mongPersistencePort.getMongPort(mongId)).thenReturn(Optional.of(mong));
             Mockito.when(mongReadPort.getMongStrokeExpirationSecondsPort(mongId)).thenReturn(nowExpirationSeconds);
@@ -446,13 +431,12 @@ class ManagementServiceTest {
         @DisplayName("몽이 졸업 준비 상태인 경우 예외가 발생 한다.")
         void strokeMongWhenIsGraduateReady() {
             // arrange
-            long mongId = 1L;
-            long accountId = 1L;
-            double maxStatus = 100D;
-            Mong mong = MongTestUtil.getFirstLevelMong(mongId, accountId, maxStatus, MongStateCode.GRADUATE_READY);
-
-            long expirationSeconds = 100;
-            long nowExpirationSeconds = 0;
+            final long mongId = 1L;
+            final long accountId = 1L;
+            final double maxStatus = 100D;
+            final Mong mong = MongTestUtil.getFirstLevelMong(mongId, accountId, maxStatus, MongStateCode.GRADUATE_READY);
+            final long expirationSeconds = 100;
+            final long nowExpirationSeconds = 0;
 
             Mockito.when(mongPersistencePort.getMongPort(mongId)).thenReturn(Optional.of(mong));
             Mockito.when(mongReadPort.getMongStrokeExpirationSecondsPort(mongId)).thenReturn(nowExpirationSeconds);
@@ -472,13 +456,12 @@ class ManagementServiceTest {
         @DisplayName("몽이 알 상태인 경우 예외가 발생 한다.")
         void strokeMongWhenIsEgg() {
             // arrange
-            long mongId = 1L;
-            long accountId = 1L;
-            double maxStatus = 100D;
-            Mong mong = MongTestUtil.getEggMong(mongId, accountId, maxStatus);
-
-            long expirationSeconds = 100;
-            long nowExpirationSeconds = 0;
+            final long mongId = 1L;
+            final long accountId = 1L;
+            final double maxStatus = 100D;
+            final Mong mong = MongTestUtil.getEggMong(mongId, accountId, maxStatus);
+            final long expirationSeconds = 100;
+            final long nowExpirationSeconds = 0;
 
             Mockito.when(mongPersistencePort.getMongPort(mongId)).thenReturn(Optional.of(mong));
             Mockito.when(mongReadPort.getMongStrokeExpirationSecondsPort(mongId)).thenReturn(nowExpirationSeconds);
@@ -498,13 +481,12 @@ class ManagementServiceTest {
         @DisplayName("몽이 수면 상태인 경우 예외가 발생 한다.")
         void strokeMongWhenIsSleeping() {
             // arrange
-            long mongId = 1L;
-            long accountId = 1L;
-            double maxStatus = 100D;
-            Mong mong = MongTestUtil.getFirstLevelMong(mongId, accountId, maxStatus, true);
-
-            long expirationSeconds = 100;
-            long nowExpirationSeconds = 0;
+            final long mongId = 1L;
+            final long accountId = 1L;
+            final double maxStatus = 100D;
+            final Mong mong = MongTestUtil.getFirstLevelMong(mongId, accountId, maxStatus, true);
+            final long expirationSeconds = 100;
+            final long nowExpirationSeconds = 0;
 
             Mockito.when(mongPersistencePort.getMongPort(mongId)).thenReturn(Optional.of(mong));
             Mockito.when(mongReadPort.getMongStrokeExpirationSecondsPort(mongId)).thenReturn(nowExpirationSeconds);
@@ -524,8 +506,8 @@ class ManagementServiceTest {
         @DisplayName("몽이 존재하지 않는 경우 예외가 발생 한다.")
         void notExistsMong() {
             // arrange
-            long mongId = 1L;
-            long accountId = 1L;
+            final long mongId = 1L;
+            final long accountId = 1L;
 
             Mockito.when(mongPersistencePort.getMongPort(mongId)).thenReturn(Optional.empty());
             // act & assert
@@ -541,10 +523,10 @@ class ManagementServiceTest {
         @DisplayName("몽의 소유자가 일치하지 않는 경우 예외가 발생 한다.")
         void forbiddenMong() {
             // arrange
-            long mongId = 1L;
-            long accountId = 1L;
-            double maxStatus = 100D;
-            Mong mong = MongTestUtil.getFirstLevelMong(mongId, accountId, maxStatus);
+            final long mongId = 1L;
+            final long accountId = 1L;
+            final double maxStatus = 100D;
+            final Mong mong = MongTestUtil.getFirstLevelMong(mongId, accountId, maxStatus);
 
             Mockito.when(mongPersistencePort.getMongPort(mongId)).thenReturn(Optional.of(mong));
 
@@ -566,10 +548,10 @@ class ManagementServiceTest {
         @DisplayName("몽을 수면 상태로 변경 한다.")
         void sleepMong() {
             // arrange
-            long mongId = 1L;
-            long accountId = 1L;
-            double maxStatus = 100D;
-            Mong mong = MongTestUtil.getFirstLevelMong(mongId, accountId, maxStatus, false);
+            final long mongId = 1L;
+            final long accountId = 1L;
+            final double maxStatus = 100D;
+            final Mong mong = MongTestUtil.getFirstLevelMong(mongId, accountId, maxStatus, false);
 
             Mockito.when(mongPersistencePort.getMongPort(mongId)).thenReturn(Optional.of(mong));
             Mockito.when(mongPersistencePort.saveMongPort(mong)).thenReturn(Optional.of(mong));
@@ -581,7 +563,7 @@ class ManagementServiceTest {
                     .mongId(mongId)
                     .build();
 
-            Mong expected = managementUseCase.sleepMongUseCase(command);
+            var expected = managementUseCase.sleepMongUseCase(command);
 
             // assert
             assertTrue(expected.getIsSleep());
@@ -591,10 +573,10 @@ class ManagementServiceTest {
         @DisplayName("몽이 수면 상태인 경우 예외가 발생 한다.")
         void sleepMongWhenIsSleeping() {
             // arrange
-            long mongId = 1L;
-            long accountId = 1L;
-            double maxStatus = 100D;
-            Mong mong = MongTestUtil.getFirstLevelMong(mongId, accountId, maxStatus, true);
+            final long mongId = 1L;
+            final long accountId = 1L;
+            final double maxStatus = 100D;
+            final Mong mong = MongTestUtil.getFirstLevelMong(mongId, accountId, maxStatus, true);
 
             Mockito.when(mongPersistencePort.getMongPort(mongId)).thenReturn(Optional.of(mong));
             Mockito.when(mongPersistencePort.saveMongPort(mong)).thenReturn(Optional.of(mong));
@@ -612,10 +594,10 @@ class ManagementServiceTest {
         @DisplayName("몽이 사망 상태인 경우 예외가 발생 한다.")
         void sleepMongWhenIsDead() {
             // arrange
-            long mongId = 1L;
-            long accountId = 1L;
-            double maxStatus = 100D;
-            Mong mong = MongTestUtil.getFirstLevelMong(mongId, accountId, maxStatus, MongStateCode.DEAD);
+            final long mongId = 1L;
+            final long accountId = 1L;
+            final double maxStatus = 100D;
+            final Mong mong = MongTestUtil.getFirstLevelMong(mongId, accountId, maxStatus, MongStateCode.DEAD);
 
             Mockito.when(mongPersistencePort.getMongPort(mongId)).thenReturn(Optional.of(mong));
             Mockito.when(mongPersistencePort.saveMongPort(mong)).thenReturn(Optional.of(mong));
@@ -633,10 +615,10 @@ class ManagementServiceTest {
         @DisplayName("몽이 졸업 준비 상태인 경우 예외가 발생 한다.")
         void sleepMongWHenIsGraduateReady() {
             // arrange
-            long mongId = 1L;
-            long accountId = 1L;
-            double maxStatus = 100D;
-            Mong mong = MongTestUtil.getFirstLevelMong(mongId, accountId, maxStatus, MongStateCode.GRADUATE_READY);
+            final long mongId = 1L;
+            final long accountId = 1L;
+            final double maxStatus = 100D;
+            final Mong mong = MongTestUtil.getFirstLevelMong(mongId, accountId, maxStatus, MongStateCode.GRADUATE_READY);
 
             Mockito.when(mongPersistencePort.getMongPort(mongId)).thenReturn(Optional.of(mong));
             Mockito.when(mongPersistencePort.saveMongPort(mong)).thenReturn(Optional.of(mong));
@@ -654,10 +636,10 @@ class ManagementServiceTest {
         @DisplayName("몽이 알 상태인 경우 예외가 발생 한다.")
         void sleepMongWhenIsEgg() {
             // arrange
-            long mongId = 1L;
-            long accountId = 1L;
-            double maxStatus = 100D;
-            Mong mong = MongTestUtil.getEggMong(mongId, accountId, maxStatus);
+            final long mongId = 1L;
+            final long accountId = 1L;
+            final double maxStatus = 100D;
+            final Mong mong = MongTestUtil.getEggMong(mongId, accountId, maxStatus);
 
             Mockito.when(mongPersistencePort.getMongPort(mongId)).thenReturn(Optional.of(mong));
             Mockito.when(mongPersistencePort.saveMongPort(mong)).thenReturn(Optional.of(mong));
@@ -675,10 +657,11 @@ class ManagementServiceTest {
         @DisplayName("몽이 존재하지 않는 경우 예외가 발생 한다.")
         void notExistsMong() {
             // arrange
-            long mongId = 1L;
-            long accountId = 1L;
+            final long mongId = 1L;
+            final long accountId = 1L;
 
             Mockito.when(mongPersistencePort.getMongPort(mongId)).thenReturn(Optional.empty());
+
             // act & assert
             SleepMongCommand command = SleepMongCommand.builder()
                     .accountId(accountId)
@@ -692,10 +675,10 @@ class ManagementServiceTest {
         @DisplayName("몽의 소유자가 일치하지 않는 경우 예외가 발생 한다.")
         void forbiddenMong() {
             // arrange
-            long mongId = 1L;
-            long accountId = 1L;
-            double maxStatus = 100D;
-            Mong mong = MongTestUtil.getFirstLevelMong(mongId, accountId, maxStatus);
+            final long mongId = 1L;
+            final long accountId = 1L;
+            final double maxStatus = 100D;
+            final Mong mong = MongTestUtil.getFirstLevelMong(mongId, accountId, maxStatus);
 
             Mockito.when(mongPersistencePort.getMongPort(mongId)).thenReturn(Optional.of(mong));
 
@@ -717,10 +700,10 @@ class ManagementServiceTest {
         @DisplayName("몽을 기상 상태로 변경 한다.")
         void wakeupMong() {
             // arrange
-            long mongId = 1L;
-            long accountId = 1L;
-            double maxStatus = 100D;
-            Mong mong = MongTestUtil.getFirstLevelMong(mongId, accountId, maxStatus, true);
+            final long mongId = 1L;
+            final long accountId = 1L;
+            final double maxStatus = 100D;
+            final Mong mong = MongTestUtil.getFirstLevelMong(mongId, accountId, maxStatus, true);
 
             Mockito.when(mongPersistencePort.getMongPort(mongId)).thenReturn(Optional.of(mong));
             Mockito.when(mongPersistencePort.saveMongPort(mong)).thenReturn(Optional.of(mong));
@@ -732,7 +715,7 @@ class ManagementServiceTest {
                     .mongId(mongId)
                     .build();
 
-            Mong expected = managementUseCase.wakeUpMongUseCase(command);
+            var expected = managementUseCase.wakeUpMongUseCase(command);
 
             // assert
             assertFalse(expected.getIsSleep());
@@ -742,10 +725,10 @@ class ManagementServiceTest {
         @DisplayName("몽이 기상 상태인 경우 예외가 발생 한다.")
         void wakeupMongWhenIsNotSleeping() {
             // arrange
-            long mongId = 1L;
-            long accountId = 1L;
-            double maxStatus = 100D;
-            Mong mong = MongTestUtil.getFirstLevelMong(mongId, accountId, maxStatus, false);
+            final long mongId = 1L;
+            final long accountId = 1L;
+            final double maxStatus = 100D;
+            final Mong mong = MongTestUtil.getFirstLevelMong(mongId, accountId, maxStatus, false);
 
             Mockito.when(mongPersistencePort.getMongPort(mongId)).thenReturn(Optional.of(mong));
             Mockito.when(mongPersistencePort.saveMongPort(mong)).thenReturn(Optional.of(mong));
@@ -763,10 +746,10 @@ class ManagementServiceTest {
         @DisplayName("몽이 사망 상태인 경우 예외가 발생 한다.")
         void wakeupMongWhenIsDead() {
             // arrange
-            long mongId = 1L;
-            long accountId = 1L;
-            double maxStatus = 100D;
-            Mong mong = MongTestUtil.getFirstLevelMong(mongId, accountId, maxStatus, MongStateCode.DEAD);
+            final long mongId = 1L;
+            final long accountId = 1L;
+            final double maxStatus = 100D;
+            final Mong mong = MongTestUtil.getFirstLevelMong(mongId, accountId, maxStatus, MongStateCode.DEAD);
 
             Mockito.when(mongPersistencePort.getMongPort(mongId)).thenReturn(Optional.of(mong));
             Mockito.when(mongPersistencePort.saveMongPort(mong)).thenReturn(Optional.of(mong));
@@ -784,10 +767,10 @@ class ManagementServiceTest {
         @DisplayName("몽이 졸업 준비 상태인 경우 예외가 발생 한다.")
         void wakeupMongWHenIsGraduateReady() {
             // arrange
-            long mongId = 1L;
-            long accountId = 1L;
-            double maxStatus = 100D;
-            Mong mong = MongTestUtil.getFirstLevelMong(mongId, accountId, maxStatus, MongStateCode.GRADUATE_READY);
+            final long mongId = 1L;
+            final long accountId = 1L;
+            final double maxStatus = 100D;
+            final Mong mong = MongTestUtil.getFirstLevelMong(mongId, accountId, maxStatus, MongStateCode.GRADUATE_READY);
 
             Mockito.when(mongPersistencePort.getMongPort(mongId)).thenReturn(Optional.of(mong));
             Mockito.when(mongPersistencePort.saveMongPort(mong)).thenReturn(Optional.of(mong));
@@ -805,10 +788,10 @@ class ManagementServiceTest {
         @DisplayName("몽이 알 상태인 경우 예외가 발생 한다.")
         void wakeupMongWhenIsEgg() {
             // arrange
-            long mongId = 1L;
-            long accountId = 1L;
-            double maxStatus = 100D;
-            Mong mong = MongTestUtil.getEggMong(mongId, accountId, maxStatus);
+            final long mongId = 1L;
+            final long accountId = 1L;
+            final double maxStatus = 100D;
+            final Mong mong = MongTestUtil.getEggMong(mongId, accountId, maxStatus);
 
             Mockito.when(mongPersistencePort.getMongPort(mongId)).thenReturn(Optional.of(mong));
             Mockito.when(mongPersistencePort.saveMongPort(mong)).thenReturn(Optional.of(mong));
@@ -826,8 +809,8 @@ class ManagementServiceTest {
         @DisplayName("몽이 존재하지 않는 경우 예외가 발생 한다.")
         void notExistsMong() {
             // arrange
-            long mongId = 1L;
-            long accountId = 1L;
+            final long mongId = 1L;
+            final long accountId = 1L;
 
             Mockito.when(mongPersistencePort.getMongPort(mongId)).thenReturn(Optional.empty());
 
@@ -844,10 +827,10 @@ class ManagementServiceTest {
         @DisplayName("몽의 소유자가 일치하지 않는 경우 예외가 발생 한다.")
         void forbiddenMong() {
             // arrange
-            long mongId = 1L;
-            long accountId = 1L;
-            double maxStatus = 100D;
-            Mong mong = MongTestUtil.getFirstLevelMong(mongId, accountId, maxStatus);
+            final long mongId = 1L;
+            final long accountId = 1L;
+            final double maxStatus = 100D;
+            final Mong mong = MongTestUtil.getFirstLevelMong(mongId, accountId, maxStatus);
 
             Mockito.when(mongPersistencePort.getMongPort(mongId)).thenReturn(Optional.of(mong));
 
@@ -869,11 +852,11 @@ class ManagementServiceTest {
         @DisplayName("몽 배변을 처리하고 지수를 증가 시킨다.")
         void poopCleanMong() {
             // arrange
-            long mongId = 1L;
-            long accountId = 1L;
-            double maxStatus = 100D;
-            int poopCount = 4;
-            Mong mong = MongTestUtil.getFirstLevelMong(mongId, accountId, maxStatus, poopCount);
+            final long mongId = 1L;
+            final long accountId = 1L;
+            final double maxStatus = 100D;
+            final int poopCount = 4;
+            final Mong mong = MongTestUtil.getFirstLevelMong(mongId, accountId, maxStatus, poopCount);
 
             Mockito.when(mongPersistencePort.getMongPort(mongId)).thenReturn(Optional.of(mong));
             Mockito.when(mongPersistencePort.saveMongPort(mong)).thenReturn(Optional.of(mong));
@@ -884,7 +867,7 @@ class ManagementServiceTest {
                     .accountId(accountId)
                     .build();
 
-            Mong expected = managementUseCase.poopCleanMongUseCase(command);
+            var expected = managementUseCase.poopCleanMongUseCase(command);
 
             // assert
             assertTrue(expected.getExp() > 0);
@@ -895,10 +878,10 @@ class ManagementServiceTest {
         @DisplayName("몽이 사망 상태인 경우 예외가 발생 한다.")
         void poopCleanMongWhenIsDead() {
             // arrange
-            long mongId = 1L;
-            long accountId = 1L;
-            double maxStatus = 100D;
-            Mong mong = MongTestUtil.getFirstLevelMong(mongId, accountId, maxStatus, MongStateCode.DEAD);
+            final long mongId = 1L;
+            final long accountId = 1L;
+            final double maxStatus = 100D;
+            final Mong mong = MongTestUtil.getFirstLevelMong(mongId, accountId, maxStatus, MongStateCode.DEAD);
 
             Mockito.when(mongPersistencePort.getMongPort(mongId)).thenReturn(Optional.of(mong));
             Mockito.when(mongPersistencePort.saveMongPort(mong)).thenReturn(Optional.of(mong));
@@ -916,10 +899,10 @@ class ManagementServiceTest {
         @DisplayName("몽이 졸업 준비 상태인 경우 예외가 발생 한다.")
         void poopCleanMongWhenIsGraduateReady() {
             // arrange
-            long mongId = 1L;
-            long accountId = 1L;
-            double maxStatus = 100D;
-            Mong mong = MongTestUtil.getFirstLevelMong(mongId, accountId, maxStatus, MongStateCode.GRADUATE_READY);
+            final long mongId = 1L;
+            final long accountId = 1L;
+            final double maxStatus = 100D;
+            final Mong mong = MongTestUtil.getFirstLevelMong(mongId, accountId, maxStatus, MongStateCode.GRADUATE_READY);
 
             Mockito.when(mongPersistencePort.getMongPort(mongId)).thenReturn(Optional.of(mong));
             Mockito.when(mongPersistencePort.saveMongPort(mong)).thenReturn(Optional.of(mong));
@@ -937,10 +920,10 @@ class ManagementServiceTest {
         @DisplayName("몽이 알 상태인 경우 예외가 발생 한다.")
         void poopCleanWhenIsEgg() {
             // arrange
-            long mongId = 1L;
-            long accountId = 1L;
-            double maxStatus = 100D;
-            Mong mong = MongTestUtil.getEggMong(mongId, accountId, maxStatus);
+            final long mongId = 1L;
+            final long accountId = 1L;
+            final double maxStatus = 100D;
+            final Mong mong = MongTestUtil.getEggMong(mongId, accountId, maxStatus);
 
             Mockito.when(mongPersistencePort.getMongPort(mongId)).thenReturn(Optional.of(mong));
             Mockito.when(mongPersistencePort.saveMongPort(mong)).thenReturn(Optional.of(mong));
@@ -958,10 +941,10 @@ class ManagementServiceTest {
         @DisplayName("몽이 수면 상태인 경우 예외가 발생 한다.")
         void poopCleanMongWhenIsSleeping() {
             // arrange
-            long mongId = 1L;
-            long accountId = 1L;
-            double maxStatus = 100D;
-            Mong mong = MongTestUtil.getFirstLevelMong(mongId, accountId, maxStatus, true);
+            final long mongId = 1L;
+            final long accountId = 1L;
+            final double maxStatus = 100D;
+            final Mong mong = MongTestUtil.getFirstLevelMong(mongId, accountId, maxStatus, true);
 
             Mockito.when(mongPersistencePort.getMongPort(mongId)).thenReturn(Optional.of(mong));
             Mockito.when(mongPersistencePort.saveMongPort(mong)).thenReturn(Optional.of(mong));
@@ -979,8 +962,8 @@ class ManagementServiceTest {
         @DisplayName("몽이 존재하지 않는 경우 예외가 발생 한다.")
         void notExistsMong() {
             // arrange
-            long mongId = 1L;
-            long accountId = 1L;
+            final long mongId = 1L;
+            final long accountId = 1L;
 
             Mockito.when(mongPersistencePort.getMongPort(mongId)).thenReturn(Optional.empty());
 
@@ -997,10 +980,10 @@ class ManagementServiceTest {
         @DisplayName("몽의 소유자가 일치하지 않는 경우 예외가 발생 한다.")
         void forbiddenMong() {
             // arrange
-            long mongId = 1L;
-            long accountId = 1L;
-            double maxStatus = 100D;
-            Mong mong = MongTestUtil.getFirstLevelMong(mongId, accountId, maxStatus);
+            final long mongId = 1L;
+            final long accountId = 1L;
+            final double maxStatus = 100D;
+            final Mong mong = MongTestUtil.getFirstLevelMong(mongId, accountId, maxStatus);
 
             Mockito.when(mongPersistencePort.getMongPort(mongId)).thenReturn(Optional.of(mong));
 
@@ -1022,13 +1005,12 @@ class ManagementServiceTest {
         @DisplayName("몽을 진화 시키고 지수를 재조정 한다.")
         void evolutionMong() {
             // arrange
-            long mongId = 1L;
-            long accountId = 1L;
-            double maxStatus = 100D;
-            Mong mong = MongTestUtil.getFirstLevelMong(mongId, accountId, maxStatus, MongStateCode.EVOLUTION_READY);
-
-            double nextMaxStatus = 300D;
-            MongType mongType = MongTestUtil.getSecondLevelMongType(nextMaxStatus);
+            final long mongId = 1L;
+            final long accountId = 1L;
+            final double maxStatus = 100D;
+            final Mong mong = MongTestUtil.getFirstLevelMong(mongId, accountId, maxStatus, MongStateCode.EVOLUTION_READY);
+            final double nextMaxStatus = 300D;
+            final MongType mongType = MongTestUtil.getSecondLevelMongType(nextMaxStatus);
 
             Mockito.when(mongPersistencePort.getMongPort(mongId)).thenReturn(Optional.of(mong));
             Mockito.when(mongReadPort.getNextLevelMongTypesPort(mong.getEvolutionScore(), mong.getMongCode())).thenReturn(List.of(mongType));
@@ -1040,7 +1022,7 @@ class ManagementServiceTest {
                     .mongId(mongId)
                     .build();
 
-            Mong expected = managementUseCase.evolutionMongUseCase(command);
+            var expected = managementUseCase.evolutionMongUseCase(command);
 
             // assert
             assertNotEquals(MongStateCode.EVOLUTION_READY, expected.getStateCode());
@@ -1060,13 +1042,12 @@ class ManagementServiceTest {
         @Test
         @DisplayName("몽이 진화 준비 상태가 아닌 경우 예외가 발생 한다.")
         void evolutionMongWhenIsNotEvolutionReady() {
-            long mongId = 1L;
-            long accountId = 1L;
-            double maxStatus = 100D;
-            Mong mong = MongTestUtil.getFirstLevelMong(mongId, accountId, maxStatus, MongStateCode.NORMAL);
-
-            double nextMaxStatus = 300D;
-            MongType mongType = MongTestUtil.getSecondLevelMongType(nextMaxStatus);
+            final long mongId = 1L;
+            final long accountId = 1L;
+            final double maxStatus = 100D;
+            final Mong mong = MongTestUtil.getFirstLevelMong(mongId, accountId, maxStatus, MongStateCode.NORMAL);
+            final double nextMaxStatus = 300D;
+            final MongType mongType = MongTestUtil.getSecondLevelMongType(nextMaxStatus);
 
             Mockito.when(mongPersistencePort.getMongPort(mongId)).thenReturn(Optional.of(mong));
             Mockito.when(mongReadPort.getNextLevelMongTypesPort(mong.getEvolutionScore(), mong.getMongCode())).thenReturn(List.of(mongType));
@@ -1084,13 +1065,12 @@ class ManagementServiceTest {
         @Test
         @DisplayName("몽이 사망 상태인 경우 예외가 발생 한다.")
         void evolutionMongWhenIsDead() {
-            long mongId = 1L;
-            long accountId = 1L;
-            double maxStatus = 100D;
-            Mong mong = MongTestUtil.getFirstLevelMong(mongId, accountId, maxStatus, MongStateCode.DEAD);
-
-            double nextMaxStatus = 300D;
-            MongType mongType = MongTestUtil.getSecondLevelMongType(nextMaxStatus);
+            final long mongId = 1L;
+            final long accountId = 1L;
+            final double maxStatus = 100D;
+            final Mong mong = MongTestUtil.getFirstLevelMong(mongId, accountId, maxStatus, MongStateCode.DEAD);
+            final double nextMaxStatus = 300D;
+            final MongType mongType = MongTestUtil.getSecondLevelMongType(nextMaxStatus);
 
             Mockito.when(mongPersistencePort.getMongPort(mongId)).thenReturn(Optional.of(mong));
             Mockito.when(mongReadPort.getNextLevelMongTypesPort(mong.getEvolutionScore(), mong.getMongCode())).thenReturn(List.of(mongType));
@@ -1108,13 +1088,12 @@ class ManagementServiceTest {
         @Test
         @DisplayName("몽이 졸업 준비 상태인 경우 예외가 발생 한다.")
         void evolutionMongWHenIsGraduateReady() {
-            long mongId = 1L;
-            long accountId = 1L;
-            double maxStatus = 100D;
-            Mong mong = MongTestUtil.getFirstLevelMong(mongId, accountId, maxStatus, MongStateCode.GRADUATE_READY);
-
-            double nextMaxStatus = 300D;
-            MongType mongType = MongTestUtil.getSecondLevelMongType(nextMaxStatus);
+            final long mongId = 1L;
+            final long accountId = 1L;
+            final double maxStatus = 100D;
+            final Mong mong = MongTestUtil.getFirstLevelMong(mongId, accountId, maxStatus, MongStateCode.GRADUATE_READY);
+            final double nextMaxStatus = 300D;
+            final MongType mongType = MongTestUtil.getSecondLevelMongType(nextMaxStatus);
 
             Mockito.when(mongPersistencePort.getMongPort(mongId)).thenReturn(Optional.of(mong));
             Mockito.when(mongReadPort.getNextLevelMongTypesPort(mong.getEvolutionScore(), mong.getMongCode())).thenReturn(List.of(mongType));
@@ -1132,10 +1111,10 @@ class ManagementServiceTest {
         @Test
         @DisplayName("진화 가능한 몽 타입이 없는 경우 예외가 발생 한다.")
         void evolutionMongWHenNotExistsMongTypes() {
-            long mongId = 1L;
-            long accountId = 1L;
-            double maxStatus = 100D;
-            Mong mong = MongTestUtil.getFirstLevelMong(mongId, accountId, maxStatus, MongStateCode.EVOLUTION_READY);
+            final long mongId = 1L;
+            final long accountId = 1L;
+            final double maxStatus = 100D;
+            final Mong mong = MongTestUtil.getFirstLevelMong(mongId, accountId, maxStatus, MongStateCode.EVOLUTION_READY);
 
             Mockito.when(mongPersistencePort.getMongPort(mongId)).thenReturn(Optional.of(mong));
             Mockito.when(mongReadPort.getNextLevelMongTypesPort(mong.getEvolutionScore(), mong.getMongCode())).thenReturn(Collections.emptyList());
@@ -1154,8 +1133,8 @@ class ManagementServiceTest {
         @DisplayName("몽이 존재하지 않는 경우 예외가 발생 한다.")
         void notExistsMong() {
             // arrange
-            long mongId = 1L;
-            long accountId = 1L;
+            final long mongId = 1L;
+            final long accountId = 1L;
 
             Mockito.when(mongPersistencePort.getMongPort(mongId)).thenReturn(Optional.empty());
 
@@ -1172,10 +1151,10 @@ class ManagementServiceTest {
         @DisplayName("몽의 소유자가 일치하지 않는 경우 예외가 발생 한다.")
         void forbiddenMong() {
             // arrange
-            long mongId = 1L;
-            long accountId = 1L;
-            double maxStatus = 100D;
-            Mong mong = MongTestUtil.getFirstLevelMong(mongId, accountId, maxStatus);
+            final long mongId = 1L;
+            final long accountId = 1L;
+            final double maxStatus = 100D;
+            final Mong mong = MongTestUtil.getFirstLevelMong(mongId, accountId, maxStatus);
 
             Mockito.when(mongPersistencePort.getMongPort(mongId)).thenReturn(Optional.of(mong));
 
@@ -1197,10 +1176,10 @@ class ManagementServiceTest {
         @DisplayName("몽을 졸업 상태로 변경 한다.")
         void graduateMong() {
             // arrange
-            long mongId = 1L;
-            long accountId = 1L;
-            double maxStatus = 100D;
-            Mong mong = MongTestUtil.getFirstLevelMong(mongId, accountId, maxStatus, MongStateCode.GRADUATE_READY);
+            final long mongId = 1L;
+            final long accountId = 1L;
+            final double maxStatus = 100D;
+            final Mong mong = MongTestUtil.getFirstLevelMong(mongId, accountId, maxStatus, MongStateCode.GRADUATE_READY);
 
             Mockito.when(mongPersistencePort.getMongPort(mongId)).thenReturn(Optional.of(mong));
             Mockito.when(mongPersistencePort.saveMongPort(mong)).thenReturn(Optional.of(mong));
@@ -1211,7 +1190,7 @@ class ManagementServiceTest {
                     .mongId(mongId)
                     .build();
 
-            Mong expected = managementUseCase.graduateMongUseCase(command);
+            var expected = managementUseCase.graduateMongUseCase(command);
 
             // assert
             assertEquals(MongStateCode.GRADUATE, expected.getStateCode());
@@ -1222,10 +1201,10 @@ class ManagementServiceTest {
         @DisplayName("몽이 졸업 준비 상태가 아닌 경우 예외가 발생 한다.")
         void graduateMongWhenIsNotGraduateReady() {
             // arrange
-            long mongId = 1L;
-            long accountId = 1L;
-            double maxStatus = 100D;
-            Mong mong = MongTestUtil.getFirstLevelMong(mongId, accountId, maxStatus, MongStateCode.NORMAL);
+            final long mongId = 1L;
+            final long accountId = 1L;
+            final double maxStatus = 100D;
+            final Mong mong = MongTestUtil.getFirstLevelMong(mongId, accountId, maxStatus, MongStateCode.NORMAL);
 
             Mockito.when(mongPersistencePort.getMongPort(mongId)).thenReturn(Optional.of(mong));
             Mockito.when(mongPersistencePort.saveMongPort(mong)).thenReturn(Optional.of(mong));
@@ -1243,10 +1222,10 @@ class ManagementServiceTest {
         @DisplayName("몽이 사망 상태인 경우 예외가 발생 한다.")
         void graduateMongWhenIsDead() {
             // arrange
-            long mongId = 1L;
-            long accountId = 1L;
-            double maxStatus = 100D;
-            Mong mong = MongTestUtil.getFirstLevelMong(mongId, accountId, maxStatus, MongStateCode.DEAD);
+            final long mongId = 1L;
+            final long accountId = 1L;
+            final double maxStatus = 100D;
+            final Mong mong = MongTestUtil.getFirstLevelMong(mongId, accountId, maxStatus, MongStateCode.DEAD);
 
             Mockito.when(mongPersistencePort.getMongPort(mongId)).thenReturn(Optional.of(mong));
             Mockito.when(mongPersistencePort.saveMongPort(mong)).thenReturn(Optional.of(mong));
@@ -1264,10 +1243,10 @@ class ManagementServiceTest {
         @DisplayName("몽이 알 상태인 경우 예외가 발생 한다.")
         void graduateMongWhenIsEgg() {
             // arrange
-            long mongId = 1L;
-            long accountId = 1L;
-            double maxStatus = 100D;
-            Mong mong = MongTestUtil.getEggMong(mongId, accountId, maxStatus);
+            final long mongId = 1L;
+            final long accountId = 1L;
+            final double maxStatus = 100D;
+            final Mong mong = MongTestUtil.getEggMong(mongId, accountId, maxStatus);
 
             Mockito.when(mongPersistencePort.getMongPort(mongId)).thenReturn(Optional.of(mong));
             Mockito.when(mongPersistencePort.saveMongPort(mong)).thenReturn(Optional.of(mong));
@@ -1285,8 +1264,8 @@ class ManagementServiceTest {
         @DisplayName("몽이 존재하지 않는 경우 예외가 발생 한다.")
         void notExistsMong() {
             // arrange
-            long mongId = 1L;
-            long accountId = 1L;
+            final long mongId = 1L;
+            final long accountId = 1L;
 
             Mockito.when(mongPersistencePort.getMongPort(mongId)).thenReturn(Optional.empty());
 
@@ -1303,10 +1282,10 @@ class ManagementServiceTest {
         @DisplayName("몽의 소유자가 일치하지 않는 경우 예외가 발생 한다.")
         void forbiddenMong() {
             // arrange
-            long mongId = 1L;
-            long accountId = 1L;
-            double maxStatus = 100D;
-            Mong mong = MongTestUtil.getFirstLevelMong(mongId, accountId, maxStatus);
+            final long mongId = 1L;
+            final long accountId = 1L;
+            final double maxStatus = 100D;
+            final Mong mong = MongTestUtil.getFirstLevelMong(mongId, accountId, maxStatus);
 
             Mockito.when(mongPersistencePort.getMongPort(mongId)).thenReturn(Optional.of(mong));
 
@@ -1328,11 +1307,11 @@ class ManagementServiceTest {
         @DisplayName("몽의 페이 포인트를 증가 시킨다.")
         void increaseMongPayPoint() {
             // arrange
-            long mongId = 1L;
-            long accountId = 1L;
-            double maxStatus = 100D;
-            int payPoint = 100;
-            Mong mong = MongTestUtil.getFirstLevelMong(mongId, accountId, maxStatus);
+            final long mongId = 1L;
+            final long accountId = 1L;
+            final double maxStatus = 100D;
+            final int payPoint = 100;
+            final Mong mong = MongTestUtil.getFirstLevelMong(mongId, accountId, maxStatus);
 
             Mockito.when(mongPersistencePort.getMongPort(mongId)).thenReturn(Optional.of(mong));
             Mockito.when(mongPersistencePort.saveMongPort(mong)).thenReturn(Optional.of(mong));
@@ -1343,7 +1322,7 @@ class ManagementServiceTest {
                     .payPoint(payPoint)
                     .build();
 
-            Mong expected = managementUseCase.increaseMongPayPointUseCase(command);
+            var expected = managementUseCase.increaseMongPayPointUseCase(command);
 
             // assert
             assertEquals(payPoint, expected.getPayPoint());
@@ -1353,7 +1332,7 @@ class ManagementServiceTest {
         @DisplayName("몽이 존재하지 않는 경우 예외가 발생 한다.")
         void notExistsMong() {
             // arrange
-            long mongId = 1L;
+            final long mongId = 1L;
 
             Mockito.when(mongPersistencePort.getMongPort(mongId)).thenReturn(Optional.empty());
 
@@ -1374,11 +1353,11 @@ class ManagementServiceTest {
         @DisplayName("몽의 지수를 1 cycle 증가 시킨다.")
         void increaseMongStatus() {
             // arrange
-            long mongId = 1L;
-            long accountId = 1L;
-            double status = 0;
-            double maxStatus = 100D;
-            Mong mong = MongTestUtil.getFirstLevelMong(mongId, accountId, status, maxStatus);
+            final long mongId = 1L;
+            final long accountId = 1L;
+            final double status = 0;
+            final double maxStatus = 100D;
+            final Mong mong = MongTestUtil.getFirstLevelMong(mongId, accountId, status, maxStatus);
 
             Mockito.when(mongPersistencePort.getMongPort(mongId)).thenReturn(Optional.of(mong));
             Mockito.when(mongPersistencePort.saveMongPort(mong)).thenReturn(Optional.of(mong));
@@ -1389,7 +1368,7 @@ class ManagementServiceTest {
                     .mongId(mongId)
                     .build();
 
-            Mong expected = managementUseCase.increaseMongStatusUseCase(command);
+            var expected = managementUseCase.increaseMongStatusUseCase(command);
 
             // assert
             assertTrue(expected.getHealthy() > status);
@@ -1400,8 +1379,8 @@ class ManagementServiceTest {
         @DisplayName("몽이 존재하지 않는 경우 예외가 발생 한다.")
         void notExistsMong() {
             // arrange
-            long mongId = 1L;
-            long accountId = 1L;
+            final long mongId = 1L;
+            final long accountId = 1L;
 
             Mockito.when(mongPersistencePort.getMongPort(mongId)).thenReturn(Optional.empty());
             // act & assert
@@ -1417,10 +1396,10 @@ class ManagementServiceTest {
         @DisplayName("몽의 소유자가 일치하지 않는 경우 예외가 발생 한다.")
         void forbiddenMong() {
             // arrange
-            long mongId = 1L;
-            long accountId = 1L;
-            double maxStatus = 100D;
-            Mong mong = MongTestUtil.getFirstLevelMong(mongId, accountId, maxStatus);
+            final long mongId = 1L;
+            final long accountId = 1L;
+            final double maxStatus = 100D;
+            final Mong mong = MongTestUtil.getFirstLevelMong(mongId, accountId, maxStatus);
 
             Mockito.when(mongPersistencePort.getMongPort(mongId)).thenReturn(Optional.of(mong));
 
@@ -1442,10 +1421,10 @@ class ManagementServiceTest {
         @DisplayName("몽의 지수를 1 cycle 감소 시킨다.")
         void decreaseMongStatus() {
             // arrange
-            long mongId = 1L;
-            long accountId = 1L;
-            double maxStatus = 100D;
-            Mong mong = MongTestUtil.getFirstLevelMong(mongId, accountId, maxStatus);
+            final long mongId = 1L;
+            final long accountId = 1L;
+            final double maxStatus = 100D;
+            final Mong mong = MongTestUtil.getFirstLevelMong(mongId, accountId, maxStatus);
 
             Mockito.when(mongPersistencePort.getMongPort(mongId)).thenReturn(Optional.of(mong));
             Mockito.when(mongPersistencePort.saveMongPort(mong)).thenReturn(Optional.of(mong));
@@ -1456,7 +1435,7 @@ class ManagementServiceTest {
                     .mongId(mongId)
                     .build();
 
-            Mong expected = managementUseCase.decreaseMongStatusUseCase(command);
+            var expected = managementUseCase.decreaseMongStatusUseCase(command);
 
             // assert
             assertTrue(expected.getWeight() < maxStatus);
@@ -1470,8 +1449,8 @@ class ManagementServiceTest {
         @DisplayName("몽이 존재하지 않는 경우 예외가 발생 한다.")
         void notExistsMong() {
             // arrange
-            long mongId = 1L;
-            long accountId = 1L;
+            final long mongId = 1L;
+            final long accountId = 1L;
 
             Mockito.when(mongPersistencePort.getMongPort(mongId)).thenReturn(Optional.empty());
             // act & assert
@@ -1487,10 +1466,10 @@ class ManagementServiceTest {
         @DisplayName("몽의 소유자가 일치하지 않는 경우 예외가 발생 한다.")
         void forbiddenMong() {
             // arrange
-            long mongId = 1L;
-            long accountId = 1L;
-            double maxStatus = 100D;
-            Mong mong = MongTestUtil.getFirstLevelMong(mongId, accountId, maxStatus);
+            final long mongId = 1L;
+            final long accountId = 1L;
+            final double maxStatus = 100D;
+            final Mong mong = MongTestUtil.getFirstLevelMong(mongId, accountId, maxStatus);
 
             Mockito.when(mongPersistencePort.getMongPort(mongId)).thenReturn(Optional.of(mong));
 
@@ -1512,11 +1491,11 @@ class ManagementServiceTest {
         @DisplayName("몽 배변 수를 1 cycle 증가 시킨다.")
         void increaseMongPoopCount() {
             // arrange
-            long mongId = 1L;
-            long accountId = 1L;
-            double maxStatus = 100D;
-            int poopCount = 0;
-            Mong mong = MongTestUtil.getFirstLevelMong(mongId, accountId, maxStatus, poopCount);
+            final long mongId = 1L;
+            final long accountId = 1L;
+            final double maxStatus = 100D;
+            final int poopCount = 0;
+            final Mong mong = MongTestUtil.getFirstLevelMong(mongId, accountId, maxStatus, poopCount);
 
             Mockito.when(mongPersistencePort.getMongPort(mongId)).thenReturn(Optional.of(mong));
             Mockito.when(mongPersistencePort.saveMongPort(mong)).thenReturn(Optional.of(mong));
@@ -1527,7 +1506,7 @@ class ManagementServiceTest {
                     .mongId(mongId)
                     .build();
 
-            Mong expected = managementUseCase.increaseMongPoopCountUseCase(command);
+            var expected = managementUseCase.increaseMongPoopCountUseCase(command);
 
             // assert
             assertTrue(expected.getPoopCount() > poopCount);
@@ -1538,11 +1517,11 @@ class ManagementServiceTest {
         @DisplayName("이미 최대 배변 수에 도달한 경우 진화 패널티를 1 증가 시킨다.")
         void increaseMongPoopCountWhenAlreadyMaxPoopCount() {
             // arrange
-            long mongId = 1L;
-            long accountId = 1L;
-            double maxStatus = 100D;
-            int poopCount = Mong.getMaxPoopCount();
-            Mong mong = MongTestUtil.getFirstLevelMong(mongId, accountId, maxStatus, poopCount);
+            final long mongId = 1L;
+            final long accountId = 1L;
+            final double maxStatus = 100D;
+            final int poopCount = Mong.getMaxPoopCount();
+            final Mong mong = MongTestUtil.getFirstLevelMong(mongId, accountId, maxStatus, poopCount);
 
             Mockito.when(mongPersistencePort.getMongPort(mongId)).thenReturn(Optional.of(mong));
             Mockito.when(mongPersistencePort.saveMongPort(mong)).thenReturn(Optional.of(mong));
@@ -1553,7 +1532,7 @@ class ManagementServiceTest {
                     .mongId(mongId)
                     .build();
 
-            Mong expected = managementUseCase.increaseMongPoopCountUseCase(command);
+            var expected = managementUseCase.increaseMongPoopCountUseCase(command);
 
             // assert
             assertEquals(poopCount, expected.getPoopCount());
@@ -1564,8 +1543,8 @@ class ManagementServiceTest {
         @DisplayName("몽이 존재하지 않는 경우 예외가 발생 한다.")
         void notExistsMong() {
             // arrange
-            long mongId = 1L;
-            long accountId = 1L;
+            final long mongId = 1L;
+            final long accountId = 1L;
 
             Mockito.when(mongPersistencePort.getMongPort(mongId)).thenReturn(Optional.empty());
 
@@ -1582,10 +1561,10 @@ class ManagementServiceTest {
         @DisplayName("몽의 소유자가 일치하지 않는 경우 예외가 발생 한다.")
         void forbiddenMong() {
             // arrange
-            long mongId = 1L;
-            long accountId = 1L;
-            double maxStatus = 100D;
-            Mong mong = MongTestUtil.getFirstLevelMong(mongId, accountId, maxStatus);
+            final long mongId = 1L;
+            final long accountId = 1L;
+            final double maxStatus = 100D;
+            final Mong mong = MongTestUtil.getFirstLevelMong(mongId, accountId, maxStatus);
 
             Mockito.when(mongPersistencePort.getMongPort(mongId)).thenReturn(Optional.of(mong));
 
