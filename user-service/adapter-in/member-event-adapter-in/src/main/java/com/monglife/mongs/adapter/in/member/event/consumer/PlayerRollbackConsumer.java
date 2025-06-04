@@ -19,7 +19,7 @@ public class PlayerRollbackConsumer {
      * 스타 포인트 환전 트랜잭션 롤백 이벤트 리스너
      * @param event 스타 포인트 환전 정보
      */
-    @KafkaListener(topics = EventTopic.ROLLBACK_EXCHANGE_STAR_POINT)
+    @KafkaListener(topics = "${spring.config.activate.on-profile}." + EventTopic.ROLLBACK_EXCHANGE_STAR_POINT)
     public void exchangeStarPointRollbackEvent(TransactionEvent<ExchangeStarPointRollbackEventDto> event) {
 
         if (event.getData() != null) {

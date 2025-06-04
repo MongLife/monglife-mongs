@@ -2,7 +2,7 @@ dependencies {
     // application layer
     implementation project(":character-service:application:mong-application")
     // core layer
-    implementation project(":core:kafka-event-core")
+    implementation project(":common:core:kafka-event-core")
     // monglife-mqtt
     implementation "com.github.monglife:monglife-module-mqtt:${monglifeModuleMqttVersion}"
     // monglife-kafka

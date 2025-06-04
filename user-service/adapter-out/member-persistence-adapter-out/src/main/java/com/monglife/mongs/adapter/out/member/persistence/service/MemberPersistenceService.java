@@ -59,7 +59,7 @@ public class MemberPersistenceService implements MemberPersistencePort {
     @Override
     @Transactional
     public Optional<Player> getPlayerPort(Long accountId) {
-        return memberRepository.findByAccountId(accountId).map(MemberEntity::toDomain);
+        return memberRepository.findByAccountIdWithLock(accountId).map(MemberEntity::toDomain);
     }
 
     /**

@@ -13,6 +13,7 @@ import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -40,6 +41,9 @@ class CollectionConsumerTest {
 
     private final KafkaService kafkaService;
 
+    @Value("${spring.config.activate.on-profile}")
+    private String profile;
+
     @Autowired
     public CollectionConsumerTest(KafkaService kafkaService) {
         this.kafkaService = kafkaService;
@@ -53,7 +57,7 @@ class CollectionConsumerTest {
         @DisplayName("몽 등록 트랜잭션이 성공하는 경우 이벤트를 소비하여 컬렉션 몽 등록 UseCase를 실행 한다.")
         void createMong() {
             // arrange
-            final String topic = EventTopic.COMMIT_CREATE_MONG;
+            final String topic = profile + "." + EventTopic.COMMIT_CREATE_MONG;
             final long accountId = 1L;
             final String mongCode = "CH000";
 
@@ -63,7 +67,7 @@ class CollectionConsumerTest {
                     .mongCode(mongCode)
                     .build();
 
-            kafkaService.generateEvent(topic, createMongEventDto);
+            kafkaService.generateEventWithProfile(topic, createMongEventDto);
 
             // assert
             ArgumentCaptor<CreateCollectionMongCommand> captor = ArgumentCaptor.forClass(CreateCollectionMongCommand.class);

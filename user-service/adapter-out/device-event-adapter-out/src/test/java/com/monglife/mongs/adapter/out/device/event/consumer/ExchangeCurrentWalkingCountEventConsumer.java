@@ -21,7 +21,7 @@ public class ExchangeCurrentWalkingCountEventConsumer {
 
     public ExchangeCurrentWalkingCountEventConsumer() {}
 
-    @KafkaListener(topics = EventTopic.COMMIT_EXCHANGE_CURRENT_WALKING_COUNT)
+    @KafkaListener(topics = "${spring.config.activate.on-profile}." + EventTopic.COMMIT_EXCHANGE_CURRENT_WALKING_COUNT)
     public void exchangeCurrentWalkingCountEvent(TransactionEvent<ExchangeCurrentWalkingCountEventDto> event) {
 
         if (event.getData() != null) {

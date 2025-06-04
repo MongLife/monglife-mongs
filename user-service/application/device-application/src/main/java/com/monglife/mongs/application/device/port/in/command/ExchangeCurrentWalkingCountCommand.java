@@ -8,6 +8,8 @@ import java.time.LocalDateTime;
 @Getter
 public class ExchangeCurrentWalkingCountCommand {
 
+    private final Long accountId;
+
     private final String deviceId;
 
     private final Long mongId;
@@ -19,7 +21,8 @@ public class ExchangeCurrentWalkingCountCommand {
     private final LocalDateTime deviceBootedAt;
 
     @Builder
-    public ExchangeCurrentWalkingCountCommand(String deviceId, Long mongId, Integer walkingCount, Integer totalWalkingCount, LocalDateTime deviceBootedAt) {
+    public ExchangeCurrentWalkingCountCommand(Long accountId, String deviceId, Long mongId, Integer walkingCount, Integer totalWalkingCount, LocalDateTime deviceBootedAt) {
+        this.accountId = accountId;
         this.deviceId = deviceId;
         this.mongId = mongId;
         this.walkingCount = walkingCount;

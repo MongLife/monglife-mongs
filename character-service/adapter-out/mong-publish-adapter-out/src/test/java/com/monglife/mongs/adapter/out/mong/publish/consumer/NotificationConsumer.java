@@ -21,7 +21,7 @@ public class NotificationConsumer {
 
     public NotificationConsumer() {}
 
-    @KafkaListener(topics = EventTopic.NOTIFICATION_MONGS)
+    @KafkaListener(topics = "${spring.config.activate.on-profile}." + EventTopic.NOTIFICATION)
     public void exchangeStarPointEvent(TransactionEvent<SendNotificationDto> event) {
 
         if (event.getData() != null) {

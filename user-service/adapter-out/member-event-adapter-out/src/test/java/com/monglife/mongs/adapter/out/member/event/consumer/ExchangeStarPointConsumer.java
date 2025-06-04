@@ -21,7 +21,7 @@ public class ExchangeStarPointConsumer {
 
     public ExchangeStarPointConsumer() {}
 
-    @KafkaListener(topics = EventTopic.COMMIT_EXCHANGE_STAR_POINT)
+    @KafkaListener(topics = "${spring.config.activate.on-profile}." + EventTopic.COMMIT_EXCHANGE_STAR_POINT)
     public void exchangeStarPointEvent(TransactionEvent<ExchangeStarPointEventDto> event) {
 
         if (event.getData() != null) {

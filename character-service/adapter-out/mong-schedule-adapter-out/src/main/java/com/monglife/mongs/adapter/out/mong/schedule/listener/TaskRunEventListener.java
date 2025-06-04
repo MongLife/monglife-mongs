@@ -10,6 +10,7 @@ import com.monglife.mongs.application.mong.port.enums.MongSchedulerType;
 import com.monglife.mongs.core.kafka.event.enums.EventTopic;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
@@ -32,6 +33,9 @@ public class TaskRunEventListener {
     private final ApplicationEventPublisher publisher;
 
     private final ScheduledExecutorService executor;
+
+    @Value("${spring.config.activate.on-profile}")
+    private String profile;
 
     public TaskRunEventListener(
             @Autowired TaskRepository taskRepository,
@@ -77,38 +81,38 @@ public class TaskRunEventListener {
                 .ifPresentOrElse(mongSchedulerType -> {
                     switch (mongSchedulerType) {
                         case EGG_EVOLUTION ->
-                                kafkaService.generateEvent(EventTopic.COMMIT_EGG_EVOLUTION, EggEvolutionEventDto.builder()
+                                kafkaService.generateEventWithProfile(EventTopic.COMMIT_EGG_EVOLUTION, EggEvolutionEventDto.builder()
                                         .accountId(taskEntity.getAccountId())
                                         .mongId(taskEntity.getMongId())
                                         .build());
                         case INCREASE_STATUS ->
-                                kafkaService.generateEvent(EventTopic.COMMIT_INCREASE_STATUS, IncreaseStatusEventDto.builder()
+                                kafkaService.generateEventWithProfile(EventTopic.COMMIT_INCREASE_STATUS, IncreaseStatusEventDto.builder()
                                         .accountId(taskEntity.getAccountId())
                                         .mongId(taskEntity.getMongId())
                                         .build());
                         case DECREASE_STATUS ->
-                                kafkaService.generateEvent(EventTopic.COMMIT_DECREASE_STATUS, DecreaseStatusEventDto.builder()
+                                kafkaService.generateEventWithProfile(EventTopic.COMMIT_DECREASE_STATUS, DecreaseStatusEventDto.builder()
                                         .accountId(taskEntity.getAccountId())
                                         .mongId(taskEntity.getMongId())
                                         .build());
                         case INCREASE_POOP ->
-                                kafkaService.generateEvent(EventTopic.COMMIT_INCREASE_POOP, IncreasePoopEventDto.builder()
+                                kafkaService.generateEventWithProfile(EventTopic.COMMIT_INCREASE_POOP, IncreasePoopEventDto.builder()
                                         .accountId(taskEntity.getAccountId())
                                         .mongId(taskEntity.getMongId())
                                         .build());
-                        case DEAD -> kafkaService.generateEvent(EventTopic.COMMIT_DEAD, DeadEventDto.builder()
+                        case DEAD -> kafkaService.generateEventWithProfile(EventTopic.COMMIT_DEAD, DeadEventDto.builder()
                                         .accountId(taskEntity.getAccountId())
                                         .mongId(taskEntity.getMongId())
                                         .build());
-                        case SLEEP -> kafkaService.generateEvent(EventTopic.COMMIT_SLEEP, SleepEventDto.builder()
+                        case SLEEP -> kafkaService.generateEventWithProfile(EventTopic.COMMIT_SLEEP, SleepEventDto.builder()
                                         .accountId(taskEntity.getAccountId())
                                         .mongId(taskEntity.getMongId())
                                         .build());
-                        case WAKEUP -> kafkaService.generateEvent(EventTopic.COMMIT_WAKEUP, WakeupEventDto.builder()
+                        case WAKEUP -> kafkaService.generateEventWithProfile(EventTopic.COMMIT_WAKEUP, WakeupEventDto.builder()
                                         .accountId(taskEntity.getAccountId())
                                         .mongId(taskEntity.getMongId())
                                         .build());
                     }
-                }, () -> kafkaService.generateEvent("commit.test", Map.of("taskId", taskEntity.getTaskId())));
+                }, () -> kafkaService.generateEventWithProfile("commit.test", Map.of("taskId", taskEntity.getTaskId())));
     }
 }

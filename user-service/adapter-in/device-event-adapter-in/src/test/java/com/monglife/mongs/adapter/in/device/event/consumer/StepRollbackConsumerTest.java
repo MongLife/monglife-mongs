@@ -13,6 +13,7 @@ import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -40,6 +41,9 @@ class StepRollbackConsumerTest {
 
     private final KafkaService kafkaService;
 
+    @Value("${spring.config.activate.on-profile}")
+    private String profile;
+
     @Autowired
     public StepRollbackConsumerTest(KafkaService kafkaService) {
         this.kafkaService = kafkaService;
@@ -53,7 +57,7 @@ class StepRollbackConsumerTest {
         @DisplayName("걸음 수 환전 트랜잭션이 실패하는 경우 롤백 이벤트를 소비하여 보유 걸음 수 증가 UseCase를 실행 한다.")
         void exchangeCurrentWalkingCountRollback() {
             // arrange
-            final String topic = EventTopic.ROLLBACK_EXCHANGE_CURRENT_WALKING_COUNT;
+            final String topic = profile + "." + EventTopic.ROLLBACK_EXCHANGE_CURRENT_WALKING_COUNT;
             final String deviceId = "TEST-DEVICE-ID";
             final long mongId = 1L;
             final int walkingCount = 10;
@@ -67,7 +71,7 @@ class StepRollbackConsumerTest {
                     .payPoint(payPoint)
                     .build();
 
-            kafkaService.generateEvent(topic, exchangeCurrentWalkingCountRollbackEventDto);
+            kafkaService.generateEventWithProfile(topic, exchangeCurrentWalkingCountRollbackEventDto);
 
             // assert
             ArgumentCaptor<IncreaseCurrentWalkingCountCommand> captor = ArgumentCaptor.forClass(IncreaseCurrentWalkingCountCommand.class);

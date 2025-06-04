@@ -1,10 +1,10 @@
-package com.monglife.mongs.adapter.out.mong.schedule.listener;
+package com.monglife.mongs.adapter.out.mong.schedule.initializer;
 
 import com.monglife.mongs.adapter.out.mong.schedule.service.TaskService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.ApplicationListener;
+import org.springframework.context.event.ContextClosedEvent;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
@@ -12,19 +12,19 @@ import org.springframework.stereotype.Component;
 @Order(Integer.MIN_VALUE)
 @Component
 @RequiredArgsConstructor
-public class StartupEventListener implements ApplicationListener<ApplicationReadyEvent> {
+public class ShutdownInitializer implements ApplicationListener<ContextClosedEvent> {
 
     private final TaskService taskService;
 
     @Override
-    public void onApplicationEvent(ApplicationReadyEvent applicationReadyEvent) {
+    public void onApplicationEvent(ContextClosedEvent contextClosedEvent) {
 
-        if (applicationReadyEvent.getApplicationContext().getParent() == null) {
+        if (contextClosedEvent.getApplicationContext().getParent() == null) {
 
-            String applicationName = applicationReadyEvent.getApplicationContext().getId();
+            String applicationName = contextClosedEvent.getApplicationContext().getId();
 
             StringBuilder sb = new StringBuilder();
-            taskService.appStopResumeAllTask().forEach(taskEntity -> {
+            taskService.appStopPauseAllTask().forEach(taskEntity -> {
                 sb.append("\n")
                         .append("[")
                         .append(taskEntity.getTaskId())
@@ -44,7 +44,7 @@ public class StartupEventListener implements ApplicationListener<ApplicationRead
                 ;
             });
 
-            log.info("\n[TASK LOAD ON \"{}\"] {}", applicationName, sb);
+            log.info("\n[TASK DOWN ON \"{}\"] {}", applicationName, sb);
         }
     }
 }

@@ -22,7 +22,7 @@ public class CollectionConsumer {
      * 몽 등록 트랜잭션 이벤트 리스너
      * @param event 몽 등록 정보
      */
-    @KafkaListener(topics = EventTopic.COMMIT_CREATE_MONG)
+    @KafkaListener(topics = "${spring.config.activate.on-profile}." + EventTopic.COMMIT_CREATE_MONG)
     public void createMongEvent(TransactionEvent<CreateMongEventDto> event) {
 
         if (event.getData() != null) {
@@ -39,7 +39,7 @@ public class CollectionConsumer {
      * 몽 진화 이벤트 트랜잭션 리스너
      * @param event 몽 진화 캐릭터 정보
      */
-    @KafkaListener(topics = EventTopic.COMMIT_EVOLUTION_MONG)
+    @KafkaListener(topics = "${spring.config.activate.on-profile}." + EventTopic.COMMIT_EVOLUTION_MONG)
     public void evolutionMongEvent(TransactionEvent<EvolutionMongEventDto> event) {
 
         if (event.getData() != null) {
@@ -56,7 +56,7 @@ public class CollectionConsumer {
      * 랜덤 뽑기 맵 당첨 이벤트 리스너
      * @param event 뽑은 맵 정보
      */
-    @KafkaListener(topics = EventTopic.COMMIT_RANDOM_DRAW_MAP)
+    @KafkaListener(topics = "${spring.config.activate.on-profile}." + EventTopic.COMMIT_RANDOM_DRAW_MAP)
     public void randomDrawMapEvent(TransactionEvent<RandomDrawMapEventDto> event) {
 
         if (event.getData() != null) {

@@ -19,7 +19,7 @@ public class StepRollbackConsumer {
      * 걸음 수 환전 트랜잭션 롤백 이벤트 리스너
      * @param event 걸음 수 환전 정보
      */
-    @KafkaListener(topics = EventTopic.ROLLBACK_EXCHANGE_CURRENT_WALKING_COUNT)
+    @KafkaListener(topics = "${spring.config.activate.on-profile}." + EventTopic.ROLLBACK_EXCHANGE_CURRENT_WALKING_COUNT)
     public void exchangeCurrentWalkingCountRollbackEvent(TransactionEvent<ExchangeCurrentWalkingCountRollbackEventDto> event) {
 
         if (event.getData() != null) {

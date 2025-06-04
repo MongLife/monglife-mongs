@@ -36,6 +36,7 @@ public class StepController {
     ) {
 
         ExchangeCurrentWalkingCountCommand command = ExchangeCurrentWalkingCountCommand.builder()
+                .accountId(passport.getAccountId())
                 .deviceId(passport.getDeviceId())
                 .mongId(exchangeCurrentWalkingCountRequestDto.getMongId())
                 .walkingCount(exchangeCurrentWalkingCountRequestDto.getWalkingCount())

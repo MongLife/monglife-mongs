@@ -13,6 +13,7 @@ import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -40,6 +41,9 @@ class PlayerRollbackConsumerTest {
 
     private final KafkaService kafkaService;
 
+    @Value("${spring.config.activate.on-profile}")
+    private String profile;
+
     @Autowired
     public PlayerRollbackConsumerTest(KafkaService kafkaService) {
         this.kafkaService = kafkaService;
@@ -53,7 +57,7 @@ class PlayerRollbackConsumerTest {
         @DisplayName("스타 포인트 환전 트랜잭션이 실패하는 경우 롤백 이벤트를 소비하여 스타 포인트 증가 UseCase를 실행 한다.")
         void exchangeStarPointRollback() {
             // arrange
-            final String topic = EventTopic.ROLLBACK_EXCHANGE_STAR_POINT;
+            final String topic = profile + "." + EventTopic.ROLLBACK_EXCHANGE_STAR_POINT;
             final long accountId = 1L;
             final long mongId = 1L;
             final int starPoint = 10;
@@ -67,7 +71,7 @@ class PlayerRollbackConsumerTest {
                     .payPoint(payPoint)
                     .build();
 
-            kafkaService.generateEvent(topic, exchangeStarPointRollbackEventDto);
+            kafkaService.generateEventWithProfile(topic, exchangeStarPointRollbackEventDto);
 
             // assert
             ArgumentCaptor<IncreaseStarPointCommand> captor = ArgumentCaptor.forClass(IncreaseStarPointCommand.class);
