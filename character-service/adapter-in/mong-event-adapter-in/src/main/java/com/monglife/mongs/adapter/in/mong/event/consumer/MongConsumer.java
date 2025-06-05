@@ -3,12 +3,12 @@ package com.monglife.mongs.adapter.in.mong.event.consumer;
 import com.monglife.core.exception.ErrorException;
 import com.monglife.module.common.kafka.event.TransactionEvent;
 import com.monglife.module.common.kafka.service.KafkaService;
+import com.monglife.module.common.logging.annotation.EntryLoggingPoint;
 import com.monglife.mongs.adapter.transaction.*;
 import com.monglife.mongs.application.mong.port.in.ManagementUseCase;
 import com.monglife.mongs.application.mong.port.in.command.*;
 import com.monglife.mongs.core.kafka.event.enums.EventTopic;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Component;
 
@@ -23,6 +23,7 @@ public class MongConsumer {
     /**
      * 걸음 수 환전 이벤트 리스너
      */
+    @EntryLoggingPoint
     @KafkaListener(topics = "${spring.config.activate.on-profile}." + EventTopic.COMMIT_EXCHANGE_CURRENT_WALKING_COUNT)
     public void exchangeCurrentWalkingCountEvent(TransactionEvent<ExchangeCurrentWalkingCountEventDto> event) {
 
@@ -50,6 +51,7 @@ public class MongConsumer {
     /**
      * 스타 포인트 환전 이벤트 리스너
      */
+    @EntryLoggingPoint
     @KafkaListener(topics = "${spring.config.activate.on-profile}." + EventTopic.COMMIT_EXCHANGE_STAR_POINT)
     public void exchangeStarPointEvent(TransactionEvent<ExchangeStarPointEventDto> event) {
 
@@ -77,6 +79,7 @@ public class MongConsumer {
     /**
      * 알 진화 이벤트 리스너
      */
+    @EntryLoggingPoint
     @KafkaListener(topics = "${spring.config.activate.on-profile}." + EventTopic.COMMIT_EGG_EVOLUTION)
     public void eggEvolutionEvent(TransactionEvent<EggEvolutionEventDto> event) {
 
@@ -93,6 +96,7 @@ public class MongConsumer {
     /**
      * 지수 증가 이벤트 리스너
      */
+    @EntryLoggingPoint
     @KafkaListener(topics = "${spring.config.activate.on-profile}." + EventTopic.COMMIT_INCREASE_STATUS)
     public void increaseStatusEvent(TransactionEvent<IncreaseStatusEventDto> event) {
 
@@ -109,6 +113,7 @@ public class MongConsumer {
     /**
      * 지수 감소 이벤트 리스너
      */
+    @EntryLoggingPoint
     @KafkaListener(topics = "${spring.config.activate.on-profile}." + EventTopic.COMMIT_DECREASE_STATUS)
     public void decreaseStatusEvent(TransactionEvent<DecreaseStatusEventDto> event) {
 
@@ -125,6 +130,7 @@ public class MongConsumer {
     /**
      * 배변 수 증가 이벤트 리스너
      */
+    @EntryLoggingPoint
     @KafkaListener(topics = "${spring.config.activate.on-profile}." + EventTopic.COMMIT_INCREASE_POOP)
     public void increasePoopEvent(TransactionEvent<IncreasePoopEventDto> event) {
 
@@ -141,6 +147,7 @@ public class MongConsumer {
     /**
      * 죽음 이벤트 리스너
      */
+    @EntryLoggingPoint
     @KafkaListener(topics = "${spring.config.activate.on-profile}." + EventTopic.COMMIT_DEAD)
     public void deadEvent(TransactionEvent<DeadEventDto> event) {
 
@@ -157,6 +164,7 @@ public class MongConsumer {
     /**
      * 수면 이벤트 리스너
      */
+    @EntryLoggingPoint
     @KafkaListener(topics = "${spring.config.activate.on-profile}." + EventTopic.COMMIT_SLEEP)
     public void sleepEvent(TransactionEvent<SleepEventDto> event) {
 
@@ -173,6 +181,7 @@ public class MongConsumer {
     /**
      * 기상 이벤트 리스너
      */
+    @EntryLoggingPoint
     @KafkaListener(topics = "${spring.config.activate.on-profile}." + EventTopic.COMMIT_WAKEUP)
     public void wakeupEvent(TransactionEvent<WakeupEventDto> event) {
 

@@ -1,6 +1,7 @@
 package com.monglife.mongs.adapter.in.member.web.controller;
 
 import com.monglife.core.dto.response.ResponseDto;
+import com.monglife.module.common.logging.annotation.EntryLoggingPoint;
 import com.monglife.module.common.security.principal.Passport;
 import com.monglife.mongs.adapter.in.member.web.enums.AdapterInMemberWebResponse;
 import com.monglife.mongs.adapter.in.member.web.dto.request.ConsumeOrderRequestDto;
@@ -39,6 +40,7 @@ public class StoreController {
     /**
      * 인앱 상품 목록 조회
      */
+    @EntryLoggingPoint
     @GetMapping("/product")
     public ResponseEntity<ResponseDto<List<GetProductResponseDto>>> getProducts() {
 
@@ -58,6 +60,7 @@ public class StoreController {
     /**
      * 소비된 주문 목록 조회
      */
+    @EntryLoggingPoint
     @PostMapping("/order")
     public ResponseEntity<ResponseDto<List<GetConsumedOrderResponseDto>>> getConsumedOrders(
             @Valid @RequestBody GetConsumedOrdersRequestDto getConsumedOrdersRequestDto
@@ -83,6 +86,7 @@ public class StoreController {
     /**
      * 주문 소비
      */
+    @EntryLoggingPoint
     @PostMapping("/order/consume")
     public ResponseEntity<ResponseDto<ConsumeOrderResponseDto>> consumeOrder(
             @AuthenticationPrincipal Passport passport,

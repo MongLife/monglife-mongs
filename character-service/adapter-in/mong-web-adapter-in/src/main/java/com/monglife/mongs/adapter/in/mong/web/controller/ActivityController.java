@@ -1,6 +1,7 @@
 package com.monglife.mongs.adapter.in.mong.web.controller;
 
 import com.monglife.core.dto.response.ResponseDto;
+import com.monglife.module.common.logging.annotation.EntryLoggingPoint;
 import com.monglife.module.common.security.principal.Passport;
 import com.monglife.mongs.adapter.in.mong.web.dto.request.TrainingEndRequestDto;
 import com.monglife.mongs.adapter.in.mong.web.dto.response.GetTrainingTypeResponseDto;
@@ -33,6 +34,7 @@ public class ActivityController {
      * 훈련 목록 조회
      * @return 훈련 정보 목록
      */
+    @EntryLoggingPoint
     @GetMapping("/training")
     public ResponseEntity<ResponseDto<List<GetTrainingTypeResponseDto>>> getTraining() {
 
@@ -59,6 +61,7 @@ public class ActivityController {
      * 훈련 조회
      * @return 훈련 정보
      */
+    @EntryLoggingPoint
     @GetMapping("/training/{trainingCode}")
     public ResponseEntity<ResponseDto<GetTrainingTypeResponseDto>> getTraining(@PathVariable("trainingCode") @NotBlank String trainingCode) {
 
@@ -88,6 +91,7 @@ public class ActivityController {
     /**
      * 훈련 완료
      */
+    @EntryLoggingPoint
     @PostMapping("/training")
     public ResponseEntity<ResponseDto<TrainingEndResponseDto>> trainingRunnerEnd(
             @AuthenticationPrincipal Passport passport,

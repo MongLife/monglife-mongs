@@ -1,6 +1,7 @@
 package com.monglife.mongs.adapter.in.mong.web.controller;
 
 import com.monglife.core.dto.response.ResponseDto;
+import com.monglife.module.common.logging.annotation.EntryLoggingPoint;
 import com.monglife.module.common.security.principal.Passport;
 import com.monglife.mongs.adapter.in.mong.web.dto.request.CreateMongRequestDto;
 import com.monglife.mongs.adapter.in.mong.web.dto.response.*;
@@ -30,6 +31,7 @@ public class ManagementController {
     /**
      * 몽 목록 조회
      */
+    @EntryLoggingPoint
     @GetMapping
     public ResponseEntity<ResponseDto<List<GetMongResponseDto>>> getMongs(@AuthenticationPrincipal Passport passport) {
 
@@ -64,6 +66,7 @@ public class ManagementController {
     /**
      * 몽 단건 조회
      */
+    @EntryLoggingPoint
     @GetMapping("/{mongId}")
     public ResponseEntity<ResponseDto<GetMongResponseDto>> getMong(
             @AuthenticationPrincipal Passport passport,
@@ -102,6 +105,7 @@ public class ManagementController {
     /**
      * 몽 생성
      */
+    @EntryLoggingPoint
     @PostMapping
     public ResponseEntity<ResponseDto<CreateMongResponseDto>> createMong(
             @AuthenticationPrincipal Passport passport,
@@ -141,6 +145,7 @@ public class ManagementController {
     /**
      * 몽 삭제
      */
+    @EntryLoggingPoint
     @DeleteMapping("/{mongId}")
     public ResponseEntity<ResponseDto<DeleteMongResponseDto>> deleteMong(
             @AuthenticationPrincipal Passport passport,
@@ -163,6 +168,7 @@ public class ManagementController {
     /**
      * 몽 쓰다 듬기
      */
+    @EntryLoggingPoint
     @PostMapping("/stroke/{mongId}")
     public ResponseEntity<ResponseDto<StrokeMongResponseDto>> strokeMong(
             @AuthenticationPrincipal Passport passport,
@@ -188,6 +194,7 @@ public class ManagementController {
     /**
      * 몽 수면/기상
      */
+    @EntryLoggingPoint
     @PutMapping("/sleep/{mongId}")
     public ResponseEntity<ResponseDto<SleepWakeupResponseDto>> sleepMong(@AuthenticationPrincipal Passport passport, @PathVariable("mongId") @NotNull @Min(1) Long mongId) {
 
@@ -225,6 +232,7 @@ public class ManagementController {
     /**
      * 몽 배변 처리
      */
+    @EntryLoggingPoint
     @PostMapping("/poopClean/{mongId}")
     public ResponseEntity<ResponseDto<PoopCleanMongResponseDto>> poopCleanMong(@AuthenticationPrincipal Passport passport, @PathVariable("mongId") @NotNull @Min(1) Long mongId) {
 
@@ -249,6 +257,7 @@ public class ManagementController {
     /**
      * 몽 진화
      */
+    @EntryLoggingPoint
     @PutMapping("/evolution/{mongId}")
     public ResponseEntity<ResponseDto<?>> evolutionMong(@AuthenticationPrincipal Passport passport, @PathVariable("mongId") @NotNull @Min(1) Long mongId) {
 
@@ -277,6 +286,7 @@ public class ManagementController {
     /**
      * 몽 졸업
      */
+    @EntryLoggingPoint
     @PutMapping("/graduate/{mongId}")
     public ResponseEntity<ResponseDto<?>> graduateMong(@AuthenticationPrincipal Passport passport, @PathVariable("mongId") @NotNull @Min(1) Long mongId) {
 

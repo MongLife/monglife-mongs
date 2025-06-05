@@ -41,17 +41,6 @@ public class MemberPersistenceService implements MemberPersistencePort {
     }
 
     /**
-     * 플레이어 존재 여부 조회
-     * @param accountId 회원 ID
-     * @return 플레이어 존재 여부
-     */
-    @Override
-    @Transactional
-    public Boolean isExistsPlayerPort(Long accountId) {
-        return memberRepository.existsByAccountId(accountId);
-    }
-
-    /**
      * 플레이어 조회
      * @param accountId 회원 ID
      * @return 플레이어 도메인 옵셔널 객체
@@ -71,7 +60,7 @@ public class MemberPersistenceService implements MemberPersistencePort {
     @Transactional
     public Optional<Player> savePlayerPort(Player player) {
 
-        Optional<MemberEntity> memberEntityOptional = memberRepository.findByAccountId(player.getAccountId());
+        Optional<MemberEntity> memberEntityOptional = memberRepository.findByAccountIdWithLock(player.getAccountId());
 
         if (memberEntityOptional.isPresent()) {
             memberEntityOptional.get().update(player);

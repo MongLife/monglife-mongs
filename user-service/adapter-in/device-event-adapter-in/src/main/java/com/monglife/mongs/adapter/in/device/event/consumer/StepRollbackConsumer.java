@@ -1,6 +1,7 @@
 package com.monglife.mongs.adapter.in.device.event.consumer;
 
 import com.monglife.module.common.kafka.event.TransactionEvent;
+import com.monglife.module.common.logging.annotation.EntryLoggingPoint;
 import com.monglife.mongs.adapter.transaction.ExchangeCurrentWalkingCountRollbackEventDto;
 import com.monglife.mongs.application.device.port.in.StepUseCase;
 import com.monglife.mongs.application.device.port.in.command.IncreaseCurrentWalkingCountCommand;
@@ -19,6 +20,7 @@ public class StepRollbackConsumer {
      * 걸음 수 환전 트랜잭션 롤백 이벤트 리스너
      * @param event 걸음 수 환전 정보
      */
+    @EntryLoggingPoint
     @KafkaListener(topics = "${spring.config.activate.on-profile}." + EventTopic.ROLLBACK_EXCHANGE_CURRENT_WALKING_COUNT)
     public void exchangeCurrentWalkingCountRollbackEvent(TransactionEvent<ExchangeCurrentWalkingCountRollbackEventDto> event) {
 

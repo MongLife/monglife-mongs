@@ -1,50 +1,68 @@
 package com.monglife.mongs.adapter.out.mong.schedule.initializer;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import com.monglife.core.utils.CommonUtil;
+import com.monglife.module.common.logging.annotation.DisableLogging;
+import com.monglife.module.common.logging.enums.LogType;
+import com.monglife.mongs.adapter.out.mong.schedule.dto.InitializerLogDto;
 import com.monglife.mongs.adapter.out.mong.schedule.service.TaskService;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.ApplicationListener;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
+
 @Slf4j
 @Order(Integer.MIN_VALUE)
 @Component
-@RequiredArgsConstructor
 public class StartupInitializer implements ApplicationListener<ApplicationReadyEvent> {
 
     private final TaskService taskService;
 
+    private final ObjectMapper objectMapper;
+
+    public StartupInitializer(@Autowired TaskService taskService) {
+        this.taskService = taskService;
+        this.objectMapper = new ObjectMapper();
+        this.objectMapper.registerModule(new JavaTimeModule());
+    }
+
     @Override
+    @DisableLogging
     public void onApplicationEvent(ApplicationReadyEvent applicationReadyEvent) {
-
         if (applicationReadyEvent.getApplicationContext().getParent() == null) {
+            AtomicInteger taskCount = new AtomicInteger();
+            List<Long> taskIds = new ArrayList<>();
 
-            String applicationName = applicationReadyEvent.getApplicationContext().getId();
-
-            StringBuilder sb = new StringBuilder();
             taskService.appStopResumeAllTask().forEach(taskEntity -> {
-                sb.append("\n")
-                        .append("[")
-                        .append(taskEntity.getTaskId())
-                        .append("]")
-                        .append(taskEntity.getMongId())
-                        .append(" | ")
-                        .append(taskEntity.getAccountId())
-                        .append(" | ")
-                        .append(taskEntity.getSchedulerTypeCode())
-                        .append(" | ")
-                        .append(taskEntity.getRestExpirationSeconds())
-                        .append("/")
-                        .append(taskEntity.getExpirationSeconds())
-                        .append("(")
-                        .append(taskEntity.getExpiredAt())
-                        .append(")")
-                ;
+                taskCount.getAndIncrement();
+                taskIds.add(taskEntity.getTaskId());
             });
 
-            log.info("\n[TASK LOAD ON \"{}\"] {}", applicationName, sb);
+            String className = this.getClass().getName();
+            String methodName = Thread.currentThread().getStackTrace()[1].getMethodName();
+
+            InitializerLogDto initializerLogDto = InitializerLogDto.builder()
+                    .traceId(CommonUtil.randomId())
+                    .traceOffset(0)
+                    .entryMethod(String.format("%s#%s", className, methodName))
+                    .className(className)
+                    .method(methodName)
+                    .logType(LogType.METHOD_CALL)
+                    .taskCount(taskCount.get())
+                    .taskIds(taskIds)
+                    .build();
+
+            try {
+                log.info("{}", objectMapper.writeValueAsString(initializerLogDto));
+            } catch (JsonProcessingException ignored) {}
         }
     }
 }

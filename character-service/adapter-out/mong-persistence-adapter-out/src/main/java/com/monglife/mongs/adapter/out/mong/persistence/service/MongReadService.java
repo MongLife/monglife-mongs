@@ -2,10 +2,8 @@ package com.monglife.mongs.adapter.out.mong.persistence.service;
 
 import com.monglife.mongs.adapter.out.mong.persistence.entity.*;
 import com.monglife.mongs.adapter.out.mong.persistence.repository.*;
-import com.monglife.mongs.application.mong.port.out.MongReadPort;
 import com.monglife.mongs.domain.mong.model.*;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -15,10 +13,11 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-@Slf4j
 @Service
 @RequiredArgsConstructor
-public class MongReadService implements MongReadPort {
+public class MongReadService implements
+        com.monglife.mongs.application.mong.port.out.MongReadPort,
+        com.monglife.mongs.application.battle.port.out.MongReadPort {
 
     private final MongStrokeHistoryRepository mongStrokeHistoryRepository;
 

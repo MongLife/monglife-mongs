@@ -1,6 +1,7 @@
 package com.monglife.mongs.adapter.in.device.web.controller;
 
 import com.monglife.core.dto.response.ResponseDto;
+import com.monglife.module.common.logging.annotation.EntryLoggingPoint;
 import com.monglife.module.common.security.principal.Passport;
 import com.monglife.mongs.adapter.in.device.web.dto.request.ExchangeCurrentWalkingCountRequestDto;
 import com.monglife.mongs.adapter.in.device.web.dto.request.UpdateTotalWalkingCountRequestDto;
@@ -29,6 +30,7 @@ public class StepController {
     /**
      * 걸음 수 환전
      */
+    @EntryLoggingPoint
     @PostMapping("/exchange/walking")
     public ResponseEntity<ResponseDto<ExchangeCurrentWalkingCountResponseDto>> exchangeCurrentWalkingCount(
             @AuthenticationPrincipal Passport passport,
@@ -57,6 +59,7 @@ public class StepController {
     /**
      * 걸음 수 동기화
      */
+    @EntryLoggingPoint
     @PatchMapping("/walking")
     public ResponseEntity<ResponseDto<UpdateTotalWalkingCountResponseDto>> updateTotalWalkingCount(
             @AuthenticationPrincipal Passport passport,

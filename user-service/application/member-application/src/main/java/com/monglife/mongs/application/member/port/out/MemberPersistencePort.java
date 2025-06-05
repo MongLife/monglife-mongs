@@ -9,8 +9,6 @@ public interface MemberPersistencePort {
 
     Optional<Player> createPlayerPort(CreatePlayerVo createPlayerVo);
 
-    Boolean isExistsPlayerPort(Long accountId);
-
     Optional<Player> getPlayerPort(Long accountId);
 
     Optional<Player> savePlayerPort(Player player);

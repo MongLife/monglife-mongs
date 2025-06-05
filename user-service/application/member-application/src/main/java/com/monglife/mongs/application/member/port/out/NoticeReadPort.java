@@ -5,7 +5,7 @@ import com.monglife.mongs.domain.member.model.Notice;
 import java.util.List;
 import java.util.Optional;
 
-public interface NoticePersistencePort {
+public interface NoticeReadPort {
 
     Optional<Notice> getNoticePort(Long noticeId);
 

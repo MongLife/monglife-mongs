@@ -1,6 +1,5 @@
 package com.monglife.mongs.adapter.in.battle.schedule.worker;
 
-import com.monglife.module.common.logging.annotation.DisableLoggingCascade;
 import com.monglife.mongs.application.battle.port.in.QueueUseCase;
 import com.monglife.mongs.application.battle.port.in.command.MatchingQueuePlayersCommand;
 import lombok.RequiredArgsConstructor;
@@ -17,7 +16,6 @@ public class QueueScheduleWorker {
     /**
      * 매칭 스케줄
      */
-    @DisableLoggingCascade
     public void doMatching() {
         while (true) {
             try {

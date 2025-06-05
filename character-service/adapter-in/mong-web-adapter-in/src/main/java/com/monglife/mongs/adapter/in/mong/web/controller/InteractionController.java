@@ -1,6 +1,7 @@
 package com.monglife.mongs.adapter.in.mong.web.controller;
 
 import com.monglife.core.dto.response.ResponseDto;
+import com.monglife.module.common.logging.annotation.EntryLoggingPoint;
 import com.monglife.module.common.security.principal.Passport;
 import com.monglife.mongs.adapter.in.mong.web.dto.request.FeedFoodRequestDto;
 import com.monglife.mongs.adapter.in.mong.web.dto.request.FeedSnackRequestDto;
@@ -33,6 +34,7 @@ public class InteractionController {
     /**
      * 음식 목록 조회
      */
+    @EntryLoggingPoint
     @GetMapping("/food/{mongId}")
     public ResponseEntity<ResponseDto<List<GetFoodResponseDto>>> getFoods(
             @AuthenticationPrincipal Passport passport,
@@ -63,6 +65,7 @@ public class InteractionController {
     /**
      * 간식 목록 조회
      */
+    @EntryLoggingPoint
     @GetMapping("/snack/{mongId}")
     public ResponseEntity<ResponseDto<List<GetSnackResponseDto>>> getSnacks(
             @AuthenticationPrincipal Passport passport,
@@ -93,6 +96,7 @@ public class InteractionController {
     /**
      * 음식 섭취
      */
+    @EntryLoggingPoint
     @PostMapping("/food/{mongId}")
     public ResponseEntity<ResponseDto<FeedFoodResponseDto>> feedFood(
             @AuthenticationPrincipal Passport passport,
@@ -126,6 +130,7 @@ public class InteractionController {
     /**
      * 간식 섭취
      */
+    @EntryLoggingPoint
     @PostMapping("/snack/{mongId}")
     public ResponseEntity<ResponseDto<FeedSnackResponseDto>> feedSnack(
             @AuthenticationPrincipal Passport passport,
@@ -159,6 +164,7 @@ public class InteractionController {
     /**
      * 인벤토리 목록 조회
      */
+    @EntryLoggingPoint
     @GetMapping("/inventory/{mongId}")
     public ResponseEntity<ResponseDto<List<GetInventoryResponseDto>>> getInventories(
             @AuthenticationPrincipal Passport passport,
@@ -184,6 +190,7 @@ public class InteractionController {
     /**
      * 인벤토리 아이템 소비
      */
+    @EntryLoggingPoint
     @PostMapping("/inventory/{mongId}")
     public ResponseEntity<ResponseDto<UseInventoryResponseDto>> useInventory(
             @AuthenticationPrincipal Passport passport,
@@ -217,6 +224,7 @@ public class InteractionController {
     /**
      * 랜덤 뽑기 티켓 구매
      */
+    @EntryLoggingPoint
     @PostMapping("/randomDraw/ticket/{mongId}")
     public ResponseEntity<ResponseDto<BuyRandomDrawTicketResponseDto>> buyRandomDrawTicket(
             @AuthenticationPrincipal Passport passport,
@@ -240,6 +248,7 @@ public class InteractionController {
     /**
      * 랜덤 뽑기
      */
+    @EntryLoggingPoint
     @PostMapping("/randomDraw/{mongId}")
     public ResponseEntity<ResponseDto<RandomDrawResponseDto>> randomDraw(
             @AuthenticationPrincipal Passport passport,

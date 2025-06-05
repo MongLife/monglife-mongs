@@ -7,6 +7,7 @@ import com.monglife.mongs.application.member.port.in.service.PlayerService;
 import com.monglife.mongs.application.member.port.out.MemberEventPort;
 import com.monglife.mongs.application.member.port.out.MemberPersistencePort;
 import com.monglife.mongs.application.member.port.out.MemberPublishPort;
+import com.monglife.mongs.application.member.port.out.MemberReadPort;
 import com.monglife.mongs.domain.member.model.Player;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -20,9 +21,10 @@ import static org.junit.jupiter.api.Assertions.*;
 class PlayerUseCaseTest {
 
     private final MemberPersistencePort memberPersistencePort = Mockito.mock(MemberPersistencePort.class);
+    private final MemberReadPort memberReadPort = Mockito.mock(MemberReadPort.class);
     private final MemberPublishPort memberPublishPort = Mockito.mock(MemberPublishPort.class);
     private final MemberEventPort memberEventPort = Mockito.mock(MemberEventPort.class);
-    private final PlayerUseCase playerUseCase = new PlayerService(memberPersistencePort, memberPublishPort, memberEventPort);
+    private final PlayerUseCase playerUseCase = new PlayerService(memberPersistencePort, memberReadPort, memberPublishPort, memberEventPort);
 
     @Nested
     @DisplayName("플레이어 등록 단위 테스트")
@@ -40,7 +42,7 @@ class PlayerUseCaseTest {
                     .starPoint(0)
                     .build();
 
-            Mockito.when(memberPersistencePort.isExistsPlayerPort(ACCOUNT_ID)).thenReturn(false);
+            Mockito.when(memberReadPort.isExistsPlayerPort(ACCOUNT_ID)).thenReturn(false);
             Mockito.when(memberPersistencePort.createPlayerPort(Mockito.any())).thenReturn(Optional.of(player));
 
             // act & assert
@@ -62,7 +64,7 @@ class PlayerUseCaseTest {
                     .starPoint(0)
                     .build();
 
-            Mockito.when(memberPersistencePort.isExistsPlayerPort(ACCOUNT_ID)).thenReturn(true);
+            Mockito.when(memberReadPort.isExistsPlayerPort(ACCOUNT_ID)).thenReturn(true);
             Mockito.when(memberPersistencePort.createPlayerPort(Mockito.any())).thenReturn(Optional.of(player));
 
             // act & assert
@@ -78,7 +80,7 @@ class PlayerUseCaseTest {
         @DisplayName("플레이어 등록에 실패하는 경우 예외가 발생 한다.")
         void createPlayerFail() {
             // arrange
-            Mockito.when(memberPersistencePort.isExistsPlayerPort(ACCOUNT_ID)).thenReturn(false);
+            Mockito.when(memberReadPort.isExistsPlayerPort(ACCOUNT_ID)).thenReturn(false);
             Mockito.when(memberPersistencePort.createPlayerPort(Mockito.any())).thenReturn(Optional.empty());
 
             // act
@@ -106,7 +108,7 @@ class PlayerUseCaseTest {
                     .starPoint(0)
                     .build();
 
-            Mockito.when(memberPersistencePort.getPlayerPort(ACCOUNT_ID)).thenReturn(Optional.of(player));
+            Mockito.when(memberReadPort.getPlayerPort(ACCOUNT_ID)).thenReturn(Optional.of(player));
 
             // act
             GetPlayerCommand command = GetPlayerCommand.builder()
@@ -117,7 +119,7 @@ class PlayerUseCaseTest {
 
             // assert
             assertEquals(player, expected);
-            Mockito.verify(memberPersistencePort).getPlayerPort(command.getAccountId());
+            Mockito.verify(memberReadPort).getPlayerPort(command.getAccountId());
         }
 
         @Test

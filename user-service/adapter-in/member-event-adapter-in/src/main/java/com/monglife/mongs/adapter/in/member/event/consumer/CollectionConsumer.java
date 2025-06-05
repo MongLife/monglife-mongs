@@ -1,6 +1,7 @@
 package com.monglife.mongs.adapter.in.member.event.consumer;
 
 import com.monglife.module.common.kafka.event.TransactionEvent;
+import com.monglife.module.common.logging.annotation.EntryLoggingPoint;
 import com.monglife.mongs.adapter.transaction.CreateMongEventDto;
 import com.monglife.mongs.adapter.transaction.EvolutionMongEventDto;
 import com.monglife.mongs.adapter.transaction.RandomDrawMapEventDto;
@@ -22,6 +23,7 @@ public class CollectionConsumer {
      * 몽 등록 트랜잭션 이벤트 리스너
      * @param event 몽 등록 정보
      */
+    @EntryLoggingPoint
     @KafkaListener(topics = "${spring.config.activate.on-profile}." + EventTopic.COMMIT_CREATE_MONG)
     public void createMongEvent(TransactionEvent<CreateMongEventDto> event) {
 
@@ -39,6 +41,7 @@ public class CollectionConsumer {
      * 몽 진화 이벤트 트랜잭션 리스너
      * @param event 몽 진화 캐릭터 정보
      */
+    @EntryLoggingPoint
     @KafkaListener(topics = "${spring.config.activate.on-profile}." + EventTopic.COMMIT_EVOLUTION_MONG)
     public void evolutionMongEvent(TransactionEvent<EvolutionMongEventDto> event) {
 
@@ -56,6 +59,7 @@ public class CollectionConsumer {
      * 랜덤 뽑기 맵 당첨 이벤트 리스너
      * @param event 뽑은 맵 정보
      */
+    @EntryLoggingPoint
     @KafkaListener(topics = "${spring.config.activate.on-profile}." + EventTopic.COMMIT_RANDOM_DRAW_MAP)
     public void randomDrawMapEvent(TransactionEvent<RandomDrawMapEventDto> event) {
 

@@ -1,6 +1,7 @@
 package com.monglife.mongs.adapter.in.member.web.controller;
 
 import com.monglife.core.dto.response.ResponseDto;
+import com.monglife.module.common.logging.annotation.EntryLoggingPoint;
 import com.monglife.mongs.adapter.in.member.web.dto.response.GetNoticeResponseDto;
 import com.monglife.mongs.adapter.in.member.web.enums.AdapterInMemberWebResponse;
 import com.monglife.mongs.application.member.port.in.NoticeUseCase;
@@ -29,6 +30,7 @@ public class NoticeController {
      * 공지 사항 조회
      * @param noticeId 공지 사항 ID
      */
+    @EntryLoggingPoint
     @GetMapping("/{noticeId}")
     public ResponseEntity<ResponseDto<GetNoticeResponseDto>> getNotice(@PathVariable("noticeId") @NotNull @Min(1) Long noticeId) {
 
@@ -55,6 +57,7 @@ public class NoticeController {
      * @param page 페이지
      * @param size 사이즈
      */
+    @EntryLoggingPoint
     @GetMapping
     public ResponseEntity<ResponseDto<List<GetNoticeResponseDto>>> getNotices(
             @RequestParam("page") @NotNull @Min(1) Integer page,

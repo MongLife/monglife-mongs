@@ -12,6 +12,7 @@ import com.monglife.mongs.adapter.out.member.persistence.repository.CollectionMo
 import com.monglife.mongs.adapter.out.member.persistence.repository.ComnCodeRepository;
 import com.monglife.mongs.adapter.out.member.persistence.repository.GroupCodeRepository;
 import com.monglife.mongs.application.member.port.out.CollectionPersistencePort;
+import com.monglife.mongs.application.member.port.out.CollectionReadPort;
 import com.monglife.mongs.application.member.port.out.vo.CreateCollectionMapVo;
 import com.monglife.mongs.application.member.port.out.vo.CreateCollectionMongVo;
 import com.monglife.mongs.domain.member.model.CollectionMap;
@@ -43,14 +44,16 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 class CollectionPersistenceServiceTest {
 
     private final CollectionPersistencePort collectionPersistencePort;
+    private final CollectionReadPort collectionReadPort;
     private final CollectionMapRepository collectionMapRepository;
     private final CollectionMongRepository collectionMongRepository;
     private final GroupCodeRepository groupCodeRepository;
     private final ComnCodeRepository comnCodeRepository;
 
     @Autowired
-    public CollectionPersistenceServiceTest(CollectionPersistencePort collectionPersistencePort, CollectionMapRepository collectionMapRepository, CollectionMongRepository collectionMongRepository, GroupCodeRepository groupCodeRepository, ComnCodeRepository comnCodeRepository) {
+    public CollectionPersistenceServiceTest(CollectionPersistencePort collectionPersistencePort, CollectionReadPort collectionReadPort, CollectionMapRepository collectionMapRepository, CollectionMongRepository collectionMongRepository, GroupCodeRepository groupCodeRepository, ComnCodeRepository comnCodeRepository) {
         this.collectionPersistencePort = collectionPersistencePort;
+        this.collectionReadPort = collectionReadPort;
         this.collectionMapRepository = collectionMapRepository;
         this.collectionMongRepository = collectionMongRepository;
         this.groupCodeRepository = groupCodeRepository;
@@ -188,7 +191,7 @@ class CollectionPersistenceServiceTest {
                     .build());
 
             // act
-            var expected = collectionPersistencePort.isExistsCollectionMapPort(ACCOUNT_ID, MAP_TYPE.getCode());
+            var expected = collectionReadPort.isExistsCollectionMapPort(ACCOUNT_ID, MAP_TYPE.getCode());
 
             // assert
             assertTrue(expected);
@@ -201,7 +204,7 @@ class CollectionPersistenceServiceTest {
             final String mapCode = "MP___";
 
             // act
-            var expected = collectionPersistencePort.isExistsCollectionMapPort(ACCOUNT_ID, mapCode);
+            var expected = collectionReadPort.isExistsCollectionMapPort(ACCOUNT_ID, mapCode);
 
             // assert
             assertFalse(expected);
@@ -222,7 +225,7 @@ class CollectionPersistenceServiceTest {
                     .build());
 
             // act
-            var expected = collectionPersistencePort.isExistsCollectionMongPort(ACCOUNT_ID, MONG_TYPE.getCode());
+            var expected = collectionReadPort.isExistsCollectionMongPort(ACCOUNT_ID, MONG_TYPE.getCode());
 
             // assert
             assertTrue(expected);
@@ -235,7 +238,7 @@ class CollectionPersistenceServiceTest {
             final String mongCode = "CH___";
 
             // act
-            var expected = collectionPersistencePort.isExistsCollectionMongPort(ACCOUNT_ID, mongCode);
+            var expected = collectionReadPort.isExistsCollectionMongPort(ACCOUNT_ID, mongCode);
 
             // assert
             assertFalse(expected);
@@ -256,7 +259,7 @@ class CollectionPersistenceServiceTest {
                     .build());
 
             // act
-            var expected = collectionPersistencePort.getCollectionMapsPort(ACCOUNT_ID);
+            var expected = collectionReadPort.getCollectionMapsPort(ACCOUNT_ID);
 
             // assert
             for (int index = 0; index < MAP_TYPE_ENTITIES.size(); index++) {
@@ -285,7 +288,7 @@ class CollectionPersistenceServiceTest {
                     .build());
 
             // act
-            var expected = collectionPersistencePort.getCollectionMongsPort(ACCOUNT_ID);
+            var expected = collectionReadPort.getCollectionMongsPort(ACCOUNT_ID);
 
             // assert
             for (int index = 0; index < MONG_TYPE_ENTITIES.size(); index++) {

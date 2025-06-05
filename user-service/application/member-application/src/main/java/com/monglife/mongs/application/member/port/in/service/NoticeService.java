@@ -4,7 +4,7 @@ import com.monglife.mongs.application.member.port.exception.NotExistsNoticeExcep
 import com.monglife.mongs.application.member.port.in.NoticeUseCase;
 import com.monglife.mongs.application.member.port.in.command.GetNoticeCommand;
 import com.monglife.mongs.application.member.port.in.command.GetNoticesCommand;
-import com.monglife.mongs.application.member.port.out.NoticePersistencePort;
+import com.monglife.mongs.application.member.port.out.NoticeReadPort;
 import com.monglife.mongs.domain.member.model.Notice;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -17,7 +17,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class NoticeService implements NoticeUseCase {
 
-    private final NoticePersistencePort noticePersistencePort;
+    private final NoticeReadPort noticeReadPort;
 
     /**
      * 공지 사항 조회
@@ -25,7 +25,7 @@ public class NoticeService implements NoticeUseCase {
     @Override
     public Notice getNoticeUseCase(GetNoticeCommand command) {
 
-        Optional<Notice> noticeOptional = noticePersistencePort.getNoticePort(command.getNoticeId());
+        Optional<Notice> noticeOptional = noticeReadPort.getNoticePort(command.getNoticeId());
 
         if (noticeOptional.isEmpty() || noticeOptional.get().getIsHided()) {
             throw new NotExistsNoticeException();
@@ -39,7 +39,7 @@ public class NoticeService implements NoticeUseCase {
      */
     @Override
     public List<Notice> getNoticesUseCase(GetNoticesCommand command) {
-        return noticePersistencePort.getNoticesPort(command.getPage() - 1, command.getSize()).stream()
+        return noticeReadPort.getNoticesPort(command.getPage() - 1, command.getSize()).stream()
                 .filter(notice -> !notice.getIsHided())
                 .collect(Collectors.toList());
     }

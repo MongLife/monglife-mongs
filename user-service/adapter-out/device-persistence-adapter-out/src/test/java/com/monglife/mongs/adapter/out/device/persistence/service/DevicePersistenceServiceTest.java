@@ -66,7 +66,7 @@ class DevicePersistenceServiceTest {
             // act
             Step step = devicePersistencePort.createStepPort(createStepVo);
 
-            Optional<DeviceEntity> deviceEntityOptional = deviceRepository.findByDeviceId(DEVICE_ID);
+            Optional<DeviceEntity> deviceEntityOptional = deviceRepository.findByDeviceIdWithLock(DEVICE_ID);
 
             // assert
             assertNotNull(step);

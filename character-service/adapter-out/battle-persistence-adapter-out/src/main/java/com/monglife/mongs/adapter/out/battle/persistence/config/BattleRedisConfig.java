@@ -25,18 +25,8 @@ public class BattleRedisConfig {
      * const values for config bean name
      */
     private static final String DOMAIN_NAME                   = "battle";
-    private static final String REDIS_REPOSITORY_BASE_PACKAGE = "com.monglife.mongs.adapter.out" + DOMAIN_NAME + ".repository";
-    private static final String REDIS_REPOSITORY_CONFIG_NAME  = DOMAIN_NAME + "RedisRepositoryConfig";
     private static final String REDIS_CONNECTION_FACTORY_NAME = DOMAIN_NAME + "RedisConnectionFactory";
     private static final String REDIS_TEMPLATE_NAME           = DOMAIN_NAME + "RedisTemplate";
-
-    @Configuration(REDIS_REPOSITORY_CONFIG_NAME)
-    @EnableRedisRepositories(
-            basePackages = REDIS_REPOSITORY_BASE_PACKAGE,
-            redisTemplateRef = REDIS_TEMPLATE_NAME,
-            enableKeyspaceEvents = RedisKeyValueAdapter.EnableKeyspaceEvents.ON_STARTUP
-    )
-    public static class RedisRepositoryConfig {}
 
     @Value("${spring.data." + DOMAIN_NAME + ".redis.host}")
     private String host;

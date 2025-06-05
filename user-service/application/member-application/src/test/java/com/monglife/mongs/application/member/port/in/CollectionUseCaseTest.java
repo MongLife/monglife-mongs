@@ -8,6 +8,7 @@ import com.monglife.mongs.application.member.port.in.command.GetCollectionMapsCo
 import com.monglife.mongs.application.member.port.in.command.GetCollectionMongsCommand;
 import com.monglife.mongs.application.member.port.in.service.CollectionService;
 import com.monglife.mongs.application.member.port.out.CollectionPersistencePort;
+import com.monglife.mongs.application.member.port.out.CollectionReadPort;
 import com.monglife.mongs.domain.member.model.CollectionMap;
 import com.monglife.mongs.domain.member.model.CollectionMong;
 import org.junit.jupiter.api.DisplayName;
@@ -23,7 +24,8 @@ import static org.junit.jupiter.api.Assertions.*;
 class CollectionUseCaseTest {
 
     private final CollectionPersistencePort collectionPersistencePort = Mockito.mock(CollectionPersistencePort.class);
-    private final CollectionUseCase collectionUseCase = new CollectionService(collectionPersistencePort);
+    private final CollectionReadPort collectionReadPort = Mockito.mock(CollectionReadPort.class);
+    private final CollectionUseCase collectionUseCase = new CollectionService(collectionPersistencePort, collectionReadPort);
 
     @Nested
     @DisplayName("컬렉션 맵 등록 단위 테스트")
@@ -42,7 +44,7 @@ class CollectionUseCaseTest {
                     .mapCode(mapCode)
                     .build();
 
-            Mockito.when(collectionPersistencePort.isExistsCollectionMapPort(ACCOUNT_ID, mapCode)).thenReturn(false);
+            Mockito.when(collectionReadPort.isExistsCollectionMapPort(ACCOUNT_ID, mapCode)).thenReturn(false);
             Mockito.when(collectionPersistencePort.createCollectionMapPort(Mockito.any())).thenReturn(Optional.of(collectionMap));
 
             // act & assert
@@ -66,7 +68,7 @@ class CollectionUseCaseTest {
                     .mapCode(mapCode)
                     .build();
 
-            Mockito.when(collectionPersistencePort.isExistsCollectionMapPort(ACCOUNT_ID, mapCode)).thenReturn(true);
+            Mockito.when(collectionReadPort.isExistsCollectionMapPort(ACCOUNT_ID, mapCode)).thenReturn(true);
             Mockito.when(collectionPersistencePort.createCollectionMapPort(Mockito.any())).thenReturn(Optional.of(collectionMap));
 
             // act & assert
@@ -85,7 +87,7 @@ class CollectionUseCaseTest {
             // arrange
             final String mapCode = "MP___";
 
-            Mockito.when(collectionPersistencePort.isExistsCollectionMapPort(ACCOUNT_ID, mapCode)).thenReturn(false);
+            Mockito.when(collectionReadPort.isExistsCollectionMapPort(ACCOUNT_ID, mapCode)).thenReturn(false);
             Mockito.when(collectionPersistencePort.createCollectionMapPort(Mockito.any())).thenReturn(Optional.empty());
 
             // act & assert
@@ -116,7 +118,7 @@ class CollectionUseCaseTest {
                     .mongCode(mongCode)
                     .build();
 
-            Mockito.when(collectionPersistencePort.isExistsCollectionMongPort(ACCOUNT_ID, mongCode)).thenReturn(false);
+            Mockito.when(collectionReadPort.isExistsCollectionMongPort(ACCOUNT_ID, mongCode)).thenReturn(false);
             Mockito.when(collectionPersistencePort.createCollectionMongPort(Mockito.any())).thenReturn(Optional.of(collectionMong));
 
             // act & assert
@@ -140,7 +142,7 @@ class CollectionUseCaseTest {
                     .mongCode(mongCode)
                     .build();
 
-            Mockito.when(collectionPersistencePort.isExistsCollectionMongPort(ACCOUNT_ID, mongCode)).thenReturn(true);
+            Mockito.when(collectionReadPort.isExistsCollectionMongPort(ACCOUNT_ID, mongCode)).thenReturn(true);
             Mockito.when(collectionPersistencePort.createCollectionMongPort(Mockito.any())).thenReturn(Optional.of(collectionMong));
 
             // act & assert
@@ -159,7 +161,7 @@ class CollectionUseCaseTest {
             // arrange
             final String mongCode = "CH___";
 
-            Mockito.when(collectionPersistencePort.isExistsCollectionMongPort(ACCOUNT_ID, mongCode)).thenReturn(false);
+            Mockito.when(collectionReadPort.isExistsCollectionMongPort(ACCOUNT_ID, mongCode)).thenReturn(false);
             Mockito.when(collectionPersistencePort.createCollectionMongPort(Mockito.any())).thenReturn(Optional.empty());
 
             // act & assert
@@ -200,7 +202,7 @@ class CollectionUseCaseTest {
                             .mapCode("MP002")
                             .build());
 
-            Mockito.when(collectionPersistencePort.getCollectionMapsPort(ACCOUNT_ID)).thenReturn(collectionMaps);
+            Mockito.when(collectionReadPort.getCollectionMapsPort(ACCOUNT_ID)).thenReturn(collectionMaps);
 
             // act
             GetCollectionMapsCommand command = GetCollectionMapsCommand.builder()
@@ -211,7 +213,7 @@ class CollectionUseCaseTest {
 
             // assert
             assertEquals(collectionMaps, expected);
-            Mockito.verify(collectionPersistencePort).getCollectionMapsPort(command.getAccountId());
+            Mockito.verify(collectionReadPort).getCollectionMapsPort(command.getAccountId());
         }
     }
 
@@ -242,7 +244,7 @@ class CollectionUseCaseTest {
                             .mongCode("CH002")
                             .build());
 
-            Mockito.when(collectionPersistencePort.getCollectionMongsPort(ACCOUNT_ID)).thenReturn(collectionMongs);
+            Mockito.when(collectionReadPort.getCollectionMongsPort(ACCOUNT_ID)).thenReturn(collectionMongs);
 
             // act
             GetCollectionMongsCommand command = GetCollectionMongsCommand.builder()
@@ -253,7 +255,7 @@ class CollectionUseCaseTest {
 
             // assert
             assertEquals(collectionMongs, expected);
-            Mockito.verify(collectionPersistencePort).getCollectionMongsPort(command.getAccountId());
+            Mockito.verify(collectionReadPort).getCollectionMongsPort(command.getAccountId());
         }
     }
 }
