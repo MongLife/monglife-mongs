@@ -17,7 +17,7 @@ public class EvolutionMongConsumer {
 
     private CountDownLatch countDownLatch;
 
-    @KafkaListener(topics = EventTopic.COMMIT_EVOLUTION_MONG)
+    @KafkaListener(topics = "${spring.config.activate.on-profile}." + EventTopic.COMMIT_EVOLUTION_MONG)
     public void evolutionMongEvent(@Payload TransactionEvent<EvolutionMongEventDto> event) {
 
         if (event.getData() != null) {

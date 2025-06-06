@@ -6,6 +6,7 @@ import com.monglife.mongs.adapter.out.member.persistence.config.MemberDataSource
 import com.monglife.mongs.adapter.out.member.persistence.entity.MemberEntity;
 import com.monglife.mongs.adapter.out.member.persistence.repository.MemberRepository;
 import com.monglife.mongs.application.member.port.out.MemberPersistencePort;
+import com.monglife.mongs.application.member.port.out.MemberReadPort;
 import com.monglife.mongs.application.member.port.out.vo.CreatePlayerVo;
 import com.monglife.mongs.domain.member.model.Player;
 import org.junit.jupiter.api.DisplayName;
@@ -30,11 +31,13 @@ import static org.junit.jupiter.api.Assertions.*;
 class MemberPersistenceServiceTest {
 
     private final MemberPersistencePort memberPersistencePort;
+    private final MemberReadPort memberReadPort;
     private final MemberRepository memberRepository;
 
     @Autowired
-    public MemberPersistenceServiceTest(MemberPersistencePort memberPersistencePort, MemberRepository memberRepository) {
+    public MemberPersistenceServiceTest(MemberPersistencePort memberPersistencePort, MemberReadPort memberReadPort, MemberRepository memberRepository) {
         this.memberPersistencePort = memberPersistencePort;
+        this.memberReadPort = memberReadPort;
         this.memberRepository = memberRepository;
     }
 
@@ -112,7 +115,7 @@ class MemberPersistenceServiceTest {
                     .build());
 
             // act
-            var expected = memberPersistencePort.isExistsPlayerPort(ACCOUNT_ID);
+            var expected = memberReadPort.isExistsPlayerPort(ACCOUNT_ID);
 
             // assert
             assertTrue(expected);
@@ -122,7 +125,7 @@ class MemberPersistenceServiceTest {
         @DisplayName("플레이어 존재하는 경우 false를 반환 한다..")
         void isExistsPlayerWhenNotExistPlayer() {
             // act
-            var expected = memberPersistencePort.isExistsPlayerPort(ACCOUNT_ID);
+            var expected = memberReadPort.isExistsPlayerPort(ACCOUNT_ID);
 
             // assert
             assertFalse(expected);

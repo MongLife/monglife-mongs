@@ -8,6 +8,7 @@ import com.monglife.mongs.application.member.port.in.command.CreateCollectionMon
 import com.monglife.mongs.application.member.port.in.command.GetCollectionMapsCommand;
 import com.monglife.mongs.application.member.port.in.command.GetCollectionMongsCommand;
 import com.monglife.mongs.application.member.port.out.CollectionPersistencePort;
+import com.monglife.mongs.application.member.port.out.CollectionReadPort;
 import com.monglife.mongs.application.member.port.out.vo.CreateCollectionMapVo;
 import com.monglife.mongs.application.member.port.out.vo.CreateCollectionMongVo;
 import com.monglife.mongs.domain.member.model.CollectionMap;
@@ -24,6 +25,8 @@ public class CollectionService implements CollectionUseCase {
 
     private final CollectionPersistencePort collectionPersistencePort;
 
+    private final CollectionReadPort collectionReadPort;
+
     /**
      * 맵 컬렉션 등록
      */
@@ -31,7 +34,7 @@ public class CollectionService implements CollectionUseCase {
     @Transactional
     public void createCollectionMapUseCase(CreateCollectionMapCommand command) {
 
-        if (Boolean.FALSE.equals(collectionPersistencePort.isExistsCollectionMapPort(command.getAccountId(), command.getMapCode()))) {
+        if (Boolean.FALSE.equals(collectionReadPort.isExistsCollectionMapPort(command.getAccountId(), command.getMapCode()))) {
             collectionPersistencePort.createCollectionMapPort(CreateCollectionMapVo.builder()
                     .accountId(command.getAccountId())
                     .mapCode(command.getMapCode())
@@ -47,7 +50,7 @@ public class CollectionService implements CollectionUseCase {
     @Transactional
     public void createCollectionMongUseCase(CreateCollectionMongCommand command) {
 
-        if (Boolean.FALSE.equals(collectionPersistencePort.isExistsCollectionMongPort(command.getAccountId(), command.getMongCode()))) {
+        if (Boolean.FALSE.equals(collectionReadPort.isExistsCollectionMongPort(command.getAccountId(), command.getMongCode()))) {
             collectionPersistencePort.createCollectionMongPort(CreateCollectionMongVo.builder()
                     .accountId(command.getAccountId())
                     .mongCode(command.getMongCode())
@@ -62,7 +65,7 @@ public class CollectionService implements CollectionUseCase {
     @Override
     @Transactional
     public List<CollectionMap> getCollectionMapsUseCase(GetCollectionMapsCommand command) {
-        return collectionPersistencePort.getCollectionMapsPort(command.getAccountId());
+        return collectionReadPort.getCollectionMapsPort(command.getAccountId());
     }
 
     /**
@@ -71,6 +74,6 @@ public class CollectionService implements CollectionUseCase {
     @Override
     @Transactional
     public List<CollectionMong> getCollectionMongsUseCase(GetCollectionMongsCommand command) {
-        return collectionPersistencePort.getCollectionMongsPort(command.getAccountId());
+        return collectionReadPort.getCollectionMongsPort(command.getAccountId());
     }
 }

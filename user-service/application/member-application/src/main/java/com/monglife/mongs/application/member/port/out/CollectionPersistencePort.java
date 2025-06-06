@@ -13,12 +13,4 @@ public interface CollectionPersistencePort {
     Optional<CollectionMap> createCollectionMapPort(CreateCollectionMapVo createCollectionMapVo);
 
     Optional<CollectionMong> createCollectionMongPort(CreateCollectionMongVo createCollectionMongVo);
-
-    Boolean isExistsCollectionMapPort(Long accountId, String mapCode);
-
-    Boolean isExistsCollectionMongPort(Long accountId, String mongCode);
-
-    List<CollectionMap> getCollectionMapsPort(Long accountId);
-
-    List<CollectionMong> getCollectionMongsPort(Long accountId);
 }

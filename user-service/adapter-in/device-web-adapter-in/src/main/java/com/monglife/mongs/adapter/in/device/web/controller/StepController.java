@@ -1,6 +1,7 @@
 package com.monglife.mongs.adapter.in.device.web.controller;
 
 import com.monglife.core.dto.response.ResponseDto;
+import com.monglife.module.common.logging.annotation.EntryLoggingPoint;
 import com.monglife.module.common.security.principal.Passport;
 import com.monglife.mongs.adapter.in.device.web.dto.request.ExchangeCurrentWalkingCountRequestDto;
 import com.monglife.mongs.adapter.in.device.web.dto.request.UpdateTotalWalkingCountRequestDto;
@@ -29,20 +30,30 @@ public class StepController {
     /**
      * 걸음 수 환전
      */
+    @EntryLoggingPoint
     @PostMapping("/exchange/walking")
     public ResponseEntity<ResponseDto<ExchangeCurrentWalkingCountResponseDto>> exchangeCurrentWalkingCount(
             @AuthenticationPrincipal Passport passport,
             @Valid @RequestBody ExchangeCurrentWalkingCountRequestDto exchangeCurrentWalkingCountRequestDto
     ) {
 
-        ExchangeCurrentWalkingCountCommand command = ExchangeCurrentWalkingCountCommand.builder()
+        UpdateTotalWalkingCountCommand updateTotalWalkingCountCommand = UpdateTotalWalkingCountCommand.builder()
                 .deviceId(passport.getDeviceId())
-                .mongId(exchangeCurrentWalkingCountRequestDto.getMongId())
-                .walkingCount(exchangeCurrentWalkingCountRequestDto.getWalkingCount())
                 .totalWalkingCount(exchangeCurrentWalkingCountRequestDto.getTotalWalkingCount())
                 .deviceBootedAt(exchangeCurrentWalkingCountRequestDto.getDeviceBootedAt())
                 .build();
 
+        // 걸음 수 동기화
+        stepUseCase.updateTotalWalkingCountUseCase(updateTotalWalkingCountCommand);
+
+        ExchangeCurrentWalkingCountCommand command = ExchangeCurrentWalkingCountCommand.builder()
+                .accountId(passport.getAccountId())
+                .deviceId(passport.getDeviceId())
+                .mongId(exchangeCurrentWalkingCountRequestDto.getMongId())
+                .walkingCount(exchangeCurrentWalkingCountRequestDto.getWalkingCount())
+                .build();
+
+        // 걸음 수 환전
         Step step = stepUseCase.exchangeCurrentWalkingCountUseCase(command);
 
         ExchangeCurrentWalkingCountResponseDto exchangeCurrentWalkingCountResponseDto = ExchangeCurrentWalkingCountResponseDto.builder()
@@ -56,6 +67,7 @@ public class StepController {
     /**
      * 걸음 수 동기화
      */
+    @EntryLoggingPoint
     @PatchMapping("/walking")
     public ResponseEntity<ResponseDto<UpdateTotalWalkingCountResponseDto>> updateTotalWalkingCount(
             @AuthenticationPrincipal Passport passport,

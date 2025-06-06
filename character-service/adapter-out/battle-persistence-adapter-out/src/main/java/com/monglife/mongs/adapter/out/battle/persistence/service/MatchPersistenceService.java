@@ -122,7 +122,7 @@ public class MatchPersistenceService implements MatchPersistencePort {
     @Override
     @Transactional
     public Optional<Match> getMatchPort(Long matchId) {
-        return matchRepository.findByMatchId(matchId)
+        return matchRepository.findByMatchIdWithLock(matchId)
                 .map(MatchEntity::toDomain)
                 .or(Optional::empty);
     }
@@ -176,7 +176,7 @@ public class MatchPersistenceService implements MatchPersistencePort {
     @Transactional
     public Optional<Match> saveMatchPort(Match match) {
 
-        Optional<MatchEntity> matchEntityOptional = matchRepository.findByMatchId(match.getMatchId());
+        Optional<MatchEntity> matchEntityOptional = matchRepository.findByMatchIdWithLock(match.getMatchId());
 
         if (matchEntityOptional.isPresent()) {
             MatchEntity matchEntity = matchEntityOptional.get();

@@ -20,7 +20,7 @@ public class TestEventConsumer {
 
     public TestEventConsumer() {}
 
-    @KafkaListener(topics = "commit.test")
+    @KafkaListener(topics = "${spring.config.activate.on-profile}." + "commit.test")
     public void testEvent(TransactionEvent<Map<String, Integer>> event) {
 
         if (event.getData() != null) {

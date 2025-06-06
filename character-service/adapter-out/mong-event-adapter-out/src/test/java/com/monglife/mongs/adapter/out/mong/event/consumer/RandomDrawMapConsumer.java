@@ -17,7 +17,7 @@ public class RandomDrawMapConsumer {
 
     private CountDownLatch countDownLatch;
 
-    @KafkaListener(topics = EventTopic.COMMIT_RANDOM_DRAW_MAP)
+    @KafkaListener(topics = "${spring.config.activate.on-profile}." + EventTopic.COMMIT_RANDOM_DRAW_MAP)
     public void randomDrawMapEvent(@Payload TransactionEvent<RandomDrawMapEventDto> event) {
 
         if (event.getData() != null) {

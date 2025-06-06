@@ -8,13 +8,7 @@ import java.util.Optional;
 
 public interface OrderPersistencePort {
 
-    Boolean isExistsOrderByAccountIdAndSocialOrderIdPort(Long accountId, String socialOrderId);
-
-    Optional<ExchangeStarPointProduct> getExchangeStarPointProductPort(String productId);
-
     Optional<Order> createOrderPort(CreateOrderVo createOrderVo);
 
     Optional<Order> saveOrderPort(Order order);
-
-    Optional<Order> getOrderBySocialOrderIdPort(String socialOrderId);
 }

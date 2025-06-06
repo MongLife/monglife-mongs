@@ -8,6 +8,7 @@ import com.monglife.mongs.application.battle.port.in.command.DeleteQueuePlayerCo
 import com.monglife.mongs.application.battle.port.in.command.MatchingQueuePlayersCommand;
 import com.monglife.mongs.application.battle.port.out.MatchPersistencePort;
 import com.monglife.mongs.application.battle.port.out.MongPersistencePort;
+import com.monglife.mongs.application.battle.port.out.MongReadPort;
 import com.monglife.mongs.application.battle.port.out.QueuePublishPort;
 import com.monglife.mongs.application.battle.port.out.vo.CreateMatchVo;
 import com.monglife.mongs.domain.battle.model.Match;
@@ -27,20 +28,11 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class QueueServiceTest {
 
-    private final MatchPersistencePort matchPersistencePort;
-
-    private final MongPersistencePort mongPersistencePort;
-
-    private final QueuePublishPort queuePublishPort;
-
-    private final QueueUseCase queueUseCase;
-
-    public QueueServiceTest() {
-        this.queuePublishPort = Mockito.mock(QueuePublishPort.class);
-        this.matchPersistencePort = Mockito.mock(MatchPersistencePort.class);
-        this.mongPersistencePort = Mockito.mock(MongPersistencePort.class);
-        this.queueUseCase = new QueueService(matchPersistencePort, mongPersistencePort, queuePublishPort);
-    }
+    private final MatchPersistencePort matchPersistencePort = Mockito.mock(MatchPersistencePort.class);
+    private final MongPersistencePort mongPersistencePort = Mockito.mock(MongPersistencePort.class);
+    private final MongReadPort mongReadPort = Mockito.mock(MongReadPort.class);
+    private final QueuePublishPort queuePublishPort = Mockito.mock(QueuePublishPort.class);
+    private final QueueUseCase queueUseCase = new QueueService(matchPersistencePort, mongPersistencePort, mongReadPort, queuePublishPort);
 
     @Nested
     @DisplayName("매치 대기열 생성 단위 테스트")
@@ -157,7 +149,7 @@ class QueueServiceTest {
             Mockito.when(matchPersistencePort.getQueuePlayersPort(matchPlayerCount, QueuePlayer.getExpiredSeconds())).thenReturn(queuePlayers);
             Mockito.when(matchPersistencePort.createMatchPort(Mockito.any())).thenReturn(Optional.of(match));
             for (QueuePlayer queuePlayer : queuePlayers) {
-                Mockito.when(mongPersistencePort.getMongPort(queuePlayer.getMongId())).thenReturn(Optional.of(Mong.builder()
+                Mockito.when(mongReadPort.getMongPort(queuePlayer.getMongId())).thenReturn(Optional.of(Mong.builder()
                         .mongId(queuePlayer.getMongId())
                         .accountId(queuePlayer.getAccountId())
                         .mongCode("TEST-MONG_TYPE-CODE")
@@ -206,7 +198,7 @@ class QueueServiceTest {
             Mockito.when(matchPersistencePort.getQueuePlayersPort(matchPlayerCount, QueuePlayer.getExpiredSeconds())).thenReturn(queuePlayers);
             Mockito.when(matchPersistencePort.createMatchPort(Mockito.any())).thenReturn(Optional.of(match));
             for (QueuePlayer queuePlayer : queuePlayers) {
-                Mockito.when(mongPersistencePort.getMongPort(queuePlayer.getMongId())).thenReturn(Optional.of(Mong.builder()
+                Mockito.when(mongReadPort.getMongPort(queuePlayer.getMongId())).thenReturn(Optional.of(Mong.builder()
                         .mongId(queuePlayer.getMongId())
                         .accountId(queuePlayer.getAccountId())
                         .mongCode("TEST-MONG_TYPE-CODE")
@@ -273,8 +265,8 @@ class QueueServiceTest {
 
             Mockito.when(matchPersistencePort.getQueuePlayersPort(matchPlayerCount, QueuePlayer.getExpiredSeconds())).thenReturn(queuePlayers);
             Mockito.when(matchPersistencePort.createMatchPort(Mockito.any())).thenReturn(Optional.of(match));
-            Mockito.when(mongPersistencePort.getMongPort(queuePlayers.get(0).getMongId())).thenReturn(Optional.empty());
-            Mockito.when(mongPersistencePort.getMongPort(queuePlayers.get(1).getMongId())).thenReturn(Optional.of(Mong.builder()
+            Mockito.when(mongReadPort.getMongPort(queuePlayers.get(0).getMongId())).thenReturn(Optional.empty());
+            Mockito.when(mongReadPort.getMongPort(queuePlayers.get(1).getMongId())).thenReturn(Optional.of(Mong.builder()
                     .mongId(queuePlayers.get(1).getMongId())
                     .accountId(queuePlayers.get(1).getAccountId())
                     .mongCode("TEST-MONG_TYPE-CODE")
@@ -316,7 +308,7 @@ class QueueServiceTest {
 
             Mockito.when(matchPersistencePort.getQueuePlayersPort(matchPlayerCount, QueuePlayer.getExpiredSeconds())).thenReturn(queuePlayers);
             Mockito.when(mongPersistencePort.getMongPort(queuePlayers.get(0).getMongId())).thenReturn(Optional.empty());
-            Mockito.when(mongPersistencePort.getMongPort(queuePlayers.get(1).getMongId())).thenReturn(Optional.of(Mong.builder()
+            Mockito.when(mongReadPort.getMongPort(queuePlayers.get(1).getMongId())).thenReturn(Optional.of(Mong.builder()
                     .mongId(queuePlayers.get(1).getMongId())
                     .accountId(queuePlayers.get(1).getAccountId())
                     .mongCode("TEST-MONG_TYPE-CODE")

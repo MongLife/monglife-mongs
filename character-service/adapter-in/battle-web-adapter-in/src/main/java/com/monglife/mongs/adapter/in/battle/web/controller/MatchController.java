@@ -1,6 +1,7 @@
 package com.monglife.mongs.adapter.in.battle.web.controller;
 
 import com.monglife.core.dto.response.ResponseDto;
+import com.monglife.module.common.logging.annotation.EntryLoggingPoint;
 import com.monglife.mongs.adapter.in.battle.web.dto.response.GetMatchOutcomeResponseDto;
 import com.monglife.mongs.adapter.in.battle.web.dto.response.GetMatchResponseDto;
 import com.monglife.mongs.adapter.in.battle.web.dto.response.GetWinMatchPlayerResponseDto;
@@ -35,6 +36,7 @@ public class MatchController {
     /**
      * 매칭 보상 정보 조회
      */
+    @EntryLoggingPoint
     @GetMapping("")
     public ResponseEntity<ResponseDto<GetMatchOutcomeResponseDto>> getMatchOutcome() {
 
@@ -52,6 +54,7 @@ public class MatchController {
      * 매치 조회
      * @param matchId 매치 ID
      */
+    @EntryLoggingPoint
     @GetMapping("/{matchId}")
     public ResponseEntity<ResponseDto<GetMatchResponseDto>> getMatch(@PathVariable("matchId") @NotNull @Min(1) Long matchId) {
 
@@ -87,6 +90,7 @@ public class MatchController {
      * 승리한 매치 플레이어 조회
      * @param matchId 배틀 ID
      */
+    @EntryLoggingPoint
     @GetMapping("/over/{matchId}")
     public ResponseEntity<ResponseDto<GetWinMatchPlayerResponseDto>> getOverBattle(@PathVariable("matchId") @NotNull @Min(1) Long matchId) {
 

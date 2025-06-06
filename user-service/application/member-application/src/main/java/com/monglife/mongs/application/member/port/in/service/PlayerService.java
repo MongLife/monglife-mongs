@@ -7,6 +7,7 @@ import com.monglife.mongs.application.member.port.in.command.*;
 import com.monglife.mongs.application.member.port.out.MemberEventPort;
 import com.monglife.mongs.application.member.port.out.MemberPersistencePort;
 import com.monglife.mongs.application.member.port.out.MemberPublishPort;
+import com.monglife.mongs.application.member.port.out.MemberReadPort;
 import com.monglife.mongs.application.member.port.out.vo.CreatePlayerVo;
 import com.monglife.mongs.domain.member.model.Player;
 import lombok.RequiredArgsConstructor;
@@ -18,6 +19,8 @@ import org.springframework.transaction.annotation.Transactional;
 public class PlayerService implements PlayerUseCase {
 
     private final MemberPersistencePort memberPersistencePort;
+
+    private final MemberReadPort memberReadPort;
 
     private final MemberPublishPort memberPublishPort;
 
@@ -31,7 +34,7 @@ public class PlayerService implements PlayerUseCase {
     public void createPlayerUseCase(CreatePlayerCommand command) {
 
         // 플레이어 존재 여부 확인
-        if (Boolean.FALSE.equals(memberPersistencePort.isExistsPlayerPort(command.getAccountId()))) {
+        if (Boolean.FALSE.equals(memberReadPort.isExistsPlayerPort(command.getAccountId()))) {
             memberPersistencePort.createPlayerPort(CreatePlayerVo.builder()
                     .accountId(command.getAccountId())
                     .slotCount(1)
@@ -47,8 +50,7 @@ public class PlayerService implements PlayerUseCase {
     @Override
     @Transactional
     public Player getPlayerUseCase(GetPlayerCommand command) {
-
-        return memberPersistencePort.getPlayerPort(command.getAccountId())
+        return memberReadPort.getPlayerPort(command.getAccountId())
                 .orElseThrow(NotExistsPlayerException::new);
     }
 

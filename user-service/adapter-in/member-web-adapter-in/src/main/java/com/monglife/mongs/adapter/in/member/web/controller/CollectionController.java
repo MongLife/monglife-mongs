@@ -1,6 +1,7 @@
 package com.monglife.mongs.adapter.in.member.web.controller;
 
 import com.monglife.core.dto.response.ResponseDto;
+import com.monglife.module.common.logging.annotation.EntryLoggingPoint;
 import com.monglife.module.common.security.principal.Passport;
 import com.monglife.mongs.adapter.in.member.web.dto.response.GetCollectionMapResponseDto;
 import com.monglife.mongs.adapter.in.member.web.dto.response.GetCollectionMongResponseDto;
@@ -31,6 +32,7 @@ public class CollectionController {
     /**
      * 맵 컬렉션 조회
      */
+    @EntryLoggingPoint
     @GetMapping("/map")
     public ResponseEntity<ResponseDto<List<GetCollectionMapResponseDto>>> getCollectionMaps(
             @AuthenticationPrincipal Passport passport
@@ -58,6 +60,7 @@ public class CollectionController {
      * @param passport 패스 포트
      * @return 몽 컬렉션 목록
      */
+    @EntryLoggingPoint
     @GetMapping("/mong")
     public ResponseEntity<ResponseDto<List<GetCollectionMongResponseDto>>> getCollectionMongs(
             @AuthenticationPrincipal Passport passport

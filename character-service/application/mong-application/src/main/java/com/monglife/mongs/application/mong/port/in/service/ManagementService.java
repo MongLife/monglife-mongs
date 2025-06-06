@@ -365,7 +365,8 @@ public class ManagementService implements ManagementUseCase {
     public Mong increaseMongPayPointUseCase(IncreaseMongPayPointCommand command) {
 
         Mong mong = mongPersistencePort.getMongPort(command.getMongId())
-                .orElseThrow(NotExistsMongException::new);
+                .orElseThrow(NotExistsMongException::new)
+                .verify(command.getAccountId());
 
         // 몽 페이 포인트 증가
         mong.increasePayPoint(command.getPayPoint());

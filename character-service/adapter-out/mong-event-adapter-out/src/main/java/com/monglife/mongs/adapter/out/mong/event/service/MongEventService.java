@@ -23,7 +23,7 @@ public class MongEventService  implements MongEventPort {
     @Override
     public void createMongEventPort(Long accountId, String mongCode) {
 
-        kafkaService.generateEvent(EventTopic.COMMIT_CREATE_MONG, CreateMongEventDto.builder()
+        kafkaService.generateEventWithProfile(EventTopic.COMMIT_CREATE_MONG, CreateMongEventDto.builder()
                 .accountId(accountId)
                 .mongCode(mongCode)
                 .build());
@@ -37,7 +37,7 @@ public class MongEventService  implements MongEventPort {
     @Override
     public void evolutionMongEventPort(Long accountId, String mongCode) {
 
-        kafkaService.generateEvent(EventTopic.COMMIT_EVOLUTION_MONG, EvolutionMongEventDto.builder()
+        kafkaService.generateEventWithProfile(EventTopic.COMMIT_EVOLUTION_MONG, EvolutionMongEventDto.builder()
                 .accountId(accountId)
                 .mongCode(mongCode)
                 .build());
@@ -51,7 +51,7 @@ public class MongEventService  implements MongEventPort {
     @Override
     public void randomDrawMapEventPort(Long accountId, String mapCode) {
 
-        kafkaService.generateEvent(EventTopic.COMMIT_RANDOM_DRAW_MAP, RandomDrawMapEventDto.builder()
+        kafkaService.generateEventWithProfile(EventTopic.COMMIT_RANDOM_DRAW_MAP, RandomDrawMapEventDto.builder()
                 .accountId(accountId)
                 .mapCode(mapCode)
                 .build());

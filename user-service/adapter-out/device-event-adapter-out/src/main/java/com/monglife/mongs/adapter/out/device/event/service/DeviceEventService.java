@@ -21,13 +21,14 @@ public class DeviceEventService implements DeviceEventPort {
     @Override
     public void exchangeCurrentWalkingCountEventPort(ExchangeCurrentWalkingCountDto stepEventDto) {
 
-        com.monglife.mongs.adapter.transaction.ExchangeCurrentWalkingCountEventDto exchangeCurrentWalkingCountEventDto = ExchangeCurrentWalkingCountEventDto.builder()
+        ExchangeCurrentWalkingCountEventDto exchangeCurrentWalkingCountEventDto = ExchangeCurrentWalkingCountEventDto.builder()
+                .accountId(stepEventDto.getAccountId())
                 .deviceId(stepEventDto.getDeviceId())
                 .mongId(stepEventDto.getMongId())
                 .walkingCount(stepEventDto.getWalkingCount())
                 .payPoint(stepEventDto.getPayPoint())
                 .build();
 
-        kafkaService.generateEvent(EventTopic.COMMIT_EXCHANGE_CURRENT_WALKING_COUNT, exchangeCurrentWalkingCountEventDto);
+        kafkaService.generateEventWithProfile(EventTopic.COMMIT_EXCHANGE_CURRENT_WALKING_COUNT, exchangeCurrentWalkingCountEventDto);
     }
 }

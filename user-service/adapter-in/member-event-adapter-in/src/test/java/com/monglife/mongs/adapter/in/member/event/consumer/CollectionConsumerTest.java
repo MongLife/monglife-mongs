@@ -63,7 +63,7 @@ class CollectionConsumerTest {
                     .mongCode(mongCode)
                     .build();
 
-            kafkaService.generateEvent(topic, createMongEventDto);
+            kafkaService.generateEventWithProfile(topic, createMongEventDto);
 
             // assert
             ArgumentCaptor<CreateCollectionMongCommand> captor = ArgumentCaptor.forClass(CreateCollectionMongCommand.class);

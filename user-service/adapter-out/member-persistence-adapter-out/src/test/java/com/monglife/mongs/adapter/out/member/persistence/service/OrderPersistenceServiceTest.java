@@ -13,6 +13,7 @@ import com.monglife.mongs.adapter.out.member.persistence.repository.ExchangeStar
 import com.monglife.mongs.adapter.out.member.persistence.repository.GroupCodeRepository;
 import com.monglife.mongs.adapter.out.member.persistence.repository.OrderRepository;
 import com.monglife.mongs.application.member.port.out.OrderPersistencePort;
+import com.monglife.mongs.application.member.port.out.OrderReadPort;
 import com.monglife.mongs.application.member.port.out.vo.CreateOrderVo;
 import com.monglife.mongs.domain.member.model.Order;
 import org.junit.jupiter.api.BeforeEach;
@@ -38,14 +39,16 @@ import static org.junit.jupiter.api.Assertions.*;
 class OrderPersistenceServiceTest {
 
     private final OrderPersistencePort orderPersistencePort;
+    private final OrderReadPort orderReadPort;
     private final GroupCodeRepository groupCodeRepository;
     private final ComnCodeRepository comnCodeRepository;
     private final OrderRepository orderRepository;
     private final ExchangeStarPointProductRepository exchangeStarPointProductRepository;
 
     @Autowired
-    public OrderPersistenceServiceTest(OrderPersistencePort orderPersistencePort, GroupCodeRepository groupCodeRepository, ComnCodeRepository comnCodeRepository, OrderRepository orderRepository, ExchangeStarPointProductRepository exchangeStarPointProductRepository) {
+    public OrderPersistenceServiceTest(OrderPersistencePort orderPersistencePort, OrderReadPort orderReadPort, GroupCodeRepository groupCodeRepository, ComnCodeRepository comnCodeRepository, OrderRepository orderRepository, ExchangeStarPointProductRepository exchangeStarPointProductRepository) {
         this.orderPersistencePort = orderPersistencePort;
+        this.orderReadPort = orderReadPort;
         this.groupCodeRepository = groupCodeRepository;
         this.comnCodeRepository = comnCodeRepository;
         this.orderRepository = orderRepository;
@@ -84,7 +87,7 @@ class OrderPersistenceServiceTest {
                             .build());
 
             // act
-            var expected = orderPersistencePort.isExistsOrderByAccountIdAndSocialOrderIdPort(ACCOUNT_ID, socialOrderId);
+            var expected = orderReadPort.isExistsOrderByAccountIdAndSocialOrderIdPort(ACCOUNT_ID, socialOrderId);
 
             // assert
             assertTrue(expected);
@@ -97,7 +100,7 @@ class OrderPersistenceServiceTest {
             final String socialOrderId = CommonUtil.randomId();
 
             // act
-            var expected = orderPersistencePort.isExistsOrderByAccountIdAndSocialOrderIdPort(ACCOUNT_ID, socialOrderId);
+            var expected = orderReadPort.isExistsOrderByAccountIdAndSocialOrderIdPort(ACCOUNT_ID, socialOrderId);
 
             // assert
             assertFalse(expected);
@@ -121,7 +124,7 @@ class OrderPersistenceServiceTest {
                     .build());
 
             // act
-            var expected = orderPersistencePort.getExchangeStarPointProductPort(PRODUCT_ID);
+            var expected = orderReadPort.getExchangeStarPointProductPort(PRODUCT_ID);
 
             // assert
             assertTrue(expected.isPresent());
@@ -133,7 +136,7 @@ class OrderPersistenceServiceTest {
         @DisplayName("스타 포인트 환전 상품이 없는 경우 빈 옵셔널 객체를 반환 한다.")
         void getExchangeStarPointProductWhenNotExistProduct() {
             // act
-            var expected = orderPersistencePort.getExchangeStarPointProductPort(PRODUCT_ID);
+            var expected = orderReadPort.getExchangeStarPointProductPort(PRODUCT_ID);
 
             // assert
             assertTrue(expected.isEmpty());
@@ -282,7 +285,7 @@ class OrderPersistenceServiceTest {
                     .getOrderId();
 
             // act
-            var expected = orderPersistencePort.getOrderBySocialOrderIdPort(socialOrderId);
+            var expected = orderReadPort.getOrderBySocialOrderIdPort(socialOrderId);
 
             // assert
             assertTrue(expected.isPresent());
@@ -301,7 +304,7 @@ class OrderPersistenceServiceTest {
             final String socialOrderId = CommonUtil.randomId();
 
             // act
-            var expected = orderPersistencePort.getOrderBySocialOrderIdPort(socialOrderId);
+            var expected = orderReadPort.getOrderBySocialOrderIdPort(socialOrderId);
 
             // assert
             assertTrue(expected.isEmpty());

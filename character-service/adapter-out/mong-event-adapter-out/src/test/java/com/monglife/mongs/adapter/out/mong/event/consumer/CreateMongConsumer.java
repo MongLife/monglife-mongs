@@ -17,7 +17,7 @@ public class CreateMongConsumer {
 
     private CountDownLatch countDownLatch;
 
-    @KafkaListener(topics = EventTopic.COMMIT_CREATE_MONG)
+    @KafkaListener(topics = "${spring.config.activate.on-profile}." + EventTopic.COMMIT_CREATE_MONG)
     public void createMongEvent(@Payload TransactionEvent<CreateMongEventDto> event) {
 
         if (event.getData() != null) {

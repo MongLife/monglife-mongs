@@ -1,5 +1,7 @@
 package com.monglife.mongs.adapter.out.mong.schedule.entity;
 
+import com.fasterxml.jackson.annotation.JsonAutoDetect;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Builder;
 import lombok.Getter;
 
@@ -28,6 +30,7 @@ public class TaskScheduleEntity {
 
     private Long expirationSeconds;
 
+    @JsonIgnore
     private ScheduledFuture<?> scheduler;
 
     @Builder
