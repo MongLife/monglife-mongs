@@ -8,6 +8,7 @@ import com.monglife.mongs.application.mong.port.out.MongPublishPort;
 import com.monglife.mongs.core.kafka.event.enums.EventTopic;
 import com.monglife.mongs.domain.mong.model.Mong;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -17,6 +18,9 @@ public class MongPublishService implements MongPublishPort {
     private final MongPublishClient mongPublishClient;
 
     private final KafkaService kafkaService;
+
+    @Value("${spring.config.activate.on-profile}")
+    private String profile;
 
     /**
      * 몽 정보 비동기 응답
@@ -62,7 +66,7 @@ public class MongPublishService implements MongPublishPort {
     @Override
     public void publishNotificationPort(Long accountId, String title, String body) {
 
-        kafkaService.generateEvent(EventTopic.NOTIFICATION_MONGS, SendNotificationDto.builder()
+        kafkaService.generateEventWithProfile(EventTopic.NOTIFICATION, SendNotificationDto.builder()
                 .accountId(accountId)
                 .title(title)
                 .body(body)

@@ -1,6 +1,7 @@
 package com.monglife.mongs.adapter.in.battle.web.controller;
 
 import com.monglife.core.dto.response.ResponseDto;
+import com.monglife.module.common.logging.annotation.EntryLoggingPoint;
 import com.monglife.module.common.security.principal.Passport;
 import com.monglife.mongs.adapter.in.battle.web.enums.AdapterInBattleWebResponse;
 import com.monglife.mongs.application.battle.port.in.QueueUseCase;
@@ -28,6 +29,7 @@ public class QueueController {
      * @param mongId 몽 ID
      * @return 성공 응답
      */
+    @EntryLoggingPoint
     @PostMapping("/{mongId}")
     public ResponseEntity<ResponseDto<?>> createQueuePlayer(@AuthenticationPrincipal Passport passport, @PathVariable("mongId") @NotNull @Min(1)  Long mongId) {
 
@@ -48,6 +50,7 @@ public class QueueController {
      * @param mongId 몽 ID
      * @return 성공 응답
      */
+    @EntryLoggingPoint
     @DeleteMapping("/{mongId}")
     public ResponseEntity<ResponseDto<?>> deleteWaitMatching(@AuthenticationPrincipal Passport passport, @PathVariable("mongId") @NotNull @Min(1) Long mongId) {
 

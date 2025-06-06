@@ -5,6 +5,7 @@ import com.monglife.mongs.adapter.transaction.ExchangeStarPointEventDto;
 import com.monglife.mongs.application.member.port.out.MemberEventPort;
 import com.monglife.mongs.core.kafka.event.enums.EventTopic;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -29,6 +30,6 @@ public class MemberEventService implements MemberEventPort {
                 .payPoint(payPoint)
                 .build();
 
-        kafkaService.generateEvent(EventTopic.COMMIT_EXCHANGE_STAR_POINT, exchangeStarPointEventDto);
+        kafkaService.generateEventWithProfile(EventTopic.COMMIT_EXCHANGE_STAR_POINT, exchangeStarPointEventDto);
     }
 }

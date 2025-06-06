@@ -30,6 +30,10 @@ public enum AdapterInMemberWebResponse implements Response {
     GET_IN_APP_PRODUCTS(HttpStatus.OK.value(), "100-201-007", "구글 인앱 상품 조회에 성공했습니다."),
     CONSUME_ORDER(HttpStatus.OK.value(), "100-201-008", "주문 소비에 성공했습니다."),
     GET_CONSUMED_ORDERS(HttpStatus.OK.value(), "100-201-009", "소비된 주문 목록 조회에 성공했습니다."),
+
+    // MEMBER-NOTICE
+    GET_NOTICE(HttpStatus.OK.value(), "100-201-010", "공지 사항 조회에 성공했습니다."),
+    GET_NOTICES(HttpStatus.OK.value(), "100-201-011", "공지 사항 목록 조회에 성공했습니다."),
     ;
 
     private final Integer httpStatus;

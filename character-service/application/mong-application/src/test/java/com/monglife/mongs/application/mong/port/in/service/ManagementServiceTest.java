@@ -1318,6 +1318,7 @@ class ManagementServiceTest {
 
             // act
             IncreaseMongPayPointCommand command = IncreaseMongPayPointCommand.builder()
+                    .accountId(accountId)
                     .mongId(mongId)
                     .payPoint(payPoint)
                     .build();

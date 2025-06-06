@@ -5,8 +5,9 @@ buildscript {
         acuatorVersion                    = "3.2.1"
         lombokVersion                     = "1.18.30"
         monglifeCoreVersion               = "2.0.10"
-        monglifeModuleCommonVersion       = "1.0.12"
+        monglifeModuleCommonVersion       = "2.0.5"
         monglifeModuleMqttVersion         = "1.0.1"
+        logstashVersion                   = "7.4"
         jupiterVersion                    = "5.9.3"
         mockitoVersion                    = "4.8.1"
         assertjVersion                    = "3.24.2"
@@ -18,6 +19,10 @@ plugins {
     id "java-library"
     id "org.springframework.boot"        version "${springBootVersion}"
     id "io.spring.dependency-management" version "${springDependencyManagementVersion}"
+}
+
+bootJar {
+    enabled(false)
 }
 
 subprojects {
@@ -48,7 +53,9 @@ subprojects {
                 project.delete fileTree("src/main/resources") {
                     include("*.yml")
                     include("*.json")
+                    include("*.xml")
                 }
+
                 project.delete fileTree("src/test/resources") {
                     include("*.yml")
                     include("*.json")
@@ -58,6 +65,7 @@ subprojects {
                     from(configPath + "/" + parentModule + "/" + currentModule + "/") {
                         include("*.yml")
                         include("*.json")
+                        include("*.xml")
                     }
                     into("src/main/resources")
                 }
@@ -67,7 +75,7 @@ subprojects {
                         include("*.yml")
                         include("*.json")
                         rename { fileName ->
-                            if (fileName.endsWith(".yml") && fileName.contains("-")) {
+                            if (fileName.endsWith(".yml")) {
                                 return "application-test.yml"
                             }
                         }

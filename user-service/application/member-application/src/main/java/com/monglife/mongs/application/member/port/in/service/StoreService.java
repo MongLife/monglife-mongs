@@ -5,10 +5,7 @@ import com.monglife.mongs.application.member.port.in.StoreUseCase;
 import com.monglife.mongs.application.member.port.in.command.ConsumeOrderCommand;
 import com.monglife.mongs.application.member.port.in.command.CreateOrderCommand;
 import com.monglife.mongs.application.member.port.in.command.GetConsumedOrderCommand;
-import com.monglife.mongs.application.member.port.out.GooglePaymentPort;
-import com.monglife.mongs.application.member.port.out.MemberPersistencePort;
-import com.monglife.mongs.application.member.port.out.MemberPublishPort;
-import com.monglife.mongs.application.member.port.out.OrderPersistencePort;
+import com.monglife.mongs.application.member.port.out.*;
 import com.monglife.mongs.application.member.port.out.vo.CreateOrderVo;
 import com.monglife.mongs.domain.member.model.*;
 import lombok.RequiredArgsConstructor;
@@ -26,6 +23,8 @@ public class StoreService implements StoreUseCase {
 
     private final OrderPersistencePort orderPersistencePort;
 
+    private final OrderReadPort orderReadPort;
+
     private final MemberPublishPort memberPublishPort;
 
     private final GooglePaymentPort googlePaymentPort;
@@ -37,7 +36,7 @@ public class StoreService implements StoreUseCase {
     @Transactional
     public void createOrderUseCase(CreateOrderCommand command) {
 
-        if (Boolean.FALSE.equals(orderPersistencePort.isExistsOrderByAccountIdAndSocialOrderIdPort(command.getAccountId(), command.getSocialOrderId()))) {
+        if (Boolean.FALSE.equals(orderReadPort.isExistsOrderByAccountIdAndSocialOrderIdPort(command.getAccountId(), command.getSocialOrderId()))) {
             // 인앱 상품 존재 여부 확인
             InAppProduct inAppProduct = googlePaymentPort.getInAppProductPort(command.getProductId())
                     .orElseThrow(NotExistsInAppProductException::new);
@@ -62,11 +61,11 @@ public class StoreService implements StoreUseCase {
     public Order consumeOrderUseCase(ConsumeOrderCommand command) {
 
         // 주문 정보 조회
-        Order order = orderPersistencePort.getOrderBySocialOrderIdPort(command.getSocialOrderId())
+        Order order = orderReadPort.getOrderBySocialOrderIdPort(command.getSocialOrderId())
                 .orElseThrow(NotExistsOrderException::new);
 
         // 환전 상품 정보 조회
-        ExchangeStarPointProduct product = orderPersistencePort.getExchangeStarPointProductPort(order.getProductId())
+        ExchangeStarPointProduct product = orderReadPort.getExchangeStarPointProductPort(order.getProductId())
                 .orElseThrow(NotExistsExchangeStarPointProductException::new);
 
         // 플레이어 정보 조회
@@ -112,7 +111,7 @@ public class StoreService implements StoreUseCase {
         List<Order> orders = new ArrayList<>();
 
         command.getSocialOrderIds().forEach(socialOrderId ->
-            orderPersistencePort.getOrderBySocialOrderIdPort(socialOrderId).ifPresent(order ->
+            orderReadPort.getOrderBySocialOrderIdPort(socialOrderId).ifPresent(order ->
                 googlePaymentPort.getInAppOrderPort(order.getProductId(), order.getSocialOrderId(), order.getPurchaseToken()).ifPresent(inAppOrder -> {
                     if (Boolean.TRUE.equals(inAppOrder.isConsumed())) {
                         orders.add(order);

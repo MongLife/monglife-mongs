@@ -8,6 +8,7 @@ import com.monglife.mongs.application.battle.port.in.command.*;
 import com.monglife.mongs.application.battle.port.in.vo.MatchOutcomeVo;
 import com.monglife.mongs.application.battle.port.out.MatchPersistencePort;
 import com.monglife.mongs.application.battle.port.out.MatchPublishPort;
+import com.monglife.mongs.application.battle.port.out.MatchReadPort;
 import com.monglife.mongs.domain.battle.model.Match;
 import com.monglife.mongs.domain.battle.model.MatchPick;
 import com.monglife.mongs.domain.battle.model.MatchPlayer;
@@ -20,6 +21,8 @@ import org.springframework.transaction.annotation.Transactional;
 public class MatchService implements MatchUseCase {
 
     private final MatchPersistencePort matchPersistencePort;
+
+    private final MatchReadPort matchReadPort;
 
     private final MatchPublishPort matchPublishPort;
 
@@ -41,7 +44,7 @@ public class MatchService implements MatchUseCase {
     @Override
     @Transactional
     public Match getMatchUseCase(GetMatchCommand command) {
-        return matchPersistencePort.getMatchPort(command.getMatchId())
+        return matchReadPort.getMatchPort(command.getMatchId())
                 .orElseThrow(NotExistsMatchException::new);
     }
 
@@ -52,7 +55,7 @@ public class MatchService implements MatchUseCase {
     @Transactional
     public MatchPlayer getWinMatchPlayerUseCase(GetWinMatchPlayerCommand command) {
 
-        Match match = matchPersistencePort.getMatchPort(command.getMatchId())
+        Match match = matchReadPort.getMatchPort(command.getMatchId())
                 .orElseThrow(NotExistsMatchException::new);
 
         // 매치 종료 여부 확인

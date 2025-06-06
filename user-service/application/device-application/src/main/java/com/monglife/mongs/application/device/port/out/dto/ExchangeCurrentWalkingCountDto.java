@@ -8,6 +8,8 @@ import lombok.ToString;
 @ToString
 public class ExchangeCurrentWalkingCountDto {
 
+    private final Long accountId;
+
     private final String deviceId;
 
     private final Long mongId;
@@ -17,7 +19,8 @@ public class ExchangeCurrentWalkingCountDto {
     private final Integer walkingCount;
 
     @Builder
-    public ExchangeCurrentWalkingCountDto(String deviceId, Long mongId, Integer payPoint, Integer walkingCount) {
+    public ExchangeCurrentWalkingCountDto(Long accountId, String deviceId, Long mongId, Integer payPoint, Integer walkingCount) {
+        this.accountId = accountId;
         this.deviceId = deviceId;
         this.mongId = mongId;
         this.payPoint = payPoint;

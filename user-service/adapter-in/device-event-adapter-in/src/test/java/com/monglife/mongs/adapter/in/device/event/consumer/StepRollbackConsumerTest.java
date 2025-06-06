@@ -67,7 +67,7 @@ class StepRollbackConsumerTest {
                     .payPoint(payPoint)
                     .build();
 
-            kafkaService.generateEvent(topic, exchangeCurrentWalkingCountRollbackEventDto);
+            kafkaService.generateEventWithProfile(topic, exchangeCurrentWalkingCountRollbackEventDto);
 
             // assert
             ArgumentCaptor<IncreaseCurrentWalkingCountCommand> captor = ArgumentCaptor.forClass(IncreaseCurrentWalkingCountCommand.class);

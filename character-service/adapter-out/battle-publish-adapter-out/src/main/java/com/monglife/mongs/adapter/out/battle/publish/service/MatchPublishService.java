@@ -8,10 +8,8 @@ import com.monglife.mongs.application.battle.port.out.MatchPublishPort;
 import com.monglife.mongs.domain.battle.model.Match;
 import com.monglife.mongs.domain.battle.model.MatchPlayer;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
-@Slf4j
 @Service
 @RequiredArgsConstructor
 public class MatchPublishService implements MatchPublishPort {

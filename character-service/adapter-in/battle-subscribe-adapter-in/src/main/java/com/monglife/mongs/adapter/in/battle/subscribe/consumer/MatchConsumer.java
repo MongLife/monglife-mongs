@@ -1,5 +1,6 @@
 package com.monglife.mongs.adapter.in.battle.subscribe.consumer;
 
+import com.monglife.module.common.logging.annotation.EntryLoggingPoint;
 import com.monglife.module.mqtt.annotation.MqttConsumer;
 import com.monglife.module.mqtt.annotation.MqttMapping;
 import com.monglife.module.mqtt.annotation.MqttPayload;
@@ -11,10 +12,8 @@ import com.monglife.mongs.application.battle.port.in.command.EnterMatchCommand;
 import com.monglife.mongs.application.battle.port.in.command.ExitMatchCommand;
 import com.monglife.mongs.application.battle.port.in.command.PickMatchCommand;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.PathVariable;
 
-@Slf4j
 @MqttConsumer
 @MqttMapping("/battle")
 @RequiredArgsConstructor
@@ -27,6 +26,7 @@ public class MatchConsumer {
      * @param matchId 매치 ID
      * @param enterMatchRequestDto 매치 입장 정보
      */
+    @EntryLoggingPoint
     @MqttMapping("/match/enter/{matchId}")
     public void enterMatch(@PathVariable("matchId") Long matchId, @MqttPayload EnterMatchRequestDto enterMatchRequestDto) {
 
@@ -43,6 +43,7 @@ public class MatchConsumer {
      * @param matchId 배틀룸 ID
      * @param exitMatchRequestDto 매치 퇴장 정보
      */
+    @EntryLoggingPoint
     @MqttMapping("/match/exit/{matchId}")
     public void exitMatch(@PathVariable("matchId") Long matchId, @MqttPayload ExitMatchRequestDto exitMatchRequestDto) {
 
@@ -59,6 +60,7 @@ public class MatchConsumer {
      * @param matchId 매치 ID
      * @param pickMatchRequestDto 선택 정보
      */
+    @EntryLoggingPoint
     @MqttMapping("/match/pick/{matchId}")
     public void pickMatch(@PathVariable("matchId") Long matchId, @MqttPayload PickMatchRequestDto pickMatchRequestDto) {
 

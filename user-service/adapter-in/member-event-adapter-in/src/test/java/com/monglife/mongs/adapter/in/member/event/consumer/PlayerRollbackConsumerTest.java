@@ -67,7 +67,7 @@ class PlayerRollbackConsumerTest {
                     .payPoint(payPoint)
                     .build();
 
-            kafkaService.generateEvent(topic, exchangeStarPointRollbackEventDto);
+            kafkaService.generateEventWithProfile(topic, exchangeStarPointRollbackEventDto);
 
             // assert
             ArgumentCaptor<IncreaseStarPointCommand> captor = ArgumentCaptor.forClass(IncreaseStarPointCommand.class);

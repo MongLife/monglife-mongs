@@ -35,9 +35,6 @@ public class StepService implements StepUseCase {
         Step step = devicePersistencePort.getStepPort(command.getDeviceId())
                 .orElseThrow(NotExistStepException::new);
 
-        // 걸음 수 동기화
-        step.syncTotalWalkingCount(command.getTotalWalkingCount(), command.getDeviceBootedAt());
-
         // 보유 걸음 수 환전
         int payPoint = step.exchangeWalkingCountToPayPoint(command.getWalkingCount());
 
@@ -47,6 +44,7 @@ public class StepService implements StepUseCase {
 
         // 보유 걸음 수 환전 이벤트 발생
         deviceEventPort.exchangeCurrentWalkingCountEventPort(ExchangeCurrentWalkingCountDto.builder()
+                .accountId(command.getAccountId())
                 .deviceId(command.getDeviceId())
                 .mongId(command.getMongId())
                 .walkingCount(command.getWalkingCount())

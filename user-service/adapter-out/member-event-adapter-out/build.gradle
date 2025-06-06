@@ -2,7 +2,7 @@ dependencies {
     // application layer
     implementation project(":user-service:application:member-application")
     // core layer
-    implementation project(":core:kafka-event-core")
+    implementation project(":common:core:kafka-event-core")
     // monglife-kafka
     implementation "com.github.monglife.monglife-module-common:monglife-module-common-kafka:${monglifeModuleCommonVersion}"
     // test

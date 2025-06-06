@@ -10,6 +10,7 @@ import com.monglife.mongs.application.battle.port.in.command.DeleteQueuePlayerCo
 import com.monglife.mongs.application.battle.port.in.command.MatchingQueuePlayersCommand;
 import com.monglife.mongs.application.battle.port.out.MatchPersistencePort;
 import com.monglife.mongs.application.battle.port.out.MongPersistencePort;
+import com.monglife.mongs.application.battle.port.out.MongReadPort;
 import com.monglife.mongs.application.battle.port.out.QueuePublishPort;
 import com.monglife.mongs.application.battle.port.out.vo.CreateMatchVo;
 import com.monglife.mongs.application.battle.port.out.vo.CreateQueuePlayerVo;
@@ -32,6 +33,8 @@ public class QueueService implements QueueUseCase {
     private final MatchPersistencePort matchPersistencePort;
 
     private final MongPersistencePort mongPersistencePort;
+
+    private final MongReadPort mongReadPort;
 
     private final QueuePublishPort queuePublishPort;
 
@@ -108,7 +111,7 @@ public class QueueService implements QueueUseCase {
 
         queuePlayers.forEach(queuePlayer -> {
             // 몽 조회
-            mongPersistencePort.getMongPort(queuePlayer.getMongId()).ifPresentOrElse(mong -> {
+            mongReadPort.getMongPort(queuePlayer.getMongId()).ifPresentOrElse(mong -> {
                 // 몽을 매치 플레이어 변환 후 저장
                 GenerateMatchPlayerVo generateMatchPlayerVo = GenerateMatchPlayerVo.builder()
                         .accountId(mong.getAccountId())

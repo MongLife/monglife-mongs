@@ -1,6 +1,7 @@
 package com.monglife.mongs.adapter.in.member.web.controller;
 
 import com.monglife.core.dto.response.ResponseDto;
+import com.monglife.module.common.logging.annotation.EntryLoggingPoint;
 import com.monglife.module.common.security.principal.Passport;
 import com.monglife.mongs.adapter.in.member.web.enums.AdapterInMemberWebResponse;
 import com.monglife.mongs.adapter.in.member.web.dto.request.ExchangeStarPointRequestDto;
@@ -31,7 +32,8 @@ public class PlayerController {
     /**
      * 플레이어 등록
      */
-    @PostMapping("")
+    @EntryLoggingPoint
+    @PostMapping
     public ResponseEntity<ResponseDto<?>> createPlayer(
             @AuthenticationPrincipal Passport passport
     ) {
@@ -48,7 +50,8 @@ public class PlayerController {
     /**
      * 플레이어 조회
      */
-    @GetMapping("")
+    @EntryLoggingPoint
+    @GetMapping
     public ResponseEntity<ResponseDto<GetPlayerResponseDto>> getPlayer(
             @AuthenticationPrincipal Passport passport
     ) {
@@ -71,6 +74,7 @@ public class PlayerController {
     /**
      * 슬롯 구매
      */
+    @EntryLoggingPoint
     @PatchMapping("/slot")
     public ResponseEntity<ResponseDto<BuySlotResponseDto>> buySlot(
             @AuthenticationPrincipal Passport passport
@@ -94,6 +98,7 @@ public class PlayerController {
     /**
      * 스타 포인트 환전
      */
+    @EntryLoggingPoint
     @PostMapping("/exchange/starPoint")
     public ResponseEntity<ResponseDto<ExchangeStarPointResponseDto>> exchangeStarPoint(
             @AuthenticationPrincipal Passport passport,
