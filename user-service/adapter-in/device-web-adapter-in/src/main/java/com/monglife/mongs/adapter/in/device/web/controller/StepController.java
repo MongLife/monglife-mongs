@@ -37,15 +37,23 @@ public class StepController {
             @Valid @RequestBody ExchangeCurrentWalkingCountRequestDto exchangeCurrentWalkingCountRequestDto
     ) {
 
+        UpdateTotalWalkingCountCommand updateTotalWalkingCountCommand = UpdateTotalWalkingCountCommand.builder()
+                .deviceId(passport.getDeviceId())
+                .totalWalkingCount(exchangeCurrentWalkingCountRequestDto.getTotalWalkingCount())
+                .deviceBootedAt(exchangeCurrentWalkingCountRequestDto.getDeviceBootedAt())
+                .build();
+
+        // 걸음 수 동기화
+        stepUseCase.updateTotalWalkingCountUseCase(updateTotalWalkingCountCommand);
+
         ExchangeCurrentWalkingCountCommand command = ExchangeCurrentWalkingCountCommand.builder()
                 .accountId(passport.getAccountId())
                 .deviceId(passport.getDeviceId())
                 .mongId(exchangeCurrentWalkingCountRequestDto.getMongId())
                 .walkingCount(exchangeCurrentWalkingCountRequestDto.getWalkingCount())
-                .totalWalkingCount(exchangeCurrentWalkingCountRequestDto.getTotalWalkingCount())
-                .deviceBootedAt(exchangeCurrentWalkingCountRequestDto.getDeviceBootedAt())
                 .build();
 
+        // 걸음 수 환전
         Step step = stepUseCase.exchangeCurrentWalkingCountUseCase(command);
 
         ExchangeCurrentWalkingCountResponseDto exchangeCurrentWalkingCountResponseDto = ExchangeCurrentWalkingCountResponseDto.builder()

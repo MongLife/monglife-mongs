@@ -1,5 +1,6 @@
 package com.monglife.mongs.domain.device.model;
 
+import com.monglife.mongs.domain.device.exception.InvalidDeviceBootedAtException;
 import com.monglife.mongs.domain.device.exception.InvalidTotalWalkingCountException;
 import com.monglife.mongs.domain.device.exception.NotEnoughCurrentWalkingCountException;
 import lombok.Builder;
@@ -110,11 +111,13 @@ public class Step {
      * @param deviceBootedDt 기기에 기록된 부팅 시간
      */
     private void reset(Integer totalWalkingCount, LocalDateTime deviceBootedDt) {
-        if (this.deviceBootedAt.isBefore(deviceBootedDt)) {
-            this.walkingCount = this.walkingCount + this.totalWalkingCount - this.consumeWalkingCount;
-            this.totalWalkingCount = totalWalkingCount;
-            this.consumeWalkingCount = 0;
-            this.deviceBootedAt = deviceBootedDt;
+        if (this.deviceBootedAt.isAfter(deviceBootedDt) || this.deviceBootedAt.equals(deviceBootedDt)) {
+            throw new InvalidDeviceBootedAtException();
         }
+
+        this.walkingCount = this.walkingCount + this.totalWalkingCount - this.consumeWalkingCount;
+        this.totalWalkingCount = totalWalkingCount;
+        this.consumeWalkingCount = 0;
+        this.deviceBootedAt = deviceBootedDt;
     }
 }
