@@ -3,6 +3,8 @@ dependencies {
     implementation project(":character-service:application:mong-application")
     // core layer
     implementation project(":common:core:kafka-event-core")
+    // monglife-logging
+    implementation "com.github.monglife.monglife-module-common:monglife-module-common-logging:${monglifeModuleCommonVersion}"
     // monglife-jpa
     implementation "com.github.monglife.monglife-module-common:monglife-module-common-jpa:${monglifeModuleCommonVersion}"
     // monglife-kafka
