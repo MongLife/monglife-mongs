@@ -7,6 +7,7 @@ import com.monglife.mongs.application.mong.port.exception.NotExistsTrainingTypeE
 import com.monglife.mongs.application.mong.port.in.ActivityUseCase;
 import com.monglife.mongs.application.mong.port.in.command.GetTrainingTypeCommand;
 import com.monglife.mongs.application.mong.port.in.command.TrainingEndCommand;
+import com.monglife.mongs.application.mong.port.in.vo.TrainingEndVo;
 import com.monglife.mongs.application.mong.port.out.MongPersistencePort;
 import com.monglife.mongs.application.mong.port.out.MongReadPort;
 import com.monglife.mongs.domain.mong.model.Mong;
@@ -51,7 +52,7 @@ public class ActivityService  implements ActivityUseCase {
     @Transactional
     @CheckMongDead
     @PublishMongPort
-    public Mong trainingEndUseCase(TrainingEndCommand command) {
+    public TrainingEndVo trainingEndUseCase(TrainingEndCommand command) {
 
         // 훈련 타입 조회
         TrainingType trainingType = mongReadPort.getTrainingTypePort(command.getTrainingCode())
@@ -62,7 +63,9 @@ public class ActivityService  implements ActivityUseCase {
                 .verify(command.getAccountId());
 
         // 스코어 달성 시 페이 포인트 증가
-        if (trainingType.getScore() <= command.getScore()) {
+        boolean isSuccess = trainingType.getScore() <= command.getScore();
+
+        if (isSuccess) {
             mong.trainingWithReward(trainingType);
         } else {
             mong.training(trainingType);
@@ -72,6 +75,11 @@ public class ActivityService  implements ActivityUseCase {
         mong = mongPersistencePort.saveMongPort(mong)
                 .orElseThrow(NotExistsMongException::new);
 
-        return mong;
+        return TrainingEndVo.builder()
+                .isSuccess(isSuccess)
+                .rewardPayPoint(trainingType.getPayPoint())
+                .score(command.getScore())
+                .mong(mong)
+                .build();
     }
 }

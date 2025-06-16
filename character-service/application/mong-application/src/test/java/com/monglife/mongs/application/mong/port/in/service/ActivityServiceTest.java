@@ -18,8 +18,7 @@ import org.mockito.Mockito;
 import java.util.List;
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 
 class ActivityServiceTest {
 
@@ -124,13 +123,16 @@ class ActivityServiceTest {
             var expected = activityUseCase.trainingEndUseCase(command);
 
             // assert
-            assertEquals(status, expected.getExp());
-            assertEquals(maxStatus - status, expected.getStrength());
-            assertEquals(maxStatus - status, expected.getSatiety());
-            assertEquals(maxStatus - status, expected.getFatigue());
-            assertEquals(maxStatus - status, expected.getWeight());
-            assertEquals(1, expected.getTrainingCount());
-            assertEquals(payPoint, expected.getPayPoint());
+            assertEquals(status, expected.getMong().getExp());
+            assertTrue(expected.getIsSuccess());
+            assertEquals(trainingType.getPayPoint(), expected.getRewardPayPoint());
+            assertEquals(score, expected.getScore());
+            assertEquals(maxStatus - status, expected.getMong().getStrength());
+            assertEquals(maxStatus - status, expected.getMong().getSatiety());
+            assertEquals(maxStatus - status, expected.getMong().getFatigue());
+            assertEquals(maxStatus - status, expected.getMong().getWeight());
+            assertEquals(1, expected.getMong().getTrainingCount());
+            assertEquals(payPoint, expected.getMong().getPayPoint());
         }
 
         @Test

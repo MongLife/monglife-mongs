@@ -177,6 +177,7 @@ public class InteractionController {
 
         List<GetInventoryResponseDto> getInventoryResponseDtos = interactionUseCase.getInventoriesUseCase(command).stream()
                 .map(inventory -> GetInventoryResponseDto.builder()
+                        .mongId(inventory.getMongId())
                         .inventoryId(inventory.getInventoryId())
                         .inventoryCode(inventory.getInventoryCode())
                         .inventoryName(inventory.getInventoryName())
@@ -240,6 +241,7 @@ public class InteractionController {
         BuyRandomDrawTicketResponseDto buyRandomDrawTicketResponseDto = BuyRandomDrawTicketResponseDto.builder()
                 .mongId(mong.getMongId())
                 .payPoint(mong.getPayPoint())
+                .randomDrawTicketCount(mong.getRandomDrawTicketCount())
                 .build();
 
         return ResponseEntity.ok(AdapterInMongWebResponse.BUY_RANDOM_DRAW_TICKET.toResponseDto(buyRandomDrawTicketResponseDto));

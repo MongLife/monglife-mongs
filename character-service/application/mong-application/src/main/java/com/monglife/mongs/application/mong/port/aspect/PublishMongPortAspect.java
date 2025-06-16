@@ -10,6 +10,8 @@ import org.aspectj.lang.annotation.AfterReturning;
 import org.aspectj.lang.annotation.Aspect;
 import org.springframework.stereotype.Component;
 
+import java.lang.reflect.Field;
+
 @Aspect
 @Component
 @RequiredArgsConstructor
@@ -19,7 +21,15 @@ public class PublishMongPortAspect {
 
     @AfterReturning(value = "@annotation(publishMongPort)", returning = "returnValue")
     public void afterReturning(JoinPoint joinPoint, PublishMongPort publishMongPort, Object returnValue) {
-        if (returnValue instanceof Mong mong) {
+        Mong mong;
+
+        if (returnValue instanceof Mong) {
+            mong = (Mong) returnValue;
+        } else {
+            mong = this.exportMong(returnValue);
+        }
+
+        if (mong != null) {
             // 몽 변동 비동기 응답 전송
             mongPublishPort.publishMongPort(mong);
 
@@ -77,5 +87,22 @@ public class PublishMongPortAspect {
         } else {
             throw new NotExistsMongException();
         }
+    }
+
+    /**
+     * 몽 필드 추출
+     */
+    private Mong exportMong(Object obj) {
+        try {
+            Field[] fields = obj.getClass().getDeclaredFields();
+            for (Field field : fields) {
+                if (Mong.class.isAssignableFrom(field.getType())) {
+                    field.setAccessible(true);
+                    return (Mong) field.get(obj);
+                }
+            }
+        } catch (IllegalAccessException ignored) {}
+
+        return null;
     }
 }

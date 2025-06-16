@@ -13,6 +13,8 @@ public class GetInventoryResponseDto {
 
     private Long inventoryId;
 
+    private Long mongId;
+
     private String inventoryCode;
 
     private String inventoryName;
@@ -20,8 +22,9 @@ public class GetInventoryResponseDto {
     private InventoryTypeCode inventoryTypeCode;
 
     @Builder
-    public GetInventoryResponseDto(Long inventoryId, String inventoryCode, String inventoryName, InventoryTypeCode inventoryTypeCode) {
+    public GetInventoryResponseDto(Long inventoryId, Long mongId, String inventoryCode, String inventoryName, InventoryTypeCode inventoryTypeCode) {
         this.inventoryId = inventoryId;
+        this.mongId = mongId;
         this.inventoryCode = inventoryCode;
         this.inventoryName = inventoryName;
         this.inventoryTypeCode = inventoryTypeCode;

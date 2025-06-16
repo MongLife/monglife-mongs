@@ -44,7 +44,10 @@ public class ManagementController {
                         .mongId(mong.getMongId())
                         .name(mong.getName())
                         .mongCode(mong.getMongCode())
+                        .mongName(mong.getMongName())
                         .payPoint(mong.getPayPoint())
+                        .level(mong.getLevel())
+                        .randomDrawTicketCount(mong.getRandomDrawTicketCount())
                         .expRatio(mong.getExp() / mong.getMaxStatus() * 100)
                         .strengthRatio(mong.getStrength() / mong.getMaxStatus() * 100)
                         .healthyRatio(mong.getHealthy() / mong.getMaxStatus() * 100)
@@ -84,7 +87,10 @@ public class ManagementController {
                 .mongId(mong.getMongId())
                 .name(mong.getName())
                 .mongCode(mong.getMongCode())
+                .mongName(mong.getMongName())
                 .payPoint(mong.getPayPoint())
+                .level(mong.getLevel())
+                .randomDrawTicketCount(mong.getRandomDrawTicketCount())
                 .expRatio(mong.getExp() / mong.getMaxStatus() * 100)
                 .strengthRatio(mong.getStrength() / mong.getMaxStatus() * 100)
                 .healthyRatio(mong.getHealthy() / mong.getMaxStatus() * 100)
@@ -124,7 +130,10 @@ public class ManagementController {
                 .mongId(mong.getMongId())
                 .name(mong.getName())
                 .mongCode(mong.getMongCode())
+                .mongName(mong.getMongName())
                 .payPoint(mong.getPayPoint())
+                .level(mong.getLevel())
+                .randomDrawTicketCount(mong.getRandomDrawTicketCount())
                 .expRatio(mong.getExp() / mong.getMaxStatus() * 100)
                 .strengthRatio(mong.getStrength() / mong.getMaxStatus() * 100)
                 .healthyRatio(mong.getHealthy() / mong.getMaxStatus() * 100)
@@ -259,7 +268,7 @@ public class ManagementController {
      */
     @EntryLoggingPoint
     @PutMapping("/evolution/{mongId}")
-    public ResponseEntity<ResponseDto<?>> evolutionMong(@AuthenticationPrincipal Passport passport, @PathVariable("mongId") @NotNull @Min(1) Long mongId) {
+    public ResponseEntity<ResponseDto<EvolutionMongResponseDto>> evolutionMong(@AuthenticationPrincipal Passport passport, @PathVariable("mongId") @NotNull @Min(1) Long mongId) {
 
         EvolutionMongCommand command = EvolutionMongCommand.builder()
                 .accountId(passport.getAccountId())
@@ -288,7 +297,7 @@ public class ManagementController {
      */
     @EntryLoggingPoint
     @PutMapping("/graduate/{mongId}")
-    public ResponseEntity<ResponseDto<?>> graduateMong(@AuthenticationPrincipal Passport passport, @PathVariable("mongId") @NotNull @Min(1) Long mongId) {
+    public ResponseEntity<ResponseDto<GraduateMongResponseDto>> graduateMong(@AuthenticationPrincipal Passport passport, @PathVariable("mongId") @NotNull @Min(1) Long mongId) {
 
         GraduateMongCommand command = GraduateMongCommand.builder()
                 .accountId(passport.getAccountId())

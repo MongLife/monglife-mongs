@@ -10,7 +10,7 @@ import com.monglife.mongs.adapter.in.mong.web.enums.AdapterInMongWebResponse;
 import com.monglife.mongs.application.mong.port.in.ActivityUseCase;
 import com.monglife.mongs.application.mong.port.in.command.GetTrainingTypeCommand;
 import com.monglife.mongs.application.mong.port.in.command.TrainingEndCommand;
-import com.monglife.mongs.domain.mong.model.Mong;
+import com.monglife.mongs.application.mong.port.in.vo.TrainingEndVo;
 import com.monglife.mongs.domain.mong.model.TrainingType;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
@@ -105,19 +105,22 @@ public class ActivityController {
                 .score(trainingEndRequestDto.getScore())
                 .build();
 
-        Mong mong = activityUseCase.trainingEndUseCase(command);
+        TrainingEndVo trainingEndVo = activityUseCase.trainingEndUseCase(command);
 
         TrainingEndResponseDto trainingEndResponseDto = TrainingEndResponseDto.builder()
-                .mongId(mong.getMongId())
-                .payPoint(mong.getPayPoint())
-                .expRatio(mong.getExp() / mong.getMaxStatus() * 100)
-                .strengthRatio(mong.getStrength() / mong.getMaxStatus() * 100)
-                .healthyRatio(mong.getHealthy() / mong.getMaxStatus() * 100)
-                .satietyRatio(mong.getSatiety() / mong.getMaxStatus() * 100)
-                .fatigueRatio(mong.getFatigue() / mong.getMaxStatus() * 100)
-                .weight(mong.getWeight())
-                .stateCode(mong.getStateCode())
-                .statusCode(mong.getStatusCode())
+                .isSuccess(trainingEndVo.getIsSuccess())
+                .rewardPayPoint(trainingEndVo.getRewardPayPoint())
+                .score(trainingEndVo.getScore())
+                .mongId(trainingEndVo.getMong().getMongId())
+                .payPoint(trainingEndVo.getMong().getPayPoint())
+                .expRatio(trainingEndVo.getMong().getExp() / trainingEndVo.getMong().getMaxStatus() * 100)
+                .strengthRatio(trainingEndVo.getMong().getStrength() / trainingEndVo.getMong().getMaxStatus() * 100)
+                .healthyRatio(trainingEndVo.getMong().getHealthy() / trainingEndVo.getMong().getMaxStatus() * 100)
+                .satietyRatio(trainingEndVo.getMong().getSatiety() / trainingEndVo.getMong().getMaxStatus() * 100)
+                .fatigueRatio(trainingEndVo.getMong().getFatigue() / trainingEndVo.getMong().getMaxStatus() * 100)
+                .weight(trainingEndVo.getMong().getWeight())
+                .stateCode(trainingEndVo.getMong().getStateCode())
+                .statusCode(trainingEndVo.getMong().getStatusCode())
                 .build();
 
         return ResponseEntity.ok(AdapterInMongWebResponse.TRAINING_END.toResponseDto(trainingEndResponseDto));

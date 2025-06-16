@@ -9,6 +9,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 
 @Getter
 @Setter
@@ -21,9 +22,23 @@ public class GetMongResponseDto {
 
     private String mongCode;
 
+    private String mongName;
+
+    private MongStateCode stateCode;
+
+    private MongStatusCode statusCode;
+
+    private Integer level;
+
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "HH:mm", timezone = "Asia/Seoul")
+    private LocalTime sleepAt;
+
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "HH:mm", timezone = "Asia/Seoul")
+    private LocalTime wakeupAt;
+
     private Integer payPoint;
 
-    private Double expRatio;
+    private Boolean isSleep;
 
     private Double strengthRatio;
 
@@ -33,15 +48,13 @@ public class GetMongResponseDto {
 
     private Double fatigueRatio;
 
+    private Double expRatio;
+
     private Double weight;
-
-    private MongStateCode stateCode;
-
-    private MongStatusCode statusCode;
 
     private Integer poopCount;
 
-    private Boolean isSleep;
+    private Integer randomDrawTicketCount;
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS", timezone = "Asia/Seoul")
     private LocalDateTime createdAt;
@@ -50,21 +63,26 @@ public class GetMongResponseDto {
     private LocalDateTime updatedAt;
 
     @Builder
-    public GetMongResponseDto(Long mongId, String name, String mongCode, Integer payPoint, Double expRatio, Double strengthRatio, Double healthyRatio, Double satietyRatio, Double fatigueRatio, Double weight, MongStateCode stateCode, MongStatusCode statusCode, Integer poopCount, Boolean isSleep, LocalDateTime createdAt, LocalDateTime updatedAt) {
+    public GetMongResponseDto(Long mongId, String name, String mongCode, String mongName, MongStateCode stateCode, MongStatusCode statusCode, Integer level, LocalTime sleepAt, LocalTime wakeupAt, Integer payPoint, Boolean isSleep, Double strengthRatio, Double healthyRatio, Double satietyRatio, Double fatigueRatio, Double expRatio, Double weight, Integer poopCount, Integer randomDrawTicketCount, LocalDateTime createdAt, LocalDateTime updatedAt) {
         this.mongId = mongId;
         this.name = name;
         this.mongCode = mongCode;
+        this.mongName = mongName;
+        this.stateCode = stateCode;
+        this.statusCode = statusCode;
+        this.level = level;
+        this.sleepAt = sleepAt;
+        this.wakeupAt = wakeupAt;
         this.payPoint = payPoint;
-        this.expRatio = expRatio;
+        this.isSleep = isSleep;
         this.strengthRatio = strengthRatio;
         this.healthyRatio = healthyRatio;
         this.satietyRatio = satietyRatio;
         this.fatigueRatio = fatigueRatio;
+        this.expRatio = expRatio;
         this.weight = weight;
-        this.stateCode = stateCode;
-        this.statusCode = statusCode;
         this.poopCount = poopCount;
-        this.isSleep = isSleep;
+        this.randomDrawTicketCount = randomDrawTicketCount;
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
     }

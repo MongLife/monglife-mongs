@@ -4,7 +4,7 @@ dependencies {
     // core layer
     implementation project(":common:core:kafka-event-core")
     // monglife-logging
-    implementation "com.github.monglife.monglife-module-common:monglife-module-common-logging:${monglifeModuleCommonVersion}"
+    implementation "com.github.monglife.monglife-module-common:monglife-module-common-logging-core:${monglifeModuleCommonVersion}"
     // monglife-jpa
     implementation "com.github.monglife.monglife-module-common:monglife-module-common-jpa:${monglifeModuleCommonVersion}"
     // monglife-kafka
