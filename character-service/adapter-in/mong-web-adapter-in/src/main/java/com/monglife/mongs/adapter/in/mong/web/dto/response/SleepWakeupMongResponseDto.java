@@ -11,7 +11,7 @@ import java.time.LocalDateTime;
 @Getter
 @Setter
 @NoArgsConstructor
-public class SleepWakeupResponseDto {
+public class SleepWakeupMongResponseDto {
 
     private Long mongId;
 
@@ -24,7 +24,7 @@ public class SleepWakeupResponseDto {
     private LocalDateTime updatedAt;
 
     @Builder
-    public SleepWakeupResponseDto(Long mongId, Boolean isSleep, LocalDateTime createdAt, LocalDateTime updatedAt) {
+    public SleepWakeupMongResponseDto(Long mongId, Boolean isSleep, LocalDateTime createdAt, LocalDateTime updatedAt) {
         this.mongId = mongId;
         this.isSleep = isSleep;
         this.createdAt = createdAt;

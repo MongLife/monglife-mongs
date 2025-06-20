@@ -205,7 +205,10 @@ public class ManagementController {
      */
     @EntryLoggingPoint
     @PutMapping("/sleep/{mongId}")
-    public ResponseEntity<ResponseDto<SleepWakeupResponseDto>> sleepMong(@AuthenticationPrincipal Passport passport, @PathVariable("mongId") @NotNull @Min(1) Long mongId) {
+    public ResponseEntity<ResponseDto<SleepWakeupMongResponseDto>> sleepMong(
+            @AuthenticationPrincipal Passport passport,
+            @PathVariable("mongId") @NotNull @Min(1) Long mongId
+    ) {
 
         Mong mong = managementUseCase.getMongUseCase(GetMongCommand.builder()
                 .accountId(passport.getAccountId())
@@ -228,14 +231,14 @@ public class ManagementController {
             mong = managementUseCase.sleepMongUseCase(command);
         }
 
-        SleepWakeupResponseDto sleepWakeupResponseDto = SleepWakeupResponseDto.builder()
+        SleepWakeupMongResponseDto sleepWakeupMongResponseDto = SleepWakeupMongResponseDto.builder()
                 .mongId(mong.getMongId())
                 .isSleep(mong.getIsSleep())
                 .createdAt(mong.getCreatedAt())
                 .updatedAt(mong.getUpdatedAt())
                 .build();
 
-        return ResponseEntity.ok(AdapterInMongWebResponse.SLEEP_WAKEUP_MONG.toResponseDto(sleepWakeupResponseDto));
+        return ResponseEntity.ok(AdapterInMongWebResponse.SLEEP_WAKEUP_MONG.toResponseDto(sleepWakeupMongResponseDto));
     }
 
     /**
@@ -243,7 +246,10 @@ public class ManagementController {
      */
     @EntryLoggingPoint
     @PostMapping("/poopClean/{mongId}")
-    public ResponseEntity<ResponseDto<PoopCleanMongResponseDto>> poopCleanMong(@AuthenticationPrincipal Passport passport, @PathVariable("mongId") @NotNull @Min(1) Long mongId) {
+    public ResponseEntity<ResponseDto<PoopCleanMongResponseDto>> poopCleanMong(
+            @AuthenticationPrincipal Passport passport,
+            @PathVariable("mongId") @NotNull @Min(1) Long mongId
+    ) {
 
         PoopCleanMongCommand command = PoopCleanMongCommand.builder()
                 .accountId(passport.getAccountId())
@@ -268,7 +274,10 @@ public class ManagementController {
      */
     @EntryLoggingPoint
     @PutMapping("/evolution/{mongId}")
-    public ResponseEntity<ResponseDto<EvolutionMongResponseDto>> evolutionMong(@AuthenticationPrincipal Passport passport, @PathVariable("mongId") @NotNull @Min(1) Long mongId) {
+    public ResponseEntity<ResponseDto<EvolutionMongResponseDto>> evolutionMong(
+            @AuthenticationPrincipal Passport passport,
+            @PathVariable("mongId") @NotNull @Min(1) Long mongId
+    ) {
 
         EvolutionMongCommand command = EvolutionMongCommand.builder()
                 .accountId(passport.getAccountId())
@@ -297,7 +306,10 @@ public class ManagementController {
      */
     @EntryLoggingPoint
     @PutMapping("/graduate/{mongId}")
-    public ResponseEntity<ResponseDto<GraduateMongResponseDto>> graduateMong(@AuthenticationPrincipal Passport passport, @PathVariable("mongId") @NotNull @Min(1) Long mongId) {
+    public ResponseEntity<ResponseDto<GraduateMongResponseDto>> graduateMong(
+            @AuthenticationPrincipal Passport passport,
+            @PathVariable("mongId") @NotNull @Min(1) Long mongId
+    ) {
 
         GraduateMongCommand command = GraduateMongCommand.builder()
                 .accountId(passport.getAccountId())

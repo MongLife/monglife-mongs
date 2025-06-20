@@ -36,7 +36,7 @@ public class ActivityController {
      */
     @EntryLoggingPoint
     @GetMapping("/training")
-    public ResponseEntity<ResponseDto<List<GetTrainingTypeResponseDto>>> getTraining() {
+    public ResponseEntity<ResponseDto<List<GetTrainingTypeResponseDto>>> getTrainingTypes() {
 
         List<GetTrainingTypeResponseDto> getTrainingTypeResponseDtos = activityUseCase.getTrainingTypesUseCase().stream()
                 .map(trainingType -> GetTrainingTypeResponseDto.builder()
@@ -63,7 +63,7 @@ public class ActivityController {
      */
     @EntryLoggingPoint
     @GetMapping("/training/{trainingCode}")
-    public ResponseEntity<ResponseDto<GetTrainingTypeResponseDto>> getTraining(@PathVariable("trainingCode") @NotBlank String trainingCode) {
+    public ResponseEntity<ResponseDto<GetTrainingTypeResponseDto>> getTrainingType(@PathVariable("trainingCode") @NotBlank String trainingCode) {
 
         GetTrainingTypeCommand command = GetTrainingTypeCommand.builder()
                 .trainingCode(trainingCode)
@@ -93,7 +93,7 @@ public class ActivityController {
      */
     @EntryLoggingPoint
     @PostMapping("/training")
-    public ResponseEntity<ResponseDto<TrainingEndResponseDto>> trainingRunnerEnd(
+    public ResponseEntity<ResponseDto<TrainingEndResponseDto>> trainingEnd(
             @AuthenticationPrincipal Passport passport,
             @Valid @RequestBody TrainingEndRequestDto trainingEndRequestDto
     ) {

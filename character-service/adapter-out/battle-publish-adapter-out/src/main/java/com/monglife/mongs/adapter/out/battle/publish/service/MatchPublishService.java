@@ -33,6 +33,7 @@ public class MatchPublishService implements MatchPublishPort {
                                 .deviceId(matchPlayer.getDeviceId())
                                 .mongCode(matchPlayer.getMongCode())
                                 .mongName(matchPlayer.getMongName())
+                                .name(matchPlayer.getName())
                                 .hp(matchPlayer.getHp())
                                 .roundCode(matchPlayer.getRoundCode())
                                 .build())

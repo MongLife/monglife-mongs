@@ -18,12 +18,15 @@ public class QueuePlayerVo {
 
     private final String mongName;
 
+    private final String name;
+
     @Builder
-    public QueuePlayerVo(String deviceId, String playerId, Long mongId, String mongCode, String mongName) {
+    public QueuePlayerVo(String deviceId, String playerId, Long mongId, String mongCode, String mongName, String name) {
         this.deviceId = deviceId;
         this.playerId = playerId;
         this.mongId = mongId;
         this.mongCode = mongCode;
         this.mongName = mongName;
+        this.name = name;
     }
 }

@@ -3,8 +3,8 @@ package com.monglife.mongs.adapter.in.member.web.controller;
 import com.monglife.core.dto.response.ResponseDto;
 import com.monglife.module.common.logging.annotation.EntryLoggingPoint;
 import com.monglife.module.common.security.principal.Passport;
-import com.monglife.mongs.adapter.in.member.web.enums.AdapterInMemberWebResponse;
 import com.monglife.mongs.adapter.in.member.web.dto.request.CreateFeedbackRequestDto;
+import com.monglife.mongs.adapter.in.member.web.enums.AdapterInMemberWebResponse;
 import com.monglife.mongs.application.member.port.in.FeedbackUseCase;
 import com.monglife.mongs.application.member.port.in.command.CreateFeedbackCommand;
 import jakarta.validation.Valid;
@@ -29,7 +29,7 @@ public class FeedbackController {
      * 오류 신고 등록
      */
     @EntryLoggingPoint
-    @PostMapping("")
+    @PostMapping
     public ResponseEntity<ResponseDto<?>> createFeedback(
             @AuthenticationPrincipal Passport passport,
             @Valid @RequestBody CreateFeedbackRequestDto createFeedbackRequestDto
