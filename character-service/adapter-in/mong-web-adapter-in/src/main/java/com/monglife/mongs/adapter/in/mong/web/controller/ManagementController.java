@@ -298,6 +298,8 @@ public class ManagementController {
                 .healthyRatio(mong.getHealthy() / mong.getMaxStatus() * 100)
                 .satietyRatio(mong.getSatiety() / mong.getMaxStatus() * 100)
                 .fatigueRatio(mong.getFatigue() / mong.getMaxStatus() * 100)
+                .stateCode(mong.getStateCode())
+                .statusCode(mong.getStatusCode())
                 .createdAt(mong.getCreatedAt())
                 .updatedAt(mong.getUpdatedAt())
                 .build();
