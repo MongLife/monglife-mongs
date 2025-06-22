@@ -144,6 +144,8 @@ public class ManagementController {
                 .satietyRatio(mong.getSatiety() / mong.getMaxStatus() * 100)
                 .fatigueRatio(mong.getFatigue() / mong.getMaxStatus() * 100)
                 .weight(mong.getWeight())
+                .sleepAt(mong.getSleepAt())
+                .wakeupAt(mong.getWakeupAt())
                 .stateCode(mong.getStateCode())
                 .statusCode(mong.getStatusCode())
                 .poopCount(mong.getPoopCount())
