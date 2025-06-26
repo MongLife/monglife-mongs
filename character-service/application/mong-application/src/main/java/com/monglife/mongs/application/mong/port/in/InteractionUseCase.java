@@ -1,5 +1,6 @@
 package com.monglife.mongs.application.mong.port.in;
 
+import com.monglife.core.vo.page.PageResult;
 import com.monglife.mongs.application.mong.port.in.command.*;
 import com.monglife.mongs.domain.mong.model.*;
 
@@ -30,7 +31,7 @@ public interface InteractionUseCase {
     /**
      * 인벤 아이템 목록 조회
      */
-    List<Inventory> getInventoriesUseCase(GetInventoriesCommand command);
+    PageResult<Inventory> getInventoriesUseCase(GetInventoriesCommand command);
 
     /**
      * 인벤 소비성 아이템 사용

@@ -66,7 +66,6 @@ public class MongPublishService implements MongPublishPort {
                 .accountId(accountId)
                 .title(title)
                 .body(body)
-                .isAppForegroundMessage(false)
                 .build());
     }
 }

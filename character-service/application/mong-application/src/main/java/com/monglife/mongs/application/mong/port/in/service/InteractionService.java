@@ -1,5 +1,6 @@
 package com.monglife.mongs.application.mong.port.in.service;
 
+import com.monglife.core.vo.page.PageResult;
 import com.monglife.mongs.application.mong.port.annotation.CheckMongDead;
 import com.monglife.mongs.application.mong.port.annotation.PublishMongPort;
 import com.monglife.mongs.application.mong.port.exception.*;
@@ -125,13 +126,13 @@ public class InteractionService implements InteractionUseCase {
      */
     @Override
     @Transactional
-    public List<Inventory> getInventoriesUseCase(GetInventoriesCommand command) {
+    public PageResult<Inventory> getInventoriesUseCase(GetInventoriesCommand command) {
 
         Mong mong = mongReadPort.getMongPort(command.getMongId())
                 .orElseThrow(NotExistsMongException::new)
                 .verify(command.getAccountId());
 
-        return mongReadPort.getInventoriesPort(mong.getMongId());
+        return mongReadPort.getInventoriesPort(mong.getMongId(), command.getPage(), command.getSize());
     }
 
     /**

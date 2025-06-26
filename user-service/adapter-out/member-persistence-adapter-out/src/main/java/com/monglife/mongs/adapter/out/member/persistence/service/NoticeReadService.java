@@ -1,5 +1,6 @@
 package com.monglife.mongs.adapter.out.member.persistence.service;
 
+import com.monglife.core.vo.page.PageResult;
 import com.monglife.mongs.adapter.out.member.persistence.entity.NoticeEntity;
 import com.monglife.mongs.adapter.out.member.persistence.repository.NoticeRepository;
 import com.monglife.mongs.application.member.port.out.NoticeReadPort;
@@ -7,6 +8,7 @@ import com.monglife.mongs.domain.member.model.Notice;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -41,14 +43,24 @@ public class NoticeReadService implements NoticeReadPort {
      */
     @Override
     @Transactional
-    public List<Notice> getNoticesPort(Integer page, Integer size) {
+    public PageResult<Notice> getNoticesPort(Integer page, Integer size, Boolean containHided) {
 
-        PageRequest pageRequest = PageRequest.of(page, size);
+        PageRequest pageRequest = PageRequest.of(page - 1, size, Sort.by(Sort.Direction.DESC, "createdAt"));
 
-        Page<NoticeEntity> noticeEntities = noticeRepository.findAll(pageRequest);
+        Page<NoticeEntity> noticesPage = containHided
+                ? noticeRepository.findAll(pageRequest)
+                : noticeRepository.findByIsHidedFalse(pageRequest);
 
-        return noticeEntities.stream()
+        List<Notice> notices = noticesPage.stream()
                 .map(NoticeEntity::toDomain)
-                .collect(Collectors.toList()) ;
+                .collect(Collectors.toList());
+
+        return PageResult.<Notice>builder()
+                .page(page)
+                .size(size)
+                .totalPage(noticesPage.getTotalPages())
+                .isLastPage(page == noticesPage.getTotalPages())
+                .result(notices)
+                .build();
     }
 }

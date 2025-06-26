@@ -1,6 +1,7 @@
 package com.monglife.mongs.adapter.in.member.web.controller;
 
 import com.monglife.core.dto.response.ResponseDto;
+import com.monglife.core.vo.page.PageResult;
 import com.monglife.module.common.logging.annotation.EntryLoggingPoint;
 import com.monglife.mongs.adapter.in.member.web.dto.response.GetNoticeResponseDto;
 import com.monglife.mongs.adapter.in.member.web.enums.AdapterInMemberWebResponse;
@@ -61,7 +62,7 @@ public class NoticeController {
     @GetMapping
     public ResponseEntity<ResponseDto<List<GetNoticeResponseDto>>> getNotices(
             @RequestParam("page") @NotNull @Min(1) Integer page,
-            @RequestParam("size") @NotNull @Min(1) @Max(50) Integer size
+            @RequestParam("size") @NotNull @Min(1) @Max(10) Integer size
     ) {
 
         GetNoticesCommand command = GetNoticesCommand.builder()
@@ -69,9 +70,9 @@ public class NoticeController {
                 .size(size)
                 .build();
 
-        List<Notice> notices = noticeUseCase.getNoticesUseCase(command);
+        PageResult<Notice> noticesPage = noticeUseCase.getNoticesUseCase(command);
 
-        List<GetNoticeResponseDto> getNoticeResponseDtos = notices.stream()
+        List<GetNoticeResponseDto> getNoticeResponseDtos = noticesPage.getResult().stream()
                 .map(notice -> GetNoticeResponseDto.builder()
                         .noticeId(notice.getNoticeId())
                         .title(notice.getTitle())
@@ -82,6 +83,11 @@ public class NoticeController {
                         .build())
                 .toList();
 
-        return ResponseEntity.ok(AdapterInMemberWebResponse.GET_NOTICES.toResponseDto(getNoticeResponseDtos));
+        return ResponseEntity.ok(AdapterInMemberWebResponse.GET_NOTICES.toPageResponseDto(
+                getNoticeResponseDtos,
+                noticesPage.getPage(),
+                noticesPage.getSize(),
+                noticesPage.getTotalPage(),
+                noticesPage.getIsLastPage()));
     }
 }
