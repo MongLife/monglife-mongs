@@ -19,6 +19,8 @@ public class EvolutionMongResponseDto {
 
     private String mongCode;
 
+    private Integer level;
+
     private MongStateCode stateCode;
 
     private MongStatusCode statusCode;
@@ -40,9 +42,10 @@ public class EvolutionMongResponseDto {
     private LocalDateTime updatedAt;
 
     @Builder
-    public EvolutionMongResponseDto(Long mongId, String mongCode, MongStateCode stateCode, MongStatusCode statusCode, Double expRatio, Double strengthRatio, Double healthyRatio, Double satietyRatio, Double fatigueRatio, LocalDateTime createdAt, LocalDateTime updatedAt) {
+    public EvolutionMongResponseDto(Long mongId, String mongCode, Integer level, MongStateCode stateCode, MongStatusCode statusCode, Double expRatio, Double strengthRatio, Double healthyRatio, Double satietyRatio, Double fatigueRatio, LocalDateTime createdAt, LocalDateTime updatedAt) {
         this.mongId = mongId;
         this.mongCode = mongCode;
+        this.level = level;
         this.stateCode = stateCode;
         this.statusCode = statusCode;
         this.expRatio = expRatio;

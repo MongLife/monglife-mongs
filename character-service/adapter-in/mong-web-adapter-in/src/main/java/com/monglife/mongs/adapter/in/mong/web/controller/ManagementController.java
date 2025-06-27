@@ -295,6 +295,7 @@ public class ManagementController {
         EvolutionMongResponseDto evolutionMongResponseDto = EvolutionMongResponseDto.builder()
                 .mongId(mong.getMongId())
                 .mongCode(mong.getMongCode())
+                .level(mong.getLevel())
                 .expRatio(mong.getExp() / mong.getMaxStatus() * 100)
                 .strengthRatio(mong.getStrength() / mong.getMaxStatus() * 100)
                 .healthyRatio(mong.getHealthy() / mong.getMaxStatus() * 100)
