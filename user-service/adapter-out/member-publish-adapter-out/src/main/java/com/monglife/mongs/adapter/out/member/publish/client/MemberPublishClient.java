@@ -15,7 +15,7 @@ public class MemberPublishClient {
      * 회원 스타 포인트 변동 사항 비동기 응답
      * @param memberStarPointPublishDto 회원 스타 포인트 변동 사항 비동기 응답 Dto
      */
-    @MqttPublish("/member/starPoint/{topic}")
+    @MqttPublish("/member/{topic}/starPoint")
     public MqttResponseEntity<ResponseDto<MemberStarPointPublishDto>> publishMemberStarPoint(MemberStarPointPublishDto memberStarPointPublishDto) {
 
         String topic = String.valueOf(memberStarPointPublishDto.getAccountId());
@@ -29,7 +29,7 @@ public class MemberPublishClient {
      * 회원 슬롯 수 변동 사항 비동기 응답
      * @param memberSlotCountPublishDto 회원 슬롯 수 변동 사항 비동기 응답 Dto
      */
-    @MqttPublish("/member/slotCount/{topic}")
+    @MqttPublish("/member/{topic}/slotCount")
     public MqttResponseEntity<ResponseDto<MemberSlotCountPublishDto>> publishMemberSlotCount(MemberSlotCountPublishDto memberSlotCountPublishDto) {
 
         String topic = String.valueOf(memberSlotCountPublishDto.getAccountId());
