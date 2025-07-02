@@ -19,13 +19,15 @@ public class MongPublishDto {
 
     private String mongCode;
 
+    private String mongName;
+
     private Integer payPoint;
 
     private String stateCode;
 
-    private Boolean isSleep;
-
     private String statusCode;
+
+    private Boolean isSleep;
 
     private Double weight;
 
@@ -39,6 +41,8 @@ public class MongPublishDto {
 
     private Double fatigueRatio;
 
+    private Integer poopCount;
+
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS", timezone = "Asia/Seoul")
     private LocalDateTime createdAt;
 
@@ -46,20 +50,22 @@ public class MongPublishDto {
     private LocalDateTime updatedAt;
 
     @Builder
-    public MongPublishDto(Long mongId, String name, String mongCode, Integer payPoint, String stateCode, Boolean isSleep, String statusCode, Double weight, Double expRatio, Double strengthRatio, Double satietyRatio, Double healthyRatio, Double fatigueRatio, LocalDateTime createdAt, LocalDateTime updatedAt) {
+    public MongPublishDto(Long mongId, String name, String mongCode, String mongName, Integer payPoint, String stateCode, String statusCode, Boolean isSleep, Double weight, Double expRatio, Double strengthRatio, Double satietyRatio, Double healthyRatio, Double fatigueRatio, Integer poopCount, LocalDateTime createdAt, LocalDateTime updatedAt) {
         this.mongId = mongId;
         this.name = name;
         this.mongCode = mongCode;
+        this.mongName = mongName;
         this.payPoint = payPoint;
         this.stateCode = stateCode;
-        this.isSleep = isSleep;
         this.statusCode = statusCode;
+        this.isSleep = isSleep;
         this.weight = weight;
         this.expRatio = expRatio;
         this.strengthRatio = strengthRatio;
         this.satietyRatio = satietyRatio;
         this.healthyRatio = healthyRatio;
         this.fatigueRatio = fatigueRatio;
+        this.poopCount = poopCount;
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
     }
