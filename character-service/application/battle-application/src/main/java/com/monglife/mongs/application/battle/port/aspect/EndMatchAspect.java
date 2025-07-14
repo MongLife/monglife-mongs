@@ -31,15 +31,17 @@ public class EndMatchAspect {
                 // 승리한 매치 플레이어 조회
                 MatchPlayer winMatchPlayer = match.getWinner();
 
-                // 승리한 매치 플레이어 몽 조회
-                Mong mong = mongPersistencePort.getMongPort(winMatchPlayer.getMongId())
-                        .orElseThrow(NotExistsMongException::new);
+                if (!winMatchPlayer.getIsBot()) {
+                    // 승리한 매치 플레이어 몽 조회
+                    Mong mong = mongPersistencePort.getMongPort(winMatchPlayer.getMongId())
+                            .orElseThrow(NotExistsMongException::new);
 
-                // 매치 승리 보상 적용
-                mong.matchReward(Match.getRewardPayPoint(), Match.getRewardExp());
+                    // 매치 승리 보상 적용
+                    mong.matchReward(Match.getRewardPayPoint(), Match.getRewardExp());
 
-                // 몽 동기화
-                mongPersistencePort.saveMongPort(mong);
+                    // 몽 동기화
+                    mongPersistencePort.saveMongPort(mong);
+                }
             }
         } else {
             throw new NotExistsMatchException();
