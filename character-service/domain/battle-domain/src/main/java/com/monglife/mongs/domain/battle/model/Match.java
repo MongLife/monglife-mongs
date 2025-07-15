@@ -125,7 +125,8 @@ public class Match {
         });
 
         // 마지막 라운드 경우
-        if (this.maxRound < this.round + 1) {
+        if (this.maxRound.equals(this.round)) {
+//        if (this.maxRound < this.round + 1) {
             // 매치 종료
             this.end();
         } else {
