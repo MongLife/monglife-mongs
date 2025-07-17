@@ -83,7 +83,7 @@ public class BattlePublishClient {
      * @param matchEndPublishDto 매치 종료 정보
      * @return 매치 중 종료 시, 비동기 응답
      */
-    @MqttPublish("/battle/match/{topic}")
+    @MqttPublish("/battle/match/{topic}/end")
     public MqttResponseEntity<ResponseDto<MatchEndPublishDto>> publishMatchEnd(MatchEndPublishDto matchEndPublishDto) {
 
         String topic = String.valueOf(matchEndPublishDto.getMatchId());
