@@ -85,7 +85,7 @@ class MatchTest {
             match.pickMatchPlayer(MatchPick.builder()
                     .matchPlayer(matchPlayer)
                     .targetMatchPlayer(targetMatchPlayer)
-                    .round(match.getRound())
+                    .round(match.getCurrentRound())
                     .pickCode(MatchPickCode.MATCH_PICK_ATTACK)
                     .pickValue(matchPlayer.getAttack())
                     .build());
@@ -108,7 +108,7 @@ class MatchTest {
             match.pickMatchPlayer(MatchPick.builder()
                     .matchPlayer(matchPlayer)
                     .targetMatchPlayer(targetMatchPlayer)
-                    .round(match.getRound())
+                    .round(match.getCurrentRound())
                     .pickCode(MatchPickCode.MATCH_PICK_ATTACK)
                     .pickValue(matchPlayer.getAttack())
                     .build());
@@ -121,14 +121,14 @@ class MatchTest {
         @DisplayName("해당 라운드에서 이미 선택한 경우 예외가 발생 한다.")
         void pickMatchWhenAlreadyPicked() {
             // arrange
-            final Match match = MatchPlayerTestUtil.generateTwoMatchPlayerBotMatchWhenRound_1(MATCH_ID, PLAYER_ID, DEVICE_ID, ACCOUNT_ID, MONG_ID, ATTACK, DEFENSE, HEAL, HP);
+            final Match match = MatchPlayerTestUtil.generateTwoMatchPlayerMatchWhenRound_1(MATCH_ID, PLAYER_ID, DEVICE_ID, ACCOUNT_ID, MONG_ID, ATTACK, DEFENSE, HEAL, HP);
             final MatchPlayer matchPlayer = match.getMatchPlayer(PLAYER_ID);
             final MatchPlayer targetMatchPlayer = MatchPlayerTestUtil.getRandomTargetMatchPlayer(match, match.getMatchPlayer(PLAYER_ID));
 
             match.pickMatchPlayer(MatchPick.builder()
                     .matchPlayer(matchPlayer)
                     .targetMatchPlayer(targetMatchPlayer)
-                    .round(match.getRound())
+                    .round(match.getCurrentRound())
                     .pickCode(MatchPickCode.MATCH_PICK_HEAL)
                     .pickValue(matchPlayer.getHeal())
                     .build());
@@ -137,7 +137,7 @@ class MatchTest {
             assertThrows(AlreadyExistsMatchPickException.class, () -> match.pickMatchPlayer(MatchPick.builder()
                     .matchPlayer(matchPlayer)
                     .targetMatchPlayer(targetMatchPlayer)
-                    .round(match.getRound())
+                    .round(match.getCurrentRound())
                     .pickCode(MatchPickCode.MATCH_PICK_ATTACK)
                     .pickValue(matchPlayer.getAttack())
                     .build()));
@@ -156,7 +156,7 @@ class MatchTest {
             match.pickMatchPlayer(MatchPick.builder()
                     .matchPlayer(matchPlayer)
                     .targetMatchPlayer(targetMatchPlayer)
-                    .round(match.getRound())
+                    .round(match.getCurrentRound())
                     .pickCode(MatchPickCode.MATCH_PICK_ATTACK)
                     .pickValue(matchPlayer.getAttack())
                     .build());
@@ -182,7 +182,7 @@ class MatchTest {
             match.pickMatchPlayer(MatchPick.builder()
                     .matchPlayer(matchPlayer)
                     .targetMatchPlayer(targetMatchPlayer)
-                    .round(match.getRound())
+                    .round(match.getCurrentRound())
                     .pickCode(MatchPickCode.MATCH_PICK_ATTACK)
                     .pickValue(matchPlayer.getAttack())
                     .build());
@@ -208,7 +208,7 @@ class MatchTest {
             match.pickMatchPlayer(MatchPick.builder()
                     .matchPlayer(matchPlayer1)
                     .targetMatchPlayer(matchPlayer1)
-                    .round(match.getRound())
+                    .round(match.getCurrentRound())
                     .pickCode(MatchPickCode.MATCH_PICK_DEFENCE)
                     .pickValue(matchPlayer1.getDefence())
                     .build());
@@ -216,7 +216,7 @@ class MatchTest {
             match.pickMatchPlayer(MatchPick.builder()
                     .matchPlayer(matchPlayer2)
                     .targetMatchPlayer(matchPlayer2)
-                    .round(match.getRound())
+                    .round(match.getCurrentRound())
                     .pickCode(MatchPickCode.MATCH_PICK_DEFENCE)
                     .pickValue(matchPlayer2.getDefence())
                     .build());
@@ -245,7 +245,7 @@ class MatchTest {
             match.pickMatchPlayer(MatchPick.builder()
                     .matchPlayer(matchPlayer1)
                     .targetMatchPlayer(matchPlayer2)
-                    .round(match.getRound())
+                    .round(match.getCurrentRound())
                     .pickCode(MatchPickCode.MATCH_PICK_ATTACK)
                     .pickValue(matchPlayer1.getAttack())
                     .build());
@@ -253,7 +253,7 @@ class MatchTest {
             match.pickMatchPlayer(MatchPick.builder()
                     .matchPlayer(matchPlayer2)
                     .targetMatchPlayer(matchPlayer1)
-                    .round(match.getRound())
+                    .round(match.getCurrentRound())
                     .pickCode(MatchPickCode.MATCH_PICK_ATTACK)
                     .pickValue(matchPlayer2.getAttack())
                     .build());
@@ -281,7 +281,7 @@ class MatchTest {
             match.pickMatchPlayer(MatchPick.builder()
                     .matchPlayer(matchPlayer1)
                     .targetMatchPlayer(matchPlayer1)
-                    .round(match.getRound())
+                    .round(match.getCurrentRound())
                     .pickCode(MatchPickCode.MATCH_PICK_HEAL)
                     .pickValue(matchPlayer1.getHeal())
                     .build());
@@ -289,7 +289,7 @@ class MatchTest {
             match.pickMatchPlayer(MatchPick.builder()
                     .matchPlayer(matchPlayer2)
                     .targetMatchPlayer(matchPlayer2)
-                    .round(match.getRound())
+                    .round(match.getCurrentRound())
                     .pickCode(MatchPickCode.MATCH_PICK_HEAL)
                     .pickValue(matchPlayer2.getHeal())
                     .build());
@@ -317,7 +317,7 @@ class MatchTest {
             match.pickMatchPlayer(MatchPick.builder()
                     .matchPlayer(matchPlayer1)
                     .targetMatchPlayer(matchPlayer1)
-                    .round(match.getRound())
+                    .round(match.getCurrentRound())
                     .pickCode(MatchPickCode.MATCH_PICK_HEAL)
                     .pickValue(matchPlayer1.getHeal())
                     .build());
@@ -325,7 +325,7 @@ class MatchTest {
             match.pickMatchPlayer(MatchPick.builder()
                     .matchPlayer(matchPlayer2)
                     .targetMatchPlayer(matchPlayer2)
-                    .round(match.getRound())
+                    .round(match.getCurrentRound())
                     .pickCode(MatchPickCode.MATCH_PICK_DEFENCE)
                     .pickValue(matchPlayer2.getDefence())
                     .build());
@@ -353,7 +353,7 @@ class MatchTest {
             match.pickMatchPlayer(MatchPick.builder()
                     .matchPlayer(matchPlayer1)
                     .targetMatchPlayer(matchPlayer1)
-                    .round(match.getRound())
+                    .round(match.getCurrentRound())
                     .pickCode(MatchPickCode.MATCH_PICK_HEAL)
                     .pickValue(matchPlayer1.getHeal())
                     .build());
@@ -361,7 +361,7 @@ class MatchTest {
             match.pickMatchPlayer(MatchPick.builder()
                     .matchPlayer(matchPlayer2)
                     .targetMatchPlayer(matchPlayer1)
-                    .round(match.getRound())
+                    .round(match.getCurrentRound())
                     .pickCode(MatchPickCode.MATCH_PICK_ATTACK)
                     .pickValue(matchPlayer2.getAttack())
                     .build());
@@ -389,7 +389,7 @@ class MatchTest {
             match.pickMatchPlayer(MatchPick.builder()
                     .matchPlayer(matchPlayer1)
                     .targetMatchPlayer(matchPlayer2)
-                    .round(match.getRound())
+                    .round(match.getCurrentRound())
                     .pickCode(MatchPickCode.MATCH_PICK_ATTACK)
                     .pickValue(matchPlayer1.getAttack())
                     .build());
@@ -397,7 +397,7 @@ class MatchTest {
             match.pickMatchPlayer(MatchPick.builder()
                     .matchPlayer(matchPlayer2)
                     .targetMatchPlayer(matchPlayer2)
-                    .round(match.getRound())
+                    .round(match.getCurrentRound())
                     .pickCode(MatchPickCode.MATCH_PICK_DEFENCE)
                     .pickValue(matchPlayer2.getDefence())
                     .build());

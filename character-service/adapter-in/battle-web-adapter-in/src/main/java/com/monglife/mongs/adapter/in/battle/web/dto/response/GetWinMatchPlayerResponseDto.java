@@ -18,11 +18,14 @@ public class GetWinMatchPlayerResponseDto {
 
     private String name;
 
+    private Integer rewardPayPoint;
+
     @Builder
-    public GetWinMatchPlayerResponseDto(String mongCode, String playerId, String mongName, String name) {
+    public GetWinMatchPlayerResponseDto(String mongCode, String playerId, String mongName, String name, Integer rewardPayPoint) {
         this.mongCode = mongCode;
         this.playerId = playerId;
         this.mongName = mongName;
         this.name = name;
+        this.rewardPayPoint = rewardPayPoint;
     }
 }

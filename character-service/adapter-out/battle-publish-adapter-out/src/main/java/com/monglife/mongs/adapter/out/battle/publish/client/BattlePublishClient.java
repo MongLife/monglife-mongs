@@ -3,7 +3,6 @@ package com.monglife.mongs.adapter.out.battle.publish.client;
 import com.monglife.core.dto.response.ResponseDto;
 import com.monglife.module.mqtt.annotation.MqttPublish;
 import com.monglife.module.mqtt.dto.MqttResponseEntity;
-import com.monglife.mongs.adapter.out.battle.publish.dto.response.MatchEndPublishDto;
 import com.monglife.mongs.adapter.out.battle.publish.dto.response.MatchPublishDto;
 import com.monglife.mongs.adapter.out.battle.publish.dto.response.MatchingQueuePlayerFailPublishDto;
 import com.monglife.mongs.adapter.out.battle.publish.dto.response.MatchingQueuePlayerPublishDto;
@@ -80,16 +79,16 @@ public class BattlePublishClient {
 
     /**
      * 매치 종료
-     * @param matchEndPublishDto 매치 종료 정보
+     * @param matchPublishDto 매치 정보
      * @return 매치 중 종료 시, 비동기 응답
      */
-    @MqttPublish("/battle/match/{topic}/end")
-    public MqttResponseEntity<ResponseDto<MatchEndPublishDto>> publishMatchEnd(MatchEndPublishDto matchEndPublishDto) {
+    @MqttPublish("/battle/match/{topic}")
+    public MqttResponseEntity<ResponseDto<MatchPublishDto>> publishMatchEnd(MatchPublishDto matchPublishDto) {
 
-        String topic = String.valueOf(matchEndPublishDto.getMatchId());
+        String topic = String.valueOf(matchPublishDto.getMatchId());
 
         return MqttResponseEntity
-                .body(AdapterOutPublishBattleResponse.BATTLE_PUBLISH_MATCH_END.toResponseDto(matchEndPublishDto))
+                .body(AdapterOutPublishBattleResponse.BATTLE_PUBLISH_MATCH_END.toResponseDto(matchPublishDto))
                 .topic(topic);
     }
 }

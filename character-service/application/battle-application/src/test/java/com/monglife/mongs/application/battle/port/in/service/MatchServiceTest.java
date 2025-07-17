@@ -108,7 +108,7 @@ class MatchServiceTest {
             matchUseCase.exitMatchUseCase(command);
 
             // assert
-            Mockito.verify(matchPublishPort).publishMatchEndPort(match, match.getWinner());
+            Mockito.verify(matchPublishPort).publishMatchEndPort(match);
         }
 
         @Test
@@ -129,7 +129,7 @@ class MatchServiceTest {
             matchUseCase.exitMatchUseCase(command);
 
             // assert
-            Mockito.verify(matchPublishPort, Mockito.never()).publishMatchEndPort(match, match.getWinner());
+            Mockito.verify(matchPublishPort, Mockito.never()).publishMatchEndPort(match);
         }
     }
 

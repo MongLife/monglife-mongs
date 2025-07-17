@@ -118,7 +118,7 @@ public class MatchService implements MatchUseCase {
 
         // 매치가 중단된 경우 승리 매치 종료 비동기 응답
         if (match.isAllMatchPlayersExited()) {
-            matchPublishPort.publishMatchEndPort(match, match.getWinner());
+            matchPublishPort.publishMatchEndPort(match);
         }
 
         return match;

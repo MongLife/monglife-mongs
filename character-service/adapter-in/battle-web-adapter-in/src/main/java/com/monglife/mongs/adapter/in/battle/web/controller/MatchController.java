@@ -98,6 +98,7 @@ public class MatchController {
                 .matchId(matchId)
                 .build();
 
+        MatchOutcomeVo matchOutcomeVo = matchUseCase.getMatchOutcomeUseCase();
         MatchPlayer matchPlayer = matchUseCase.getWinMatchPlayerUseCase(command);
 
         GetWinMatchPlayerResponseDto getWinMatchPlayerResponseDto = GetWinMatchPlayerResponseDto.builder()
@@ -105,6 +106,7 @@ public class MatchController {
                 .mongCode(matchPlayer.getMongCode())
                 .mongName(matchPlayer.getMongName())
                 .name(matchPlayer.getName())
+                .rewardPayPoint(matchOutcomeVo.getRewardPayPoint())
                 .build();
 
         return ResponseEntity.ok(AdapterInBattleWebResponse.GET_WIN_MATCH_PLAYER.toResponseDto(getWinMatchPlayerResponseDto));
