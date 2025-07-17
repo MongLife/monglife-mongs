@@ -13,7 +13,7 @@ import java.time.LocalDateTime;
 @ToString
 public class Step {
 
-    private static final int PAY_POINT_PER_STEP = 100;
+    private static final double PAY_POINT_PER_STEP = 0.1;
 
     private final String deviceId;
 
@@ -58,7 +58,7 @@ public class Step {
         this.decreaseCurrentWalkingCount(walkingCount);
 
         // 환전할 페이 포인트 반환
-        return walkingCount * PAY_POINT_PER_STEP;
+        return (int) Math.ceil(walkingCount * PAY_POINT_PER_STEP);
     }
 
     /**
