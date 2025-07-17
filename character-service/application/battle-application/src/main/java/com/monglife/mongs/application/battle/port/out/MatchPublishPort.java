@@ -12,6 +12,12 @@ public interface MatchPublishPort {
     void publishMatchPort(Match match);
 
     /**
+     * 매치 시작 비동기 응답
+     * @param match 매치 도메인 객체
+     */
+    void publishMatchStartPort(Match match);
+
+    /**
      * 매치 강제 중단 비동기 응답
      * @param match 매치 도메인 객체
      */

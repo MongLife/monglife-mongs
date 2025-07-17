@@ -61,7 +61,7 @@ class MatchServiceTest {
             matchUseCase.enterMatchUseCase(command);
 
             // assert
-            Mockito.verify(matchPublishPort).publishMatchPort(match);
+            Mockito.verify(matchPublishPort).publishMatchStartPort(match);
         }
 
         @Test

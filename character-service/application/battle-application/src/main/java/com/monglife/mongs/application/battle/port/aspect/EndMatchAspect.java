@@ -27,7 +27,7 @@ public class EndMatchAspect {
     public void afterReturning(JoinPoint joinPoint, EndMatch endMatch, Object returnValue) {
         if (returnValue instanceof Match match) {
             // 매치가 종료된 경우
-            if (Boolean.TRUE.equals(match.isEnd())) {
+            if (match.isEnd()) {
                 // 승리한 매치 플레이어 조회
                 MatchPlayer winMatchPlayer = match.getWinner();
 

@@ -39,11 +39,35 @@ public class MatchPublishService implements MatchPublishPort {
                                 .build())
                         .toList())
                 .build();
-        if (match.getRound() == 1) {
-            battlePublishClient.publishMatchPlayersEntered(matchPublishDto);
-        } else {
-            battlePublishClient.publishMatch(matchPublishDto);
-        }
+
+        battlePublishClient.publishMatch(matchPublishDto);
+    }
+
+    /**
+     * 매치 시작 비동기 응답
+     * @param match 매치 도메인 객체
+     */
+    @Override
+    public void publishMatchStartPort(Match match) {
+
+        MatchPublishDto matchPublishDto = MatchPublishDto.builder()
+                .matchId(match.getMatchId())
+                .round(match.getRound())
+                .isLastRound(match.isLastRound())
+                .matchPlayers(match.getMatchPlayers().stream()
+                        .map(matchPlayer -> MatchPlayerVo.builder()
+                                .playerId(matchPlayer.getPlayerId())
+                                .deviceId(matchPlayer.getDeviceId())
+                                .mongCode(matchPlayer.getMongCode())
+                                .mongName(matchPlayer.getMongName())
+                                .name(matchPlayer.getName())
+                                .hp(matchPlayer.getHp())
+                                .roundCode(matchPlayer.getRoundCode())
+                                .build())
+                        .toList())
+                .build();
+
+        battlePublishClient.publishMatchPlayersEntered(matchPublishDto);
     }
 
     /**

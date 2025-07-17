@@ -109,7 +109,7 @@ public class MatchEntity extends BaseTimeEntity {
                 .collect(Collectors.toList());
 
         List<MatchPick> matchPicks = this.matchPicks.stream()
-                .filter(matchPickEntity -> this.round.equals(matchPickEntity.getRound()))
+//                .filter(matchPickEntity -> this.round.equals(matchPickEntity.getRound()))
                 .map(matchPickEntity -> {
                     var matchPlayer = matchPlayers.stream()
                             .filter(mp -> mp.getPlayerId().equals(matchPickEntity.getPlayerId()))

@@ -105,11 +105,11 @@ public class MatchPlayer {
      * 입장
      */
     public void enter() {
-        if (Boolean.TRUE.equals(this.isEnter)) {
+        if (this.isEnter) {
             throw new AlreadyEnterMatchPlayerException();
         }
 
-        this.isEnter = Boolean.TRUE;
+        this.isEnter = true;
         this.enteredAt = LocalDateTime.now();
     }
 
@@ -117,11 +117,11 @@ public class MatchPlayer {
      * 퇴장
      */
     public void exit() {
-        if (Boolean.FALSE.equals(this.isEnter)) {
+        if (!this.isEnter) {
             throw new AlreadyExitMatchPlayerException();
         }
 
-        this.isEnter = Boolean.FALSE;
+        this.isEnter = false;
         this.exitedAt = LocalDateTime.now();
     }
 
@@ -225,9 +225,9 @@ public class MatchPlayer {
                     .attack(attack)
                     .heal(heal)
                     .defence(defence)
-                    .isBot(Boolean.TRUE)
+                    .isBot(true)
                     .hp(MAX_HP)
-                    .isEnter(Boolean.TRUE)
+                    .isEnter(true)
                     .enteredAt(LocalDateTime.now())
                     .build();
 
@@ -260,9 +260,9 @@ public class MatchPlayer {
                 .attack(attack)
                 .heal(heal)
                 .defence(defence)
-                .isBot(Boolean.FALSE)
+                .isBot(false)
                 .hp(MAX_HP)
-                .isEnter(Boolean.FALSE)
+                .isEnter(false)
                 .build();
     }
 }

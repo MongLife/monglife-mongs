@@ -49,9 +49,9 @@ public class InAppOrder {
      */
     public void consume() {
 
-        if (Boolean.FALSE.equals(this.isPayed())) {
+        if (!this.isPayed()) {
             throw new PaymentNotCompletedInAppOrderException();
-        } else if (Boolean.TRUE.equals(this.isConsumed())) {
+        } else if (this.isConsumed()) {
             throw new AlreadyConsumedInAppOrderException();
         }
 

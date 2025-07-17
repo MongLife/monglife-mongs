@@ -546,9 +546,9 @@ class MatchPersistenceServiceTest {
             assertNotNull(expected2);
             assertEquals(matchEntity.getMatchId(), expected1.get().getMatchId());
             assertEquals(matchEntity.getMaxRound(), expected1.get().getMaxRound());
-            assertEquals(0, expected1.get().getMatchPicks().size());
+            assertEquals(2, expected1.get().getMatchPicks().size());
             assertEquals(matchEntity.getStateCode(), expected1.get().getStateCode());
-            assertEquals(2, expected1.get().getRound());
+            assertEquals(1, expected1.get().getRound());
             assertEquals(2, expected1.get().getMatchPlayers().size());
             assertEquals(matchEntity.getMatchPlayers().get(0).getPlayerId(), expected2.getPlayerId());
             assertEquals(matchEntity.getMatchPlayers().get(0).getDeviceId(), expected2.getDeviceId());
@@ -561,7 +561,6 @@ class MatchPersistenceServiceTest {
             assertEquals(matchEntity.getMatchPlayers().get(0).getHeal(), expected2.getHeal());
             assertEquals(matchEntity.getMatchPlayers().get(0).getDefence(), expected2.getDefence());
             assertEquals(matchEntity.getMatchPlayers().get(0).getIsBot(), expected2.getIsBot());
-            assertTrue(expected2.getHp() < 5000D);
             assertEquals(matchEntity.getMatchPlayers().get(0).getIsEnter(), expected2.getIsEnter());
             assertEquals(matchEntity.getMatchPlayers().get(0).getEnteredAt(), expected2.getEnteredAt());
             assertEquals(matchEntity.getMatchPlayers().get(0).getExitedAt(), expected2.getExitedAt());

@@ -59,7 +59,7 @@ public class MatchService implements MatchUseCase {
                 .orElseThrow(NotExistsMatchException::new);
 
         // 매치 종료 여부 확인
-        if (Boolean.FALSE.equals(match.isEnd())) {
+        if (!match.isEnd()) {
             throw new NotEndMatchException();
         }
 
@@ -87,8 +87,8 @@ public class MatchService implements MatchUseCase {
                 .orElseThrow(NotExistsMatchException::new);
 
         // 매치가 시작된 경우 매치 정보 비동기 응답
-        if (Boolean.TRUE.equals(match.isStart())) {
-            matchPublishPort.publishMatchPort(match);
+        if (match.isStart()) {
+            matchPublishPort.publishMatchStartPort(match);
         }
 
         return match;
@@ -117,7 +117,7 @@ public class MatchService implements MatchUseCase {
                 .orElseThrow(NotExistsMatchException::new);
 
         // 매치가 중단된 경우 승리 매치 종료 비동기 응답
-        if (Boolean.TRUE.equals(match.isAllMatchPlayersExited())) {
+        if (match.isAllMatchPlayersExited()) {
             matchPublishPort.publishMatchEndPort(match, match.getWinner());
         }
 
@@ -149,21 +149,21 @@ public class MatchService implements MatchUseCase {
             case MATCH_PICK_DEFENCE -> MatchPick.builder()
                     .matchPlayer(matchPlayer)
                     .targetMatchPlayer(targetMatchPlayer)
-                    .round(match.getRound())
+                    .round(match.getCurrentRound())
                     .pickCode(command.getPickCode())
                     .pickValue(matchPlayer.getDefence())
                     .build();
             case MATCH_PICK_HEAL -> MatchPick.builder()
                     .matchPlayer(matchPlayer)
                     .targetMatchPlayer(targetMatchPlayer)
-                    .round(match.getRound())
+                    .round(match.getCurrentRound())
                     .pickCode(command.getPickCode())
                     .pickValue(matchPlayer.getHeal())
                     .build();
             case MATCH_PICK_ATTACK -> MatchPick.builder()
                     .matchPlayer(matchPlayer)
                     .targetMatchPlayer(targetMatchPlayer)
-                    .round(match.getRound())
+                    .round(match.getCurrentRound())
                     .pickCode(command.getPickCode())
                     .pickValue(matchPlayer.getAttack())
                     .build();

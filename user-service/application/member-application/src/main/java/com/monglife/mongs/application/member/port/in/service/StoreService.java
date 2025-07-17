@@ -36,7 +36,7 @@ public class StoreService implements StoreUseCase {
     @Transactional
     public void createOrderUseCase(CreateOrderCommand command) {
 
-        if (Boolean.FALSE.equals(orderReadPort.isExistsOrderByAccountIdAndSocialOrderIdPort(command.getAccountId(), command.getSocialOrderId()))) {
+        if (!orderReadPort.isExistsOrderByAccountIdAndSocialOrderIdPort(command.getAccountId(), command.getSocialOrderId())) {
             // 인앱 상품 존재 여부 확인
             InAppProduct inAppProduct = googlePaymentPort.getInAppProductPort(command.getProductId())
                     .orElseThrow(NotExistsInAppProductException::new);
@@ -113,7 +113,7 @@ public class StoreService implements StoreUseCase {
         command.getSocialOrderIds().forEach(socialOrderId ->
             orderReadPort.getOrderBySocialOrderIdPort(socialOrderId).ifPresent(order ->
                 googlePaymentPort.getInAppOrderPort(order.getProductId(), order.getSocialOrderId(), order.getPurchaseToken()).ifPresent(inAppOrder -> {
-                    if (Boolean.TRUE.equals(inAppOrder.isConsumed())) {
+                    if (inAppOrder.isConsumed()) {
                         orders.add(order);
                     }
                 })

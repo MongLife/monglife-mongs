@@ -111,8 +111,8 @@ public class Mong {
         this.randomDrawTicketCount = randomDrawTicketCount;
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
-        this.isMongStateChange = Boolean.FALSE;
-        this.isMongStatusCodeChange = Boolean.FALSE;
+        this.isMongStateChange = false;
+        this.isMongStatusCodeChange = false;
     }
 
     /**
@@ -149,7 +149,7 @@ public class Mong {
         if (MongStateCode.DEAD.equals(this.stateCode) ||
             MongStateCode.GRADUATE_READY.equals(this.stateCode) ||
             this.level == 0 ||
-            Boolean.TRUE.equals(this.isSleep)
+            this.isSleep
         ) throw new InvalidMongStateException();
 
         this.exp = Math.max(0, Math.min(this.exp + 5D, this.maxStatus));
@@ -167,10 +167,10 @@ public class Mong {
         if (MongStateCode.DEAD.equals(this.stateCode) ||
             MongStateCode.GRADUATE_READY.equals(this.stateCode) ||
             this.level == 0 ||
-            Boolean.TRUE.equals(this.isSleep)
+            this.isSleep
         ) throw new InvalidMongStateException();
 
-        this.isSleep = Boolean.TRUE;
+        this.isSleep = true;
     }
 
     /**
@@ -181,10 +181,10 @@ public class Mong {
         if (MongStateCode.DEAD.equals(this.stateCode) ||
             MongStateCode.GRADUATE_READY.equals(this.stateCode) ||
             this.level == 0 ||
-            Boolean.FALSE.equals(this.isSleep)
+            !this.isSleep
         ) throw new InvalidMongStateException();
 
-        this.isSleep = Boolean.FALSE;
+        this.isSleep = false;
     }
 
     /**
@@ -195,7 +195,7 @@ public class Mong {
         if (MongStateCode.DEAD.equals(this.stateCode) ||
             MongStateCode.GRADUATE_READY.equals(this.stateCode) ||
             this.level == 0 ||
-            Boolean.TRUE.equals(this.isSleep)
+            this.isSleep
         ) throw new InvalidMongStateException();
 
         this.exp = Math.max(0, Math.min(this.exp + this.poopCount * 2D, this.maxStatus));
@@ -408,11 +408,11 @@ public class Mong {
 
         if (MongStateCode.DEAD.equals(this.stateCode) ||
             this.level == 0 ||
-            Boolean.TRUE.equals(this.isSleep)
+            this.isSleep
         ) throw new InvalidMongStateException();
 
         // 구매할 수 없는 경우 예외 발생
-        if (Boolean.FALSE.equals(food.getIsCanBuy())) {
+        if (!food.getIsCanBuy()) {
             throw new InvalidFeedFoodException();
         }
 
@@ -433,11 +433,11 @@ public class Mong {
 
         if (MongStateCode.DEAD.equals(this.stateCode) ||
             this.level == 0 ||
-            Boolean.TRUE.equals(this.isSleep)
+            this.isSleep
         ) throw new InvalidMongStateException();
 
         // 구매할 수 없는 경우 예외 발생
-        if (Boolean.FALSE.equals(snack.getIsCanBuy())) {
+        if (!snack.getIsCanBuy()) {
             throw new InvalidFeedSnackException();
         }
 
@@ -458,7 +458,7 @@ public class Mong {
 
         if (MongStateCode.DEAD.equals(this.stateCode) ||
             this.level == 0 ||
-            Boolean.TRUE.equals(this.isSleep)
+            this.isSleep
         ) throw new InvalidMongStateException();
 
         this.strength = Math.max(0, Math.min(this.strength + food.getStrength(), this.maxStatus));
@@ -479,7 +479,7 @@ public class Mong {
 
         if (MongStateCode.DEAD.equals(this.stateCode) ||
             this.level == 0 ||
-            Boolean.TRUE.equals(this.isSleep)
+            this.isSleep
         ) throw new InvalidMongStateException();
 
         this.strength = Math.max(0, Math.min(this.strength + snack.getStrength(), this.maxStatus));
@@ -610,7 +610,7 @@ public class Mong {
         }
 
         this.stateCode = stateCode;
-        this.isMongStateChange = Boolean.TRUE;
+        this.isMongStateChange = true;
     }
 
     /**
@@ -624,7 +624,7 @@ public class Mong {
         }
 
         this.statusCode = statusCode;
-        this.isMongStatusCodeChange = Boolean.TRUE;
+        this.isMongStatusCodeChange = true;
     }
 
     /**
