@@ -3,11 +3,13 @@ package com.monglife.mongs.application.device.port.in.service;
 import com.monglife.mongs.application.device.port.exception.NotExistStepException;
 import com.monglife.mongs.application.device.port.in.StepUseCase;
 import com.monglife.mongs.application.device.port.in.command.ExchangeCurrentWalkingCountCommand;
+import com.monglife.mongs.application.device.port.in.command.GetStepCommand;
 import com.monglife.mongs.application.device.port.in.command.IncreaseCurrentWalkingCountCommand;
 import com.monglife.mongs.application.device.port.in.command.UpdateTotalWalkingCountCommand;
 import com.monglife.mongs.application.device.port.out.DeviceEventPort;
 import com.monglife.mongs.application.device.port.out.DevicePersistencePort;
 import com.monglife.mongs.application.device.port.out.DevicePublishPort;
+import com.monglife.mongs.application.device.port.out.DeviceReadPort;
 import com.monglife.mongs.application.device.port.out.dto.ExchangeCurrentWalkingCountDto;
 import com.monglife.mongs.application.device.port.out.vo.CreateStepVo;
 import com.monglife.mongs.domain.device.model.Step;
@@ -21,9 +23,21 @@ public class StepService implements StepUseCase {
 
     private final DeviceEventPort deviceEventPort;
 
+    private final DeviceReadPort deviceReadPort;
+
     private final DevicePersistencePort devicePersistencePort;
 
     private final DevicePublishPort devicePublishPort;
+
+    /**
+     * 보유 걸음 수 조회
+     */
+    @Override
+    @Transactional
+    public Step getStepUseCase(GetStepCommand command) {
+        return deviceReadPort.getStepPort(command.getDeviceId())
+                .orElseThrow(NotExistStepException::new);
+    }
 
     /**
      * 보유 걸음 수 환전

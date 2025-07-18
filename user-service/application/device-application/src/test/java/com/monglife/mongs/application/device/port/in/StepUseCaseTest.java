@@ -8,6 +8,7 @@ import com.monglife.mongs.application.device.port.in.service.StepService;
 import com.monglife.mongs.application.device.port.out.DeviceEventPort;
 import com.monglife.mongs.application.device.port.out.DevicePersistencePort;
 import com.monglife.mongs.application.device.port.out.DevicePublishPort;
+import com.monglife.mongs.application.device.port.out.DeviceReadPort;
 import com.monglife.mongs.domain.device.model.Step;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -24,8 +25,9 @@ class StepUseCaseTest {
 
     private final DeviceEventPort deviceEventPort = Mockito.mock(DeviceEventPort.class);
     private final DevicePublishPort devicePublishPort = Mockito.mock(DevicePublishPort.class);
+    private final DeviceReadPort deviceReadPort = Mockito.mock(DeviceReadPort.class);
     private final DevicePersistencePort devicePersistencePort = Mockito.mock(DevicePersistencePort.class);
-    private final StepUseCase stepUseCase = new StepService(deviceEventPort, devicePersistencePort, devicePublishPort);
+    private final StepUseCase stepUseCase = new StepService(deviceEventPort, deviceReadPort, devicePersistencePort, devicePublishPort);
 
     @Nested
     @DisplayName("보유 걸음 수 페이 포인트 환전 단위 테스트")
