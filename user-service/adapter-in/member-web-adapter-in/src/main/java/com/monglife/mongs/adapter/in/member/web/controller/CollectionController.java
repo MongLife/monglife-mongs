@@ -3,8 +3,10 @@ package com.monglife.mongs.adapter.in.member.web.controller;
 import com.monglife.core.dto.response.ResponseDto;
 import com.monglife.module.common.logging.annotation.EntryLoggingPoint;
 import com.monglife.module.common.security.principal.Passport;
+import com.monglife.mongs.adapter.in.member.web.dto.request.SearchCollectionMapRequestDto;
 import com.monglife.mongs.adapter.in.member.web.dto.response.GetCollectionMapResponseDto;
 import com.monglife.mongs.adapter.in.member.web.dto.response.GetCollectionMongResponseDto;
+import com.monglife.mongs.adapter.in.member.web.dto.response.SearchCollectionMapResponseDto;
 import com.monglife.mongs.adapter.in.member.web.enums.AdapterInMemberWebResponse;
 import com.monglife.mongs.application.member.port.in.CollectionUseCase;
 import com.monglife.mongs.application.member.port.in.command.GetCollectionMapsCommand;
@@ -15,9 +17,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -81,5 +81,21 @@ public class CollectionController {
                 .toList();
 
         return ResponseEntity.ok(AdapterInMemberWebResponse.GET_COLLECTION_MONGS.toResponseDto(getCollectionMongResponseDtos));
+    }
+
+    /**
+     * 맵 컬렉션 탐색
+     */
+    @EntryLoggingPoint
+    @PostMapping("/map")
+    public ResponseEntity<ResponseDto<SearchCollectionMapResponseDto>> searchCollectionMaps(
+            @AuthenticationPrincipal Passport passport,
+            @RequestBody SearchCollectionMapRequestDto searchCollectionMapRequestDto
+    ) {
+        SearchCollectionMapResponseDto searchCollectionMapResponseDto = SearchCollectionMapResponseDto.builder()
+                .isFind(false)
+                .build();
+
+        return ResponseEntity.ok(AdapterInMemberWebResponse.SEARCH_COLLECTION_MAP.toResponseDto(searchCollectionMapResponseDto));
     }
 }

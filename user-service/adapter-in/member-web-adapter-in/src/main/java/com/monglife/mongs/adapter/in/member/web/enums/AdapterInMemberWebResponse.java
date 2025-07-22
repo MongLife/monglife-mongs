@@ -12,6 +12,7 @@ public enum AdapterInMemberWebResponse implements Response {
     // MEMBER-COLLECTION
     GET_COLLECTION_MAPS(HttpStatus.OK.value(), "100-201-000", "컬렉션 맵 목록 조회에 성공했습니다."),
     GET_COLLECTION_MONGS(HttpStatus.OK.value(), "100-201-001", "컬렉션 몽 목록 조회에 성공했습니다."),
+    SEARCH_COLLECTION_MAP(HttpStatus.OK.value(), "100-201-002", "컬렉션 맵 탐색에 성공했습니다."),
 
     // MEMBER-FEEDBACK
     CREATE_FEEDBACK(HttpStatus.OK.value(), "100-201-002", "오류 신고 등록에 성공했습니다."),
