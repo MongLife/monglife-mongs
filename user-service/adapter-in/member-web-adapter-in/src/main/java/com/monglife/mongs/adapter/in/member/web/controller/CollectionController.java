@@ -93,7 +93,8 @@ public class CollectionController {
             @RequestBody SearchCollectionMapRequestDto searchCollectionMapRequestDto
     ) {
         SearchCollectionMapResponseDto searchCollectionMapResponseDto = SearchCollectionMapResponseDto.builder()
-                .isFind(false)
+                .isFound(false)
+                .data(null)
                 .build();
 
         return ResponseEntity.ok(AdapterInMemberWebResponse.SEARCH_COLLECTION_MAP.toResponseDto(searchCollectionMapResponseDto));

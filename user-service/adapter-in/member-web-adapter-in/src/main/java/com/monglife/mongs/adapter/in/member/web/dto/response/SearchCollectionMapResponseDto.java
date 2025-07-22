@@ -10,16 +10,13 @@ import lombok.Setter;
 @NoArgsConstructor
 public class SearchCollectionMapResponseDto {
 
-    private Boolean isFind;
+    private Boolean isFound;
 
-    private String mapCode;
-
-    private String mapName;
+    private GetCollectionMapResponseDto data;
 
     @Builder
-    public SearchCollectionMapResponseDto(Boolean isFind, String mapCode, String mapName) {
-        this.isFind = isFind;
-        this.mapCode = mapCode;
-        this.mapName = mapName;
+    public SearchCollectionMapResponseDto(Boolean isFound, GetCollectionMapResponseDto data) {
+        this.isFound = isFound;
+        this.data = data;
     }
 }
