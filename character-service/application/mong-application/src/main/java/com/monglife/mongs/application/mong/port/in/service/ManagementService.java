@@ -101,7 +101,7 @@ public class ManagementService implements ManagementUseCase {
                 .verify(command.getAccountId());
 
         // 몽 삭제
-        mong = mongPersistencePort.deleteMongPort(mong)
+        mongPersistencePort.deleteMongPort(mong)
                 .orElseThrow(NotExistsMongException::new);
 
         // 모든 스케줄 삭제
@@ -126,7 +126,7 @@ public class ManagementService implements ManagementUseCase {
         mong.dead();
 
         // 몽 정보 동기화
-        mong = mongPersistencePort.saveMongPort(mong)
+        mongPersistencePort.saveMongPort(mong)
                 .orElseThrow(NotExistsMongException::new);
 
         // 모든 스케줄 삭제
@@ -179,7 +179,7 @@ public class ManagementService implements ManagementUseCase {
         mong.stroke();
 
         // 몽 정보 동기화
-        mong = mongPersistencePort.saveMongPort(mong)
+        mongPersistencePort.saveMongPort(mong)
                 .orElseThrow(NotExistsMongException::new);
 
         // 몽 쓰다 듬기 이력 등록
@@ -205,7 +205,7 @@ public class ManagementService implements ManagementUseCase {
         mong.sleep();
 
         // 몽 정보 동기화
-        mong = mongPersistencePort.saveMongPort(mong)
+        mongPersistencePort.saveMongPort(mong)
                 .orElseThrow(NotExistsMongException::new);
 
         // 스케줄 등록 및 삭제
@@ -233,7 +233,7 @@ public class ManagementService implements ManagementUseCase {
         mong.wakeup();
 
         // 몽 정보 동기화
-        mong = mongPersistencePort.saveMongPort(mong)
+        mongPersistencePort.saveMongPort(mong)
                 .orElseThrow(NotExistsMongException::new);
 
         // 스케줄 등록 및 삭제
@@ -262,7 +262,7 @@ public class ManagementService implements ManagementUseCase {
         mong.poopClean();
 
         // 몽 정보 동기화
-        mong = mongPersistencePort.saveMongPort(mong)
+        mongPersistencePort.saveMongPort(mong)
                 .orElseThrow(NotExistsMongException::new);
 
         return mong;
@@ -282,7 +282,7 @@ public class ManagementService implements ManagementUseCase {
 
         mong.evolutionReady();
 
-        mong = mongPersistencePort.saveMongPort(mong)
+        mongPersistencePort.saveMongPort(mong)
                 .orElseThrow(NotExistsMongException::new);
 
         return mong;
@@ -310,7 +310,7 @@ public class ManagementService implements ManagementUseCase {
         mong.evolution(mongCodes);
 
         // 몽 정보 동기화
-        mong = mongPersistencePort.saveMongPort(mong)
+        mongPersistencePort.saveMongPort(mong)
                 .orElseThrow(NotExistsMongException::new);
 
         // 알 진화 경우 스케줄 등록
@@ -347,7 +347,7 @@ public class ManagementService implements ManagementUseCase {
         mong.graduate();
 
         // 몽 정보 동기화
-        mong = mongPersistencePort.saveMongPort(mong)
+        mongPersistencePort.saveMongPort(mong)
                 .orElseThrow(NotExistsMongException::new);
 
         // 모든 스케줄 삭제
@@ -372,7 +372,7 @@ public class ManagementService implements ManagementUseCase {
         mong.increasePayPoint(command.getPayPoint());
 
         // 몽 정보 동기화
-        mong = mongPersistencePort.saveMongPort(mong)
+        mongPersistencePort.saveMongPort(mong)
                 .orElseThrow(NotExistsMongException::new);
 
         return mong;
@@ -395,7 +395,7 @@ public class ManagementService implements ManagementUseCase {
         mong.cycleIncreaseStatus();
 
         // 몽 정보 동기화
-        mong = mongPersistencePort.saveMongPort(mong)
+        mongPersistencePort.saveMongPort(mong)
                 .orElseThrow(NotExistsMongException::new);
 
         return mong;
@@ -418,7 +418,7 @@ public class ManagementService implements ManagementUseCase {
         mong.cycleDecreaseStatus();
 
         // 몽 정보 동기화
-        mong = mongPersistencePort.saveMongPort(mong)
+        mongPersistencePort.saveMongPort(mong)
                 .orElseThrow(NotExistsMongException::new);
 
         return mong;
@@ -440,7 +440,7 @@ public class ManagementService implements ManagementUseCase {
         mong.cycleIncreasePoopCount();
 
         // 몽 정보 동기화
-        mong = mongPersistencePort.saveMongPort(mong)
+        mongPersistencePort.saveMongPort(mong)
                 .orElseThrow(NotExistsMongException::new);
 
         return mong;

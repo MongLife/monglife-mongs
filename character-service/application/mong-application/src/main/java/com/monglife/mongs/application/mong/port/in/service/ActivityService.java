@@ -72,7 +72,7 @@ public class ActivityService  implements ActivityUseCase {
         }
 
         // 몽 정보 동기화
-        mong = mongPersistencePort.saveMongPort(mong)
+        mongPersistencePort.saveMongPort(mong)
                 .orElseThrow(NotExistsMongException::new);
 
         return TrainingEndVo.builder()
