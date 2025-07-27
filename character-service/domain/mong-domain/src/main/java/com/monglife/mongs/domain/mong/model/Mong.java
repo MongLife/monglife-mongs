@@ -621,8 +621,10 @@ public class Mong {
             throw new InvalidMongStateException();
         }
 
-        this.stateCode = stateCode;
-        this.isMongStateChange = true;
+        if (this.stateCode != stateCode) {
+            this.stateCode = stateCode;
+            this.isMongStateChange = true;
+        }
     }
 
     /**
@@ -635,8 +637,10 @@ public class Mong {
             throw new InvalidMongStateException();
         }
 
-        this.statusCode = statusCode;
-        this.isMongStatusCodeChange = true;
+        if (this.statusCode != statusCode) {
+            this.statusCode = statusCode;
+            this.isMongStatusCodeChange = true;
+        }
     }
 
     /**
