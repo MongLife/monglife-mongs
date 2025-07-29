@@ -3,7 +3,6 @@ on:
   push:
     branches:
       - stage
-      - develop
 permissions:
   contents: read
   checks: write

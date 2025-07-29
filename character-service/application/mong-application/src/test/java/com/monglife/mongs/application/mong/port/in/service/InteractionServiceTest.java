@@ -1,5 +1,6 @@
 package com.monglife.mongs.application.mong.port.in.service;
 
+import com.monglife.core.vo.page.PageResult;
 import com.monglife.mongs.application.mong.port.exception.InvalidUseInventoryItemException;
 import com.monglife.mongs.application.mong.port.exception.NotExistsMongException;
 import com.monglife.mongs.application.mong.port.in.InteractionUseCase;
@@ -411,28 +412,36 @@ class InteractionServiceTest {
             final long inventoryItemId = 1L;
             final String typeCode = "TEST-INVENTORY-ITEM-TYPE-CODE";
             final String typeName = "TEST-INVENTORY-ITEM-TYPE-NAME";
-            final List<Inventory> inventories = List.of(
-                    Inventory.builder()
-                            .inventoryId(inventoryItemId)
-                            .mongId(mongId)
-                            .inventoryTypeCode(InventoryTypeCode.FOOD)
-                            .inventoryCode(typeCode)
-                            .inventoryName(typeName)
-                            .build());
+            final PageResult<Inventory> inventories = PageResult.<Inventory>builder()
+                    .page(1)
+                    .size(1)
+                    .isLastPage(true)
+                    .totalPage(1)
+                    .result(List.of(
+                            Inventory.builder()
+                                    .inventoryId(inventoryItemId)
+                                    .mongId(mongId)
+                                    .inventoryTypeCode(InventoryTypeCode.FOOD)
+                                    .inventoryCode(typeCode)
+                                    .inventoryName(typeName)
+                                    .build()))
+                    .build();
 
             Mockito.when(mongReadPort.getMongPort(mongId)).thenReturn(Optional.of(mong));
-            Mockito.when(mongReadPort.getInventoriesPort(mongId)).thenReturn(inventories);
+            Mockito.when(mongReadPort.getInventoriesPort(mongId, inventories.getPage(), inventories.getSize())).thenReturn(inventories);
 
             // act
             GetInventoriesCommand command = GetInventoriesCommand.builder()
                     .mongId(mongId)
                     .accountId(accountId)
+                    .page(inventories.getPage())
+                    .size(inventories.getSize())
                     .build();
 
             var expected = interactionUseCase.getInventoriesUseCase(command);
 
             // assert
-            assertIterableEquals(expected, inventories);
+            assertIterableEquals(expected.getResult(), inventories.getResult());
         }
     }
 
