@@ -9,8 +9,8 @@ import org.springframework.http.HttpStatus;
 @AllArgsConstructor
 public enum AdapterOutPublishMemberResponse implements Response {
 
-    MEMBER_PUBLISH_MEMBER_STAR_POINT(HttpStatus.OK.value(), "200-201-000", "회원 스타 포인트에 변동이 있습니다."),
-    MEMBER_PUBLISH_MEMBER_SLOT_COUNT(HttpStatus.OK.value(), "200-201-001", "회원 슬롯 수에 변동이 있습니다."),
+    MEMBER_PUBLISH_MEMBER_STAR_POINT(HttpStatus.OK.value(), "MONGS-USER-MEMBER-500", "회원 스타 포인트에 변동이 있습니다."),
+    MEMBER_PUBLISH_MEMBER_SLOT_COUNT(HttpStatus.OK.value(), "MONGS-USER-MEMBER-501", "회원 슬롯 수에 변동이 있습니다."),
     ;
 
     private final Integer httpStatus;

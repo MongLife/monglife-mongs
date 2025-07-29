@@ -9,9 +9,9 @@ import org.springframework.http.HttpStatus;
 @AllArgsConstructor
 public enum AdapterInDeviceWebResponse implements Response {
 
-    EXCHANGE_CURRENT_WALKING_COUNT(HttpStatus.OK.value(), "100-200-000", "걸음수 환전에 성공했습니다."),
-    UPDATE_TOTAL_WALKING_COUNT(HttpStatus.OK.value(), "100-200-001", "걸음수 동기화에 성공했습니다."),
-    GET_STEP(HttpStatus.OK.value(), "100-200-002", "걸음수 조회에 성공했습니다."),
+    EXCHANGE_CURRENT_WALKING_COUNT(HttpStatus.OK.value(), "MONGS-USER-DEVICE-000", "걸음수 환전에 성공했습니다."),
+    UPDATE_TOTAL_WALKING_COUNT(HttpStatus.OK.value(), "MONGS-USER-DEVICE-001", "걸음수 동기화에 성공했습니다."),
+    GET_STEP(HttpStatus.OK.value(), "MONGS-USER-DEVICE-002", "걸음수 조회에 성공했습니다."),
     ;
 
     private final Integer httpStatus;
