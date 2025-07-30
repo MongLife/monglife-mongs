@@ -1,0 +1,10 @@
+dependencies {
+    // application layer
+    implementation project(":user-service:application:device-application")
+    // core layer
+    implementation project(":common:core:kafka-event-core")
+    // monglife-kafka
+    implementation "com.github.monglife.monglife-module-common:monglife-module-common-kafka:${monglifeModuleCommonVersion}"
+    // test
+    testImplementation "org.springframework.kafka:spring-kafka-test"
+}

@@ -1,0 +1,72 @@
+package com.monglife.mongs.adapter.out.member.persistence.service;
+
+import com.monglife.module.common.jpa.entity.ComnCodeEntity;
+import com.monglife.mongs.adapter.out.member.persistence.entity.OrderEntity;
+import com.monglife.mongs.adapter.out.member.persistence.repository.ComnCodeRepository;
+import com.monglife.mongs.adapter.out.member.persistence.repository.OrderRepository;
+import com.monglife.mongs.application.member.port.out.OrderPersistencePort;
+import com.monglife.mongs.application.member.port.out.vo.CreateOrderVo;
+import com.monglife.mongs.domain.member.model.Order;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.Optional;
+
+@Service
+@RequiredArgsConstructor
+public class OrderPersistenceService implements OrderPersistencePort {
+
+    private final ComnCodeRepository comnCodeRepository;
+
+    private final OrderRepository orderRepository;
+
+    /**
+     * 주문 등록
+     * @return 주문 도메인 옵셔널 객체
+     */
+    @Override
+    @Transactional
+    public Optional<Order> createOrderPort(CreateOrderVo createOrderVo) {
+
+        Optional<ComnCodeEntity> comnCodeEntityOptional = comnCodeRepository.findById(createOrderVo.getProductId());
+
+        if (comnCodeEntityOptional.isPresent()) {
+            OrderEntity orderEntity = OrderEntity.builder()
+                    .accountId(createOrderVo.getAccountId())
+                    .productType(comnCodeEntityOptional.get())
+                    .price(createOrderVo.getPrice())
+                    .socialOrderId(createOrderVo.getSocialOrderId())
+                    .purchaseToken(createOrderVo.getPurchaseToken())
+                    .build();
+
+            return Optional.of(orderRepository.save(orderEntity).toDomain());
+
+        } else {
+            return Optional.empty();
+        }
+    }
+
+    /**
+     * 주문 수정
+     * @param order 주문 도메인 객체
+     * @return 주문 도메인 옵셔널 객체
+     */
+    @Override
+    @Transactional
+    public Optional<Order> saveOrderPort(Order order) {
+
+        Optional<ComnCodeEntity> comnCodeEntityOptional = comnCodeRepository.findById(order.getProductId());
+        Optional<OrderEntity> orderEntityOptional = orderRepository.findByOrderIdWithLock(order.getOrderId());
+
+        if (comnCodeEntityOptional.isPresent() && orderEntityOptional.isPresent()) {
+            OrderEntity orderEntity = orderEntityOptional.get();
+            orderEntity.update(order, comnCodeEntityOptional.get());
+
+            return Optional.of(orderRepository.save(orderEntity).toDomain());
+
+        } else {
+            return Optional.empty();
+        }
+    }
+}

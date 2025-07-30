@@ -1,0 +1,6 @@
+dependencies {
+    // application layer
+    implementation project(":user-service:application:member-application")
+    // monglife-mqtt
+    implementation "com.github.monglife:monglife-module-mqtt:${monglifeModuleMqttVersion}"
+}

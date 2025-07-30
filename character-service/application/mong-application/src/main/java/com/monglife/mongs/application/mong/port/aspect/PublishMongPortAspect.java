@@ -1,0 +1,81 @@
+package com.monglife.mongs.application.mong.port.aspect;
+
+import com.monglife.mongs.application.mong.port.annotation.PublishMongPort;
+import com.monglife.mongs.application.mong.port.exception.NotExistsMongException;
+import com.monglife.mongs.application.mong.port.out.MongPublishPort;
+import com.monglife.mongs.domain.mong.model.Mong;
+import lombok.RequiredArgsConstructor;
+import org.aspectj.lang.JoinPoint;
+import org.aspectj.lang.annotation.AfterReturning;
+import org.aspectj.lang.annotation.Aspect;
+import org.springframework.stereotype.Component;
+
+import java.lang.reflect.Field;
+
+@Aspect
+@Component
+@RequiredArgsConstructor
+public class PublishMongPortAspect {
+
+    private final MongPublishPort mongPublishPort;
+
+    @AfterReturning(value = "@annotation(publishMongPort)", returning = "returnValue")
+    public void afterReturning(JoinPoint joinPoint, PublishMongPort publishMongPort, Object returnValue) {
+        Mong mong;
+
+        if (returnValue instanceof Mong) {
+            mong = (Mong) returnValue;
+        } else {
+            mong = this.exportMong(returnValue);
+        }
+
+        if (mong != null) {
+            // 몽 변동 비동기 응답 전송
+            mongPublishPort.publishMongPort(mong);
+
+            // 몽 상태 코드 변동 알림 전송
+            if (mong.getIsMongStateChange()) {
+                switch (mong.getStateCode()) {
+                    case DEAD -> mongPublishPort.publishNotificationPort(
+                            mong.getAccountId(), "죽은 몽이 있어요", mong.getName() + "(이)가 죽었어요...");
+                    case EVOLUTION_READY -> mongPublishPort.publishNotificationPort(
+                            mong.getAccountId(), "진화 준비가 되었어요", mong.getName() + "(을)를 새로운 몽으로 진화시켜 주세요");
+                    case GRADUATE_READY -> mongPublishPort.publishNotificationPort(
+                            mong.getAccountId(), "졸업 준비가 되었어요", mong.getName() + "(을)를 졸업 시켜 주세요");
+                }
+            }
+
+            // 몽 지수 코드 변동 알림 전송
+            if (mong.getIsMongStatusCodeChange()) {
+                switch (mong.getStatusCode()) {
+                    case SOMNOLENCE -> mongPublishPort.publishNotificationPort(
+                            mong.getAccountId(), "졸린 몽이 있어요", mong.getName() + "(을)를 재워야 해요");
+                    case HUNGRY -> mongPublishPort.publishNotificationPort(
+                            mong.getAccountId(), "배고픈 몽이 있어요", mong.getName() + "에게 밥을 줘야 해요");
+                    case SICK -> mongPublishPort.publishNotificationPort(
+                            mong.getAccountId(), "아픈 몽이 있어요", mong.getName() + "의 체력을 채워야 해요");
+                }
+            }
+
+        } else {
+            throw new NotExistsMongException();
+        }
+    }
+
+    /**
+     * 몽 필드 추출
+     */
+    private Mong exportMong(Object obj) {
+        try {
+            Field[] fields = obj.getClass().getDeclaredFields();
+            for (Field field : fields) {
+                if (Mong.class.isAssignableFrom(field.getType())) {
+                    field.setAccessible(true);
+                    return (Mong) field.get(obj);
+                }
+            }
+        } catch (IllegalAccessException ignored) {}
+
+        return null;
+    }
+}

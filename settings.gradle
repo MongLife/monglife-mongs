@@ -1,18 +1,65 @@
 rootProject.name = 'monglife-mongs'
 
-include 'apps'
-include 'apps:monglife-mongs-app-activity-api'
-include 'apps:monglife-mongs-app-manager-api'
-include 'apps:monglife-mongs-app-user-api'
+// --- common ---
+include 'common'
 
-include 'clients'
-include 'clients:monglife-mongs-client-google'
-include 'clients:monglife-mongs-client-manager'
-include 'clients:monglife-mongs-client-user'
+include 'common:core'
+include 'common:core:kafka-event-core'
 
-include 'domains'
-include 'domains:monglife-mongs-domain-device'
-include 'domains:monglife-mongs-domain-match'
-include 'domains:monglife-mongs-domain-member'
-include 'domains:monglife-mongs-domain-mong'
-include 'domains:monglife-mongs-domain-task'
+// --- character service ---
+include 'character-service'
+
+include 'character-service:adapter-in'
+include 'character-service:adapter-in:battle-schedule-adapter-in'
+include 'character-service:adapter-in:battle-subscribe-adapter-in'
+include 'character-service:adapter-in:battle-web-adapter-in'
+include 'character-service:adapter-in:mong-event-adapter-in'
+include 'character-service:adapter-in:mong-web-adapter-in'
+
+include 'character-service:adapter-out'
+include 'character-service:adapter-out:battle-persistence-adapter-out'
+include 'character-service:adapter-out:battle-publish-adapter-out'
+include 'character-service:adapter-out:mong-event-adapter-out'
+include 'character-service:adapter-out:mong-persistence-adapter-out'
+include 'character-service:adapter-out:mong-publish-adapter-out'
+include 'character-service:adapter-out:mong-schedule-adapter-out'
+
+include 'character-service:bootstrap'
+include 'character-service:bootstrap:character-bootstrap-api'
+
+include 'character-service:application'
+include 'character-service:application:battle-application'
+include 'character-service:application:mong-application'
+
+include 'character-service:domain'
+include 'character-service:domain:battle-domain'
+include 'character-service:domain:mong-domain'
+
+// --- user service ---
+include 'user-service'
+
+include 'user-service:adapter-in'
+include 'user-service:adapter-in:device-event-adapter-in'
+include 'user-service:adapter-in:device-web-adapter-in'
+include 'user-service:adapter-in:member-event-adapter-in'
+include 'user-service:adapter-in:member-web-adapter-in'
+
+include 'user-service:adapter-out'
+include 'user-service:adapter-out:device-event-adapter-out'
+include 'user-service:adapter-out:device-persistence-adapter-out'
+include 'user-service:adapter-out:device-publish-adapter-out'
+include 'user-service:adapter-out:google-payment-adapter-out'
+include 'user-service:adapter-out:member-event-adapter-out'
+include 'user-service:adapter-out:member-persistence-adapter-out'
+include 'user-service:adapter-out:member-publish-adapter-out'
+
+include 'user-service:bootstrap'
+include 'user-service:bootstrap:user-bootstrap-api'
+
+include 'user-service:application'
+include 'user-service:application:device-application'
+include 'user-service:application:member-application'
+
+include 'user-service:domain'
+include 'user-service:domain:device-domain'
+include 'user-service:domain:member-domain'
