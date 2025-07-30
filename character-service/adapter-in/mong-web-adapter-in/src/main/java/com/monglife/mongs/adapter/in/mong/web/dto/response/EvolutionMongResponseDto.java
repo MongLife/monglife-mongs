@@ -1,6 +1,8 @@
 package com.monglife.mongs.adapter.in.mong.web.dto.response;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.monglife.mongs.domain.mong.enums.MongStateCode;
+import com.monglife.mongs.domain.mong.enums.MongStatusCode;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -16,6 +18,12 @@ public class EvolutionMongResponseDto {
     private Long mongId;
 
     private String mongCode;
+
+    private Integer level;
+
+    private MongStateCode stateCode;
+
+    private MongStatusCode statusCode;
 
     private Double expRatio;
 
@@ -34,9 +42,12 @@ public class EvolutionMongResponseDto {
     private LocalDateTime updatedAt;
 
     @Builder
-    public EvolutionMongResponseDto(Long mongId, String mongCode, Double expRatio, Double strengthRatio, Double healthyRatio, Double satietyRatio, Double fatigueRatio, LocalDateTime createdAt, LocalDateTime updatedAt) {
+    public EvolutionMongResponseDto(Long mongId, String mongCode, Integer level, MongStateCode stateCode, MongStatusCode statusCode, Double expRatio, Double strengthRatio, Double healthyRatio, Double satietyRatio, Double fatigueRatio, LocalDateTime createdAt, LocalDateTime updatedAt) {
         this.mongId = mongId;
         this.mongCode = mongCode;
+        this.level = level;
+        this.stateCode = stateCode;
+        this.statusCode = statusCode;
         this.expRatio = expRatio;
         this.strengthRatio = strengthRatio;
         this.healthyRatio = healthyRatio;

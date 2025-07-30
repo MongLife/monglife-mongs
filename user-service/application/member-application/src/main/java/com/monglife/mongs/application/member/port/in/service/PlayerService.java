@@ -34,7 +34,7 @@ public class PlayerService implements PlayerUseCase {
     public void createPlayerUseCase(CreatePlayerCommand command) {
 
         // 플레이어 존재 여부 확인
-        if (Boolean.FALSE.equals(memberReadPort.isExistsPlayerPort(command.getAccountId()))) {
+        if (!memberReadPort.isExistsPlayerPort(command.getAccountId())) {
             memberPersistencePort.createPlayerPort(CreatePlayerVo.builder()
                     .accountId(command.getAccountId())
                     .slotCount(1)

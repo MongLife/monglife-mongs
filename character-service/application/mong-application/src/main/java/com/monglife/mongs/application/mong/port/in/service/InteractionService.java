@@ -1,5 +1,6 @@
 package com.monglife.mongs.application.mong.port.in.service;
 
+import com.monglife.core.vo.page.PageResult;
 import com.monglife.mongs.application.mong.port.annotation.CheckMongDead;
 import com.monglife.mongs.application.mong.port.annotation.PublishMongPort;
 import com.monglife.mongs.application.mong.port.exception.*;
@@ -79,7 +80,7 @@ public class InteractionService implements InteractionUseCase {
         mong.feedWithBuy(food);
 
         // 몽 정보 동기화
-        mong = mongPersistencePort.saveMongPort(mong)
+        mongPersistencePort.saveMongPort(mong)
                 .orElseThrow(NotExistsMongException::new);
 
         // 몽 섭취 이력 등록
@@ -110,7 +111,7 @@ public class InteractionService implements InteractionUseCase {
         mong.feedWithBuy(snack);
 
         // 몽 정보 동기화
-        mong = mongPersistencePort.saveMongPort(mong)
+        mongPersistencePort.saveMongPort(mong)
                 .orElseThrow(NotExistsMongException::new);
 
         // 몽 섭취 이력 등록
@@ -125,13 +126,13 @@ public class InteractionService implements InteractionUseCase {
      */
     @Override
     @Transactional
-    public List<Inventory> getInventoriesUseCase(GetInventoriesCommand command) {
+    public PageResult<Inventory> getInventoriesUseCase(GetInventoriesCommand command) {
 
         Mong mong = mongReadPort.getMongPort(command.getMongId())
                 .orElseThrow(NotExistsMongException::new)
                 .verify(command.getAccountId());
 
-        return mongReadPort.getInventoriesPort(mong.getMongId());
+        return mongReadPort.getInventoriesPort(mong.getMongId(), command.getPage(), command.getSize());
     }
 
     /**
@@ -168,7 +169,7 @@ public class InteractionService implements InteractionUseCase {
         }
 
         // 몽 정보 동기화
-        mong = mongPersistencePort.saveMongPort(mong)
+        mongPersistencePort.saveMongPort(mong)
                 .orElseThrow(NotExistsMongException::new);
 
         // 인벤 아이템 삭제
@@ -193,8 +194,10 @@ public class InteractionService implements InteractionUseCase {
         mong.buyRandomDrawTicket();
 
         // 몽 정보 동기화
-        return mongPersistencePort.saveMongPort(mong)
+        mongPersistencePort.saveMongPort(mong)
                 .orElseThrow(NotExistsMongException::new);
+
+        return mong;
     }
 
     /**
@@ -212,7 +215,7 @@ public class InteractionService implements InteractionUseCase {
         mong.decreaseRandomDrawTicketCount();
 
         // 몽 정보 동기화
-        mong = mongPersistencePort.saveMongPort(mong)
+        mongPersistencePort.saveMongPort(mong)
                 .orElseThrow(NotExistsMongException::new);
 
         // 랜덤 뽑기 아이템 목록 조회

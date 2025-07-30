@@ -1,5 +1,6 @@
 package com.monglife.mongs.application.mong.port.out;
 
+import com.monglife.core.vo.page.PageResult;
 import com.monglife.mongs.domain.mong.model.*;
 
 import java.util.List;
@@ -97,5 +98,5 @@ public interface MongReadPort {
      * @param mongId 몽 ID
      * @return 인벤토리 아이템 도메인 객체 목록
      */
-    List<Inventory> getInventoriesPort(Long mongId);
+    PageResult<Inventory> getInventoriesPort(Long mongId, Integer page, Integer size);
 }

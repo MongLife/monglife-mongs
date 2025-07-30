@@ -1,6 +1,8 @@
 package com.monglife.mongs.adapter.in.mong.web.controller;
 
+import com.monglife.core.dto.response.PageResponseDto;
 import com.monglife.core.dto.response.ResponseDto;
+import com.monglife.core.vo.page.PageResult;
 import com.monglife.module.common.logging.annotation.EntryLoggingPoint;
 import com.monglife.module.common.security.principal.Passport;
 import com.monglife.mongs.adapter.in.mong.web.dto.request.FeedFoodRequestDto;
@@ -10,9 +12,11 @@ import com.monglife.mongs.adapter.in.mong.web.dto.response.*;
 import com.monglife.mongs.adapter.in.mong.web.enums.AdapterInMongWebResponse;
 import com.monglife.mongs.application.mong.port.in.InteractionUseCase;
 import com.monglife.mongs.application.mong.port.in.command.*;
+import com.monglife.mongs.domain.mong.model.Inventory;
 import com.monglife.mongs.domain.mong.model.Mong;
 import com.monglife.mongs.domain.mong.model.RandomDraw;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
@@ -166,17 +170,24 @@ public class InteractionController {
      */
     @EntryLoggingPoint
     @GetMapping("/inventory/{mongId}")
-    public ResponseEntity<ResponseDto<List<GetInventoryResponseDto>>> getInventories(
+    public ResponseEntity<PageResponseDto<List<GetInventoryResponseDto>>> getInventories(
             @AuthenticationPrincipal Passport passport,
-            @PathVariable("mongId") @NotNull @Min(1) Long mongId
+            @PathVariable("mongId") @NotNull @Min(1) Long mongId,
+            @RequestParam("page") @NotNull @Min(1) Integer page,
+            @RequestParam("size") @NotNull @Min(1) @Max(10) Integer size
     ) {
         GetInventoriesCommand command = GetInventoriesCommand.builder()
                 .accountId(passport.getAccountId())
                 .mongId(mongId)
+                .page(page)
+                .size(size)
                 .build();
 
-        List<GetInventoryResponseDto> getInventoryResponseDtos = interactionUseCase.getInventoriesUseCase(command).stream()
+        PageResult<Inventory> inventoriesPage = interactionUseCase.getInventoriesUseCase(command);
+
+        List<GetInventoryResponseDto> getInventoryResponseDtos = inventoriesPage.getResult().stream()
                 .map(inventory -> GetInventoryResponseDto.builder()
+                        .mongId(inventory.getMongId())
                         .inventoryId(inventory.getInventoryId())
                         .inventoryCode(inventory.getInventoryCode())
                         .inventoryName(inventory.getInventoryName())
@@ -184,7 +195,13 @@ public class InteractionController {
                         .build())
                 .toList();
 
-        return ResponseEntity.ok(AdapterInMongWebResponse.GET_INVENTORIES.toResponseDto(getInventoryResponseDtos));
+        return ResponseEntity.ok(
+                AdapterInMongWebResponse.GET_INVENTORIES.toPageResponseDto(
+                        getInventoryResponseDtos,
+                        inventoriesPage.getPage(),
+                        inventoriesPage.getSize(),
+                        inventoriesPage.getTotalPage(),
+                        inventoriesPage.getIsLastPage()));
     }
 
     /**
@@ -240,6 +257,7 @@ public class InteractionController {
         BuyRandomDrawTicketResponseDto buyRandomDrawTicketResponseDto = BuyRandomDrawTicketResponseDto.builder()
                 .mongId(mong.getMongId())
                 .payPoint(mong.getPayPoint())
+                .randomDrawTicketCount(mong.getRandomDrawTicketCount())
                 .build();
 
         return ResponseEntity.ok(AdapterInMongWebResponse.BUY_RANDOM_DRAW_TICKET.toResponseDto(buyRandomDrawTicketResponseDto));

@@ -14,6 +14,12 @@ public class TrainingEndResponseDto {
 
     private Long mongId;
 
+    private Boolean isSuccess;
+
+    private Integer rewardPayPoint;
+
+    private Integer score;
+
     private Integer payPoint;
 
     private Double expRatio;
@@ -33,8 +39,11 @@ public class TrainingEndResponseDto {
     private MongStatusCode statusCode;
 
     @Builder
-    public TrainingEndResponseDto(Long mongId, Integer payPoint, Double expRatio, Double strengthRatio, Double healthyRatio, Double satietyRatio, Double fatigueRatio, Double weight, MongStateCode stateCode, MongStatusCode statusCode) {
+    public TrainingEndResponseDto(Long mongId, Boolean isSuccess, Integer rewardPayPoint, Integer score, Integer payPoint, Double expRatio, Double strengthRatio, Double healthyRatio, Double satietyRatio, Double fatigueRatio, Double weight, MongStateCode stateCode, MongStatusCode statusCode) {
         this.mongId = mongId;
+        this.isSuccess = isSuccess;
+        this.rewardPayPoint = rewardPayPoint;
+        this.score = score;
         this.payPoint = payPoint;
         this.expRatio = expRatio;
         this.strengthRatio = strengthRatio;

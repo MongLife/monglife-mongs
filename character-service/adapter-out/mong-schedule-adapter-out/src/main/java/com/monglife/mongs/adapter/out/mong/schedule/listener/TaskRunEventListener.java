@@ -34,9 +34,6 @@ public class TaskRunEventListener {
 
     private final ScheduledExecutorService executor;
 
-    @Value("${spring.config.activate.on-profile}")
-    private String profile;
-
     public TaskRunEventListener(
             @Autowired TaskRepository taskRepository,
             @Autowired TaskScheduleRepository taskScheduleRepository,

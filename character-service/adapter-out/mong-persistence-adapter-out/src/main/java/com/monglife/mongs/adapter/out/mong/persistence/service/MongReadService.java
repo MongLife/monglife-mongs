@@ -1,9 +1,13 @@
 package com.monglife.mongs.adapter.out.mong.persistence.service;
 
+import com.monglife.core.vo.page.PageResult;
 import com.monglife.mongs.adapter.out.mong.persistence.entity.*;
 import com.monglife.mongs.adapter.out.mong.persistence.repository.*;
 import com.monglife.mongs.domain.mong.model.*;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -271,9 +275,23 @@ public class MongReadService implements
      */
     @Override
     @Transactional
-    public List<Inventory> getInventoriesPort(Long mongId) {
-        return inventoryRepository.findByMongId(mongId).stream()
+    public PageResult<Inventory> getInventoriesPort(Long mongId, Integer page, Integer size) {
+
+        PageRequest pageRequest = PageRequest.of(page - 1, size, Sort.by(Sort.Direction.ASC, "inventoryId"));
+
+        Page<InventoryEntity> inventoriesPage = inventoryRepository.findByMongId(pageRequest, mongId);
+
+        List<Inventory> inventories = inventoriesPage.getContent()
+                .stream()
                 .map(InventoryEntity::toDomain)
                 .toList();
+
+        return PageResult.<Inventory>builder()
+                .page(page)
+                .size(size)
+                .totalPage(inventoriesPage.getTotalPages())
+                .isLastPage(page == inventoriesPage.getTotalPages())
+                .result(inventories)
+                .build();
     }
 }

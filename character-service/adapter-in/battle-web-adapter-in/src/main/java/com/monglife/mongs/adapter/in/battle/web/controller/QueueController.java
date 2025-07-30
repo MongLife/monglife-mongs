@@ -52,7 +52,7 @@ public class QueueController {
      */
     @EntryLoggingPoint
     @DeleteMapping("/{mongId}")
-    public ResponseEntity<ResponseDto<?>> deleteWaitMatching(@AuthenticationPrincipal Passport passport, @PathVariable("mongId") @NotNull @Min(1) Long mongId) {
+    public ResponseEntity<ResponseDto<?>> deleteQueuePlayer(@AuthenticationPrincipal Passport passport, @PathVariable("mongId") @NotNull @Min(1) Long mongId) {
 
         DeleteQueuePlayerCommand command = DeleteQueuePlayerCommand.builder()
                 .mongId(mongId)

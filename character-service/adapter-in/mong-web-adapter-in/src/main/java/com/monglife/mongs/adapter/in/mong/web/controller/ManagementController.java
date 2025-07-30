@@ -44,7 +44,12 @@ public class ManagementController {
                         .mongId(mong.getMongId())
                         .name(mong.getName())
                         .mongCode(mong.getMongCode())
+                        .mongName(mong.getMongName())
+                        .sleepAt(mong.getSleepAt())
+                        .wakeupAt(mong.getWakeupAt())
                         .payPoint(mong.getPayPoint())
+                        .level(mong.getLevel())
+                        .randomDrawTicketCount(mong.getRandomDrawTicketCount())
                         .expRatio(mong.getExp() / mong.getMaxStatus() * 100)
                         .strengthRatio(mong.getStrength() / mong.getMaxStatus() * 100)
                         .healthyRatio(mong.getHealthy() / mong.getMaxStatus() * 100)
@@ -84,7 +89,12 @@ public class ManagementController {
                 .mongId(mong.getMongId())
                 .name(mong.getName())
                 .mongCode(mong.getMongCode())
+                .mongName(mong.getMongName())
+                .sleepAt(mong.getSleepAt())
+                .wakeupAt(mong.getWakeupAt())
                 .payPoint(mong.getPayPoint())
+                .level(mong.getLevel())
+                .randomDrawTicketCount(mong.getRandomDrawTicketCount())
                 .expRatio(mong.getExp() / mong.getMaxStatus() * 100)
                 .strengthRatio(mong.getStrength() / mong.getMaxStatus() * 100)
                 .healthyRatio(mong.getHealthy() / mong.getMaxStatus() * 100)
@@ -124,13 +134,18 @@ public class ManagementController {
                 .mongId(mong.getMongId())
                 .name(mong.getName())
                 .mongCode(mong.getMongCode())
+                .mongName(mong.getMongName())
                 .payPoint(mong.getPayPoint())
+                .level(mong.getLevel())
+                .randomDrawTicketCount(mong.getRandomDrawTicketCount())
                 .expRatio(mong.getExp() / mong.getMaxStatus() * 100)
                 .strengthRatio(mong.getStrength() / mong.getMaxStatus() * 100)
                 .healthyRatio(mong.getHealthy() / mong.getMaxStatus() * 100)
                 .satietyRatio(mong.getSatiety() / mong.getMaxStatus() * 100)
                 .fatigueRatio(mong.getFatigue() / mong.getMaxStatus() * 100)
                 .weight(mong.getWeight())
+                .sleepAt(mong.getSleepAt())
+                .wakeupAt(mong.getWakeupAt())
                 .stateCode(mong.getStateCode())
                 .statusCode(mong.getStatusCode())
                 .poopCount(mong.getPoopCount())
@@ -196,7 +211,10 @@ public class ManagementController {
      */
     @EntryLoggingPoint
     @PutMapping("/sleep/{mongId}")
-    public ResponseEntity<ResponseDto<SleepWakeupResponseDto>> sleepMong(@AuthenticationPrincipal Passport passport, @PathVariable("mongId") @NotNull @Min(1) Long mongId) {
+    public ResponseEntity<ResponseDto<SleepWakeupMongResponseDto>> sleepMong(
+            @AuthenticationPrincipal Passport passport,
+            @PathVariable("mongId") @NotNull @Min(1) Long mongId
+    ) {
 
         Mong mong = managementUseCase.getMongUseCase(GetMongCommand.builder()
                 .accountId(passport.getAccountId())
@@ -219,14 +237,14 @@ public class ManagementController {
             mong = managementUseCase.sleepMongUseCase(command);
         }
 
-        SleepWakeupResponseDto sleepWakeupResponseDto = SleepWakeupResponseDto.builder()
+        SleepWakeupMongResponseDto sleepWakeupMongResponseDto = SleepWakeupMongResponseDto.builder()
                 .mongId(mong.getMongId())
                 .isSleep(mong.getIsSleep())
                 .createdAt(mong.getCreatedAt())
                 .updatedAt(mong.getUpdatedAt())
                 .build();
 
-        return ResponseEntity.ok(AdapterInMongWebResponse.SLEEP_WAKEUP_MONG.toResponseDto(sleepWakeupResponseDto));
+        return ResponseEntity.ok(AdapterInMongWebResponse.SLEEP_WAKEUP_MONG.toResponseDto(sleepWakeupMongResponseDto));
     }
 
     /**
@@ -234,7 +252,10 @@ public class ManagementController {
      */
     @EntryLoggingPoint
     @PostMapping("/poopClean/{mongId}")
-    public ResponseEntity<ResponseDto<PoopCleanMongResponseDto>> poopCleanMong(@AuthenticationPrincipal Passport passport, @PathVariable("mongId") @NotNull @Min(1) Long mongId) {
+    public ResponseEntity<ResponseDto<PoopCleanMongResponseDto>> poopCleanMong(
+            @AuthenticationPrincipal Passport passport,
+            @PathVariable("mongId") @NotNull @Min(1) Long mongId
+    ) {
 
         PoopCleanMongCommand command = PoopCleanMongCommand.builder()
                 .accountId(passport.getAccountId())
@@ -259,7 +280,10 @@ public class ManagementController {
      */
     @EntryLoggingPoint
     @PutMapping("/evolution/{mongId}")
-    public ResponseEntity<ResponseDto<?>> evolutionMong(@AuthenticationPrincipal Passport passport, @PathVariable("mongId") @NotNull @Min(1) Long mongId) {
+    public ResponseEntity<ResponseDto<EvolutionMongResponseDto>> evolutionMong(
+            @AuthenticationPrincipal Passport passport,
+            @PathVariable("mongId") @NotNull @Min(1) Long mongId
+    ) {
 
         EvolutionMongCommand command = EvolutionMongCommand.builder()
                 .accountId(passport.getAccountId())
@@ -271,11 +295,14 @@ public class ManagementController {
         EvolutionMongResponseDto evolutionMongResponseDto = EvolutionMongResponseDto.builder()
                 .mongId(mong.getMongId())
                 .mongCode(mong.getMongCode())
+                .level(mong.getLevel())
                 .expRatio(mong.getExp() / mong.getMaxStatus() * 100)
                 .strengthRatio(mong.getStrength() / mong.getMaxStatus() * 100)
                 .healthyRatio(mong.getHealthy() / mong.getMaxStatus() * 100)
                 .satietyRatio(mong.getSatiety() / mong.getMaxStatus() * 100)
                 .fatigueRatio(mong.getFatigue() / mong.getMaxStatus() * 100)
+                .stateCode(mong.getStateCode())
+                .statusCode(mong.getStatusCode())
                 .createdAt(mong.getCreatedAt())
                 .updatedAt(mong.getUpdatedAt())
                 .build();
@@ -288,7 +315,10 @@ public class ManagementController {
      */
     @EntryLoggingPoint
     @PutMapping("/graduate/{mongId}")
-    public ResponseEntity<ResponseDto<?>> graduateMong(@AuthenticationPrincipal Passport passport, @PathVariable("mongId") @NotNull @Min(1) Long mongId) {
+    public ResponseEntity<ResponseDto<GraduateMongResponseDto>> graduateMong(
+            @AuthenticationPrincipal Passport passport,
+            @PathVariable("mongId") @NotNull @Min(1) Long mongId
+    ) {
 
         GraduateMongCommand command = GraduateMongCommand.builder()
                 .accountId(passport.getAccountId())

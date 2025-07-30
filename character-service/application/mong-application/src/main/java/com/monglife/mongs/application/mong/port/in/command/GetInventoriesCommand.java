@@ -10,9 +10,15 @@ public class GetInventoriesCommand {
 
     private final Long mongId;
 
+    private final Integer page;
+
+    private final Integer size;
+
     @Builder
-    public GetInventoriesCommand(Long accountId, Long mongId) {
+    public GetInventoriesCommand(Long accountId, Long mongId, Integer page, Integer size) {
         this.accountId = accountId;
         this.mongId = mongId;
+        this.page = page;
+        this.size = size;
     }
 }

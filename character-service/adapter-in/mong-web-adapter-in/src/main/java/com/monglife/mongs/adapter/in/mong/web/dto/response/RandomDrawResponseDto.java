@@ -17,8 +17,6 @@ public class RandomDrawResponseDto {
 
     private InventoryTypeCode inventoryTypeCode;
 
-
-
     @Builder
     public RandomDrawResponseDto(String randomDrawCode, String randomDrawName, InventoryTypeCode inventoryTypeCode) {
         this.randomDrawCode = randomDrawCode;

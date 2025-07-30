@@ -59,7 +59,7 @@ public class Match {
      */
     private void start() {
         this.stateCode = MatchStateCode.PROCESS;
-        this.round = 1;
+        this.round = 0;
     }
 
     /**
@@ -75,7 +75,7 @@ public class Match {
      */
     private void nextRound() {
         // 매치 선택이 완료 되지 않은 경우
-        if (Boolean.FALSE.equals(this.isPickedAllMatchPlayers())) {
+        if (!this.isPickedAllMatchPlayers()) {
             throw new NotPickedAllMatchPlayersException();
         }
 
@@ -84,8 +84,8 @@ public class Match {
                 .filter(MatchPlayer::getIsBot)
                 .forEach(matchPlayer -> {
                     // 매치 선택 중복 방지
-                    if (Boolean.FALSE.equals(this.isPickedMatchPlayerInCurrentRound(matchPlayer.getPlayerId()))) {
-                        this.matchPicks.add(MatchPick.generateMatchPick(this, matchPlayer));
+                    if (!this.isPickedMatchPlayerInCurrentRound(matchPlayer.getPlayerId())) {
+                        this.matchPicks.add(MatchPick.generateMatchPick(this.getCurrentRound(), matchPlayer, this.matchPlayers));
                     }
                 });
 
@@ -94,11 +94,11 @@ public class Match {
                 .filter(matchPlayer -> !matchPlayer.getIsBot() && !matchPlayer.getIsEnter())
                 .forEach(matchPlayer -> {
                     // 매치 선택 중복 방지
-                    if (Boolean.FALSE.equals(this.isPickedMatchPlayerInCurrentRound(matchPlayer.getPlayerId()))) {
+                    if (!this.isPickedMatchPlayerInCurrentRound(matchPlayer.getPlayerId())) {
                         this.matchPicks.add(MatchPick.builder()
                                 .matchPlayer(matchPlayer)
                                 .targetMatchPlayer(matchPlayer)
-                                .round(this.round)
+                                .round(this.getCurrentRound())
                                 .pickCode(MatchPickCode.MATCH_PICK_DEFENCE)
                                 .pickValue(matchPlayer.getDefence())
                                 .build());
@@ -106,7 +106,9 @@ public class Match {
                 });
 
         // 매치 플레이어 선택 적용 (공격, 방어, 회복)
-        this.matchPicks.forEach(matchPick -> {
+        this.matchPicks.stream()
+                .filter(matchPick -> matchPick.getRound() == this.getCurrentRound())
+                .forEach(matchPick -> {
             switch (matchPick.getPickCode()) {
                 case MATCH_PICK_DEFENCE -> matchPick.getTargetMatchPlayer().defence();
                 case MATCH_PICK_HEAL -> matchPick.getTargetMatchPlayer().heal(matchPick.getPickValue());
@@ -118,19 +120,18 @@ public class Match {
         this.matchPlayers.forEach(matchPlayer -> {
             matchPlayer.applyDamageAndRecovery();
 
-            // 매치 플레이어 사망한 경우
-            if (Boolean.TRUE.equals(matchPlayer.isDead())) {
+            // 매치 플레이어 사망한 경우 매치 종료
+            if (matchPlayer.isDead()) {
                 this.end();
             }
         });
 
-        // 마지막 라운드 경우
-        if (this.maxRound < this.round + 1) {
-            // 매치 종료
+        // 라운드 수 증가
+        this.round = Math.min(this.round + 1, this.maxRound);
+
+        // 마지막 라운드 경우 매치 종료
+        if (this.maxRound <= this.round) {
             this.end();
-        } else {
-            // 라운드 수 증가
-            this.round = this.round + 1;
         }
     }
 
@@ -140,7 +141,7 @@ public class Match {
      */
     public void enterMatchPlayer(String playerId) {
         // 이미 매치가 시작한 경우
-        if (Boolean.TRUE.equals(this.isStart())) {
+        if (this.isStart()) {
             throw new AlreadyStartMatchException();
         }
 
@@ -153,7 +154,7 @@ public class Match {
         }
 
         // 모든 매치 플레이어 입장 완료인 경우 매치 시작
-        if (Boolean.TRUE.equals(this.isAllMatchPlayersEntered())) {
+        if (this.isAllMatchPlayersEntered()) {
             this.start();
         }
     }
@@ -163,22 +164,22 @@ public class Match {
      * @param matchPick 매치 선택 도메인 객체
      * @return 다음 라운드 진행 여부
      */
-    public Boolean pickMatchPlayer(MatchPick matchPick) {
+    public boolean pickMatchPlayer(MatchPick matchPick) {
 
         // 현재 라운드 매치 선택 여부 확인
-        if (Boolean.TRUE.equals(this.isPickedMatchPlayerInCurrentRound(matchPick.getMatchPlayer().getPlayerId()))) {
+        if (this.isPickedMatchPlayerInCurrentRound(matchPick.getMatchPlayer().getPlayerId())) {
             throw new AlreadyExistsMatchPickException();
         }
 
         this.matchPicks.add(matchPick);
 
         // 모든 매치 플레이어 선택 완료인 경우 다음 라운드 진행
-        if (Boolean.TRUE.equals(this.isPickedAllMatchPlayers())) {
+        if (this.isPickedAllMatchPlayers()) {
             this.nextRound();
-            return Boolean.TRUE;
+            return true;
         }
 
-        return Boolean.FALSE;
+        return false;
     }
 
     /**
@@ -195,7 +196,7 @@ public class Match {
         }
 
         // 매치 플레이어 1명 or 모든 플레이어 퇴장 상태인 경우
-        if (Boolean.TRUE.equals(this.isAllMatchPlayersExited())) {
+        if (this.isAllMatchPlayersExited()) {
             // 매치 종료
             this.end();
         }
@@ -250,11 +251,20 @@ public class Match {
         throw new NotExistsMatchPlayerException();
     }
 
+
+    /**
+     * 현재 진행중인 라운드 조회
+     * @return 현재 라운드
+     */
+    public int getCurrentRound() {
+        return Math.min(this.round + 1, this.maxRound);
+    }
+
     /**
      * 매치 시작 여부 확인
      * @return 매치 시작 여부
      */
-    public Boolean isStart() {
+    public boolean isStart() {
         return MatchStateCode.PROCESS.equals(this.stateCode);
     }
 
@@ -262,7 +272,7 @@ public class Match {
      * 매치 종료 여부 확인
      * @return 매치 종료 여부
      */
-    public Boolean isEnd() {
+    public boolean isEnd() {
         return MatchStateCode.END.equals(this.stateCode);
     }
 
@@ -270,17 +280,18 @@ public class Match {
      * 마지막 라운드 여부 확인
      * @return 마지막 라운드 여부
      */
-    public Boolean isLastRound() {
-        return this.maxRound.equals(this.round);
+    public boolean isLastRound() {
+        return MatchStateCode.END.equals(this.stateCode) || this.maxRound.equals(this.round);
     }
 
     /**
      * 모든 매치 플레이어 매치 선택 여부 확인
      * @return 매치 선택 여부 확인
      */
-    public Boolean isPickedAllMatchPlayers() {
+    public boolean isPickedAllMatchPlayers() {
         // 선택한 매치 플레이어 ID 목록
         Set<String> pickedMatchPlayerIds = this.matchPicks.stream()
+                .filter(matchPick -> matchPick.getRound() == this.getCurrentRound())
                 .map(matchPick -> matchPick.getMatchPlayer().getPlayerId())
                 .collect(Collectors.toSet());
 
@@ -297,39 +308,40 @@ public class Match {
      * @param playerId 매치 플레이어 ID
      * @return 매치 선택 완료 여부
      */
-    public Boolean isPickedMatchPlayerInCurrentRound(String playerId) {
+    public boolean isPickedMatchPlayerInCurrentRound(String playerId) {
         for (MatchPick matchPick : this.matchPicks) {
+            if (matchPick.getRound() != this.getCurrentRound()) continue;
             if (matchPick.getMatchPlayer().getPlayerId().equals(playerId)) {
-                return Boolean.TRUE;
+                return true;
             }
         }
 
-        return Boolean.FALSE;
+        return false;
     }
 
     /**
      * 모든 매치 플레이어 입장 여부 확인
      * @return 모든 매치 플레이어 입장 여부
      */
-    public Boolean isAllMatchPlayersEntered() {
+    public boolean isAllMatchPlayersEntered() {
         for (MatchPlayer matchPlayer : matchPlayers) {
-            if (Boolean.FALSE.equals(matchPlayer.getIsEnter())) {
-                return Boolean.FALSE;
+            if (!matchPlayer.getIsEnter()) {
+                return false;
             }
         }
 
-        return Boolean.TRUE;
+        return true;
     }
 
     /**
      * 모든 매치 플레이어 퇴장 or 1명의 매치 플레이어 잔류 여부 확인
      * @return 매치 플레이어 퇴장 여부
      */
-    public Boolean isAllMatchPlayersExited() {
+    public boolean isAllMatchPlayersExited() {
         int matchPlayersCount = 0;
 
         for (MatchPlayer matchPlayer : matchPlayers) {
-            if (Boolean.TRUE.equals(matchPlayer.getIsEnter())) {
+            if (matchPlayer.getIsEnter()) {
                 matchPlayersCount++;
             }
         }
@@ -341,7 +353,7 @@ public class Match {
      * 보상 경험치 수치 조회
      * @return 보상 경험치 수치
      */
-    public static Double getRewardExp() {
+    public static double getRewardExp() {
         return REWARD_EXP;
     }
 
@@ -349,7 +361,7 @@ public class Match {
      * 보상 페이 포인트 조회
      * @return 보상 페이 포인트
      */
-    public static Integer getRewardPayPoint() {
+    public static int getRewardPayPoint() {
         return REWARD_PAY_POINT;
     }
 
@@ -357,7 +369,7 @@ public class Match {
      * 배팅 페이 포인트 조회
      * @return 배팅 페이 포인트
      */
-    public static Integer getBettingPayPoint() {
+    public static int getBettingPayPoint() {
         return BETTING_PAY_POINT;
     }
 
@@ -365,7 +377,7 @@ public class Match {
      * 매치 초기 라운드 값 조회
      * @return 초기 라운드 값
      */
-    public static Integer getInitRound() {
+    public static int getInitRound() {
         return INIT_ROUND;
     }
 
@@ -381,7 +393,7 @@ public class Match {
      * 매치 최대 라운드 수 조회
      * @return 매치 최대 라운드 수
      */
-    public static Integer getInitMaxRound() {
+    public static int getInitMaxRound() {
         return MAX_ROUND;
     }
 }

@@ -1,10 +1,9 @@
 package com.monglife.mongs.application.member.port.in;
 
+import com.monglife.core.vo.page.PageResult;
 import com.monglife.mongs.application.member.port.in.command.GetNoticeCommand;
 import com.monglife.mongs.application.member.port.in.command.GetNoticesCommand;
 import com.monglife.mongs.domain.member.model.Notice;
-
-import java.util.List;
 
 public interface NoticeUseCase {
 
@@ -16,5 +15,5 @@ public interface NoticeUseCase {
     /**
      * 공지 사항 목록 조회
      */
-    List<Notice> getNoticesUseCase(GetNoticesCommand command);
+    PageResult<Notice> getNoticesUseCase(GetNoticesCommand command);
 }

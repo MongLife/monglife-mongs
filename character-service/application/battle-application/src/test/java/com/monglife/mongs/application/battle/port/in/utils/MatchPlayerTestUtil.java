@@ -176,9 +176,9 @@ public class MatchPlayerTestUtil {
                 .attack(attack)
                 .heal(heal)
                 .defence(defence)
-                .isBot(Boolean.FALSE)
+                .isBot(false)
                 .hp(hp)
-                .isEnter(Boolean.FALSE)
+                .isEnter(false)
                 .build();
     }
 
@@ -194,9 +194,9 @@ public class MatchPlayerTestUtil {
                 .attack(attack)
                 .heal(heal)
                 .defence(defence)
-                .isBot(Boolean.FALSE)
+                .isBot(false)
                 .hp(hp)
-                .isEnter(Boolean.FALSE)
+                .isEnter(false)
                 .build();
     }
 
@@ -212,9 +212,9 @@ public class MatchPlayerTestUtil {
                 .attack(attack)
                 .heal(heal)
                 .defence(defence)
-                .isBot(Boolean.TRUE)
+                .isBot(true)
                 .hp(hp)
-                .isEnter(Boolean.TRUE)
+                .isEnter(true)
                 .build();
     }
 

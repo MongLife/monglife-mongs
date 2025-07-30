@@ -38,17 +38,17 @@ public class MatchPick {
 
     /**
      * 매치 선택 도메인 객체 랜덤 생성
-     * @param match 매치 도메인 객체
+     * @param round 매치 선택 라운드
      * @param matchPlayer 매치 플레이어 도메인 객체
      * @return 매치 선택 도메인 객체
      */
-    public static MatchPick generateMatchPick(Match match, MatchPlayer matchPlayer) {
+    public static MatchPick generateMatchPick(int round, MatchPlayer matchPlayer, List<MatchPlayer> matchPlayers) {
 
         // 매치 선택 코드 랜덤 선택
         int matchPickIndex = random.nextInt(0, MatchPickCode.values().length);
         MatchPickCode pickCode = MatchPickCode.values()[matchPickIndex];
 
-        List<MatchPlayer> targetMatchPlayers = match.getMatchPlayers().stream()
+        List<MatchPlayer> targetMatchPlayers = matchPlayers.stream()
                 .filter(targetMatchPlayer -> !targetMatchPlayer.getPlayerId().equals(matchPlayer.getPlayerId()))
                 .toList();
 
@@ -65,21 +65,21 @@ public class MatchPick {
             case MATCH_PICK_DEFENCE -> MatchPick.builder()
                     .matchPlayer(matchPlayer)
                     .targetMatchPlayer(targetMatchPlayer)
-                    .round(match.getRound())
+                    .round(round)
                     .pickCode(pickCode)
                     .pickValue(matchPlayer.getDefence())
                     .build();
             case MATCH_PICK_HEAL -> MatchPick.builder()
                     .matchPlayer(matchPlayer)
                     .targetMatchPlayer(targetMatchPlayer)
-                    .round(match.getRound())
+                    .round(round)
                     .pickCode(pickCode)
                     .pickValue(matchPlayer.getHeal())
                     .build();
             default -> MatchPick.builder()
                     .matchPlayer(matchPlayer)
                     .targetMatchPlayer(targetMatchPlayer)
-                    .round(match.getRound())
+                    .round(round)
                     .pickCode(pickCode)
                     .pickValue(matchPlayer.getAttack())
                     .build();

@@ -7,4 +7,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.Optional;
 
 public interface DeviceRepository extends JpaRepository<DeviceEntity, String>, DeviceDslRepository {
+
+    Optional<DeviceEntity> findByDeviceId(String deviceId);
 }

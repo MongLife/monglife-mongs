@@ -2,6 +2,7 @@ package com.monglife.mongs.adapter.out.mong.schedule.service;
 
 import com.monglife.mongs.adapter.out.mong.schedule.entity.TaskEntity;
 import com.monglife.mongs.adapter.out.mong.schedule.entity.TaskScheduleEntity;
+import com.monglife.mongs.adapter.out.mong.schedule.enums.TaskStateCode;
 import com.monglife.mongs.adapter.out.mong.schedule.enums.TaskTypeCode;
 import com.monglife.mongs.adapter.out.mong.schedule.repository.TaskRepository;
 import com.monglife.mongs.adapter.out.mong.schedule.repository.TaskScheduleRepository;
@@ -175,8 +176,10 @@ public class TaskService implements MongSchedulerPort {
             taskEntity.appStopResume();
 
             // 테스크 스케줄 시작
-            taskScheduleRepository.save(TaskScheduleEntity.of(taskEntity))
-                    .start(executor, () -> publisher.publishEvent(taskEntity));
+            if (TaskStateCode.APP_STOP_PROCESSING.equals(taskEntity.getStateCode())) {
+                taskScheduleRepository.save(TaskScheduleEntity.of(taskEntity))
+                        .start(executor, () -> publisher.publishEvent(taskEntity));
+            }
         });
 
         return taskEntities;

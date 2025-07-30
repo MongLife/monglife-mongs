@@ -4,7 +4,6 @@ import com.monglife.core.utils.CommonUtil;
 import com.monglife.module.mqtt.config.MqttAutoConfig;
 import com.monglife.mongs.adapter.out.battle.publish.config.AdapterOutBattlePublishConfig;
 import com.monglife.mongs.adapter.out.battle.publish.consumer.MatchConsumer;
-import com.monglife.mongs.adapter.out.battle.publish.dto.response.MatchEndPublishDto;
 import com.monglife.mongs.adapter.out.battle.publish.dto.response.MatchPublishDto;
 import com.monglife.mongs.application.battle.port.out.MatchPublishPort;
 import com.monglife.mongs.domain.battle.enums.MatchStateCode;
@@ -168,21 +167,19 @@ class MatchPublishServiceTest {
                     .stateCode(MatchStateCode.PROCESS)
                     .build();
 
-            MatchEndPublishDto matchEndPublishDto = new MatchEndPublishDto();
+            MatchPublishDto matchPublishDto = new MatchPublishDto();
             CountDownLatch countDownLatch = new CountDownLatch(1);
-            matchConsumer.reset(matchId, matchEndPublishDto, countDownLatch);
+            matchConsumer.reset(matchId, matchPublishDto, countDownLatch);
 
             // act
-            matchPublishPort.publishMatchEndPort(match, matchPlayer);
+            matchPublishPort.publishMatchEndPort(match);
             var expected = countDownLatch.await(5, TimeUnit.SECONDS);
 
             // assert
             assertTrue(expected);
-            assertEquals(matchId, matchEndPublishDto.getMatchId());
-            assertEquals(playerId, matchEndPublishDto.getPlayerId());
-            assertEquals(name, matchEndPublishDto.getName());
-            assertEquals(mongCode, matchEndPublishDto.getMongCode());
-            assertEquals(mongName, matchEndPublishDto.getMongName());
+            assertEquals(matchId, matchPublishDto.getMatchId());
+            assertEquals(1, matchPublishDto.getRound());
+            assertFalse(matchPublishDto.getIsLastRound());
         }
     }
 }

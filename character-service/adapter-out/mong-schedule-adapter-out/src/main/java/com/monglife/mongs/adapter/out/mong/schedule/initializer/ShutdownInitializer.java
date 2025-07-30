@@ -1,14 +1,12 @@
 package com.monglife.mongs.adapter.out.mong.schedule.initializer;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.monglife.core.utils.CommonUtil;
 import com.monglife.module.common.logging.annotation.DisableLogging;
-import com.monglife.module.common.logging.enums.LogType;
+import com.monglife.module.common.logging.enums.BasicLogType;
+import com.monglife.module.common.logging.enums.LoggerType;
+import com.monglife.module.common.logging.utils.LoggingUtil;
 import com.monglife.mongs.adapter.out.mong.schedule.dto.InitializerLogDto;
 import com.monglife.mongs.adapter.out.mong.schedule.service.TaskService;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.event.ContextClosedEvent;
@@ -19,19 +17,18 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
-@Slf4j
 @Order(Integer.MIN_VALUE)
 @Component
 public class ShutdownInitializer implements ApplicationListener<ContextClosedEvent> {
 
     private final TaskService taskService;
 
-    private final ObjectMapper objectMapper;
+    private final LoggingUtil loggingUtil;
 
-    public ShutdownInitializer(@Autowired TaskService taskService) {
+    @Autowired
+    public ShutdownInitializer(TaskService taskService, LoggingUtil loggingUtil) {
         this.taskService = taskService;
-        this.objectMapper = new ObjectMapper();
-        this.objectMapper.registerModule(new JavaTimeModule());
+        this.loggingUtil = loggingUtil;
     }
 
     @Override
@@ -55,14 +52,12 @@ public class ShutdownInitializer implements ApplicationListener<ContextClosedEve
                     .entryMethod(String.format("%s#%s", className, methodName))
                     .className(className)
                     .method(methodName)
-                    .logType(LogType.METHOD_CALL)
+                    .logType(BasicLogType.METHOD_CALL)
                     .taskCount(taskCount.get())
                     .taskIds(taskIds)
                     .build();
 
-            try {
-                log.info("{}", objectMapper.writeValueAsString(initializerLogDto));
-            } catch (JsonProcessingException ignored) {}
+            loggingUtil.printInfoLog(initializerLogDto, LoggerType.CONSOLE_LOGGER);
         }
     }
 }
