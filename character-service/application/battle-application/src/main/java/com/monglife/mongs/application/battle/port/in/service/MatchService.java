@@ -1,17 +1,19 @@
 package com.monglife.mongs.application.battle.port.in.service;
 
-import com.monglife.mongs.application.battle.port.annotation.EndMatch;
 import com.monglife.mongs.application.battle.port.exception.NotEndMatchException;
 import com.monglife.mongs.application.battle.port.exception.NotExistsMatchException;
+import com.monglife.mongs.application.battle.port.exception.NotExistsMongException;
 import com.monglife.mongs.application.battle.port.in.MatchUseCase;
 import com.monglife.mongs.application.battle.port.in.command.*;
 import com.monglife.mongs.application.battle.port.in.vo.MatchOutcomeVo;
 import com.monglife.mongs.application.battle.port.out.MatchPersistencePort;
 import com.monglife.mongs.application.battle.port.out.MatchPublishPort;
 import com.monglife.mongs.application.battle.port.out.MatchReadPort;
+import com.monglife.mongs.application.battle.port.out.MongPersistencePort;
 import com.monglife.mongs.domain.battle.model.Match;
 import com.monglife.mongs.domain.battle.model.MatchPick;
 import com.monglife.mongs.domain.battle.model.MatchPlayer;
+import com.monglife.mongs.domain.mong.model.Mong;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -19,6 +21,8 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 @RequiredArgsConstructor
 public class MatchService implements MatchUseCase {
+
+    private final MongPersistencePort mongPersistencePort;
 
     private final MatchPersistencePort matchPersistencePort;
 
@@ -99,7 +103,6 @@ public class MatchService implements MatchUseCase {
      */
     @Override
     @Transactional
-    @EndMatch
     public Match exitMatchUseCase(ExitMatchCommand command) {
 
         Match match = matchPersistencePort.getMatchPort(command.getMatchId())
@@ -113,8 +116,24 @@ public class MatchService implements MatchUseCase {
             matchPersistencePort.saveMatchPort(match)
                     .orElseThrow(NotExistsMatchException::new);
 
-            // 매치가 중단된 경우 승리 매치 종료 비동기 응답
+            // 매치가 중단된 경우
             if (match.isAllMatchPlayersExited()) {
+                // 승리한 매치 플레이어 조회
+                MatchPlayer winMatchPlayer = match.getWinner();
+
+                if (!winMatchPlayer.getIsBot()) {
+                    // 승리한 매치 플레이어 몽 조회
+                    Mong mong = mongPersistencePort.getMongPort(winMatchPlayer.getMongId())
+                            .orElseThrow(NotExistsMongException::new);
+
+                    // 매치 승리 보상 적용
+                    mong.matchReward(Match.getRewardPayPoint(), Match.getRewardExp());
+
+                    // 몽 동기화
+                    mongPersistencePort.saveMongPort(mong);
+                }
+
+                // 매치 종료 비동기 응답
                 matchPublishPort.publishMatchEndPort(match);
             }
         }
@@ -127,7 +146,6 @@ public class MatchService implements MatchUseCase {
      */
     @Override
     @Transactional
-    @EndMatch
     public Match pickMatchUseCase(PickMatchCommand command) {
 
         Match match = matchPersistencePort.getMatchPort(command.getMatchId())
@@ -174,8 +192,24 @@ public class MatchService implements MatchUseCase {
         matchPersistencePort.saveMatchPort(match)
                 .orElseThrow(NotExistsMatchException::new);
 
+        if (match.isEnd()) {
+            // 승리한 매치 플레이어 조회
+            MatchPlayer winMatchPlayer = match.getWinner();
+
+            if (!winMatchPlayer.getIsBot()) {
+                // 승리한 매치 플레이어 몽 조회
+                Mong mong = mongPersistencePort.getMongPort(winMatchPlayer.getMongId())
+                        .orElseThrow(NotExistsMongException::new);
+
+                // 매치 승리 보상 적용
+                mong.matchReward(Match.getRewardPayPoint(), Match.getRewardExp());
+
+                // 몽 동기화
+                mongPersistencePort.saveMongPort(mong);
+            }
+        }
         // 다음 라운드 진행한 경우
-        if (isRoundOver) {
+        else if (isRoundOver) {
             // 매치 라운드 종료 비동기 응답
             matchPublishPort.publishMatchPort(match);
         }

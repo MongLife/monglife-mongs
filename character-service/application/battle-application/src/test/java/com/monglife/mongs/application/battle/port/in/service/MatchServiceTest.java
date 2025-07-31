@@ -9,6 +9,7 @@ import com.monglife.mongs.application.battle.port.in.utils.MatchPlayerTestUtil;
 import com.monglife.mongs.application.battle.port.out.MatchPersistencePort;
 import com.monglife.mongs.application.battle.port.out.MatchPublishPort;
 import com.monglife.mongs.application.battle.port.out.MatchReadPort;
+import com.monglife.mongs.application.battle.port.out.MongPersistencePort;
 import com.monglife.mongs.domain.battle.enums.MatchPickCode;
 import com.monglife.mongs.domain.battle.model.Match;
 import com.monglife.mongs.domain.battle.model.MatchPlayer;
@@ -24,10 +25,11 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class MatchServiceTest {
 
+    private final MongPersistencePort mongPersistencePort = Mockito.mock(MongPersistencePort.class);
     private final MatchPersistencePort matchPersistencePort = Mockito.mock(MatchPersistencePort.class);
     private final MatchReadPort matchReadPort = Mockito.mock(MatchReadPort.class);
     private final MatchPublishPort matchPublishPort = Mockito.mock(MatchPublishPort.class);
-    private final MatchUseCase matchUseCase = new MatchService(matchPersistencePort, matchReadPort, matchPublishPort);
+    private final MatchUseCase matchUseCase = new MatchService(mongPersistencePort, matchPersistencePort, matchReadPort, matchPublishPort);
 
     private static final Long MATCH_ID = 1L;
     private static final String PLAYER_ID = CommonUtil.randomId();
