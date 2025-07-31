@@ -176,7 +176,7 @@ public class TaskService implements MongSchedulerPort {
             taskEntity.appStopResume();
 
             // 테스크 스케줄 시작
-            if (TaskStateCode.APP_STOP_PROCESSING.equals(taskEntity.getStateCode())) {
+            if (TaskStateCode.PROCESSING.equals(taskEntity.getStateCode())) {
                 taskScheduleRepository.save(TaskScheduleEntity.of(taskEntity))
                         .start(executor, () -> publisher.publishEvent(taskEntity));
             }
