@@ -105,20 +105,18 @@ public class MatchService implements MatchUseCase {
         Match match = matchPersistencePort.getMatchPort(command.getMatchId())
                 .orElseThrow(NotExistsMatchException::new);
 
-        if (match.isEnd()) {
-            throw new NotExistsMatchException();
-        }
+        if (!match.isEnd()) {
+            // 플레이어 퇴장
+            match.exitMatchPlayer(command.getPlayerId());
 
-        // 플레이어 퇴장
-        match.exitMatchPlayer(command.getPlayerId());
+            // 매치 정보 동기화
+            matchPersistencePort.saveMatchPort(match)
+                    .orElseThrow(NotExistsMatchException::new);
 
-        // 매치 정보 동기화
-        matchPersistencePort.saveMatchPort(match)
-                .orElseThrow(NotExistsMatchException::new);
-
-        // 매치가 중단된 경우 승리 매치 종료 비동기 응답
-        if (match.isAllMatchPlayersExited()) {
-            matchPublishPort.publishMatchEndPort(match);
+            // 매치가 중단된 경우 승리 매치 종료 비동기 응답
+            if (match.isAllMatchPlayersExited()) {
+                matchPublishPort.publishMatchEndPort(match);
+            }
         }
 
         return match;
