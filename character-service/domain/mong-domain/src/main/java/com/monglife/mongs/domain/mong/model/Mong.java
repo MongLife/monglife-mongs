@@ -200,27 +200,11 @@ public class Mong {
             this.isSleep
         ) throw new InvalidMongStateException();
 
-        this.exp = Math.max(0, Math.min(this.exp + this.poopCount * 2D, this.maxStatus));
+        this.exp = Math.max(0, Math.min(this.exp + this.poopCount * 2.0, this.maxStatus));
         this.poopCount = 0;
 
         // 몽 상태 코드 동기화
         this.syncMongStateCode();
-    }
-
-    /**
-     * 진화 점수 조회
-     * @return 진화 점수
-     */
-    public Double getEvolutionScore() {
-
-        double evolutionScore = 50D;
-
-        evolutionScore += this.evolutionReward;
-        evolutionScore -= this.evolutionPenalty;
-        evolutionScore += this.strokeCount * 2D;
-        evolutionScore += this.trainingCount * 5D;
-
-        return Math.max(0, evolutionScore);
     }
 
     /**
@@ -231,17 +215,45 @@ public class Mong {
     }
 
     /**
+     * 진화 스코어 계산
+     */
+    private Double getEvolutionScore() {
+        double evolutionScore = 50D;
+
+        evolutionScore = Math.max(0, evolutionScore + 1.00 * this.evolutionReward);
+        evolutionScore = Math.max(0, evolutionScore - 1.00 * this.evolutionPenalty);
+        evolutionScore = Math.max(0, evolutionScore + 2.00 * this.strokeCount);
+        evolutionScore = Math.max(0, evolutionScore + 5.00 * this.trainingCount);
+
+        return evolutionScore;
+    }
+
+    /**
      * 진화
      * @param mongTypes 진화 가능한 몽 타입 목록
      */
-    public void evolution(List<MongType> mongTypes) {
+    public Double evolution(List<MongType> mongTypes, List<MongEvolutionHistory> mongEvolutionHistories) {
 
         if (MongStateCode.DEAD.equals(this.stateCode) ||
             MongStateCode.GRADUATE_READY.equals(this.stateCode) ||
             !MongStateCode.EVOLUTION_READY.equals(this.stateCode)
         ) throw new InvalidMongStateException();
 
+
+        List<String> mongEvolutionHistoryMongCodes = mongEvolutionHistories.stream()
+                .map(MongEvolutionHistory::getMongCode)
+                .toList();
+
+        // 진화 스코어 기준 필터링
+        double evolutionScore = this.getEvolutionScore();
         List<MongType> sortedMongTypes = mongTypes.stream()
+                .peek(mongType -> {
+                    if (mongEvolutionHistoryMongCodes.contains(mongType.getMongCode())) {
+                        // 이미 컬렉션 보유 중인 몽인 경우 진화 스코어 65% 감소 패치
+                        mongType.fetchEvolutionScore(0.70);
+                    }
+                })
+                .filter(mongType -> mongType.getEvolutionScore() <= evolutionScore)
                 .sorted((o1, o2) -> o2.getEvolutionScore().compareTo(o1.getEvolutionScore()))
                 .toList();
 
@@ -252,17 +264,17 @@ public class Mong {
 
         // 다음 몽 타입 지정
         MongType mongType;
-        double evolutionScore;
+        double evolutionReward;
 
         if (this.level == 0) {
             // 다음 몽 타입 지정
-            mongType = sortedMongTypes.get(random.nextInt(0, mongTypes.size()));
-            evolutionScore = 0;
+            mongType = sortedMongTypes.get((int) (random.nextLong(0, Long.MAX_VALUE) % (long) mongTypes.size()));
+            evolutionReward = 0;
         } else {
             // 다음 몽 타입 지정
             mongType = sortedMongTypes.get(0);
             // 진화 점수 계산
-            evolutionScore = Math.max(0, Math.min(this.getEvolutionScore() - 100D, 25D));
+            evolutionReward = Math.max(0, Math.min(evolutionScore - 100D, 25D));
         }
 
         // 지수 수치 -> 지수 비율 퍼센트 변환
@@ -272,7 +284,7 @@ public class Mong {
         double fatigueRatio  = this.fatigue  / this.maxStatus * 100;
 
         // 진화 리워드 점수 갱신
-        this.evolutionReward  = evolutionScore;
+        this.evolutionReward  = evolutionReward;
         this.evolutionPenalty = 0D;
         this.mongCode         = mongType.getMongCode();
         this.mongName         = mongType.getMongName();
@@ -286,6 +298,8 @@ public class Mong {
         this.exp = 0D;
 
         this.updateStateCode(MongStateCode.NORMAL);
+
+        return evolutionScore;
     }
 
     /**
@@ -314,63 +328,56 @@ public class Mong {
      * 몽 지수 1 Cycle 증가
      */
     public void cycleIncreaseStatus() {
+        if (!MongStateCode.DEAD.equals(this.stateCode)) {
+            double addStrength = 0.015 * this.maxStatus;
+            double addHealthy  = 0.020  * this.maxStatus;
+            double addFatigue  = 0.060  * this.maxStatus;
 
-        if (MongStateCode.DEAD.equals(this.stateCode)) {
-            throw new InvalidMongStateException();
+            this.strength = Math.max(0, Math.min(this.strength + addStrength, this.maxStatus));
+            this.healthy  = Math.max(0, Math.min(this.healthy + addHealthy, this.maxStatus));
+            this.fatigue  = Math.max(0, Math.min(this.fatigue + addFatigue, this.maxStatus));
+
+            // 몽 지수 코드 동기화
+            this.syncMongStatusCode();
         }
-
-        double addHealthy = this.maxStatus * 0.2;
-        double addFatigue = this.maxStatus * 0.6;
-
-        this.healthy = Math.max(0, Math.min(this.healthy + addHealthy, this.maxStatus));
-        this.fatigue = Math.max(0, Math.min(this.fatigue + addFatigue, this.maxStatus));
-
-        // 몽 지수 코드 동기화
-        this.syncMongStatusCode();
     }
 
     /**
      * 몽 지수 1 Cycle 감소
      */
     public void cycleDecreaseStatus() {
+        if (!MongStateCode.DEAD.equals(this.stateCode)) {
+            double subWeight   = 0.050 * this.weight;
+            double subStrength = 0.070 * this.maxStatus;
+            double subSatiety  = 0.050 * this.maxStatus;
+            double subHealthy  = 0.050 * this.maxStatus;
+            double subFatigue  = 0.030 * this.maxStatus;
 
-        if (MongStateCode.DEAD.equals(this.stateCode)) {
-            throw new InvalidMongStateException();
+            this.weight   = Math.max(0, this.weight - subWeight);
+            this.strength = Math.max(0, Math.min(this.strength - subStrength, this.maxStatus));
+            this.satiety  = Math.max(0, Math.min(this.satiety - subSatiety, this.maxStatus));
+            this.healthy  = Math.max(0, Math.min(this.healthy - subHealthy, this.maxStatus));
+            this.fatigue  = Math.max(0, Math.min(this.fatigue - subFatigue, this.maxStatus));
+
+            // 몽 지수 코드 동기화
+            this.syncMongStatusCode();
         }
-
-        double subWeight   = 1.3;
-        double subStrength = 0.7 * this.maxStatus;
-        double subSatiety  = 0.5 * this.maxStatus;
-        double subHealthy  = 0.5 * this.maxStatus;
-        double subFatigue  = 0.3 * this.maxStatus;
-
-        this.weight   = Math.max(0, this.weight   - subWeight);
-        this.strength = Math.max(0, Math.min(this.strength - subStrength, this.maxStatus));
-        this.satiety  = Math.max(0, Math.min(this.satiety  - subSatiety,  this.maxStatus));
-        this.healthy  = Math.max(0, Math.min(this.healthy  - subHealthy,  this.maxStatus));
-        this.fatigue  = Math.max(0, Math.min(this.fatigue  - subFatigue,  this.maxStatus));
-
-        // 몽 지수 코드 동기화
-        this.syncMongStatusCode();
     }
 
     /**
      * 몽 배변 수 1 Cycle 증가
      */
     public void cycleIncreasePoopCount() {
+        if (!MongStateCode.DEAD.equals(this.stateCode)) {
+            int addPoopCount = 1;
 
-        if (MongStateCode.DEAD.equals(this.stateCode)) {
-            throw new InvalidMongStateException();
+            // 최대 배변 수를 초과한 경우 진화 패널티 증가
+            if (this.poopCount + addPoopCount >= MAX_POOP_COUNT) {
+                this.evolutionPenalty = this.evolutionPenalty + 0.1;
+            }
+
+            this.poopCount = Math.min(this.poopCount + addPoopCount, MAX_POOP_COUNT);
         }
-
-        int addPoopCount = 1;
-
-        // 최대 배변 수를 초과한 경우 진화 패널티 증가
-        if (this.poopCount + addPoopCount >= MAX_POOP_COUNT) {
-            this.evolutionPenalty = this.evolutionPenalty + 0.1;
-        }
-
-        this.poopCount = Math.min(this.poopCount + addPoopCount, MAX_POOP_COUNT);
     }
 
     /**

@@ -86,4 +86,13 @@ public interface MongPersistencePort {
      * @return 랜덤 뽑기 아이템 도메인 객체
      */
     Optional<RandomDraw> createRandomDrawHistoryPort(Long accountId, RandomDraw randomDraw);
+
+    /**
+     * 몽 진화 이력 등록
+     * @param accountId 계정 ID
+     * @param mongCode 몽 타입 코드
+     * @param evolutionScore 진화 스코어
+     * @return 몽 진화 이력 도메인 객체
+     */
+    Optional<MongEvolutionHistory> createMongEvolutionHistoryPort(Long accountId, String mongCode, Double evolutionScore);
 }
