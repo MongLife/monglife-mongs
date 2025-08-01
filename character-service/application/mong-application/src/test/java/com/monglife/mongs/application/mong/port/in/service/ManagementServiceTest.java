@@ -1013,7 +1013,7 @@ class ManagementServiceTest {
             final MongType mongType = MongTestUtil.getSecondLevelMongType(nextMaxStatus);
 
             Mockito.when(mongPersistencePort.getMongPort(mongId)).thenReturn(Optional.of(mong));
-            Mockito.when(mongReadPort.getNextLevelMongTypesPort(mong.getEvolutionScore(), mong.getMongCode())).thenReturn(List.of(mongType));
+            Mockito.when(mongReadPort.getNextLevelMongTypesPort(mong.getMongCode())).thenReturn(List.of(mongType));
             Mockito.when(mongPersistencePort.saveMongPort(mong)).thenReturn(Optional.of(mong));
 
             // act
@@ -1050,7 +1050,7 @@ class ManagementServiceTest {
             final MongType mongType = MongTestUtil.getSecondLevelMongType(nextMaxStatus);
 
             Mockito.when(mongPersistencePort.getMongPort(mongId)).thenReturn(Optional.of(mong));
-            Mockito.when(mongReadPort.getNextLevelMongTypesPort(mong.getEvolutionScore(), mong.getMongCode())).thenReturn(List.of(mongType));
+            Mockito.when(mongReadPort.getNextLevelMongTypesPort(mong.getMongCode())).thenReturn(List.of(mongType));
             Mockito.when(mongPersistencePort.saveMongPort(mong)).thenReturn(Optional.of(mong));
 
             // act & assert
@@ -1073,7 +1073,7 @@ class ManagementServiceTest {
             final MongType mongType = MongTestUtil.getSecondLevelMongType(nextMaxStatus);
 
             Mockito.when(mongPersistencePort.getMongPort(mongId)).thenReturn(Optional.of(mong));
-            Mockito.when(mongReadPort.getNextLevelMongTypesPort(mong.getEvolutionScore(), mong.getMongCode())).thenReturn(List.of(mongType));
+            Mockito.when(mongReadPort.getNextLevelMongTypesPort(mong.getMongCode())).thenReturn(List.of(mongType));
             Mockito.when(mongPersistencePort.saveMongPort(mong)).thenReturn(Optional.of(mong));
 
             // act & assert
@@ -1096,7 +1096,7 @@ class ManagementServiceTest {
             final MongType mongType = MongTestUtil.getSecondLevelMongType(nextMaxStatus);
 
             Mockito.when(mongPersistencePort.getMongPort(mongId)).thenReturn(Optional.of(mong));
-            Mockito.when(mongReadPort.getNextLevelMongTypesPort(mong.getEvolutionScore(), mong.getMongCode())).thenReturn(List.of(mongType));
+            Mockito.when(mongReadPort.getNextLevelMongTypesPort(mong.getMongCode())).thenReturn(List.of(mongType));
             Mockito.when(mongPersistencePort.saveMongPort(mong)).thenReturn(Optional.of(mong));
 
             // act & assert
@@ -1117,7 +1117,7 @@ class ManagementServiceTest {
             final Mong mong = MongTestUtil.getFirstLevelMong(mongId, accountId, maxStatus, MongStateCode.EVOLUTION_READY);
 
             Mockito.when(mongPersistencePort.getMongPort(mongId)).thenReturn(Optional.of(mong));
-            Mockito.when(mongReadPort.getNextLevelMongTypesPort(mong.getEvolutionScore(), mong.getMongCode())).thenReturn(Collections.emptyList());
+            Mockito.when(mongReadPort.getNextLevelMongTypesPort(mong.getMongCode())).thenReturn(Collections.emptyList());
             Mockito.when(mongPersistencePort.saveMongPort(mong)).thenReturn(Optional.of(mong));
 
             // act & assert

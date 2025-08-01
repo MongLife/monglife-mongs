@@ -24,11 +24,17 @@ public interface MongReadPort {
 
     /**
      * 다음 레벨 몽 타입 목록 조회
-     * @param evolutionScore 현재 진화 점수
      * @param mongCode 현재 몽 타입 코드
      * @return 현재 진화 점수 기준 진화 가능한 몽 타입 목록
      */
-    List<MongType> getNextLevelMongTypesPort(Double evolutionScore, String mongCode);
+    List<MongType> getNextLevelMongTypesPort(String mongCode);
+
+    /**
+     * 몽 진화 이력 목록 조회
+     * @param accountId 계정 ID
+     * @return 몽 진화 이력 목록
+     */
+    List<MongEvolutionHistory> getMongEvolutionHistoriesPort(Long accountId);
 
     /**
      * 몽 조회

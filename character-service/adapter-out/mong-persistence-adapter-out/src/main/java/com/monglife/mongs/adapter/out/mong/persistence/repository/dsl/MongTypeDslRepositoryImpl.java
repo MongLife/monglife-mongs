@@ -8,6 +8,7 @@ import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
+import static com.monglife.mongs.adapter.out.mong.persistence.entity.QMongGroupTypeEntity.mongGroupTypeEntity;
 import static com.monglife.mongs.adapter.out.mong.persistence.entity.QMongTypeEntity.mongTypeEntity;
 
 @Repository
@@ -20,13 +21,15 @@ public class MongTypeDslRepositoryImpl implements MongTypeDslRepository {
     }
 
     @Override
-    public List<MongTypeEntity> findByEvolutionScoreAndMongCode(Double evolutionScore, String mongCode) {
+    public List<MongTypeEntity> findMongCode(String mongCode) {
         return jpaQueryFactory.selectFrom(mongTypeEntity)
-                .where(mongTypeEntity.groupType.eq(
+                .join(mongTypeEntity.comn).fetchJoin()
+                .where(mongTypeEntity.groupType.in(
                         JPAExpressions
-                                .select(mongTypeEntity.nextGroupType)
-                                .from(mongTypeEntity)
-                                .where(mongTypeEntity.comn.code.eq(mongCode))).and(mongTypeEntity.evolutionScore.loe(evolutionScore)))
+                                .select(mongGroupTypeEntity.nextGroupType)
+                                .from(mongGroupTypeEntity)
+                                .join(mongTypeEntity).on(mongGroupTypeEntity.groupType.eq(mongTypeEntity.groupType))
+                                .where(mongTypeEntity.comn.code.eq(mongCode))))
                 .orderBy(mongTypeEntity.evolutionScore.asc())
                 .fetch();
     }

@@ -32,20 +32,16 @@ public class MongTypeEntity {
     @Column(name = "max_status")
     private Double maxStatus;
 
-    @Column(name = "next_group_type")
-    private String nextGroupType;
-
     @Column(name = "group_type")
     private String groupType;
 
     @Builder
-    public MongTypeEntity(Long mongTypeId, ComnCodeEntity comn, Integer level, Double evolutionScore, Double maxStatus, String nextGroupType, String groupType) {
+    public MongTypeEntity(Long mongTypeId, ComnCodeEntity comn, Integer level, Double evolutionScore, Double maxStatus, String groupType) {
         this.mongTypeId = mongTypeId;
         this.comn = comn;
         this.level = level;
         this.evolutionScore = evolutionScore;
         this.maxStatus = maxStatus;
-        this.nextGroupType = nextGroupType;
         this.groupType = groupType;
     }
 

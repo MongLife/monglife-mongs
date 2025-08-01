@@ -116,16 +116,6 @@ class MongReadServiceTest {
                 "TEST-MONG-GROUP-TYPE-3",
                 "TEST-MONG-GROUP-TYPE-3"
         );
-        private static final List<String> NEXT_GROUP_TYPES = List.of(
-                "TEST-MONG-GROUP-TYPE-1",
-                "TEST-MONG-GROUP-TYPE-1",
-                "TEST-MONG-GROUP-TYPE-2",
-                "TEST-MONG-GROUP-TYPE-2",
-                "TEST-MONG-GROUP-TYPE-3",
-                "TEST-MONG-GROUP-TYPE-3",
-                "",
-                ""
-        );
         private static final List<Integer> LEVELS = List.of(0, 0, 1, 1, 2, 2, 3, 3);
         private static final List<Double> EVOLUTION_SCORES = List.of(0D, 0D, 50D, 100D, 150D, 200D, 250D, 300D);
 
@@ -143,7 +133,6 @@ class MongReadServiceTest {
                         .evolutionScore(EVOLUTION_SCORES.get(index))
                         .maxStatus(Double.MAX_VALUE)
                         .groupType(GROUP_TYPES.get(index))
-                        .nextGroupType(NEXT_GROUP_TYPES.get(index))
                         .build());
             }
 
@@ -169,31 +158,26 @@ class MongReadServiceTest {
         @DisplayName("다음 레벨 몽 타입 목록을 조회 한다.")
         void getNextLevelMongTypes() {
             // arrange
-            final double evolutionScore = 50D;
             final String mongCode = "TEST-MONG-TYPE-CODE-0";
 
             // act
-            var expected = mongReadPort.getNextLevelMongTypesPort(evolutionScore, mongCode);
+            var expected = mongReadPort.getNextLevelMongTypesPort(mongCode);
 
             // assert
             assertEquals(1, expected.size());
-            assertTrue(evolutionScore >= expected.get(0).getEvolutionScore());
         }
 
         @Test
         @DisplayName("다음 레벨 몽 타입 목록을 진화 점수 기준으로 오름차순 정렬 조회 한다.")
         void getNextLevelMongTypesWhenMutilMongTypes() {
             // arrange
-            final double evolutionScore = 100D;
             final String mongCode = "TEST-MONG-TYPE-CODE-0";
 
             // act
-            var expected = mongReadPort.getNextLevelMongTypesPort(evolutionScore, mongCode);
+            var expected = mongReadPort.getNextLevelMongTypesPort(mongCode);
 
             // assert
             assertEquals(2, expected.size());
-            assertTrue(evolutionScore >= expected.get(0).getEvolutionScore());
-            assertTrue(evolutionScore >= expected.get(1).getEvolutionScore());
             assertEquals(COMN_CODE_ENTITIES.get(2).getCode(), expected.get(0).getMongCode());
             assertEquals(COMN_CODE_ENTITIES.get(3).getCode(), expected.get(1).getMongCode());
             assertEquals(COMN_CODE_ENTITIES.get(2).getName(), expected.get(0).getMongName());

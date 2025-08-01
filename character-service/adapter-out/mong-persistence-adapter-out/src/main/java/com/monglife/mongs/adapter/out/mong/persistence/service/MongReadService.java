@@ -41,6 +41,8 @@ public class MongReadService implements
 
     private final InventoryRepository inventoryRepository;
 
+    private final MongEvolutionHistoryRepository mongEvolutionHistoryRepository;
+
     /**
      * 몽 쓰다 듬기 대기 잔여 시간 조회
      * @param mongId 몽 ID
@@ -69,15 +71,26 @@ public class MongReadService implements
 
     /**
      * 다음 레벨 몽 타입 목록 조회
-     * @param evolutionScore 현재 진화 점수
      * @param mongCode 현재 몽 타입 코드
      * @return 몽 타입 목록
      */
     @Override
     @Transactional
-    public List<MongType> getNextLevelMongTypesPort(Double evolutionScore, String mongCode) {
-        return mongTypeRepository.findByEvolutionScoreAndMongCode(evolutionScore, mongCode).stream()
+    public List<MongType> getNextLevelMongTypesPort(String mongCode) {
+        return mongTypeRepository.findMongCode(mongCode).stream()
                 .map(MongTypeEntity::toDomain)
+                .collect(Collectors.toList());
+    }
+
+    /**
+     * 몽 진화 이력 목록 조회
+     * @param accountId 계정 ID
+     * @return 몽 진화 이력 목록
+     */
+    @Override
+    public List<MongEvolutionHistory> getMongEvolutionHistoriesPort(Long accountId) {
+        return mongEvolutionHistoryRepository.findByAccountId(accountId).stream()
+                .map(MongEvolutionHistoryEntity::toDomain)
                 .collect(Collectors.toList());
     }
 

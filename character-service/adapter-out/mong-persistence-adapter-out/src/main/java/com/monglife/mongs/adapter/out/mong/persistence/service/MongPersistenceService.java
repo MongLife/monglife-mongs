@@ -8,6 +8,7 @@ import com.monglife.mongs.application.mong.port.out.vo.CreateInventoryVo;
 import com.monglife.mongs.application.mong.port.out.vo.CreateMongVo;
 import com.monglife.mongs.domain.mong.model.Inventory;
 import com.monglife.mongs.domain.mong.model.Mong;
+import com.monglife.mongs.domain.mong.model.MongEvolutionHistory;
 import com.monglife.mongs.domain.mong.model.RandomDraw;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -39,6 +40,8 @@ public class MongPersistenceService implements
     private final InventoryRepository inventoryRepository;
 
     private final RandomDrawHistoryRepository randomDrawHistoryRepository;
+
+    private final MongEvolutionHistoryRepository mongEvolutionHistoryRepository;
 
     /**
      * 몽 쓰다 듬기 이력 등록
@@ -314,6 +317,30 @@ public class MongPersistenceService implements
         }
 
         return Optional.empty();
+    }
+
+    /**
+     * 몽 진화 이력 등록
+     * @param accountId 계정 ID
+     * @param mongCode 몽 타입 코드
+     * @param evolutionScore 진화 스코어
+     * @return 몽 진화 이력 도메인 객체
+     */
+    @Override
+    @Transactional
+    public Optional<MongEvolutionHistory> createMongEvolutionHistoryPort(Long accountId, String mongCode, Double evolutionScore) {
+
+        MongEvolutionHistoryEntity mongEvolutionHistoryEntity = MongEvolutionHistoryEntity.builder()
+                .accountId(accountId)
+                .mongCode(mongCode)
+                .evolutionScore(evolutionScore)
+                .build();
+
+        if (!mongEvolutionHistoryRepository.existsByAccountIdAndMongCode(accountId, mongCode)) {
+            mongEvolutionHistoryRepository.save(mongEvolutionHistoryEntity);
+        }
+
+        return Optional.of(mongEvolutionHistoryEntity.toDomain());
     }
 }
 

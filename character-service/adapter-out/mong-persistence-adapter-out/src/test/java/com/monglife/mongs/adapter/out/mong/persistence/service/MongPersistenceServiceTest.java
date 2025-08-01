@@ -138,7 +138,7 @@ class MongPersistenceServiceTest {
         private static final LocalTime WAKEUP_AT = LocalTime.of(8, 0);
         private static final GroupCodeEntity GROUP_CODE_ENTITY = new GroupCodeEntity("TEST-GROUP-CODE", "테스트 그룹 코드");
         private static final ComnCodeEntity COMN_CODE_ENTITY = new ComnCodeEntity("TEST-MONG-TYPE-CODE", "테스트 몽 타입 코드", GROUP_CODE_ENTITY);
-        private static final MongTypeEntity MONG_TYPE_ENTITY = new MongTypeEntity(null, COMN_CODE_ENTITY, 1, 100D, 100D, "TEST-GROUP-TYPE", "TEST-NEXT-GROUP-TYPE");
+        private static final MongTypeEntity MONG_TYPE_ENTITY = new MongTypeEntity(null, COMN_CODE_ENTITY, 1, 100D, 100D, "TEST-GROUP-TYPE");
 
         @Test
         @DisplayName("몽을 등록 한다.")
@@ -275,7 +275,7 @@ class MongPersistenceServiceTest {
         private static final LocalTime WAKEUP_AT = LocalTime.of(8, 0);
         private static final GroupCodeEntity GROUP_CODE_ENTITY = new GroupCodeEntity("TEST-GROUP-CODE", "테스트 그룹 코드");
         private static final ComnCodeEntity COMN_CODE_ENTITY = new ComnCodeEntity("TEST-MONG-TYPE-CODE", "테스트 몽 타입 코드", GROUP_CODE_ENTITY);
-        private static final MongTypeEntity MONG_TYPE_ENTITY = new MongTypeEntity(null, COMN_CODE_ENTITY, 1, 100D, 100D, "TEST-GROUP-TYPE", "TEST-NEXT-GROUP-TYPE");
+        private static final MongTypeEntity MONG_TYPE_ENTITY = new MongTypeEntity(null, COMN_CODE_ENTITY, 1, 100D, 100D, "TEST-GROUP-TYPE");
 
         @Test
         @DisplayName("몽을 조회 한다.")
@@ -342,7 +342,7 @@ class MongPersistenceServiceTest {
         private static final LocalTime WAKEUP_AT = LocalTime.of(8, 0);
         private static final GroupCodeEntity GROUP_CODE_ENTITY = new GroupCodeEntity("TEST-GROUP-CODE", "테스트 그룹 코드");
         private static final ComnCodeEntity COMN_CODE_ENTITY = new ComnCodeEntity("TEST-MONG-TYPE-CODE", "테스트 몽 타입 코드", GROUP_CODE_ENTITY);
-        private static final MongTypeEntity MONG_TYPE_ENTITY = new MongTypeEntity(null, COMN_CODE_ENTITY, 1, 100D, 100D, "TEST-GROUP-TYPE", "TEST-NEXT-GROUP-TYPE");
+        private static final MongTypeEntity MONG_TYPE_ENTITY = new MongTypeEntity(null, COMN_CODE_ENTITY, 1, 100D, 100D, "TEST-GROUP-TYPE");
 
 
         @Test
@@ -425,7 +425,7 @@ class MongPersistenceServiceTest {
         private static final LocalTime WAKEUP_AT = LocalTime.of(8, 0);
         private static final GroupCodeEntity GROUP_CODE_ENTITY = new GroupCodeEntity("TEST-GROUP-CODE", "테스트 그룹 코드");
         private static final ComnCodeEntity COMN_CODE_ENTITY = new ComnCodeEntity("TEST-MONG-TYPE-CODE", "테스트 몽 타입 코드", GROUP_CODE_ENTITY);
-        private static final MongTypeEntity MONG_TYPE_ENTITY = new MongTypeEntity(null, COMN_CODE_ENTITY, 1, 100D, 100D, "TEST-GROUP-TYPE", "TEST-NEXT-GROUP-TYPE");
+        private static final MongTypeEntity MONG_TYPE_ENTITY = new MongTypeEntity(null, COMN_CODE_ENTITY, 1, 100D, 100D, "TEST-GROUP-TYPE");
 
         @Test
         @DisplayName("몽을 삭제 한다.")
