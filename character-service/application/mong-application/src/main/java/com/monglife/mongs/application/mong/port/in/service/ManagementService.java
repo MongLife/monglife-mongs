@@ -14,6 +14,7 @@ import com.monglife.mongs.application.mong.port.out.vo.CreateMongVo;
 import com.monglife.mongs.domain.mong.enums.MongStateCode;
 import com.monglife.mongs.domain.mong.enums.MongStatusCode;
 import com.monglife.mongs.domain.mong.model.Mong;
+import com.monglife.mongs.domain.mong.model.MongEvolutionHistory;
 import com.monglife.mongs.domain.mong.model.MongType;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -300,18 +301,19 @@ public class ManagementService implements ManagementUseCase {
                 .orElseThrow(NotExistsMongException::new)
                 .verify(command.getAccountId());
 
-        // 몽 진화 점수 조회
-        Double evolutionScore = mong.getEvolutionScore();
-
         // 진화 가능한 몽 타입 목록 조회
-        List<MongType> mongCodes = mongReadPort.getNextLevelMongTypesPort(evolutionScore, mong.getMongCode());
+        List<MongType> mongCodes = mongReadPort.getNextLevelMongTypesPort(mong.getMongCode());
+        List<MongEvolutionHistory> mongEvolutionHistories = mongReadPort.getMongEvolutionHistoriesPort(mong.getAccountId());
 
         // 몽 진화
-        mong.evolution(mongCodes);
+        double evolutionScore = mong.evolution(mongCodes, mongEvolutionHistories);
 
         // 몽 정보 동기화
         mongPersistencePort.saveMongPort(mong)
                 .orElseThrow(NotExistsMongException::new);
+
+        // 몽 진화 이력 등록
+        mongPersistencePort.createMongEvolutionHistoryPort(mong.getAccountId(), mong.getMongCode(), evolutionScore);
 
         // 알 진화 경우 스케줄 등록
         if (mong.getLevel() == 1) {

@@ -374,7 +374,7 @@ class MongTest {
             final MongType mongType = MongTestUtil.getSecondLevelMongType(nextMaxStatus);
 
             // act
-            mong.evolution(List.of(mongType));
+            mong.evolution(List.of(mongType), Collections.emptyList());
 
             // assert
             assertNotEquals(MongStateCode.EVOLUTION_READY, mong.getStateCode());
@@ -402,7 +402,7 @@ class MongTest {
             final MongType mongType = MongTestUtil.getSecondLevelMongType(nextMaxStatus);
 
             // act & assert
-            assertThrows(InvalidMongStateException.class, () -> mong.evolution(List.of(mongType)));
+            assertThrows(InvalidMongStateException.class, () -> mong.evolution(List.of(mongType), Collections.emptyList()));
         }
 
         @Test
@@ -416,7 +416,7 @@ class MongTest {
             final MongType mongType = MongTestUtil.getSecondLevelMongType(nextMaxStatus);
 
             // act & assert
-            assertThrows(InvalidMongStateException.class, () -> mong.evolution(List.of(mongType)));
+            assertThrows(InvalidMongStateException.class, () -> mong.evolution(List.of(mongType), Collections.emptyList()));
         }
 
         @Test
@@ -430,7 +430,7 @@ class MongTest {
             final MongType mongType = MongTestUtil.getSecondLevelMongType(nextMaxStatus);
 
             // act & assert
-            assertThrows(InvalidMongStateException.class, () -> mong.evolution(List.of(mongType)));
+            assertThrows(InvalidMongStateException.class, () -> mong.evolution(List.of(mongType), Collections.emptyList()));
         }
 
         @Test
@@ -442,7 +442,7 @@ class MongTest {
             final Mong mong = MongTestUtil.getFirstLevelMong(mongId, accountId, maxStatus, MongStateCode.EVOLUTION_READY);
 
             // act & assert
-            assertThrows(InvalidEvolutionException.class, () -> mong.evolution(Collections.emptyList()));
+            assertThrows(InvalidEvolutionException.class, () -> mong.evolution(Collections.emptyList(), Collections.emptyList()));
         }
     }
 

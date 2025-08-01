@@ -1,6 +1,6 @@
 name: CD STAGE
 on:
-  push:
+  pull_request:
     branches:
       - stage
 permissions:
