@@ -10,7 +10,10 @@ import com.monglife.mongs.adapter.out.mong.persistence.config.MongDataSourceConf
 import com.monglife.mongs.adapter.out.mong.persistence.config.MongRedisConfig;
 import com.monglife.mongs.adapter.out.mong.persistence.entity.MongStrokeHistoryEntity;
 import com.monglife.mongs.adapter.out.mong.persistence.entity.MongTypeEntity;
-import com.monglife.mongs.adapter.out.mong.persistence.repository.*;
+import com.monglife.mongs.adapter.out.mong.persistence.repository.ComnCodeRepository;
+import com.monglife.mongs.adapter.out.mong.persistence.repository.GroupCodeRepository;
+import com.monglife.mongs.adapter.out.mong.persistence.repository.MongStrokeHistoryRepository;
+import com.monglife.mongs.adapter.out.mong.persistence.repository.MongTypeRepository;
 import com.monglife.mongs.application.mong.port.out.MongReadPort;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,16 +46,14 @@ class MongReadServiceTest {
     private final ComnCodeRepository comnCodeRepository;
     private final MongStrokeHistoryRepository mongStrokeHistoryRepository;
     private final MongTypeRepository mongTypeRepository;
-    private final MongRepository mongRepository;
 
     @Autowired
-    public MongReadServiceTest(MongReadPort mongReadPort, GroupCodeRepository groupCodeRepository, ComnCodeRepository comnCodeRepository, MongStrokeHistoryRepository mongStrokeHistoryRepository, MongTypeRepository mongTypeRepository, MongRepository mongRepository) {
+    public MongReadServiceTest(MongReadPort mongReadPort, GroupCodeRepository groupCodeRepository, ComnCodeRepository comnCodeRepository, MongStrokeHistoryRepository mongStrokeHistoryRepository, MongTypeRepository mongTypeRepository) {
         this.mongReadPort = mongReadPort;
         this.groupCodeRepository = groupCodeRepository;
         this.comnCodeRepository = comnCodeRepository;
         this.mongStrokeHistoryRepository = mongStrokeHistoryRepository;
         this.mongTypeRepository = mongTypeRepository;
-        this.mongRepository = mongRepository;
     }
 
     @Nested

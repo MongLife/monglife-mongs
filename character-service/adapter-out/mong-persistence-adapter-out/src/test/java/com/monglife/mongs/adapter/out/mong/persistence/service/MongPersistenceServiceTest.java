@@ -76,9 +76,8 @@ class MongPersistenceServiceTest {
 
         @AfterEach
         void afterEach() {
-            mongStrokeHistoryRepository.findByMongId(MONG_ID).ifPresent(mongStrokeHistoryEntity -> {
-                mongStrokeHistoryRepository.deleteById(mongStrokeHistoryEntity.getMongStrokeHistoryId());
-            });
+            mongStrokeHistoryRepository.findByMongId(MONG_ID).ifPresent(mongStrokeHistoryEntity ->
+                    mongStrokeHistoryRepository.deleteById(mongStrokeHistoryEntity.getMongStrokeHistoryId()));
         }
 
         @Test
