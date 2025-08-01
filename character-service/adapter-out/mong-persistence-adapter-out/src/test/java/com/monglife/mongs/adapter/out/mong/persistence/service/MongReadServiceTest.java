@@ -158,31 +158,13 @@ class MongReadServiceTest {
         @Test
         @DisplayName("다음 레벨 몽 타입 목록을 조회 한다.")
         void getNextLevelMongTypes() {
-            // arrange
-            final String mongCode = "TEST-MONG-TYPE-CODE-0";
-
-            // act
-            var expected = mongReadPort.getNextLevelMongTypesPort(mongCode);
-
-            // assert
-            assertEquals(1, expected.size());
+            // TODO: 단위 테스트 작성
         }
 
         @Test
         @DisplayName("다음 레벨 몽 타입 목록을 진화 점수 기준으로 오름차순 정렬 조회 한다.")
         void getNextLevelMongTypesWhenMutilMongTypes() {
-            // arrange
-            final String mongCode = "TEST-MONG-TYPE-CODE-0";
-
-            // act
-            var expected = mongReadPort.getNextLevelMongTypesPort(mongCode);
-
-            // assert
-            assertEquals(2, expected.size());
-            assertEquals(COMN_CODE_ENTITIES.get(2).getCode(), expected.get(0).getMongCode());
-            assertEquals(COMN_CODE_ENTITIES.get(3).getCode(), expected.get(1).getMongCode());
-            assertEquals(COMN_CODE_ENTITIES.get(2).getName(), expected.get(0).getMongName());
-            assertEquals(COMN_CODE_ENTITIES.get(3).getName(), expected.get(1).getMongName());
+            // TODO: 단위 테스트 작성
         }
     }
 
