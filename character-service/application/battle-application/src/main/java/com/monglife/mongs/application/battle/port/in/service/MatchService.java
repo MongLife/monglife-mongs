@@ -192,6 +192,12 @@ public class MatchService implements MatchUseCase {
         matchPersistencePort.saveMatchPort(match)
                 .orElseThrow(NotExistsMatchException::new);
 
+        // 다음 라운드 진행한 경우
+        if (isRoundOver) {
+            // 매치 라운드 종료 비동기 응답
+            matchPublishPort.publishMatchPort(match);
+        }
+
         if (match.isEnd()) {
             // 승리한 매치 플레이어 조회
             MatchPlayer winMatchPlayer = match.getWinner();
@@ -207,11 +213,6 @@ public class MatchService implements MatchUseCase {
                 // 몽 동기화
                 mongPersistencePort.saveMongPort(mong);
             }
-        }
-        // 다음 라운드 진행한 경우
-        else if (isRoundOver) {
-            // 매치 라운드 종료 비동기 응답
-            matchPublishPort.publishMatchPort(match);
         }
 
         return match;
