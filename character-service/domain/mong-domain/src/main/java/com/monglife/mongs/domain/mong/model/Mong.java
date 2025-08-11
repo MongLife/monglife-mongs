@@ -347,11 +347,11 @@ public class Mong {
      */
     public void cycleDecreaseStatus() {
         if (!MongStateCode.DEAD.equals(this.stateCode)) {
-            double subWeight   = 0.050 * this.weight;
-            double subStrength = 0.070 * this.maxStatus;
-            double subSatiety  = 0.050 * this.maxStatus;
-            double subHealthy  = 0.050 * this.maxStatus;
-            double subFatigue  = 0.030 * this.maxStatus;
+            double subWeight   = 0.025 * this.weight;
+            double subStrength = 0.035 * this.maxStatus;
+            double subSatiety  = 0.025 * this.maxStatus;
+            double subHealthy  = 0.025 * this.maxStatus;
+            double subFatigue  = 0.015 * this.maxStatus;
 
             this.weight   = Math.max(0, this.weight - subWeight);
             this.strength = Math.max(0, Math.min(this.strength - subStrength, this.maxStatus));
