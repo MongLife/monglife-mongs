@@ -205,14 +205,14 @@ public class MatchPlayer {
 
         for (long index = 1; index <= count; index++) {
 
-            double attack  = DEFAULT_ATTACK  + random.nextDouble(0, 50D);
-            double heal    = DEFAULT_HEAL    + random.nextDouble(0, 50D);
-            double defence = DEFAULT_DEFENCE + random.nextDouble(0, 50D);
-
             int mongTypeIndex = random.nextInt(0, BotMatchMongType.values().length);
             BotMatchMongType botMatchMongType = BotMatchMongType.values()[mongTypeIndex];
 
-            String name = "봇 " + botMatchMongType.getMongName();
+            double attack  = DEFAULT_ATTACK  + botMatchMongType.getStrength();
+            double heal    = DEFAULT_HEAL    + botMatchMongType.getFatigue();
+            double defence = DEFAULT_DEFENCE + botMatchMongType.getWeight();
+
+            String name = botMatchMongType.getMongName() + " 봇" ;
 
             MatchPlayer matchPlayer = MatchPlayer.builder()
                     .playerId(CommonUtil.randomId())
