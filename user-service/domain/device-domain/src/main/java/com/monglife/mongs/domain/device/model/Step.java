@@ -14,6 +14,7 @@ import java.time.LocalDateTime;
 public class Step {
 
     private static final double PAY_POINT_PER_STEP = 0.1;
+    private static final int DEVICE_BOOTED_AT_DURATION = 2;
 
     private final String deviceId;
 
@@ -81,14 +82,14 @@ public class Step {
      * 기기 총 걸음 수 동기화
      * @param totalWalkingCount 기기에 기록된 총 걸음 수
      */
-    public void syncTotalWalkingCount(Integer totalWalkingCount, LocalDateTime deviceBootedDt) {
+    public void syncTotalWalkingCount(Integer totalWalkingCount, LocalDateTime deviceBootedAt) {
 
-        if (this.getDeviceBootedAt().equals(deviceBootedDt)) {
+        if (compareDeviceBootedAt(deviceBootedAt)) {
             // 기기 부팅 시간이 변경 되지 않은 경우, 걸음 수 동기화
             this.updateTotalWalkingCount(totalWalkingCount);
         } else {
             // 기기 부팅 시간이 변경 된 경우, 걸음 수 초기화
-            this.reset(totalWalkingCount, deviceBootedDt);
+            this.reset(totalWalkingCount, deviceBootedAt);
         }
     }
 
@@ -108,16 +109,33 @@ public class Step {
     /**
      * 걸음 수 초기화
      * @param totalWalkingCount 기기에 기록된 총 걸음 수
-     * @param deviceBootedDt 기기에 기록된 부팅 시간
+     * @param deviceBootedAt 기기에 기록된 부팅 시간
      */
-    private void reset(Integer totalWalkingCount, LocalDateTime deviceBootedDt) {
-        if (this.deviceBootedAt.isAfter(deviceBootedDt) || this.deviceBootedAt.equals(deviceBootedDt)) {
+    private void reset(Integer totalWalkingCount, LocalDateTime deviceBootedAt) {
+
+        if (deviceBootedAt.isBefore(this.deviceBootedAt.minusMinutes(DEVICE_BOOTED_AT_DURATION))) {
             throw new InvalidDeviceBootedAtException();
         }
 
         this.walkingCount = this.walkingCount + this.totalWalkingCount - this.consumeWalkingCount;
         this.totalWalkingCount = totalWalkingCount;
         this.consumeWalkingCount = 0;
-        this.deviceBootedAt = deviceBootedDt;
+        this.deviceBootedAt = deviceBootedAt;
+    }
+
+    /**
+     * 기기 부팅 시간 검증 (시간 오차 범위 적용)
+     * @param deviceBootedAt 기기 부팅 시간
+     * @return 기기 부팅 시간 유효 여부 확인
+     */
+    private boolean compareDeviceBootedAt(LocalDateTime deviceBootedAt) {
+
+        LocalDateTime prevDeviceBootedAt = this.deviceBootedAt.minusMinutes(DEVICE_BOOTED_AT_DURATION);
+        LocalDateTime nextDeviceBootedAt = this.deviceBootedAt.plusMinutes(DEVICE_BOOTED_AT_DURATION);
+
+        boolean prevValidation = deviceBootedAt.isEqual(prevDeviceBootedAt) || deviceBootedAt.isAfter(prevDeviceBootedAt);
+        boolean nextValidation = deviceBootedAt.isEqual(nextDeviceBootedAt) || deviceBootedAt.isBefore(nextDeviceBootedAt);
+
+        return prevValidation && nextValidation;
     }
 }
