@@ -3,10 +3,7 @@ package com.monglife.mongs.application.member.port.in.service;
 import com.monglife.mongs.application.member.port.exception.InvalidCreateCollectionMapException;
 import com.monglife.mongs.application.member.port.exception.InvalidCreateCollectionMongException;
 import com.monglife.mongs.application.member.port.in.CollectionUseCase;
-import com.monglife.mongs.application.member.port.in.command.CreateCollectionMapCommand;
-import com.monglife.mongs.application.member.port.in.command.CreateCollectionMongCommand;
-import com.monglife.mongs.application.member.port.in.command.GetCollectionMapsCommand;
-import com.monglife.mongs.application.member.port.in.command.GetCollectionMongsCommand;
+import com.monglife.mongs.application.member.port.in.command.*;
 import com.monglife.mongs.application.member.port.out.CollectionPersistencePort;
 import com.monglife.mongs.application.member.port.out.CollectionReadPort;
 import com.monglife.mongs.application.member.port.out.vo.CreateCollectionMapVo;
@@ -75,5 +72,13 @@ public class CollectionService implements CollectionUseCase {
     @Transactional
     public List<CollectionMong> getCollectionMongsUseCase(GetCollectionMongsCommand command) {
         return collectionReadPort.getCollectionMongsPort(command.getAccountId());
+    }
+
+    /**
+     * 맵 컬렉션 탐색
+     */
+    @Override
+    public CollectionMap searchCollectionMapUseCase(SearchCollectionMapCommand command) {
+        return null;
     }
 }
