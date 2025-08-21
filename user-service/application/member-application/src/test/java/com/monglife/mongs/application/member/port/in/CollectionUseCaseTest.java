@@ -9,6 +9,7 @@ import com.monglife.mongs.application.member.port.in.command.GetCollectionMongsC
 import com.monglife.mongs.application.member.port.in.service.CollectionService;
 import com.monglife.mongs.application.member.port.out.CollectionPersistencePort;
 import com.monglife.mongs.application.member.port.out.CollectionReadPort;
+import com.monglife.mongs.application.member.port.out.MapStoreReadPort;
 import com.monglife.mongs.domain.member.model.CollectionMap;
 import com.monglife.mongs.domain.member.model.CollectionMong;
 import org.junit.jupiter.api.DisplayName;
@@ -25,7 +26,8 @@ class CollectionUseCaseTest {
 
     private final CollectionPersistencePort collectionPersistencePort = Mockito.mock(CollectionPersistencePort.class);
     private final CollectionReadPort collectionReadPort = Mockito.mock(CollectionReadPort.class);
-    private final CollectionUseCase collectionUseCase = new CollectionService(collectionPersistencePort, collectionReadPort);
+    private final MapStoreReadPort mapStoreReadPort = Mockito.mock(MapStoreReadPort.class);
+    private final CollectionUseCase collectionUseCase = new CollectionService(collectionPersistencePort, collectionReadPort, mapStoreReadPort);
 
     @Nested
     @DisplayName("컬렉션 맵 등록 단위 테스트")
