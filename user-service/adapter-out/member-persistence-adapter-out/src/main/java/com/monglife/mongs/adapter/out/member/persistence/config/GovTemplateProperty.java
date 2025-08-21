@@ -11,5 +11,7 @@ public class GovTemplateProperty {
 
     private String url;
 
+    private String path;
+
     private String serviceKey;
 }

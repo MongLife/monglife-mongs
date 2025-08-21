@@ -12,10 +12,9 @@ import org.springframework.web.client.RestTemplate;
 @EnableConfigurationProperties(GovTemplateProperty.class)
 public class AdapterOutMemberPersistenceConfig {
 
-    @Bean(name = "govRestTemplate")
-    public RestTemplate restTemplate(RestTemplateBuilder restTemplateBuilder, GovTemplateProperty  govTemplateProperty) {
+    @Bean
+    public RestTemplate restTemplate(RestTemplateBuilder restTemplateBuilder) {
         return restTemplateBuilder
-                .rootUri(govTemplateProperty.getUrl())
                 .build();
     }
 }

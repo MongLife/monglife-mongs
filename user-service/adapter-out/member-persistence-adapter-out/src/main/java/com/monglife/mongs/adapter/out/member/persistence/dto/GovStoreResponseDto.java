@@ -1,6 +1,7 @@
 package com.monglife.mongs.adapter.out.member.persistence.dto;
 
 import com.fasterxml.jackson.annotation.JsonAlias;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -11,19 +12,18 @@ import java.util.List;
 @Getter
 @Setter
 @NoArgsConstructor
+@AllArgsConstructor
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class GovStoreResponseDto {
 
     @JsonAlias("body")
     private Data data;
 
-    public GovStoreResponseDto(Data data) {
-        this.data = data;
-    }
-
     @Getter
     @Setter
     @NoArgsConstructor
     @AllArgsConstructor
+    @JsonIgnoreProperties(ignoreUnknown = true)
     public static class Data {
 
         @JsonAlias("items")
@@ -43,6 +43,7 @@ public class GovStoreResponseDto {
     @Setter
     @NoArgsConstructor
     @AllArgsConstructor
+    @JsonIgnoreProperties(ignoreUnknown = true)
     public static class Item {
 
         @JsonAlias("bizesNm")
