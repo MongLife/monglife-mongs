@@ -11,6 +11,7 @@ import com.monglife.mongs.adapter.in.member.web.enums.AdapterInMemberWebResponse
 import com.monglife.mongs.application.member.port.in.CollectionUseCase;
 import com.monglife.mongs.application.member.port.in.command.GetCollectionMapsCommand;
 import com.monglife.mongs.application.member.port.in.command.GetCollectionMongsCommand;
+import com.monglife.mongs.application.member.port.in.command.SearchCollectionMapCommand;
 import com.monglife.mongs.domain.member.model.CollectionMap;
 import com.monglife.mongs.domain.member.model.CollectionMong;
 import lombok.RequiredArgsConstructor;
@@ -92,9 +93,26 @@ public class CollectionController {
             @AuthenticationPrincipal Passport passport,
             @RequestBody SearchCollectionMapRequestDto searchCollectionMapRequestDto
     ) {
+
+        SearchCollectionMapCommand command = SearchCollectionMapCommand.builder()
+                .accountId(passport.getAccountId())
+                .latitude(searchCollectionMapRequestDto.getLatitude())
+                .longitude(searchCollectionMapRequestDto.getLongitude())
+                .build();
+
+        CollectionMap collectionMap = collectionUseCase.searchCollectionMapUseCase(command);
+
+        GetCollectionMapResponseDto getCollectionMapResponseDto = collectionMap == null
+                ? null
+                : GetCollectionMapResponseDto.builder()
+                .mapCode(collectionMap.getMapCode())
+                .mapName(collectionMap.getMapName())
+                .isIncluded(collectionMap.getIsIncluded())
+                .build();
+
         SearchCollectionMapResponseDto searchCollectionMapResponseDto = SearchCollectionMapResponseDto.builder()
-                .isFound(false)
-                .data(null)
+                .isFound(getCollectionMapResponseDto != null)
+                .data(getCollectionMapResponseDto)
                 .build();
 
         return ResponseEntity.ok(AdapterInMemberWebResponse.SEARCH_COLLECTION_MAP.toResponseDto(searchCollectionMapResponseDto));

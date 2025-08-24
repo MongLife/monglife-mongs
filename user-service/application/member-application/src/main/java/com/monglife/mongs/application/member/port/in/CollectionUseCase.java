@@ -1,9 +1,6 @@
 package com.monglife.mongs.application.member.port.in;
 
-import com.monglife.mongs.application.member.port.in.command.CreateCollectionMapCommand;
-import com.monglife.mongs.application.member.port.in.command.CreateCollectionMongCommand;
-import com.monglife.mongs.application.member.port.in.command.GetCollectionMapsCommand;
-import com.monglife.mongs.application.member.port.in.command.GetCollectionMongsCommand;
+import com.monglife.mongs.application.member.port.in.command.*;
 import com.monglife.mongs.domain.member.model.CollectionMap;
 import com.monglife.mongs.domain.member.model.CollectionMong;
 
@@ -30,4 +27,6 @@ public interface CollectionUseCase {
      * 몽 컬렉션 목록 조회
      */
     List<CollectionMong> getCollectionMongsUseCase(GetCollectionMongsCommand command);
+
+    CollectionMap searchCollectionMapUseCase(SearchCollectionMapCommand command);
 }
