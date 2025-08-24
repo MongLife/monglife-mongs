@@ -64,7 +64,7 @@ public class MapStoreReadService implements MapStoreReadPort {
 
         PriorityQueue<SearchMapVo> searchMapVos = new PriorityQueue<>(Comparator.comparing(SearchMapVo::getDistance));
 
-        if (responseEntity.getBody() != null) {
+        if (responseEntity.getBody() != null && responseEntity.getBody().getData().getItems() != null) {
             for (GovStoreResponseDto.Item item : responseEntity.getBody().getData().getItems()) {
                 for (MapTypeEntity mapTypeEntity : mapTypeEntities) {
                     for (String word : mapTypeEntity.getWords().split("\n")) {

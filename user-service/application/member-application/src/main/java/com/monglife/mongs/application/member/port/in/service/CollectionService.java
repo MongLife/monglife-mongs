@@ -85,7 +85,7 @@ public class CollectionService implements CollectionUseCase {
     @Override
     public CollectionMap searchCollectionMapUseCase(SearchCollectionMapCommand command) {
 
-        Queue<SearchMapVo> searchMapVoQueue = mapStoreReadPort.searchMapsPort(command.getLatitude(), command.getLongitude(), 15);
+        Queue<SearchMapVo> searchMapVoQueue = mapStoreReadPort.searchMapsPort(command.getLatitude(), command.getLongitude(), 30);
 
         while (!searchMapVoQueue.isEmpty()) {
 
