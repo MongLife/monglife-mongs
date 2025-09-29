@@ -72,7 +72,6 @@ jobs:
           username: ${{ secrets.USERNAME }}
           key: ${{ secrets.SSH_KEY }}
           script: |
-            export HOME=${{ secrets.HOME }}
             sh ${{ env.service-script }} restart ${{ env.bootstrap-character }}
       # 배포 파일 원격 복사
       - name: User Bootstrap API 배포 파일 서버로 전송
@@ -95,5 +94,4 @@ jobs:
           username: ${{ secrets.USERNAME }}
           key: ${{ secrets.SSH_KEY }}
           script: |
-            export HOME=${{ secrets.HOME }}
             sh ${{ env.service-script }} restart ${{ env.bootstrap-user }}
