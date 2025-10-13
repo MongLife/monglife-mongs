@@ -43,9 +43,8 @@ class MapStoreReadServiceTest {
         this.mapTypeRepository = mapTypeRepository;
     }
 
-
-
-    @Test
+    // 국자원 화재로 인한 API 접근 불가
+    //@Test
     @DisplayName("공공 데이터 API 를 호출하여 반경 내 상가 정보를 조회 한다.")
     void searchMapsPort() {
         // arrange
