@@ -97,10 +97,24 @@ public class StoreController {
             @AuthenticationPrincipal Passport passport,
             @Valid @RequestBody ConsumeOrderRequestDto consumeOrderRequestDto
     ) {
+        /**
+         * productId 는 여기서 대문자로 정규화한다.
+         *
+         * Google Play 의 상품 ID 는 소문자(prdt000)이고 우리 규약은 대문자(PRDT000)다.
+         * 클라이언트가 Play 가 준 값을 그대로 보내면 OrderPersistenceService 의
+         * comnCodeRepository.findById 가 monglife_comn_code 에서 빗나가 주문 생성이
+         * 실패하고, 그 결과 Google 소비까지 도달하지 못해 구매가 계정에 보유 상태로
+         * 남는다(이후 모든 구매가 ITEM_ALREADY_OWNED 로 거부됨).
+         *
+         * 클라이언트도 대문자로 보내도록 고쳤지만 구버전 앱이 남아 있으므로
+         * 외부 입력이 들어오는 이 경계에서 한 번 더 막는다.
+         */
+        String productId = consumeOrderRequestDto.getProductId().toUpperCase();
+
         // 새로운 주문 생성
         CreateOrderCommand createOrderCommand = CreateOrderCommand.builder()
                 .accountId(passport.getAccountId())
-                .productId(consumeOrderRequestDto.getProductId())
+                .productId(productId)
                 .socialOrderId(consumeOrderRequestDto.getSocialOrderId())
                 .purchaseToken(consumeOrderRequestDto.getPurchaseToken())
                 .build();
