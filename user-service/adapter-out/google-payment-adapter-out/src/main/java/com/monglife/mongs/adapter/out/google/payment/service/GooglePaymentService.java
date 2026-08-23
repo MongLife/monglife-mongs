@@ -8,6 +8,7 @@ import com.monglife.mongs.domain.member.enums.OrderTypeCode;
 import com.monglife.mongs.domain.member.model.InAppOrder;
 import com.monglife.mongs.domain.member.model.InAppProduct;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -17,6 +18,7 @@ import java.time.ZoneId;
 import java.util.List;
 import java.util.Optional;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class GooglePaymentService implements GooglePaymentPort {
@@ -64,7 +66,9 @@ public class GooglePaymentService implements GooglePaymentPort {
                     .purchasedAt(purchasedAt)
                     .build());
 
-        } catch (Exception e){
+        } catch (Exception e) {
+            log.error("인앱 주문 조회 실패 - productId: {}, socialOrderId: {}, purchaseToken: {}",
+                    productId, socialOrderId, maskToken(purchaseToken), e);
             return Optional.empty();
         }
     }
@@ -83,7 +87,9 @@ public class GooglePaymentService implements GooglePaymentPort {
 
             return this.getInAppOrderPort(inAppOrder.getProductId(), inAppOrder.getSocialOrderId(), inAppOrder.getPurchaseToken());
 
-        } catch (Exception e) {;
+        } catch (Exception e) {
+            log.error("인앱 주문 소비 실패 - productId: {}, socialOrderId: {}, purchaseToken: {}",
+                    inAppOrder.getProductId(), inAppOrder.getSocialOrderId(), maskToken(inAppOrder.getPurchaseToken()), e);
             return Optional.empty();
         }
     }
@@ -109,6 +115,7 @@ public class GooglePaymentService implements GooglePaymentPort {
                     .build());
 
         } catch (Exception e) {
+            log.error("인앱 상품 조회 실패 - productId: {}", productId, e);
             return Optional.empty();
         }
     }
@@ -139,7 +146,23 @@ public class GooglePaymentService implements GooglePaymentPort {
                     .toList();
 
         } catch (Exception e) {
+            log.error("인앱 상품 목록 조회 실패", e);
             return List.of();
         }
+    }
+
+    /**
+     * 로그에 남길 purchaseToken 마스킹
+     *
+     * 토큰 전체는 결제를 식별하는 민감 값이라 앞 8자만 남긴다.
+     * 로그에서 같은 주문을 이어 추적하기에는 충분하다.
+     */
+    private String maskToken(String purchaseToken) {
+
+        if (purchaseToken == null || purchaseToken.length() <= 8) {
+            return "****";
+        }
+
+        return purchaseToken.substring(0, 8) + "...";
     }
 }
