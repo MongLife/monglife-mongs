@@ -85,7 +85,19 @@ public class GooglePaymentService implements GooglePaymentPort {
                     .consume(APP_PACKAGE_NAME, inAppOrder.getProductId().toLowerCase(), inAppOrder.getPurchaseToken())
                     .execute();
 
-            return this.getInAppOrderPort(inAppOrder.getProductId(), inAppOrder.getSocialOrderId(), inAppOrder.getPurchaseToken());
+            /**
+             * 재조회하지 않고 인자로 받은 주문을 그대로 돌려준다.
+             *
+             * 이전에는 consume 직후 getInAppOrderPort 를 한 번 더 호출했는데, 그 재조회가
+             * 실패하면 Optional.empty() 가 되어 상위 StoreService 에서
+             * InvalidConsumeInAppOrderException 으로 트랜잭션이 롤백됐다.
+             * 그런데 Google 쪽은 이미 소비가 끝난 상태라 스타 포인트만 사라지고
+             * 재시도해도 AlreadyConsumedInAppOrderException 으로 막혀 영구 손실이 된다.
+             *
+             * consume 이 성공했다는 사실만으로 소비 완료가 확정되고,
+             * 인자로 받은 inAppOrder 는 호출 전에 consume() 으로 이미 CONSUMED 다.
+             */
+            return Optional.of(inAppOrder);
 
         } catch (Exception e) {
             log.error("인앱 주문 소비 실패 - productId: {}, socialOrderId: {}, purchaseToken: {}",
