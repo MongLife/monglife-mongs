@@ -1,7 +1,9 @@
 package com.monglife.mongs.adapter.in.member.web.controller;
 
 import com.monglife.core.dto.response.ResponseDto;
+import com.monglife.core.enums.role.RoleCode;
 import com.monglife.module.common.logging.annotation.EntryLoggingPoint;
+import com.monglife.module.common.security.annotation.AuthCheck;
 import com.monglife.module.common.security.principal.Passport;
 import com.monglife.mongs.adapter.in.member.web.enums.AdapterInMemberWebResponse;
 import com.monglife.mongs.adapter.in.member.web.dto.request.ExchangeStarPointRequestDto;
@@ -74,6 +76,7 @@ public class PlayerController {
     /**
      * 슬롯 구매
      */
+    @AuthCheck({ RoleCode.NORMAL, RoleCode.SUBSCRIBER, RoleCode.ADMIN })
     @EntryLoggingPoint
     @PatchMapping("/slot")
     public ResponseEntity<ResponseDto<BuySlotResponseDto>> buySlot(
@@ -98,6 +101,7 @@ public class PlayerController {
     /**
      * 스타 포인트 환전
      */
+    @AuthCheck({ RoleCode.NORMAL, RoleCode.SUBSCRIBER, RoleCode.ADMIN })
     @EntryLoggingPoint
     @PostMapping("/exchange/starPoint")
     public ResponseEntity<ResponseDto<ExchangeStarPointResponseDto>> exchangeStarPoint(
