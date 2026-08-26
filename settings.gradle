@@ -45,6 +45,7 @@ include 'user-service:adapter-in:member-event-adapter-in'
 include 'user-service:adapter-in:member-web-adapter-in'
 
 include 'user-service:adapter-out'
+include 'user-service:adapter-out:device-cache-adapter-out'
 include 'user-service:adapter-out:device-event-adapter-out'
 include 'user-service:adapter-out:device-persistence-adapter-out'
 include 'user-service:adapter-out:device-publish-adapter-out'

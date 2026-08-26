@@ -1,0 +1,6 @@
+dependencies {
+    // application layer
+    implementation project(":user-service:application:device-application")
+    // redis
+    implementation "org.springframework.boot:spring-boot-starter-data-redis"
+}

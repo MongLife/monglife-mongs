@@ -101,6 +101,9 @@ jobs:
       # 환경 설정 파일 로드
       - name: 환경 설정 파일 로드
         run: ./gradlew copyPrivate
+      # Device Cache Adapter Out 모듈 단위 테스트
+      - name: Device Cache Adapter Out 모듈 단위 테스트
+        run: ./gradlew :user-service:adapter-out:device-cache-adapter-out:test
       # Device Event Adapter Out  모듈 단위 테스트
       - name: Device Event Adapter Out 모듈 단위 테스트
         run: ./gradlew :user-service:adapter-out:device-event-adapter-out:test
