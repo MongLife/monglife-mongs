@@ -7,10 +7,10 @@ import lombok.Getter;
 import java.util.Collections;
 
 @Getter
-public class InvalidDeviceBootedAtException extends ErrorException {
+public class InvalidExchangeWalkingCountException extends ErrorException {
 
-    public InvalidDeviceBootedAtException() {
-        this.errorCode = DomainDeviceErrorCode.INVALID_DEVICE_BOOTED_AT;
+    public InvalidExchangeWalkingCountException() {
+        this.errorCode = DomainDeviceErrorCode.INVALID_EXCHANGE_WALKING_COUNT;
         this.result = Collections.emptyMap();
     }
 }

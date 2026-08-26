@@ -8,7 +8,6 @@ dependencies {
     // adapter-out layer
     implementation project(":user-service:adapter-out:device-cache-adapter-out")
     implementation project(":user-service:adapter-out:device-event-adapter-out")
-    implementation project(":user-service:adapter-out:device-persistence-adapter-out")
     implementation project(":user-service:adapter-out:device-publish-adapter-out")
     implementation project(":user-service:adapter-out:google-payment-adapter-out")
     implementation project(":user-service:adapter-out:member-event-adapter-out")

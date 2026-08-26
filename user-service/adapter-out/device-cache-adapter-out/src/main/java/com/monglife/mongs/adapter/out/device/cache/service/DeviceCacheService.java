@@ -26,6 +26,7 @@ public class DeviceCacheService implements DeviceCachePort {
 
     /**
      * 자정 경계를 직접 계산하지 않고 넉넉한 TTL 로 스스로 사라지게 둔다.
+     * 키 이름에 날짜가 들어가므로 매번 갱신해도 오늘 키만 살아남고 어제 키는 그대로 만료된다.
      */
     private static final Duration KEY_TTL = Duration.ofDays(2);
 
@@ -53,10 +54,9 @@ public class DeviceCacheService implements DeviceCachePort {
                 return 0;
             }
 
-            // 방금 만들어진 키에만 만료를 건다. 매번 걸면 계속 걷는 사용자의 키가 만료되지 않는다.
-            if (total.equals(walkingCount.longValue())) {
-                deviceRedisTemplate.expire(key, KEY_TTL);
-            }
+            // 만료는 매번 건다. "새로 만들어진 키일 때만" 걸면 INCRBY 직후 프로세스가 죽었을 때
+            // 만료 없는 키가 영구히 남는다.
+            deviceRedisTemplate.expire(key, KEY_TTL);
 
             return total > Integer.MAX_VALUE ? Integer.MAX_VALUE : total.intValue();
 

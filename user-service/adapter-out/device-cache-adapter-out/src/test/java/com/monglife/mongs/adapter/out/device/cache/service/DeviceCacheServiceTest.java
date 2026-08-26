@@ -50,9 +50,9 @@ class DeviceCacheServiceTest {
         }
 
         @Test
-        @DisplayName("키가 새로 만들어진 경우에만 만료 시간을 건다.")
-        void expireOnlyOnFirstIncrement() {
-            // arrange - 증가분과 누적값이 같다 = 방금 만들어진 키
+        @DisplayName("만료 시간을 건다.")
+        void setsExpire() {
+            // arrange
             Mockito.when(valueOperations.increment(Mockito.anyString(), Mockito.eq(1_000L))).thenReturn(1_000L);
 
             // act
@@ -65,8 +65,10 @@ class DeviceCacheServiceTest {
         }
 
         @Test
-        @DisplayName("이미 있던 키에는 만료 시간을 다시 걸지 않는다.")
-        void doesNotRefreshExpire() {
+        @DisplayName("이미 있던 키에도 만료 시간을 매번 다시 건다.")
+        void alwaysRefreshExpire() {
+            // 첫 증가에만 걸면 INCRBY 직후 프로세스가 죽었을 때 만료 없는 키가 영구히 남는다.
+            // 키 이름에 날짜가 들어가므로 매번 갱신해도 어제 키는 그대로 만료된다.
             // arrange - 누적값이 증가분보다 크다 = 오늘 이미 환전한 적이 있다
             Mockito.when(valueOperations.increment(Mockito.anyString(), Mockito.eq(1_000L))).thenReturn(5_000L);
 
@@ -74,7 +76,7 @@ class DeviceCacheServiceTest {
             deviceCachePort.increaseTodayExchangedWalkingCountPort(ACCOUNT_ID, 1_000);
 
             // assert
-            Mockito.verify(deviceRedisTemplate, Mockito.never()).expire(Mockito.anyString(), Mockito.any(Duration.class));
+            Mockito.verify(deviceRedisTemplate).expire(Mockito.anyString(), Mockito.eq(Duration.ofDays(2)));
         }
 
         @Test

@@ -8,7 +8,6 @@ import com.monglife.mongs.adapter.in.device.web.dto.response.ExchangeCurrentWalk
 import com.monglife.mongs.adapter.in.device.web.enums.AdapterInDeviceWebResponse;
 import com.monglife.mongs.application.device.port.in.StepUseCase;
 import com.monglife.mongs.application.device.port.in.command.ExchangeCurrentWalkingCountCommand;
-import com.monglife.mongs.application.device.port.in.command.UpdateTotalWalkingCountCommand;
 import com.monglife.mongs.domain.device.model.Step;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -35,15 +34,6 @@ public class StepController {
             @Valid @RequestBody ExchangeCurrentWalkingCountRequestDto exchangeCurrentWalkingCountRequestDto
     ) {
 
-        UpdateTotalWalkingCountCommand updateTotalWalkingCountCommand = UpdateTotalWalkingCountCommand.builder()
-                .deviceId(passport.getDeviceId())
-                .totalWalkingCount(exchangeCurrentWalkingCountRequestDto.getTotalWalkingCount())
-                .deviceBootedAt(exchangeCurrentWalkingCountRequestDto.getDeviceBootedAt())
-                .build();
-
-        // 걸음 수 동기화
-        stepUseCase.updateTotalWalkingCountUseCase(updateTotalWalkingCountCommand);
-
         ExchangeCurrentWalkingCountCommand command = ExchangeCurrentWalkingCountCommand.builder()
                 .accountId(passport.getAccountId())
                 .deviceId(passport.getDeviceId())
@@ -51,12 +41,11 @@ public class StepController {
                 .walkingCount(exchangeCurrentWalkingCountRequestDto.getWalkingCount())
                 .build();
 
-        // 걸음 수 환전
         Step step = stepUseCase.exchangeCurrentWalkingCountUseCase(command);
 
         ExchangeCurrentWalkingCountResponseDto exchangeCurrentWalkingCountResponseDto = ExchangeCurrentWalkingCountResponseDto.builder()
-                .consumeWalkingCount(step.getConsumeWalkingCount())
                 .walkingCount(step.getWalkingCount())
+                .payPoint(step.getPayPoint())
                 .build();
 
         return ResponseEntity.ok(AdapterInDeviceWebResponse.EXCHANGE_CURRENT_WALKING_COUNT.toResponseDto(exchangeCurrentWalkingCountResponseDto));

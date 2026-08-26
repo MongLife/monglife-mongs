@@ -1,141 +1,62 @@
 package com.monglife.mongs.domain.device.model;
 
-import com.monglife.mongs.domain.device.exception.InvalidDeviceBootedAtException;
-import com.monglife.mongs.domain.device.exception.InvalidTotalWalkingCountException;
-import com.monglife.mongs.domain.device.exception.NotEnoughCurrentWalkingCountException;
-import lombok.Builder;
+import com.monglife.mongs.domain.device.exception.ExceedDailyExchangeWalkingCountException;
+import com.monglife.mongs.domain.device.exception.InvalidExchangeWalkingCountException;
 import lombok.Getter;
 import lombok.ToString;
 
-import java.time.LocalDateTime;
-
+/**
+ * 걸음 수 환전
+ *
+ * 걸음 수 잔액은 기기가 들고 있고 서버는 보관하지 않는다. 서버에 남은 규칙은 두 가지뿐이다.
+ * 요청받은 걸음 수를 페이 포인트로 환산하는 환율, 그리고 하루에 환전할 수 있는 상한이다.
+ * 그래서 이 객체는 기기 상태를 담지 않고 환전 1건의 결과만 표현한다.
+ */
 @Getter
 @ToString
 public class Step {
 
     private static final double PAY_POINT_PER_STEP = 0.1;
-    private static final int DEVICE_BOOTED_AT_DURATION = 2;
 
-    private final String deviceId;
+    /**
+     * 계정당 하루 환전 상한.
+     *
+     * 서버가 걸음 수 잔액을 보관하지 않게 되면서 환전 요청의 정당성을 검증할 근거가 사라졌다.
+     * 사람이 하루에 걸을 수 있는 범위를 넉넉히 넘는 값으로 잡아, 정상 사용자는 건드리지 않으면서
+     * 변조 클라이언트의 무제한 발행만 막는다.
+     */
+    public static final int DAILY_EXCHANGE_LIMIT_WALKING_COUNT = 30_000;
 
-    private Integer walkingCount;
+    private final Integer walkingCount;
 
-    private Integer totalWalkingCount;
+    private final Integer payPoint;
 
-    private Integer consumeWalkingCount;
-
-    private LocalDateTime deviceBootedAt;
-
-    @Builder
-    public Step(String deviceId, Integer walkingCount, Integer totalWalkingCount, Integer consumeWalkingCount, LocalDateTime deviceBootedAt) {
-        this.deviceId = deviceId;
+    private Step(Integer walkingCount, Integer payPoint) {
         this.walkingCount = walkingCount;
-        this.totalWalkingCount = totalWalkingCount;
-        this.consumeWalkingCount = consumeWalkingCount;
-        this.deviceBootedAt = deviceBootedAt;
+        this.payPoint = payPoint;
     }
 
     /**
-     * 보유 걸음 수 조회
-     * @return 보유 걸음 수
+     * 환전 걸음 수를 검증하고 지급할 페이 포인트를 산출한다.
+     * @param walkingCount 환전할 걸음 수
      */
-    public Integer getCurrentWalkingCount() {
-        return this.walkingCount + (this.totalWalkingCount - this.consumeWalkingCount);
-    }
+    public static Step of(Integer walkingCount) {
 
-    /**
-     * 보유 걸음 수 페이 포인트 환전
-     * @param walkingCount 환전 걸음 수
-     * @return 환전 페이 포인트
-     */
-    public Integer exchangeWalkingCountToPayPoint(Integer walkingCount) {
-
-        // 보유 걸음 수가 부족한 경우 예외 발생
-        if (this.getCurrentWalkingCount() < walkingCount) {
-            throw new NotEnoughCurrentWalkingCountException();
+        if (walkingCount == null || walkingCount <= 0) {
+            throw new InvalidExchangeWalkingCountException();
         }
 
-        // 보유 걸음 수 감소
-        this.decreaseCurrentWalkingCount(walkingCount);
-
-        // 환전할 페이 포인트 반환
-        return (int) Math.ceil(walkingCount * PAY_POINT_PER_STEP);
+        return new Step(walkingCount, (int) Math.ceil(walkingCount * PAY_POINT_PER_STEP));
     }
 
     /**
-     * 보유 걸음 수 증가
-     * @param walkingCount 증가할 보유 걸음 수
+     * 오늘 누적 환전량이 상한을 넘었는지 검증한다.
+     * @param todayExchangedWalkingCount 이번 요청까지 더한 오늘 누적 환전 걸음 수
      */
-    public void increaseCurrentWalkingCount(Integer walkingCount) {
-        this.walkingCount = this.walkingCount + walkingCount;
-    }
+    public static void validateDailyExchangeLimit(int todayExchangedWalkingCount) {
 
-    /**
-     * 보유 걸음 수 감소
-     * @param walkingCount 감소할 보유 걸음 수
-     */
-    public void decreaseCurrentWalkingCount(Integer walkingCount) {
-        this.consumeWalkingCount = this.consumeWalkingCount + walkingCount;
-    }
-
-    /**
-     * 기기 총 걸음 수 동기화
-     * @param totalWalkingCount 기기에 기록된 총 걸음 수
-     */
-    public void syncTotalWalkingCount(Integer totalWalkingCount, LocalDateTime deviceBootedAt) {
-
-        if (compareDeviceBootedAt(deviceBootedAt)) {
-            // 기기 부팅 시간이 변경 되지 않은 경우, 걸음 수 동기화
-            this.updateTotalWalkingCount(totalWalkingCount);
-        } else {
-            // 기기 부팅 시간이 변경 된 경우, 걸음 수 초기화
-            this.reset(totalWalkingCount, deviceBootedAt);
+        if (todayExchangedWalkingCount > DAILY_EXCHANGE_LIMIT_WALKING_COUNT) {
+            throw new ExceedDailyExchangeWalkingCountException();
         }
-    }
-
-    /**
-     * 기기 총 걸음 수 수정
-     * @param totalWalkingCount 기기에 기록된 총 걸음 수
-     */
-    private void updateTotalWalkingCount(Integer totalWalkingCount) {
-
-        if (totalWalkingCount < this.totalWalkingCount) {
-            throw new InvalidTotalWalkingCountException();
-        }
-
-        this.totalWalkingCount = totalWalkingCount;
-    }
-
-    /**
-     * 걸음 수 초기화
-     * @param totalWalkingCount 기기에 기록된 총 걸음 수
-     * @param deviceBootedAt 기기에 기록된 부팅 시간
-     */
-    private void reset(Integer totalWalkingCount, LocalDateTime deviceBootedAt) {
-
-        if (deviceBootedAt.isBefore(this.deviceBootedAt.minusMinutes(DEVICE_BOOTED_AT_DURATION))) {
-            throw new InvalidDeviceBootedAtException();
-        }
-
-        this.walkingCount = this.walkingCount + this.totalWalkingCount - this.consumeWalkingCount;
-        this.totalWalkingCount = totalWalkingCount;
-        this.consumeWalkingCount = 0;
-        this.deviceBootedAt = deviceBootedAt;
-    }
-
-    /**
-     * 기기 부팅 시간 검증 (시간 오차 범위 적용)
-     * @param deviceBootedAt 기기 부팅 시간
-     * @return 기기 부팅 시간 유효 여부 확인
-     */
-    private boolean compareDeviceBootedAt(LocalDateTime deviceBootedAt) {
-
-        LocalDateTime prevDeviceBootedAt = this.deviceBootedAt.minusMinutes(DEVICE_BOOTED_AT_DURATION);
-        LocalDateTime nextDeviceBootedAt = this.deviceBootedAt.plusMinutes(DEVICE_BOOTED_AT_DURATION);
-
-        boolean prevValidation = deviceBootedAt.isEqual(prevDeviceBootedAt) || deviceBootedAt.isAfter(prevDeviceBootedAt);
-        boolean nextValidation = deviceBootedAt.isEqual(nextDeviceBootedAt) || deviceBootedAt.isBefore(nextDeviceBootedAt);
-
-        return prevValidation && nextValidation;
     }
 }

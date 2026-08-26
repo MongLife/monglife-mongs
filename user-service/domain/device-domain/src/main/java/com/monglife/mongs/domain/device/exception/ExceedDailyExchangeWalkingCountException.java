@@ -7,10 +7,10 @@ import lombok.Getter;
 import java.util.Collections;
 
 @Getter
-public class NotEnoughCurrentWalkingCountException extends ErrorException {
+public class ExceedDailyExchangeWalkingCountException extends ErrorException {
 
-    public NotEnoughCurrentWalkingCountException() {
-        this.errorCode = DomainDeviceErrorCode.NOT_ENOUGH_CURRENT_WALKING_COUNT;
+    public ExceedDailyExchangeWalkingCountException() {
+        this.errorCode = DomainDeviceErrorCode.EXCEED_DAILY_EXCHANGE_WALKING_COUNT;
         this.result = Collections.emptyMap();
     }
 }

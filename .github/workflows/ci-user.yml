@@ -107,9 +107,6 @@ jobs:
       # Device Event Adapter Out  모듈 단위 테스트
       - name: Device Event Adapter Out 모듈 단위 테스트
         run: ./gradlew :user-service:adapter-out:device-event-adapter-out:test
-      # Device Persistence Adapter Out 모듈 단위 테스트
-      - name: Device Persistence Adapter Out 모듈 단위 테스트
-        run: ./gradlew :user-service:adapter-out:device-persistence-adapter-out:test
       # Device Publish Adapter Out 모듈 단위 테스트
       - name: Device Publish Adapter Out 모듈 단위 테스트
         run: ./gradlew :user-service:adapter-out:device-publish-adapter-out:test
