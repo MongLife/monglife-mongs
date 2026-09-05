@@ -3,4 +3,6 @@ dependencies {
     implementation project(":user-service:application:device-application")
     // redis
     implementation "org.springframework.boot:spring-boot-starter-data-redis"
+    // test
+    testImplementation "org.testcontainers:testcontainers:${testcontainersVersion}"
 }

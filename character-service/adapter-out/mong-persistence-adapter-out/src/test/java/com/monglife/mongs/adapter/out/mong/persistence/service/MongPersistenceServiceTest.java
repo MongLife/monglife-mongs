@@ -20,6 +20,7 @@ import com.monglife.mongs.domain.mong.enums.MongStateCode;
 import com.monglife.mongs.domain.mong.enums.MongStatusCode;
 import com.monglife.mongs.domain.mong.model.Mong;
 import org.awaitility.Awaitility;
+import com.monglife.mongs.adapter.out.mong.persistence.utils.RedisTestContainer;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -45,7 +46,7 @@ import static org.junit.jupiter.api.Assertions.*;
         JpaAuditingAutoConfig.class,
         MongRedisConfig.class
 })
-class MongPersistenceServiceTest {
+class MongPersistenceServiceTest extends RedisTestContainer {
 
     private final MongPersistencePort mongPersistencePort;
     private final GroupCodeRepository groupCodeRepository;

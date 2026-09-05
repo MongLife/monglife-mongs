@@ -15,6 +15,7 @@ import com.monglife.mongs.adapter.out.mong.persistence.repository.GroupCodeRepos
 import com.monglife.mongs.adapter.out.mong.persistence.repository.MongStrokeHistoryRepository;
 import com.monglife.mongs.adapter.out.mong.persistence.repository.MongTypeRepository;
 import com.monglife.mongs.application.mong.port.out.MongReadPort;
+import com.monglife.mongs.adapter.out.mong.persistence.utils.RedisTestContainer;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
@@ -39,7 +40,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
         JpaAuditingAutoConfig.class,
         MongRedisConfig.class
 })
-class MongReadServiceTest {
+class MongReadServiceTest extends RedisTestContainer {
 
     private final MongReadPort mongReadPort;
     private final GroupCodeRepository groupCodeRepository;

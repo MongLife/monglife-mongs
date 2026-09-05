@@ -47,9 +47,24 @@ import static org.junit.jupiter.api.Assertions.*;
         KafkaAutoConfig.class,
         TestEventConsumer.class,
 })
-@EmbeddedKafka(partitions = 1, brokerProperties = {"listeners=PLAINTEXT://localhost:9092", "port=9092"})
+@EmbeddedKafka(partitions = 1, bootstrapServersProperty = "module.kafka.url")
 @DirtiesContext
 class TaskServiceTest {
+
+    /**
+     * 스케줄 등록에 드는 시간을 감안한 여유.
+     *
+     * TaskEntity 는 fixTime 이 등록 시점보다 앞서면 만료를 다음 날로 미룬다(plusDays(1)).
+     * 목표 시각을 촉박하게 잡으면 첫 JPA 쿼리·스키마 초기화에 밀려 그 시각이 지나 버리고,
+     * 스케줄이 내일로 넘어가 테스트 대기 시간 안에 돌지 않는다.
+     */
+    private static final long LEAD_SECONDS = 15L;
+
+    /**
+     * 이벤트 대기에 주는 추가 여유. 이벤트가 오면 즉시 반환하므로 정상 경로는 느려지지 않고,
+     * 머신이 느릴 때만 더 기다린다.
+     */
+    private static final long AWAIT_SLACK_SECONDS = 10L;
 
     private final MongSchedulerPort mongSchedulerPort;
 
@@ -91,16 +106,16 @@ class TaskServiceTest {
 
             // act
             var expected1 = mongSchedulerPort.createTaskPort(mongId, accountId, schedulerType);
-            var expected2 = countDownLatch.await(schedulerType.getExpiration() * 2, TimeUnit.SECONDS);
+            var expected2 = countDownLatch.await(schedulerType.getExpiration() * 2 + AWAIT_SLACK_SECONDS, TimeUnit.SECONDS);
 
             // assert
             assertFalse(expected1.isEmpty());
             assertTrue(expected2);
             assertEquals(expected1.get(), testEventDto.getTaskId());
 
-            Awaitility.waitAtMost(Duration.ofSeconds(schedulerType.getExpiration() * 2))
+            Awaitility.waitAtMost(Duration.ofSeconds(schedulerType.getExpiration() * 2 + AWAIT_SLACK_SECONDS))
                     .untilAsserted(() -> assertTrue(taskRepository.findByTaskId(expected1.orElse(-1L)).isEmpty()));
-            Awaitility.waitAtMost(Duration.ofSeconds(schedulerType.getExpiration() * 2))
+            Awaitility.waitAtMost(Duration.ofSeconds(schedulerType.getExpiration() * 2 + AWAIT_SLACK_SECONDS))
                     .untilAsserted(() -> assertTrue(taskScheduleRepository.findByTaskId(expected1.orElse(-1L)).isEmpty()));
         }
     }
@@ -127,16 +142,16 @@ class TaskServiceTest {
 
             // act
             var expected1 = mongSchedulerPort.createCycleTaskPort(mongId, accountId, schedulerType);
-            var expected2 = countDownLatch.await(schedulerType.getExpiration() * cycleCount * 2, TimeUnit.SECONDS);
+            var expected2 = countDownLatch.await(schedulerType.getExpiration() * cycleCount * 2 + AWAIT_SLACK_SECONDS, TimeUnit.SECONDS);
 
             // assert
             assertFalse(expected1.isEmpty());
             assertEquals(expected1.get(), testEventDto.getTaskId());
             assertTrue(expected2);
 
-            Awaitility.waitAtMost(Duration.ofSeconds(schedulerType.getExpiration() * 2))
+            Awaitility.waitAtMost(Duration.ofSeconds(schedulerType.getExpiration() * 2 + AWAIT_SLACK_SECONDS))
                     .untilAsserted(() -> assertFalse(taskRepository.findByTaskId(expected1.orElse(-1L)).isEmpty()));
-            Awaitility.waitAtMost(Duration.ofSeconds(schedulerType.getExpiration() * 2))
+            Awaitility.waitAtMost(Duration.ofSeconds(schedulerType.getExpiration() * 2 + AWAIT_SLACK_SECONDS))
                     .untilAsserted(() -> assertFalse(taskScheduleRepository.findByTaskId(expected1.orElse(-1L)).isEmpty()));
         }
     }
@@ -155,25 +170,28 @@ class TaskServiceTest {
             final long mongId = 1L;
             final long accountId = 1L;
             final TestSchedulerType schedulerType = TestSchedulerType.CREATE_TEST;
-            final LocalTime fixedTime = LocalTime.now().plusSeconds(schedulerType.getExpiration());
-            final LocalDateTime expiredAt = LocalDateTime.of(LocalDate.now().plusDays(1), fixedTime);
+            // 자정을 넘겨도 날짜가 어긋나지 않도록 시각과 날짜를 같은 기준으로 잡는다.
+            final LocalDateTime base = LocalDateTime.now().plusSeconds(LEAD_SECONDS);
+            final LocalTime fixedTime = base.toLocalTime();
+            final LocalDateTime expiredAt = LocalDateTime.of(base.toLocalDate().plusDays(1), fixedTime);
 
             TestEventDto testEventDto = new TestEventDto();
             CountDownLatch countDownLatch = new CountDownLatch(1);
             testEventConsumer.reset(testEventDto, countDownLatch);
 
             var expected1 = mongSchedulerPort.createFixedTimeCycleTaskPort(mongId, accountId, schedulerType, fixedTime);
-            var expected2 = countDownLatch.await(schedulerType.getExpiration() * 2, TimeUnit.SECONDS);
+            // 스케줄은 LEAD_SECONDS 뒤에 돈다. 그 시각을 기준으로 기다린다.
+            var expected2 = countDownLatch.await(LEAD_SECONDS + AWAIT_SLACK_SECONDS, TimeUnit.SECONDS);
 
             // assert
             assertFalse(expected1.isEmpty());
             assertEquals(expected1.get(), testEventDto.getTaskId());
             assertTrue(expected2);
 
-            Awaitility.waitAtMost(Duration.ofSeconds(schedulerType.getExpiration() * 2))
+            Awaitility.waitAtMost(Duration.ofSeconds(schedulerType.getExpiration() * 2 + AWAIT_SLACK_SECONDS))
                     .untilAsserted(() -> taskRepository.findByTaskId(expected1.orElse(-1L)).ifPresentOrElse(taskScheduleEntity ->
                             assertTrue(Math.abs(Duration.between(taskScheduleEntity.getExpiredAt(), expiredAt).toSeconds()) <= 1), Assertions::fail));
-            Awaitility.waitAtMost(Duration.ofSeconds(schedulerType.getExpiration() * 2))
+            Awaitility.waitAtMost(Duration.ofSeconds(schedulerType.getExpiration() * 2 + AWAIT_SLACK_SECONDS))
                     .untilAsserted(() -> taskScheduleRepository.findByTaskId(expected1.orElse(-1L)).ifPresentOrElse(taskScheduleEntity ->
                             assertTrue(Math.abs(Duration.between(taskScheduleEntity.getExpiredAt(), expiredAt).toSeconds()) <= 1), Assertions::fail));
         }
@@ -201,7 +219,7 @@ class TaskServiceTest {
 
             // act
             var expected1 = mongSchedulerPort.createCycleTaskPort(mongId, accountId, schedulerType);
-            var expected2 = countDownLatch.await(schedulerType.getExpiration() * cycleCount * 2, TimeUnit.SECONDS);
+            var expected2 = countDownLatch.await(schedulerType.getExpiration() * cycleCount * 2 + AWAIT_SLACK_SECONDS, TimeUnit.SECONDS);
             mongSchedulerPort.deleteTaskPort(mongId, schedulerType);
 
             // assert
@@ -209,9 +227,9 @@ class TaskServiceTest {
             assertEquals(expected1.get(), testEventDto.getTaskId());
             assertTrue(expected2);
 
-            Awaitility.waitAtMost(Duration.ofSeconds(schedulerType.getExpiration() * 2))
+            Awaitility.waitAtMost(Duration.ofSeconds(schedulerType.getExpiration() * 2 + AWAIT_SLACK_SECONDS))
                     .untilAsserted(() -> assertTrue(taskRepository.findByTaskId(expected1.orElse(-1L)).isEmpty()));
-            Awaitility.waitAtMost(Duration.ofSeconds(schedulerType.getExpiration() * 2))
+            Awaitility.waitAtMost(Duration.ofSeconds(schedulerType.getExpiration() * 2 + AWAIT_SLACK_SECONDS))
                     .untilAsserted(() -> assertTrue(taskScheduleRepository.findByTaskId(expected1.orElse(-1L)).isEmpty()));
         }
     }
@@ -241,16 +259,16 @@ class TaskServiceTest {
                 expected1.add(mongSchedulerPort.createCycleTaskPort(mongId, accountId, testSchedulerType));
             }
 
-            var expected2 = countDownLatch.await(schedulerType.stream().mapToLong(TestSchedulerType::getExpiration).sum() * 2, TimeUnit.SECONDS);
+            var expected2 = countDownLatch.await(schedulerType.stream().mapToLong(TestSchedulerType::getExpiration).sum() * 2 + AWAIT_SLACK_SECONDS, TimeUnit.SECONDS);
             mongSchedulerPort.deleteAllTaskPort(mongId);
 
             // assert
             expected1.forEach(optional -> assertFalse(optional.isEmpty()));
             assertTrue(expected2);
 
-            Awaitility.waitAtMost(Duration.ofSeconds(schedulerType.stream().mapToLong(TestSchedulerType::getExpiration).sum() * 2))
+            Awaitility.waitAtMost(Duration.ofSeconds(schedulerType.stream().mapToLong(TestSchedulerType::getExpiration).sum() * 2 + AWAIT_SLACK_SECONDS))
                             .untilAsserted(() -> assertEquals(0, taskRepository.count()));
-            Awaitility.waitAtMost(Duration.ofSeconds(schedulerType.stream().mapToLong(TestSchedulerType::getExpiration).sum() * 2))
+            Awaitility.waitAtMost(Duration.ofSeconds(schedulerType.stream().mapToLong(TestSchedulerType::getExpiration).sum() * 2 + AWAIT_SLACK_SECONDS))
                     .untilAsserted(() -> assertEquals(0, taskScheduleRepository.count()));
         }
     }
@@ -288,7 +306,7 @@ class TaskServiceTest {
                 expected1.add(mongSchedulerPort.createCycleTaskPort(mongId, accountId, testSchedulerType));
             }
 
-            var expected2 = countDownLatch.await(schedulerTypes.stream().mapToLong(TestSchedulerType::getExpiration).sum() * 2, TimeUnit.SECONDS);
+            var expected2 = countDownLatch.await(schedulerTypes.stream().mapToLong(TestSchedulerType::getExpiration).sum() * 2 + AWAIT_SLACK_SECONDS, TimeUnit.SECONDS);
             taskService.appStopPauseAllTask();
 
             var expected3 = List.copyOf(taskRepository.findAll());

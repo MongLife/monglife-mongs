@@ -31,7 +31,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 @ActiveProfiles("test")
 @ContextConfiguration(classes = { CollectionConsumer.class, KafkaAutoConfig.class })
 @ComponentScan({"com.monglife.module.common.kafka"})
-@EmbeddedKafka(partitions = 1, brokerProperties = { "listeners=PLAINTEXT://localhost:9092", "port=9092" })
+@EmbeddedKafka(partitions = 1, bootstrapServersProperty = "module.kafka.url")
 @DirtiesContext
 class CollectionConsumerTest {
 

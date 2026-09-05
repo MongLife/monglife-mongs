@@ -9,4 +9,5 @@ dependencies {
     implementation "com.github.monglife.monglife-module-common:monglife-module-common-kafka:${monglifeModuleCommonVersion}"
     // test
     testImplementation "org.springframework.kafka:spring-kafka-test"
+    testImplementation "org.testcontainers:testcontainers:${testcontainersVersion}"
 }

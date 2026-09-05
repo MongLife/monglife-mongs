@@ -7,6 +7,7 @@ import com.monglife.mongs.adapter.out.device.publish.consumer.DeviceConsumer;
 import com.monglife.mongs.adapter.out.device.publish.dto.response.DevicePublishDto;
 import com.monglife.mongs.application.device.port.out.DevicePublishPort;
 import com.monglife.mongs.application.device.port.out.dto.RestoreWalkingCountDto;
+import com.monglife.mongs.adapter.out.device.publish.utils.MqttTestContainer;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -30,7 +31,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
         AdapterOutDevicePublishConfig.class,
         MqttAutoConfig.class
 })
-class DevicePublishServiceTest {
+class DevicePublishServiceTest extends MqttTestContainer {
 
     private final DevicePublishPort devicePublishPort;
 

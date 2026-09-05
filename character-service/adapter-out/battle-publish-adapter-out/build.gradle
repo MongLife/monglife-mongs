@@ -3,4 +3,6 @@ dependencies {
     implementation project(":character-service:application:battle-application")
     // monglife-mqtt
     implementation "com.github.monglife:monglife-module-mqtt:${monglifeModuleMqttVersion}"
+    // test
+    testImplementation "org.testcontainers:testcontainers:${testcontainersVersion}"
 }
