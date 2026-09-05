@@ -99,8 +99,8 @@ public class MongEntity extends BaseTimeEntity {
         this.mongId = mongId;
         this.accountId = accountId;
         this.name = name;
-        this.sleepAt = sleepAt;
-        this.wakeupAt = wakeupAt;
+        this.sleepAt = toSecond(sleepAt);
+        this.wakeupAt = toSecond(wakeupAt);
         this.payPoint = payPoint;
         this.mongType = mongType;
         this.stateCode = stateCode;
@@ -173,8 +173,8 @@ public class MongEntity extends BaseTimeEntity {
     public void update(Mong mong, MongTypeEntity mongTypeEntity) {
         this.accountId = mong.getAccountId();
         this.name = mong.getName();
-        this.sleepAt = mong.getSleepAt();
-        this.wakeupAt = mong.getWakeupAt();
+        this.sleepAt = toSecond(mong.getSleepAt());
+        this.wakeupAt = toSecond(mong.getWakeupAt());
         this.payPoint = mong.getPayPoint();
         this.mongType = mongTypeEntity;
         this.stateCode = mong.getStateCode();
@@ -193,5 +193,16 @@ public class MongEntity extends BaseTimeEntity {
         this.randomDrawTicketCount = mong.getRandomDrawTicketCount();
         this.evolutionReward = mong.getEvolutionReward();
         this.evolutionPenalty = mong.getEvolutionPenalty();
+    }
+
+    /**
+     * time(6) 컬럼에 밀리초가 남으면 그 행을 읽을 때 터진다. Hibernate 6.2.5 의
+     * LocalTimeJavaType.wrap 이 java.sql.Time.getTime() % 1000 의 음수 나머지를 보정하지 않고,
+     * KST 는 09시 이전 시각의 epoch millis 가 음수이기 때문이다(TaskEntity 에 같은 주석이 있다).
+     *
+     * <p>수면·기상 시각은 분 단위 개념이라 초 미만을 버려도 의미가 달라지지 않는다.
+     */
+    private static LocalTime toSecond(LocalTime time) {
+        return time == null ? null : time.withNano(0);
     }
 }
