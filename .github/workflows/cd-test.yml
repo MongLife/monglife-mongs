@@ -1,16 +1,15 @@
-name: CD STAGE
+name: CD TEST (임시)
 
-# cd-prd.yml 과 짝이다. 다른 것은 아래 넷뿐이다.
-#   name / on.push.branches / env.deploy_env / jobs.deploy.environment
-# 한쪽을 고치면 다른 쪽도 같이 고친다.
+# cd-stg.yml 의 복제본. 새 배포 구조를 이 브랜치에서 검증하기 위한 임시 워크플로다.
+# **검증이 끝나면 지운다.**
 #
-# 실제 처리 과정은 .github/actions/ci/build-test 와 .github/actions/cd/deploy 에 있다.
-# 이 파일은 트리거와 job 배선만 가진다.
+# 대상은 STAGE 다(environment: stage, configs/deploy/stage). 운영은 건드리지 않는다.
+# cd-stg.yml 과 다른 것은 name 과 트리거 브랜치뿐이다.
 
 on:
   push:
     branches:
-      - stage
+      - feature/cd-docker-compose
   workflow_dispatch:
 
 permissions:

@@ -1,0 +1,67 @@
+name: CI
+
+# ci-character.yml / ci-user.yml 을 matrix 하나로 합친 것이다. 두 파일은 서비스 이름만
+# 다른 같은 구조였고, 각 job 의 체크아웃·JDK·copyPrivate 스텝이 열 번 복붙돼 있었다.
+#
+# 레이어별 단위 테스트 구조는 그대로 둔다. 배포 단위는 하나지만 헥사고날 레이어마다
+# 테스트가 실제로 있어서, 어디가 깨졌는지 갈라 보는 값이 있다.
+#
+# 실제 처리 과정은 .github/actions/ci/build-test 에 있다. cd-*.yml 의 ci job 도 같은 액션을 쓴다.
+
+on:
+  push:
+    branches:
+      - develop
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  checks: write
+
+jobs:
+  # 레이어 단위 테스트. -p <디렉터리> 로 그 아래 모든 프로젝트의 test 를 돌린다.
+  # 모듈을 하나씩 나열하지 않으므로 새 모듈이 생겨도 자동으로 포함된다.
+  unit-test:
+    name: ${{ matrix.service }} / ${{ matrix.layer }} 단위 테스트
+    runs-on: ubuntu-latest
+    strategy:
+      # 한 레이어가 깨져도 나머지를 끝까지 돌린다. 한 번에 전부 보려는 것이다.
+      fail-fast: false
+      matrix:
+        service: [character, user]
+        layer: [domain, application, adapter-out, adapter-in]
+    steps:
+      # 소스 로드 (configs 서브모듈 포함)
+      - name: 소스 코드 로드
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.ACTION_TOKEN }}
+          submodules: true
+
+      - name: ${{ matrix.service }} / ${{ matrix.layer }} 단위 테스트
+        uses: ./.github/actions/ci/build-test
+        with:
+          gradle_args: -p ${{ matrix.service }}-service/${{ matrix.layer }} test
+
+  # 부트스트랩 빌드. 테스트는 위에서 이미 돌았으므로 -x test 다.
+  build-test:
+    name: ${{ matrix.service }} API 빌드 테스트
+    needs: unit-test
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        service: [character, user]
+    steps:
+      # 소스 로드 (configs 서브모듈 포함)
+      - name: 소스 코드 로드
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.ACTION_TOKEN }}
+          submodules: true
+
+      - name: ${{ matrix.service }} API 빌드 테스트
+        uses: ./.github/actions/ci/build-test
+        with:
+          gradle_args: ':${{ matrix.service }}-service:bootstrap:${{ matrix.service }}-bootstrap-api:build -x test'
+          test_report: 'false'
