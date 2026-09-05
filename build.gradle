@@ -55,6 +55,7 @@ subprojects {
                     include("*.yml")
                     include("*.json")
                     include("*.xml")
+                    include("*.sql")
                 }
 
                 project.delete fileTree("src/test/resources") {
@@ -67,6 +68,7 @@ subprojects {
                         include("*.yml")
                         include("*.json")
                         include("*.xml")
+                        include("*.sql")
                     }
                     into("src/main/resources")
                 }
