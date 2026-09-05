@@ -1,185 +1,77 @@
 package com.monglife.mongs.domain.device.model;
 
-import com.monglife.mongs.domain.device.exception.InvalidTotalWalkingCountException;
-import com.monglife.mongs.domain.device.exception.NotEnoughCurrentWalkingCountException;
+import com.monglife.mongs.domain.device.exception.ExceedDailyExchangeWalkingCountException;
+import com.monglife.mongs.domain.device.exception.InvalidExchangeWalkingCountException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
-import java.time.LocalDateTime;
-
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class StepTest {
 
     @Nested
-    @DisplayName("보유 걸음 수 페이 포인트 환전 단위 테스트")
-    class ExchangeWalkingCountToPayPoint {
-
-        private static final String DEVICE_ID = "TEST-DEVICE-ID";
-        private static final LocalDateTime DEVICE_BOOTED_AT = LocalDateTime.of(2025, 1, 1, 0, 0);
+    @DisplayName("걸음 수 환전 단위 테스트")
+    class Of {
 
         @Test
-        @DisplayName("보유 걸음 수를 감소 시키고 환전 페이 포인트를 반환 한다.")
-        void exchangeWalkingCountToPayPoint() {
-            // arrange
-            final int totalWalkingCount = 100;
-            final Step step = Step.builder()
-                    .deviceId(DEVICE_ID)
-                    .walkingCount(0)
-                    .consumeWalkingCount(0)
-                    .totalWalkingCount(totalWalkingCount)
-                    .deviceBootedAt(DEVICE_BOOTED_AT)
-                    .build();
-
+        @DisplayName("10 걸음 당 1 페이 포인트로 환산 한다.")
+        void toPayPoint() {
             // act
-            var expected = step.exchangeWalkingCountToPayPoint(totalWalkingCount);
+            Step step = Step.of(1_000);
 
             // assert
-            assertTrue(expected > 0);
+            assertEquals(1_000, step.getWalkingCount());
+            assertEquals(100, step.getPayPoint());
         }
 
         @Test
-        @DisplayName("보유 걸음 수가 충분하지 않은 경우 예외가 발생 한다.")
-        void exchangeWalkingCountToPayPointWhenNotEnoughCurrentWalkingCount() {
-            // arrange
-            final Step step = Step.builder()
-                    .deviceId(DEVICE_ID)
-                    .walkingCount(0)
-                    .consumeWalkingCount(0)
-                    .totalWalkingCount(0)
-                    .deviceBootedAt(DEVICE_BOOTED_AT)
-                    .build();
+        @DisplayName("나누어 떨어지지 않는 걸음 수는 올림 한다.")
+        void ceil() {
+            // 10 으로 나누어 떨어지지 않는 값은 사용자에게 유리한 쪽으로 올린다.
+            assertEquals(1, Step.of(1).getPayPoint());
+            assertEquals(2, Step.of(15).getPayPoint());
+            assertEquals(1_000, Step.of(9_999).getPayPoint());
+        }
 
-            // act & assert
-            assertThrows(NotEnoughCurrentWalkingCountException.class, () -> step.exchangeWalkingCountToPayPoint(Integer.MAX_VALUE));
+        @Test
+        @DisplayName("0 이하의 걸음 수는 환전할 수 없다.")
+        void invalidWalkingCount() {
+            assertThrows(InvalidExchangeWalkingCountException.class, () -> Step.of(0));
+            assertThrows(InvalidExchangeWalkingCountException.class, () -> Step.of(-1_000));
+        }
+
+        @Test
+        @DisplayName("걸음 수가 없으면 환전할 수 없다.")
+        void nullWalkingCount() {
+            assertThrows(InvalidExchangeWalkingCountException.class, () -> Step.of(null));
         }
     }
 
     @Nested
-    @DisplayName("보유 걸음 수 증가 단위 테스트")
-    class IncreaseCurrentWalkingCount {
-
-        private static final String DEVICE_ID = "TEST-DEVICE-ID";
-        private static final LocalDateTime DEVICE_BOOTED_AT = LocalDateTime.of(2025, 1, 1, 0, 0);
+    @DisplayName("일일 환전 상한 단위 테스트")
+    class ValidateDailyExchangeLimit {
 
         @Test
-        @DisplayName("보유 걸음 수를 증가 시킨다.")
-        void increaseCurrentWalkingCount() {
-            // arrange
-            final int walkingCount = 100;
-            final Step step = Step.builder()
-                    .deviceId(DEVICE_ID)
-                    .walkingCount(0)
-                    .consumeWalkingCount(0)
-                    .totalWalkingCount(0)
-                    .deviceBootedAt(DEVICE_BOOTED_AT)
-                    .build();
-
-            // act
-            step.increaseCurrentWalkingCount(walkingCount);
-
-            // assert
-            assertEquals(walkingCount, step.getCurrentWalkingCount());
-        }
-    }
-
-    @Nested
-    @DisplayName("보유 걸음 수 감소 단위 테스트")
-    class DecreaseCurrentWalkingCount {
-
-        private static final String DEVICE_ID = "TEST-DEVICE-ID";
-        private static final LocalDateTime DEVICE_BOOTED_AT = LocalDateTime.of(2025, 1, 1, 0, 0);
-
-        @Test
-        @DisplayName("보유 걸음 수를 감소 시킨다.")
-        void decreaseCurrentWalkingCount() {
-            // arrange
-            final int totalWalkingCount = 100;
-            final Step step = Step.builder()
-                    .deviceId(DEVICE_ID)
-                    .walkingCount(0)
-                    .consumeWalkingCount(0)
-                    .totalWalkingCount(totalWalkingCount)
-                    .deviceBootedAt(DEVICE_BOOTED_AT)
-                    .build();
-
-            // act
-            step.decreaseCurrentWalkingCount(totalWalkingCount);
-
-            // assert
-            assertEquals(0, step.getCurrentWalkingCount());
-        }
-    }
-
-    @Nested
-    @DisplayName("총 걸음 수 동기화 단위 테스트 ")
-    class SyncTotalWalkingCount {
-
-        private static final String DEVICE_ID = "TEST-DEVICE-ID";
-        private static final LocalDateTime DEVICE_BOOTED_AT = LocalDateTime.of(2025, 1, 1, 0, 0);
-
-        @Test
-        @DisplayName("부팅 시간이 동일한 경우 걸음 수를 동기화 한다.")
-        void syncTotalWalkingCount() {
-            // arrange
-            final int totalWalkingCount = 100;
-            final int newTotalWalkingCount = totalWalkingCount + 50;
-            final Step step = Step.builder()
-                    .deviceId(DEVICE_ID)
-                    .walkingCount(0)
-                    .consumeWalkingCount(0)
-                    .totalWalkingCount(totalWalkingCount)
-                    .deviceBootedAt(DEVICE_BOOTED_AT)
-                    .build();
-
-            // act
-            step.syncTotalWalkingCount(newTotalWalkingCount, DEVICE_BOOTED_AT);
-
-            // assert
-            assertEquals(newTotalWalkingCount, step.getCurrentWalkingCount());
+        @DisplayName("상한 이하는 통과 한다.")
+        void underLimit() {
+            assertDoesNotThrow(() -> Step.validateDailyExchangeLimit(Step.DAILY_EXCHANGE_LIMIT_WALKING_COUNT));
         }
 
         @Test
-        @DisplayName("부팅 시간이 지난 경우 총 걸음 수를 초기화 한다.")
-        void resetStep() {
-            // arrange
-            final int totalWalkingCount = 100;
-            final int newTotalWalkingCount = 50;
-            final LocalDateTime newDeviceBootedDt = DEVICE_BOOTED_AT.plusDays(1);
-            final Step step = Step.builder()
-                    .deviceId(DEVICE_ID)
-                    .walkingCount(0)
-                    .consumeWalkingCount(0)
-                    .totalWalkingCount(totalWalkingCount)
-                    .deviceBootedAt(DEVICE_BOOTED_AT)
-                    .build();
-
-            // act
-            step.syncTotalWalkingCount(newTotalWalkingCount, newDeviceBootedDt);
-
-            // assert
-            assertEquals(newDeviceBootedDt, step.getDeviceBootedAt());
-            assertEquals(totalWalkingCount, step.getWalkingCount());
-            assertEquals(newTotalWalkingCount, step.getTotalWalkingCount());
-            assertEquals(totalWalkingCount + newTotalWalkingCount, step.getCurrentWalkingCount());
+        @DisplayName("상한을 넘으면 예외가 발생 한다.")
+        void overLimit() {
+            assertThrows(ExceedDailyExchangeWalkingCountException.class,
+                    () -> Step.validateDailyExchangeLimit(Step.DAILY_EXCHANGE_LIMIT_WALKING_COUNT + 1));
         }
 
         @Test
-        @DisplayName("부팅 시간이 동일하지만 현재 총 걸음 수보다 적은 총 걸음 수인 경우 예외가 발생 한다.")
-        void updateTotalWalkingCountWhenLeastTotalWalkingCount() {
-            // arrange
-            final int newTotalWalkingCount = 0;
-            final Step step = Step.builder()
-                    .deviceId(DEVICE_ID)
-                    .walkingCount(0)
-                    .consumeWalkingCount(0)
-                    .totalWalkingCount(Integer.MAX_VALUE)
-                    .deviceBootedAt(DEVICE_BOOTED_AT)
-                    .build();
-
-            // act & assert
-            assertThrows(InvalidTotalWalkingCountException.class, () -> step.syncTotalWalkingCount(newTotalWalkingCount, DEVICE_BOOTED_AT));
+        @DisplayName("집계할 수 없어 0 이 들어오면 통과 한다.")
+        void failOpen() {
+            // Redis 장애 시 어댑터가 0 을 돌려준다. 상한 검사를 건너뛰고 환전이 진행되어야 한다.
+            assertDoesNotThrow(() -> Step.validateDailyExchangeLimit(0));
         }
     }
 }

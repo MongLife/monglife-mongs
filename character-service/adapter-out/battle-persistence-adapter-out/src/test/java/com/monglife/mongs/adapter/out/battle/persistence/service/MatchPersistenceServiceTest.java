@@ -21,6 +21,7 @@ import com.monglife.mongs.domain.battle.model.Match;
 import com.monglife.mongs.domain.battle.model.MatchPick;
 import com.monglife.mongs.domain.battle.model.MatchPlayer;
 import com.monglife.mongs.domain.battle.model.QueuePlayer;
+import com.monglife.mongs.adapter.out.battle.persistence.utils.RedisTestContainer;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -48,7 +49,7 @@ import static org.junit.jupiter.api.Assertions.*;
         JpaAuditingAutoConfig.class,
         BattleRedisConfig.class
 })
-class MatchPersistenceServiceTest {
+class MatchPersistenceServiceTest extends RedisTestContainer {
 
     private final MatchPersistencePort matchPersistencePort;
     private final MatchRepository matchRepository;

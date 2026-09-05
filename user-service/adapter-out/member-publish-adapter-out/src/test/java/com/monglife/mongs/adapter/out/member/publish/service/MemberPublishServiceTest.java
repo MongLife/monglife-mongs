@@ -9,6 +9,7 @@ import com.monglife.mongs.adapter.out.member.publish.dto.response.MemberSlotCoun
 import com.monglife.mongs.adapter.out.member.publish.dto.response.MemberStarPointPublishDto;
 import com.monglife.mongs.application.member.port.out.MemberPublishPort;
 import com.monglife.mongs.domain.member.model.Player;
+import com.monglife.mongs.adapter.out.member.publish.utils.MqttTestContainer;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -32,7 +33,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
         AdapterOutMemberPublishConfig.class,
         MqttAutoConfig.class
 })
-class MemberPublishServiceTest {
+class MemberPublishServiceTest extends MqttTestContainer {
 
     private final MemberPublishPort memberPublishPort;
 

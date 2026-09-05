@@ -14,13 +14,13 @@ public class DevicePublishClient {
      * 기기 변동 사항 비동기 응답
      * @param devicePublishDto 기기 변동 정보 비동기 응답 Dto
      */
-    @MqttPublish("/device/{topic}")
+    @MqttPublish("/device/{topic}/step/restore")
     public MqttResponseEntity<ResponseDto<DevicePublishDto>> publishDevice(DevicePublishDto devicePublishDto) {
 
         String topic = devicePublishDto.getDeviceId();
 
         return MqttResponseEntity
-                .body(AdapterOutPublishDeviceResponse.DEVICE_PUBLISH_DEVICE.toResponseDto(devicePublishDto))
+                .body(AdapterOutPublishDeviceResponse.DEVICE_PUBLISH_RESTORE_WALKING_COUNT.toResponseDto(devicePublishDto))
                 .topic(topic);
     }
 }

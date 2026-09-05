@@ -3,4 +3,6 @@ dependencies {
     implementation project(":user-service:application:member-application")
     // monglife-mqtt
     implementation "com.github.monglife:monglife-module-mqtt:${monglifeModuleMqttVersion}"
+    // test
+    testImplementation "org.testcontainers:testcontainers:${testcontainersVersion}"
 }

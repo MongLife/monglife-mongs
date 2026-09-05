@@ -11,6 +11,7 @@ import com.monglife.mongs.domain.battle.enums.MatchStateCode;
 import com.monglife.mongs.domain.battle.model.Match;
 import com.monglife.mongs.domain.battle.model.MatchPlayer;
 import com.monglife.mongs.domain.battle.model.QueuePlayer;
+import com.monglife.mongs.adapter.out.battle.publish.utils.MqttTestContainer;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -36,7 +37,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
         AdapterOutBattlePublishConfig.class,
         MqttAutoConfig.class,
 })
-class QueuePublishServiceTest {
+class QueuePublishServiceTest extends MqttTestContainer {
 
     private final QueuePublishPort queuePublishPort;
 

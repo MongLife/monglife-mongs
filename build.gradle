@@ -4,14 +4,15 @@ buildscript {
         springDependencyManagementVersion = "1.1.4"
         acuatorVersion                    = "3.2.1"
         lombokVersion                     = "1.18.30"
-        monglifeCoreVersion               = "2.0.11"
-        monglifeModuleCommonVersion       = "2.1.0"
+        monglifeCoreVersion               = "2.1.0"
+        monglifeModuleCommonVersion       = "2.3.0"
         monglifeModuleMqttVersion         = "1.0.1"
         logstashVersion                   = "7.4"
         jupiterVersion                    = "5.9.3"
         mockitoVersion                    = "4.8.1"
         assertjVersion                    = "3.24.2"
         awaitilityVersion                 = "4.2.0"
+        testcontainersVersion             = "1.21.3"
     }
 }
 
@@ -28,7 +29,7 @@ bootJar {
 subprojects {
 
     group = "com.monglife.mongs"
-    version = "2.1.0"
+    version = "3.0.0"
 
     repositories {
         mavenCentral()
@@ -54,6 +55,7 @@ subprojects {
                     include("*.yml")
                     include("*.json")
                     include("*.xml")
+                    include("*.sql")
                 }
 
                 project.delete fileTree("src/test/resources") {
@@ -66,6 +68,7 @@ subprojects {
                         include("*.yml")
                         include("*.json")
                         include("*.xml")
+                        include("*.sql")
                     }
                     into("src/main/resources")
                 }

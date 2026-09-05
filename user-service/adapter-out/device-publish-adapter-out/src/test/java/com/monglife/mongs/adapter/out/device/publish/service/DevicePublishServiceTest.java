@@ -6,7 +6,8 @@ import com.monglife.mongs.adapter.out.device.publish.config.AdapterOutDevicePubl
 import com.monglife.mongs.adapter.out.device.publish.consumer.DeviceConsumer;
 import com.monglife.mongs.adapter.out.device.publish.dto.response.DevicePublishDto;
 import com.monglife.mongs.application.device.port.out.DevicePublishPort;
-import com.monglife.mongs.domain.device.model.Step;
+import com.monglife.mongs.application.device.port.out.dto.RestoreWalkingCountDto;
+import com.monglife.mongs.adapter.out.device.publish.utils.MqttTestContainer;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -17,7 +18,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 
-import java.time.LocalDateTime;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
@@ -31,7 +31,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
         AdapterOutDevicePublishConfig.class,
         MqttAutoConfig.class
 })
-class DevicePublishServiceTest {
+class DevicePublishServiceTest extends MqttTestContainer {
 
     private final DevicePublishPort devicePublishPort;
 
@@ -41,14 +41,13 @@ class DevicePublishServiceTest {
     }
 
     @Nested
-    @DisplayName("보유 걸음 수 비동기 응답 단위 테스트")
-    class PublishCurrentWalkingCountPort {
+    @DisplayName("걸음 수 복구 알림 비동기 발행 단위 테스트")
+    class PublishRestoreWalkingCountPort {
 
         @Autowired
         private DeviceConsumer deviceConsumer;
 
         private static String DEVICE_ID;
-        private static final LocalDateTime DEVICE_BOOTED_AT = LocalDateTime.of(2025, 1, 1, 0, 0);
 
         @BeforeEach
         void beforeEach() {
@@ -56,33 +55,34 @@ class DevicePublishServiceTest {
         }
 
         @Test
-        @DisplayName("걸음 수 도메인 객체의 정보를 사용자의 기기로 비동기 전송 한다.")
-        void publishCurrentWalkingCount() throws InterruptedException {
+        @DisplayName("되돌릴 걸음 수와 중복 방지 키를 사용자의 기기로 비동기 전송 한다.")
+        void publishRestoreWalkingCount() throws InterruptedException {
             // arrange
-            final int walkingCount = 50;
-            final int consumeWalkingCount = 100;
-            final Step step = Step.builder()
-                    .deviceId(DEVICE_ID)
-                    .walkingCount(walkingCount)
-                    .totalWalkingCount(100)
-                    .consumeWalkingCount(consumeWalkingCount)
-                    .deviceBootedAt(DEVICE_BOOTED_AT)
-                    .build();
+            final int restoreWalkingCount = 1_000;
+            final String eventId = "TEST-TRANSACTION-ID";
 
             DevicePublishDto devicePublishDto = new DevicePublishDto();
             CountDownLatch countDownLatch = new CountDownLatch(1);
             deviceConsumer.reset(DEVICE_ID, devicePublishDto, countDownLatch);
 
             // act
-            devicePublishPort.publishCurrentWalkingCountPort(step);
+            devicePublishPort.publishRestoreWalkingCountPort(RestoreWalkingCountDto.builder()
+                    .deviceId(DEVICE_ID)
+                    .restoreWalkingCount(restoreWalkingCount)
+                    .eventId(eventId)
+                    .build());
 
             var expected = countDownLatch.await(5, TimeUnit.SECONDS);
 
             // assert
             assertTrue(expected);
             assertEquals(DEVICE_ID, devicePublishDto.getDeviceId());
-            assertEquals(walkingCount, devicePublishDto.getWalkingCount());
-            assertEquals(consumeWalkingCount, devicePublishDto.getConsumeWalkingCount());
+            assertEquals(restoreWalkingCount, devicePublishDto.getRestoreWalkingCount());
+            assertEquals(eventId, devicePublishDto.getEventId());
+
+            // 구 토픽으로는 아무것도 나가면 안 된다.
+            // 이미 배포된 앱들이 그 토픽을 잔액 스냅샷으로 해석해 로컬 잔액을 덮어쓴다.
+            assertEquals(0, deviceConsumer.getLegacyTopicReceiveCount());
         }
     }
 }

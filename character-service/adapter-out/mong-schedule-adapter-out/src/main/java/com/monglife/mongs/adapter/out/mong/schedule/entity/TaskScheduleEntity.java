@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.extern.slf4j.Slf4j;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
@@ -11,6 +12,7 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
+@Slf4j
 @Getter
 public class TaskScheduleEntity {
 
@@ -46,7 +48,15 @@ public class TaskScheduleEntity {
 
     public void start(ScheduledExecutorService executor, Runnable runnable) {
         this.expirationSeconds = Math.max(1, Duration.between(LocalDateTime.now(), this.expiredAt).getSeconds());
-        this.scheduler = executor.schedule(runnable, this.expirationSeconds, TimeUnit.SECONDS);
+        // executor 에 넘긴 러너블에서 난 예외는 아무도 get() 하지 않는 Future 안에 갇혀
+        // 로그에 한 줄도 남지 않는다. 스케줄이 조용히 죽는 것을 막으려고 여기서 잡아 남긴다.
+        this.scheduler = executor.schedule(() -> {
+            try {
+                runnable.run();
+            } catch (Exception exception) {
+                log.error("스케줄 실행 실패 taskId={}", this.taskId, exception);
+            }
+        }, this.expirationSeconds, TimeUnit.SECONDS);
     }
 
     public void stop() {

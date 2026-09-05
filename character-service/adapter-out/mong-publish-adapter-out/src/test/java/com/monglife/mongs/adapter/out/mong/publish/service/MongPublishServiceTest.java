@@ -11,6 +11,7 @@ import com.monglife.mongs.application.mong.port.out.MongPublishPort;
 import com.monglife.mongs.domain.mong.enums.MongStateCode;
 import com.monglife.mongs.domain.mong.enums.MongStatusCode;
 import com.monglife.mongs.domain.mong.model.Mong;
+import com.monglife.mongs.adapter.out.mong.publish.utils.MqttTestContainer;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -40,9 +41,9 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
         KafkaAutoConfig.class
 })
 @ComponentScan({ "com.monglife.module.common.kafka", "com.monglife.mongs.adapter" })
-@EmbeddedKafka(partitions = 1, brokerProperties = {"listeners=PLAINTEXT://localhost:9092", "port=9092"})
+@EmbeddedKafka(partitions = 1, bootstrapServersProperty = "module.kafka.url")
 @DirtiesContext
-class MongPublishServiceTest {
+class MongPublishServiceTest extends MqttTestContainer {
 
     private final MongPublishPort mongPublishPort;
 

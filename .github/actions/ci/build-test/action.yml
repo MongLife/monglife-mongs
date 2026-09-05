@@ -1,0 +1,120 @@
+name: Mongs 빌드·테스트
+description: >
+  configs 서브모듈의 설정을 각 모듈 리소스로 복사한 뒤 지정한 Gradle 태스크를 돌린다.
+  ci.yml 의 단위 테스트·빌드 job 과 cd-*.yml 의 ci job 이 모두 이 액션 하나를 쓴다.
+
+# ⚠ 이 액션은 워크스페이스에서 읽히므로 **호출하는 워크플로가 먼저 actions/checkout 을 해야 한다.**
+#   그래서 체크아웃 스텝은 여기가 아니라 워크플로 파일에 남아 있다.
+#
+# ⚠ 액션 폴더 이름이 build 가 아니라 build-test 인 것은 .gitignore 의 build/ 때문이다.
+#   ci/build/ 로 두면 git add 가 조용히 건너뛴다.
+
+inputs:
+  gradle_args:
+    description: >
+      ./gradlew --no-daemon 뒤에 붙일 인자.
+      예) "-p character-service/domain test" / ":user-service:bootstrap:user-bootstrap-api:build -x test" / "build"
+    required: true
+  test_report:
+    description: >
+      JUnit 리포트 스텝 실행 여부. 리포트를 켜는 워크플로는 permissions: checks: write 가 필요하다.
+    required: false
+    default: 'true'
+  modules:
+    description: >
+      버전 추출과 jar 수집의 대상 서비스 이름을 공백으로 나열한다. 예) "character user"
+      <이름>-service/bootstrap/<이름>-bootstrap-api 로 경로가 유도된다.
+      비우면 두 스텝을 건너뛴다(단위 테스트 job 은 필요 없다).
+    required: false
+    default: ''
+  artifact_name:
+    description: >
+      비우면 업로드하지 않는다. 지정하면 빌드한 jar 을 한 디렉터리에 평평하게 모아 그 이름으로 올린다.
+      CD 의 ci job 이 deploy job 에 jar 을 넘길 때 쓴다. modules 가 있어야 한다.
+    required: false
+    default: ''
+
+outputs:
+  character_version:
+    description: 'character 모듈 버전. 대상에 없었으면 빈 문자열'
+    value: ${{ steps.versions.outputs.character_version }}
+  user_version:
+    description: 'user 모듈 버전. 대상에 없었으면 빈 문자열'
+    value: ${{ steps.versions.outputs.user_version }}
+
+runs:
+  using: composite
+  steps:
+    - name: JDK 설정
+      uses: actions/setup-java@v4
+      with:
+        distribution: 'zulu'
+        java-version: '17'
+        cache: gradle
+
+    - name: Gradle 권한 부여
+      shell: bash
+      run: chmod +x gradlew
+
+    # 설정을 서브모듈에서 각 모듈 리소스로 복사
+    - name: 환경 설정 파일 로드
+      shell: bash
+      run: ./gradlew copyPrivate
+
+    - name: Gradle 실행
+      shell: bash
+      env:
+        GRADLE_ARGS: ${{ inputs.gradle_args }}
+      run: |
+        set -euo pipefail
+        # shellcheck disable=SC2086
+        ./gradlew --no-daemon $GRADLE_ARGS
+
+    - name: 테스트 리포트 작성
+      if: inputs.test_report == 'true' && (success() || failure())
+      uses: mikepenz/action-junit-report@v5
+      with:
+        report_paths: '**/build/test-results/test/TEST-*.xml'
+
+    # CD 가 .version 을 만들 때 쓴다. 버전은 루트 build.gradle 의 subprojects 에서 온다.
+    - name: 모듈 버전 추출
+      id: versions
+      if: inputs.modules != ''
+      shell: bash
+      env:
+        MODULES: ${{ inputs.modules }}
+      run: |
+        set -euo pipefail
+        for m in $MODULES; do
+          v=$(./gradlew ":${m}-service:bootstrap:${m}-bootstrap-api:properties" -q | grep "^version:" | awk '{print $2}')
+          echo "${m}_version=$v" >> "$GITHUB_OUTPUT"
+        done
+
+    # upload-artifact 는 glob 의 공통 조상 경로를 보존한다. */build/libs/*.jar 를 그대로 올리면
+    # 받는 쪽이 <서비스>/bootstrap/... 로 풀려 버리므로, 먼저 한곳에 평평하게 모은다.
+    #
+    # ⚠ 디렉터리 이름을 점으로 시작하면 안 된다. upload-artifact 는 v4.4.0 부터 숨김 파일을
+    #   기본 제외해서(include-hidden-files: false), `.ci-jars/` 로 두면 glob 결과가 0건이 되고
+    #   "No files were found with the provided path" 로 끊긴다.
+    - name: jar 모으기
+      if: inputs.artifact_name != ''
+      shell: bash
+      env:
+        MODULES: ${{ inputs.modules }}
+      run: |
+        set -euo pipefail
+        rm -rf ci-jars && mkdir -p ci-jars
+        for m in $MODULES; do
+          n="${m}-bootstrap-api"
+          cp "${m}-service/bootstrap/${n}/build/libs/${n}.jar" ci-jars/
+        done
+        ls -al ci-jars
+
+    - name: jar 업로드
+      if: inputs.artifact_name != ''
+      uses: actions/upload-artifact@v4
+      with:
+        name: ${{ inputs.artifact_name }}
+        path: ci-jars/
+        retention-days: 1
+        if-no-files-found: error

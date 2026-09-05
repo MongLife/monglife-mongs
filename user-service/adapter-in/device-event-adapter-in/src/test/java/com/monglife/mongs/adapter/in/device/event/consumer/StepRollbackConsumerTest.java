@@ -4,7 +4,7 @@ import com.monglife.module.common.kafka.config.KafkaAutoConfig;
 import com.monglife.module.common.kafka.service.KafkaService;
 import com.monglife.mongs.adapter.transaction.ExchangeCurrentWalkingCountRollbackEventDto;
 import com.monglife.mongs.application.device.port.in.StepUseCase;
-import com.monglife.mongs.application.device.port.in.command.IncreaseCurrentWalkingCountCommand;
+import com.monglife.mongs.application.device.port.in.command.RestoreExchangedWalkingCountCommand;
 import com.monglife.mongs.core.kafka.event.enums.EventTopic;
 import org.awaitility.Awaitility;
 import org.junit.jupiter.api.DisplayName;
@@ -25,13 +25,14 @@ import org.springframework.test.context.ContextConfiguration;
 import java.time.Duration;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 @SpringBootTest
 @EnableAutoConfiguration
 @ActiveProfiles("test")
 @ContextConfiguration(classes = { StepRollbackConsumer.class, KafkaAutoConfig.class })
 @ComponentScan({"com.monglife.module.common.kafka"})
-@EmbeddedKafka(partitions = 1, brokerProperties = {"listeners=PLAINTEXT://localhost:9092", "port=9092"})
+@EmbeddedKafka(partitions = 1, bootstrapServersProperty = "module.kafka.url")
 @DirtiesContext
 class StepRollbackConsumerTest {
 
@@ -50,13 +51,13 @@ class StepRollbackConsumerTest {
     class ExchangeCurrentWalkingCountRollbackEvent {
 
         @Test
-        @DisplayName("걸음 수 환전 트랜잭션이 실패하는 경우 롤백 이벤트를 소비하여 보유 걸음 수 증가 UseCase를 실행 한다.")
+        @DisplayName("환전이 실패하는 경우 롤백 이벤트를 소비하여 기기에 복구를 알린다.")
         void exchangeCurrentWalkingCountRollback() {
             // arrange
             final String topic = EventTopic.ROLLBACK_EXCHANGE_CURRENT_WALKING_COUNT;
             final String deviceId = "TEST-DEVICE-ID";
             final long mongId = 1L;
-            final int walkingCount = 10;
+            final int walkingCount = 1_000;
             final int payPoint = 100;
 
             // act
@@ -70,18 +71,20 @@ class StepRollbackConsumerTest {
             kafkaService.generateEventWithProfile(topic, exchangeCurrentWalkingCountRollbackEventDto);
 
             // assert
-            ArgumentCaptor<IncreaseCurrentWalkingCountCommand> captor = ArgumentCaptor.forClass(IncreaseCurrentWalkingCountCommand.class);
+            ArgumentCaptor<RestoreExchangedWalkingCountCommand> captor = ArgumentCaptor.forClass(RestoreExchangedWalkingCountCommand.class);
 
             Awaitility.await()
                     .atMost(Duration.ofSeconds(30))
                     .untilAsserted(() -> Mockito.verify(stepUseCase, Mockito.times(1))
-                                    .increaseCurrentWalkingCountUseCase(Mockito.any()));
+                                    .restoreExchangedWalkingCountUseCase(Mockito.any()));
 
-            Mockito.verify(stepUseCase).increaseCurrentWalkingCountUseCase(captor.capture());
+            Mockito.verify(stepUseCase).restoreExchangedWalkingCountUseCase(captor.capture());
 
             var command = captor.getValue();
             assertEquals(deviceId, command.getDeviceId());
             assertEquals(walkingCount, command.getWalkingCount());
+            // 기기가 중복 수신을 걸러 낼 수 있도록 키가 반드시 실려야 한다.
+            assertNotNull(command.getEventId());
         }
     }
 }

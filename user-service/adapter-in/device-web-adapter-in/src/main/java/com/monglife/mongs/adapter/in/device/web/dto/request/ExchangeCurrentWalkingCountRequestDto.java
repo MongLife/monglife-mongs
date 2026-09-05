@@ -6,9 +6,6 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.springframework.format.annotation.DateTimeFormat;
-
-import java.time.LocalDateTime;
 
 @Getter
 @Setter
@@ -18,21 +15,13 @@ public class ExchangeCurrentWalkingCountRequestDto {
     @NotNull
     private Long mongId;
 
-    @Min(0)
-    private Integer totalWalkingCount;
-
-    @Min(0)
+    @NotNull
+    @Min(1)
     private Integer walkingCount;
 
-    @NotNull
-    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
-    private LocalDateTime deviceBootedAt;
-
     @Builder
-    public ExchangeCurrentWalkingCountRequestDto(Long mongId, Integer totalWalkingCount, Integer walkingCount, LocalDateTime deviceBootedAt) {
+    public ExchangeCurrentWalkingCountRequestDto(Long mongId, Integer walkingCount) {
         this.mongId = mongId;
-        this.totalWalkingCount = totalWalkingCount;
         this.walkingCount = walkingCount;
-        this.deviceBootedAt = deviceBootedAt;
     }
 }

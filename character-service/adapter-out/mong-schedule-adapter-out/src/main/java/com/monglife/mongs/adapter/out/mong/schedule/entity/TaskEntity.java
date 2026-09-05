@@ -89,7 +89,11 @@ public class TaskEntity extends BaseTimeEntity {
         this.accountId = accountId;
         this.schedulerTypeCode = schedulerTypeCode;
         this.typeCode = typeCode;
-        this.fixTime = fixTime == null ? LocalTime.of(0, 0) : fixTime;
+        // 밀리초를 남기면 안 된다. Hibernate 6.2.5 의 LocalTimeJavaType.wrap 은
+        // java.sql.Time.getTime() % 1000 의 음수 나머지를 보정하지 않고 NANO_OF_SECOND 에 넣는다.
+        // KST 는 09시 이전 시각의 epoch millis 가 음수라, 그런 값이 저장되면 이 행을 읽는
+        // 모든 쿼리가 DateTimeException 으로 터진다. 스케줄은 초 단위라 잘라도 무손실이다.
+        this.fixTime = (fixTime == null ? LocalTime.of(0, 0) : fixTime).withNano(0);
         this.stateCode = TaskStateCode.PROCESSING;
 
         this.expiredAt = LocalDateTime.of(this.now.toLocalDate(), this.fixTime);
