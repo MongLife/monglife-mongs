@@ -80,6 +80,7 @@ public class CollectionService implements CollectionUseCase {
     }
 
     /**
+     @deprecated
      * 맵 컬렉션 탐색
      */
     @Override
