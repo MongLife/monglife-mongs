@@ -94,26 +94,31 @@ public class CollectionController {
             @RequestBody SearchCollectionMapRequestDto searchCollectionMapRequestDto
     ) {
 
-        SearchCollectionMapCommand command = SearchCollectionMapCommand.builder()
-                .accountId(passport.getAccountId())
-                .latitude(searchCollectionMapRequestDto.getLatitude())
-                .longitude(searchCollectionMapRequestDto.getLongitude())
-                .build();
-
-        CollectionMap collectionMap = collectionUseCase.searchCollectionMapUseCase(command);
-
-        GetCollectionMapResponseDto getCollectionMapResponseDto = collectionMap == null
-                ? null
-                : GetCollectionMapResponseDto.builder()
-                .mapCode(collectionMap.getMapCode())
-                .mapName(collectionMap.getMapName())
-                .isIncluded(collectionMap.getIsIncluded())
-                .build();
-
         SearchCollectionMapResponseDto searchCollectionMapResponseDto = SearchCollectionMapResponseDto.builder()
-                .isFound(getCollectionMapResponseDto != null)
-                .data(getCollectionMapResponseDto)
+                .isFound(false)
+                .data(null)
                 .build();
+
+//        SearchCollectionMapCommand command = SearchCollectionMapCommand.builder()
+//                .accountId(passport.getAccountId())
+//                .latitude(searchCollectionMapRequestDto.getLatitude())
+//                .longitude(searchCollectionMapRequestDto.getLongitude())
+//                .build();
+//
+//        CollectionMap collectionMap = collectionUseCase.searchCollectionMapUseCase(command);
+//
+//        GetCollectionMapResponseDto getCollectionMapResponseDto = collectionMap == null
+//                ? null
+//                : GetCollectionMapResponseDto.builder()
+//                .mapCode(collectionMap.getMapCode())
+//                .mapName(collectionMap.getMapName())
+//                .isIncluded(collectionMap.getIsIncluded())
+//                .build();
+//
+//        SearchCollectionMapResponseDto searchCollectionMapResponseDto = SearchCollectionMapResponseDto.builder()
+//                .isFound(getCollectionMapResponseDto != null)
+//                .data(getCollectionMapResponseDto)
+//                .build();
 
         return ResponseEntity.ok(AdapterInMemberWebResponse.SEARCH_COLLECTION_MAP.toResponseDto(searchCollectionMapResponseDto));
     }
